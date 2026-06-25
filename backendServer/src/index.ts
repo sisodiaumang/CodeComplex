@@ -1,41 +1,148 @@
-import express from 'express';
-import cors from 'cors';
-import http from 'http';
-import { Server } from 'socket.io';
-import dotenv from 'dotenv';
+import dns from "dns";
+dns.setServers(["8.8.8.8", "8.8.4.4"]);
+
+import express from "express";
+import cors from "cors";
+import http from "http";
+import { Server } from "socket.io";
+import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
+
+import connectDB from "./db/connectDB.js";
+import startCleanupJob from "./jobs/cleanUnverifedUser.js";
+
+//sockets
+import { registerBattleChatHandlers } from "./sockets/battleChat.socket.js";
+import { registerBattleVoiceHandlers } from "./sockets/battleVoice.socket.js";
+
+// Routes
+import userRouter from "./routes/user.router.js";
+import battleRouter from "./routes/battle.router.js";
+
+
+// Middlewares
+import errorHandler from "./middlewares/error.middleware.js";
+import socketAuthMiddleware from "./middlewares/socketAuth.middleware.js";
 
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
 
-// Middleware
-app.use(cors());
+app.use(
+    cors({
+        origin: process.env.CORS_ORIGIN,
+        credentials: true
+    })
+);
+
+app.use(cookieParser());
+
 app.use(express.json());
 
-// Health Check Route
-app.get('/health', (req, res) => {
-  res.json({ status: 'up', message: 'DevArena Arena Server Engine Live' });
+app.use(
+    express.urlencoded({
+        extended: true
+    })
+);
+
+// --------------------
+// Health Check
+// --------------------
+
+app.get("/", (_, res) => {
+    res.status(200).json({
+        success: true,
+        message: "DevWar API Running 🚀"
+    });
 });
 
-// Create HTTP Server for Socket.io integration
+app.get("/health", (_, res) => {
+    res.status(200).json({
+        success: true,
+        uptime: process.uptime(),
+        timestamp: new Date(),
+        message: "Server Healthy"
+    });
+});
+
+// --------------------
+// API Routes
+// --------------------
+
+app.use("/api/v1/user", userRouter);
+app.use("/api/v1/battle", battleRouter);
+
+// --------------------
+// 404 Handler
+// --------------------
+
+app.use((req, res) => {
+    res.status(404).json({
+        success: false,
+        message: "Route not found"
+    });
+});
+
+// --------------------
+// Global Error Handler
+// --------------------
+
+app.use(errorHandler);
+
+// --------------------
+// Socket.IO
+// --------------------
+
 const server = http.createServer(app);
 
-const io = new Server(server, {
-  cors: {
-    origin: '*', // We'll restrict this to our client URL later
-    methods: ['GET', 'POST'],
-  },
+export const io = new Server(server, {
+    cors: {
+        origin: process.env.CORS_ORIGIN,
+        credentials: true
+    }
 });
 
-io.on('connection', (socket) => {
-  console.log(`⚡ User connected: ${socket.id}`);
-  
-  socket.on('disconnect', () => {
-    console.log(`🔌 User disconnected: ${socket.id}`);
-  });
-});
+io.use(socketAuthMiddleware);
 
-server.listen(PORT, () => {
-  console.log(`🔥 Server is roaring on http://localhost:${PORT}`);
+io.on("connection", (socket) => {
+    console.log(` User Connected : ${socket.id}`);
+
+    registerBattleChatHandlers(io, socket);
+    registerBattleVoiceHandlers(io, socket);
+
+    socket.on("disconnect", () => {
+        console.log(` User Disconnected : ${socket.id}`);
+    });
 });
+// --------------------
+// Start Server
+// --------------------
+
+const PORT = Number(process.env.PORT) || 8000;
+
+connectDB()
+    .then(() => {
+
+        console.log(" MongoDB Connected");
+
+        startCleanupJob();
+
+        server.listen(PORT, () => {
+
+            console.log(
+                ` Server running at http://localhost:${PORT}`
+            );
+
+        });
+
+    })
+    .catch((error) => {
+
+        console.error(
+            " MongoDB connection failed",
+            error
+        );
+
+        process.exit(1);
+
+    });

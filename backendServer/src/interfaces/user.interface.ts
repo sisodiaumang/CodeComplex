@@ -2,15 +2,16 @@ import { Document } from "mongoose";
 
 export interface IUser extends Document {
     username: string;
+    fullName : string;
     email: string;
     password: string;
 
-    avatar?: {
+    avatar: {
         profileImageURL:string,
         profileImagePublicId:string
     };
     bio?: string;
-    country?: string;
+    country: string;
 
     role: "USER" | "ADMIN"|"MODERATOR"|"OWNER";
 
@@ -26,4 +27,8 @@ export interface IUser extends Document {
     comparePassword(
         password: string
     ): Promise<boolean>;
+
+    generateRefreshToken() : string;
+    generateAccessToken() :string;
+
 }

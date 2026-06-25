@@ -38,7 +38,7 @@ export interface ISubmission extends Document {
     userId: Types.ObjectId;
 
     questionSlug: string;
-
+    sourceCodeUrl:string;
     battleType: BattleType;
 
     language?: ProgrammingLanguage;
