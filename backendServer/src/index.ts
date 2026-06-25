@@ -1,11 +1,10 @@
 import dns from "dns";
 dns.setServers(["8.8.8.8", "8.8.4.4"]);
-
 import express from "express";
 import cors from "cors";
 import http from "http";
 import { Server } from "socket.io";
-import dotenv from "dotenv";
+
 import cookieParser from "cookie-parser";
 
 import connectDB from "./db/connectDB.js";
@@ -24,7 +23,6 @@ import battleRouter from "./routes/battle.router.js";
 import errorHandler from "./middlewares/error.middleware.js";
 import socketAuthMiddleware from "./middlewares/socketAuth.middleware.js";
 
-dotenv.config();
 
 const app = express();
 

@@ -16,6 +16,7 @@ interface SendPayload {
 
 const GLOBAL_PREFIX = "!!";
 const MAX_MESSAGE_LENGTH = 500;
+const SEND_COOLDOWN_MS = 600; // simple per-socket throttle against spam
 
 const globalChannel = (roomCode: string) => roomCode;
 const teamChannel = (roomCode: string, team: TeamLetter) => `${roomCode}:${team}`;
@@ -29,6 +30,8 @@ export const registerBattleChatHandlers = (io: Server, socket: Socket): void => 
     // ── battle:chat:join ──────────────────────────────────────────────
     // Call when entering a room, and again whenever the team changes
     // (e.g. after a battle:team-update event) so the cache stays correct.
+    // Joins BOTH the whole-room global channel and the caller's team
+    // channel — "!!"-prefixed sends go to global, everything else to team.
     socket.on("battle:chat:join", async ({ roomCode }: JoinPayload) => {
         try {
             if (!roomCode) return;
@@ -71,6 +74,19 @@ export const registerBattleChatHandlers = (io: Server, socket: Socket): void => 
                 });
                 return;
             }
+
+            // FIX: basic per-socket cooldown so a client can't fan out
+            // unlimited messages to a whole room/team. Lightweight and
+            // in-memory — fine for a single-process deployment; if you ever
+            // scale Socket.IO horizontally, move this to Redis so the
+            // cooldown is shared across instances.
+            const now = Date.now();
+            const lastSentAt = (socket.data.lastChatSentAt as number | undefined) ?? 0;
+            if (now - lastSentAt < SEND_COOLDOWN_MS) {
+                socket.emit("battle:chat:error", { message: "You're sending messages too fast" });
+                return;
+            }
+            socket.data.lastChatSentAt = now;
 
             // Defensive re-check — don't trust a stale cache for something
             // that fans out to other people.
