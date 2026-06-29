@@ -20,6 +20,20 @@ const userProfileSchema =
                 promptWar: { type: Number, default: 1200, min: 0 }
             },
 
+            // FIX (rating-controller spec): "peakRating" in the spec's
+            // /rating/me response had no backing field anywhere — added
+            // here, mirroring `ratings`. rating.service.ts updates this via
+            // the native MongoDB $max update operator (never decreases,
+            // never needs a fetch-then-compare round trip).
+            peakRatings: {
+                dsa:       { type: Number, default: 1200, min: 0 },
+                frontend:  { type: Number, default: 1200, min: 0 },
+                backend:   { type: Number, default: 1200, min: 0 },
+                fullstack: { type: Number, default: 1200, min: 0 },
+                team:      { type: Number, default: 1200, min: 0 },
+                promptWar: { type: Number, default: 1200, min: 0 }
+            },
+
             stats: {
                 wins:               { type: Number, default: 0, min: 0 },
                 losses:             { type: Number, default: 0, min: 0 },

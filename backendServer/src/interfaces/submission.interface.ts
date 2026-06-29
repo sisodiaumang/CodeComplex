@@ -54,11 +54,11 @@ export interface ISubmission extends Document {
     memoryUsage?: number;
 
     passedTestCases?: number;
-
+    team:'A'|"B";
     totalTestCases?: number;
-
+    judgeToken:string;
     judgeResult?:JudgeResult;
-
+    judgedAt:Date;
     aiEvaluation?:AiEvaluation;
 
     aiScore?:number;

@@ -7,9 +7,10 @@ import { JwtPayload } from "jsonwebtoken";
 import jwt from "jsonwebtoken";
 import ms, { StringValue } from "ms";
 import bcrypt from "bcrypt";
-import OTP from "../models/otp.model.js";
+import OTP, { MAX_OTP_ATTEMPTS } from "../models/otp.model.js";
 import { generateOTP } from "../services/otp.service.js";
 import { sendVerificationMail } from "../services/emailSend.service.js";
+import UserProfile from "../models/userProfile.model.js";
 import { OtpPurpose } from "../interfaces/otp.interface.js";
 import { uploadOnCloudinary, deleteCloudinary } from "../utils/cloudinary.js";
 import countries from "../constants/countries.js";
@@ -128,6 +129,7 @@ async function sendOtp(
             otp: plainOtp,
             purpose,
             attempts: 0,
+            resendAttempts: 0,
             lastSentAt: new Date(),
             expiresAt: new Date(Date.now() + 5 * 60 * 1000)
         });
@@ -149,11 +151,13 @@ async function sendOtp(
     }
 
     if (otpDoc.expiresAt.getTime() >= Date.now()) {
-        // OTP still valid → this resend counts as an attempt
-        otpDoc.attempts++;
+        // FIX (W4): resend count now tracked on its own `resendAttempts`
+        // field — no longer shares `attempts` with the wrong-guess counter
+        // used by verifyUser / resetPassword / verifyEmailChange.
+        otpDoc.resendAttempts++;
 
-        if (otpDoc.attempts >= 5) {
-            otpDoc.attempts = 0;
+        if (otpDoc.resendAttempts >= MAX_OTP_ATTEMPTS) {
+            otpDoc.resendAttempts = 0;
             otpDoc.blockedUntil = new Date(Date.now() + 2 * 60 * 60 * 1000);
 
             await otpDoc.save();
@@ -164,8 +168,8 @@ async function sendOtp(
             );
         }
     } else {
-        // OTP expired → fresh start, reset attempts
-        otpDoc.attempts = 0;
+        // OTP expired → fresh start, reset resend attempts
+        otpDoc.resendAttempts = 0;
     }
 
     // Always issue a brand-new plaintext code. The stored value is a one-way
@@ -224,7 +228,7 @@ const signupUser = asyncHandler(async (req, res) => {
         throw new ApiError(409, "Account Creation Failed", ["Username already in use"]);
 
     // Hash password before storing — never store plain-text even temporarily
-    const passwordHash = await bcrypt.hash(userData.password, 10);
+    const passwordHash = await bcrypt.hash(userData.password, 12);
 
     const otp = await sendOtp(userData.email, "EMAIL_VERIFICATION");
 
@@ -251,7 +255,7 @@ const signupUser = asyncHandler(async (req, res) => {
         new ApiResponse(
             201,
             { email: userData.email },
-            "Verification email sent. Please verify your email to complete registration."
+            "Verification OTP sent. Please Enter OTP to  complete registration."
         )
     );
 });
@@ -313,6 +317,12 @@ const verifyUser = asyncHandler(async (req, res) => {
         password: passwordHash,
         isVerified: true
     });
+
+    // FIX (W7): previously no UserProfile was created at registration —
+    // leaderboard queries, achievement checks, and profile endpoints would
+    // come up empty (or rely on rating.service.ts's getOrCreateProfile
+    // fallback) until the user played their first match.
+    await UserProfile.create({ userId: user._id });
 
     await OTP.deleteOne({ _id: otpDoc._id });
 
@@ -736,6 +746,17 @@ const verifyEmailChange = asyncHandler(async (req, res) => {
 
         await otpDoc.save();
         throw new ApiError(401, `Invalid OTP. ${5 - otpDoc.attempts} attempts remaining.`);
+    }
+
+    // FIX (W2): confirm the account completing this change is the same one
+    // that requested it. requestedByUserId was already being written by
+    // requestEmailChange but was never read back here, so a stolen OTP
+    // could previously be redeemed by a different account.
+    if (
+        !otpDoc.requestedByUserId ||
+        otpDoc.requestedByUserId.toString() !== req.user!._id.toString()
+    ) {
+        throw new ApiError(403, "This email change request was not initiated by your account.");
     }
 
     // Confirm new email still isn't taken (race condition guard)

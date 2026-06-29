@@ -5,12 +5,21 @@ export interface IUserProfile extends Document {
     userId: Types.ObjectId;
 
     ratings: {
-        dsa: Number,
-        frontend: Number,
-        backend: Number,
-        fullstack: Number,
-        promptWar: Number,
-        team: Number
+        dsa: number,
+        frontend: number,
+        backend: number,
+        fullstack: number,
+        promptWar: number,
+        team: number
+    }
+
+    peakRatings:{
+        dsa: number,
+        frontend: number,
+        backend: number,
+        fullstack: number,
+        promptWar: number,
+        team: number
     }
 
     stats: {

@@ -111,8 +111,23 @@ userSchema.index({ email: 1 });
 userSchema.index({ username: 1 });
 
 
+// Matches bcrypt hash output ($2a$, $2b$, or $2y$ prefix) so we never
+// re-hash a value that's already a bcrypt hash.
+const BCRYPT_HASH_PATTERN = /^\$2[aby]\$\d{2}\$/;
+
 userSchema.pre("save", async function () {
     if (!this.isModified("password")) return;
+
+    // FIX (C4): verifyUser (user_controllers.ts) creates the User doc with
+    // password set to the already-bcrypt-hashed value from
+    // OTP.pendingUser.passwordHash (hashed at signup time — see C1). Without
+    // this guard, this hook would hash that hash again, and
+    // bcrypt.compare(plainPassword, hashOfHash) would always return false,
+    // permanently locking the user out of their own account.
+    if (BCRYPT_HASH_PATTERN.test(this.password)) {
+        this.lastPasswordChangedAt = new Date();
+        return;
+    }
 
     this.password = await bcrypt.hash(this.password, 12);
     this.lastPasswordChangedAt = new Date();

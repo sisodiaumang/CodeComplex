@@ -3,8 +3,8 @@ import mongoose from "mongoose";
 import { nanoid } from "nanoid";
 
 import BattleRoom from "../models/battleRoom.model.js";
-import Match from "../models/match.model.js";
 import { io } from "../index.js";
+import { createMatchForRoom, MatchServiceError } from "../services/match.service.js";
 
 // ─────────────────────────────────────────────
 // Helpers
@@ -16,6 +16,57 @@ const generateRoomCode = (): string =>
 
 /** Total player slots = teamSize * 2 (team A + team B) */
 const maxPlayers = (teamSize: number): number => teamSize * 2;
+
+// ─────────────────────────────────────────────
+// FIX (D2): the previous implementation stored one entry per user forever —
+// a Map that grows without bound across the server's lifetime. Replaced with
+// a minimal TTL-evicting wrapper: entries are removed as soon as they expire,
+// so the map stays bounded to however many users are actively hitting room
+// endpoints right now rather than everyone who ever called one.
+//
+// Still in-process / single-node — the Redis-backed replacement note from
+// the original comment still applies for multi-instance deployments.
+// ─────────────────────────────────────────────
+const ROOM_ACTION_COOLDOWN_MS = 1500;
+
+class TtlMap {
+    private readonly store = new Map<string, ReturnType<typeof setTimeout>>();
+
+    has(key: string): boolean {
+        return this.store.has(key);
+    }
+
+    set(key: string, ttlMs: number): void {
+        const existing = this.store.get(key);
+        if (existing !== undefined) clearTimeout(existing);
+        const timer = setTimeout(() => this.store.delete(key), ttlMs);
+        // Prevent the timer from keeping the Node process alive during tests
+        if (typeof timer === "object" && "unref" in timer) (timer as any).unref();
+        this.store.set(key, timer);
+    }
+
+    delete(key: string): void {
+        const existing = this.store.get(key);
+        if (existing !== undefined) {
+            clearTimeout(existing);
+            this.store.delete(key);
+        }
+    }
+
+    get size(): number {
+        return this.store.size;
+    }
+}
+
+const roomActionCooldown = new TtlMap();
+
+function isOnCooldown(userId: string): boolean {
+    return roomActionCooldown.has(userId);
+}
+
+function markRoomAction(userId: string): void {
+    roomActionCooldown.set(userId, ROOM_ACTION_COOLDOWN_MS);
+}
 
 // ─────────────────────────────────────────────
 // 1. POST /battle  — Create Room
@@ -70,16 +121,30 @@ export const createRoom = async (
             return;
         }
 
-        // Generate a unique room code (retry on collision)
-        let roomCode: string;
-        let attempts = 0;
+        // Generate a unique room code (retry on collision).
+        // FIX (W3): previously `roomCode` could still hold a known-duplicate
+        // value after the loop exited via the attempt-count guard, causing
+        // BattleRoom.create to throw a raw MongoDB duplicate-key error (500).
+        // Now roomCode is only ever assigned once a non-colliding candidate
+        // is confirmed, and we fail fast with a clear 503 otherwise.
+        let roomCode = "";
 
-        do {
-            roomCode = generateRoomCode();
-            const collision = await BattleRoom.findOne({ roomCode });
-            if (!collision) break;
-            attempts++;
-        } while (attempts < 5);
+        for (let i = 0; i < 5; i++) {
+            const candidate = generateRoomCode();
+            const collision = await BattleRoom.findOne({ roomCode: candidate });
+            if (!collision) {
+                roomCode = candidate;
+                break;
+            }
+        }
+
+        if (!roomCode) {
+            res.status(503).json({
+                success: false,
+                message: "Could not generate a unique room code, try again."
+            });
+            return;
+        }
 
         const room = await BattleRoom.create({
             roomCode,
@@ -127,6 +192,15 @@ export const joinRoom = async (
     try {
         const userId = req.user._id;
         const { roomCode } = req.params;
+        const userIdStr = userId.toString();
+
+        if (isOnCooldown(userIdStr)) {
+            res.status(429).json({
+                success: false,
+                message: "You're doing that too fast — slow down a little"
+            });
+            return;
+        }
 
         const room = await BattleRoom.findOne({ roomCode });
 
@@ -146,7 +220,6 @@ export const joinRoom = async (
             return;
         }
 
-        const userIdStr = userId.toString();
         const inTeamA = room.teams.teamA.map((id) => id.toString()).includes(userIdStr);
         const inTeamB = room.teams.teamB.map((id) => id.toString()).includes(userIdStr);
 
@@ -177,6 +250,7 @@ export const joinRoom = async (
         }
 
         await room.save();
+        markRoomAction(userIdStr);
 
         const populated = await BattleRoom.findById(room._id)
             .populate("host", "username fullName avatar")
@@ -251,6 +325,15 @@ export const joinTeamA = async (
     try {
         const userId = req.user._id;
         const { roomCode } = req.params;
+        const userIdStr = userId.toString();
+
+        if (isOnCooldown(userIdStr)) {
+            res.status(429).json({
+                success: false,
+                message: "You're doing that too fast — slow down a little"
+            });
+            return;
+        }
 
         const room = await BattleRoom.findOne({ roomCode });
 
@@ -267,7 +350,6 @@ export const joinTeamA = async (
             return;
         }
 
-        const userIdStr = userId.toString();
         const inTeamA = room.teams.teamA.map((id) => id.toString()).includes(userIdStr);
         const inTeamB = room.teams.teamB.map((id) => id.toString()).includes(userIdStr);
 
@@ -303,6 +385,7 @@ export const joinTeamA = async (
         room.teams.teamA.push(userId);
 
         await room.save();
+        markRoomAction(userIdStr);
 
         const populated = await BattleRoom.findById(room._id)
             .populate("host", "username fullName avatar")
@@ -338,6 +421,15 @@ export const joinTeamB = async (
     try {
         const userId = req.user._id;
         const { roomCode } = req.params;
+        const userIdStr = userId.toString();
+
+        if (isOnCooldown(userIdStr)) {
+            res.status(429).json({
+                success: false,
+                message: "You're doing that too fast — slow down a little"
+            });
+            return;
+        }
 
         const room = await BattleRoom.findOne({ roomCode });
 
@@ -354,7 +446,6 @@ export const joinTeamB = async (
             return;
         }
 
-        const userIdStr = userId.toString();
         const inTeamA = room.teams.teamA.map((id) => id.toString()).includes(userIdStr);
         const inTeamB = room.teams.teamB.map((id) => id.toString()).includes(userIdStr);
 
@@ -390,6 +481,7 @@ export const joinTeamB = async (
         room.teams.teamB.push(userId);
 
         await room.save();
+        markRoomAction(userIdStr);
 
         const populated = await BattleRoom.findById(room._id)
             .populate("host", "username fullName avatar")
@@ -456,45 +548,25 @@ export const startBattle = async (
             return;
         }
 
-        if (room.status !== "WAITING") {
-            res.status(400).json({
-                success: false,
-                message: `Battle cannot be started — room is ${room.status.toLowerCase()}`
-            });
-            return;
+        // createMatchForRoom validates room.status === "WAITING", checks both
+        // teams are full, AND guards against a match already being ongoing
+        // for this room (the double-start race that startMatch in
+        // match_controller.ts already guarded against but this endpoint did
+        // not — see code review C2). Both controllers now share this single
+        // implementation so a fix here can't drift out of sync with the other.
+        let match;
+        try {
+            match = await createMatchForRoom(room, { questionSlug, durationInMinutes });
+        } catch (serviceErr) {
+            if (serviceErr instanceof MatchServiceError) {
+                res.status(serviceErr.statusCode).json({
+                    success: false,
+                    message: serviceErr.message
+                });
+                return;
+            }
+            throw serviceErr;
         }
-
-        // For 1v1 both teams must have exactly 1 player; for team modes, both must be full
-        const teamAFull = room.teams.teamA.length === room.teamSize;
-        const teamBFull = room.teams.teamB.length === room.teamSize;
-
-        if (!teamAFull || !teamBFull) {
-            res.status(400).json({
-                success: false,
-                message: "Both teams must be full before starting"
-            });
-            return;
-        }
-
-        // Create the Match
-        const match = await Match.create({
-            battleRoomId: room._id,
-            questionSlug,
-            battleType: room.battleType,
-            teamA: room.teams.teamA,
-            teamB: room.teams.teamB,
-            durationInMinutes,
-            difficulty: room.difficulty,
-            matchType: room.isRanked ? "RANKED" : "CASUAL",
-            status: "ONGOING",
-            startedAt: new Date()
-        });
-
-        // Link match to room and flip status
-        room.matchId = match._id as mongoose.Types.ObjectId;
-        room.questionSlug = questionSlug;
-        room.status = "STARTED";
-        await room.save();
 
         const populatedRoom = await BattleRoom.findById(room._id)
             .populate("host", "username fullName avatar")
@@ -538,6 +610,15 @@ export const leaveRoom = async (
     try {
         const userId = req.user._id;
         const { roomCode } = req.params;
+        const userIdStr = userId.toString();
+
+        if (isOnCooldown(userIdStr)) {
+            res.status(429).json({
+                success: false,
+                message: "You're doing that too fast — slow down a little"
+            });
+            return;
+        }
 
         const room = await BattleRoom.findOne({ roomCode });
 
@@ -561,8 +642,6 @@ export const leaveRoom = async (
             });
             return;
         }
-
-        const userIdStr = userId.toString();
 
         // Remove from whichever team they're in
         const beforeA = room.teams.teamA.length;
@@ -597,6 +676,7 @@ export const leaveRoom = async (
             // Last person out — cancel the room
             room.status = "CANCELLED";
             await room.save();
+            markRoomAction(userIdStr);
 
             io.to(roomCode).emit("battle:cancel", { roomCode });
 
@@ -617,6 +697,7 @@ export const leaveRoom = async (
         }
 
         await room.save();
+        markRoomAction(userIdStr);
 
         const populated = await BattleRoom.findById(room._id)
             .populate("host", "username fullName avatar")

@@ -131,6 +131,24 @@ battleRoomSchema.index({ status: 1 });
 battleRoomSchema.index({ battleType: 1 });
 
 
+// FIX (I6): defense-in-depth helper for any future findOneAndUpdate-based
+// join flow. The pre-save hook above enforces the teamSize cap correctly
+// today because joinRoom/joinTeamA/joinTeamB (battle_controller.ts) all
+// fetch the document and call room.save() — but pre-save hooks NEVER run
+// on findOneAndUpdate, with or without { runValidators: true }, since that
+// option only re-runs schema-level field validators, not custom document
+// hooks. If a future refactor switches any of those handlers to a
+// $push-based findOneAndUpdate (a common optimisation to avoid the fetch),
+// it MUST call this first and reject the request on `false` — there is no
+// way to make Mongoose enforce this automatically for that update style.
+export function hasTeamCapacity(
+    room: Pick<IBattleRoom, "teamSize">,
+    currentTeamLength: number
+): boolean {
+    return currentTeamLength < (room.teamSize ?? 1);
+}
+
+
 const BattleRoom: mongoose.Model<IBattleRoom> =
     (mongoose.models.BattleRoom as mongoose.Model<IBattleRoom>) ||
     mongoose.model<IBattleRoom>("BattleRoom", battleRoomSchema);

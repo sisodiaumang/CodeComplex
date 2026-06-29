@@ -122,8 +122,16 @@ const matchSchema =
 
             abandonReason: {
                 type: String
-            }
+            },
+
+            spectators: [
+                {
+                    type: mongoose.Schema.Types.ObjectId,
+                    ref: "User"
+                }
+            ]
         },
+
         {
             timestamps: true
         }

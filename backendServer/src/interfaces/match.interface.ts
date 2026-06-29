@@ -37,10 +37,11 @@ export interface IMatch extends Document {
 
     createdAt: Date;
     updatedAt: Date;
-    teamAScore: Number;
-    teamBScore: Number;
+    teamAScore: number;
+    teamBScore: number;
     ratingProcessed: Boolean;
     matchType : MatchType;
     difficulty: Difficulty;
     abandonReason : String;
+    spectators: Types.ObjectId[];
 }

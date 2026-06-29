@@ -1,4 +1,5 @@
 import { Document } from "mongoose";
+import { IUser } from "./user.interface.js";
 
 export type OtpPurpose =
     | "EMAIL_VERIFICATION"
@@ -23,4 +24,6 @@ export interface IOTP extends Document {
     attempts: number;
     pendingUser?: PendingUser; // signup payload stored here until OTP is verified
     compareOTP(otp: string): Promise<boolean>;
+    resendAttempts:number;
+    requestedByUserId:IUser
 }

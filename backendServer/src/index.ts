@@ -9,6 +9,7 @@ import cookieParser from "cookie-parser";
 
 import connectDB from "./db/connectDB.js";
 import startCleanupJob from "./jobs/cleanUnverifedUser.js";
+import startRatingRecoveryJob from "./jobs/ratingRecoveryjob.js";
 
 //sockets
 import { registerBattleChatHandlers } from "./sockets/battleChat.socket.js";
@@ -17,6 +18,20 @@ import { registerBattleVoiceHandlers } from "./sockets/battleVoice.socket.js";
 // Routes
 import userRouter from "./routes/user.router.js";
 import battleRouter from "./routes/battle.router.js";
+import matchRouter from "./routes/match.router.js";
+import submissionRouter from "./routes/submission.router.js";
+import ratingRouter from "./routes/rating.router.js";
+import friendshipRouter from "./routes/friendship.router.js";
+import notificationRouter from "./routes/notification.router.js";
+import achievementRouter from "./routes/achievement.router.js";
+import leaderboardRouter from "./routes/leaderboard.router.js";
+import spectateRouter from "./routes/spectate.router.js";
+
+
+
+
+
+
 
 
 // Middlewares
@@ -69,10 +84,24 @@ app.get("/health", (_, res) => {
 
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/battle", battleRouter);
+app.use("/api/v1/match", matchRouter);
+app.use("/api/v1/submission", submissionRouter);
+app.use("/api/v1/ratings", ratingRouter);
+app.use("/api/v1/friends", friendshipRouter);
+app.use("/api/v1/notifications", notificationRouter);
+app.use("/api/v1/achievements", achievementRouter);
+app.use("/api/v1/leaderboard", leaderboardRouter);
+app.use("/api/v1/spectate", spectateRouter);
+
+
+
+
+
 
 // --------------------
 // 404 Handler
 // --------------------
+
 
 app.use((req, res) => {
     res.status(404).json({
@@ -124,6 +153,7 @@ connectDB()
         console.log(" MongoDB Connected");
 
         startCleanupJob();
+        startRatingRecoveryJob();
 
         server.listen(PORT, () => {
 

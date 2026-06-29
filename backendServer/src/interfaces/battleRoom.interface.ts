@@ -13,7 +13,8 @@ export type BattleType =
     | "FULLSTACK"
     | "PROMPT_WAR"
     | "BUG_FIX"
-    | "PROMPT_WAR";
+    | "PROMPT_WAR"
+    | "TEAM";
 
 export type RoomStatus =
     | "WAITING"
