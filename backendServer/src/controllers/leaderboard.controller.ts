@@ -144,13 +144,38 @@ export const getCountryLeaderboard = async (req: Request, res: Response, next: N
             return res.status(400).json({ success: false, message: "country is required" });
         }
 
-        // MVP: use global ranking then filter by country in-memory.
         const category = getCategory(battleType);
         const page = Math.max(DEFAULT_PAGE, parseInt(String(req.query.page ?? DEFAULT_PAGE), 10) || DEFAULT_PAGE);
         const limit = Math.min(MAX_LIMIT, Math.max(1, parseInt(String(req.query.limit ?? DEFAULT_LIMIT), 10) || DEFAULT_LIMIT));
+        const skip = (page - 1) * limit;
 
-        const { players, totalPages, total } = await fetchLeaderboardPage({ category, page, limit });
-        const filtered = players.filter((p) => p.country === country);
+        // `country` lives on User, not UserProfile — so the previous approach
+        // (global page, then in-memory filter, with global totals) returned
+        // near-empty pages and meaningless pagination. Resolve the country's
+        // users first, then rank *their* profiles with a real DB query.
+        const countryUsers = await User.find({ country }).select("_id username avatar country");
+        const userIds = countryUsers.map((u: any) => u._id);
+        const userById = new Map(countryUsers.map((u: any) => [u._id.toString(), u]));
+
+        const total = await UserProfile.countDocuments({ userId: { $in: userIds } });
+        const totalPages = Math.ceil(total / limit);
+
+        const top = await UserProfile.find({ userId: { $in: userIds } })
+            .sort({ [`ratings.${category}`]: -1 } as any)
+            .skip(skip)
+            .limit(limit)
+            .select("userId ratings");
+
+        const players = top.map((row: any, idx: number) => {
+            const user = userById.get(row.userId.toString());
+            return {
+                rank: skip + idx + 1,
+                username: user?.username,
+                avatar: user?.avatar?.profileImageURL,
+                country: user?.country,
+                rating: row.ratings?.[category] ?? 1200,
+            };
+        });
 
         return res.status(200).json({
             success: true,
@@ -158,7 +183,7 @@ export const getCountryLeaderboard = async (req: Request, res: Response, next: N
                 page,
                 totalPages,
                 total,
-                players: filtered,
+                players,
             },
         });
     } catch (err) {

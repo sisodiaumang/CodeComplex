@@ -1,30 +1,65 @@
 import { Document } from "mongoose";
 
-// ─────────────────────────────────────────────────────────────────────────
-// Shape confirmed directly against a real export of the seeded question
-// bank (13 array-topic problems) — every field below appeared, with the
-// same keys, on every single document. Nothing here is guessed.
-//
-// One deliberate departure from the raw seed shape: `starterCode` and
-// `functionSignature` are typed as `Record<string, string>` (plain object)
-// rather than a Mongoose `Map`. A Mongoose Map looks convenient, but
-// `JSON.stringify(someMap)` silently produces `{}` — every controller in
-// this codebase does `res.json({ data: doc })` somewhere, and a Map field
-// would vanish the moment it crosses an API response. Plain object avoids
-// that trap and still allows any language key (not just cpp/python/java),
-// so adding a language to the bank later needs no schema change.
-// ─────────────────────────────────────────────────────────────────────────
+/* ─────────────────────────────────────────────────────────── */
+/*                       ENUMS                                */
+/* ─────────────────────────────────────────────────────────── */
 
-export type QuestionDifficulty = "Easy" | "Medium" | "Hard";
+export type QuestionMode = "solve" | "bug_fix";
 
-// Lowercase, per-language keys used inside a question doc (starterCode,
-// functionSignature, judgeConfig.language) — every seeded doc uses
-// "cpp" | "python" | "java" today. Kept as `string` rather than a strict
-// union so a new language can be added to the bank without a migration;
-// note this is a *different* casing/namespace than Submission.language's
-// uppercase enum (CPP/JAVA/PYTHON/JAVASCRIPT/TYPESCRIPT) — judge.service.ts
-// is what bridges the two.
-export type QuestionLanguageKey = string;
+export type Difficulty = "Easy" | "Medium" | "Hard";
+
+export type ScoringType = "binary" | "partial";
+
+export type SupportedLanguage = "cpp" | "java" | "python" | "javascript" | "go";
+
+export type CompanyFrequency = 1 | 2 | 3 | 4 | 5;
+
+/* ─────────────────────────────────────────────────────────── */
+/*                     METADATA                               */
+/* ─────────────────────────────────────────────────────────── */
+
+export interface ICompanyTag {
+    name: string;
+    frequency: CompanyFrequency;
+}
+
+export interface IQuestionMetadata {
+    estimatedTime: number;
+    points: number;
+    premium: boolean;
+    isPublished: boolean;
+
+    companies: ICompanyTag[];
+
+    topics: string[];
+
+    patterns: string[];
+
+    prerequisites: string[];
+
+    variants: string[];
+
+    tags: string[];
+
+    keywords: string[];
+
+    // Added recommendations
+    interviewFrequency?: number;
+    revisionLevel?: number;
+    contestEligible?: boolean;
+}
+
+/* ─────────────────────────────────────────────────────────── */
+/*                    STATEMENT                               */
+/* ─────────────────────────────────────────────────────────── */
+
+export interface IConstraint {
+    variable: string;
+    type: string;
+    min?: number;
+    max?: number;
+    description?: string;
+}
 
 export interface IQuestionExample {
     input: string;
@@ -32,98 +67,203 @@ export interface IQuestionExample {
     explanation?: string;
 }
 
+export interface IQuestionStatement {
+    markdown: string;
+    html?: string;
+
+    inputFormat?: string;
+    outputFormat?: string;
+
+    notes?: string;
+
+    images?: string[];
+
+    constraints: IConstraint[];
+
+    examples: IQuestionExample[];
+}
+
+/* ─────────────────────────────────────────────────────────── */
+/*                      HINTS                                 */
+/* ─────────────────────────────────────────────────────────── */
+
+export interface IQuestionHint {
+    order: number;
+    text: string;
+}
+
+/* ─────────────────────────────────────────────────────────── */
+/*                     EDITORIAL                              */
+/* ─────────────────────────────────────────────────────────── */
+
+export interface IEditorial {
+    title: string;
+    intuition: string;
+    bruteForce: string;
+    betterSolution?: string;
+    optimalSolution: string;
+
+    proofOfCorrectness?: string;
+    dryRun?: string;
+    commonMistakes: string[];
+
+    timeComplexity: string;
+    spaceComplexity: string;
+}
+
+/* ─────────────────────────────────────────────────────────── */
+/*                    TEST CASES                              */
+/* ─────────────────────────────────────────────────────────── */
+
 export interface IQuestionTestCase {
     id: string;
     input: string;
     output: string;
     isVisible: boolean;
+    weight: number;
 }
 
-export interface IQuestionJudgeConfig {
-    timeLimit: number; // milliseconds
-    memoryLimit: number; // MB
-    language: QuestionLanguageKey[];
+/* ─────────────────────────────────────────────────────────── */
+/*                  STARTER CODE                              */
+/* ─────────────────────────────────────────────────────────── */
+
+export interface ILanguageCode {
+    cpp?: string;
+
+    java?: string;
+    python?: string;
+    javascript?: string;
+    go?: string;
 }
 
-export interface IQuestionScoring {
-    // Only "binary" has been seen in the seeded data so far. "partial" is
-    // included because `partialScoring` already exists as a sibling flag —
-    // remove it from this union if partial scoring never actually ships.
-    type: "binary" | "partial";
+/* ─────────────────────────────────────────────────────────── */
+/*                FUNCTION SIGNATURE                          */
+/* ─────────────────────────────────────────────────────────── */
+
+export interface IFunctionSignature {
+    cpp?: string;
+    java?: string;
+    python?: string;
+    javascript?: string;
+    go?: string;
+}
+
+/* ─────────────────────────────────────────────────────────── */
+/*                     SOLUTIONS                              */
+/* ─────────────────────────────────────────────────────────── */
+
+export interface IQuestionSolutions {
+    cpp?: string;
+    java?: string;
+    python?: string;
+    javascript?: string;
+    go?: string;
+}
+
+/* ─────────────────────────────────────────────────────────── */
+/*                     JUDGE                                  */
+/* ─────────────────────────────────────────────────────────── */
+
+export interface IJudgeConfig {
+    timeLimit: number;
+    memoryLimit: number;
+    stackLimit?: number;
+    outputLimit?: number;
+    supportedLanguages: SupportedLanguage[];
+}
+
+/* ─────────────────────────────────────────────────────────── */
+/*                     SCORING                                */
+/* ─────────────────────────────────────────────────────────── */
+
+export interface IScoring {
+    type: ScoringType;
     maxScore: number;
     partialScoring: boolean;
 }
 
-export interface IQuestionBattleConfig {
+/* ─────────────────────────────────────────────────────────── */
+/*                    BATTLE                                  */
+/* ─────────────────────────────────────────────────────────── */
+
+export interface IBattleConfig {
     enabled: boolean;
+    ratingEnabled: boolean;
     timeBonus: boolean;
     maxBattleScore: number;
+    difficultyMultiplier: number;
 }
 
-export interface IQuestionTestCaseDistribution {
-    visible: number;
-    hidden: number;
-    total: number;
+/* ─────────────────────────────────────────────────────────── */
+/*                    ANALYTICS                               */
+/* ─────────────────────────────────────────────────────────── */
+
+export interface IAnalytics {
+    likes: number;
+    dislikes: number;
+    totalSubmissions: number;
+    acceptedSubmissions: number;
+    averageRuntime?: number;
+    averageMemory?: number;
 }
 
-// FIX (bug-fix battleType support): per the platform owner, BUG_FIX
-// questions are "just like DSA" — same statement/test-case/judging shape,
-// the only difference is the player starts from deliberately broken code
-// instead of an empty stub. So rather than a whole separate model, a DSA
-// question doc can just declare mode: "bug_fix" and supply
-// `buggyStarterCode` alongside the normal (working) `starterCode`.
-// `starterCode` is still required either way — for "solve" mode it's the
-// usual empty-stub scaffold; for "bug_fix" mode it doubles as the
-// reference/"intended fix" version, while `buggyStarterCode` is what
-// actually gets shown to and submitted by the player.
-export type QuestionMode = "solve" | "bug_fix";
+/* ─────────────────────────────────────────────────────────── */
+/*                      MAIN                                  */
+/* ─────────────────────────────────────────────────────────── */
 
-export interface IQuestion extends Document<string> {
-    // _id's type comes from the `Document<string>` generic above (Mongoose's
-    // Document<T> uses T as the _id type, defaulting to Types.ObjectId).
-    // Declaring it again here would be redundant — and re-declaring it as
-    // a bare `_id: string` on top of `Document` (without the generic) is
-    // exactly what produced TS2430 ("Types of property '_id' are
-    // incompatible. Type 'string' is not assignable to type 'ObjectId'"),
-    // since the inherited default still wins unless overridden through the
-    // generic itself.
+export interface IQuestion extends Document {
+    _id: any;
 
     title: string;
-    slug: string;
-    difficulty: QuestionDifficulty;
-    topics: string[];
-    statement: string;
-    constraints: string[];
-    examples: IQuestionExample[];
 
-    // Defaults to "solve" (the original 13 seeded questions are all this
-    // mode). "bug_fix" reuses everything else on this model unchanged —
-    // see the QuestionMode comment above.
+    slug?: string;
+
+    difficulty: Difficulty;
+
+    category: string;
+
+    subCategory?: string;
+
     mode: QuestionMode;
 
-    starterCode: Record<QuestionLanguageKey, string>;
-    // Only meaningful when mode === "bug_fix": the broken version of
-    // starterCode that's actually handed to the player. Optional at the
-    // type level because it's irrelevant for mode === "solve"; the model's
-    // pre-validate hook enforces it's present when mode is "bug_fix".
-    buggyStarterCode?: Record<QuestionLanguageKey, string>;
+    metadata: IQuestionMetadata;
 
-    functionSignature: Record<QuestionLanguageKey, string>;
+    statement: IQuestionStatement;
 
-    judgeConfig: IQuestionJudgeConfig;
-    scoring: IQuestionScoring;
-    battleConfig: IQuestionBattleConfig;
+    hints: IQuestionHint[];
 
-    visibleTestCases: IQuestionTestCase[];
-    hiddenTestCases: IQuestionTestCase[];
+    editorial?: IEditorial;
 
-    // Derived/read-only in practice — question.model.ts recomputes this on
-    // every save from the actual array lengths, so it can never drift from
-    // visibleTestCases/hiddenTestCases. Don't hand-maintain it.
-    testCaseDistribution: IQuestionTestCaseDistribution;
+    starterCode: ILanguageCode;
 
-    tags: string[];
+    buggyStarterCode?: ILanguageCode;
+
+    functionSignature: IFunctionSignature;
+
+    solutions?: IQuestionSolutions;
+
+    judgeConfig: IJudgeConfig;
+
+    scoring: IScoring;
+
+    battleConfig: IBattleConfig;
+
+    testCases: IQuestionTestCase[];
+
+    analytics: IAnalytics;
+
+    similarProblems: string[];
+
+    followUpQuestions: string[];
+
+    // Soft delete + auditing
+    isDeleted?: boolean;
+    deletedAt?: Date | null;
+
+    createdBy?: string;
+    updatedBy?: string;
 
     createdAt: Date;
     updatedAt: Date;
 }
+

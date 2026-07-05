@@ -30,7 +30,7 @@ export interface IBattleRoom extends Document {
 
     battleType: BattleType;
 
-    topic?: string;
+    topics?: string[];
 
     difficulty?: Difficulty;
 

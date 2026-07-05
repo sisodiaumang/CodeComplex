@@ -1,18 +1,20 @@
 import { Resend } from 'resend';
+import { env } from '../config/env.js';
+import ApiError from '../utils/ApiError.js';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = new Resend(env.RESEND_API_KEY ?? "");
 
 // In production the sandbox address silently drops all mail — fail fast
 // so a misconfigured deploy is caught at startup, not at the first OTP send.
-if (process.env.NODE_ENV === "production" && !process.env.EMAIL_FROM_ADDRESS) {
+if (env.NODE_ENV === "production" && !env.EMAIL_FROM_ADDRESS) {
     throw new Error(
         "[EmailService] EMAIL_FROM_ADDRESS must be set to a verified Resend sending domain in production. " +
         "The default sandbox address (onboarding@resend.dev) does not deliver to real inboxes."
     );
 }
 
-const FROM_ADDRESS = process.env.EMAIL_FROM_ADDRESS ?? "onboarding@resend.dev";
-const APP_NAME = process.env.APP_NAME ?? 'DevArena';
+const FROM_ADDRESS =  "onboarding@resend.dev";
+const APP_NAME = env.APP_NAME ?? 'DevArena';
 
 function buildVerificationHtml(otp: string): string {
     return `
@@ -58,7 +60,11 @@ async function sendVerificationMail(email: string, otp: string): Promise<void> {
         }
     } catch (err) {
         const reason = err instanceof Error ? err.message : String(err);
-        throw new Error(`[EmailService] Failed to send verification email to ${email}: ${reason}`);
+        throw new ApiError(
+            500,
+            "Failed to send verification email",
+            [reason]
+        );
     }
 }
 

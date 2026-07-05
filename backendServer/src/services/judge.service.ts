@@ -44,9 +44,11 @@ import Question from "../models/question.model.js";
 // that file and can't confirm it exports a matching type name.
 export type SubmissionLanguage = "CPP" | "JAVA" | "PYTHON" | "JAVASCRIPT" | "TYPESCRIPT";
 
-const JUDGE0_API_URL = process.env.JUDGE0_API_URL ?? "http://localhost:2358";
-const JUDGE0_API_KEY = process.env.JUDGE0_API_KEY;
-const JUDGE0_API_HOST = process.env.JUDGE0_API_HOST;
+import { env } from "../config/env.js";
+
+const JUDGE0_API_URL = env.JUDGE0_API_URL;
+const JUDGE0_API_KEY = env.JUDGE0_API_KEY;
+const JUDGE0_API_HOST = env.JUDGE0_API_HOST;
 
 // See assumption #3 above.
 const LANGUAGE_ID_MAP: Record<SubmissionLanguage, number> = {
@@ -204,30 +206,24 @@ export async function compile(
  * and marks the submission ERROR rather than leaving it stuck on RUNNING.
  */
 export async function getTestCases(questionSlug: string): Promise<TestCase[]> {
-    const question = await Question.findOne({ slug: questionSlug })
-        .select("visibleTestCases hiddenTestCases")
-        .lean<{
-            visibleTestCases?: { input: string; output: string }[];
-            hiddenTestCases?: { input: string; output: string }[];
-        }>();
+    const question = await Question.findOne({ slug: questionSlug }).lean<{
+        testCases?: { input: string; output: string; isVisible: boolean }[];
+    }>();
 
     if (!question) {
         throw new Error(`[JudgeService] No question found for slug "${questionSlug}"`);
     }
 
-    const allCases = [
-        ...(question.visibleTestCases ?? []),
-        ...(question.hiddenTestCases ?? []),
-    ];
+    const allCases = (question.testCases ?? []).map((tc) => ({
+        input: tc.input,
+        expectedOutput: tc.output,
+    }));
 
     if (allCases.length === 0) {
         throw new Error(`[JudgeService] Question "${questionSlug}" has no test cases configured`);
     }
 
-    return allCases.map((tc) => ({
-        input: tc.input,
-        expectedOutput: tc.output,
-    }));
+    return allCases;
 }
 
 /**

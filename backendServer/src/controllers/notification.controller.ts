@@ -30,7 +30,12 @@ export const getNotifications = async (req: Request, res: Response, next: NextFu
             Notification.countDocuments(filter),
         ]);
 
-        const unreadCount = unreadOnly ? notifications.length : await Notification.countDocuments({ recipient: userId, isRead: false });
+        // When unreadOnly is set, `total` (countDocuments over the same
+        // isRead:false filter) already IS the unread total — using
+        // notifications.length capped the count at one page (≤ limit).
+        const unreadCount = unreadOnly
+            ? total
+            : await Notification.countDocuments({ recipient: userId, isRead: false });
 
         res.status(200).json({
             success: true,

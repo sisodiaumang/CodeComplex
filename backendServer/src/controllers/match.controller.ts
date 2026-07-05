@@ -572,6 +572,23 @@ export const getMatchResult = async (
             return;
         }
 
+        // Only participants (or an admin) may view a match's full result —
+        // winner/loser, scores and rating changes shouldn't be enumerable by
+        // arbitrary authenticated users. teamA/teamB are populated here, so
+        // pull the id whether each entry is a raw ObjectId or a populated doc.
+        const requesterId = req.user._id.toString();
+        const participantIds = [...match.teamA, ...match.teamB].map(
+            (p: any) => (p?._id ?? p).toString()
+        );
+
+        if (!participantIds.includes(requesterId) && req.user.role !== "ADMIN") {
+            res.status(403).json({
+                success: false,
+                message: "Not authorised to view this match result"
+            });
+            return;
+        }
+
         const winner = match.winnerTeam === "A"
             ? match.teamA[0]
             : match.winnerTeam === "B"

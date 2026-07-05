@@ -129,26 +129,45 @@ export async function createAndJudge(params: {
 }) {
     const { matchId, userId, team, questionSlug, battleType, battleRoomId, language, sourceCode } = params;
 
-    const submissionNumber = (await Submission.countDocuments({ matchId, userId })) + 1;
+    // submissionNumber is (count + 1), but there's a unique index on
+    // {matchId, userId, submissionNumber}. Two concurrent submissions from the
+    // same user compute the same number, so the second create() throws an
+    // E11000 duplicate-key error. Retry with a recomputed number instead of
+    // letting that surface to the user as a 500.
+    let submission;
+    let attempts = 0;
 
-    const submission = await Submission.create({
-        matchId,
-        userId,
-        team,
-        questionSlug,
-        battleType,
-        language,
-        sourceCode,
-        status: "PENDING",
-        submissionNumber,
-    });
+    while (true) {
+        const submissionNumber = (await Submission.countDocuments({ matchId, userId })) + 1;
+
+        try {
+            submission = await Submission.create({
+                matchId,
+                userId,
+                team,
+                questionSlug,
+                battleType,
+                language,
+                sourceCode,
+                status: "PENDING",
+                submissionNumber,
+            });
+            break;
+        } catch (err: any) {
+            if (err?.code === 11000 && attempts < 5) {
+                attempts++;
+                continue;
+            }
+            throw err;
+        }
+    }
 
     await emitToRoom(battleRoomId, "submission:created", {
         submissionId: submission._id,
         matchId,
         userId,
         team,
-        submissionNumber,
+        submissionNumber: submission.submissionNumber,
     });
 
     // Fire-and-forget — submitCode responds immediately with PENDING (per

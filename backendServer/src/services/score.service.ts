@@ -32,20 +32,27 @@ export async function applySubmissionScore(
     team: "A" | "B",
     submissionScore: number
 ): Promise<void> {
-    const match = await Match.findById(matchId);
+    const scoreField = team === "A" ? "teamAScore" : "teamBScore";
+
+    // Atomic monotonic update: only raise the score, and only while the match
+    // is still ONGOING. Two submissions judged concurrently used to read the
+    // same in-memory currentScore and the later save() could clobber a higher
+    // score with a lower one — this conditional $set closes that race.
+    const raised = await Match.findOneAndUpdate(
+        { _id: matchId, status: "ONGOING", [scoreField]: { $lt: submissionScore } },
+        { $set: { [scoreField]: submissionScore } },
+        { new: true }
+    );
+
+    // If the score wasn't raised (equal/lower, or the match just ended), fall
+    // back to the current persisted doc so we still emit an accurate snapshot.
+    const match = raised ?? (await Match.findById(matchId));
 
     if (!match || match.status !== "ONGOING") {
         return;
     }
 
-    const scoreField = team === "A" ? "teamAScore" : "teamBScore";
-    const currentScore = (match as any)[scoreField] ?? 0;
-    const updatedScore = Math.max(currentScore, submissionScore);
-
-    if (updatedScore !== currentScore) {
-        (match as any)[scoreField] = updatedScore;
-        await match.save();
-    }
+    const updatedScore = (match as any)[scoreField] ?? 0;
 
     const room = await BattleRoom.findById(match.battleRoomId).select("roomCode");
 

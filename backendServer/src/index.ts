@@ -4,12 +4,23 @@ import express from "express";
 import cors from "cors";
 import http from "http";
 import { Server } from "socket.io";
+import helmet from "helmet";
+import compression from "compression";
+import hpp from "hpp";
+import rateLimit from "express-rate-limit";
+import { pinoHttp } from "pino-http";
 
 import cookieParser from "cookie-parser";
 
+import { env } from "./config/env.js";
+import { logger } from "./utils/logger.js";
 import connectDB from "./db/connectDB.js";
 import startCleanupJob from "./jobs/cleanUnverifedUser.js";
 import startRatingRecoveryJob from "./jobs/ratingRecoveryjob.js";
+import startRefreshTokenCleanupJob from "./jobs/refreshTokenCleanup.js";
+import startOtpCleanupJob from "./jobs/otpCleanup.js";
+import startNotificationCleanupJob from "./jobs/notificationCleanup.js";
+import startStaleBattleRoomCleanupJob from "./jobs/staleBattleRoomCleanup.js";
 
 //sockets
 import { registerBattleChatHandlers } from "./sockets/battleChat.socket.js";
@@ -33,28 +44,55 @@ import spectateRouter from "./routes/spectate.router.js";
 
 
 
-
 // Middlewares
 import errorHandler from "./middlewares/error.middleware.js";
 import socketAuthMiddleware from "./middlewares/socketAuth.middleware.js";
 
-
 const app = express();
 
+// ────────────────────────────────────────────────────────────────────
+// Security & Logging Middleware (must be early in the pipeline)
+// ────────────────────────────────────────────────────────────────────
+
+// HTTP logging middleware
+app.use(pinoHttp({ logger }));
+
+// Security headers
+app.use(helmet());
+
+// Response compression
+app.use(compression());
+
+// Rate limiting
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // limit each IP to 100 requests per windowMs
+    message: "Too many requests from this IP, please try again later",
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+app.use(limiter);
+
+// Prevent HTTP Parameter Pollution
+app.use(hpp());
+
+// CORS
 app.use(
     cors({
-        origin: process.env.CORS_ORIGIN,
+        origin: env.CORS_ORIGIN,
         credentials: true
     })
 );
 
+// Cookie parser
 app.use(cookieParser());
 
-app.use(express.json());
-
+// JSON and URL-encoded body parsing (with size limits)
+app.use(express.json({ limit: "50mb" }));
 app.use(
     express.urlencoded({
-        extended: true
+        extended: true,
+        limit: "50mb"
     })
 );
 
@@ -124,7 +162,7 @@ const server = http.createServer(app);
 
 export const io = new Server(server, {
     cors: {
-        origin: process.env.CORS_ORIGIN,
+        origin: env.CORS_ORIGIN,
         credentials: true
     }
 });
@@ -145,15 +183,20 @@ io.on("connection", (socket) => {
 // Start Server
 // --------------------
 
-const PORT = Number(process.env.PORT) || 8000;
+const PORT = env.PORT;
 
 connectDB()
     .then(() => {
 
         console.log(" MongoDB Connected");
 
+        // Start background cron jobs
         startCleanupJob();
         startRatingRecoveryJob();
+        startRefreshTokenCleanupJob();
+        startOtpCleanupJob();
+        startNotificationCleanupJob();
+        startStaleBattleRoomCleanupJob();
 
         server.listen(PORT, () => {
 

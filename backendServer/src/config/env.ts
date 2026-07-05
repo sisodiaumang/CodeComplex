@@ -1,47 +1,74 @@
 import { z } from "zod";
 
+const getEnv = (key: string, fallback?: string): string | undefined =>
+  process.env[key] ?? fallback;
+
 // Centralized environment validation (no direct process.env usage elsewhere).
 export const env = {
-  PORT: z.coerce.number().int().min(1).max(65535).default(8000).parse(process.env.PORT),
+  PORT: z.coerce.number().int().min(1).max(65535).default(8000).parse(getEnv("PORT")),
 
   CORS_ORIGIN: z
     .string()
     .min(1)
     .default("http://localhost:3000")
-    .parse(process.env.CORS_ORIGIN),
+    .parse(getEnv("CORS_ORIGIN")),
 
-  MONGO_URI: z
+  MONGODB_URI: z
     .string()
     .min(1)
-    .parse(process.env.MONGO_URI),
+    .parse(getEnv("MONGODB_URI") ?? getEnv("MONGO_URI")),
 
   JWT_ACCESS_SECRET: z
     .string()
     .min(10)
-    .parse(process.env.JWT_ACCESS_SECRET),
+    .parse(getEnv("JWT_ACCESS_SECRET")),
 
   JWT_REFRESH_SECRET: z
     .string()
     .min(10)
-    .parse(process.env.JWT_REFRESH_SECRET),
+    .parse(getEnv("JWT_REFRESH_SECRET")),
+
+  ACCESS_TOKEN_EXPIRY: z
+    .string()
+    .min(1)
+    .default("15m")
+    .parse(getEnv("ACCESS_TOKEN_EXPIRY")),
+
+  REFRESH_TOKEN_EXPIRY: z
+    .string()
+    .min(1)
+    .default("7d")
+    .parse(getEnv("REFRESH_TOKEN_EXPIRY")),
 
   // Judge0 (optional depending on battle types)
   JUDGE0_API_URL: z
     .string()
     .min(1)
     .default("http://localhost:2358")
-    .parse(process.env.JUDGE0_API_URL),
+    .parse(getEnv("JUDGE0_API_URL")),
 
-  XAI_API_KEY: z.string().min(1).optional().parse(process.env.XAI_API_KEY),
-  // Email / OTP / Cloudinary are optional because not every environment uses them.
-  EMAIL_USER: z.string().min(1).optional().parse(process.env.EMAIL_USER),
-  EMAIL_PASS: z.string().min(1).optional().parse(process.env.EMAIL_PASS),
-  CLOUDINARY_CLOUD_NAME: z.string().min(1).optional().parse(process.env.CLOUDINARY_CLOUD_NAME),
-  CLOUDINARY_API_KEY: z.string().min(1).optional().parse(process.env.CLOUDINARY_API_KEY),
-  CLOUDINARY_API_SECRET: z.string().min(1).optional().parse(process.env.CLOUDINARY_API_SECRET),
+  JUDGE0_API_KEY: z.string().min(1).optional().parse(getEnv("JUDGE0_API_KEY")),
+  JUDGE0_API_HOST: z.string().min(1).optional().parse(getEnv("JUDGE0_API_HOST")),
 
-  // Rate limit / security toggles
-  NODE_ENV: z.enum(["development", "test", "production"]).default("development").parse(process.env.NODE_ENV),
+  XAI_API_KEY: z.string().min(1).optional().parse(getEnv("XAI_API_KEY")),
+
+  RESEND_API_KEY: z.string().min(1).optional().parse(getEnv("RESEND_API_KEY")),
+  EMAIL_FROM_ADDRESS: z.string().min(1).optional().parse(getEnv("EMAIL_FROM_ADDRESS")),
+  APP_NAME: z.string().min(1).default("DevArena").parse(getEnv("APP_NAME")),
+  EMAIL_USER: z.string().min(1).optional().parse(getEnv("EMAIL_USER")),
+  EMAIL_PASS: z.string().min(1).optional().parse(getEnv("EMAIL_PASS")),
+
+  CLOUDINARY_CLOUD_NAME: z.string().min(1).optional().parse(getEnv("CLOUDINARY_CLOUD_NAME")),
+  CLOUDINARY_API_KEY: z.string().min(1).optional().parse(getEnv("CLOUDINARY_API_KEY")),
+  CLOUDINARY_API_SECRET: z.string().min(1).optional().parse(getEnv("CLOUDINARY_API_SECRET")),
+
+  DEFAULT_AVATAR_URL: z.string().min(1).optional().parse(getEnv("DEFAULT_AVATAR_URL")),
+  DEFAULT_AVATAR_PUBLIC_URL: z.string().min(1).optional().parse(getEnv("DEFAULT_AVATAR_PUBLIC_URL")),
+  DEFAULT_AVATAR_PUBLIC_ID: z.string().min(1).optional().parse(getEnv("DEFAULT_AVATAR_PUBLIC_ID")),
+
+  LOG_LEVEL: z.string().default("info").parse(getEnv("LOG_LEVEL")),
+
+  NODE_ENV: z.enum(["development", "test", "production"]).default("development").parse(getEnv("NODE_ENV")),
 };
 
 export type Env = typeof env;

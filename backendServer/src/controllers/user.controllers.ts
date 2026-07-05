@@ -6,6 +6,7 @@ import RefreshToken from "../models/refreshToken.model.js";
 import { JwtPayload } from "jsonwebtoken";
 import jwt from "jsonwebtoken";
 import ms, { StringValue } from "ms";
+import { env } from "../config/env.js";
 import bcrypt from "bcrypt";
 import OTP, { MAX_OTP_ATTEMPTS } from "../models/otp.model.js";
 import { generateOTP } from "../services/otp.service.js";
@@ -39,7 +40,7 @@ async function generateNewRefreshAndAccessToken(
     try {
         decoded = jwt.verify(
             oldRefreshToken,
-            process.env.REFRESH_TOKEN_SECRET!
+            env.JWT_REFRESH_SECRET
         ) as JwtPayload;
     } catch {
         throw new ApiError(401, "Invalid refresh token");
@@ -74,7 +75,7 @@ async function generateNewRefreshAndAccessToken(
 
     storedToken.token = newRefreshToken;
     storedToken.expiresAt = new Date(
-        Date.now() + ms(process.env.REFRESH_TOKEN_EXPIRY as StringValue)
+        Date.now() + ms(env.REFRESH_TOKEN_EXPIRY as StringValue)
     );
 
     await storedToken.save();
@@ -104,7 +105,7 @@ async function generateAccessAndRefreshToken(
 
     refreshDoc.token = newRefreshToken;
     refreshDoc.expiresAt = new Date(
-        Date.now() + ms(process.env.REFRESH_TOKEN_EXPIRY as StringValue)
+        Date.now() + ms(env.REFRESH_TOKEN_EXPIRY as StringValue)
     );
 
     await refreshDoc.save();
@@ -190,7 +191,7 @@ async function sendOtp(
 function getCookieOptions() {
     return {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
+        secure: env.NODE_ENV === "production",
         sameSite: "strict" as const,
     };
 }
@@ -265,7 +266,7 @@ const signupUser = asyncHandler(async (req, res) => {
 
 const verifyUser = asyncHandler(async (req, res) => {
 
-    const { email, userOtp } = req.body;
+    const { email, otp: userOtp } = req.body;
 
     if (!email) throw new ApiError(400, "Email is required");
     if (!userOtp) throw new ApiError(400, "OTP is required");
@@ -430,11 +431,11 @@ const loginUser = asyncHandler(async (req, res) => {
         .status(200)
         .cookie("accessToken", newAccessToken, {
             ...cookieOptions,
-            maxAge: ms(process.env.ACCESS_TOKEN_EXPIRY as StringValue)
+            maxAge: ms(env.ACCESS_TOKEN_EXPIRY as StringValue)
         })
         .cookie("refreshToken", newRefreshToken, {
             ...cookieOptions,
-            maxAge: ms(process.env.REFRESH_TOKEN_EXPIRY as StringValue)
+            maxAge: ms(env.REFRESH_TOKEN_EXPIRY as StringValue)
         })
         .json(
             new ApiResponse(
@@ -497,11 +498,11 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
         .status(200)
         .cookie("accessToken", newAccessToken, {
             ...cookieOptions,
-            maxAge: ms(process.env.ACCESS_TOKEN_EXPIRY as StringValue)
+            maxAge: ms(env.ACCESS_TOKEN_EXPIRY as StringValue)
         })
         .cookie("refreshToken", newRefreshToken, {
             ...cookieOptions,
-            maxAge: ms(process.env.REFRESH_TOKEN_EXPIRY as StringValue)
+            maxAge: ms(env.REFRESH_TOKEN_EXPIRY as StringValue)
         })
         .json(
             new ApiResponse(200, {}, "Tokens refreshed successfully")
@@ -557,7 +558,7 @@ const forgotPassword = asyncHandler(async (req, res) => {
 
 const resetPassword = asyncHandler(async (req, res) => {
 
-    const { email, userOtp, newPassword } = req.body;
+    const { email, otp: userOtp, newPassword } = req.body;
 
     if (!email) throw new ApiError(400, "Email is required");
     if (!userOtp) throw new ApiError(400, "OTP is required");
@@ -717,7 +718,7 @@ const requestEmailChange = asyncHandler(async (req, res) => {
 
 const verifyEmailChange = asyncHandler(async (req, res) => {
 
-    const { newEmail, userOtp } = req.body;
+    const { newEmail, otp: userOtp } = req.body;
 
     if (!newEmail) throw new ApiError(400, "New email is required");
     if (!userOtp) throw new ApiError(400, "OTP is required");
@@ -808,7 +809,7 @@ const deleteAccount = asyncHandler(async (req, res) => {
     // Delete Cloudinary avatar if it's not the default
     if (
         user.avatar?.profileImagePublicId &&
-        user.avatar.profileImagePublicId !== process.env.DEFAULT_AVATAR_PUBLIC_ID
+        user.avatar.profileImagePublicId !== env.DEFAULT_AVATAR_PUBLIC_ID
     ) {
         await deleteCloudinary(user.avatar.profileImagePublicId);
     }
@@ -920,7 +921,7 @@ const uploadProfileImage = asyncHandler(async (req, res) => {
 
     if (
         user.avatar.profileImagePublicId &&
-        user.avatar.profileImagePublicId !== process.env.DEFAULT_AVATAR_PUBLIC_ID
+        user.avatar.profileImagePublicId !== env.DEFAULT_AVATAR_PUBLIC_ID
     ) {
         await deleteCloudinary(user.avatar.profileImagePublicId);
     }

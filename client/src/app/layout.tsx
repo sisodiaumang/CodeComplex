@@ -1,9 +1,30 @@
 import type { Metadata } from "next";
+import { Space_Grotesk, Inter, JetBrains_Mono } from "next/font/google";
+import Providers from "@/components/providers";
 import "./globals.css";
 
+const heading = Space_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-heading",
+  display: "swap",
+});
+
+const body = Inter({
+  subsets: ["latin"],
+  variable: "--font-body",
+  display: "swap",
+});
+
+const code = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-code",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
-  title: "DevArena - Competitive Engineering Platform",
-  description: "Battle other developers in real-time engineering challenges",
+  title: "DevArena — Competitive Engineering Platform",
+  description:
+    "Battle other developers in real-time DSA, bug-fix, backend, frontend and prompt-war challenges.",
 };
 
 export default function RootLayout({
@@ -12,9 +33,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" data-theme="dark">
+    <html
+      lang="en"
+      className={`${heading.variable} ${body.variable} ${code.variable}`}
+    >
       <body className="antialiased">
-        {children}
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

@@ -1,0 +1,1283 @@
+openapi: 3.0.0
+info:
+  title: DevArena Backend API
+  description: |
+    DevArena - Competitive Coding Battle Platform
+    
+    All authenticated endpoints require a JWT access token in the Authorization header:
+    `Authorization: Bearer <token>`
+    
+    Socket.IO events run on the same server (default port 8000) with separate authentication.
+  version: 1.0.0
+  contact:
+    name: DevArena Team
+
+servers:
+  - url: http://localhost:8000
+    description: Development server
+  - url: https://api.devarena.com
+    description: Production server
+
+paths:
+  # ────────────────────────────────────────────────────────────────
+  # User Routes
+  # ────────────────────────────────────────────────────────────────
+  /api/v1/user/signup:
+    post:
+      tags: [Auth]
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  minLength: 3
+                  maxLength: 30
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  minLength: 8
+                  maxLength: 128
+                fullName:
+                  type: string
+                  minLength: 3
+                  maxLength: 50
+                country:
+                  type: string
+                  minLength: 2
+                  maxLength: 2
+                  default: IN
+              required: [username, email, password, fullName]
+      responses:
+        201:
+          description: User created successfully. OTP sent to email.
+        400:
+          description: Validation failed or user already exists
+        500:
+          description: Server error
+
+  /api/v1/user/signup/verify:
+    post:
+      tags: [Auth]
+      summary: Verify user registration with OTP
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                otp:
+                  type: string
+                  pattern: "^\\d{6}$"
+              required: [email, otp]
+      responses:
+        200:
+          description: User verified successfully
+        400:
+          description: Invalid or expired OTP
+        404:
+          description: User or OTP not found
+
+  /api/v1/user/otp/resend:
+    post:
+      tags: [Auth]
+      summary: Resend OTP to email
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+              required: [email]
+      responses:
+        200:
+          description: OTP resent successfully
+        400:
+          description: Too many resend attempts or user not found
+
+  /api/v1/user/login:
+    post:
+      tags: [Auth]
+      summary: Login user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+              required: [email, password]
+      responses:
+        200:
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      accessToken:
+                        type: string
+                      refreshToken:
+                        type: string
+                  message:
+                    type: string
+        401:
+          description: Invalid credentials or user not verified
+
+  /api/v1/user/logout:
+    post:
+      tags: [Auth]
+      summary: Logout user
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: Logged out successfully
+        401:
+          description: Unauthorized
+
+  /api/v1/user/refresh-token:
+    post:
+      tags: [Auth]
+      summary: Refresh access token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refreshToken:
+                  type: string
+              required: [refreshToken]
+      responses:
+        200:
+          description: New tokens generated
+        401:
+          description: Invalid or expired refresh token
+
+  /api/v1/user/password/forgot:
+    post:
+      tags: [Auth]
+      summary: Request password reset
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+              required: [email]
+      responses:
+        200:
+          description: OTP sent to email
+
+  /api/v1/user/password/reset:
+    post:
+      tags: [Auth]
+      summary: Reset password with OTP
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                otp:
+                  type: string
+                  pattern: "^\\d{6}$"
+                newPassword:
+                  type: string
+                  minLength: 8
+              required: [email, otp, newPassword]
+      responses:
+        200:
+          description: Password reset successfully
+
+  /api/v1/user/password/change:
+    patch:
+      tags: [Auth]
+      summary: Change password (authenticated)
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                oldPassword:
+                  type: string
+                newPassword:
+                  type: string
+                  minLength: 8
+              required: [oldPassword, newPassword]
+      responses:
+        200:
+          description: Password changed successfully
+        401:
+          description: Unauthorized or incorrect old password
+
+  /api/v1/user/email/change:
+    post:
+      tags: [Account]
+      summary: Request email change
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                newEmail:
+                  type: string
+                  format: email
+              required: [newEmail]
+      responses:
+        200:
+          description: OTP sent to new email
+
+  /api/v1/user/email/change/verify:
+    post:
+      tags: [Account]
+      summary: Verify email change with OTP
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                newEmail:
+                  type: string
+                  format: email
+                otp:
+                  type: string
+                  pattern: "^\\d{6}$"
+              required: [newEmail, otp]
+      responses:
+        200:
+          description: Email changed successfully
+
+  /api/v1/user/me:
+    get:
+      tags: [Account]
+      summary: Get current user profile
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: User profile returned
+
+  /api/v1/user/{username}:
+    get:
+      tags: [Account]
+      summary: Get public user profile
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: User profile returned
+        404:
+          description: User not found
+
+  /api/v1/user/account:
+    delete:
+      tags: [Account]
+      summary: Delete user account
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: Account deleted successfully
+
+  /api/v1/user/avatar:
+    patch:
+      tags: [Account]
+      summary: Upload profile avatar
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                avatar:
+                  type: string
+                  format: binary
+              required: [avatar]
+      responses:
+        200:
+          description: Avatar uploaded successfully
+
+  /api/v1/user/bio:
+    patch:
+      tags: [Account]
+      summary: Update user bio
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                bio:
+                  type: string
+                  maxLength: 200
+              required: [bio]
+      responses:
+        200:
+          description: Bio updated successfully
+
+  /api/v1/user/country:
+    patch:
+      tags: [Account]
+      summary: Update user country
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                country:
+                  type: string
+                  minLength: 2
+                  maxLength: 2
+              required: [country]
+      responses:
+        200:
+          description: Country updated successfully
+
+  # ────────────────────────────────────────────────────────────────
+  # Battle Routes
+  # ────────────────────────────────────────────────────────────────
+  /api/v1/battle:
+    post:
+      tags: [Battle]
+      summary: Create a new battle room
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                questionSlug:
+                  type: string
+                battleType:
+                  type: string
+                  enum: [DSA, BUG_FIX, BACKEND, FRONTEND, FULLSTACK, PROMPT_WAR]
+                maxTeamSize:
+                  type: number
+                  minimum: 1
+                  maximum: 5
+                timeLimit:
+                  type: number
+                  minimum: 1
+              required: [questionSlug, battleType]
+      responses:
+        201:
+          description: Battle room created
+
+  /api/v1/battle/{roomCode}:
+    get:
+      tags: [Battle]
+      summary: Get battle room details
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: roomCode
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Room details returned
+    delete:
+      tags: [Battle]
+      summary: Delete battle room
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: roomCode
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Room deleted
+
+  /api/v1/battle/{roomCode}/join:
+    post:
+      tags: [Battle]
+      summary: Join battle room
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: roomCode
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                teamPreference:
+                  type: string
+                  enum: [NONE, A, B]
+      responses:
+        200:
+          description: Joined room successfully
+
+  /api/v1/battle/{roomCode}/leave:
+    post:
+      tags: [Battle]
+      summary: Leave battle room
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: roomCode
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Left room successfully
+
+  /api/v1/battle/{roomCode}/team-a:
+    post:
+      tags: [Battle]
+      summary: Join Team A
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: roomCode
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Joined Team A
+
+  /api/v1/battle/{roomCode}/team-b:
+    post:
+      tags: [Battle]
+      summary: Join Team B
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: roomCode
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Joined Team B
+
+  /api/v1/battle/{roomCode}/start:
+    post:
+      tags: [Battle]
+      summary: Start the battle
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: roomCode
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Battle started
+
+  # ────────────────────────────────────────────────────────────────
+  # Match Routes
+  # ────────────────────────────────────────────────────────────────
+  /api/v1/match/start:
+    post:
+      tags: [Match]
+      summary: Start a new match
+      security:
+        - BearerAuth: []
+      responses:
+        201:
+          description: Match started
+
+  /api/v1/match/current:
+    get:
+      tags: [Match]
+      summary: Get current active match
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: Current match returned
+
+  /api/v1/match/history:
+    get:
+      tags: [Match]
+      summary: Get match history
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Match history returned
+
+  /api/v1/match/{matchId}:
+    get:
+      tags: [Match]
+      summary: Get match details
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: matchId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Match details returned
+
+  /api/v1/match/{matchId}/live:
+    get:
+      tags: [Match]
+      summary: Get live match updates
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: matchId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Live match data
+
+  /api/v1/match/{matchId}/end:
+    post:
+      tags: [Match]
+      summary: End match
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: matchId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Match ended
+
+  /api/v1/match/{matchId}/abandon:
+    post:
+      tags: [Match]
+      summary: Abandon match
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: matchId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Match abandoned
+
+  # ────────────────────────────────────────────────────────────────
+  # Submission Routes
+  # ────────────────────────────────────────────────────────────────
+  /api/v1/submission:
+    post:
+      tags: [Submission]
+      summary: Submit code
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                matchId:
+                  type: string
+                questionSlug:
+                  type: string
+                language:
+                  type: string
+                  enum: [CPP, JAVA, PYTHON, JAVASCRIPT, TYPESCRIPT]
+                sourceCode:
+                  type: string
+                  maxLength: 40000
+              required: [matchId, questionSlug, language, sourceCode]
+      responses:
+        201:
+          description: Code submitted for judging
+
+  /api/v1/submission/me:
+    get:
+      tags: [Submission]
+      summary: Get my submissions
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: User submissions returned
+
+  /api/v1/submission/match/{matchId}:
+    get:
+      tags: [Submission]
+      summary: Get submissions for a match
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: matchId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Match submissions returned
+
+  /api/v1/submission/{submissionId}:
+    get:
+      tags: [Submission]
+      summary: Get submission details
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: submissionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Submission details returned
+    delete:
+      tags: [Submission]
+      summary: Delete submission
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: submissionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Submission deleted
+
+  /api/v1/submission/{submissionId}/rejudge:
+    post:
+      tags: [Submission]
+      summary: Rejudge a submission
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: submissionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Submission rejudged
+
+  # ────────────────────────────────────────────────────────────────
+  # Rating Routes
+  # ────────────────────────────────────────────────────────────────
+  /api/v1/ratings/me:
+    get:
+      tags: [Rating]
+      summary: Get my rating
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: User rating returned
+
+  /api/v1/ratings/history:
+    get:
+      tags: [Rating]
+      summary: Get rating history
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: Rating history returned
+
+  /api/v1/ratings/leaderboard:
+    get:
+      tags: [Rating]
+      summary: Get global leaderboard
+      responses:
+        200:
+          description: Leaderboard returned
+
+  /api/v1/ratings/user/{username}:
+    get:
+      tags: [Rating]
+      summary: Get user rating
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: User rating returned
+
+  /api/v1/ratings/match/{matchId}:
+    get:
+      tags: [Rating]
+      summary: Get rating changes for a match
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: matchId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Rating changes returned
+
+  # ────────────────────────────────────────────────────────────────
+  # Friendship Routes
+  # ────────────────────────────────────────────────────────────────
+  /api/v1/friends:
+    get:
+      tags: [Friends]
+      summary: Get user friends list
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: Friends list returned
+
+  /api/v1/friends/request/{userId}:
+    post:
+      tags: [Friends]
+      summary: Send friend request
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        201:
+          description: Friend request sent
+
+  /api/v1/friends/request/{requestId}/accept:
+    patch:
+      tags: [Friends]
+      summary: Accept friend request
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: requestId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Friend request accepted
+
+  /api/v1/friends/request/{requestId}/reject:
+    patch:
+      tags: [Friends]
+      summary: Reject friend request
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: requestId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Friend request rejected
+
+  /api/v1/friends/request/{requestId}:
+    delete:
+      tags: [Friends]
+      summary: Cancel friend request
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: requestId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Friend request cancelled
+
+  /api/v1/friends/{friendId}:
+    delete:
+      tags: [Friends]
+      summary: Remove friend
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: friendId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Friend removed
+
+  /api/v1/friends/requests/incoming:
+    get:
+      tags: [Friends]
+      summary: Get incoming friend requests
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: Incoming requests returned
+
+  /api/v1/friends/requests/outgoing:
+    get:
+      tags: [Friends]
+      summary: Get outgoing friend requests
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: Outgoing requests returned
+
+  /api/v1/friends/mutual/{userId}:
+    get:
+      tags: [Friends]
+      summary: Get mutual friends
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Mutual friends returned
+
+  /api/v1/friends/status/{userId}:
+    get:
+      tags: [Friends]
+      summary: Get friendship status
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Friendship status returned
+
+  /api/v1/friends/search:
+    get:
+      tags: [Friends]
+      summary: Search friends
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: query
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Search results returned
+
+  # ────────────────────────────────────────────────────────────────
+  # Notification Routes
+  # ────────────────────────────────────────────────────────────────
+  /api/v1/notifications:
+    get:
+      tags: [Notification]
+      summary: Get notifications
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: Notifications returned
+    delete:
+      tags: [Notification]
+      summary: Delete all notifications
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: All notifications deleted
+
+  /api/v1/notifications/{notificationId}:
+    get:
+      tags: [Notification]
+      summary: Get notification details
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: notificationId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Notification returned
+    delete:
+      tags: [Notification]
+      summary: Delete notification
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: notificationId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Notification deleted
+
+  /api/v1/notifications/{notificationId}/read:
+    patch:
+      tags: [Notification]
+      summary: Mark notification as read
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: notificationId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Notification marked as read
+
+  /api/v1/notifications/read-all:
+    patch:
+      tags: [Notification]
+      summary: Mark all notifications as read
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: All notifications marked as read
+
+  # ────────────────────────────────────────────────────────────────
+  # Achievement Routes
+  # ────────────────────────────────────────────────────────────────
+  /api/v1/achievements/me:
+    get:
+      tags: [Achievement]
+      summary: Get my achievements
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: User achievements returned
+
+  /api/v1/achievements/progress:
+    get:
+      tags: [Achievement]
+      summary: Get achievement progress
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: Achievement progress returned
+
+  /api/v1/achievements/categories:
+    get:
+      tags: [Achievement]
+      summary: Get achievement categories
+      responses:
+        200:
+          description: Categories returned
+
+  /api/v1/achievements/user/{username}:
+    get:
+      tags: [Achievement]
+      summary: Get user achievements
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: User achievements returned
+
+  /api/v1/achievements/{achievementId}:
+    get:
+      tags: [Achievement]
+      summary: Get achievement details
+      parameters:
+        - name: achievementId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Achievement details returned
+
+  # ────────────────────────────────────────────────────────────────
+  # Leaderboard Routes
+  # ────────────────────────────────────────────────────────────────
+  /api/v1/leaderboard/global:
+    get:
+      tags: [Leaderboard]
+      summary: Get global leaderboard
+      responses:
+        200:
+          description: Global leaderboard returned
+
+  /api/v1/leaderboard/country:
+    get:
+      tags: [Leaderboard]
+      summary: Get country leaderboard
+      responses:
+        200:
+          description: Country leaderboard returned
+
+  /api/v1/leaderboard/friends:
+    get:
+      tags: [Leaderboard]
+      summary: Get friends leaderboard
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: Friends leaderboard returned
+
+  /api/v1/leaderboard/weekly:
+    get:
+      tags: [Leaderboard]
+      summary: Get weekly leaderboard
+      responses:
+        200:
+          description: Weekly leaderboard returned
+
+  /api/v1/leaderboard/monthly:
+    get:
+      tags: [Leaderboard]
+      summary: Get monthly leaderboard
+      responses:
+        200:
+          description: Monthly leaderboard returned
+
+  /api/v1/leaderboard/college:
+    get:
+      tags: [Leaderboard]
+      summary: Get college leaderboard
+      responses:
+        200:
+          description: College leaderboard returned
+
+  /api/v1/leaderboard/me:
+    get:
+      tags: [Leaderboard]
+      summary: Get my leaderboard position
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: My position returned
+
+  /api/v1/leaderboard/search:
+    get:
+      tags: [Leaderboard]
+      summary: Search leaderboard
+      parameters:
+        - name: query
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Search results returned
+
+  # ────────────────────────────────────────────────────────────────
+  # Spectate Routes
+  # ────────────────────────────────────────────────────────────────
+  /api/v1/spectate/{matchId}:
+    get:
+      tags: [Spectate]
+      summary: Get spectate data for a match
+      parameters:
+        - name: matchId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Spectate data returned
+
+  /api/v1/spectate/{matchId}/live:
+    get:
+      tags: [Spectate]
+      summary: Get live spectate updates
+      parameters:
+        - name: matchId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Live spectate data returned
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    User:
+      type: object
+      properties:
+        _id:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+        fullName:
+          type: string
+        country:
+          type: string
+        role:
+          type: string
+          enum: [USER, ADMIN, MODERATOR, OWNER]
+        isVerified:
+          type: boolean
+        isBanned:
+          type: boolean
+
+tags:
+  - name: Auth
+    description: Authentication endpoints (signup, login, password reset)
+  - name: Account
+    description: User account management (profile, settings)
+  - name: Battle
+    description: Battle room management
+  - name: Match
+    description: Match management and tracking
+  - name: Submission
+    description: Code submission and judging
+  - name: Rating
+    description: User ratings and rankings
+  - name: Friends
+    description: Friend management
+  - name: Notification
+    description: User notifications
+  - name: Achievement
+    description: User achievements and badges
+  - name: Leaderboard
+    description: Leaderboards (global, country, weekly, etc.)
+  - name: Spectate
+    description: Spectate active matches

@@ -1,12 +1,13 @@
 import { v2 as cloudinary } from "cloudinary";
 import fs from "fs";
+import { env } from "../config/env.js";
 
 import ApiError from "./ApiError.js";
 
 if (
-    !process.env.CLOUDINARY_CLOUD_NAME ||
-    !process.env.CLOUDINARY_API_KEY ||
-    !process.env.CLOUDINARY_API_SECRET
+    !env.CLOUDINARY_CLOUD_NAME ||
+    !env.CLOUDINARY_API_KEY ||
+    !env.CLOUDINARY_API_SECRET
 ) {
     throw new Error(
         "Cloudinary environment variables are missing"
@@ -14,9 +15,9 @@ if (
 }
 
 cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET
+    cloud_name: env.CLOUDINARY_CLOUD_NAME,
+    api_key: env.CLOUDINARY_API_KEY,
+    api_secret: env.CLOUDINARY_API_SECRET
 });
 
 export const uploadOnCloudinary = async (

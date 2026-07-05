@@ -29,8 +29,9 @@ const battleRoomSchema =
                 required: true
             },
 
-            topic: {
-                type: String
+            topics: {
+                type: [String],
+                default: []
             },
 
             // FIX: difficulty is conditionally required — enforced in the

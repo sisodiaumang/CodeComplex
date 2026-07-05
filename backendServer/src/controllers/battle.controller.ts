@@ -3,8 +3,10 @@ import mongoose from "mongoose";
 import { nanoid } from "nanoid";
 
 import BattleRoom from "../models/battleRoom.model.js";
+import Question from "../models/question.model.js";
 import { io } from "../index.js";
 import { createMatchForRoom, MatchServiceError } from "../services/match.service.js";
+import { IBattleRoom } from "../interfaces/battleRoom.interface.js";
 
 // ─────────────────────────────────────────────
 // Helpers
@@ -16,6 +18,49 @@ const generateRoomCode = (): string =>
 
 /** Total player slots = teamSize * 2 (team A + team B) */
 const maxPlayers = (teamSize: number): number => teamSize * 2;
+
+/** Map room difficulty (uppercase) → question difficulty (title-case) */
+const DIFFICULTY_MAP: Record<string, string> = {
+    EASY: "Easy",
+    MEDIUM: "Medium",
+    HARD: "Hard",
+};
+
+/**
+ * Randomly pick a question matching the room's topics and difficulty.
+ * Picks one of the selected topics at random, queries for a battle-enabled
+ * question of that category + difficulty, and returns the slug.
+ * Falls back: if the first topic has no questions, tries others.
+ */
+async function pickRandomQuestion(
+    room: InstanceType<typeof BattleRoom>
+): Promise<string | null> {
+    const topics = room.topics ?? [];
+    const difficulty = DIFFICULTY_MAP[room.difficulty ?? ""] ?? room.difficulty;
+
+    if (topics.length === 0) return null;
+
+    // Shuffle topics so we try in random order
+    const shuffled = [...topics].sort(() => Math.random() - 0.5);
+
+    for (const topic of shuffled) {
+        const questions = await Question.find({
+            category: topic,
+            difficulty,
+            isDeleted: { $ne: true },
+            "battleConfig.enabled": true,
+        })
+            .select("slug")
+            .lean();
+
+        if (questions.length > 0) {
+            const pick = questions[Math.floor(Math.random() * questions.length)];
+            return pick.slug;
+        }
+    }
+
+    return null;
+}
 
 // ─────────────────────────────────────────────
 // FIX (D2): the previous implementation stored one entry per user forever —
@@ -69,6 +114,37 @@ function markRoomAction(userId: string): void {
 }
 
 // ─────────────────────────────────────────────
+// 0. GET /battle/me/active — Get user's active room
+// ─────────────────────────────────────────────
+
+export const getActiveRoom = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+): Promise<void> => {
+    try {
+        const userId = req.user._id;
+        const room = await BattleRoom.findOne({
+            status: { $in: ["WAITING", "STARTED"] },
+            $or: [
+                { "teams.teamA": userId },
+                { "teams.teamB": userId },
+                { host: userId }
+            ]
+        }).populate("host teams.teamA teams.teamB", "username avatar");
+
+        if (!room) {
+            res.status(200).json({ success: true, room: null });
+            return;
+        }
+
+        res.status(200).json({ success: true, room });
+    } catch (err) {
+        next(err);
+    }
+};
+
+// ─────────────────────────────────────────────
 // 1. POST /battle  — Create Room
 // ─────────────────────────────────────────────
 
@@ -87,10 +163,10 @@ export const createRoom = async (
 
         const {
             battleType,
-            teamSize = 1,
+            maxTeamSize: teamSize = 1,
             difficulty,
             isRanked = true,
-            topic
+            topics
         } = req.body;
 
         // Validate required fields
@@ -98,6 +174,14 @@ export const createRoom = async (
             res.status(400).json({
                 success: false,
                 message: "battleType and difficulty are required"
+            });
+            return;
+        }
+
+        if (!topics || !Array.isArray(topics) || topics.length < 3) {
+            res.status(400).json({
+                success: false,
+                message: "Select at least 3 topics"
             });
             return;
         }
@@ -153,7 +237,7 @@ export const createRoom = async (
             difficulty,
             teamSize,
             isRanked,
-            topic: topic ?? undefined,
+            topics: topics ?? [],
             status: "WAITING",
             teams: {
                 teamA: [hostId],
@@ -242,17 +326,48 @@ export const joinRoom = async (
             return;
         }
 
-        // Fill Team A first, then Team B
-        if (room.teams.teamA.length < room.teamSize) {
-            room.teams.teamA.push(userId);
-        } else {
-            room.teams.teamB.push(userId);
+        // Fill Team A first, then Team B — atomically. The read-based checks
+        // above give friendly error messages for the common case; these
+        // conditional updates close the race where two concurrent joins both
+        // pass the capacity check and overfill a team.
+        let joined = await BattleRoom.findOneAndUpdate(
+            {
+                roomCode,
+                status: "WAITING",
+                "teams.teamA": { $ne: userId },
+                "teams.teamB": { $ne: userId },
+                $expr: { $lt: [{ $size: "$teams.teamA" }, "$teamSize"] },
+            },
+            { $push: { "teams.teamA": userId } },
+            { new: true }
+        );
+
+        if (!joined) {
+            // Team A was full (or filled up under us) — try Team B.
+            joined = await BattleRoom.findOneAndUpdate(
+                {
+                    roomCode,
+                    status: "WAITING",
+                    "teams.teamA": { $ne: userId },
+                    "teams.teamB": { $ne: userId },
+                    $expr: { $lt: [{ $size: "$teams.teamB" }, "$teamSize"] },
+                },
+                { $push: { "teams.teamB": userId } },
+                { new: true }
+            );
         }
 
-        await room.save();
+        if (!joined) {
+            res.status(409).json({
+                success: false,
+                message: "Could not join — the room just filled up or its state changed",
+            });
+            return;
+        }
+
         markRoomAction(userIdStr);
 
-        const populated = await BattleRoom.findById(room._id)
+        const populated = await BattleRoom.findById(joined._id)
             .populate("host", "username fullName avatar")
             .populate("teams.teamA", "username fullName avatar")
             .populate("teams.teamB", "username fullName avatar");
@@ -377,17 +492,34 @@ export const joinTeamA = async (
             return;
         }
 
-        // Move from B → A
-        room.teams.teamB = room.teams.teamB.filter(
-            (id) => id.toString() !== userIdStr
-        ) as typeof room.teams.teamB;
+        // Move from B → A atomically: only succeeds if the user is still in
+        // Team B and Team A still has a free slot, closing the capacity race.
+        const moved = await BattleRoom.findOneAndUpdate(
+            {
+                roomCode,
+                status: "WAITING",
+                "teams.teamB": userId,
+                "teams.teamA": { $ne: userId },
+                $expr: { $lt: [{ $size: "$teams.teamA" }, "$teamSize"] },
+            },
+            {
+                $pull: { "teams.teamB": userId },
+                $push: { "teams.teamA": userId },
+            },
+            { new: true }
+        );
 
-        room.teams.teamA.push(userId);
+        if (!moved) {
+            res.status(409).json({
+                success: false,
+                message: "Could not move to Team A — it just filled up or the room state changed"
+            });
+            return;
+        }
 
-        await room.save();
         markRoomAction(userIdStr);
 
-        const populated = await BattleRoom.findById(room._id)
+        const populated = await BattleRoom.findById(moved._id)
             .populate("host", "username fullName avatar")
             .populate("teams.teamA", "username fullName avatar")
             .populate("teams.teamB", "username fullName avatar");
@@ -473,17 +605,34 @@ export const joinTeamB = async (
             return;
         }
 
-        // Move from A → B
-        room.teams.teamA = room.teams.teamA.filter(
-            (id) => id.toString() !== userIdStr
-        ) as typeof room.teams.teamA;
+        // Move from A → B atomically: only succeeds if the user is still in
+        // Team A and Team B still has a free slot, closing the capacity race.
+        const moved = await BattleRoom.findOneAndUpdate(
+            {
+                roomCode,
+                status: "WAITING",
+                "teams.teamA": userId,
+                "teams.teamB": { $ne: userId },
+                $expr: { $lt: [{ $size: "$teams.teamB" }, "$teamSize"] },
+            },
+            {
+                $pull: { "teams.teamA": userId },
+                $push: { "teams.teamB": userId },
+            },
+            { new: true }
+        );
 
-        room.teams.teamB.push(userId);
+        if (!moved) {
+            res.status(409).json({
+                success: false,
+                message: "Could not move to Team B — it just filled up or the room state changed"
+            });
+            return;
+        }
 
-        await room.save();
         markRoomAction(userIdStr);
 
-        const populated = await BattleRoom.findById(room._id)
+        const populated = await BattleRoom.findById(moved._id)
             .populate("host", "username fullName avatar")
             .populate("teams.teamA", "username fullName avatar")
             .populate("teams.teamB", "username fullName avatar");
@@ -522,15 +671,7 @@ export const startBattle = async (
     try {
         const userId = req.user._id;
         const { roomCode } = req.params;
-        const { questionSlug, durationInMinutes = 30 } = req.body;
-
-        if (!questionSlug) {
-            res.status(400).json({
-                success: false,
-                message: "questionSlug is required to start the battle"
-            });
-            return;
-        }
+        const { durationInMinutes = 30 } = req.body;
 
         const room = await BattleRoom.findOne({ roomCode });
 
@@ -548,12 +689,17 @@ export const startBattle = async (
             return;
         }
 
-        // createMatchForRoom validates room.status === "WAITING", checks both
-        // teams are full, AND guards against a match already being ongoing
-        // for this room (the double-start race that startMatch in
-        // match_controller.ts already guarded against but this endpoint did
-        // not — see code review C2). Both controllers now share this single
-        // implementation so a fix here can't drift out of sync with the other.
+        // Randomly pick a question from the room's selected topics + difficulty
+        const questionSlug = await pickRandomQuestion(room);
+
+        if (!questionSlug) {
+            res.status(404).json({
+                success: false,
+                message: "No questions found matching the selected topics and difficulty"
+            });
+            return;
+        }
+
         let match;
         try {
             match = await createMatchForRoom(room, { questionSlug, durationInMinutes });

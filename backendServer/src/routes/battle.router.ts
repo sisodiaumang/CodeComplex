@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
     createRoom,
+    getActiveRoom,
     joinRoom,
     getRoomDetails,
     joinTeamA,
@@ -10,6 +11,16 @@ import {
     deleteRoom
 } from "../controllers/battle.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
+import { validateRequest } from "../middlewares/validate.middleware.js";
+import {
+    createRoomSchema,
+    joinRoomSchema,
+    getRoomDetailsSchema,
+    joinTeamSchema,
+    startBattleSchema,
+    leaveRoomSchema,
+    deleteRoomSchema,
+} from "../validators/battle.validator.js";
 
 const battleRouter = Router();
 
@@ -17,19 +28,20 @@ const battleRouter = Router();
 battleRouter.use(verifyJWT);
 
 // ── Room ──────────────────────────────────────
-battleRouter.post("/", createRoom);
-battleRouter.get("/:roomCode", getRoomDetails);
-battleRouter.delete("/:roomCode", deleteRoom);
+battleRouter.post("/", validateRequest(createRoomSchema), createRoom);
+battleRouter.get("/me/active", getActiveRoom);
+battleRouter.get("/:roomCode", validateRequest(getRoomDetailsSchema), getRoomDetails);
+battleRouter.delete("/:roomCode", validateRequest(deleteRoomSchema), deleteRoom);
 
 // ── Membership ───────────────────────────────
-battleRouter.post("/:roomCode/join", joinRoom);
-battleRouter.post("/:roomCode/leave", leaveRoom);
+battleRouter.post("/:roomCode/join", validateRequest(joinRoomSchema), joinRoom);
+battleRouter.post("/:roomCode/leave", validateRequest(leaveRoomSchema), leaveRoom);
 
 // ── Teams ─────────────────────────────────────
-battleRouter.post("/:roomCode/team-a", joinTeamA);
-battleRouter.post("/:roomCode/team-b", joinTeamB);
+battleRouter.post("/:roomCode/team-a", validateRequest(joinTeamSchema), joinTeamA);
+battleRouter.post("/:roomCode/team-b", validateRequest(joinTeamSchema), joinTeamB);
 
 // ── Battle Lifecycle ──────────────────────────
-battleRouter.post("/:roomCode/start", startBattle);
+battleRouter.post("/:roomCode/start", validateRequest(startBattleSchema), startBattle);
 
 export default battleRouter;

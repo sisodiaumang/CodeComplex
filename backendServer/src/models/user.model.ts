@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import { IUser } from "../interfaces/user.interface.js";
 import jwt from "jsonwebtoken";
+import { env } from "../config/env.js";
 import { isReservedUsername } from "../constants/reservedUsernames.js";
 
 
@@ -49,11 +50,11 @@ const userSchema = new mongoose.Schema<IUser>(
         avatar: {
             profileImageURL: {
                 type: String,
-                default: process.env.DEFAULT_AVATAR_URL
+                default: env.DEFAULT_AVATAR_URL
             },
             profileImagePublicId: {
                 type: String,
-                default: process.env.DEFAULT_AVATAR_PUBLIC_URL
+                default: env.DEFAULT_AVATAR_PUBLIC_URL
             }
         },
 
@@ -155,9 +156,9 @@ userSchema.methods.generateAccessToken = function (): string {
                 ? Math.floor(this.lastPasswordChangedAt.getTime() / 1000)
                 : 0
         },
-        process.env.ACCESS_TOKEN_SECRET!,
+        env.JWT_ACCESS_SECRET,
         {
-            expiresIn: process.env.ACCESS_TOKEN_EXPIRY as jwt.SignOptions["expiresIn"]
+            expiresIn: env.ACCESS_TOKEN_EXPIRY as jwt.SignOptions["expiresIn"]
         }
     );
 };
@@ -165,9 +166,9 @@ userSchema.methods.generateAccessToken = function (): string {
 userSchema.methods.generateRefreshToken = function (): string {
     return jwt.sign(
         { _id: this._id },
-        process.env.REFRESH_TOKEN_SECRET!,
+        env.JWT_REFRESH_SECRET,
         {
-            expiresIn: process.env.REFRESH_TOKEN_EXPIRY as jwt.SignOptions["expiresIn"]
+            expiresIn: env.REFRESH_TOKEN_EXPIRY as jwt.SignOptions["expiresIn"]
         }
     );
 };

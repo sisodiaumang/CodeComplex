@@ -52,8 +52,31 @@ const otpSchema = new mongoose.Schema<IOTP>(
             max: MAX_OTP_ATTEMPTS
         },
 
+        // FIX (W4): tracks resend requests separately from `attempts`
+        // (wrong-guess count). Previously both shared the `attempts` field,
+        // so a user who requested several resends could be locked out on
+        // their very first wrong guess, even though the limit is described
+        // as "5 wrong OTP attempts". See otp.service.ts / sendOtp.
+        resendAttempts: {
+            type: Number,
+            default: 0,
+            min: 0,
+            max: MAX_OTP_ATTEMPTS
+        },
+
         lastSentAt: {
             type: Date
+        },
+
+        // FIX (W2): records which authenticated user initiated this
+        // EMAIL_CHANGE OTP request. requestEmailChange (user_controllers.ts)
+        // was already writing this field with no schema support — Mongoose
+        // silently stripped it in strict mode. verifyEmailChange now reads
+        // it back to confirm the same account that requested the change is
+        // the one completing it, instead of trusting req.user._id alone.
+        requestedByUserId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User"
         },
 
         // Stores signup payload temporarily until email is verified.

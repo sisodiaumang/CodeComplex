@@ -1,6 +1,8 @@
 import { Socket } from "socket.io";
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 import * as cookie from "cookie";
+import { env } from "../config/env.js";
+import User from "../models/user.model.js";
 
 export interface SocketUser {
     _id: string;
@@ -9,10 +11,10 @@ export interface SocketUser {
     fullName: string;
 }
 
-const socketAuthMiddleware = (
+const socketAuthMiddleware = async (
     socket: Socket,
     next: (err?: Error) => void
-): void => {
+): Promise<void> => {
     try {
         let token = socket.handshake.auth?.token as string | undefined;
 
@@ -32,10 +34,39 @@ const socketAuthMiddleware = (
 
         const decoded = jwt.verify(
             token,
-            process.env.ACCESS_TOKEN_SECRET!
-        ) as SocketUser;
+            env.JWT_ACCESS_SECRET
+        ) as JwtPayload;
 
-        socket.data.user = decoded;
+        // Look the user up so a banned account or a token issued before a
+        // password change can't hold a live socket until token expiry — the
+        // HTTP auth middleware enforces the same two guards.
+        const user = await User.findById(decoded._id).select(
+            "isBanned lastPasswordChangedAt email username fullName"
+        );
+
+        if (!user) {
+            return next(new Error("Invalid or expired token"));
+        }
+
+        if (user.isBanned) {
+            return next(new Error("Account banned"));
+        }
+
+        if (user.lastPasswordChangedAt) {
+            const changedAtSec = Math.floor(user.lastPasswordChangedAt.getTime() / 1000);
+            const tokenIssuedAtSec = Number(decoded.passwordChangedAt ?? 0);
+
+            if (tokenIssuedAtSec < changedAtSec) {
+                return next(new Error("Session expired"));
+            }
+        }
+
+        socket.data.user = {
+            _id: user._id.toString(),
+            email: user.email,
+            username: user.username,
+            fullName: user.fullName,
+        } as SocketUser;
 
         next();
     } catch (err) {

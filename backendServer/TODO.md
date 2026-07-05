@@ -1,5 +1,3 @@
-# DevWar Backend Roadmap - TODO
-
 ## Phase 1: Finish Backend Infrastructure
 - [ ] (1) Logger (pino-http + request/error + socket logging)
 - [ ] (2) Environment validation + central config usage (`src/config/env.ts`)
@@ -39,6 +37,17 @@
   - [ ] Match start
   - [ ] Submission + judgement
   - [ ] Rating updates
+
+## Model hardening (DevWar Questions)
+- [ ] Fix text index to include correct fields (metadata.*) and add name to index
+- [ ] Strengthen validation: every supported language must have starterCode/functionSignature/solutions (as applicable)
+- [ ] Detect duplicate testcases by (input+output) in addition to id
+- [ ] Prevent slug collisions by using a unique slug strategy (append short suffix on collision)
+- [ ] Fix auditing fields: createdBy/updatedBy type to ObjectId ref User; add corresponding indexes
+- [ ] Constrain interviewFrequency (min/max)
+- [ ] Use enums for revisionLevel and category
+- [ ] Add soft-delete relevant indexes (isDeleted)
+- [ ] Validate starterCode != buggyStarterCode in bug_fix mode
 
 ## Final: README
 - [ ] Write backend README (architecture diagram, folder structure, API + socket events, env vars, run locally)

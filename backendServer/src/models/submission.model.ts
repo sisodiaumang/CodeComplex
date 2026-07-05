@@ -16,6 +16,18 @@ const submissionSchema =
                 required: true
             },
 
+            // FIX (submission-controller spec): the spec's model checklist
+            // calls for `team` — needed so score.service.ts can credit the
+            // right side (Match.teamAScore vs teamBScore) without having to
+            // re-derive team membership from Match.teamA/teamB on every
+            // score update. Snapshotted at submission time, same rationale
+            // as Match.teamA/teamB being a snapshot of BattleRoom.teams.
+            team: {
+                type: String,
+                enum: ["A", "B"],
+                required: true
+            },
+
             questionSlug: {
                 type: String,
                 required: true
@@ -97,6 +109,23 @@ const submissionSchema =
                     "RUNTIME_ERROR",
                     "COMPILATION_ERROR"
                 ]
+            },
+
+            // FIX (submission-controller spec): judgeToken is Judge0's
+            // submission token. judge.service.ts uses the synchronous
+            // wait=true mode by default (see that file's header comment),
+            // so this is unused on the happy path today — but it's needed
+            // the moment you switch to async submit+poll or a webhook
+            // callback, and rejudge needs somewhere to stash the new token.
+            judgeToken: {
+                type: String,
+                select: false
+            },
+
+            // FIX (submission-controller spec): timestamp of when judging
+            // actually completed, distinct from `createdAt` (submittedAt).
+            judgedAt: {
+                type: Date
             },
 
             executionTime: {

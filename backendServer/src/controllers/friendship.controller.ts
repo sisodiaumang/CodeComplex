@@ -69,20 +69,37 @@ export const sendFriendRequest = async (req: Request, res: Response, next: NextF
             return res.status(409).json({ success: false, message: "Friend request already pending or user blocked" });
         }
 
-        const friend = await Friendship.create({
-            sender: senderId as any,
-            receiver: receiverId as any,
-            status: "PENDING",
-        });
+        let friend;
+        try {
+            friend = await Friendship.create({
+                sender: senderId as any,
+                receiver: receiverId as any,
+                status: "PENDING",
+            });
+        } catch (createErr: any) {
+            // Concurrent duplicate requests race past the checks above and hit
+            // the unique {sender,receiver} index — return a clean 409 instead
+            // of a raw 500.
+            if (createErr?.code === 11000) {
+                return res.status(409).json({ success: false, message: "Friend request already pending" });
+            }
+            throw createErr;
+        }
 
-        await Notification.create({
-            recipient: receiverId,
-            sender: senderId,
-            type: "FRIEND_REQUEST",
-            title: "Friend Request",
-            message: "You have a new friend request",
-            relatedEntityId: friend._id,
-        });
+        // Best-effort: a notification failure must not roll back an already
+        // persisted friend request (which would surface as a misleading 500).
+        try {
+            await Notification.create({
+                recipient: receiverId,
+                sender: senderId,
+                type: "FRIEND_REQUEST",
+                title: "Friend Request",
+                message: "You have a new friend request",
+                relatedEntityId: friend._id,
+            });
+        } catch (notifyErr) {
+            console.error("[Friendship] Failed to create FRIEND_REQUEST notification:", notifyErr);
+        }
 
         // socket event is expected to be emitted by socket layer.
         // if your socket layer listens to DB changes, it will handle it.

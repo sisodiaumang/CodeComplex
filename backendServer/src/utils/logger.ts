@@ -1,7 +1,9 @@
 import pino from "pino";
 
+import { env } from "../config/env.js";
+
 export const logger = pino({
-  level: process.env.LOG_LEVEL ?? "info",
+  level: env.LOG_LEVEL ?? "info",
   redact: {
     paths: [
       "req.headers.authorization",
@@ -14,7 +16,7 @@ export const logger = pino({
     remove: true,
   },
   transport:
-    process.env.NODE_ENV === "development"
+    env.NODE_ENV === "development"
       ? {
           target: "pino-pretty",
           options: {

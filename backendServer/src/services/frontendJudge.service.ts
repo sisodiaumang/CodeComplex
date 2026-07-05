@@ -126,15 +126,16 @@ interface RawVerdict {
 
 // ── xAI API helpers ───────────────────────────────────────────────────────
 
+import { env } from "../config/env.js";
+
 function getApiKey(): string {
-    const key = process.env.XAI_API_KEY;
-    if (!key) {
+    if (!env.XAI_API_KEY) {
         throw new Error(
             "[FrontendJudge] XAI_API_KEY is not set. " +
             "Add it to your environment to enable FRONTEND/FULLSTACK judging."
         );
     }
-    return key;
+    return env.XAI_API_KEY;
 }
 
 // OpenAI-compatible content block types used in the Grok request

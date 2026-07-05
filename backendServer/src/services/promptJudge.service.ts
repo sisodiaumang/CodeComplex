@@ -63,14 +63,15 @@ interface RawVerdict {
     weightedScore?: number; // optional; we still compute ourselves if absent
 }
 
+import { env } from "../config/env.js";
+
 function getApiKey(): string {
-    const key = process.env.XAI_API_KEY;
-    if (!key) {
+    if (!env.XAI_API_KEY) {
         throw new Error(
             "[PromptJudge] XAI_API_KEY is not set. Add it to environment to enable PROMPT_WAR judging."
         );
     }
-    return key;
+    return env.XAI_API_KEY;
 }
 
 // OpenAI-compatible message blocks

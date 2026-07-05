@@ -201,11 +201,14 @@ async function materializeSubmissionFiles(params: {
     }
 
     for (const [relPath, contents] of Object.entries(files)) {
-        const fullPath = path.join(buildDir, relPath);
+        const fullPath = path.resolve(buildDir, relPath);
 
         // Guard against path traversal escaping the build dir — untrusted
-        // input is being used to construct filesystem paths.
-        if (!fullPath.startsWith(buildDir)) {
+        // input is being used to construct filesystem paths. Compare against
+        // buildDir + separator so a sibling dir sharing buildDir as a string
+        // prefix (e.g. "/tmp/build-x" vs "/tmp/build-x-evil") can't slip past.
+        const buildRoot = path.resolve(buildDir);
+        if (fullPath !== buildRoot && !fullPath.startsWith(buildRoot + path.sep)) {
             throw new Error(`[BackendJudge] Rejected unsafe file path in submission: "${relPath}"`);
         }
 
@@ -219,9 +222,13 @@ async function buildImage(buildDir: string, dockerfile: string, imageTag: string
     await fs.writeFile(path.join(buildDir, "Dockerfile"), dockerfile, "utf-8");
 
     try {
+        // The build needs network access for `npm install` / `pip install`
+        // (the Dockerfile templates run these). --network=none here made every
+        // submission with a dependency fail the build. The *run* step is what
+        // sandboxes untrusted code (--network bridge + memory/pid/cpu caps).
         await execFileAsync(
             "docker",
-            ["build", "--network=none", "-t", imageTag, buildDir],
+            ["build", "--network=default", "-t", imageTag, buildDir],
             { timeout: 120_000, maxBuffer: 1024 * 1024 * 10 }
         );
     } catch (err: any) {
@@ -300,12 +307,22 @@ async function getAjvValidatorFactory() {
     if (ajvLoadAttempted) return ajvValidatorFactory;
     ajvLoadAttempted = true;
     try {
-        const AjvModule = await import("ajv");
-        
-        // Target the inner default which contains the actual class constructor
-        const AjvClass = AjvModule.default.default;
+        const AjvModule: any = await import("ajv");
+
+        // Resolve the constructor defensively across CJS/ESM interop shapes:
+        // ESM default, double-default, named `Ajv`, or the module itself.
+        const AjvClass =
+            AjvModule?.default?.default ??
+            AjvModule?.default ??
+            AjvModule?.Ajv ??
+            AjvModule;
+
+        if (typeof AjvClass !== "function") {
+            throw new Error("ajv constructor could not be resolved");
+        }
+
         const ajv = new AjvClass({ allErrors: false });
-        
+
         ajvValidatorFactory = (schema: object) => ajv.compile(schema);
     } catch (err) {
         console.warn(
@@ -316,8 +333,34 @@ async function getAjvValidatorFactory() {
     }
     return ajvValidatorFactory;
 }
+// Structural deep-equality that is insensitive to object key ordering — a
+// correct JSON response whose keys serialize in a different order than
+// expectedBody must not be marked a body mismatch.
 function deepEqual(a: unknown, b: unknown): boolean {
-    return JSON.stringify(a) === JSON.stringify(b);
+    if (a === b) return true;
+
+    if (typeof a !== typeof b) return false;
+
+    if (a === null || b === null) return a === b;
+
+    if (Array.isArray(a) || Array.isArray(b)) {
+        if (!Array.isArray(a) || !Array.isArray(b)) return false;
+        if (a.length !== b.length) return false;
+        return a.every((item, i) => deepEqual(item, b[i]));
+    }
+
+    if (typeof a === "object" && typeof b === "object") {
+        const aKeys = Object.keys(a as Record<string, unknown>);
+        const bKeys = Object.keys(b as Record<string, unknown>);
+        if (aKeys.length !== bKeys.length) return false;
+        return aKeys.every(
+            (k) =>
+                Object.prototype.hasOwnProperty.call(b, k) &&
+                deepEqual((a as any)[k], (b as any)[k])
+        );
+    }
+
+    return false;
 }
 
 async function runTestCase(

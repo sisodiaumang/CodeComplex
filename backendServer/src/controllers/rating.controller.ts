@@ -9,6 +9,19 @@ import { BattleType } from "../interfaces/battleRoom.interface.js";
 const DEFAULT_PAGE = 1;
 const DEFAULT_LIMIT = 20;
 
+// Maps a raw battleType to the category enum actually stored on RatingHistory
+// (see rating.service.ts CATEGORY_TO_HISTORY_ENUM). BUG_FIX shares the DSA
+// pool, so its history is written — and must be queried — as "DSA".
+const HISTORY_ENUM_BY_BATTLE_TYPE: Record<string, string> = {
+    DSA: "DSA",
+    BUG_FIX: "DSA",
+    FRONTEND: "FRONTEND",
+    BACKEND: "BACKEND",
+    FULLSTACK: "FULLSTACK",
+    PROMPT_WAR: "PROMPT_WAR",
+    TEAM: "TEAM",
+};
+
 function normalizeBattleType(battleType: unknown): BattleType | null {
     if (!battleType) return null;
     const v = Array.isArray(battleType) ? battleType[0] : (battleType as any);
@@ -118,16 +131,22 @@ export const getMyRatingHistory = async (req: Request, res: Response, next: Next
         const limit = Math.min(100, Math.max(1, parseInt(req.query.limit as string) || DEFAULT_LIMIT));
         const skip = (page - 1) * limit;
 
+        // RatingHistory stores the *mapped* category enum, not the raw
+        // battleType (e.g. BUG_FIX matches are written as "DSA"). Querying by
+        // the raw battleType returned zero rows for BUG_FIX. Map through the
+        // rating category → history enum before querying.
+        const historyCategory = HISTORY_ENUM_BY_BATTLE_TYPE[battleType];
+
         const total = await RatingHistory.countDocuments({
             userId,
-            category: battleType,
+            category: historyCategory,
         } as any);
 
         const totalPages = Math.ceil(total / limit);
 
         const history = await RatingHistory.find({
             userId,
-            category: battleType,
+            category: historyCategory,
         } as any)
             .sort({ createdAt: -1 })
             .skip(skip)

@@ -105,6 +105,7 @@ export async function createMatchForRoom(
     }
 
     // Validate questionSlug exists in the appropriate question bank for this battleType.
+    // (Done before the atomic claim so a bad slug doesn't leave the room STARTED.)
     const FRONTEND_TYPES = ["FRONTEND", "FULLSTACK"];
     const BACKEND_TYPES  = ["BACKEND"];
     const PROMPT_TYPES   = ["PROMPT_WAR"];
@@ -128,25 +129,53 @@ export async function createMatchForRoom(
         if (!q) throw new MatchServiceError(400, `No question found for slug "${questionSlug}"`);
     }
 
+    // Atomically claim the room: flip WAITING → STARTED in a single
+    // conditional update so two concurrent starts (double-click, or the host
+    // hitting both /battle/:roomCode/start and /match/start) can't both pass
+    // the in-memory status check above and create two ONGOING Match docs.
+    // Only the request that wins this update proceeds to create the Match.
+    const claimed = await BattleRoom.findOneAndUpdate(
+        { _id: room._id, status: "WAITING" },
+        { $set: { status: "STARTED", questionSlug } },
+        { new: true }
+    );
+
+    if (!claimed) {
+        throw new MatchServiceError(409, "A match is already being started for this room");
+    }
+
     const startedAt = new Date();
 
-    const match = await Match.create({
-        battleRoomId: room._id,
-        questionSlug,
-        battleType: room.battleType,
-        teamA: room.teams.teamA,
-        teamB: room.teams.teamB,
-        durationInMinutes,
-        difficulty: room.difficulty,
-        matchType: room.isRanked ? "RANKED" : "CASUAL",
-        status: "ONGOING",
-        startedAt,
-    });
+    let match;
+    try {
+        match = await Match.create({
+            battleRoomId: room._id,
+            questionSlug,
+            battleType: room.battleType,
+            teamA: room.teams.teamA,
+            teamB: room.teams.teamB,
+            durationInMinutes,
+            difficulty: room.difficulty,
+            matchType: room.isRanked ? "RANKED" : "CASUAL",
+            status: "ONGOING",
+            startedAt,
+        });
+    } catch (err) {
+        // Roll the claim back so the room isn't left STARTED with no match.
+        await BattleRoom.updateOne(
+            { _id: room._id, status: "STARTED", matchId: { $in: [null, undefined] } },
+            { $set: { status: "WAITING" } }
+        );
+        throw err;
+    }
 
+    claimed.matchId = match._id as mongoose.Types.ObjectId;
+    await claimed.save();
+
+    // Keep the caller's in-memory doc consistent with what was persisted.
     room.matchId = match._id as mongoose.Types.ObjectId;
     room.questionSlug = questionSlug;
     room.status = "STARTED";
-    await room.save();
 
     return match;
 }

@@ -8,6 +8,7 @@ import {
     canSpectate,
     addSpectator,
     removeSpectator,
+    isMatchViewer,
     getSpectators as fetchSpectatorIds,
     getSpectatorStatus as fetchIsSpectator,
 } from "../services/spectate.service.js";
@@ -78,9 +79,18 @@ export const leaveSpectate = async (req: Request, res: Response, next: NextFunct
 export const getSpectators = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const matchId = req.params.matchId as string;
+        const requesterId = req.user._id.toString();
 
         if (!mongoose.isValidObjectId(matchId)) {
             res.status(400).json({ success: false, message: "Invalid matchId" });
+            return;
+        }
+
+        // Don't let arbitrary users enumerate a match's spectator roster —
+        // restrict to participants and users allowed to spectate this match.
+        const allowed = await isMatchViewer(matchId, requesterId);
+        if (!allowed) {
+            res.status(403).json({ success: false, message: "Not allowed to view this match's spectators" });
             return;
         }
 
@@ -117,8 +127,17 @@ export const getSpectatorStatus = async (req: Request, res: Response, next: Next
             return;
         }
 
+        // A user may always check their OWN spectating status, but shouldn't be
+        // able to probe a match they have no relationship to. isMatchViewer
+        // covers participants + allowed spectators; membership covers the case
+        // where they're already in the spectators array.
         const spectatorIds = await fetchSpectatorIds(matchId);
         const isSpectator = spectatorIds.includes(spectatorId);
+
+        if (!isSpectator && !(await isMatchViewer(matchId, spectatorId))) {
+            res.status(403).json({ success: false, message: "Not allowed to view this match" });
+            return;
+        }
 
 
         res.status(200).json({ success: true, data: { isSpectating: isSpectator } });

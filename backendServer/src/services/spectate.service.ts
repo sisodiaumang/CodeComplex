@@ -44,6 +44,25 @@ export async function canSpectate(matchId: string, meId: string): Promise<boolea
     return false;
 }
 
+/**
+ * True if the user is allowed to VIEW spectate metadata for this match:
+ * either a participant (any status) or someone permitted to spectate it
+ * (friend of a player while the match is ONGOING).
+ */
+export async function isMatchViewer(matchId: string, userId: string): Promise<boolean> {
+    const match = await Match.findById(matchId).select("teamA teamB");
+    if (!match) return false;
+
+    const players = [
+        ...(match.teamA ?? []).map((x: any) => x.toString()),
+        ...(match.teamB ?? []).map((x: any) => x.toString()),
+    ];
+
+    if (players.includes(userId)) return true;
+
+    return canSpectate(matchId, userId);
+}
+
 export async function addSpectator(matchId: string, spectatorId: string): Promise<void> {
     await Match.findByIdAndUpdate(
         matchId,

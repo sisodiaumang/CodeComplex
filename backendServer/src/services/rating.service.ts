@@ -170,6 +170,9 @@ export async function updateRatings(
         { userId: new mongoose.Types.ObjectId(winnerId) },
         {
             $set:  { [`ratings.${category}`]: winnerNewRating },
+            // peakRatings must only ever ratchet upward — $max never lowers it
+            // and needs no fetch-then-compare round trip.
+            $max:  { [`peakRatings.${category}`]: winnerNewRating },
             $inc:  {
                 "stats.wins":         1,
                 "stats.totalMatches": 1,
@@ -187,6 +190,9 @@ export async function updateRatings(
         { userId: new mongoose.Types.ObjectId(loserId) },
         {
             $set:  { [`ratings.${category}`]: loserNewRating, streak: 0 },
+            // A loss can't raise peak, but keep the write symmetric so a
+            // brand-new profile's peak is initialised alongside its rating.
+            $max:  { [`peakRatings.${category}`]: loserNewRating },
             $inc:  {
                 "stats.losses":       1,
                 "stats.totalMatches": 1,
@@ -278,6 +284,15 @@ export async function updateRatingsForDraw(
 
     // FIX (B2): guard moved to applyRankedRatings() — see updateRatings() comment.
     const category        = BATTLE_TYPE_TO_CATEGORY[match.battleType];
+
+    // Mirror the guard in updateRatings(): an unrecognised battleType would
+    // otherwise write to ratings.undefined and throw on the required history
+    // enum (CATEGORY_TO_HISTORY_ENUM[undefined]).
+    if (!category) {
+        console.error(`[RatingService] Unknown battleType: ${match.battleType}`);
+        return;
+    }
+
     const historyCategory = CATEGORY_TO_HISTORY_ENUM[category];
 
     const [profileA, profileB] = await Promise.all([
@@ -304,6 +319,7 @@ export async function updateRatingsForDraw(
             { userId: new mongoose.Types.ObjectId(playerAId) },
             {
                 $set: { [`ratings.${category}`]: newRatingA, streak: 0 },
+                $max: { [`peakRatings.${category}`]: newRatingA },
                 $inc: { "stats.draws": 1, "stats.totalMatches": 1 },
             }
         ),
@@ -311,6 +327,7 @@ export async function updateRatingsForDraw(
             { userId: new mongoose.Types.ObjectId(playerBId) },
             {
                 $set: { [`ratings.${category}`]: newRatingB, streak: 0 },
+                $max: { [`peakRatings.${category}`]: newRatingB },
                 $inc: { "stats.draws": 1, "stats.totalMatches": 1 },
             }
         ),
