@@ -46,6 +46,10 @@ new mongoose.Schema<INotification>(
 
     relatedEntityId:{
         type:mongoose.Schema.Types.ObjectId
+    },
+
+    metadata:{
+        type:mongoose.Schema.Types.Mixed
     }
 
 },

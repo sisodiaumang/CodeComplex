@@ -3,7 +3,14 @@
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
-import { Camera, Mail, Trash2 } from "lucide-react";
+import {
+  Camera,
+  KeyRound,
+  Mail,
+  Shield,
+  Trash2,
+  User,
+} from "lucide-react";
 import { api, errorMessage } from "@/lib/api";
 import { avatarUrl, type Me } from "@/lib/types";
 import { COUNTRIES } from "@/lib/countries";
@@ -17,25 +24,128 @@ import {
   Select,
 } from "@/components/ui";
 
+/* ─── types ───────────────────────────────────────────────────────────── */
+
+type Feedback = { tone: "success" | "danger" | "info"; text: string } | null;
+
+type Tab = "profile" | "security";
+
+/* ─── helpers ─────────────────────────────────────────────────────────── */
+
+function forceRelogin(
+  setUser: (u: Me | null) => void,
+  queryClient: ReturnType<typeof useQueryClient>,
+  router: ReturnType<typeof useRouter>
+) {
+  setUser(null);
+  queryClient.clear();
+  router.replace("/login");
+}
+
+function SectionTitle({
+  icon: Icon,
+  title,
+  subtitle,
+}: {
+  icon: React.ElementType;
+  title: string;
+  subtitle?: string;
+}) {
+  return (
+    <div className="flex items-center gap-3 px-6 py-5">
+      <div className="flex size-9 items-center justify-center rounded-lg bg-surface-2">
+        <Icon className="size-4 text-text-muted" />
+      </div>
+      <div>
+        <h2 className="text-base font-semibold text-text">{title}</h2>
+        {subtitle && (
+          <p className="text-sm text-text-faint">{subtitle}</p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ─── main page ───────────────────────────────────────────────────────── */
+
 export default function SettingsPage() {
   const { user, setUser, patchUser } = useAuth();
   const queryClient = useQueryClient();
   const router = useRouter();
-  const fileRef = useRef<HTMLInputElement>(null);
-
-  const [bio, setBio] = useState(user?.bio ?? "");
-  const [country, setCountry] = useState(user?.country ?? "IN");
-  const [profileMsg, setProfileMsg] = useState<Feedback>(null);
-  const [avatarBusy, setAvatarBusy] = useState(false);
-  const [profileBusy, setProfileBusy] = useState(false);
+  const [tab, setTab] = useState<Tab>("profile");
 
   if (!user) return null;
+
+  const tabs: { key: Tab; label: string; icon: React.ElementType }[] = [
+    { key: "profile", label: "Profile", icon: User },
+    { key: "security", label: "Security", icon: Shield },
+  ];
+
+  return (
+    <div className="mx-auto max-w-3xl space-y-6 py-2">
+      {/* Header */}
+      <div>
+        <h1 className="text-2xl font-bold text-text">Settings</h1>
+        <p className="mt-1 text-sm text-text-faint">
+          Manage your account and preferences
+        </p>
+      </div>
+
+      {/* Tab bar */}
+      <div className="flex gap-1 rounded-lg border border-border bg-surface-2 p-1">
+        {tabs.map(({ key, label, icon: Icon }) => (
+          <button
+            key={key}
+            onClick={() => setTab(key)}
+            className={`flex flex-1 items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-all ${
+              tab === key
+                ? "bg-surface text-text shadow-sm"
+                : "text-text-muted hover:text-text"
+            }`}
+          >
+            <Icon className="size-4" />
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {/* Tab content */}
+      {tab === "profile" ? (
+        <ProfileTab user={user} patchUser={patchUser} queryClient={queryClient} />
+      ) : (
+        <SecurityTab
+          user={user}
+          patchUser={patchUser}
+          onForceRelogin={() => forceRelogin(setUser, queryClient, router)}
+        />
+      )}
+    </div>
+  );
+}
+
+/* ─── Profile Tab ─────────────────────────────────────────────────────── */
+
+function ProfileTab({
+  user,
+  patchUser,
+  queryClient,
+}: {
+  user: Me;
+  patchUser: (p: Partial<Me>) => void;
+  queryClient: ReturnType<typeof useQueryClient>;
+}) {
+  const fileRef = useRef<HTMLInputElement>(null);
+  const [bio, setBio] = useState(user.bio ?? "");
+  const [country, setCountry] = useState(user.country ?? "IN");
+  const [msg, setMsg] = useState<Feedback>(null);
+  const [avatarBusy, setAvatarBusy] = useState(false);
+  const [saveBusy, setSaveBusy] = useState(false);
 
   async function onAvatarPick(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
     setAvatarBusy(true);
-    setProfileMsg(null);
+    setMsg(null);
     try {
       const form = new FormData();
       form.append("avatar", file);
@@ -45,9 +155,9 @@ export default function SettingsPage() {
       });
       patchUser({ avatar: res.avatar });
       queryClient.invalidateQueries({ queryKey: ["profile"] });
-      setProfileMsg({ tone: "success", text: "Photo updated." });
+      setMsg({ tone: "success", text: "Photo updated." });
     } catch (err) {
-      setProfileMsg({ tone: "danger", text: errorMessage(err) });
+      setMsg({ tone: "danger", text: errorMessage(err) });
     } finally {
       setAvatarBusy(false);
       if (fileRef.current) fileRef.current.value = "";
@@ -55,50 +165,63 @@ export default function SettingsPage() {
   }
 
   async function saveProfile() {
-    setProfileBusy(true);
-    setProfileMsg(null);
+    setSaveBusy(true);
+    setMsg(null);
     try {
-      if (bio !== (user!.bio ?? "")) {
+      if (bio !== (user.bio ?? "")) {
         await api("/user/bio", { method: "PATCH", body: { bio } });
         patchUser({ bio });
       }
-      if (country !== (user!.country ?? "")) {
+      if (country !== (user.country ?? "")) {
         await api("/user/country", { method: "PATCH", body: { country } });
         patchUser({ country });
       }
-      setProfileMsg({ tone: "success", text: "Saved." });
+      setMsg({ tone: "success", text: "Profile saved." });
     } catch (err) {
-      setProfileMsg({ tone: "danger", text: errorMessage(err) });
+      setMsg({ tone: "danger", text: errorMessage(err) });
     } finally {
-      setProfileBusy(false);
+      setSaveBusy(false);
     }
   }
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-semibold text-text">Settings</h1>
-
-      {/* Profile */}
+    <div className="space-y-5">
+      {/* Avatar card */}
       <Card>
-        <div className="px-6 py-5">
-          <h2 className="text-lg font-semibold text-text">Profile</h2>
-          <p className="text-sm text-text-faint">How other players see you</p>
-        </div>
-        <div className="space-y-5 border-t border-border px-6 py-6">
-          {profileMsg && <Alert tone={profileMsg.tone}>{profileMsg.text}</Alert>}
-
-          <div className="flex items-center gap-3">
-            <Avatar src={avatarUrl(user.avatar)} name={user.username} size={56} />
-            <div>
+        <SectionTitle icon={Camera} title="Avatar" subtitle="Your profile picture" />
+        <div className="border-t border-border px-6 py-6">
+          {msg && msg.text.includes("Photo") && (
+            <div className="mb-4">
+              <Alert tone={msg.tone}>{msg.text}</Alert>
+            </div>
+          )}
+          <div className="flex items-center gap-6">
+            <div className="relative shrink-0 size-24 overflow-hidden rounded-full ring-4 ring-border">
+              <Avatar
+                src={avatarUrl(user.avatar)}
+                name={user.username}
+                size={96}
+              />
+              {avatarBusy && (
+                <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/40">
+                  <div className="size-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                </div>
+              )}
+            </div>
+            <div className="space-y-2">
+              <p className="text-sm font-medium text-text">{user.fullName}</p>
+              <p className="text-xs text-text-faint">@{user.username}</p>
               <Button
                 variant="secondary"
                 size="sm"
                 onClick={() => fileRef.current?.click()}
                 loading={avatarBusy}
               >
-                <Camera className="size-3.5" /> Change photo
+                <Camera className="size-4" /> Upload new photo
               </Button>
-              <p className="mt-1.5 text-sm text-text-faint">JPG or PNG, up to 5MB</p>
+              <p className="text-xs text-text-faint">
+                JPG, PNG or WebP. Max 5MB.
+              </p>
               <input
                 ref={fileRef}
                 type="file"
@@ -108,8 +231,22 @@ export default function SettingsPage() {
               />
             </div>
           </div>
+        </div>
+      </Card>
 
-          <div className="grid gap-3 sm:grid-cols-2">
+      {/* Info card */}
+      <Card>
+        <SectionTitle
+          icon={User}
+          title="Personal info"
+          subtitle="Your public profile details"
+        />
+        <div className="space-y-5 border-t border-border px-6 py-6">
+          {msg && !msg.text.includes("Photo") && (
+            <Alert tone={msg.tone}>{msg.text}</Alert>
+          )}
+
+          <div className="grid gap-4 sm:grid-cols-2">
             <Input label="Username" value={user.username} disabled />
             <Select
               label="Country"
@@ -124,48 +261,62 @@ export default function SettingsPage() {
             </Select>
           </div>
 
-          <div className="flex flex-col gap-1">
-            <label htmlFor="bio" className="text-[15px] font-medium text-text-muted">
+          <div className="space-y-1.5">
+            <label
+              htmlFor="bio"
+              className="text-[15px] font-medium text-text"
+            >
               Bio
             </label>
             <textarea
               id="bio"
               value={bio}
               maxLength={200}
-              rows={2}
+              rows={3}
               onChange={(e) => setBio(e.target.value)}
-              placeholder="Tell the arena who you are..."
-              className="w-full resize-none rounded-lg border border-border bg-surface-2 px-4 py-3 text-[15px] text-text placeholder:text-text-faint focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30"
+              placeholder="Tell the world who you are..."
+              className="w-full resize-none rounded-lg border border-border bg-surface px-4 py-3 text-[15px] text-text placeholder:text-text-faint focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
             />
-            <p className="text-right text-sm text-text-faint">{bio.length}/200</p>
+            <p className="text-right text-xs text-text-faint">
+              {bio.length}/200
+            </p>
           </div>
 
-          <div className="flex justify-end">
-            <Button onClick={saveProfile} loading={profileBusy} size="sm">
+          <div className="flex justify-end pt-2">
+            <Button onClick={saveProfile} loading={saveBusy} size="sm">
               Save changes
             </Button>
           </div>
         </div>
       </Card>
-
-      <ChangePasswordCard onDone={() => forceRelogin(setUser, queryClient, router)} />
-      <ChangeEmailCard currentEmail={user.email} onUpdated={(email) => patchUser({ email })} />
-      <DangerZoneCard onDeleted={() => forceRelogin(setUser, queryClient, router)} />
     </div>
   );
 }
 
-type Feedback = { tone: "success" | "danger" | "info"; text: string } | null;
+/* ─── Security Tab ────────────────────────────────────────────────────── */
 
-function forceRelogin(
-  setUser: (u: Me | null) => void,
-  queryClient: ReturnType<typeof useQueryClient>,
-  router: ReturnType<typeof useRouter>
-) {
-  setUser(null);
-  queryClient.clear();
-  router.replace("/login");
+function SecurityTab({
+  user,
+  patchUser,
+  onForceRelogin,
+}: {
+  user: Me;
+  patchUser: (p: Partial<Me>) => void;
+  onForceRelogin: () => void;
+}) {
+  return (
+    <div className="space-y-5">
+      {!user.oauthProvider && <ChangePasswordCard onDone={onForceRelogin} />}
+      <ChangeEmailCard
+        currentEmail={user.email}
+        onUpdated={(email) => patchUser({ email })}
+      />
+      <DangerZoneCard isOAuth={!!user.oauthProvider} onDeleted={onForceRelogin} />
+    </div>
+  );
 }
+
+/* ─── Change Password ─────────────────────────────────────────────────── */
 
 function ChangePasswordCard({ onDone }: { onDone: () => void }) {
   const [oldPassword, setOld] = useState("");
@@ -187,7 +338,10 @@ function ChangePasswordCard({ onDone }: { onDone: () => void }) {
         method: "POST",
         body: { oldPassword, newPassword },
       });
-      setMsg({ tone: "success", text: "Password changed. Signing you out..." });
+      setMsg({
+        tone: "success",
+        text: "Password changed. Signing you out...",
+      });
       setTimeout(onDone, 1200);
     } catch (err) {
       setMsg({ tone: "danger", text: errorMessage(err) });
@@ -197,10 +351,15 @@ function ChangePasswordCard({ onDone }: { onDone: () => void }) {
 
   return (
     <Card>
-      <div className="px-6 py-5">
-        <h2 className="text-lg font-semibold text-text">Password</h2>
-      </div>
-      <form onSubmit={submit} className="space-y-4 border-t border-border px-6 py-6">
+      <SectionTitle
+        icon={KeyRound}
+        title="Change password"
+        subtitle="Update your account password"
+      />
+      <form
+        onSubmit={submit}
+        className="space-y-4 border-t border-border px-6 py-6"
+      >
         {msg && <Alert tone={msg.tone}>{msg.text}</Alert>}
         <Input
           label="Current password"
@@ -210,7 +369,7 @@ function ChangePasswordCard({ onDone }: { onDone: () => void }) {
           onChange={(e) => setOld(e.target.value)}
           required
         />
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div className="grid gap-4 sm:grid-cols-2">
           <Input
             label="New password"
             type="password"
@@ -222,7 +381,7 @@ function ChangePasswordCard({ onDone }: { onDone: () => void }) {
             hint="At least 8 characters"
           />
           <Input
-            label="Confirm"
+            label="Confirm new password"
             type="password"
             autoComplete="new-password"
             value={confirm}
@@ -230,7 +389,7 @@ function ChangePasswordCard({ onDone }: { onDone: () => void }) {
             required
           />
         </div>
-        <div className="flex justify-end">
+        <div className="flex justify-end pt-2">
           <Button type="submit" loading={busy} size="sm">
             Update password
           </Button>
@@ -239,6 +398,8 @@ function ChangePasswordCard({ onDone }: { onDone: () => void }) {
     </Card>
   );
 }
+
+/* ─── Change Email ────────────────────────────────────────────────────── */
 
 function ChangeEmailCard({
   currentEmail,
@@ -258,9 +419,12 @@ function ChangeEmailCard({
     setMsg(null);
     setBusy(true);
     try {
-      await api("/user/email/change", { method: "POST", body: { newEmail } });
+      await api("/user/email/change", {
+        method: "POST",
+        body: { newEmail },
+      });
       setStep("verify");
-      setMsg({ tone: "info", text: `Code sent to ${newEmail}` });
+      setMsg({ tone: "info", text: `Verification code sent to ${newEmail}` });
     } catch (err) {
       setMsg({ tone: "danger", text: errorMessage(err) });
     } finally {
@@ -281,7 +445,7 @@ function ChangeEmailCard({
       setStep("request");
       setNewEmail("");
       setOtp("");
-      setMsg({ tone: "success", text: "Email updated." });
+      setMsg({ tone: "success", text: "Email updated successfully." });
     } catch (err) {
       setMsg({ tone: "danger", text: errorMessage(err) });
     } finally {
@@ -291,28 +455,35 @@ function ChangeEmailCard({
 
   return (
     <Card>
-      <div className="px-6 py-5">
-        <h2 className="text-lg font-semibold text-text">Email</h2>
-        <p className="text-sm text-text-faint">{currentEmail}</p>
-      </div>
+      <SectionTitle
+        icon={Mail}
+        title="Email address"
+        subtitle={currentEmail}
+      />
       {step === "request" ? (
-        <form onSubmit={requestChange} className="space-y-4 border-t border-border px-6 py-6">
+        <form
+          onSubmit={requestChange}
+          className="space-y-4 border-t border-border px-6 py-6"
+        >
           {msg && <Alert tone={msg.tone}>{msg.text}</Alert>}
           <Input
-            label="New email"
+            label="New email address"
             type="email"
             value={newEmail}
             onChange={(e) => setNewEmail(e.target.value)}
             required
           />
-          <div className="flex justify-end">
+          <div className="flex justify-end pt-2">
             <Button type="submit" loading={busy} size="sm">
-              <Mail className="size-3.5" /> Send code
+              <Mail className="size-4" /> Send verification code
             </Button>
           </div>
         </form>
       ) : (
-        <form onSubmit={verifyChange} className="space-y-4 border-t border-border px-6 py-6">
+        <form
+          onSubmit={verifyChange}
+          className="space-y-4 border-t border-border px-6 py-6"
+        >
           {msg && <Alert tone={msg.tone}>{msg.text}</Alert>}
           <Input
             label="Verification code"
@@ -324,17 +495,20 @@ function ChangeEmailCard({
             required
             className="font-mono tracking-[0.3em]"
           />
-          <div className="flex justify-between">
+          <div className="flex justify-between pt-2">
             <Button
               type="button"
               variant="ghost"
               size="sm"
-              onClick={() => { setStep("request"); setMsg(null); }}
+              onClick={() => {
+                setStep("request");
+                setMsg(null);
+              }}
             >
               Back
             </Button>
             <Button type="submit" loading={busy} size="sm">
-              Confirm
+              Verify & update
             </Button>
           </div>
         </form>
@@ -343,9 +517,12 @@ function ChangeEmailCard({
   );
 }
 
-function DangerZoneCard({ onDeleted }: { onDeleted: () => void }) {
+/* ─── Danger Zone ─────────────────────────────────────────────────────── */
+
+function DangerZoneCard({ isOAuth, onDeleted }: { isOAuth: boolean; onDeleted: () => void }) {
   const [confirming, setConfirming] = useState(false);
   const [password, setPassword] = useState("");
+  const [confirmText, setConfirmText] = useState("");
   const [msg, setMsg] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -354,7 +531,10 @@ function DangerZoneCard({ onDeleted }: { onDeleted: () => void }) {
     setMsg(null);
     setBusy(true);
     try {
-      await api("/user/account", { method: "DELETE", body: { password } });
+      await api("/user/account", {
+        method: "DELETE",
+        body: isOAuth ? { confirmText } : { password },
+      });
       onDeleted();
     } catch (err) {
       setMsg(errorMessage(err));
@@ -363,44 +543,83 @@ function DangerZoneCard({ onDeleted }: { onDeleted: () => void }) {
   }
 
   return (
-    <Card className="border-danger/20">
-      <div className="px-6 py-5">
-        <h2 className="text-lg font-semibold text-danger">Danger zone</h2>
+    <Card className="border-danger/30">
+      <div className="flex items-center gap-3 px-6 py-5">
+        <div className="flex size-9 items-center justify-center rounded-lg bg-danger/10">
+          <Trash2 className="size-4 text-danger" />
+        </div>
+        <div>
+          <h2 className="text-base font-semibold text-danger">Danger zone</h2>
+          <p className="text-sm text-text-faint">
+            Irreversible actions
+          </p>
+        </div>
       </div>
-      <div className="border-t border-border px-6 py-6">
+      <div className="border-t border-danger/20 px-6 py-6">
         {!confirming ? (
           <div className="flex items-center justify-between gap-4">
-            <p className="text-[15px] text-text-muted">
-              Permanently delete your account and all data.
-            </p>
-            <Button variant="danger" size="sm" onClick={() => setConfirming(true)}>
-              <Trash2 className="size-3.5" /> Delete
+            <div>
+              <p className="text-sm font-medium text-text">Delete account</p>
+              <p className="text-sm text-text-faint">
+                Permanently delete your account and all associated data.
+              </p>
+            </div>
+            <Button
+              variant="danger"
+              size="sm"
+              onClick={() => setConfirming(true)}
+            >
+              <Trash2 className="size-4" /> Delete
             </Button>
           </div>
         ) : (
-          <form onSubmit={deleteAccount} className="space-y-3">
+          <form onSubmit={deleteAccount} className="space-y-4">
             {msg && <Alert tone="danger">{msg}</Alert>}
-            <p className="text-[15px] text-text-muted">
-              Enter your password to confirm. This cannot be undone.
-            </p>
-            <Input
-              label="Password"
-              type="password"
-              autoComplete="current-password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
+            <div className="rounded-lg border border-danger/20 bg-danger/10 px-4 py-3">
+              <p className="text-sm text-danger">
+                This action is permanent and cannot be undone. All your data,
+                matches, and achievements will be deleted.
+              </p>
+            </div>
+            {isOAuth ? (
+              <Input
+                label={<>Type <span className="font-mono font-bold text-danger">DELETE</span> to confirm</>}
+                value={confirmText}
+                onChange={(e) => setConfirmText(e.target.value)}
+                placeholder="DELETE"
+                required
+              />
+            ) : (
+              <Input
+                label="Enter your password to confirm"
+                type="password"
+                autoComplete="current-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            )}
             <div className="flex justify-end gap-2">
               <Button
                 type="button"
                 variant="ghost"
                 size="sm"
-                onClick={() => { setConfirming(false); setPassword(""); setMsg(null); }}
+                onClick={() => {
+                  setConfirming(false);
+                  setPassword("");
+                  setConfirmText("");
+                  setMsg(null);
+                }}
               >
                 Cancel
               </Button>
-              <Button type="submit" variant="danger" size="sm" loading={busy}>
+              <Button
+                type="submit"
+                variant="danger"
+                size="sm"
+                loading={busy}
+                disabled={isOAuth && confirmText !== "DELETE"}
+              >
                 Delete permanently
               </Button>
             </div>

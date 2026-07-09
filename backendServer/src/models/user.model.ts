@@ -43,8 +43,19 @@ const userSchema = new mongoose.Schema<IUser>(
 
         password: {
             type: String,
-            required: true,
+            required: function (this: { oauthProvider?: string }) {
+                return !this.oauthProvider;
+            },
             select: false
+        },
+
+        oauthProvider: {
+            type: String,
+            enum: ["google", "github"],
+        },
+
+        oauthId: {
+            type: String,
         },
 
         avatar: {

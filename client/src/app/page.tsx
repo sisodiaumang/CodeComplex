@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { Swords, ArrowRight, Radio } from "lucide-react";
+import { ArrowRight, Radio } from "lucide-react";
+import { LogoMark } from "@/components/logo";
 import { MODE_COLORS, ELO_TIERS, type BattleType } from "@/lib/theme";
 import { useAuth } from "@/stores/auth-store";
 import { Button } from "@/components/ui";
@@ -31,15 +32,13 @@ export default function LandingPage() {
   }, [status, router]);
 
   return (
-    <div className="min-h-screen bg-white text-text">
+    <div className="min-h-screen bg-surface text-text">
       {/* Top bar */}
       <header className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
         <div className="flex items-center gap-2">
-          <span className="flex size-7 items-center justify-center rounded-lg bg-primary text-primary-fg">
-            <Swords className="size-3.5" />
-          </span>
+          <LogoMark size={28} />
           <span className="text-sm font-bold tracking-tight">
-            dev<span className="text-primary">Arena</span>
+            Dev<span className="text-primary">War</span>
           </span>
         </div>
         <div className="flex items-center gap-2">
@@ -84,7 +83,7 @@ export default function LandingPage() {
 
         {/* Room card mock */}
         <div className="relative">
-          <div className="rounded-lg border border-border bg-white shadow-lg">
+          <div className="rounded-lg border border-border bg-surface shadow-lg">
             <div className="flex items-center justify-between border-b border-border px-4 py-2.5">
               <span className="font-mono text-[11px] text-text-faint">
                 battle room
@@ -220,7 +219,7 @@ export default function LandingPage() {
           </Button>
         </Link>
         <p className="font-mono text-[11px] text-text-faint">
-          devArena — competitive engineering platform
+          DevWar — competitive engineering platform
         </p>
       </footer>
     </div>

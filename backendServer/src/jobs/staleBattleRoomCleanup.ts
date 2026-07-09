@@ -20,7 +20,7 @@ const startStaleBattleRoomCleanupJob = () => {
             
             logger.info(`Deleted ${result.deletedCount} stale battle rooms`);
         } catch (error) {
-            logger.error("Stale battle room cleanup job failed:", error);
+            logger.error(error as Error, "Stale battle room cleanup job failed");
         }
     });
 };

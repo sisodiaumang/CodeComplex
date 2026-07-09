@@ -8,7 +8,9 @@ import {
     joinTeamB,
     startBattle,
     leaveRoom,
-    deleteRoom
+    deleteRoom,
+    inviteToRoom,
+    getRoomInvitableFriends,
 } from "../controllers/battle.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 import { validateRequest } from "../middlewares/validate.middleware.js";
@@ -43,5 +45,9 @@ battleRouter.post("/:roomCode/team-b", validateRequest(joinTeamSchema), joinTeam
 
 // ── Battle Lifecycle ──────────────────────────
 battleRouter.post("/:roomCode/start", validateRequest(startBattleSchema), startBattle);
+
+// ── Invites ──────────────────────────────────
+battleRouter.get("/:roomCode/friends", getRoomInvitableFriends);
+battleRouter.post("/:roomCode/invite/:userId", inviteToRoom);
 
 export default battleRouter;

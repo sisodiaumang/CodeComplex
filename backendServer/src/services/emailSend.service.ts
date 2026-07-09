@@ -1,20 +1,24 @@
-import { Resend } from 'resend';
+import nodemailer from 'nodemailer';
 import { env } from '../config/env.js';
 import ApiError from '../utils/ApiError.js';
 
-const resend = new Resend(env.RESEND_API_KEY ?? "");
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: env.EMAIL_USER,
+        pass: env.EMAIL_PASS,
+    },
+});
 
-// In production the sandbox address silently drops all mail — fail fast
-// so a misconfigured deploy is caught at startup, not at the first OTP send.
-if (env.NODE_ENV === "production" && !env.EMAIL_FROM_ADDRESS) {
+if (env.NODE_ENV === "production" && (!env.EMAIL_USER || !env.EMAIL_PASS)) {
     throw new Error(
-        "[EmailService] EMAIL_FROM_ADDRESS must be set to a verified Resend sending domain in production. " +
-        "The default sandbox address (onboarding@resend.dev) does not deliver to real inboxes."
+        "[EmailService] EMAIL_USER and EMAIL_PASS must be set in production. " +
+        "Configure your SMTP credentials (e.g. Gmail app password) in the environment."
     );
 }
 
-const FROM_ADDRESS =  "onboarding@resend.dev";
-const APP_NAME = env.APP_NAME ?? 'DevArena';
+const FROM_ADDRESS = env.EMAIL_FROM_ADDRESS ?? env.EMAIL_USER ?? "noreply@devarena.dev";
+const APP_NAME = env.APP_NAME ?? 'DevWar';
 
 function buildVerificationHtml(otp: string): string {
     return `
@@ -33,31 +37,16 @@ function buildVerificationHtml(otp: string): string {
 
 /**
  * Sends a one-time verification code to the given email address.
- * Used for both EMAIL_VERIFICATION (signup) and EMAIL_CHANGE flows.
- *
- * FIX (I3): previously had no error handling — a Resend API-level failure
- * (returned as `{ error }`, not always a thrown exception) would pass
- * through silently. Callers in user_controllers.ts wrap this in try/catch,
- * but only get a bare SDK error with no context on which address/flow
- * failed. This now checks the response explicitly and re-throws with
- * enough context to log meaningfully upstream.
+ * Uses Nodemailer with Gmail SMTP.
  */
 async function sendVerificationMail(email: string, otp: string): Promise<void> {
     try {
-        const { error } = await resend.emails.send({
-            from: FROM_ADDRESS,
+        await transporter.sendMail({
+            from: `"${APP_NAME}" <${FROM_ADDRESS}>`,
             to: email,
             subject: `${APP_NAME} — Your verification code`,
             html: buildVerificationHtml(otp),
         });
-
-        if (error) {
-            throw new Error(
-                typeof error === "object" && error !== null && "message" in error
-                    ? String((error as { message: unknown }).message)
-                    : JSON.stringify(error)
-            );
-        }
     } catch (err) {
         const reason = err instanceof Error ? err.message : String(err);
         throw new ApiError(

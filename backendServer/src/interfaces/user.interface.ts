@@ -6,6 +6,9 @@ export interface IUser extends Document {
     email: string;
     password: string;
 
+    oauthProvider?: "google" | "github";
+    oauthId?: string;
+
     avatar: {
         profileImageURL:string,
         profileImagePublicId:string

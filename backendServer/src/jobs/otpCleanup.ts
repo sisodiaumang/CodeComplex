@@ -17,7 +17,7 @@ const startOtpCleanupJob = () => {
             
             logger.info(`Deleted ${result.deletedCount} expired OTPs`);
         } catch (error) {
-            logger.error("OTP cleanup job failed:", error);
+            logger.error(error as Error, "OTP cleanup job failed");
         }
     });
 };

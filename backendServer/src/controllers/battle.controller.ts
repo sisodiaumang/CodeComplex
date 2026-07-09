@@ -4,6 +4,9 @@ import { nanoid } from "nanoid";
 
 import BattleRoom from "../models/battleRoom.model.js";
 import Question from "../models/question.model.js";
+import Friendship from "../models/friendship.model.js";
+import User from "../models/user.model.js";
+import Notification from "../models/notification.model.js";
 import { io } from "../index.js";
 import { createMatchForRoom, MatchServiceError } from "../services/match.service.js";
 import { IBattleRoom } from "../interfaces/battleRoom.interface.js";
@@ -45,8 +48,8 @@ async function pickRandomQuestion(
 
     for (const topic of shuffled) {
         const questions = await Question.find({
-            category: topic,
-            difficulty,
+            category: topic as any,
+            difficulty: difficulty as any,
             isDeleted: { $ne: true },
             "battleConfig.enabled": true,
         })
@@ -55,7 +58,7 @@ async function pickRandomQuestion(
 
         if (questions.length > 0) {
             const pick = questions[Math.floor(Math.random() * questions.length)];
-            return pick.slug;
+            return pick.slug ?? null;
         }
     }
 
@@ -927,6 +930,122 @@ export const deleteRoom = async (
             success: true,
             message: "Room deleted"
         });
+    } catch (err) {
+        next(err);
+    }
+};
+
+// ─────────────────────────────────────────────
+// 9. POST /battle/:roomCode/invite/:userId — Invite friend to room
+// ─────────────────────────────────────────────
+
+export const inviteToRoom = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+): Promise<void> => {
+    try {
+        const senderId = req.user._id;
+        const { roomCode, userId: targetId } = req.params;
+
+        const room = await BattleRoom.findOne({ roomCode });
+        if (!room) {
+            res.status(404).json({ success: false, message: "Room not found" });
+            return;
+        }
+
+        if (room.status !== "WAITING") {
+            res.status(400).json({ success: false, message: "Room is no longer accepting players" });
+            return;
+        }
+
+        const senderIdStr = senderId.toString();
+        const inRoom =
+            room.teams.teamA.some((id) => id.toString() === senderIdStr) ||
+            room.teams.teamB.some((id) => id.toString() === senderIdStr);
+
+        if (!inRoom) {
+            res.status(403).json({ success: false, message: "You must be in the room to invite" });
+            return;
+        }
+
+        const target = await User.findById(targetId).select("_id username");
+        if (!target) {
+            res.status(404).json({ success: false, message: "User not found" });
+            return;
+        }
+
+        const friendship = await Friendship.findOne({
+            status: "ACCEPTED",
+            $or: [
+                { sender: senderId, receiver: targetId },
+                { sender: targetId, receiver: senderId },
+            ],
+        });
+
+        if (!friendship) {
+            res.status(403).json({ success: false, message: "You can only invite friends" });
+            return;
+        }
+
+        const notification = await Notification.create({
+            recipient: targetId,
+            sender: senderId,
+            type: "ROOM_INVITE",
+            title: "Battle Invite",
+            message: `You've been invited to join a battle!`,
+            relatedEntityId: room._id,
+            metadata: { roomCode },
+        });
+
+        io.to(`user:${targetId}`).emit("notification:new", notification);
+
+        res.status(200).json({ success: true, message: `Invite sent to ${target.username}` });
+    } catch (err) {
+        next(err);
+    }
+};
+
+// ─────────────────────────────────────────────
+// 10. GET /battle/:roomCode/friends — List friends available to invite
+// ─────────────────────────────────────────────
+
+export const getRoomInvitableFriends = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+): Promise<void> => {
+    try {
+        const userId = req.user._id;
+        const { roomCode } = req.params;
+
+        const room = await BattleRoom.findOne({ roomCode });
+        if (!room) {
+            res.status(404).json({ success: false, message: "Room not found" });
+            return;
+        }
+
+        const accepted = await Friendship.find({
+            status: "ACCEPTED",
+            $or: [{ sender: userId }, { receiver: userId }],
+        }).select("sender receiver");
+
+        const friendIds = accepted.map((f: any) =>
+            String(f.sender) === String(userId) ? f.receiver : f.sender
+        );
+
+        const inRoom = new Set([
+            ...room.teams.teamA.map((id) => id.toString()),
+            ...room.teams.teamB.map((id) => id.toString()),
+        ]);
+
+        const availableIds = friendIds.filter((id) => !inRoom.has(id.toString()));
+
+        const users = await User.find({ _id: { $in: availableIds } })
+            .select("_id username fullName avatar country")
+            .limit(30);
+
+        res.status(200).json({ success: true, data: users });
     } catch (err) {
         next(err);
     }

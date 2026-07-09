@@ -86,7 +86,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         ref={ref}
         id={inputId}
         className={cn(
-          "h-11 w-full rounded-lg border border-border bg-white px-4 text-[15px] text-text",
+          "h-11 w-full rounded-lg border border-border bg-surface px-4 text-[15px] text-text",
           "placeholder:text-text-faint",
           "focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20",
           "transition-colors",
@@ -125,7 +125,7 @@ export function Select({ className, label, id, children, ...props }: SelectProps
       <select
         id={selectId}
         className={cn(
-          "h-11 w-full appearance-none rounded-lg border border-border bg-white px-4 text-[15px] text-text",
+          "h-11 w-full appearance-none rounded-lg border border-border bg-surface px-4 text-[15px] text-text",
           "focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20",
           className
         )}
@@ -146,7 +146,7 @@ export function Card({
   return (
     <div
       className={cn(
-        "rounded-xl border border-border bg-white shadow-sm",
+        "rounded-xl border border-border bg-surface shadow-sm",
         className
       )}
       {...props}
@@ -255,7 +255,7 @@ export function Avatar({
       width={size}
       height={size}
       className={cn("shrink-0 rounded-full object-cover", className)}
-      style={{ width: size, height: size }}
+      style={{ width: size, height: size, minWidth: size, minHeight: size }}
     />
   ) : (
     <span

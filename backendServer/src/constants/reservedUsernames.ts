@@ -8,7 +8,7 @@ const RESERVED_USERNAMES: ReadonlySet<string> = new Set([
     // ── Profile / settings ──
     "profile", "settings", "avatar", "bio", "country", "preferences",
 
-    // ── Platform sections (DevArena domains) ──
+    // ── Platform sections (DevWar domains) ──
     "dsa", "frontend", "backend", "fullstack", "bug-fix", "bugfix",
     "prompt-war", "promptwar", "arena", "battle", "battles", "battleroom",
     "match", "matches", "matchmaking", "queue", "leaderboard",

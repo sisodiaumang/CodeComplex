@@ -26,6 +26,7 @@ export interface Me {
   country?: string;
   role?: "USER" | "ADMIN" | "MODERATOR" | "OWNER";
   isVerified?: boolean;
+  oauthProvider?: "google" | "github";
   createdAt?: string;
 }
 
@@ -139,6 +140,7 @@ export interface AppNotification {
   message: string;
   isRead: boolean;
   relatedEntityId?: string;
+  metadata?: Record<string, unknown>;
   createdAt: string;
 }
 

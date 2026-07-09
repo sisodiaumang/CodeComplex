@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
-import { Trophy, ChevronLeft, ChevronRight } from "lucide-react";
+import { Trophy, ChevronLeft, ChevronRight, Users } from "lucide-react";
 import { api } from "@/lib/api";
 import type { LeaderboardPage, LeaderboardPlayer } from "@/lib/types";
 import { unwrapList } from "@/lib/types";
@@ -30,11 +30,14 @@ function normalizePage(data: unknown): LeaderboardPage {
 export default function LeaderboardPage() {
   const [mode, setMode] = useState<BattleType>("DSA");
   const [page, setPage] = useState(1);
+  const [friendsOnly, setFriendsOnly] = useState(false);
+
+  const endpoint = friendsOnly ? "/leaderboard/friends" : "/leaderboard/global";
 
   const query = useQuery({
-    queryKey: ["leaderboard", mode, page],
+    queryKey: ["leaderboard", mode, page, friendsOnly],
     queryFn: () =>
-      api<unknown>(`/leaderboard/global?battleType=${mode}&page=${page}&limit=50`),
+      api<unknown>(`${endpoint}?battleType=${mode}&page=${page}&limit=50`),
   });
 
   const board = normalizePage(query.data);
@@ -44,8 +47,8 @@ export default function LeaderboardPage() {
     <div className="space-y-6">
       <h1 className="text-2xl font-semibold text-text">Leaderboard</h1>
 
-      {/* Mode tabs */}
-      <div className="flex flex-wrap gap-2" role="tablist" aria-label="Battle mode">
+      {/* Mode tabs + friends filter */}
+      <div className="flex flex-wrap items-center gap-2" role="tablist" aria-label="Battle mode">
         {MODES.map((m) => {
           const color = MODE_COLORS[m];
           const active = m === mode;
@@ -67,6 +70,21 @@ export default function LeaderboardPage() {
             </button>
           );
         })}
+
+        <div className="ml-auto">
+          <button
+            onClick={() => { setFriendsOnly((v) => !v); setPage(1); }}
+            className={cn(
+              "flex items-center gap-1.5 rounded-lg border px-3.5 py-1.5 text-[15px] font-medium transition-colors",
+              friendsOnly
+                ? "border-primary bg-primary/10 text-primary"
+                : "border-border text-text-muted hover:border-border-strong hover:text-text"
+            )}
+          >
+            <Users className="size-4" />
+            Friends
+          </button>
+        </div>
       </div>
 
       <Card>
@@ -74,10 +92,18 @@ export default function LeaderboardPage() {
           <Spinner />
         ) : board.players.length === 0 ? (
           <EmptyState
-            icon={<Trophy className="size-6" />}
-            title="No ranked players yet"
-            message={`Be the first to play a ranked ${MODE_COLORS[mode].label} match.`}
-            action={<Link href="/battle"><Button size="sm">Start a battle</Button></Link>}
+            icon={friendsOnly ? <Users className="size-6" /> : <Trophy className="size-6" />}
+            title={friendsOnly ? "No friends ranked yet" : "No ranked players yet"}
+            message={
+              friendsOnly
+                ? "Add friends to see how you rank against them!"
+                : `Be the first to play a ranked ${MODE_COLORS[mode].label} match.`
+            }
+            action={
+              friendsOnly
+                ? <Link href="/friends"><Button size="sm">Find friends</Button></Link>
+                : <Link href="/battle"><Button size="sm">Start a battle</Button></Link>
+            }
           />
         ) : (
           <div className="overflow-x-auto">

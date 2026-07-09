@@ -22,7 +22,7 @@ const code = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "DevArena — Competitive Engineering Platform",
+  title: "DevWar — Competitive Engineering Platform",
   description:
     "Battle other developers in real-time DSA, bug-fix, backend, frontend and prompt-war challenges.",
 };
@@ -36,7 +36,15 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${heading.variable} ${body.variable} ${code.variable}`}
+      suppressHydrationWarning
     >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem("devwar-theme");var d=(t==="dark")||(t!=="light"&&matchMedia("(prefers-color-scheme:dark)").matches);if(d)document.documentElement.setAttribute("data-theme","dark")}catch(e){}})()`,
+          }}
+        />
+      </head>
       <body className="antialiased">
         <Providers>{children}</Providers>
       </body>

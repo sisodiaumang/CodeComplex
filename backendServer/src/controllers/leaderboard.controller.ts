@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 
 import UserProfile from "../models/userProfile.model.js";
 import User from "../models/user.model.js";
+import Friendship from "../models/friendship.model.js";
 
 import { BattleType } from "../interfaces/battleRoom.interface.js";
 
@@ -88,18 +89,22 @@ async function fetchLeaderboardPage(params: {
 
     const userById = new Map(users.map((u: any) => [u._id.toString(), u]));
 
-    const players = top.map((row: any, idx: number) => {
+    const players: any[] = [];
+    let rank = skip;
+    for (const row of top) {
         const user = userById.get(row.userId.toString());
-        return {
-            rank: skip + idx + 1,
-            username: user?.username,
-            avatar: user?.avatar?.profileImageURL,
-            country: user?.country,
-            rating: row.ratings?.[category] ?? 1200,
+        if (!user) continue;
+        rank++;
+        players.push({
+            rank,
+            username: user.username,
+            avatar: user.avatar?.profileImageURL,
+            country: user.country,
+            rating: (row.ratings as any)?.[category] ?? 1200,
             wins: 0,
             losses: 0,
-        };
-    });
+        });
+    }
 
     return { players, page, totalPages, total };
 }
@@ -196,8 +201,64 @@ export const getCollegeLeaderboard = async (req: Request, res: Response, next: N
     return res.status(501).json({ success: false, message: "College leaderboard is not implemented yet." });
 };
 
-export const getFriendsLeaderboard = async (_req: Request, res: Response) => {
-    return res.status(501).json({ success: false, message: "Friends leaderboard is not implemented yet." });
+export const getFriendsLeaderboard = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const battleType = normalizeBattleType(req.query.battleType);
+        if (!battleType) {
+            return res.status(400).json({ success: false, message: "battleType is required" });
+        }
+
+        const category = getCategory(battleType);
+        const userId = req.user._id.toString();
+
+        const friendships = await Friendship.find({
+            status: "ACCEPTED",
+            $or: [{ sender: req.user._id }, { receiver: req.user._id }],
+        }).select("sender receiver");
+
+        const friendIds = friendships.map((f: any) => {
+            const s = f.sender.toString();
+            const r = f.receiver.toString();
+            return s === userId ? f.receiver : f.sender;
+        });
+
+        friendIds.push(req.user._id);
+
+        const page = Math.max(DEFAULT_PAGE, parseInt(String(req.query.page ?? DEFAULT_PAGE), 10) || DEFAULT_PAGE);
+        const limit = Math.min(MAX_LIMIT, Math.max(1, parseInt(String(req.query.limit ?? DEFAULT_LIMIT), 10) || DEFAULT_LIMIT));
+        const skip = (page - 1) * limit;
+
+        const total = await UserProfile.countDocuments({ userId: { $in: friendIds } });
+        const totalPages = Math.ceil(total / limit);
+
+        const top = await UserProfile.find({ userId: { $in: friendIds } })
+            .sort({ [`ratings.${category}`]: -1 } as any)
+            .skip(skip)
+            .limit(limit)
+            .select("userId ratings");
+
+        const userIds = top.map((t: any) => t.userId);
+        const users = await User.find({ _id: { $in: userIds } }).select("username avatar country");
+        const userById = new Map(users.map((u: any) => [u._id.toString(), u]));
+
+        const players = top.map((row: any, idx: number) => {
+            const user = userById.get(row.userId.toString());
+            return {
+                rank: skip + idx + 1,
+                username: user?.username,
+                avatar: user?.avatar?.profileImageURL,
+                country: user?.country,
+                rating: row.ratings?.[category] ?? 1200,
+            };
+        });
+
+        return res.status(200).json({
+            success: true,
+            data: { page, totalPages, total, players },
+        });
+    } catch (err) {
+        next(err);
+    }
 };
 
 export const getWeeklyLeaderboard = async (_req: Request, res: Response) => {

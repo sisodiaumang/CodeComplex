@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import type { Me } from "@/lib/types";
 import { useAuth } from "@/stores/auth-store";
+import { initTheme } from "@/stores/theme-store";
 
 function AuthBootstrap({ children }: { children: React.ReactNode }) {
   const setUser = useAuth((s) => s.setUser);
@@ -28,6 +29,13 @@ function AuthBootstrap({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
+function ThemeBootstrap({ children }: { children: React.ReactNode }) {
+  useEffect(() => {
+    initTheme();
+  }, []);
+  return <>{children}</>;
+}
+
 export default function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
     () =>
@@ -44,7 +52,9 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthBootstrap>{children}</AuthBootstrap>
+      <ThemeBootstrap>
+        <AuthBootstrap>{children}</AuthBootstrap>
+      </ThemeBootstrap>
     </QueryClientProvider>
   );
 }

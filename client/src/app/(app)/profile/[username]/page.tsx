@@ -2,7 +2,8 @@
 
 import { use } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Award, CalendarDays } from "lucide-react";
+import { Award, CalendarDays, Pencil } from "lucide-react";
+import Link from "next/link";
 import { api } from "@/lib/api";
 import {
   avatarUrl,
@@ -16,6 +17,7 @@ import { cn, countryFlag, formatDate } from "@/lib/utils";
 import { useAuth } from "@/stores/auth-store";
 import {
   Avatar,
+  Button,
   Card,
   EmptyState,
   Spinner,
@@ -135,6 +137,13 @@ export default function ProfilePage({
               <CalendarDays className="size-4" />
               {formatDate(profile.createdAt)}
             </span>
+            {isMe && (
+              <Link href="/settings">
+                <Button variant="outline" size="sm">
+                  <Pencil className="size-3.5" /> Edit Profile
+                </Button>
+              </Link>
+            )}
           </div>
         </div>
         {profile.bio && (

@@ -17,7 +17,7 @@ const startRefreshTokenCleanupJob = () => {
             
             logger.info(`Deleted ${result.deletedCount} expired refresh tokens`);
         } catch (error) {
-            logger.error("Refresh token cleanup job failed:", error);
+            logger.error(error as Error, "Refresh token cleanup job failed");
         }
     });
 };

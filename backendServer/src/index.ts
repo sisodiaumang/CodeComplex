@@ -37,6 +37,7 @@ import notificationRouter from "./routes/notification.router.js";
 import achievementRouter from "./routes/achievement.router.js";
 import leaderboardRouter from "./routes/leaderboard.router.js";
 import spectateRouter from "./routes/spectate.router.js";
+import oauthRouter from "./routes/oauth.router.js";
 
 
 
@@ -130,6 +131,7 @@ app.use("/api/v1/notifications", notificationRouter);
 app.use("/api/v1/achievements", achievementRouter);
 app.use("/api/v1/leaderboard", leaderboardRouter);
 app.use("/api/v1/spectate", spectateRouter);
+app.use("/api/v1/auth", oauthRouter);
 
 
 
@@ -171,6 +173,11 @@ io.use(socketAuthMiddleware);
 
 io.on("connection", (socket) => {
     console.log(` User Connected : ${socket.id}`);
+
+    const userId = socket.data.user?._id;
+    if (userId) {
+        socket.join(`user:${userId}`);
+    }
 
     registerBattleChatHandlers(io, socket);
     registerBattleVoiceHandlers(io, socket);

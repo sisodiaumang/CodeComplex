@@ -25,6 +25,8 @@ export interface INotification extends Document {
 
     relatedEntityId?: Types.ObjectId;
 
+    metadata?: Record<string, unknown>;
+
     createdAt: Date;
     updatedAt: Date;
 }

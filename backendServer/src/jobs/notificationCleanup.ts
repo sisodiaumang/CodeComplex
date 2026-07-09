@@ -19,7 +19,7 @@ const startNotificationCleanupJob = () => {
             
             logger.info(`Deleted ${result.deletedCount} old notifications`);
         } catch (error) {
-            logger.error("Notification cleanup job failed:", error);
+            logger.error(error as Error, "Notification cleanup job failed");
         }
     });
 };

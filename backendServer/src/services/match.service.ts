@@ -163,7 +163,7 @@ export async function createMatchForRoom(
     } catch (err) {
         // Roll the claim back so the room isn't left STARTED with no match.
         await BattleRoom.updateOne(
-            { _id: room._id, status: "STARTED", matchId: { $in: [null, undefined] } },
+            { _id: room._id, status: "STARTED", matchId: { $in: [null, undefined] } } as any,
             { $set: { status: "WAITING" } }
         );
         throw err;

@@ -12,6 +12,7 @@ import OTP, { MAX_OTP_ATTEMPTS } from "../models/otp.model.js";
 import { generateOTP } from "../services/otp.service.js";
 import { sendVerificationMail } from "../services/emailSend.service.js";
 import UserProfile from "../models/userProfile.model.js";
+import Friendship from "../models/friendship.model.js";
 import { OtpPurpose } from "../interfaces/otp.interface.js";
 import { uploadOnCloudinary, deleteCloudinary } from "../utils/cloudinary.js";
 import countries from "../constants/countries.js";
@@ -794,17 +795,19 @@ const verifyEmailChange = asyncHandler(async (req, res) => {
 
 const deleteAccount = asyncHandler(async (req, res) => {
 
-    const { password } = req.body;
-
-    if (!password) throw new ApiError(400, "Password is required to delete your account");
+    const { password, confirmText } = req.body;
 
     const user = await User.findById(req.user!._id).select("+password");
 
     if (!user) throw new ApiError(404, "User not found");
 
-    const isCorrect = await user.comparePassword(password);
-
-    if (!isCorrect) throw new ApiError(401, "Incorrect password");
+    if (user.oauthProvider) {
+        if (confirmText !== "DELETE") throw new ApiError(400, "Type DELETE to confirm");
+    } else {
+        if (!password) throw new ApiError(400, "Password is required to delete your account");
+        const isCorrect = await user.comparePassword(password);
+        if (!isCorrect) throw new ApiError(401, "Incorrect password");
+    }
 
     // Delete Cloudinary avatar if it's not the default
     if (
@@ -814,11 +817,13 @@ const deleteAccount = asyncHandler(async (req, res) => {
         await deleteCloudinary(user.avatar.profileImagePublicId);
     }
 
-    // Hard delete — remove user + their refresh token + any pending OTPs
+    // Hard delete — remove user + all associated data
     await Promise.all([
         User.deleteOne({ _id: user._id }),
+        UserProfile.deleteOne({ userId: user._id }),
+        Friendship.deleteMany({ $or: [{ sender: user._id }, { receiver: user._id }] }),
         RefreshToken.deleteOne({ userId: user._id }),
-        OTP.deleteMany({ email: user.email })
+        OTP.deleteMany({ email: user.email }),
     ]);
 
     const cookieOptions = getCookieOptions();
@@ -856,6 +861,7 @@ const getMe = asyncHandler(async (req, res) => {
                 country: user.country,
                 bio: user.bio,
                 isVerified: user.isVerified,
+                oauthProvider: user.oauthProvider,
                 lastSeen: user.lastSeen,
                 createdAt: user.createdAt
             },

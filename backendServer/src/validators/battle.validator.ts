@@ -16,7 +16,7 @@ export const joinRoomSchema = z.object({
     }).strict(),
     body: z.object({
         teamPreference: z.enum(["NONE", "A", "B"]).optional().default("NONE"),
-    }).strict(),
+    }).strict().optional().default({}),
 });
 
 export const getRoomDetailsSchema = z.object({

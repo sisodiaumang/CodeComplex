@@ -4,6 +4,7 @@ import Friendship from "../models/friendship.model.js";
 import User from "../models/user.model.js";
 import UserProfile from "../models/userProfile.model.js";
 import Notification from "../models/notification.model.js";
+import { io } from "../index.js";
 
 import { IFriendship, FriendshipStatus } from "../interfaces/friendship.interface.js";
 
@@ -89,7 +90,7 @@ export const sendFriendRequest = async (req: Request, res: Response, next: NextF
         // Best-effort: a notification failure must not roll back an already
         // persisted friend request (which would surface as a misleading 500).
         try {
-            await Notification.create({
+            const notification = await Notification.create({
                 recipient: receiverId,
                 sender: senderId,
                 type: "FRIEND_REQUEST",
@@ -97,6 +98,7 @@ export const sendFriendRequest = async (req: Request, res: Response, next: NextF
                 message: "You have a new friend request",
                 relatedEntityId: friend._id,
             });
+            io.to(`user:${receiverId}`).emit("notification:new", notification);
         } catch (notifyErr) {
             console.error("[Friendship] Failed to create FRIEND_REQUEST notification:", notifyErr);
         }
@@ -133,7 +135,7 @@ export const acceptFriendRequest = async (req: Request, res: Response, next: Nex
 // compute other (sender/receiver friendly)
         const other = String(fr.sender) === String(userId) ? fr.receiver : fr.sender;
 
-        await Notification.create({
+        const notification = await Notification.create({
             recipient: other as any,
             sender: userId,
             type: "FRIEND_ACCEPTED",
@@ -141,6 +143,7 @@ export const acceptFriendRequest = async (req: Request, res: Response, next: Nex
             message: "Your friend request was accepted",
             relatedEntityId: fr._id,
         });
+        io.to(`user:${other}`).emit("notification:new", notification);
 
         return res.status(200).json({ success: true, message: "Friend request accepted" });
     } catch (err) {
@@ -365,21 +368,14 @@ export const getFriendshipStatus = async (req: Request, res: Response, next: Nex
 
 export const searchFriends = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const userId = req.user._id;
         const q = String(req.query.q ?? "").trim();
         if (!q) return res.status(400).json({ success: false, message: "q is required" });
 
-        const accepted = await Friendship.find({
-            status: "ACCEPTED",
-            $or: [{ sender: userId }, { receiver: userId }],
-        }).select("sender receiver");
-
-        const friendIds = accepted.map((f: any) => (String(f.sender) === String(userId) ? f.receiver : f.sender));
-
         const users = await User.find({
-            _id: { $in: friendIds },
             username: { $regex: q, $options: "i" },
-        }).select("_id username fullName avatar country isOnline");
+        })
+            .select("_id username fullName avatar country")
+            .limit(20);
 
         return res.status(200).json({ success: true, data: users });
     } catch (err) {

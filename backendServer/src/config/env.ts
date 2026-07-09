@@ -52,9 +52,14 @@ export const env = {
 
   XAI_API_KEY: z.string().min(1).optional().parse(getEnv("XAI_API_KEY")),
 
-  RESEND_API_KEY: z.string().min(1).optional().parse(getEnv("RESEND_API_KEY")),
+  GOOGLE_CLIENT_ID: z.string().min(1).optional().parse(getEnv("GOOGLE_CLIENT_ID")),
+  GOOGLE_CLIENT_SECRET: z.string().min(1).optional().parse(getEnv("GOOGLE_CLIENT_SECRET")),
+  GITHUB_CLIENT_ID: z.string().min(1).optional().parse(getEnv("GITHUB_CLIENT_ID")),
+  GITHUB_CLIENT_SECRET: z.string().min(1).optional().parse(getEnv("GITHUB_CLIENT_SECRET")),
+  OAUTH_CALLBACK_URL: z.string().min(1).default("http://localhost:8000/api/v1/auth").parse(getEnv("OAUTH_CALLBACK_URL")),
+  CLIENT_URL: z.string().min(1).default("http://localhost:3000").parse(getEnv("CLIENT_URL")),
   EMAIL_FROM_ADDRESS: z.string().min(1).optional().parse(getEnv("EMAIL_FROM_ADDRESS")),
-  APP_NAME: z.string().min(1).default("DevArena").parse(getEnv("APP_NAME")),
+  APP_NAME: z.string().min(1).default("DevWar").parse(getEnv("APP_NAME")),
   EMAIL_USER: z.string().min(1).optional().parse(getEnv("EMAIL_USER")),
   EMAIL_PASS: z.string().min(1).optional().parse(getEnv("EMAIL_PASS")),
 

@@ -16,24 +16,66 @@ const MODES = Object.entries(MODE_COLORS) as [
   (typeof MODE_COLORS)[BattleType],
 ][];
 
-const DSA_TOPICS = [
-  { key: "ARRAY", label: "Arrays" },
-  { key: "STRING", label: "Strings" },
-  { key: "LINKED_LIST", label: "Linked List" },
-  { key: "STACK", label: "Stack" },
-  { key: "QUEUE", label: "Queue" },
-  { key: "HEAP", label: "Heap" },
-  { key: "TREE", label: "Trees" },
-  { key: "GRAPH", label: "Graphs" },
-  { key: "BINARY_SEARCH", label: "Binary Search" },
-  { key: "SORTING", label: "Sorting" },
-  { key: "GREEDY", label: "Greedy" },
-  { key: "DP", label: "DP" },
-  { key: "BACKTRACKING", label: "Backtracking" },
-  { key: "BIT_MANIPULATION", label: "Bit Manipulation" },
-  { key: "MATH", label: "Math" },
-  { key: "TRIE", label: "Trie" },
-] as const;
+const TOPICS_BY_MODE: Record<BattleType, { key: string; label: string }[]> = {
+  DSA: [
+    { key: "ARRAY", label: "Arrays" },
+    { key: "STRING", label: "Strings" },
+    { key: "LINKED_LIST", label: "Linked List" },
+    { key: "STACK", label: "Stack" },
+    { key: "QUEUE", label: "Queue" },
+    { key: "HEAP", label: "Heap" },
+    { key: "TREE", label: "Trees" },
+    { key: "GRAPH", label: "Graphs" },
+    { key: "BINARY_SEARCH", label: "Binary Search" },
+    { key: "SORTING", label: "Sorting" },
+    { key: "GREEDY", label: "Greedy" },
+    { key: "DP", label: "DP" },
+    { key: "BACKTRACKING", label: "Backtracking" },
+    { key: "BIT_MANIPULATION", label: "Bit Manipulation" },
+    { key: "MATH", label: "Math" },
+    { key: "TRIE", label: "Trie" },
+  ],
+  BUG_FIX: [
+    { key: "DSA", label: "DSA" },
+    { key: "FRONTEND", label: "Frontend" },
+    { key: "BACKEND", label: "Backend" },
+    { key: "FULLSTACK", label: "Fullstack" },
+  ],
+  FRONTEND: [
+    { key: "HTML_CSS", label: "HTML / CSS" },
+    { key: "JAVASCRIPT", label: "JavaScript" },
+    { key: "REACT", label: "React" },
+    { key: "TYPESCRIPT", label: "TypeScript" },
+    { key: "RESPONSIVE", label: "Responsive Design" },
+    { key: "ACCESSIBILITY", label: "Accessibility" },
+    { key: "ANIMATION", label: "Animation" },
+  ],
+  BACKEND: [
+    { key: "REST_API", label: "REST API" },
+    { key: "DATABASE", label: "Database" },
+    { key: "AUTH", label: "Authentication" },
+    { key: "NODE_JS", label: "Node.js" },
+    { key: "CACHING", label: "Caching" },
+    { key: "WEBSOCKETS", label: "WebSockets" },
+    { key: "FILE_HANDLING", label: "File Handling" },
+  ],
+  FULLSTACK: [
+    { key: "FRONTEND", label: "Frontend" },
+    { key: "BACKEND", label: "Backend" },
+    { key: "DATABASE", label: "Database" },
+    { key: "AUTH", label: "Authentication" },
+    { key: "DEPLOYMENT", label: "Deployment" },
+    { key: "API_INTEGRATION", label: "API Integration" },
+  ],
+  PROMPT_WAR: [
+    { key: "TEXT_GENERATION", label: "Text Generation" },
+    { key: "CODE_GENERATION", label: "Code Generation" },
+    { key: "REASONING", label: "Reasoning" },
+    { key: "CREATIVE", label: "Creative" },
+    { key: "DATA_EXTRACTION", label: "Data Extraction" },
+    { key: "SUMMARIZATION", label: "Summarization" },
+  ],
+};
 
 const DIFFICULTIES = ["EASY", "MEDIUM", "HARD"] as const;
 type Difficulty = (typeof DIFFICULTIES)[number];
@@ -151,7 +193,7 @@ export default function BattlePage() {
                     <button
                       key={key}
                       type="button"
-                      onClick={() => setBattleType(key)}
+                      onClick={() => { setBattleType(key); setSelectedTopics([]); }}
                       className={cn(
                         "rounded-md border px-3.5 py-1.5 text-[15px] font-medium transition-colors",
                         active
@@ -177,7 +219,7 @@ export default function BattlePage() {
                 Topics <span className="font-normal text-text-faint">(pick at least 3)</span>
               </label>
               <div className="flex flex-wrap gap-2">
-                {DSA_TOPICS.map(({ key, label }) => {
+                {(TOPICS_BY_MODE[battleType] ?? []).map(({ key, label }) => {
                   const active = selectedTopics.includes(key);
                   return (
                     <button
@@ -283,7 +325,7 @@ export default function BattlePage() {
 
       {/* Active room bar */}
       {activeRoom && activeRoom.roomCode && (
-        <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-white shadow-[0_-2px_8px_rgba(0,0,0,0.06)] lg:left-64">
+        <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-surface shadow-[0_-2px_8px_rgba(0,0,0,0.06)] lg:left-64">
           <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-4">
             <div className="flex items-center gap-4">
               <span className="relative flex size-2.5">

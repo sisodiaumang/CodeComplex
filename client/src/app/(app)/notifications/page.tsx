@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Bell,
@@ -12,6 +14,7 @@ import {
   Users,
   Award,
   Info,
+  Play,
 } from "lucide-react";
 import { api, errorMessage } from "@/lib/api";
 import {
@@ -39,6 +42,7 @@ const ICONS: Record<NotificationType, typeof Bell> = {
 };
 
 export default function NotificationsPage() {
+  const router = useRouter();
   const queryClient = useQueryClient();
 
   const query = useQuery({
@@ -70,6 +74,17 @@ export default function NotificationsPage() {
     onSuccess: invalidate,
   });
 
+  const [joinError, setJoinError] = useState<string | null>(null);
+
+  const joinRoom = useMutation({
+    mutationFn: (roomCode: string) =>
+      api(`/battle/${roomCode}/join`, { method: "POST", body: {} }),
+    onSuccess: (_data, roomCode) => {
+      router.push(`/battle/${roomCode}`);
+    },
+    onError: (err) => setJoinError(errorMessage(err)),
+  });
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -94,6 +109,7 @@ export default function NotificationsPage() {
       </div>
 
       {markAll.isError && <Alert tone="danger">{errorMessage(markAll.error)}</Alert>}
+      {joinError && <Alert tone="danger">{joinError}</Alert>}
 
       <Card>
         {query.isLoading ? (
@@ -136,6 +152,20 @@ export default function NotificationsPage() {
                   </div>
 
                   <div className="flex shrink-0 items-center gap-1">
+                    {n.type === "ROOM_INVITE" && n.metadata?.roomCode && (
+                      <Button
+                        variant="primary"
+                        size="sm"
+                        className="h-7 px-2.5 text-xs"
+                        onClick={() => {
+                          if (!n.isRead) markRead.mutate(n._id);
+                          joinRoom.mutate(n.metadata!.roomCode as string);
+                        }}
+                        loading={joinRoom.isPending}
+                      >
+                        <Play className="size-3" /> Join
+                      </Button>
+                    )}
                     {!n.isRead && (
                       <button
                         onClick={() => markRead.mutate(n._id)}
