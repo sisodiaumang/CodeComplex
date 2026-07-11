@@ -4,12 +4,12 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Swords, KeyRound, DoorOpen, ArrowRight } from "lucide-react";
+import { Swords, KeyRound, DoorOpen, ArrowRight, Users, Play } from "lucide-react";
 import { api, errorMessage } from "@/lib/api";
 import type { BattleRoom } from "@/lib/types";
 import { MODE_COLORS, type BattleType } from "@/lib/theme";
 import { cn } from "@/lib/utils";
-import { Alert, Button, Card, Input, ModeBadge } from "@/components/ui";
+import { Alert, Badge, Button, Card, Input, ModeBadge } from "@/components/ui";
 
 const MODES = Object.entries(MODE_COLORS) as [
   BattleType,
@@ -81,9 +81,9 @@ const DIFFICULTIES = ["EASY", "MEDIUM", "HARD"] as const;
 type Difficulty = (typeof DIFFICULTIES)[number];
 
 const DIFF_COLORS: Record<Difficulty, string> = {
-  EASY: "text-emerald-600 border-emerald-300 bg-emerald-50",
-  MEDIUM: "text-amber-600 border-amber-300 bg-amber-50",
-  HARD: "text-red-600 border-red-300 bg-red-50",
+  EASY: "text-emerald-600 dark:text-emerald-400 border-emerald-300 dark:border-emerald-500/40 bg-emerald-50 dark:bg-emerald-500/15",
+  MEDIUM: "text-amber-600 dark:text-amber-400 border-amber-300 dark:border-amber-500/40 bg-amber-50 dark:bg-amber-500/15",
+  HARD: "text-red-600 dark:text-red-400 border-red-300 dark:border-red-500/40 bg-red-50 dark:bg-red-500/15",
 };
 
 export default function BattlePage() {
@@ -92,8 +92,10 @@ export default function BattlePage() {
 
   const [battleType, setBattleType] = useState<BattleType>("DSA");
   const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
+  const [lobbyMode, setLobbyMode] = useState<"RANKED" | "VERSUS" | "SOLO">("RANKED");
   const [difficulty, setDifficulty] = useState<Difficulty>("MEDIUM");
   const [teamSize, setTeamSize] = useState(1);
+  const [isPrivate, setIsPrivate] = useState(false);
   const [createError, setCreateError] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
 
@@ -132,19 +134,29 @@ export default function BattlePage() {
   async function onCreate(e: React.FormEvent) {
     e.preventDefault();
     setCreateError(null);
-    if (selectedTopics.length < 3) {
-      setCreateError("Select at least 3 topics");
+    const minTopics = lobbyMode === "RANKED" ? 3 : 1;
+    if (selectedTopics.length < minTopics) {
+      setCreateError(`Select at least ${minTopics} topic${minTopics > 1 ? "s" : ""}`);
       return;
     }
     setCreating(true);
+    const isPublicMatch = !isPrivate && lobbyMode !== "SOLO";
+    const endpoint = isPublicMatch ? "/battle/matchmaking" : "/battle";
     try {
-      const room = await api<BattleRoom | { room: BattleRoom }>("/battle", {
+      const room = await api<BattleRoom | { room: BattleRoom }>(endpoint, {
         method: "POST",
-        body: { battleType, difficulty, topics: selectedTopics, maxTeamSize: teamSize },
+        body: {
+          battleType,
+          difficulty,
+          topics: selectedTopics,
+          maxTeamSize: lobbyMode === "SOLO" ? 1 : teamSize,
+          isRanked: lobbyMode === "RANKED",
+          isSolo: lobbyMode === "SOLO",
+          isPrivate: lobbyMode === "SOLO" ? true : isPrivate,
+        },
       });
-      const code =
-        (room as BattleRoom).roomCode ??
-        (room as { room: BattleRoom }).room?.roomCode;
+      const dataObj = (room as any).data ?? room;
+      const code = dataObj.roomCode;
       if (!code) throw new Error("Room created but no code returned.");
       router.push(`/battle/${code}`);
     } catch (err) {
@@ -213,10 +225,116 @@ export default function BattlePage() {
               </div>
             </div>
 
+            {/* Match Type */}
+            <div>
+              <label className="mb-2.5 block text-xs font-semibold text-text uppercase tracking-wider font-mono">Match Type</label>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {[
+                  {
+                    key: "RANKED",
+                    title: "Ranked Battle",
+                    desc: "Affects rating points & stats. Select at least 3 topics.",
+                    icon: Swords,
+                    accent: "border-primary bg-primary/5 text-primary shadow-[0_0_12px_rgba(255,107,0,0.1)]",
+                    iconBg: "bg-primary/10 text-primary"
+                  },
+                  {
+                    key: "VERSUS",
+                    title: "Versus Practice",
+                    desc: "No rating change. Select 1 or more topics.",
+                    icon: Users,
+                    accent: "border-primary bg-primary/5 text-primary shadow-[0_0_12px_rgba(255,107,0,0.1)]",
+                    iconBg: "bg-primary/10 text-primary"
+                  },
+                  {
+                    key: "SOLO",
+                    title: "Solo Practice",
+                    desc: "Practice coding solo. Start instantly. Select 1 or more topics.",
+                    icon: Play,
+                    accent: "border-primary bg-primary/5 text-primary shadow-[0_0_12px_rgba(255,107,0,0.1)]",
+                    iconBg: "bg-primary/10 text-primary"
+                  }
+                ].map((item) => {
+                  const Icon = item.icon;
+                  const active = lobbyMode === item.key;
+                  return (
+                    <button
+                      key={item.key}
+                      type="button"
+                      onClick={() => setLobbyMode(item.key as any)}
+                      className={cn(
+                        "group flex flex-col gap-3 rounded-xl border p-4 text-left transition-all hover:scale-[1.01] duration-200",
+                        active
+                          ? item.accent
+                          : "border-border/60 bg-surface/30 text-text-muted hover:border-border hover:bg-surface-2"
+                      )}
+                    >
+                      <div className="flex items-center justify-between w-full">
+                        <div className={cn(
+                          "flex size-8 items-center justify-center rounded-lg transition-colors",
+                          active ? item.iconBg : "bg-surface-2 text-text-faint group-hover:text-text-muted"
+                        )}>
+                          <Icon className="size-4.5" />
+                        </div>
+                        {active && (
+                          <span className="size-2 rounded-full bg-primary animate-pulse" />
+                        )}
+                      </div>
+                      <div className="space-y-0.5">
+                        <span className="font-bold text-xs text-text">{item.title}</span>
+                        <p className="text-[10px] text-text-faint leading-relaxed mt-0.5">
+                          {item.desc}
+                        </p>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Room Visibility */}
+            {lobbyMode !== "SOLO" && (
+              <div>
+                <label className="mb-2.5 block text-xs font-semibold text-text uppercase tracking-wider font-mono">Room Visibility</label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setIsPrivate(false)}
+                    className={cn(
+                      "group flex flex-col gap-1 rounded-xl border p-4 text-left transition-all hover:scale-[1.01] duration-200",
+                      !isPrivate
+                        ? "border-primary bg-primary/5 text-primary shadow-[0_0_12px_rgba(255,107,0,0.1)]"
+                        : "border-border/60 bg-surface/30 text-text-muted hover:border-border hover:bg-surface-2"
+                    )}
+                  >
+                    <span className="font-bold text-xs text-text">Public Matchmaking</span>
+                    <span className="text-[10px] text-text-faint leading-relaxed mt-0.5">
+                      Enter a queue to automatically find and play with online players matching your settings.
+                    </span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsPrivate(true)}
+                    className={cn(
+                      "group flex flex-col gap-1 rounded-xl border p-4 text-left transition-all hover:scale-[1.01] duration-200",
+                      isPrivate
+                        ? "border-primary bg-primary/5 text-primary shadow-[0_0_12px_rgba(255,107,0,0.1)]"
+                        : "border-border/60 bg-surface/30 text-text-muted hover:border-border hover:bg-surface-2"
+                    )}
+                  >
+                    <span className="font-bold text-xs text-text">Private Custom Room</span>
+                    <span className="text-[10px] text-text-faint leading-relaxed mt-0.5">
+                      Create a private lobby. Play custom games only with friends using room code or invites.
+                    </span>
+                  </button>
+                </div>
+              </div>
+            )}
+
             {/* Topics */}
             <div>
               <label className="mb-2 block text-[15px] font-medium text-text">
-                Topics <span className="font-normal text-text-faint">(pick at least 3)</span>
+                Topics <span className="font-normal text-text-faint">{lobbyMode === "RANKED" ? "(pick at least 3)" : "(pick at least 1)"}</span>
               </label>
               <div className="flex flex-wrap gap-2">
                 {(TOPICS_BY_MODE[battleType] ?? []).map(({ key, label }) => {
@@ -238,9 +356,9 @@ export default function BattlePage() {
                   );
                 })}
               </div>
-              {selectedTopics.length > 0 && selectedTopics.length < 3 && (
+              {selectedTopics.length > 0 && selectedTopics.length < (lobbyMode === "RANKED" ? 3 : 1) && (
                 <p className="mt-2 text-sm text-danger">
-                  {3 - selectedTopics.length} more needed
+                  {(lobbyMode === "RANKED" ? 3 : 1) - selectedTopics.length} more needed
                 </p>
               )}
             </div>
@@ -268,33 +386,35 @@ export default function BattlePage() {
             </div>
 
             {/* Team size */}
-            <div>
-              <label className="mb-2 block text-[15px] font-medium text-text">Team size</label>
-              <div className="flex gap-1.5">
-                {[1, 2, 3, 4, 5].map((n) => (
-                  <button
-                    key={n}
-                    type="button"
-                    onClick={() => setTeamSize(n)}
-                    className={cn(
-                      "size-10 rounded-lg border font-mono text-[15px] font-medium transition-colors",
-                      teamSize === n
-                        ? "border-primary bg-primary-subtle text-primary shadow-sm"
-                        : "border-border text-text-muted hover:border-border-strong"
-                    )}
-                  >
-                    {n}
-                  </button>
-                ))}
+            {lobbyMode !== "SOLO" && (
+              <div>
+                <label className="mb-2 block text-[15px] font-medium text-text">Team size</label>
+                <div className="flex gap-1.5">
+                  {[1, 2, 3, 4].map((n) => (
+                    <button
+                      key={n}
+                      type="button"
+                      onClick={() => setTeamSize(n)}
+                      className={cn(
+                        "size-10 rounded-lg border font-mono text-[15px] font-medium transition-colors",
+                        teamSize === n
+                          ? "border-primary bg-primary-subtle text-primary shadow-sm"
+                          : "border-border text-text-muted hover:border-border-strong"
+                      )}
+                    >
+                      {n}
+                    </button>
+                  ))}
+                </div>
+                <p className="mt-2 text-[15px] text-text-faint">
+                  {teamSize === 1 ? "1v1 duel" : `${teamSize}v${teamSize}`}
+                </p>
               </div>
-              <p className="mt-2 text-[15px] text-text-faint">
-                {teamSize === 1 ? "1v1 duel" : `${teamSize}v${teamSize}`}
-              </p>
-            </div>
+            )}
 
             <Button type="submit" loading={creating}>
               <Swords className="size-4" />
-              Create room
+              {!isPrivate && lobbyMode !== "SOLO" ? "Find Match" : "Create room"}
             </Button>
           </form>
         </Card>
@@ -325,7 +445,7 @@ export default function BattlePage() {
 
       {/* Active room bar */}
       {activeRoom && activeRoom.roomCode && (
-        <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-surface shadow-[0_-2px_8px_rgba(0,0,0,0.06)] lg:left-64">
+        <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-surface shadow-[0_-2px_8px_rgba(0,0,0,0.06)]">
           <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-4">
             <div className="flex items-center gap-4">
               <span className="relative flex size-2.5">
@@ -338,6 +458,18 @@ export default function BattlePage() {
                   {activeRoom.roomCode}
                 </span>
                 <ModeBadge type={activeRoom.battleType} />
+                <Badge
+                  className={cn(
+                    "border font-medium",
+                    activeRoom.isSolo
+                      ? "border-blue-500/20 bg-blue-500/10 text-blue-600"
+                      : activeRoom.isRanked !== false
+                        ? "border-amber-500/20 bg-amber-500/10 text-amber-600"
+                        : "border-purple-500/20 bg-purple-500/10 text-purple-600"
+                  )}
+                >
+                  {activeRoom.isSolo ? "Solo Practice" : activeRoom.isRanked !== false ? "Ranked" : "Practice"}
+                </Badge>
                 {activeRoom.difficulty && (
                   <span className="text-[15px] text-text-faint">{activeRoom.difficulty}</span>
                 )}

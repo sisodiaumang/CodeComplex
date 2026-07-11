@@ -1,0 +1,279 @@
+{
+  "_id": "delete-head-of-dll",
+  "title": "Delete Head of DLL",
+  "slug": "delete-head-of-dll",
+  "difficulty": "Easy",
+  "category": "ARRAY",
+  "subCategory": "Doubly LL Basics",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 10,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "Linked List",
+      "Doubly LL Basics"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "Easy",
+      "Basic"
+    ],
+    "keywords": [
+      "DLL",
+      "Delete Head"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given a doubly linked list, delete the head node and return the modified list. If the list is empty, return an empty list. If the list has only one node, return an empty list after deletion. The input list is represented as a sequence of node values, and the output should be the modified list after deletion.",
+    "inputFormat": "The first line contains an integer N, the number of nodes in the list. The second line contains N space-separated integers representing the node values.",
+    "outputFormat": "The output should be a sequence of node values after deletion, one value per line, preceded by a line containing the count of nodes in the modified list.",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "N",
+        "type": "integer",
+        "min": 0,
+        "max": 10000,
+        "description": "Number of nodes in the list"
+      }
+    ],
+    "examples": [
+      {
+        "input": "5\n1 2 3 4 5",
+        "output": "4\r\n2\r\n3\r\n4\r\n5",
+        "explanation": "The head node with value 1 is deleted, and the modified list has 4 nodes with values 2, 3, 4, and 5."
+      },
+      {
+        "input": "1\n5",
+        "output": "0",
+        "explanation": "The list has only one node, which is deleted, resulting in an empty list."
+      },
+      {
+        "input": "0",
+        "output": "0",
+        "explanation": "The input list is empty, so the output is also an empty list."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "start by understanding the structure of a doubly linked list, which has both 'next' and 'prev' pointers"
+    },
+    {
+      "order": 2,
+      "text": "consider the case when the list has only one node, and think about how you can modify the 'head' and 'tail' pointers accordingly"
+    },
+    {
+      "order": 3,
+      "text": "if the list has more than one node, you'll need to update the 'next' pointer of the node that comes after the head"
+    },
+    {
+      "order": 4,
+      "text": "you'll also need to update the 'prev' pointer of the node that comes after the head, to point to the new head of the list"
+    },
+    {
+      "order": 5,
+      "text": "the key insight is to realize that you don't need to traverse the entire list to delete the head, you can do it in constant time"
+    }
+  ],
+  "editorial": {
+    "title": "Efficient Deletion of Head Node in a Doubly Linked List",
+    "intuition": "The problem requires deleting the head of a doubly linked list. The brute force approach involves shifting all elements one position to the left, effectively removing the head. However, this is inefficient and can be improved by simply returning the next node as the new head.",
+    "bruteForce": "The brute force solution is correct but slow because it requires iterating over the entire list to shift elements, resulting in a time complexity of O(n). This approach is unnecessary and can be optimized.",
+    "betterSolution": "A more efficient approach is to recognize that deleting the head node only requires updating the head reference to point to the next node, reducing the time complexity.",
+    "optimalSolution": "The optimal solution involves checking for edge cases where the list is empty or contains only one node. If the list has more than one node, it simply returns the number of remaining nodes and prints the elements starting from the second node, effectively deleting the head. This approach has a time complexity of O(n) and a space complexity of O(n) due to the input storage.",
+    "proofOfCorrectness": "The correctness of the optimal solution can be proven by considering the edge cases and the general case. For an empty list or a list with one node, returning 0 is correct. For a list with more than one node, returning the number of remaining nodes and printing the elements starting from the second node correctly deletes the head node.",
+    "dryRun": "A dry run of the optimal solution involves iterating over the input list, checking for edge cases, and then printing the number of remaining nodes and the elements starting from the second node.",
+    "commonMistakes": [
+      "Failing to handle edge cases where the list is empty or contains only one node",
+      "Incorrectly shifting elements instead of simply updating the head reference",
+      "Not considering the time and space complexity of the solution",
+      "Failing to iterate over the input list correctly",
+      "Not checking for invalid input"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nstruct Node {\n    int data;\n    Node* next;\n    Node* prev;\n    Node(int value) : data(value), next(nullptr), prev(nullptr) {}\n};\n\nclass DoublyLinkedList {\npublic:\n    Node* head;\n    DoublyLinkedList() : head(nullptr) {}\n    void push(int new_data);\n    void printList();\n    void deleteHead();\n};\n\nvoid DoublyLinkedList::push(int new_data) {\n    Node* new_node = new Node(new_data);\n    new_node->next = head;\n    if (head != nullptr)\n        head->prev = new_node;\n    head = new_node;\n}\n\nvoid DoublyLinkedList::printList() {\n    Node* node = head;\n    while (node != nullptr) {\n        cout << node->data << endl;\n        node = node->next;\n    }\n}\n\nvoid DoublyLinkedList::deleteHead() {\n    if (head == nullptr)\n        return;\n    Node* temp = head;\n    head = head->next;\n    if (head != nullptr)\n        head->prev = nullptr;\n    delete temp;\n}\n\nint main() {\n    int n;\n    cin >> n;\n    DoublyLinkedList dll;\n    for (int i = 0; i < n; i++) {\n        int data;\n        cin >> data;\n        dll.push(data);\n    }\n    dll.deleteHead();\n    cout << (dll.head ? to_string(--n) : \"0\") << endl;\n    dll.printList();\n    return 0;\n}\n",
+    "java": "import java.util.Scanner;\n\nclass Node {\n    int data;\n    Node next;\n    Node prev;\n    public Node(int data) {\n        this.data = data;\n        this.next = null;\n        this.prev = null;\n    }\n}\n\nclass DoublyLinkedList {\n    Node head;\n    public void push(int new_data) {\n        Node new_node = new Node(new_data);\n        new_node.next = head;\n        if (head != null)\n            head.prev = new_node;\n        head = new_node;\n    }\n    public void printList() {\n        Node node = head;\n        while (node != null) {\n            System.out.println(node.data);\n            node = node.next;\n        }\n    }\n    public void deleteHead() {\n        if (head == null)\n            return;\n        Node temp = head;\n        head = head.next;\n        if (head != null)\n            head.prev = null;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        DoublyLinkedList dll = new DoublyLinkedList();\n        for (int i = 0; i < n; i++) {\n            int data = scanner.nextInt();\n            dll.push(data);\n        }\n        dll.deleteHead();\n        System.out.println(dll.head != null ? n - 1 : 0);\n        dll.printList();\n    }\n}\n",
+    "python": "class Node:\n    def __init__(self, data=None):\n        self.data = data\n        self.next = None\n        self.prev = None\n\nclass DoublyLinkedList:\n    def __init__(self):\n        self.head = None\n\n    def push(self, new_data):\n        new_node = Node(new_data)\n        new_node.next = self.head\n        if self.head is not None:\n            self.head.prev = new_node\n        self.head = new_node\n\n    def printList(self):\n        node = self.head\n        while node:\n            print(node.data)\n            node = node.next\n\n    def deleteHead(self):\n        if self.head is None:\n            return\n        temp = self.head\n        self.head = self.head.next\n        if self.head is not None:\n            self.head.prev = None\n\nif __name__ == '__main__':\n    n = int(input())\n    dll = DoublyLinkedList()\n    for _ in range(n):\n        data = int(input()) if n == 1 else int(input().split()[0])\n        dll.push(data)\n    dll.deleteHead()\n    print(n - 1 if dll.head else 0)\n    dll.printList()\n",
+    "javascript": "class Node {\n    constructor(data) {\n        this.data = data;\n        this.next = null;\n        this.prev = null;\n    }\n}\n\nclass DoublyLinkedList {\n    constructor() {\n        this.head = null;\n    }\n    push(new_data) {\n        let new_node = new Node(new_data);\n        new_node.next = this.head;\n        if (this.head !== null)\n            this.head.prev = new_node;\n        this.head = new_node;\n    }\n    printList() {\n        let node = this.head;\n        while (node !== null) {\n            console.log(node.data);\n            node = node.next;\n        }\n    }\n    deleteHead() {\n        if (this.head === null)\n            return;\n        let temp = this.head;\n        this.head = this.head.next;\n        if (this.head !== null)\n            this.head.prev = null;\n    }\n}\n\nlet input = process.stdin;\nlet n = parseInt(input.readLine());\nlet dll = new DoublyLinkedList();\nfor (let i = 0; i < n; i++) {\n    let data = parseInt(input.readLine());\n    dll.push(data);\n}\ndll.deleteHead();\nconsole.log(dll.head ? n - 1 : 0);\ndll.printList();\n"
+  },
+  "functionSignature": {
+    "cpp": "void deleteHead()",
+    "java": "public void deleteHead()",
+    "python": "def deleteHead(self):",
+    "javascript": "deleteHead()"
+  },
+  "solutions": {
+    "python": "\nimport sys\nit = iter(sys.stdin.read().split())\nn = int(next(it))\nnums = [int(next(it)) for _ in range(n)]\nif n == 0:\n    print(0)\nelif n == 1:\n    print(0)\nelse:\n    print(n - 1)\n    for i in range(1, n):\n        print(nums[i])\n",
+    "cpp": "\n#include <bits/stdc++.h>\nusing namespace std;\nint main(){\n    int n;\n    if(!(cin >> n)) return 0;\n    vector<int> nums(n);\n    for(int i = 0; i < n; i++) cin >> nums[i];\n    if(n == 0){\n        cout << 0 << endl;\n    } else if(n == 1){\n        cout << 0 << endl;\n    } else {\n        cout << n - 1 << endl;\n        for(int i = 1; i < n; i++) cout << nums[i] << endl;\n    }\n    return 0;\n}\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample",
+      "input": "5\n1 2 3 4 5",
+      "output": "4\r\n2\r\n3\r\n4\r\n5",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint",
+      "input": "1\n0",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "max_constraint",
+      "input": "1\n1000000000",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "max_constraint"
+    },
+    {
+      "id": "boundary",
+      "input": "3\n-1 0 1",
+      "output": "2\r\n0\r\n1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    },
+    {
+      "id": "duplicate",
+      "input": "6\n1 1 1 1 1 1",
+      "output": "5\r\n1\r\n1\r\n1\r\n1\r\n1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "duplicate"
+    },
+    {
+      "id": "sorted",
+      "input": "6\n1 2 3 4 5 6",
+      "output": "5\r\n2\r\n3\r\n4\r\n5\r\n6",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sorted"
+    },
+    {
+      "id": "reverse_sorted",
+      "input": "6\n6 5 4 3 2 1",
+      "output": "5\r\n5\r\n4\r\n3\r\n2\r\n1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "reverse_sorted"
+    },
+    {
+      "id": "negative",
+      "input": "5\n-5 -4 -3 -2 -1",
+      "output": "4\r\n-4\r\n-3\r\n-2\r\n-1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "negative"
+    },
+    {
+      "id": "zero",
+      "input": "5\n0 0 0 0 0",
+      "output": "4\r\n0\r\n0\r\n0\r\n0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "zero"
+    },
+    {
+      "id": "one",
+      "input": "2\n1 1",
+      "output": "1\r\n1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "one"
+    },
+    {
+      "id": "repeated",
+      "input": "8\n2 2 2 2 3 3 3 3",
+      "output": "7\r\n2\r\n2\r\n2\r\n3\r\n3\r\n3\r\n3",
+      "isVisible": false,
+      "weight": 1,
+      "category": "repeated"
+    },
+    {
+      "id": "large_random",
+      "input": "10\n309 -772 -949 518 -437 -499 -543 -715 508 -791",
+      "output": "9\r\n-772\r\n-949\r\n518\r\n-437\r\n-499\r\n-543\r\n-715\r\n508\r\n-791",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    },
+    {
+      "id": "adversarial",
+      "input": "12\n385 516 827 116 -822 209 -136 -935 -939 -809 -553 -524",
+      "output": "11\r\n516\r\n827\r\n116\r\n-822\r\n209\r\n-136\r\n-935\r\n-939\r\n-809\r\n-553\r\n-524",
+      "isVisible": false,
+      "weight": 1,
+      "category": "adversarial"
+    },
+    {
+      "id": "random_13",
+      "input": "21\n6 9 -10 7 -4 10 7 3 -3 4 8 -2 -10 -5 3 0 -2 -6 -4 0 -7",
+      "output": "20\r\n9\r\n-10\r\n7\r\n-4\r\n10\r\n7\r\n3\r\n-3\r\n4\r\n8\r\n-2\r\n-10\r\n-5\r\n3\r\n0\r\n-2\r\n-6\r\n-4\r\n0\r\n-7",
+      "isVisible": false,
+      "weight": 1,
+      "category": "random"
+    },
+    {
+      "id": "random_14",
+      "input": "22\n-8 2 -7 1 1 9 -2 -9 4 7 -7 2 -8 7 -1 10 9 1 8 -4 -8 -9",
+      "output": "21\r\n2\r\n-7\r\n1\r\n1\r\n9\r\n-2\r\n-9\r\n4\r\n7\r\n-7\r\n2\r\n-8\r\n7\r\n-1\r\n10\r\n9\r\n1\r\n8\r\n-4\r\n-8\r\n-9",
+      "isVisible": false,
+      "weight": 1,
+      "category": "random"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

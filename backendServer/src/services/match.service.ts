@@ -89,10 +89,13 @@ export async function createMatchForRoom(
     }
 
     const teamAFull = room.teams.teamA.length === room.teamSize;
-    const teamBFull = room.teams.teamB.length === room.teamSize;
+    const teamBFull = room.isSolo ? true : (room.teams.teamB.length === room.teamSize);
 
     if (!teamAFull || !teamBFull) {
-        throw new MatchServiceError(400, "Both teams must be full before starting");
+        throw new MatchServiceError(
+            400,
+            room.isSolo ? "Your team must be full before starting" : "Both teams must be full before starting"
+        );
     }
 
     // Guard against double-start (duplicate client request, or the host
@@ -291,6 +294,11 @@ export async function settleMatchAsWon(
     match.status = "COMPLETED";
     match.endedAt = new Date();
     await match.save();
+
+    // BattleRoom uses "FINISHED" (different enum from Match)
+    await BattleRoom.findByIdAndUpdate(match.battleRoomId, {
+        status: "FINISHED"
+    });
 
     // applyRankedRatings already no-ops for non-RANKED matches and never
     // throws (it catches and logs internally) — safe to await directly.

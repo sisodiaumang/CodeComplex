@@ -1,0 +1,289 @@
+{
+  "_id": "xor-of-numbers-in-given-range",
+  "title": "XOR of Numbers in Given Range",
+  "slug": "xor-of-numbers-in-given-range",
+  "difficulty": "Medium",
+  "category": "STRING",
+  "subCategory": "Interview Problems",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 300,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "Bit Manipulation",
+      "Prefix Sum"
+    ],
+    "patterns": [
+      "Prefix XOR",
+      "Range XOR"
+    ],
+    "prerequisites": [
+      "Bitwise XOR",
+      "Prefix Sum"
+    ],
+    "variants": [],
+    "tags": [
+      "Bit Manipulation",
+      "Interview Problem",
+      "Medium"
+    ],
+    "keywords": [
+      "XOR",
+      "Range",
+      "Bit Manipulation",
+      "Prefix"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "Given a range [left, right] where 1 <= left <= right <= 4 * 10^4, return the XOR of all numbers in the given range. The XOR operation is a binary operation that takes two bits and produces an output of 1 if the bits are different, and 0 if they are the same. For example, 5 XOR 3 is 6. The goal is to find the XOR of all integers from left to right (inclusive) without iterating over the entire range, optimizing for large ranges.",
+    "inputFormat": "2\nleft\nright",
+    "outputFormat": "result",
+    "notes": "The input values are provided one per line, and the output should be a single line with the result.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "left",
+        "type": "integer",
+        "min": 1,
+        "max": 40000,
+        "description": "The left boundary of the range (inclusive)."
+      },
+      {
+        "variable": "right",
+        "type": "integer",
+        "min": 1,
+        "max": 40000,
+        "description": "The right boundary of the range (inclusive)."
+      }
+    ],
+    "examples": [
+      {
+        "input": "2\n5\n3",
+        "output": "0",
+        "explanation": "The XOR of numbers from 5 to 3 is 5 XOR 4 XOR 3. Calculating: 5 XOR 4 = 1, then 1 XOR 3 = 2."
+      },
+      {
+        "input": "10\n1\n10",
+        "output": "0",
+        "explanation": "The XOR of numbers from 1 to 10 is 1 XOR 2 XOR 3 XOR 4 XOR 5 XOR 6 XOR 7 XOR 8 XOR 9 XOR 10. Using properties of XOR, we can find a pattern or use prefix XOR."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Think about the properties of XOR operation, specifically that XOR of a number with itself is 0 and XOR of a number with 0 is the number itself."
+    },
+    {
+      "order": 2,
+      "text": "Consider how you can use these properties to calculate the XOR of a range of numbers without iterating over the entire range."
+    },
+    {
+      "order": 3,
+      "text": "Recall that XOR operation is commutative and associative, meaning that the order in which you perform the operations does not matter."
+    },
+    {
+      "order": 4,
+      "text": "Think about how you can use the fact that XOR of a range of numbers can be broken down into the XOR of smaller ranges, and that the XOR of a number with 0 is the number itself."
+    },
+    {
+      "order": 5,
+      "text": "The key to solving this problem lies in understanding the pattern of XOR of consecutive numbers, and how you can use this pattern to calculate the XOR of a given range without iterating over the entire range."
+    }
+  ],
+  "editorial": {
+    "title": "XOR of Numbers in a Range: From Brute Force to a Constant‑Time Formula",
+    "intuition": "The XOR of a consecutive block of integers behaves like a repeating pattern of length four.  If you write out the XORs from 0 up to n, the results cycle every four numbers: 0,1,n+1,n.  This observation lets us collapse a whole interval into just two prefix XORs.",
+    "bruteForce": "A straightforward approach is to iterate from left to right, maintaining a running XOR.  While this works, it touches every integer in the interval, leading to O(right‑left+1) time.  With the maximum bounds of 40 000, the loop is fast in practice, but the algorithm’s linear complexity is unnecessary and would become a bottleneck for larger limits.",
+    "betterSolution": "The key insight is that XOR is associative and its prefix can be expressed in closed form.  By computing the XOR of all numbers from 0 to n in O(1) using the remainder of n modulo 4, we can obtain the XOR over [left,right] as xor_upto(right) ^ xor_upto(left‑1).  This reduces the problem to a handful of arithmetic operations.",
+    "optimalSolution": "The optimal solution runs in constant time and uses constant extra space.  It relies on the fact that the XOR of the first n integers repeats every four values, allowing us to compute each prefix in O(1).  The final answer is the XOR of two such prefixes, which yields the XOR of the desired interval.",
+    "proofOfCorrectness": "Let F(n) denote the XOR of all integers from 0 to n.  By induction on n, one can show that F(n) equals n when n≡0 (mod 4), 1 when n≡1, n+1 when n≡2, and 0 when n≡3.  For any interval [l,r], the XOR of its elements equals F(r)⊕F(l−1) because every number less than l cancels out in the XOR of the two prefixes.  Therefore the algorithm returns exactly the XOR of all numbers between left and right inclusive.",
+    "dryRun": "Example: left=3, right=6.  F(6)=6 (since 6≡2→6+1=7? actually 6≡2→6+1=7, but modulo 4 gives 2 so F(6)=7).  F(2)=2 (2≡2→2+1=3).  XOR: 7⊕3=4, which matches 3⊕4⊕5⊕6=4.",
+    "commonMistakes": [
+      "Assuming the pattern starts at 1 instead of 0, leading to off‑by‑one errors.",
+      "Using the wrong modulus condition (e.g., mixing up 0‑based and 1‑based remainders).",
+      "Neglecting to handle the case left=0, which would require computing xor_upto(-1).",
+      "Implementing the prefix function incorrectly, e.g., returning n+1 for n≡0 instead of n."
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nlong long solve(int left, int right) {\n    // TODO: implement efficient XOR calculation\n    return 0LL;\n}\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int left, right;\n    if(!(cin >> left)) return 0;\n    if(!(cin >> right)) return 0;\n    cout << solve(left, right) << \"\\n\";\n    return 0;\n}",
+    "java": "import java.io.*;\nimport java.util.*;\n\npublic class Main {\n    public static long solve(int left, int right) {\n        // TODO: implement efficient XOR calculation\n        return 0L;\n    }\n\n    public static void main(String[] args) throws IOException {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        StringTokenizer st = new StringTokenizer(br.readLine());\n        int left = Integer.parseInt(st.nextToken());\n        st = new StringTokenizer(br.readLine());\n        int right = Integer.parseInt(st.nextToken());\n        System.out.println(solve(left, right));\n    }\n}",
+    "python": "import sys\n\ndef solve():\n    # TODO: implement efficient XOR calculation\n    pass\n\nif __name__ == \"__main__\":\n    data = sys.stdin.read().strip().split()\n    if len(data) >= 2:\n        left = int(data[0])\n        right = int(data[1])\n        # placeholder call; replace with actual implementation\n        result = 0\n        print(result)\n    else:\n        # insufficient input\n        pass",
+    "javascript": "const readline = require('readline');\nconst rl = readline.createInterface({\n    input: process.stdin,\n    output: process.stdout,\n    terminal: false\n});\nlet lines = [];\nrl.on('line', line => {\n    lines.push(line.trim());\n    if (lines.length === 2) {\n        rl.close();\n    }\n});\nrl.on('close', () => {\n    const left = parseInt(lines[0], 10);\n    const right = parseInt(lines[1], 10);\n    const result = solve(left, right);\n    console.log(result);\n});\n\nfunction solve(left, right) {\n    // TODO: implement efficient XOR calculation\n    return 0;\n}"
+  },
+  "functionSignature": {
+    "cpp": "long long solve(int left, int right);",
+    "java": "public static long solve(int left, int right);",
+    "python": "def solve():",
+    "javascript": "function solve(left, right);"
+  },
+  "solutions": {
+    "python": "import sys\nit = iter(sys.stdin.read().split())\nleft = int(next(it))\nright = int(next(it))\n\ndef xor_upto(n: int) -> int:\n    # XOR of all numbers from 0 to n\n    r = n % 4\n    if r == 0:\n        return n\n    if r == 1:\n        return 1\n    if r == 2:\n        return n + 1\n    return 0\n\nresult = xor_upto(right) ^ xor_upto(left - 1)\nprint(result)\n",
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\nlong long xorUpto(long long n){\n    switch(n & 3LL){\n        case 0: return n;\n        case 1: return 1;\n        case 2: return n+1;\n        default: return 0;\n    }\n}\nint main(){\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    long long left, right;\n    if(!(cin>>left)) return 0;\n    if(!(cin>>right)) return 0;\n    long long result = xorUpto(right) ^ xorUpto(left-1);\n    cout<<result;\n    return 0;\n}\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.2
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "2\n5\n3",
+      "output": "0",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "10\n1\n10",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint",
+      "input": "2\n1\n1",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "max_constraint",
+      "input": "2\n40000\n40000",
+      "output": "40001",
+      "isVisible": false,
+      "weight": 1,
+      "category": "max_constraint"
+    },
+    {
+      "id": "boundary_1",
+      "input": "2\n1\n2",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    },
+    {
+      "id": "boundary_2",
+      "input": "2\n39999\n40000",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    },
+    {
+      "id": "duplicate",
+      "input": "2\n5\n5",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "duplicate"
+    },
+    {
+      "id": "sorted_2",
+      "input": "2\n10\n20",
+      "output": "10",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sorted"
+    },
+    {
+      "id": "reverse_sorted",
+      "input": "2\n20\n10",
+      "output": "21",
+      "isVisible": false,
+      "weight": 1,
+      "category": "reverse_sorted"
+    },
+    {
+      "id": "reverse_sorted_2",
+      "input": "2\n2\n1",
+      "output": "2",
+      "isVisible": false,
+      "weight": 1,
+      "category": "reverse_sorted"
+    },
+    {
+      "id": "large_random_0",
+      "input": "2\n7297\n8116",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    },
+    {
+      "id": "large_random_1",
+      "input": "2\n18025\n26049",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    },
+    {
+      "id": "large_random_2",
+      "input": "2\n14629\n19201",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    },
+    {
+      "id": "large_random_3",
+      "input": "2\n6718\n12415",
+      "output": "6718",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    },
+    {
+      "id": "large_random_4",
+      "input": "2\n38699\n39563",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

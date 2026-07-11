@@ -38,6 +38,7 @@ import achievementRouter from "./routes/achievement.router.js";
 import leaderboardRouter from "./routes/leaderboard.router.js";
 import spectateRouter from "./routes/spectate.router.js";
 import oauthRouter from "./routes/oauth.router.js";
+import adminRouter from "./routes/admin.router.js";
 
 
 
@@ -65,14 +66,25 @@ app.use(helmet());
 app.use(compression());
 
 // Rate limiting
-const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100, // limit each IP to 100 requests per windowMs
-    message: "Too many requests from this IP, please try again later",
-    standardHeaders: true,
-    legacyHeaders: false,
-});
-app.use(limiter);
+if (env.NODE_ENV === "production") {
+    const limiter = rateLimit({
+        windowMs: 15 * 60 * 1000, // 15 minutes
+        max: 100, // limit each IP to 100 requests per windowMs
+        message: "Too many requests from this IP, please try again later",
+        standardHeaders: true,
+        legacyHeaders: false,
+    });
+    app.use(limiter);
+} else {
+    const devLimiter = rateLimit({
+        windowMs: 15 * 60 * 1000, // 15 minutes
+        max: 10000, // very generous limit in development to avoid EADDRINUSE / fetch locks
+        message: "Too many requests from this IP in development, please try again later",
+        standardHeaders: true,
+        legacyHeaders: false,
+    });
+    app.use(devLimiter);
+}
 
 // Prevent HTTP Parameter Pollution
 app.use(hpp());
@@ -104,7 +116,7 @@ app.use(
 app.get("/", (_, res) => {
     res.status(200).json({
         success: true,
-        message: "DevWar API Running 🚀"
+        message: "CodeComplex API Running 🚀"
     });
 });
 
@@ -132,6 +144,7 @@ app.use("/api/v1/achievements", achievementRouter);
 app.use("/api/v1/leaderboard", leaderboardRouter);
 app.use("/api/v1/spectate", spectateRouter);
 app.use("/api/v1/auth", oauthRouter);
+app.use("/api/v1/admin", adminRouter);
 
 
 

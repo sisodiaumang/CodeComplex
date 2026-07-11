@@ -16,7 +16,8 @@ type RatingCategory =
     | "backend"
     | "fullstack"
     | "promptWar"
-    | "team";
+    | "team"
+    | "bugFix";
 
 // Maps Match.battleType → UserProfile.ratings key
 const BATTLE_TYPE_TO_CATEGORY: Record<string, RatingCategory> = {
@@ -25,7 +26,7 @@ const BATTLE_TYPE_TO_CATEGORY: Record<string, RatingCategory> = {
     BACKEND:    "backend",
     FULLSTACK:  "fullstack",
     PROMPT_WAR: "promptWar",
-    BUG_FIX:    "dsa",    // BUG_FIX uses the DSA rating pool
+    BUG_FIX:    "bugFix",    // BUG_FIX now uses its own rating pool
     TEAM:       "team",
 };
 
@@ -37,6 +38,7 @@ const CATEGORY_TO_HISTORY_ENUM: Record<RatingCategory, BattleType> = {
     fullstack:  "FULLSTACK",
     promptWar:  "PROMPT_WAR",
     team:       "TEAM",
+    bugFix:     "BUG_FIX",
 };
 
 
@@ -61,21 +63,30 @@ function expectedScore(ratingA: number, ratingB: number): number {
  * @param winnerRating  Current rating of the winner
  * @param loserRating   Current rating of the loser
  * @param isAbandon     If true, uses a higher K-factor to penalise abandonment
+ * @param scoreDiff     The difference in scores (out of 100) between the winner and loser
  * @returns             { winnerDelta, loserDelta } — signed integer deltas
  */
 function computeEloDelta(
     winnerRating: number,
     loserRating: number,
-    isAbandon = false
+    isAbandon = false,
+    scoreDiff = 50
 ): { winnerDelta: number; loserDelta: number } {
     const K = isAbandon ? K_ABANDON : K_NORMAL;
 
     const expectedWinner = expectedScore(winnerRating, loserRating);
     const expectedLoser  = expectedScore(loserRating, winnerRating);
 
-    // Actual scores: winner = 1, loser = 0
-    const winnerDelta = Math.round(K * (1 - expectedWinner));
-    const loserDelta  = Math.round(K * (0 - expectedLoser));
+    // Standard Elo deltas
+    const rawWinnerDelta = K * (1 - expectedWinner);
+    const rawLoserDelta  = K * (0 - expectedLoser);
+
+    // Scale deltas based on Battle Score Difference (Philosophy: reward dominance, reduce change for close matches)
+    // A scoreDiff of 50 yields a multiplier of 1.0 (standard). 100 yields 1.5. 0 yields 0.5.
+    const multiplier = 0.5 + (scoreDiff / 100);
+
+    const winnerDelta = Math.round(rawWinnerDelta * multiplier);
+    const loserDelta  = Math.round(rawLoserDelta * multiplier);
 
     return { winnerDelta, loserDelta };
 }
@@ -156,10 +167,17 @@ export async function updateRatings(
     const winnerOldRating = winnerProfile.ratings[category] ?? 1200;
     const loserOldRating  = loserProfile.ratings[category]  ?? 1200;
 
+    // Determine winner/loser score based on team membership to find battle score difference
+    const winnerScore = match.winnerTeam === "A" ? match.teamAScore : match.teamBScore;
+    const loserScore  = match.winnerTeam === "A" ? match.teamBScore : match.teamAScore;
+    // Default to 100 on abandon so the maximum Elo penalty is correctly applied
+    const scoreDiff   = isAbandon ? 100 : Math.abs(winnerScore - loserScore);
+
     const { winnerDelta, loserDelta } = computeEloDelta(
         winnerOldRating,
         loserOldRating,
-        isAbandon
+        isAbandon,
+        scoreDiff
     );
 
     const winnerNewRating = Math.max(MIN_RATING, winnerOldRating + winnerDelta);

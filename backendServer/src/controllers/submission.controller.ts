@@ -69,8 +69,8 @@ export const submitCode = async (req: Request, res: Response, next: NextFunction
             return;
         }
 
-        // ✓ Match is LIVE / ✓ Match not ended
-        if (match.status !== "ONGOING") {
+        // Allow submissions if match is ONGOING or COMPLETED (for optimization / continue editing)
+        if (match.status !== "ONGOING" && match.status !== "COMPLETED") {
             res.status(400).json({
                 success: false,
                 message: `Cannot submit — match is ${match.status.toLowerCase()}`
@@ -78,10 +78,8 @@ export const submitCode = async (req: Request, res: Response, next: NextFunction
             return;
         }
 
-        // Belt-and-braces alongside the status check: a client could submit
-        // in the window after the scheduled timer elapses but before anyone
-        // has actually called POST /match/:matchId/end yet.
-        if (Date.now() >= computeEndsAt(match).getTime()) {
+        // Bypassed if already COMPLETED (practicing/optimizing post-match).
+        if (match.status === "ONGOING" && Date.now() >= computeEndsAt(match).getTime()) {
             res.status(400).json({
                 success: false,
                 message: "Match time has already elapsed"
@@ -241,6 +239,7 @@ export const getMatchSubmissions = async (req: Request, res: Response, next: Nex
         // submission (incl. code) via GET /:submissionId.
         const submissions = await Submission.find({ matchId })
             .select("-sourceCode")
+            .populate("userId", "username avatar")
             .sort({ createdAt: -1 });
 
         res.status(200).json({ success: true, data: submissions });

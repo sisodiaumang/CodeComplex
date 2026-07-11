@@ -1,0 +1,290 @@
+{
+  "_id": "implement-stack-using-arrays",
+  "title": "Implement Stack using Arrays",
+  "slug": "implement-stack-using-arrays",
+  "difficulty": "Easy",
+  "category": "ARRAY",
+  "subCategory": "Learning",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 100,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "Stack",
+      "Array"
+    ],
+    "patterns": [
+      "Basic Implementation"
+    ],
+    "prerequisites": [
+      "Array Basics"
+    ],
+    "variants": [],
+    "tags": [
+      "Stack",
+      "Array",
+      "Implementation"
+    ],
+    "keywords": [
+      "Stack",
+      "Array",
+      "Push",
+      "Pop",
+      "Top"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Implement a stack using an array. A stack is a linear data structure that follows the LIFO (Last In First Out) principle. This means the last element inserted inside the stack is the first one to be removed. You need to implement the following methods: `push(x)`, `pop()`, `top()`, and `empty()`.",
+    "inputFormat": "The input will consist of a series of operations on the stack.\nThe first line will contain an integer 'n', the number of operations to be performed.\nFor each operation, the type of operation and the value (if any) will be provided.\nThe operation can be one of the following:\n- 'push x' to push element 'x' onto the stack\n- 'pop' to remove the top element from the stack\n- 'top' to get the top element of the stack\n- 'empty' to check if the stack is empty",
+    "outputFormat": "For each 'top' operation, print the top element of the stack.\nFor each 'empty' operation, print 'true' if the stack is empty and 'false' otherwise.\nFor 'pop' operation, do not print anything.",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 1000,
+        "description": "The number of operations"
+      },
+      {
+        "variable": "x",
+        "type": "integer",
+        "min": -10000,
+        "max": 10000,
+        "description": "The value to be pushed onto the stack"
+      }
+    ],
+    "examples": [
+      {
+        "input": "5\npush 1\npush 2\ntop\npop\nempty",
+        "output": "2\r\nfalse",
+        "explanation": "After pushing 1 and 2, the stack is [1, 2]. The top element is 2. After popping, the stack is [1]. The stack is not empty."
+      },
+      {
+        "input": "4\npush 1\nempty\npop\nempty",
+        "output": "false\r\ntrue",
+        "explanation": "After pushing 1, the stack is [1]. The stack is not empty. After popping, the stack is empty. The stack is empty."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Think about how you can represent a stack using an array. Consider the operations you need to implement: push, pop, top, and empty."
+    },
+    {
+      "order": 2,
+      "text": "The push operation should add an element to the end of the array, because the last element inserted is the first one to be removed."
+    },
+    {
+      "order": 3,
+      "text": "The pop operation should remove the last element from the array, but you also need to handle the edge case where the array is empty."
+    },
+    {
+      "order": 4,
+      "text": "The top operation should return the last element of the array, but again, you need to handle the edge case where the array is empty."
+    },
+    {
+      "order": 5,
+      "text": "Think about how you can implement the empty operation, which should return true if the array is empty and false otherwise."
+    }
+  ],
+  "editorial": {
+    "title": "Implementing a Stack with Arrays: From Brute Force to Optimal O(1) Operations",
+    "intuition": "A stack is a classic LIFO data structure. When we model it with a dynamic array (Python list), the natural operations—push, pop, top, and empty—translate directly to list methods. The key insight is that appending or popping from the end of a list is amortized constant time, so a straightforward implementation already meets the required complexity. The challenge lies in recognizing that no more sophisticated data structure is needed and in handling edge cases such as popping from an empty stack or querying the top of an empty stack.",
+    "bruteForce": "A naive approach might rebuild the stack from scratch after each operation or use a linked list with costly traversal for the top element. Such methods would incur O(n) time per operation, leading to O(n²) total time, which is far beyond the acceptable limits for up to 1000 operations. The brute force solution is correct in that it produces the right outputs, but it is unnecessarily slow and memory‑inefficient.",
+    "betterSolution": "The optimal strategy is to use a dynamic array (Python list) and perform each operation directly: append for push, pop for pop, index -1 for top, and a simple length check for empty. This yields O(1) amortized time per operation and O(m) space, where m is the maximum stack size.",
+    "optimalSolution": "By leveraging the list’s amortized constant‑time append and pop, the implementation becomes concise and efficient. Each operation maps to a single list method call, ensuring that the algorithm stays within the O(n) time and O(m) space bounds specified by the problem constraints.",
+    "proofOfCorrectness": "The correctness follows from the invariant that the list always contains the stack elements in order, with the last element representing the top. Push appends a new element, preserving order. Pop removes the last element, which is exactly the top of the stack. Top reads the last element without modification, and empty checks whether the list is empty. Since all operations mirror the formal stack semantics, the algorithm produces the correct result for every sequence of operations.",
+    "dryRun": "Consider the sequence: push 5, push 3, top, pop, empty. The list evolves as [5], [5,3], top reads 3, pop removes 3 leaving [5], empty reports false. The outputs match the expected stack behavior.",
+    "commonMistakes": [
+      "Using a linked list and traversing to find the top, which adds O(n) time.",
+      "Popping from an empty list without checking, causing an exception.",
+      "Returning an empty string for top on an empty stack instead of a specified sentinel value.",
+      "Not handling the empty case for the empty operation, leading to incorrect boolean output.",
+      "Using a fixed-size array and ignoring dynamic resizing, causing overflow.",
+      "Misinterpreting the input format and reading operations incorrectly.”"
+    ],
+    "timeComplexity": "O(n) where n is the number of operations, each operation O(1)",
+    "spaceComplexity": "O(m) where m is the maximum stack size, at most n"
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass Stack {\n    vector<int> data;\npublic:\n    void push(int x) { data.push_back(x); }\n    void pop() { if(!data.empty()) data.pop_back(); }\n    int top() const { return data.empty() ? -1 : data.back(); }\n    bool empty() const { return data.empty(); }\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int n; if(!(cin>>n)) return 0;\n    Stack st;\n    for(int i=0;i<n;++i){\n        string op; cin>>op;\n        if(op==\"push\"){ int x; cin>>x; st.push(x); }\n        else if(op==\"pop\"){ st.pop(); }\n        else if(op==\"top\"){ cout<<st.top()<<\"\\n\"; }\n        else if(op==\"empty\"){ cout<<(st.empty()?\"true\":\"false\")<<\"\\n\"; }\n    }\n    return 0;\n}\n",
+    "java": "import java.io.*;\nimport java.util.*;\n\npublic class Main {\n    static class Stack {\n        private ArrayList<Integer> data = new ArrayList<>();\n        void push(int x) { data.add(x); }\n        void pop() { if(!data.isEmpty()) data.remove(data.size()-1); }\n        int top() { return data.isEmpty() ? -1 : data.get(data.size()-1); }\n        boolean empty() { return data.isEmpty(); }\n    }\n    public static void main(String[] args) throws Exception {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        StringTokenizer stz = new StringTokenizer(br.readLine());\n        int n = Integer.parseInt(stz.nextToken());\n        Stack st = new Stack();\n        StringBuilder out = new StringBuilder();\n        for(int i=0;i<n;i++){\n            String line = br.readLine();\n            StringTokenizer tk = new StringTokenizer(line);\n            String op = tk.nextToken();\n            switch(op){\n                case \"push\":\n                    int x = Integer.parseInt(tk.nextToken());\n                    st.push(x);\n                    break;\n                case \"pop\":\n                    st.pop();\n                    break;\n                case \"top\":\n                    out.append(st.top()).append('\\n');\n                    break;\n                case \"empty\":\n                    out.append(st.empty()?\"true\":\"false\").append('\\n');\n                    break;\n            }\n        }\n        System.out.print(out.toString());\n    }\n}\n",
+    "python": "import sys\n\ndef solve():\n    data = []\n    it = iter(sys.stdin.read().strip().split())\n    try:\n        n = int(next(it))\n    except StopIteration:\n        return\n    out_lines = []\n    for _ in range(n):\n        op = next(it)\n        if op == 'push':\n            x = int(next(it))\n            data.append(x)\n        elif op == 'pop':\n            if data:\n                data.pop()\n        elif op == 'top':\n            out_lines.append(str(data[-1] if data else -1))\n        elif op == 'empty':\n            out_lines.append('true' if not data else 'false')\n    sys.stdout.write('\\n'.join(out_lines))\n    # TODO: implement additional logic if needed\n    pass\n\nif __name__ == \"__main__\":\n    solve()\n",
+    "javascript": "const fs = require('fs');\n\nfunction solve() {\n    const input = fs.readFileSync(0, 'utf8').trim().split(/\\s+/);\n    let idx = 0;\n    const n = parseInt(input[idx++]);\n    const stack = [];\n    let output = [];\n    for(let i=0;i<n;i++){\n        const op = input[idx++];\n        if(op==='push'){\n            const x = parseInt(input[idx++]);\n            stack.push(x);\n        } else if(op==='pop'){\n            if(stack.length) stack.pop();\n        } else if(op==='top'){\n            output.push(stack.length?stack[stack.length-1]:-1);\n        } else if(op==='empty'){\n            output.push(stack.length? 'false' : 'true');\n        }\n    }\n    console.log(output.join('\\n'));\n    // TODO: implement additional logic if needed\n    return null;\n}\n\nsolve();"
+  },
+  "functionSignature": {
+    "cpp": "int main()",
+    "java": "public static void main(String[] args) throws Exception",
+    "python": "def solve()",
+    "javascript": "function solve()"
+  },
+  "solutions": {
+    "python": "import sys\nit = iter(sys.stdin.read().split())\ntry:\n    n = int(next(it))\nexcept StopIteration:\n    sys.exit()\nstack = []\nout_lines = []\nfor _ in range(n):\n    op = next(it)\n    if op == 'push':\n        x = int(next(it))\n        stack.append(x)\n    elif op == 'pop':\n        if stack:\n            stack.pop()\n    elif op == 'top':\n        out_lines.append(str(stack[-1] if stack else ''))\n    elif op == 'empty':\n        out_lines.append('true' if not stack else 'false')\nprint('\\n'.join(out_lines))\n",
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\nint main(){\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int n;\n    if(!(cin>>n)) return 0;\n    vector<int> st;\n    string op;\n    vector<string> out;\n    for(int i=0;i<n;++i){\n        cin>>op;\n        if(op==\"push\"){\n            int x;cin>>x;st.push_back(x);\n        }else if(op==\"pop\"){\n            if(!st.empty()) st.pop_back();\n        }else if(op==\"top\"){\n            out.push_back(to_string(st.back()));\n        }else if(op==\"empty\"){\n            out.push_back(st.empty()?\"true\":\"false\");\n        }\n    }\n    for(size_t i=0;i<out.size();++i){\n        cout<<out[i];\n        if(i+1<out.size()) cout<<'\\n';\n    }\n    return 0;\n}\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5\npush 1\npush 2\ntop\npop\nempty",
+      "output": "2\r\nfalse",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "4\npush 1\nempty\npop\nempty",
+      "output": "false\r\ntrue",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "boundary_2",
+      "input": "1\nempty",
+      "output": "true",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    },
+    {
+      "id": "large_random_6",
+      "input": "82\npush -9181\ntop\npop\npop\npop\npush 7870\npush 9349\nempty\npush -9024\npush -2836\npop\npush 8390\npop\nempty\npop\nempty\ntop\npush -4769\nempty\ntop\ntop\npop\npop\ntop\npush -6961\nempty\npush 1763\ntop\ntop\npush 5054\npush 2403\npush 8089\ntop\ntop\npop\npush -8499\npop\ntop\npush -2372\npush 2455\ntop\nempty\ntop\npop\ntop\ntop\npop\ntop\npush 9960\npop\npop\npop\nempty\nempty\ntop\npop\ntop\npush -2495\npush 336\nempty\ntop\npush -3087\ntop\npop\nempty\nempty\nempty\npop\ntop\npop\npop\ntop\nempty\nempty\ntop\npop\npop\nempty\npush -8457\npush -4992\npop\nempty",
+      "output": "-9181\r\nfalse\r\nfalse\r\nfalse\r\n9349\r\nfalse\r\n-4769\r\n-4769\r\n7870\r\nfalse\r\n1763\r\n1763\r\n8089\r\n8089\r\n2403\r\n2455\r\nfalse\r\n2455\r\n-2372\r\n-2372\r\n2403\r\nfalse\r\nfalse\r\n1763\r\n-6961\r\nfalse\r\n336\r\n-3087\r\nfalse\r\nfalse\r\nfalse\r\n-2495\r\n7870\r\nfalse\r\nfalse\r\n7870\r\ntrue\r\nfalse",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    },
+    {
+      "id": "large_random_7",
+      "input": "77\npush 2608\nempty\nempty\ntop\npush -6247\ntop\ntop\npush -383\nempty\npop\nempty\npush -1370\npop\npush -221\npop\npop\ntop\npop\npush 9626\ntop\nempty\npush -6335\ntop\ntop\npop\npush -2108\npush -7194\nempty\npush 7455\npop\npop\nempty\npop\ntop\nempty\npop\npop\ntop\nempty\ntop\nempty\nempty\npush -1877\npop\npush 1078\npush 9277\npop\npop\npush -7674\npush -2499\npush -8971\ntop\npush 6847\npop\ntop\nempty\npop\npop\nempty\npop\nempty\nempty\npop\npush -6824\nempty\ntop\nempty\nempty\nempty\npush -6776\npush 3193\ntop\npush -1853\npop\npop\nempty\npop",
+      "output": "false\r\nfalse\r\n2608\r\n-6247\r\n-6247\r\nfalse\r\nfalse\r\n2608\r\n9626\r\nfalse\r\n-6335\r\n-6335\r\nfalse\r\nfalse\r\n9626\r\nfalse\r\n\r\ntrue\r\n\r\ntrue\r\ntrue\r\n-8971\r\n-8971\r\nfalse\r\nfalse\r\ntrue\r\ntrue\r\nfalse\r\n-6824\r\nfalse\r\nfalse\r\nfalse\r\n3193\r\nfalse",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    },
+    {
+      "id": "large_random_8",
+      "input": "55\npop\ntop\nempty\npop\npush 4520\npush -8343\npush -6944\npop\npop\nempty\nempty\nempty\npop\nempty\npush -4606\nempty\npush 2793\ntop\nempty\ntop\nempty\nempty\npop\npop\ntop\npop\npush 8978\npush 276\npush -8357\nempty\npop\npush 6640\npush -3911\npush 9498\npush -2293\nempty\npush 8667\npop\npush -7314\nempty\ntop\ntop\npop\ntop\npop\ntop\nempty\npop\ntop\nempty\ntop\npush -9695\nempty\npush -7600\npop",
+      "output": "\r\ntrue\r\nfalse\r\nfalse\r\nfalse\r\ntrue\r\nfalse\r\n2793\r\nfalse\r\n2793\r\nfalse\r\nfalse\r\n\r\nfalse\r\nfalse\r\nfalse\r\n-7314\r\n-7314\r\n-2293\r\n9498\r\nfalse\r\n-3911\r\nfalse\r\n-3911\r\nfalse",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    },
+    {
+      "id": "large_random_9",
+      "input": "65\ntop\npop\ntop\npush -1996\ntop\ntop\npop\nempty\ntop\npush 8173\ntop\npush -5600\ntop\npush -6493\npop\ntop\ntop\npop\ntop\npop\ntop\nempty\ntop\npush -6976\nempty\ntop\npush -9884\ntop\npop\ntop\npop\nempty\nempty\npush -6335\npush -5116\npush 2098\npop\nempty\npop\npush 101\ntop\npush 1724\npop\npop\npush 1589\nempty\npop\npop\npop\npop\nempty\npush -4123\ntop\nempty\npop\ntop\npop\npush 2535\npush 5423\npop\npop\nempty\ntop\ntop\npop",
+      "output": "\r\n\r\n-1996\r\n-1996\r\ntrue\r\n\r\n8173\r\n-5600\r\n-5600\r\n-5600\r\n8173\r\n\r\ntrue\r\n\r\nfalse\r\n-6976\r\n-9884\r\n-6976\r\ntrue\r\ntrue\r\nfalse\r\n101\r\nfalse\r\ntrue\r\n-4123\r\nfalse\r\n\r\ntrue",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    },
+    {
+      "id": "large_random_10",
+      "input": "29\npush -3672\nempty\ntop\ntop\npush -854\ntop\nempty\ntop\npush -6221\ntop\npop\ntop\npush -6448\nempty\ntop\ntop\nempty\npush 2622\npop\ntop\npush 4288\npush 7036\npop\ntop\nempty\npush 819\ntop\npush -160\ntop",
+      "output": "false\r\n-3672\r\n-3672\r\n-854\r\nfalse\r\n-854\r\n-6221\r\n-854\r\nfalse\r\n-6448\r\n-6448\r\nfalse\r\n-6448\r\n4288\r\nfalse\r\n819\r\n-160",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    },
+    {
+      "id": "large_random_11",
+      "input": "86\nempty\ntop\nempty\ntop\npop\npop\nempty\nempty\npop\ntop\nempty\npush -43\ntop\npop\nempty\ntop\nempty\nempty\nempty\npop\nempty\npop\npush -701\ntop\npush -2304\ntop\npop\npop\npop\npush -8486\npop\nempty\npush 4923\nempty\npop\nempty\nempty\nempty\npop\npop\npush -6508\nempty\npop\npop\nempty\npush 8265\npop\npush 4957\npop\nempty\ntop\nempty\nempty\nempty\npop\nempty\nempty\ntop\npop\ntop\nempty\npop\ntop\nempty\npush -638\npop\ntop\ntop\ntop\npush -5466\npop\npop\nempty\npop\npop\npush 3594\nempty\ntop\nempty\nempty\npush -3223\nempty\nempty\npush 8864\nempty\nempty",
+      "output": "true\r\n\r\ntrue\r\n\r\ntrue\r\ntrue\r\n\r\ntrue\r\n-43\r\ntrue\r\n\r\ntrue\r\ntrue\r\ntrue\r\ntrue\r\n-701\r\n-2304\r\ntrue\r\nfalse\r\ntrue\r\ntrue\r\ntrue\r\nfalse\r\ntrue\r\ntrue\r\n\r\ntrue\r\ntrue\r\ntrue\r\ntrue\r\ntrue\r\n\r\n\r\ntrue\r\n\r\ntrue\r\n\r\n\r\n\r\ntrue\r\nfalse\r\n3594\r\nfalse\r\nfalse\r\nfalse\r\nfalse\r\nfalse\r\nfalse",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    },
+    {
+      "id": "large_random_13",
+      "input": "39\nempty\nempty\npop\nempty\npop\ntop\nempty\nempty\npush 2742\ntop\nempty\npop\nempty\npop\npush 2911\npush -7250\nempty\npop\nempty\npop\npush -1476\nempty\ntop\npop\nempty\ntop\ntop\nempty\ntop\nempty\ntop\npush 5411\npush 7675\npush 1467\npop\npush -8681\npush -1898\npop\npush -5007",
+      "output": "true\r\ntrue\r\ntrue\r\n\r\ntrue\r\ntrue\r\n2742\r\nfalse\r\ntrue\r\nfalse\r\nfalse\r\nfalse\r\n-1476\r\ntrue\r\n\r\n\r\ntrue\r\n\r\ntrue",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    },
+    {
+      "id": "large_random_14",
+      "input": "31\npop\nempty\npush 8480\npop\nempty\ntop\ntop\npop\npush -4634\ntop\npush 8962\npush 222\nempty\nempty\npop\npush 9401\npop\npush -118\npush 8544\npush 1377\nempty\ntop\npush 6579\ntop\npush 3764\nempty\npush 4205\ntop\nempty\npop\nempty",
+      "output": "true\r\ntrue\r\n\r\n\r\n-4634\r\nfalse\r\nfalse\r\nfalse\r\n1377\r\n6579\r\nfalse\r\n4205\r\nfalse\r\nfalse",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    },
+    {
+      "id": "large_random_15",
+      "input": "23\ntop\nempty\nempty\nempty\ntop\ntop\npop\npush -861\nempty\npop\nempty\nempty\ntop\npush 6197\ntop\npop\nempty\npop\ntop\ntop\ntop\ntop\ntop",
+      "output": "\r\ntrue\r\ntrue\r\ntrue\r\n\r\n\r\nfalse\r\ntrue\r\ntrue\r\n\r\n6197\r\ntrue",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    },
+    {
+      "id": "adversarial_1",
+      "input": "1000\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npush 1\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\npop\ntop",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "adversarial"
+    },
+    {
+      "id": "duplicate_1",
+      "input": "3\npush 1\npush 1\ntop",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "duplicate"
+    },
+    {
+      "id": "one_1",
+      "input": "2\npush 1\ntop",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "one"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

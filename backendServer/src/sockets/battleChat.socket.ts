@@ -123,4 +123,18 @@ export const registerBattleChatHandlers = (io: Server, socket: Socket): void => 
             socket.emit("battle:chat:error", { message: "Failed to send message" });
         }
     });
+
+    // ── battle:typing ──────────────────────────────────────────────────
+    socket.on("battle:typing", ({ roomCode, isTyping, pet }: { roomCode: string; isTyping: boolean; pet?: { type: string; color: string } }) => {
+        try {
+            if (!roomCode) return;
+            socket.to(globalChannel(roomCode)).emit("battle:opponent-typing", {
+                username: user.username,
+                isTyping,
+                pet
+            });
+        } catch {
+            // fail-silent
+        }
+    });
 };

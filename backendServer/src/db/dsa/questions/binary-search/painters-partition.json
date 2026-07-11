@@ -1,0 +1,295 @@
+{
+  "_id": "painters-partition",
+  "title": "Painter's Partition",
+  "slug": "painters-partition",
+  "difficulty": "Medium",
+  "category": "ARRAY",
+  "subCategory": "Binary Search on Answers",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 45,
+    "points": 300,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "Binary Search",
+      "Divide and Conquer"
+    ],
+    "patterns": [
+      "Search for the optimal answer"
+    ],
+    "prerequisites": [
+      "Understanding of Binary Search",
+      "Familiarity with Divide and Conquer"
+    ],
+    "variants": [],
+    "tags": [
+      "Partition Problem",
+      "Optimization Problem"
+    ],
+    "keywords": [
+      "Painter's Partition",
+      "Binary Search",
+      "Divide and Conquer",
+      "Optimization"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "Given an array of integers representing the amount of work required to paint each board and an integer k representing the number of painters, determine the minimum amount of time required to paint all boards. The work required to paint each board is given by the array boards, where boards[i] represents the amount of work required to paint the ith board. The number of painters is given by k. The function should return the minimum time required to paint all boards.",
+    "inputFormat": "The first line contains an integer n, representing the number of boards. The second line contains n integers representing the amount of work required to paint each board. The third line contains an integer k, representing the number of painters.",
+    "outputFormat": "The function should return the minimum time required to paint all boards as an integer.",
+    "notes": "The input array will contain at least 1 and at most 10000 elements, and each element will be between 1 and 10000. The number of painters will be between 1 and 10000.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of boards"
+      },
+      {
+        "variable": "boards[i]",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The amount of work required to paint each board"
+      },
+      {
+        "variable": "k",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of painters"
+      }
+    ],
+    "examples": [
+      {
+        "input": "4\n10 20 30 40\n2",
+        "output": "60",
+        "explanation": "The minimum time required to paint all boards with 2 painters is 60. One painter can paint the first two boards in 30 units of time, and the other painter can paint the last two boards in 30 units of time. Therefore, the minimum time required is 60."
+      },
+      {
+        "input": "4\n10 20 30 40\n3",
+        "output": "40",
+        "explanation": "The minimum time required to paint all boards with 3 painters is 50. One painter can paint the first board in 10 units of time, the second painter can paint the next two boards in 30 units of time, and the third painter can paint the last board in 10 units of time. Therefore, the minimum time required is 50."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "You can start by sorting the boards array in ascending order. This will help you find the minimum time required to paint all boards efficiently."
+    },
+    {
+      "order": 2,
+      "text": "Since we have k painters, we can divide the total work among them. To find the minimum time required, we need to find the maximum workload for any painter."
+    },
+    {
+      "order": 3,
+      "text": "You can use a variable, say max_work, to keep track of the maximum workload. Initialize max_work to 0 and then iterate over the sorted boards array. In each iteration, update max_work to be the maximum of its current value and the current board's work."
+    },
+    {
+      "order": 4,
+      "text": "The minimum time required to paint all boards can be calculated by dividing the total work by the number of painters and rounding up to the nearest integer. You can use the ceiling division operator (//) to achieve this."
+    },
+    {
+      "order": 5,
+      "text": "The key to solving this problem is to use the concept of maximum workload and divide the total work among the painters. This is an example of the greedy algorithm, where we make the locally optimal choice at each step with the hope of finding a global optimum solution."
+    }
+  ],
+  "editorial": {
+    "title": "Painter's Partition Problem",
+    "intuition": "The problem requires finding the minimum amount of time required to paint all the boards with a given number of painters. The key observation here is that the minimum time required will be the minimum amount of work that can be assigned to each painter such that the total work is completed.",
+    "bruteForce": "A brute force approach would involve trying all possible combinations of work assignments to painters, which would be highly inefficient due to the large number of possible combinations. This approach is correct but slow due to its exponential time complexity.",
+    "betterSolution": "A better approach would be to use a binary search algorithm to find the minimum time required. This involves initializing the search space with the minimum and maximum possible time required, which are the maximum work of a single board and the total work of all boards respectively.",
+    "optimalSolution": "The optimal solution uses a binary search algorithm to find the minimum time required to paint all the boards. It works by repeatedly dividing the search space in half and checking if it's possible to paint all the boards within the mid value of the search space. If it's possible, the search space is updated to the lower half, otherwise it's updated to the upper half. This process continues until the search space is reduced to a single value, which is the minimum time required.",
+    "proofOfCorrectness": "The correctness of the optimal solution can be proven by showing that the binary search algorithm will always converge to the minimum time required. This is because the search space is repeatedly divided in half, and the algorithm always checks if it's possible to paint all the boards within the mid value of the search space. If it's possible, the search space is updated to the lower half, which means the minimum time required must be less than or equal to the mid value. If it's not possible, the search space is updated to the upper half, which means the minimum time required must be greater than the mid value.",
+    "dryRun": "The dry run of the algorithm involves initializing the search space with the minimum and maximum possible time required, and then repeatedly dividing the search space in half and checking if it's possible to paint all the boards within the mid value of the search space.",
+    "commonMistakes": [
+      "Not initializing the search space correctly",
+      "Not updating the search space correctly",
+      "Not checking if it's possible to paint all the boards within the mid value of the search space",
+      "Not handling the case where the number of painters is equal to the number of boards",
+      "Not handling the case where the total work of all boards is less than the maximum work of a single board"
+    ],
+    "timeComplexity": "O(n log m)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "cpp": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\nint minTime(vector<int>& boards, int k) {\n    // TODO\n    return 0;\n}\nint main() {\n    int n;\n    cin >> n;\n    vector<int> boards(n);\n    for (int i = 0; i < n; i++) {\n        cin >> boards[i];\n    }\n    int k;\n    cin >> k;\n    cout << minTime(boards, k) << endl;\n    return 0;\n}",
+    "java": "import java.util.Scanner;\npublic class Main {\n    public static int minTime(int[] boards, int k) {\n        // TODO\n        return 0;\n    }\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int[] boards = new int[n];\n        for (int i = 0; i < n; i++) {\n            boards[i] = scanner.nextInt();\n        }\n        int k = scanner.nextInt();\n        System.out.println(minTime(boards, k));\n    }\n}",
+    "python": "import sys\ndef minTime(boards, k):\n    # TODO\n    return 0\nif __name__ == '__main__':\n    n = int(sys.stdin.readline().strip())\n    boards = list(map(int, sys.stdin.readline().strip().split()))\n    k = int(sys.stdin.readline().strip())\n    print(minTime(boards, k))",
+    "javascript": "const readline = require('readline');\nconst rl = readline.createInterface({\n    input: process.stdin,\n    output: process.stdout\n});\nlet n, boards, k;\nlet line = 0;\nrl.on('line', (input) => {\n    if (line === 0) {\n        n = parseInt(input);\n    } else if (line === 1) {\n        boards = input.split(' ').map(Number);\n    } else if (line === 2) {\n        k = parseInt(input);\n        rl.close();\n        console.log(minTime(boards, k));\n    }\n    line++;\n});\nfunction minTime(boards, k) {\n    // TODO\n    return 0;\n}"
+  },
+  "functionSignature": {
+    "cpp": "int minTime(vector<int>& boards, int k)",
+    "java": "public static int minTime(int[] boards, int k)",
+    "python": "def minTime(boards, k)",
+    "javascript": "function minTime(boards, k)"
+  },
+  "solutions": {
+    "python": "\nimport sys\nit = iter(sys.stdin.read().split())\nn = int(next(it))\nboards = [int(next(it)) for _ in range(n)]\nk = int(next(it))\n\ndef can_paint(mid):\n    painters = 1\n    current_work = 0\n    for work in boards:\n        if current_work + work > mid:\n            painters += 1\n            current_work = 0\n        current_work += work\n    return painters <= k\n\nlow, high = max(boards), sum(boards)\nwhile low < high:\n    mid = (low + high) // 2\n    if can_paint(mid):\n        high = mid\n    else:\n        low = mid + 1\nprint(low)\n",
+    "cpp": "\n#include <bits/stdc++.h>\nusing namespace std;\nint main(){\n    int n;\n    if(!(cin >> n)) return 0;\n    vector<int> boards(n);\n    for(int i = 0; i < n; i++) cin >> boards[i];\n    int k; cin >> k;\n\n    auto can_paint = [&](int mid){\n        int painters = 1;\n        int current_work = 0;\n        for(int work : boards){\n            if(current_work + work > mid){\n                painters++;\n                current_work = 0;\n            }\n            current_work += work;\n        }\n        return painters <= k;\n    };\n\n    int low = *max_element(boards.begin(), boards.end());\n    int high = accumulate(boards.begin(), boards.end(), 0);\n    while(low < high){\n        int mid = low + (high - low) / 2;\n        if(can_paint(mid)) high = mid;\n        else low = mid + 1;\n    }\n    cout << low << endl;\n    return 0;\n}\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.2
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "4\n10 20 30 40\n2",
+      "output": "60",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "4\n10 20 30 40\n3",
+      "output": "40",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint_1",
+      "input": "1\n1\n1",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "min_constraint_2",
+      "input": "2\n1 1\n2",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "boundary_1",
+      "input": "2\n1 10000\n2",
+      "output": "10000",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    },
+    {
+      "id": "duplicate_1",
+      "input": "4\n10 10 10 10\n2",
+      "output": "20",
+      "isVisible": false,
+      "weight": 1,
+      "category": "duplicate"
+    },
+    {
+      "id": "duplicate_2",
+      "input": "4\n10 10 10 10\n4",
+      "output": "10",
+      "isVisible": false,
+      "weight": 1,
+      "category": "duplicate"
+    },
+    {
+      "id": "sorted_1",
+      "input": "4\n1 2 3 4\n2",
+      "output": "6",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sorted"
+    },
+    {
+      "id": "sorted_2",
+      "input": "4\n1 2 3 4\n4",
+      "output": "4",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sorted"
+    },
+    {
+      "id": "reverse_sorted_1",
+      "input": "4\n4 3 2 1\n2",
+      "output": "6",
+      "isVisible": false,
+      "weight": 1,
+      "category": "reverse_sorted"
+    },
+    {
+      "id": "reverse_sorted_2",
+      "input": "4\n4 3 2 1\n4",
+      "output": "4",
+      "isVisible": false,
+      "weight": 1,
+      "category": "reverse_sorted"
+    },
+    {
+      "id": "large_random_14",
+      "input": "655\n115 26 760 282 251 229 143 755 105 693 759 914 559 90 605 433 33 31 96 224 239 518 617 28 575 204 734 666 719 559 430 226 460 604 285 829 891 7 778 826 164 715 433 349 285 160 221 981 782 345 105 95 390 100 368 868 353 619 271 827 45 748 471 550 128 997 945 388 81 566 301 850 644 634 907 883 371 592 197 722 72 47 678 234 792 297 82 876 239 888 104 390 285 465 651 855 374 167 380 364 215 687 274 719 960 700 664 74 624 651 176 547 747 251 168 474 389 277 948 656 705 571 225 702 333 864 787 795 58 235 842 33 825 324 411 275 68 217 936 966 581 898 736 323 218 672 512 406 906 937 659 470 147 272 143 253 763 575 552 270 765 599 439 920 598 409 371 225 142 522 506 94 774 49 882 113 157 643 164 812 697 433 611 66 395 391 611 480 542 258 995 567 882 966 12 697 739 118 699 907 550 769 274 788 657 349 115 301 446 162 465 4 977 740 897 737 270 996 513 781 183 520 935 109 892 641 306 862 655 520 624 204 157 383 781 166 553 977 798 945 544 941 1 614 332 501 20 115 952 372 900 852 827 315 246 60 247 900 581 970 81 88 750 498 836 71 779 546 785 129 132 676 487 970 563 170 272 541 894 622 434 988 217 952 553 774 748 707 206 731 320 409 688 666 383 449 922 530 463 124 254 231 66 347 22 603 568 236 603 226 8 73 725 647 61 235 70 928 33 881 339 73 527 244 286 686 498 220 553 136 741 958 904 585 591 485 249 804 485 827 417 195 97 100 675 442 363 434 421 479 885 747 56 690 670 662 101 63 413 746 348 820 883 112 255 197 195 550 460 144 433 188 286 474 256 896 946 78 454 828 883 877 564 101 52 668 554 857 16 993 96 949 772 870 243 171 417 498 493 219 886 411 925 61 169 389 3 400 272 949 803 804 466 293 434 714 981 749 803 570 678 736 499 159 195 304 223 992 60 594 754 556 63 766 322 59 52 599 489 515 942 874 544 162 59 984 521 83 872 191 71 610 70 692 883 241 414 123 965 912 584 253 593 609 41 635 84 430 674 598 579 536 324 958 268 210 686 734 322 245 272 406 135 688 661 308 469 324 952 770 959 75 10 470 637 577 103 76 551 219 519 272 136 956 358 903 71 901 251 379 292 162 449 854 557 721 310 627 827 670 542 9 684 837 568 307 955 680 107 962 900 138 271 119 912 110 761 567 160 279 289 620 216 735 352 209 704 650 874 271 518 501 258 928 930 867 53 95 650 434 850 284 46 4 342 790 134 653 269 166 760 453 565 723 438 575 10 115 78 968 905 708 926 153 559 37 855 379 597 566 152 441 131 43 316 374 921 956 816 996 882 41 921 367 216 699 256 683 106 363 799 574 906 896 417 998 636 768 159 948 953 243 886 167 1000 820 831 182 903 423 26 184 755 947 341 802 954 422 822 686 885 753 831 255 274 164 807 719 111 392 894 40 880 482 228\n205",
+      "output": "1899",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    },
+    {
+      "id": "large_random_15",
+      "input": "837\n941 472 359 313 841 815 893 234 229 25 676 198 409 337 286 886 72 991 792 286 360 657 522 410 696 864 550 340 962 29 119 899 994 268 183 595 986 272 40 112 611 445 354 747 806 322 447 621 524 119 395 922 591 195 261 46 726 447 2 533 948 826 552 704 737 963 760 755 687 202 373 442 72 972 681 943 339 639 322 680 869 128 738 922 308 520 317 683 419 335 413 714 303 568 131 197 431 681 963 389 694 767 925 179 631 583 309 416 562 854 1 312 294 216 441 805 594 622 671 330 477 453 453 692 219 524 485 813 923 983 816 754 174 675 87 291 528 680 649 635 344 96 839 975 770 241 689 318 231 826 204 151 26 48 251 487 626 871 787 75 467 425 908 645 590 200 736 714 394 507 410 250 152 672 705 6 915 769 882 789 907 110 798 436 225 181 824 981 713 531 476 52 571 256 940 869 125 468 137 821 476 684 544 573 610 325 973 774 913 454 628 835 737 914 517 437 851 929 562 457 919 163 762 883 487 461 266 770 254 861 653 284 785 797 534 497 642 245 282 451 80 731 293 241 279 344 328 915 554 83 142 155 237 393 711 157 724 220 66 425 418 339 556 478 426 64 212 853 431 399 927 789 599 969 713 21 878 902 784 590 390 489 7 966 361 306 772 400 874 914 977 856 430 552 766 753 560 820 618 920 226 500 225 280 447 498 30 399 345 685 696 818 415 742 170 861 479 942 131 638 547 28 929 404 607 578 679 28 86 659 439 139 888 473 187 52 267 389 336 217 466 335 346 780 901 389 285 771 975 852 432 259 855 84 482 20 768 553 54 975 359 230 666 71 800 981 668 42 773 32 973 254 205 860 21 637 157 245 130 485 686 118 578 971 224 477 717 263 786 378 172 621 622 987 766 736 118 797 839 168 988 319 111 593 27 952 320 590 694 930 982 385 407 965 733 204 78 607 708 851 643 249 105 714 792 309 871 701 615 825 124 816 580 802 43 356 546 439 678 380 71 519 664 350 13 870 431 843 502 109 444 984 371 651 913 849 471 725 157 446 181 752 535 989 667 277 631 828 942 552 794 496 477 447 846 749 607 275 331 873 252 851 958 89 286 903 462 250 769 476 584 625 685 389 345 30 507 872 333 187 500 218 364 817 265 349 287 902 611 719 902 283 570 11 530 971 196 88 248 738 417 501 569 777 247 708 488 662 729 503 459 812 18 96 302 227 415 709 250 314 680 596 378 485 567 544 353 436 764 564 339 361 720 465 278 314 258 237 124 739 198 324 123 761 549 974 781 707 190 197 222 757 496 284 742 604 779 538 612 290 103 853 199 304 233 370 184 310 15 726 547 130 281 47 998 56 567 300 715 967 130 654 890 771 503 106 894 13 588 292 481 491 452 349 189 989 53 259 964 883 490 117 842 67 411 504 76 591 645 703 55 156 153 831 577 972 312 88 255 122 572 783 427 621 611 810 634 232 795 536 390 462 931 454 305 881 603 440 313 583 636 62 625 984 758 102 971 782 213 641 217 271 677 84 161 246 178 566 77 161 3 419 462 706 609 482 299 34 238 296 724 290 720 881 465 73 704 240 947 271 807 811 641 604 678 824 957 203 436 118 558 231 664 153 931 273 847 146 74 62 170 812 315 610 767 845 583 944 296 450 128 480 706 312 717 413 966 279 513 553 506 449 83 613 41 911 443 753 331 619 257 27 94 235 985 691 857 882 590 602 974 22 784 689 842 276 591 42 782 775 180 482 532 668 453 939 285 186 600 447 651 834 504 993 94 482 357 419 342 329 687 108 879 165 338 422 711 508 296 679 968 411 834 779 564 38 466 91 323 259 332 119 994 792 414 886 527 845 2 674 891 556 474 424 56 193 531 371 638 775 511 641 453 779 53 209 274\n563",
+      "output": "1002",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    },
+    {
+      "id": "large_random_16",
+      "input": "135\n950 295 449 902 716 497 125 30 997 646 624 819 246 727 163 319 565 15 566 418 96 231 862 935 117 473 970 121 664 853 158 511 956 734 299 522 723 280 426 855 495 484 250 468 565 149 393 196 944 614 521 765 901 140 885 72 283 792 809 875 425 349 957 807 520 274 841 3 290 744 306 858 602 594 676 502 887 153 458 552 496 354 341 566 782 557 387 467 956 330 891 194 715 245 586 393 240 877 795 421 45 326 763 485 723 936 831 391 396 680 812 841 668 156 508 988 38 130 515 989 605 340 891 103 896 866 451 103 539 933 468 16 740 148 420\n892",
+      "output": "997",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    },
+    {
+      "id": "large_random_17",
+      "input": "671\n994 159 77 481 801 993 272 347 639 710 408 666 83 873 337 873 691 880 547 390 978 325 642 736 909 778 500 894 555 37 633 71 241 647 701 944 295 233 765 93 445 101 779 649 721 894 103 455 171 711 307 926 30 48 333 816 58 301 368 384 442 150 251 544 422 580 699 812 185 175 180 81 625 892 392 635 700 247 510 935 598 147 238 473 654 261 471 262 683 10 921 824 477 923 295 694 560 162 76 453 968 354 602 307 655 986 435 707 257 468 866 310 204 394 874 495 110 243 391 586 368 589 303 717 303 23 850 675 406 282 9 580 886 703 797 763 997 51 933 621 764 509 853 926 925 294 795 819 236 622 822 361 225 652 195 636 257 695 774 739 786 676 698 859 141 644 100 926 643 662 41 317 808 452 35 594 374 750 135 93 932 303 335 766 426 180 206 136 806 553 898 995 375 544 514 936 280 851 169 264 936 845 967 494 991 826 303 765 892 347 824 118 480 987 78 145 773 990 232 881 693 742 691 407 991 867 824 571 375 93 810 405 15 271 550 127 466 378 689 767 689 269 599 391 843 654 963 381 111 692 240 483 26 635 906 966 575 336 938 625 227 664 65 651 844 476 932 718 310 665 419 120 144 47 969 39 312 505 119 100 241 909 551 139 398 465 380 687 973 761 714 969 554 430 602 761 745 159 907 425 671 102 854 502 631 418 962 975 287 34 707 380 223 455 456 974 242 876 372 102 703 377 558 924 661 368 63 408 283 195 992 126 972 869 844 466 94 679 218 658 655 612 995 22 52 806 342 250 129 806 579 211 71 850 784 568 213 601 222 833 891 239 337 793 152 808 923 611 3 284 880 149 134 554 257 818 179 113 677 888 27 135 16 367 809 808 244 603 332 17 179 272 54 130 760 432 539 117 764 66 488 460 797 371 526 608 112 463 516 227 969 630 45 745 803 931 888 675 534 309 470 659 988 32 63 491 868 412 437 703 111 503 730 932 455 76 921 83 330 623 152 68 130 282 640 649 600 562 730 333 391 612 544 302 465 518 620 441 102 813 719 118 874 671 667 899 788 565 739 887 221 441 463 910 234 424 348 848 465 409 426 748 98 321 438 321 682 262 384 977 157 704 946 486 69 94 852 88 96 443 99 763 757 382 832 134 570 62 601 980 576 576 338 687 126 421 363 895 682 964 769 434 889 938 739 53 992 295 615 320 361 107 592 520 218 159 673 494 230 868 111 359 866 570 377 118 781 286 588 232 827 440 866 575 998 786 839 637 629 692 659 571 27 624 952 674 850 711 274 30 185 280 720 781 317 944 348 360 7 186 891 147 580 674 411 72 146 759 649 996 32 94 765 544 221 386 430 465 350 162 379 320 739 333 796 965 582 611 87 905 54 160 162 773 633 51 691 84 279 454 678 435 498 622 453 425 280 221 774 525 117 354 441 114 291 695 695 608 499 540 684 316 47 226 405 614 57 8 210 309 969 217 786 141 783 262 297 336 123 8 510 765 441 180 133 390 546 721 236 513 573\n854",
+      "output": "998",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

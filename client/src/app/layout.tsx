@@ -22,7 +22,7 @@ const code = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "DevWar — Competitive Engineering Platform",
+  title: "CodeComplex — Competitive Engineering Platform",
   description:
     "Battle other developers in real-time DSA, bug-fix, backend, frontend and prompt-war challenges.",
 };
@@ -39,14 +39,18 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
+        <link rel="icon" href="/favicon.ico" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem("devwar-theme");var d=(t==="dark")||(t!=="light"&&matchMedia("(prefers-color-scheme:dark)").matches);if(d)document.documentElement.setAttribute("data-theme","dark")}catch(e){}})()`,
+            __html: `(function(){try{var t=localStorage.getItem("devwar-theme");var d=(t==="dark")||(t!=="light");if(d)document.documentElement.setAttribute("data-theme","dark")}catch(e){}})()`,
           }}
         />
       </head>
       <body className="antialiased">
-        <Providers>{children}</Providers>
+        <Providers>
+          {children}
+        </Providers>
       </body>
     </html>
   );

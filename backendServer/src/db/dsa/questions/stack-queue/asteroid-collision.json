@@ -1,0 +1,293 @@
+{
+  "_id": "asteroid-collision",
+  "title": "Asteroid Collision",
+  "slug": "asteroid-collision",
+  "difficulty": "Medium",
+  "category": "ARRAY",
+  "subCategory": "Monotonic Stack / Queue",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 500,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "STACK",
+      "MONOTONIC STACK",
+      "ARRAY",
+      "GREEDY"
+    ],
+    "patterns": [
+      "asteroid collision",
+      "stack",
+      "queue",
+      "monotonic stack",
+      "greedy algorithm"
+    ],
+    "prerequisites": [
+      "Implement Stack using Linked List",
+      "Implement Queue using Linked List",
+      "Implement Stack using Array"
+    ],
+    "variants": [],
+    "tags": [
+      "monotonic stack",
+      "greedy algorithm",
+      "array",
+      "stack",
+      "queue"
+    ],
+    "keywords": [
+      "asteroid collision",
+      "collision",
+      "stack",
+      "queue",
+      "greedy",
+      "monotonic",
+      "array",
+      "implementation"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "You are given a row of asteroids represented by an array of integers. Each integer denotes the size of an asteroid and its sign indicates its moving direction: a positive value means the asteroid is moving to the right, and a negative value means it is moving to the left. All asteroids move at the same speed. When two asteroids moving in opposite directions meet, the smaller one (by absolute size) explodes. If both have the same size, both explode. Asteroids moving in the same direction never collide.\n\nYour task is to simulate all possible collisions and output the state of the asteroids after no more collisions can occur. The remaining asteroids should be listed in the order they appear from left to right.\n\n**Input Format**\n- The first line contains a single integer `n`, the number of asteroids.\n- The second line contains `n` space‑separated integers `a1 a2 … an`, where each `ai` is the size and direction of the i‑th asteroid.\n\n**Output Format**\n- The first line contains a single integer `k`, the number of asteroids that remain after all collisions.\n- The second line contains `k` space‑separated integers representing the remaining asteroids in their original order.\n\n**Constraints**\n- `1 ≤ n ≤ 100000`\n- `-1000 ≤ ai ≤ 1000`, `ai ≠ 0`\n- The absolute value `|ai|` represents the size of the asteroid and is at most `1000`.\n\n**Notes**\n- Collisions only occur when a right‑moving asteroid meets a left‑moving asteroid that is to its right.\n- Use a stack to efficiently process the asteroids from left to right.\n\n**Examples**\n\n**Example 1**\nInput:\n5\n5 10 -5 -10 3\nOutput:\n2\n5 3\nExplanation:\n- The asteroid `10` moves right and meets `-5`. Since `10` is larger, `-5` explodes.\n- Then `10` meets `-10`. They are equal in size, so both explode.\n- The remaining asteroids are `5` (moving right) and `3` (moving right), which never meet a left‑moving asteroid.\n\n**Example 2**\nInput:\n6\n-2 -1 1 2 -3 4\nOutput:\n4\n-2 -1 -3 4\nExplanation:\n- The pair `1` and `2` are moving right, while `-3` moves left. `2` collides with `-3` and explodes because `2 < 3`.\n- Then `1` collides with `-3` and also explodes.\n- The left‑moving asteroids `-2` and `-1` never meet a right‑moving one, and `4` moves right without any collision.\n",
+    "inputFormat": "The first line contains an integer n, the number of asteroids.\nThe second line contains n space-separated integers representing the asteroids.\n",
+    "outputFormat": "The first line contains an integer k, the number of remaining asteroids.\nThe second line contains k space-separated integers of the remaining asteroids.\n",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 100000,
+        "description": "Number of asteroids"
+      },
+      {
+        "variable": "ai",
+        "type": "integer",
+        "min": -1000,
+        "max": 1000,
+        "description": "Size and direction of each asteroid (non‑zero)"
+      }
+    ],
+    "examples": [
+      {
+        "input": "5\n5 10 -5 -10 3",
+        "output": "2\r\n5 3",
+        "explanation": "After processing collisions, only asteroids 5 and 3 remain."
+      },
+      {
+        "input": "6\n-2 -1 1 2 -3 4",
+        "output": "4\r\n-2 -1 -3 4",
+        "explanation": "Asteroids 1 and 2 are destroyed by -3; the others survive."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "The problem involves simulating asteroid collisions based on their sizes and directions. Consider processing the asteroids from left to right."
+    },
+    {
+      "order": 2,
+      "text": "A stack data structure can be useful for efficiently processing the asteroids. Think about how you can use the stack to handle collisions between asteroids moving in opposite directions."
+    },
+    {
+      "order": 3,
+      "text": "When an asteroid moving to the right meets an asteroid moving to the left, the smaller one explodes. If they have the same size, both explode. Consider how you can implement this collision logic using a stack."
+    }
+  ],
+  "editorial": {
+    "title": "Asteroid Collision: A Stack-Based Approach",
+    "intuition": "The problem requires simulating asteroid collisions. A brute force approach would involve checking every pair of asteroids for potential collisions, which is inefficient. The key observation is that using a stack to keep track of asteroids moving in the same direction can significantly simplify the simulation process.",
+    "bruteForce": "A brute force approach would involve iterating through all asteroids for each new asteroid to check for collisions, resulting in a time complexity of O(n^2). This is impractical for large inputs.",
+    "betterSolution": "The optimal approach utilizes a stack to track asteroids. When a new asteroid is encountered, it checks if the top asteroid on the stack is moving in the opposite direction. If so, it compares their sizes to determine the outcome of the collision.",
+    "optimalSolution": "The solution iterates through the asteroids once, using a stack to keep track of asteroids that have not collided or have won a collision. The time complexity of this approach is O(n), and the space complexity is also O(n), as in the worst case, all asteroids could be pushed onto the stack.",
+    "proofOfCorrectness": "The correctness of the stack-based approach can be proven by induction on the number of asteroids processed. The base case is when there are no asteroids, and the stack is empty. For each asteroid added, the algorithm ensures that only asteroids that will not collide or have won a collision are kept on the stack. The comparison and potential removal of asteroids from the stack ensure that the final state accurately reflects the outcome of all collisions.",
+    "dryRun": "Testing with sample inputs, such as asteroids = [5,10,-5], helps validate the approach. The expected output is 1 and [5], which matches the result from the stack-based solution.",
+    "commonMistakes": [
+      "Not considering the direction of asteroids when determining collisions.",
+      "Failing to handle cases where two asteroids of equal size collide and both are destroyed.",
+      "Incorrectly assuming that sorting or ordering asteroids by size or direction simplifies the problem.",
+      "Overcomplicating the collision logic, leading to incorrect outcomes.",
+      "Not utilizing a stack or similar data structure to efficiently track asteroids."
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "#include <iostream>\n#include <vector>\n#include <stack>\n\nint main() {\n    int n;\n    std::cin >> n;\n    std::vector<int> asteroids(n);\n    for (int i = 0; i < n; i++) {\n        std::cin >> asteroids[i];\n    }\n    std::stack<int> stack;\n    for (int asteroid : asteroids) {\n        // TODO: implement\n        stack.push(asteroid);\n    }\n    std::cout << stack.size() << std::endl;\n    while (!stack.empty()) {\n        std::cout << stack.top() << \" \";\n        stack.pop();\n    }\n    std::cout << std::endl;\n    return 0;\n}",
+    "java": "import java.util.Stack;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int[] asteroids = new int[n];\n        for (int i = 0; i < n; i++) {\n            asteroids[i] = scanner.nextInt();\n        }\n        Stack<Integer> stack = new Stack<>();\n        for (int asteroid : asteroids) {\n            // TODO: implement\n            stack.push(asteroid);\n        }\n        System.out.println(stack.size());\n        while (!stack.isEmpty()) {\n            System.out.print(stack.pop() + \" \");\n        }\n        System.out.println();\n    }\n}",
+    "python": "import sys\n\ndef solve():\n    # TODO: implement\n    pass\n\ndef main():\n    n = int(sys.stdin.readline().strip())\n    asteroids = list(map(int, sys.stdin.readline().strip().split()))\n    solve()\n\nif __name__ == '__main__':\n    main()\n",
+    "javascript": "const readline = require('readline');\nconst rl = readline.createInterface({\n    input: process.stdin,\n    output: process.stdout\n});\nlet lines = [];\nrl.on('line', (line) => {\n    lines.push(line);\n});\nrl.on('close', () => {\n    let n = parseInt(lines[0]);\n    let asteroids = lines[1].split(' ').map(Number);\n    // TODO: implement\n    console.log(0);\n    console.log('');\n});\n"
+  },
+  "functionSignature": {
+    "cpp": "int main()",
+    "java": "public static void main(String[] args)",
+    "python": "def solve():",
+    "javascript": "rl.on('close', () => {"
+  },
+  "solutions": {
+    "python": "import sys\nit = iter(sys.stdin.read().split())\nn = int(next(it))\nasteroids = [int(next(it)) for _ in range(n)]\nstack = []\nfor asteroid in asteroids:\n    while stack and stack[-1] > 0 and asteroid < 0:\n        if stack[-1] < -asteroid:\n            stack.pop()\n            continue\n        elif stack[-1] == -asteroid:\n            stack.pop()\n        break\n    else:\n        stack.append(asteroid)\nprint(len(stack))\nprint(' '.join(map(str, stack)))",
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\nint main(){\n    int n;\n    cin >> n;\n    vector<int> asteroids(n);\n    for(int i = 0; i < n; i++) cin >> asteroids[i];\n    vector<int> stack;\n    for(int asteroid : asteroids){\n        bool added = false;\n        while(!stack.empty() && stack.back() > 0 && asteroid < 0){\n            if(stack.back() < -asteroid){\n                stack.pop_back();\n                continue;\n            }else if(stack.back() == -asteroid){\n                stack.pop_back();\n            }\n            added = true;\n            break;\n        }\n        if(!added){\n            stack.push_back(asteroid);\n        }\n    }\n    cout << stack.size() << endl;\n    for(int asteroid : stack) cout << asteroid << ' ';\n    cout << endl;\n    return 0;\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.2
+  },
+  "testCases": [
+    {
+      "id": "sample",
+      "input": "5\n5 10 -5 -10 3",
+      "output": "2\r\n5 3",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint",
+      "input": "1\n0",
+      "output": "1\r\n0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "max_constraint",
+      "input": "1\n1000000000",
+      "output": "1\r\n1000000000",
+      "isVisible": false,
+      "weight": 1,
+      "category": "max_constraint"
+    },
+    {
+      "id": "boundary",
+      "input": "3\n-1 0 1",
+      "output": "3\r\n-1 0 1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    },
+    {
+      "id": "duplicate",
+      "input": "6\n1 1 1 1 1 1",
+      "output": "6\r\n1 1 1 1 1 1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "duplicate"
+    },
+    {
+      "id": "sorted",
+      "input": "6\n1 2 3 4 5 6",
+      "output": "6\r\n1 2 3 4 5 6",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sorted"
+    },
+    {
+      "id": "reverse_sorted",
+      "input": "6\n6 5 4 3 2 1",
+      "output": "6\r\n6 5 4 3 2 1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "reverse_sorted"
+    },
+    {
+      "id": "negative",
+      "input": "5\n-5 -4 -3 -2 -1",
+      "output": "5\r\n-5 -4 -3 -2 -1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "negative"
+    },
+    {
+      "id": "zero",
+      "input": "5\n0 0 0 0 0",
+      "output": "5\r\n0 0 0 0 0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "zero"
+    },
+    {
+      "id": "one",
+      "input": "2\n1 1",
+      "output": "2\r\n1 1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "one"
+    },
+    {
+      "id": "repeated",
+      "input": "8\n2 2 2 2 3 3 3 3",
+      "output": "8\r\n2 2 2 2 3 3 3 3",
+      "isVisible": false,
+      "weight": 1,
+      "category": "repeated"
+    },
+    {
+      "id": "large_random",
+      "input": "10\n309 -772 -949 518 -437 -499 -543 -715 508 -791",
+      "output": "5\r\n-772 -949 -543 -715 -791",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    },
+    {
+      "id": "adversarial",
+      "input": "12\n385 516 827 116 -822 209 -136 -935 -939 -809 -553 -524",
+      "output": "5\r\n-935 -939 -809 -553 -524",
+      "isVisible": false,
+      "weight": 1,
+      "category": "adversarial"
+    },
+    {
+      "id": "random_13",
+      "input": "21\n6 9 -10 7 -4 10 7 3 -3 4 8 -2 -10 -5 3 0 -2 -6 -4 0 -7",
+      "output": "9\r\n-10 7 3 0 -2 -6 -4 0 -7",
+      "isVisible": false,
+      "weight": 1,
+      "category": "random"
+    },
+    {
+      "id": "random_14",
+      "input": "22\n-8 2 -7 1 1 9 -2 -9 4 7 -7 2 -8 7 -1 10 9 1 8 -4 -8 -9",
+      "output": "5\r\n-8 -7 -8 7 10",
+      "isVisible": false,
+      "weight": 1,
+      "category": "random"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

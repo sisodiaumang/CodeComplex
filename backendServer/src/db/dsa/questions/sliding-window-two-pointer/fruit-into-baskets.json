@@ -1,0 +1,276 @@
+{
+  "_id": "fruit-into-baskets",
+  "title": "Fruit Into Baskets",
+  "slug": "fruit-into-baskets",
+  "difficulty": "Medium",
+  "category": "ARRAY",
+  "subCategory": "Medium Problems",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 500,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "ARRAY",
+      "GREEDY"
+    ],
+    "patterns": [
+      "sliding window",
+      "two pointers"
+    ],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "medium",
+      "sliding window",
+      "two pointers"
+    ],
+    "keywords": [
+      "fruit into baskets",
+      "maximum fruit"
+    ],
+    "interviewFrequency": 4,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "You are visiting a farm to collect fruits. There are two types of fruits: apples and oranges. The farm has a long row of fruit trees, and you want to pick as many fruits as possible. However, there is a constraint: you can only pick fruits from two baskets, and you cannot mix the fruits in the same basket.\n\nYou are given an array of characters representing the types of fruits in the row of trees. The array contains only 'A' (apple) and 'O' (orange). Your goal is to find the maximum number of fruits you can collect using two baskets.\n\nThe input array can contain any combination of 'A' and 'O' characters, and the baskets can be empty initially.",
+    "inputFormat": "1\nA O A O O A",
+    "outputFormat": "4",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "fruits",
+        "type": "array",
+        "min": 1,
+        "max": 10000,
+        "description": "The array of characters representing the types of fruits."
+      }
+    ],
+    "examples": [
+      {
+        "input": "1\nA O A O O A",
+        "output": "1",
+        "explanation": "You can collect 2 apples and 2 oranges, for a total of 4 fruits."
+      },
+      {
+        "input": "1\nA A A O O O",
+        "output": "1",
+        "explanation": "You can collect 3 apples and 3 oranges, for a total of 6 fruits."
+      },
+      {
+        "input": "1\nO O O O O O",
+        "output": "1",
+        "explanation": "You can collect 6 oranges."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "The problem involves finding a maximum value within a given constraint, and it requires iterating over the array of fruits."
+    },
+    {
+      "order": 2,
+      "text": "The constraint of two baskets implies that we need to track the counts of 'A' and 'O' separately within a certain window or range of the array."
+    },
+    {
+      "order": 3,
+      "text": "This problem can be solved using a sliding window approach, where we expand and shrink a window of fruits to maximize the count while adhering to the constraint of two baskets."
+    }
+  ],
+  "editorial": {
+    "title": "Fruit Into Baskets: A Sliding Window Approach",
+    "intuition": "The problem requires finding the maximum length of a subarray with at most two distinct elements. A brute force approach would be inefficient, so a more optimal approach is needed.",
+    "bruteForce": "A brute force approach would involve generating all possible subarrays and checking if each subarray has at most two distinct elements. This approach would be correct but slow, with a time complexity of O(n^2).",
+    "betterSolution": "The optimal approach uses a sliding window technique with a hashmap to keep track of the count of each character in the current window.",
+    "optimalSolution": "By maintaining a sliding window and using a hashmap to store the character counts, we can solve the problem in O(n) time complexity and O(1) space complexity.",
+    "proofOfCorrectness": "The correctness of the optimal solution can be proven by observing that the sliding window approach ensures that we consider all possible subarrays with at most two distinct elements. The hashmap allows us to efficiently update the character counts as we move the window.",
+    "dryRun": "A dry run of the optimal solution with a sample input, such as 'abcba', helps to verify that the solution produces the correct output.",
+    "commonMistakes": [
+      "Not considering the use of a sliding window approach",
+      "Not using a hashmap to efficiently store character counts",
+      "Failing to update the character counts correctly as the window moves",
+      "Not handling the case where the window has more than two distinct elements",
+      "Not verifying the correctness of the solution with a dry run",
+      "Not considering the time and space complexity of the solution"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "cpp": "#include <iostream>\n#include <string>\n#include <unordered_map>\n\nint solve() {\n    // TODO: implement\n    return 0;\n}",
+    "java": "import java.util.Scanner;\nimport java.util.HashMap;\n\npublic class Main {\n    public static int solve() {\n        // TODO: implement\n        return 0;\n    }\n}",
+    "python": "import sys\nfrom collections import defaultdict\n\ndef solve():\n    # TODO: implement\n    pass",
+    "javascript": "const readline = require('readline');\n\nfunction solve() {\n    // TODO: implement\n    return null;\n}"
+  },
+  "functionSignature": {
+    "cpp": "int solve()",
+    "java": "public static int solve()",
+    "python": "def solve()",
+    "javascript": "function solve()"
+  },
+  "solutions": {
+    "python": "import sys\nit = iter(sys.stdin.read().split())\nn = int(next(it))\nfruits = [next(it) for _ in range(n)]\nmax_len = 0\nchar_count = {}\nleft = 0\nfor right in range(n):\n    char_count[fruits[right]] = char_count.get(fruits[right], 0) + 1\n    while len(char_count) > 2:\n        char_count[fruits[left]] -= 1\n        if char_count[fruits[left]] == 0:\n            del char_count[fruits[left]]\n        left += 1\n    max_len = max(max_len, right - left + 1)\nprint(max_len)",
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\nint main(){\n    int n;\n    cin >> n;\n    vector<char> fruits(n);\n    for(int i = 0; i < n; i++) cin >> fruits[i];\n    int max_len = 0;\n    unordered_map<char, int> char_count;\n    int left = 0;\n    for(int right = 0; right < n; right++){\n        char_count[fruits[right]]++;\n        while(char_count.size() > 2){\n            char_count[fruits[left]]--;\n            if(char_count[fruits[left]] == 0) char_count.erase(fruits[left]);\n            left++;\n        }\n        max_len = max(max_len, right - left + 1);\n    }\n    cout << max_len << endl;\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.2
+  },
+  "testCases": [
+    {
+      "id": "sample",
+      "input": "1\nA O A O O A",
+      "output": "1",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint",
+      "input": "1\n0",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "max_constraint",
+      "input": "1\n1000000000",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "max_constraint"
+    },
+    {
+      "id": "boundary",
+      "input": "3\n-1 0 1",
+      "output": "2",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    },
+    {
+      "id": "duplicate",
+      "input": "6\n1 1 1 1 1 1",
+      "output": "6",
+      "isVisible": false,
+      "weight": 1,
+      "category": "duplicate"
+    },
+    {
+      "id": "sorted",
+      "input": "6\n1 2 3 4 5 6",
+      "output": "2",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sorted"
+    },
+    {
+      "id": "reverse_sorted",
+      "input": "6\n6 5 4 3 2 1",
+      "output": "2",
+      "isVisible": false,
+      "weight": 1,
+      "category": "reverse_sorted"
+    },
+    {
+      "id": "negative",
+      "input": "5\n-5 -4 -3 -2 -1",
+      "output": "2",
+      "isVisible": false,
+      "weight": 1,
+      "category": "negative"
+    },
+    {
+      "id": "zero",
+      "input": "5\n0 0 0 0 0",
+      "output": "5",
+      "isVisible": false,
+      "weight": 1,
+      "category": "zero"
+    },
+    {
+      "id": "one",
+      "input": "2\n1 1",
+      "output": "2",
+      "isVisible": false,
+      "weight": 1,
+      "category": "one"
+    },
+    {
+      "id": "repeated",
+      "input": "8\n2 2 2 2 3 3 3 3",
+      "output": "8",
+      "isVisible": false,
+      "weight": 1,
+      "category": "repeated"
+    },
+    {
+      "id": "large_random",
+      "input": "10\n309 -772 -949 518 -437 -499 -543 -715 508 -791",
+      "output": "2",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    },
+    {
+      "id": "adversarial",
+      "input": "12\n385 516 827 116 -822 209 -136 -935 -939 -809 -553 -524",
+      "output": "2",
+      "isVisible": false,
+      "weight": 1,
+      "category": "adversarial"
+    },
+    {
+      "id": "random_13",
+      "input": "21\n6 9 -10 7 -4 10 7 3 -3 4 8 -2 -10 -5 3 0 -2 -6 -4 0 -7",
+      "output": "2",
+      "isVisible": false,
+      "weight": 1,
+      "category": "random"
+    },
+    {
+      "id": "random_14",
+      "input": "22\n-8 2 -7 1 1 9 -2 -9 4 7 -7 2 -8 7 -1 10 9 1 8 -4 -8 -9",
+      "output": "3",
+      "isVisible": false,
+      "weight": 1,
+      "category": "random"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

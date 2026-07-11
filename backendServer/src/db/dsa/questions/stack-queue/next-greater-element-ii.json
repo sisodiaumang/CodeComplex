@@ -1,0 +1,289 @@
+{
+  "_id": "next-greater-element-ii",
+  "title": "Next Greater Element II",
+  "slug": "next-greater-element-ii",
+  "difficulty": "Medium",
+  "category": "ARRAY",
+  "subCategory": "Monotonic Stack / Queue",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 500,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "STACK",
+      "QUEUE"
+    ],
+    "patterns": [
+      "MONOTONIC STACK",
+      "ARRAY"
+    ],
+    "prerequisites": [
+      "ARRAY",
+      "STACK"
+    ],
+    "variants": [],
+    "tags": [
+      "MONOTONIC STACK",
+      "ARRAY",
+      "STACK",
+      "QUEUE",
+      "ARRAY PROBLEMS",
+      "STACK PROBLEMS"
+    ],
+    "keywords": [
+      "MONOTONIC STACK",
+      "STACK",
+      "ARRAY",
+      "MONOTONIC STACK PROBLEMS",
+      "STACK PROBLEMS",
+      "ARRAY PROBLEMS",
+      "NEXT GREATER ELEMENT",
+      "GREATER ELEMENT PROBLEM"
+    ],
+    "interviewFrequency": 4,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "Given a circular array (the next element of the last element is the first element of the array), print the Next Greater Number for every element. The Next Greater Number of a number x is the first greater number to its traversing-order next in the array, which means you could search circularly to find its next greater number. If no greater element exists, output -1 for this number.",
+    "inputFormat": "The first line contains an integer n, the size of the array.\nThe second line contains n integers, the elements of the array.",
+    "outputFormat": "The next greater element for every element in the array, separated by spaces.",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The size of the array."
+      },
+      {
+        "variable": "nums",
+        "type": "integer",
+        "min": -10000,
+        "max": 10000,
+        "description": "The elements of the array."
+      }
+    ],
+    "examples": [
+      {
+        "input": "5\n3 4 1 2 5",
+        "output": "4 5 2 5 -1",
+        "explanation": "The next greater element for every element in the array is: for 3, the next greater element is 4; for 4, the next greater element is 5; for 1, the next greater element is 2; for 2, the next greater element is 5; for 5, there is no greater element, so the output is -1."
+      },
+      {
+        "input": "4\n1 2 3 4",
+        "output": "2 3 4 -1",
+        "explanation": "The next greater element for every element in the array is: for 1, the next greater element is 2; for 2, the next greater element is 3; for 3, the next greater element is 4; for 4, there is no greater element, so the output is -1."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "The problem involves a circular array, which means that after the last element, we wrap around to the first element. Think about how you can handle this circular behavior."
+    },
+    {
+      "order": 2,
+      "text": "For each element in the array, we need to find the next greater element in a circular manner. This means if we reach the end of the array and haven't found a greater element, we should continue searching from the beginning of the array."
+    },
+    {
+      "order": 3,
+      "text": "A possible approach to solve this problem efficiently is to use a stack data structure. Think about how you can use a stack to keep track of the elements you have seen so far and their indices, which will help in finding the next greater element for each element in the array."
+    }
+  ],
+  "editorial": {
+    "title": "Unlocking Efficiency in Next Greater Element II",
+    "intuition": "The key observation is that the array can be treated as circular, meaning that after the last element, we can continue checking from the first element again. This allows us to find the next greater element for each element in the array by essentially doubling the array and applying a stack-based approach.",
+    "bruteForce": "A brute force approach would involve for each element in the array, linearly searching the rest of the array (and wrapping around to the start when reaching the end) for the first greater element. This results in a time complexity of O(n^2) due to the nested loops, which is inefficient for large inputs.",
+    "betterSolution": "The optimal approach utilizes a stack to keep track of indices of elements for which we have not yet found a greater element. By iterating through the array twice (or equivalently, treating the array as circular and iterating once), we can efficiently find the next greater element for each element.",
+    "optimalSolution": "The provided Python solution achieves this optimal approach. It iterates through the array twice (using the modulus operator to wrap around), and for each element, it pops from the stack all indices whose corresponding elements are smaller than the current element, updating the result array with the current element as the next greater element.",
+    "proofOfCorrectness": "The correctness can be proven by noting that for any element, we only update its next greater element when we find a greater element. The stack ensures that we consider elements in the order they appear and that we update their next greater element as soon as possible. The circular nature of the array ensures that we consider wrap-around cases correctly.",
+    "dryRun": "For an array [1,2,1], the stack approach correctly identifies that the next greater element for the first '1' is '2', for '2' is '-1' (as there's no greater element), and for the second '1' is '-1' but then when wrapping around, it finds '2' as the next greater element is not available in first pass but is in second pass effectively.",
+    "commonMistakes": [
+      "Not considering the circular nature of the array, leading to incomplete solutions.",
+      "Incorrectly implementing the stack logic, leading to wrong next greater elements.",
+      "Not handling the wrap-around cases properly, resulting in incorrect results.",
+      "Assuming a simple linear search approach would suffice, ignoring the potential for a more efficient algorithm.",
+      "Overcomplicating the solution with unnecessary data structures or loops."
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "#include <iostream>\n#include <stack>\n#include <vector>\nusing namespace std;\nint main() {\n    int n;\n    cin >> n;\n    vector<int> nums(n);\n    for (int i = 0; i < n; i++) {\n        cin >> nums[i];\n    }\n    vector<int> result(n, -1);\n    stack<int> st;\n    for (int i = 0; i < n * 2; i++) {\n        while (!st.empty() && nums[st.top()] < nums[i % n]) {\n            result[st.top()] = nums[i % n];\n            st.pop();\n        }\n        st.push(i % n);\n    }\n    for (int i = 0; i < n; i++) {\n        cout << result[i] << \" \";\n    }\n    return 0;\n}",
+    "java": "import java.util.Stack;\nimport java.util.Scanner;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int[] nums = new int[n];\n        for (int i = 0; i < n; i++) {\n            nums[i] = scanner.nextInt();\n        }\n        int[] result = new int[n];\n        for (int i = 0; i < n; i++) {\n            result[i] = -1;\n        }\n        Stack<Integer> st = new Stack<>();\n        for (int i = 0; i < n * 2; i++) {\n            while (!st.isEmpty() && nums[st.peek()] < nums[i % n]) {\n                result[st.pop()] = nums[i % n];\n            }\n            st.push(i % n);\n        }\n        for (int i = 0; i < n; i++) {\n            System.out.print(result[i] + \" \");\n        }\n    }\n}",
+    "python": "import sys\nimport math\nfrom collections import deque\ndef solve():\n    n = int(sys.stdin.readline().strip())\n    nums = list(map(int, sys.stdin.readline().strip().split()))\n    result = [-1] * n\n    stack = deque()\n    for i in range(n * 2):\n        while stack and nums[stack[-1]] < nums[i % n]:\n            result[stack.pop()] = nums[i % n]\n        stack.append(i % n)\n    print(*result)\nif __name__ == '__main__':\n    solve()\n",
+    "javascript": "const readline = require('readline');\nconst rl = readline.createInterface({\n    input: process.stdin,\n    output: process.stdout\n});\nlet lines = [];\nrl.on('line', (line) => {\n    lines.push(line);\n});\nrl.on('close', () => {\n    let n = parseInt(lines[0]);\n    let nums = lines[1].split(' ').map(Number);\n    let result = new Array(n).fill(-1);\n    let stack = [];\n    for (let i = 0; i < n * 2; i++) {\n        while (stack.length > 0 && nums[stack[stack.length - 1]] < nums[i % n]) {\n            result[stack.pop()] = nums[i % n];\n        }\n        stack.push(i % n);\n    }\n    console.log(result.join(' '));\n});\n"
+  },
+  "functionSignature": {
+    "cpp": "int main()",
+    "java": "public static void main(String[] args)",
+    "python": "def solve():",
+    "javascript": "rl.on('close', () => {"
+  },
+  "solutions": {
+    "python": "import sys\nit = iter(sys.stdin.read().split())\nn = int(next(it))\nnums = [int(next(it)) for _ in range(n)]\nstack = []\nresult = [-1] * n\nfor i in range(n * 2):\n    while stack and nums[stack[-1]] < nums[i % n]:\n        result[stack.pop()] = nums[i % n]\n    stack.append(i % n)\nprint(' '.join(map(str, result)))",
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\nint main(){\n    int n;\n    cin >> n;\n    vector<int> nums(n);\n    for(int i = 0; i < n; i++) cin >> nums[i];\n    vector<int> result(n, -1);\n    stack<int> st;\n    for(int i = 0; i < n * 2; i++){\n        while(!st.empty() && nums[st.top()] < nums[i % n]){\n            result[st.top()] = nums[i % n];\n            st.pop();\n        }\n        st.push(i % n);\n    }\n    for(int i = 0; i < n; i++){\n        cout << result[i] << \" \";\n    }\n    return 0;\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.2
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5\n3 4 1 2 5",
+      "output": "4 5 2 5 -1",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "4\n1 2 3 4",
+      "output": "2 3 4 -1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint",
+      "input": "1\n1",
+      "output": "-1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "max_constraint",
+      "input": "1\n10000",
+      "output": "-1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "max_constraint"
+    },
+    {
+      "id": "boundary",
+      "input": "2\n-10000 10000",
+      "output": "10000 -1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    },
+    {
+      "id": "duplicate",
+      "input": "4\n1 1 1 1",
+      "output": "-1 -1 -1 -1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "duplicate"
+    },
+    {
+      "id": "reverse_sorted",
+      "input": "4\n4 3 2 1",
+      "output": "-1 4 4 4",
+      "isVisible": false,
+      "weight": 1,
+      "category": "reverse_sorted"
+    },
+    {
+      "id": "negative",
+      "input": "3\n-1 -2 -3",
+      "output": "-1 -1 -1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "negative"
+    },
+    {
+      "id": "zero",
+      "input": "2\n0 0",
+      "output": "-1 -1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "zero"
+    },
+    {
+      "id": "repeated",
+      "input": "5\n1 1 1 1 1",
+      "output": "-1 -1 -1 -1 -1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "repeated"
+    },
+    {
+      "id": "large_random_0",
+      "input": "91\n-6352 -9181 -988 -1976 -2686 -5428 -6642 7870 -7152 9349 3825 -8959 -9024 -6930 -2836 -2377 6559 9726 -9131 8390 -3485 7856 3746 -2777 4719 9309 -885 -9788 -4769 3848 1149 -895 -4906 -2945 1029 -6651 -6961 2449 -6831 1763 1270 9782 -1333 -8577 5054 7571 -5910 2403 -7418 8089 -394 1850 8918 -3700 -7721 -8499 -2533 -518 -7386 -2372 -6691 2455 -892 4857 1954 -4671 2130 1641 -3135 -1252 -7661 9960 -4393 7502 -1979 -4646 5147 2433 -1155 8250 -2804 626 -8168 -2495 -8949 336 3145 -1227 -7832 -3087 8585",
+      "output": "-988 -988 7870 7870 7870 7870 7870 9349 9349 9726 6559 -6930 -6930 -2836 -2377 6559 9726 9782 8390 9309 7856 9309 4719 4719 9309 9782 3848 -4769 3848 9782 2449 1029 -2945 1029 2449 2449 2449 9782 1763 9782 9782 9960 5054 5054 7571 8089 2403 8089 8089 8918 1850 8918 9960 -2533 -2533 -2533 -518 2455 -2372 2455 2455 4857 4857 9960 2130 2130 9960 9960 -1252 9960 9960 -1 7502 8250 5147 5147 8250 8250 8250 8585 626 3145 -2495 336 336 3145 8585 8585 -3087 8585 9349",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    },
+    {
+      "id": "large_random_1",
+      "input": "50\n-3033 6358 2964 5035 -5319 -1321 -5425 -1919 8394 7661 -1391 9155 4038 9121 3087 1861 -2814 -5468 6696 6171 -7022 -8457 -6408 -4992 -4758 3833 9543 -7919 2608 2504 9526 5337 7338 -1762 8128 -9624 -6247 7595 -1257 1146 -6345 -383 4246 -4818 4867 -9894 -1370 6403 -4146 6635",
+      "output": "6358 8394 5035 8394 -1321 8394 -1919 8394 9155 9155 9155 9543 9121 9543 6696 6696 6696 6696 9543 9543 -6408 -6408 -4992 -4758 3833 9543 -1 2608 9526 9526 9543 7338 8128 8128 8394 -6247 7595 8394 1146 4246 -383 4246 4867 4867 6403 -1370 6403 6635 6635 8394",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    },
+    {
+      "id": "large_random_2",
+      "input": "23\n-221 6635 9954 -3483 -4992 2252 -4707 7674 7378 -9982 9626 621 6010 -9362 -6335 1894 76 -2154 -8102 -2108 8591 -7420 -7194",
+      "output": "6635 9954 -1 2252 2252 7674 7674 9626 9626 9626 9954 6010 8591 -6335 1894 8591 8591 -2108 -2108 8591 9954 -7194 -221",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    },
+    {
+      "id": "large_random_3",
+      "input": "72\n-7733 7455 -5880 -5793 5574 8015 -4590 -1315 7290 9876 3865 -3060 7671 -3409 214 3074 2236 4355 6959 4794 -6035 -1877 -2638 -7902 1078 -9311 9277 8150 -2460 9282 -2784 -9765 -7674 -8071 -2499 -7792 -8971 827 -7679 6847 -2202 -875 5906 -2980 7669 -5665 8711 8881 5488 -2038 5498 3338 -3761 -6910 -6824 4124 1609 3879 3470 5303 -8225 -6776 -8014 3193 1118 -6420 -1853 -3722 -3768 7573 4700 -5407",
+      "output": "7455 8015 -5793 5574 8015 9876 -1315 7290 9876 -1 7671 7671 9277 214 3074 4355 4355 6959 9277 9277 -1877 1078 1078 1078 9277 9277 9282 9282 9282 9876 -2499 -7674 -2499 -2499 827 827 827 6847 6847 7669 -875 5906 7669 7669 8711 8711 8881 9876 5498 5498 7573 4124 4124 -6824 4124 5303 3879 5303 5303 7573 -6776 3193 3193 7573 7573 -1853 7573 7573 7573 8015 7455 7455",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    },
+    {
+      "id": "large_random_4",
+      "input": "64\n-3988 -873 5159 -1815 -7530 4520 8033 -6792 -8343 7713 -9517 -6944 -2255 -4551 3317 5913 5773 -2996 3141 -8079 -4606 2418 -9930 2793 -1310 4909 -653 3861 8211 5947 -4928 -3778 -278 -2867 -8084 8978 7766 -8003 276 -8127 -8357 9142 5623 6477 7403 -4842 -8137 6640 -7375 -3911 -7755 9498 -7774 -2293 3230 -6072 8667 -1933 8970 9481 -8698 -7314 3737 9125",
+      "output": "-873 5159 8033 4520 4520 8033 8211 7713 7713 8211 -6944 -2255 3317 3317 5913 8211 8211 3141 4909 -4606 2418 2793 2793 4909 4909 8211 3861 8211 8978 8978 -3778 -278 8978 8978 8978 9142 9142 276 9142 9142 9142 9498 6477 7403 9498 6640 6640 9498 -3911 9498 9498 -1 -2293 3230 8667 8667 8970 8970 9481 9498 -7314 3737 9125 9142",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

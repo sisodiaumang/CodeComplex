@@ -15,7 +15,13 @@ export interface IUser extends Document {
     };
     bio?: string;
     country: string;
-
+    githubProfile?: string;
+    linkedinProfile?: string;
+    leetcodeProfile?: string;
+    mascot?: {
+        type: string;
+        color: string;
+    };
     role: "USER" | "ADMIN"|"MODERATOR"|"OWNER";
 
     isVerified: boolean;

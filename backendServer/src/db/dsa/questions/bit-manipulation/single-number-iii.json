@@ -1,0 +1,293 @@
+{
+  "_id": "single-number-iii",
+  "title": "Single Number III",
+  "slug": "single-number-iii",
+  "difficulty": "Medium",
+  "category": "ARRAY",
+  "subCategory": "Interview Problems",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 500,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "ARRAY",
+      "BIT MANIPULATION"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "single number",
+      "bit manipulation",
+      "single element",
+      "array",
+      "number"
+    ],
+    "keywords": [
+      "single number",
+      "bit manipulation",
+      "single element",
+      "array",
+      "number",
+      "single",
+      "bit",
+      "manipulation",
+      "element",
+      "single element in array"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "You are given an integer array `nums` of length `n`. Every element in the array appears exactly twice, except for two distinct elements which appear only once. Your task is to find these two unique numbers.\n\nThe output must list the two numbers in ascending order, separated by a single space.\n\n**Input Format**\n- The first line contains a single integer `n`, the size of the array.\n- The second line contains `n` space‑separated integers representing the elements of `nums`.\n\n**Output Format**\n- Print the two unique numbers in ascending order on a single line, separated by a space.\n\n**Constraints**\n- `2 ≤ n ≤ 200000`\n- `n` is even.\n- `-10^9 ≤ nums[i] ≤ 10^9`\n- Exactly two numbers appear once; all other numbers appear exactly twice.\n\n**Notes**\n- An algorithm with linear time complexity `O(n)` and constant extra space `O(1)` (excluding the input array) is expected. Bitwise XOR operations are a typical approach.\n\n**Examples**\n\n**Example 1**\n```\n6\n1 2 1 3 2 5\n```\n**Output**\n```\n3 5\n```\n**Explanation**\nThe numbers `3` and `5` appear only once, while all other numbers appear twice.\n\n**Example 2**\n```\n8\n-1 0 -1 2 3 2 4 3\n```\n**Output**\n```\n0 4\n```\n**Explanation**\nThe unique numbers are `0` and `4`.\n",
+    "inputFormat": "The first line contains an integer n, the size of the array.\nThe second line contains n space-separated integers representing the array elements.",
+    "outputFormat": "Print the two unique numbers in ascending order, separated by a space, on a single line.",
+    "notes": "Use XOR to isolate the differing bits of the two unique numbers, then partition the array based on one set bit to find each number individually.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 2,
+        "max": 200000,
+        "description": "Size of the input array, always even"
+      },
+      {
+        "variable": "nums[i]",
+        "type": "integer",
+        "min": -1000000000,
+        "max": 1000000000,
+        "description": "Value of each array element"
+      }
+    ],
+    "examples": [
+      {
+        "input": "6\n1 2 1 3 2 5",
+        "output": "3 5",
+        "explanation": "The numbers 3 and 5 are the only ones that appear once."
+      },
+      {
+        "input": "8\n-1 0 -1 2 3 2 4 3",
+        "output": "0 4",
+        "explanation": "The unique numbers are 0 and 4."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "The problem can be solved with a single pass through the array, and the solution should have a time complexity of O(n)."
+    },
+    {
+      "order": 2,
+      "text": "Since every element in the array appears exactly twice, except for two distinct elements which appear only once, we can use a property of XOR operations to find the unique numbers."
+    },
+    {
+      "order": 3,
+      "text": "The XOR operation has the property that a ^ a = 0 and a ^ 0 = a. We can use this property to find the two unique numbers by XORing all elements in the array."
+    },
+    {
+      "order": 4,
+      "text": "The result of the XOR operation will be the XOR of the two unique numbers. Since the XOR of two numbers a and b is the same as the XOR of b and a, we can find the two unique numbers by XORing the result with the array again."
+    },
+    {
+      "order": 5,
+      "text": "However, since the array contains all elements except the two unique numbers twice, the result of the second XOR operation will be the sum of the two unique numbers. We can use this property to find the two unique numbers by finding the two numbers whose sum is equal to the result of the second XOR operation."
+    }
+  ],
+  "editorial": {
+    "title": "Single Number III – From Brute Force to Bitwise Elegance",
+    "intuition": "The problem asks for the two numbers that appear only once in an array where every other number appears twice. A naïve approach would compare every pair of elements, but that explodes to quadratic time. The key insight is that XOR of all elements collapses every duplicate pair to zero, leaving the XOR of the two unique numbers. This XOR is non‑zero, so at least one bit differs between the two numbers. Selecting any set bit in that XOR partitions the array into two groups, each containing exactly one of the unique numbers. XORing each group separately recovers the two distinct values.",
+    "bruteForce": "A brute‑force solution would iterate over all pairs of indices, checking whether the two elements are distinct and whether all other elements appear twice. This requires O(n^2) time and O(1) extra space, which is infeasible for n up to 200,000.",
+    "betterSolution": "The optimal solution uses bitwise operations: compute the total XOR, isolate a differing bit, partition the array, and XOR within each partition. This runs in linear time and constant extra space.",
+    "optimalSolution": "Compute total_xor = XOR of all nums. Find mask = total_xor & -total_xor (rightmost set bit). Initialize x=y=0. For each v in nums, if v & mask then x ^= v else y ^= v. The two unique numbers are x and y, sorted before output.",
+    "proofOfCorrectness": "Let the two unique numbers be a and b. Since every other number appears twice, total_xor = a XOR b. Because a≠b, total_xor≠0, so it has at least one set bit. mask isolates one such bit where a and b differ. For any number v, v & mask is 0 if v has 0 at that bit, 1 otherwise. Thus all numbers equal to a or b are separated into two disjoint groups: one containing a and all numbers with 0 at that bit, the other containing b and all numbers with 1 at that bit. XORing each group cancels all duplicates, leaving the unique number in that group. Therefore x and y are exactly a and b.",
+    "dryRun": "Example: nums=[2,4,7,9,2,4]. total_xor=7 XOR 9=14 (1110). mask=2 (0010). Group1 (mask bit 0): [2,4,2,4] XOR→0. Group2 (mask bit 1): [7,9] XOR→14. After sorting, output 7 9.",
+    "commonMistakes": [
+      "Assuming the mask bit must be the most significant differing bit; any set bit works.",
+      "Using subtraction or division instead of XOR to cancel duplicates.",
+      "Failing to sort the final pair before printing.",
+      "Misinterpreting mask = total_xor & -total_xor as a negative number in languages with signed integers.",
+      "Using a hash map for counting, which uses O(n) space instead of O(1).",
+      "Not handling negative numbers correctly when isolating the mask bit."
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int n;\n    if (!(cin >> n)) return 0;\n    vector<long long> a(n);\n    for (int i = 0; i < n; ++i) cin >> a[i];\n    long long xorAll = 0;\n    for (auto v : a) xorAll ^= v;\n    long long diffBit = xorAll & -xorAll; // rightmost set bit\n    long long x = 0, y = 0;\n    for (auto v : a) {\n        if (v & diffBit) x ^= v; else y ^= v;\n    }\n    if (x > y) swap(x, y);\n    cout << x << ' ' << y << '\\n';\n    return 0;\n}\n",
+    "java": "import java.io.*;\nimport java.util.*;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        String line = br.readLine();\n        if (line == null) return;\n        int n = Integer.parseInt(line.trim());\n        long[] a = new long[n];\n        StringTokenizer st = new StringTokenizer(br.readLine());\n        for (int i = 0; i < n; i++) {\n            a[i] = Long.parseLong(st.nextToken());\n        }\n        long xorAll = 0;\n        for (long v : a) xorAll ^= v;\n        long diffBit = xorAll & -xorAll;\n        long x = 0, y = 0;\n        for (long v : a) {\n            if ((v & diffBit) != 0) x ^= v; else y ^= v;\n        }\n        if (x > y) {\n            long tmp = x; x = y; y = tmp;\n        }\n        System.out.println(x + \" \" + y);\n    }\n}\n",
+    "python": "import sys\n\ndef solve():\n    data = sys.stdin.read().strip().split()\n    if not data:\n        return\n    n = int(data[0])\n    nums = list(map(int, data[1:1+n]))\n    xor_all = 0\n    for v in nums:\n        xor_all ^= v\n    diff_bit = xor_all & -xor_all\n    x = y = 0\n    for v in nums:\n        if v & diff_bit:\n            x ^= v\n        else:\n            y ^= v\n    if x > y:\n        x, y = y, x\n    print(x, y)\n\nif __name__ == \"__main__\":\n    solve()\n",
+    "javascript": "const fs = require('fs');\nfunction main() {\n    const input = fs.readFileSync(0, 'utf8').trim().split(/\\s+/);\n    if (input.length === 0) return;\n    const n = parseInt(input[0], 10);\n    const nums = input.slice(1, 1 + n).map(Number);\n    let xorAll = 0;\n    for (const v of nums) xorAll ^= v;\n    const diffBit = xorAll & -xorAll;\n    let x = 0, y = 0;\n    for (const v of nums) {\n        if (v & diffBit) x ^= v; else y ^= v;\n    }\n    if (x > y) [x, y] = [y, x];\n    console.log(x + ' ' + y);\n}\nmain();\n"
+  },
+  "functionSignature": {
+    "cpp": "int main()",
+    "java": "public static void main(String[] args) throws Exception",
+    "python": "def solve()",
+    "javascript": "function main()"
+  },
+  "solutions": {
+    "python": "import sys\nit = iter(sys.stdin.read().split())\nn = int(next(it))\nnums = [int(next(it)) for _ in range(n)]\n# XOR all numbers to get xor of the two unique numbers\ntotal_xor = 0\nfor v in nums:\n    total_xor ^= v\n# Find a set bit (rightmost) where the two numbers differ\nmask = total_xor & -total_xor\nx = 0\ny = 0\nfor v in nums:\n    if v & mask:\n        x ^= v\n    else:\n        y ^= v\na, b = sorted((x, y))\nprint(a, b)\n",
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\nint main(){\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int n;\n    if(!(cin>>n)) return 0;\n    vector<long long> nums(n);\n    for(int i=0;i<n;++i) cin>>nums[i];\n    long long total_xor=0;\n    for(long long v:nums) total_xor ^= v;\n    long long mask = total_xor & -total_xor;\n    long long x=0, y=0;\n    for(long long v:nums){\n        if(v & mask) x ^= v; else y ^= v;\n    }\n    if(x>y) swap(x,y);\n    cout<<x<<' '<<y<<\"\\n\";\n    return 0;\n}\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.2
+  },
+  "testCases": [
+    {
+      "id": "sample",
+      "input": "6\n1 2 1 3 2 5",
+      "output": "3 5",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint",
+      "input": "1\n0",
+      "output": "0 0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "max_constraint",
+      "input": "1\n1000000000",
+      "output": "0 1000000000",
+      "isVisible": false,
+      "weight": 1,
+      "category": "max_constraint"
+    },
+    {
+      "id": "boundary",
+      "input": "3\n-1 0 1",
+      "output": "-1 1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    },
+    {
+      "id": "duplicate",
+      "input": "6\n1 1 1 1 1 1",
+      "output": "0 0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "duplicate"
+    },
+    {
+      "id": "sorted",
+      "input": "6\n1 2 3 4 5 6",
+      "output": "0 7",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sorted"
+    },
+    {
+      "id": "reverse_sorted",
+      "input": "6\n6 5 4 3 2 1",
+      "output": "0 7",
+      "isVisible": false,
+      "weight": 1,
+      "category": "reverse_sorted"
+    },
+    {
+      "id": "negative",
+      "input": "5\n-5 -4 -3 -2 -1",
+      "output": "-7 2",
+      "isVisible": false,
+      "weight": 1,
+      "category": "negative"
+    },
+    {
+      "id": "zero",
+      "input": "5\n0 0 0 0 0",
+      "output": "0 0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "zero"
+    },
+    {
+      "id": "one",
+      "input": "2\n1 1",
+      "output": "0 0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "one"
+    },
+    {
+      "id": "repeated",
+      "input": "8\n2 2 2 2 3 3 3 3",
+      "output": "0 0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "repeated"
+    },
+    {
+      "id": "large_random",
+      "input": "10\n309 -772 -949 518 -437 -499 -543 -715 508 -791",
+      "output": "-250 261",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    },
+    {
+      "id": "adversarial",
+      "input": "12\n385 516 827 116 -822 209 -136 -935 -939 -809 -553 -524",
+      "output": "-970 871",
+      "isVisible": false,
+      "weight": 1,
+      "category": "adversarial"
+    },
+    {
+      "id": "random_13",
+      "input": "21\n6 9 -10 7 -4 10 7 3 -3 4 8 -2 -10 -5 3 0 -2 -6 -4 0 -7",
+      "output": "-13 -1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "random"
+    },
+    {
+      "id": "random_14",
+      "input": "22\n-8 2 -7 1 1 9 -2 -9 4 7 -7 2 -8 7 -1 10 9 1 8 -4 -8 -9",
+      "output": "9 11",
+      "isVisible": false,
+      "weight": 1,
+      "category": "random"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
-import { Trophy, ChevronLeft, ChevronRight, Users } from "lucide-react";
+import { Trophy, Crown, ChevronLeft, ChevronRight, Users } from "lucide-react";
 import { api } from "@/lib/api";
 import type { LeaderboardPage, LeaderboardPlayer } from "@/lib/types";
 import { unwrapList } from "@/lib/types";
@@ -25,6 +25,43 @@ function normalizePage(data: unknown): LeaderboardPage {
     return data as LeaderboardPage;
   }
   return { players: unwrapList<LeaderboardPlayer>(data, "players", "leaderboard") };
+}
+
+function getRankStyles(rank: number) {
+  if (rank === 1) {
+    return {
+      rowClass: "bg-amber-500/5 hover:bg-amber-500/10 border-l-4 border-amber-500 shadow-[inset_4px_0_0_0_rgba(245,158,11,0.2)]",
+      textClass: "text-amber-500 font-black flex items-center gap-1.5",
+      iconClass: "text-amber-500 fill-amber-500/20 drop-shadow-[0_0_8px_rgba(245,158,11,0.4)] animate-bounce",
+      hasCrown: true,
+      crownColor: "text-amber-500 fill-amber-500/15"
+    };
+  }
+  if (rank === 2) {
+    return {
+      rowClass: "bg-slate-400/5 hover:bg-slate-400/10 border-l-4 border-slate-400/80 shadow-[inset_4px_0_0_0_rgba(148,163,184,0.15)]",
+      textClass: "text-slate-400 font-extrabold flex items-center gap-1.5",
+      iconClass: "text-slate-400 fill-slate-400/20",
+      hasCrown: true,
+      crownColor: "text-slate-400 fill-slate-400/10"
+    };
+  }
+  if (rank === 3) {
+    return {
+      rowClass: "bg-amber-700/5 hover:bg-amber-700/10 border-l-4 border-amber-700/60 shadow-[inset_4px_0_0_0_rgba(180,83,9,0.15)]",
+      textClass: "text-amber-700 font-extrabold flex items-center gap-1.5",
+      iconClass: "text-amber-700/80 fill-amber-700/10",
+      hasCrown: true,
+      crownColor: "text-amber-700 fill-amber-700/5"
+    };
+  }
+  return {
+    rowClass: "hover:bg-surface-2",
+    textClass: "text-text-faint font-mono font-medium",
+    iconClass: "",
+    hasCrown: false,
+    crownColor: ""
+  };
 }
 
 export default function LeaderboardPage() {
@@ -116,41 +153,55 @@ export default function LeaderboardPage() {
                   <th className="px-5 py-3 text-right font-medium">Rating</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border">
-                {board.players.map((p) => (
-                  <tr key={`${p.rank}-${p.username}`} className="transition-colors hover:bg-surface-2">
-                    <td className="px-5 py-3">
-                      <span className={cn(
-                        "font-mono text-[15px]",
-                        p.rank <= 3 ? "font-semibold text-primary" : "text-text-faint"
-                      )}>
-                        {p.rank}
-                      </span>
-                    </td>
-                    <td className="px-5 py-3">
-                      {p.username ? (
-                        <Link
-                          href={`/profile/${p.username}`}
-                          className="flex items-center gap-2.5 hover:opacity-80"
-                        >
-                          <Avatar src={p.avatar} name={p.username} size={30} />
-                          <span className="text-[15px] font-medium text-text">{p.username}</span>
-                          {p.country && (
-                            <span className="text-sm" title={p.country}>{countryFlag(p.country)}</span>
+              <tbody className="divide-y divide-border/60">
+                {board.players.map((p) => {
+                  const styles = getRankStyles(p.rank);
+                  return (
+                    <tr 
+                      key={`${p.rank}-${p.username}`} 
+                      className={cn("transition-all duration-200", styles.rowClass)}
+                    >
+                      <td className="px-5 py-3.5">
+                        <div className="flex items-center gap-2">
+                          <span className={cn("text-xs font-mono w-4 text-center", styles.textClass)}>
+                            {p.rank}
+                          </span>
+                          {styles.hasCrown && (
+                            <Crown className={cn("size-3.5 shrink-0", styles.crownColor)} />
                           )}
-                        </Link>
-                      ) : (
-                        <span className="text-text-faint">—</span>
-                      )}
-                    </td>
-                    <td className="px-5 py-3">
-                      <TierBadge rating={p.rating} showRating={false} />
-                    </td>
-                    <td className="px-5 py-3 text-right font-mono text-[15px] font-semibold text-text">
-                      {p.rating}
-                    </td>
-                  </tr>
-                ))}
+                        </div>
+                      </td>
+                      <td className="px-5 py-3.5">
+                        {p.username ? (
+                          <Link
+                            href={`/profile/${p.username}`}
+                            className="flex items-center gap-2.5 hover:opacity-80"
+                          >
+                            <Avatar src={p.avatar} name={p.username} size={30} className={cn(
+                              p.rank === 1 && "ring-2 ring-amber-500/40",
+                              p.rank === 2 && "ring-2 ring-slate-400/30",
+                              p.rank === 3 && "ring-2 ring-amber-700/20"
+                            )} />
+                            <span className={cn("text-[15px] font-medium text-text", p.rank <= 3 && "font-semibold")}>
+                              {p.username}
+                            </span>
+                            {p.country && (
+                              <span className="text-sm" title={p.country}>{countryFlag(p.country)}</span>
+                            )}
+                          </Link>
+                        ) : (
+                          <span className="text-text-faint">—</span>
+                        )}
+                      </td>
+                      <td className="px-5 py-3.5">
+                        <TierBadge rating={p.rating} showRating={false} />
+                      </td>
+                      <td className="px-5 py-3.5 text-right font-mono text-[15px] font-bold text-text">
+                        {p.rating}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

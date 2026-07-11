@@ -6,7 +6,6 @@ import { usePathname, useRouter } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Swords,
-  LayoutDashboard,
   Trophy,
   History,
   Users,
@@ -19,6 +18,7 @@ import {
   Sun,
   Moon,
   Monitor,
+  Shield,
 } from "lucide-react";
 import { api } from "@/lib/api";
 import { unwrapList, type AppNotification } from "@/lib/types";
@@ -28,9 +28,9 @@ import { useTheme } from "@/stores/theme-store";
 import { useSocketNotifications } from "@/stores/socket-store";
 import { Avatar, Spinner } from "@/components/ui";
 import { LogoMark } from "@/components/logo";
+import { ThemeToggle } from "./ThemeToggle";
 
 const NAV = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/battle", label: "Battle", icon: Swords },
   { href: "/leaderboard", label: "Leaderboard", icon: Trophy },
   { href: "/matches", label: "Matches", icon: History },
@@ -41,10 +41,10 @@ const NAV = [
 
 function Brand() {
   return (
-    <Link href="/dashboard" className="flex items-center gap-2 shrink-0">
+    <Link href="/battle" className="flex items-center gap-2 shrink-0">
       <LogoMark size={28} />
       <span className="text-lg font-bold tracking-tight text-sidebar-text">
-        Dev<span className="text-primary">War</span>
+        Code<span className="text-primary">Complex</span>
       </span>
     </Link>
   );
@@ -54,10 +54,17 @@ function Brand() {
 
 function DesktopNav() {
   const pathname = usePathname();
+  const user = useAuth((s) => s.user);
+  const isAdmin = user && ["ADMIN", "MODERATOR", "OWNER"].includes(user.role || "");
+
+  const navItems = [...NAV];
+  if (isAdmin) {
+    navItems.push({ href: "/admin", label: "Admin", icon: Shield } as any);
+  }
 
   return (
     <nav className="flex items-center gap-1">
-      {NAV.map(({ href, label, icon: Icon }) => {
+      {navItems.map(({ href, label, icon: Icon }) => {
         const active = pathname === href || pathname.startsWith(`${href}/`);
         return (
           <Link
@@ -119,29 +126,7 @@ function NotificationBell() {
 
 /* ─── Theme toggle ────────────────────────────────────────────────────── */
 
-const THEME_META = {
-  light: { icon: Sun, label: "Light", next: "Switch to dark mode" },
-  dark: { icon: Moon, label: "Dark", next: "Switch to system theme" },
-  system: { icon: Monitor, label: "System", next: "Switch to light mode" },
-} as const;
-
-function ThemeToggle() {
-  const { theme, cycle } = useTheme();
-  const meta = THEME_META[theme];
-  const Icon = meta.icon;
-
-  return (
-    <button
-      onClick={cycle}
-      className="flex items-center gap-1.5 rounded-md px-2 py-1.5 text-sidebar-muted transition-colors hover:bg-sidebar-hover hover:text-sidebar-text"
-      title={meta.next}
-      aria-label={meta.next}
-    >
-      <Icon className="size-4" />
-      <span className="hidden text-xs font-medium sm:inline">{meta.label}</span>
-    </button>
-  );
-}
+// ThemeToggle is imported from "./ThemeToggle" to prevent circular reference compilation.
 
 /* ─── User dropdown ───────────────────────────────────────────────────── */
 
@@ -232,6 +217,8 @@ function UserMenu() {
 
 function MobileNavLinks({ onNavigate }: { onNavigate: () => void }) {
   const pathname = usePathname();
+  const user = useAuth((s) => s.user);
+  const isAdmin = user && ["ADMIN", "MODERATOR", "OWNER"].includes(user.role || "");
 
   const { data: notifications } = useQuery({
     queryKey: ["notifications"],
@@ -248,6 +235,10 @@ function MobileNavLinks({ onNavigate }: { onNavigate: () => void }) {
     { href: "/notifications", label: "Notifications", icon: Bell },
     { href: "/settings", label: "Settings", icon: Settings },
   ];
+
+  if (isAdmin) {
+    allLinks.push({ href: "/admin", label: "Admin Panel", icon: Shield } as any);
+  }
 
   return (
     <nav className="flex flex-col gap-1 px-3 py-2">

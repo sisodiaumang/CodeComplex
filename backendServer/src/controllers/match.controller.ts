@@ -5,6 +5,7 @@ import Match from "../models/match.model.js";
 import BattleRoom from "../models/battleRoom.model.js";
 import Submission from "../models/submission.model.js";
 import RatingHistory from "../models/ratingHistory.model.js";
+import User from "../models/user.model.js";
 import { io } from "../index.js";
 import {
     createMatchForRoom,
@@ -20,8 +21,8 @@ import {
 /** All players in a match as a flat array of ObjectId strings */
 function allPlayerIds(match: any): string[] {
     return [
-        ...match.teamA.map((id: any) => id.toString()),
-        ...match.teamB.map((id: any) => id.toString()),
+        ...match.teamA.map((id: any) => (id._id ? id._id.toString() : id.toString())),
+        ...match.teamB.map((id: any) => (id._id ? id._id.toString() : id.toString())),
     ];
 }
 
@@ -637,10 +638,17 @@ export const getMatchHistory = async (
     next: NextFunction
 ): Promise<void> => {
     try {
-        const userId = req.user._id;
+        let userId = req.user._id;
+        const queryUsername = req.query.username as string;
+        if (queryUsername) {
+            const foundUser = await User.findOne({ username: queryUsername });
+            if (foundUser) {
+                userId = foundUser._id;
+            }
+        }
 
         const page = Math.max(1, parseInt(req.query.page as string) || 1);
-        const limit = Math.min(50, Math.max(1, parseInt(req.query.limit as string) || 20));
+        const limit = Math.min(100, Math.max(1, parseInt(req.query.limit as string) || 20));
         const skip = (page - 1) * limit;
 
         // Match uses "COMPLETED" and "ABANDONED" — NOT "FINISHED"
@@ -881,6 +889,72 @@ export const getLiveMatch = async (
                 },
                 recentSubmissions,
             }
+        });
+    } catch (err) {
+        next(err);
+    }
+};
+
+// ─────────────────────────────────────────────
+// 10. GET /match/:matchId/question — Get Match Question
+// ─────────────────────────────────────────────
+export const getMatchQuestion = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+): Promise<void> => {
+    try {
+        const { matchId } = req.params;
+
+        if (!mongoose.isValidObjectId(matchId)) {
+            res.status(400).json({ success: false, message: "Invalid matchId" });
+            return;
+        }
+
+        const match = await Match.findById(matchId);
+        if (!match) {
+            res.status(404).json({ success: false, message: "Match not found" });
+            return;
+        }
+
+        const userId = req.user._id.toString();
+        const players = allPlayerIds(match);
+
+        if (!players.includes(userId) && req.user.role !== "ADMIN") {
+            res.status(403).json({
+                success: false,
+                message: "Not authorised to view this match"
+            });
+            return;
+        }
+
+        const FRONTEND_TYPES = ["FRONTEND", "FULLSTACK"];
+        const BACKEND_TYPES  = ["BACKEND"];
+        const PROMPT_TYPES   = ["PROMPT_WAR"];
+
+        let question;
+        if (FRONTEND_TYPES.includes(match.battleType)) {
+            const { default: FrontendQuestion } = await import("../models/frontendQuestion.model.js");
+            question = await FrontendQuestion.findOne({ slug: match.questionSlug });
+        } else if (BACKEND_TYPES.includes(match.battleType)) {
+            const { default: BackendQuestion } = await import("../models/backendQuestion.model.js");
+            question = await BackendQuestion.findOne({ slug: match.questionSlug });
+        } else if (PROMPT_TYPES.includes(match.battleType)) {
+            const { default: PromptWarScenario } = await import("../models/promptWarScenerio.model.js");
+            question = await PromptWarScenario.findOne({ slug: match.questionSlug });
+        } else {
+            const { default: Question } = await import("../models/question.model.js");
+            question = await Question.findOne({ slug: match.questionSlug });
+        }
+
+        if (!question) {
+            res.status(404).json({ success: false, message: "Question not found" });
+            return;
+        }
+
+        res.status(200).json({
+            success: true,
+            data: { question }
         });
     } catch (err) {
         next(err);

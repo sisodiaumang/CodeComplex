@@ -70,8 +70,8 @@ import type { IFrontendGradingCriterion } from "../interfaces/frontendQuestion.i
 
 // ── Constants ─────────────────────────────────────────────────────────────
 
-const JUDGE_MODEL = "grok-2-vision-1212";
-const XAI_API_URL = "https://api.x.ai/v1/chat/completions";
+const JUDGE_MODEL = "meta-llama/llama-4-scout-17b-16e-instruct";
+const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
 
 // Source code truncated at this limit before sending to the LLM.
 // ~40k chars ≈ ~10k tokens — leaves headroom for prompt + image blocks.
@@ -129,13 +129,14 @@ interface RawVerdict {
 import { env } from "../config/env.js";
 
 function getApiKey(): string {
-    if (!env.XAI_API_KEY) {
+    const key = env.GROQ_API_KEY || env.XAI_API_KEY;
+    if (!key) {
         throw new Error(
-            "[FrontendJudge] XAI_API_KEY is not set. " +
+            "[FrontendJudge] GROQ_API_KEY or XAI_API_KEY is not set. " +
             "Add it to your environment to enable FRONTEND/FULLSTACK judging."
         );
     }
-    return env.XAI_API_KEY;
+    return key;
 }
 
 // OpenAI-compatible content block types used in the Grok request
@@ -162,13 +163,19 @@ interface GrokResponse {
         };
         finish_reason: string;
     }[];
+    usage?: {
+        prompt_tokens?: number;
+        completion_tokens?: number;
+        total_tokens?: number;
+    };
+    model?: string;
     error?: { message: string };
 }
 
 async function callGrok(request: GrokRequest): Promise<string> {
     const apiKey = getApiKey();
 
-    const res = await fetch(XAI_API_URL, {
+    const res = await fetch(GROQ_API_URL, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -180,7 +187,7 @@ async function callGrok(request: GrokRequest): Promise<string> {
     if (!res.ok) {
         const body = await res.text().catch(() => "");
         throw new Error(
-            `[FrontendJudge] xAI API request failed: ${res.status} ${res.statusText}` +
+            `[FrontendJudge] Groq API request failed: ${res.status} ${res.statusText}` +
             (body ? ` — ${body.slice(0, 300)}` : "")
         );
     }
@@ -189,6 +196,27 @@ async function callGrok(request: GrokRequest): Promise<string> {
 
     if (data.error) {
         throw new Error(`[FrontendJudge] xAI API error: ${data.error.message}`);
+    }
+
+    // Log token usage asynchronously in the background
+    if (data.usage) {
+        import("../models/tokenUsage.model.js")
+            .then(({ default: TokenUsage }) => {
+                const promptTokens = data.usage?.prompt_tokens ?? 0;
+                const completionTokens = data.usage?.completion_tokens ?? 0;
+                const totalTokens = data.usage?.total_tokens ?? 0;
+                const cost = (promptTokens * 5 + completionTokens * 15) / 1_000_000;
+
+                TokenUsage.create({
+                    promptTokens,
+                    completionTokens,
+                    totalTokens,
+                    model: data.model || "grok-2",
+                    feature: "FRONTEND",
+                    cost,
+                }).catch((e) => console.error("[TokenUsage] Failed to create record:", e));
+            })
+            .catch((e) => console.error("[TokenUsage] Failed to load model:", e));
     }
 
     const text = data.choices?.[0]?.message?.content;

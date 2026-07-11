@@ -77,6 +77,27 @@ export const updateCountrySchema = z.object({
     }).strict(),
 });
 
+export const updateFullNameSchema = z.object({
+    body: z.object({
+        fullName: z.string().min(3).max(50),
+    }).strict(),
+});
+
+export const updateSocialsSchema = z.object({
+    body: z.object({
+        githubProfile: z.string().max(200).optional(),
+        linkedinProfile: z.string().max(200).optional(),
+        leetcodeProfile: z.string().max(200).optional(),
+    }).strict(),
+});
+
+export const updateMascotSchema = z.object({
+    body: z.object({
+        type: z.enum(["cat", "dog", "panda", "crab"]),
+        color: z.string().min(4).max(10),
+    }).strict(),
+});
+
 export type SignupInput = z.infer<typeof signupSchema>;
 export type VerifyUserInput = z.infer<typeof verifyUserSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
@@ -88,3 +109,5 @@ export type RequestEmailChangeInput = z.infer<typeof requestEmailChangeSchema>;
 export type VerifyEmailChangeInput = z.infer<typeof verifyEmailChangeSchema>;
 export type UpdateBioInput = z.infer<typeof updateBioSchema>;
 export type UpdateCountryInput = z.infer<typeof updateCountrySchema>;
+export type UpdateFullNameInput = z.infer<typeof updateFullNameSchema>;
+export type UpdateSocialsInput = z.infer<typeof updateSocialsSchema>;

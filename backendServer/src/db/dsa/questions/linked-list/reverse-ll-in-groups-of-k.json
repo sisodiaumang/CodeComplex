@@ -1,0 +1,292 @@
+{
+  "_id": "reverse-ll-in-groups-of-k",
+  "title": "Reverse LL in Groups of K",
+  "slug": "reverse-ll-in-groups-of-k",
+  "difficulty": "Hard",
+  "category": "ARRAY",
+  "subCategory": "Hard LL Problems",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 45,
+    "points": 500,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "Linked List"
+    ],
+    "patterns": [
+      "Reverse Linked List"
+    ],
+    "prerequisites": [
+      "Basic LL Operations"
+    ],
+    "variants": [],
+    "tags": [
+      "LL Reversal",
+      "Grouping"
+    ],
+    "keywords": [
+      "Grouped LL Reversal",
+      "K Grouping"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "Given a linked list, reverse the nodes of the list in groups of k. If the number of nodes is not a multiple of k, then the last group should remain as it is (i.e., not reversed). The input linked list is represented as a sequence of space-separated integers, and the output should also be a sequence of space-separated integers. The first line of the input contains the number of nodes in the linked list, followed by the node values. The second line contains the value of k. Your task is to write a program that takes this input and produces the reversed linked list in groups of k as output.",
+    "inputFormat": "The first line contains an integer n, the number of nodes in the linked list. The second line contains n space-separated integers representing the node values. The third line contains an integer k, the group size for reversal.",
+    "outputFormat": "A sequence of space-separated integers representing the node values of the reversed linked list in groups of k.",
+    "notes": "The input linked list is 1-indexed, and the node values are integers.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "int",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of nodes in the linked list"
+      },
+      {
+        "variable": "k",
+        "type": "int",
+        "min": 1,
+        "max": 10000,
+        "description": "The group size for reversal"
+      },
+      {
+        "variable": "node values",
+        "type": "int",
+        "min": 1,
+        "max": 10000,
+        "description": "The values of the nodes in the linked list"
+      }
+    ],
+    "examples": [
+      {
+        "input": "5\n1 2 3 4 5\n3",
+        "output": "3 2 1 5 4",
+        "explanation": "Reverse the first 3 nodes (1, 2, 3) to get (3, 2, 1), and then append the remaining nodes (4, 5) as they are."
+      },
+      {
+        "input": "4\n1 2 3 4\n2",
+        "output": "2 1 4 3",
+        "explanation": "Reverse the first 2 nodes (1, 2) to get (2, 1), and then reverse the next 2 nodes (3, 4) to get (4, 3)."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Consider creating a helper function to reverse a linked list in-place. This will be useful for reversing each group of k nodes."
+    },
+    {
+      "order": 2,
+      "text": "Think about how you can iterate over the linked list in groups of k nodes. You can use a counter to keep track of the current group size."
+    },
+    {
+      "order": 3,
+      "text": "When you encounter a group of k nodes, you can reverse this group by calling your helper function. Remember to update the next pointers of the nodes accordingly."
+    },
+    {
+      "order": 4,
+      "text": "After reversing each group, you need to update the next pointer of the last node in the previous group to point to the first node of the current group. This will link the groups together."
+    },
+    {
+      "order": 5,
+      "text": "The key insight is to realize that you don't need to reverse the entire linked list. You only need to reverse each group of k nodes in-place and link them together."
+    }
+  ],
+  "editorial": {
+    "title": "Reversing a Linked List in Groups of K",
+    "intuition": "The problem requires reversing a linked list in groups of K nodes. A brute force approach would involve reversing the entire list and then adjusting the pointers, but this would be inefficient. A key observation is that we can solve this problem recursively by reversing the first K nodes and then connecting the rest of the list to the reversed group.",
+    "bruteForce": "A brute force approach would involve reversing the entire linked list and then trying to group the nodes into sets of K. This would be slow because it would require extra work to reconnect the nodes into groups. The time complexity of this approach would be much higher than the optimal solution.",
+    "betterSolution": "The optimal approach involves using a recursive strategy to reverse the linked list in groups of K. This approach takes advantage of the fact that we can reverse a linked list by changing the next pointers of the nodes.",
+    "optimalSolution": "The optimal solution involves a recursive function that takes the head of the list and the group size K as input. It reverses the first K nodes and then connects the rest of the list to the reversed group. This approach has a time complexity of O(n) and a space complexity of O(1).",
+    "proofOfCorrectness": "The correctness of the optimal solution can be proven by induction. The base case is when the list has less than K nodes, in which case the list is returned as is. The inductive step involves reversing the first K nodes and then connecting the rest of the list to the reversed group. This process is repeated until the entire list is reversed in groups of K.",
+    "dryRun": "A dry run of the optimal solution with a sample input can help verify its correctness. For example, if the input is a list of 6 nodes (1 -> 2 -> 3 -> 4 -> 5 -> 6) and K = 3, the solution should output the list 3 -> 2 -> 1 -> 6 -> 5 -> 4.",
+    "commonMistakes": [
+      "Not handling the case where the list has less than K nodes",
+      "Not updating the next pointers correctly when reversing the list",
+      "Not connecting the rest of the list to the reversed group correctly",
+      "Using a non-recursive approach that requires extra space",
+      "Not considering the edge case where K is 1",
+      "Not verifying the correctness of the solution with a dry run"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "cpp": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nstruct Node {\n    int data;\n    Node* next;\n};\n\nNode* createNode(int data) {\n    Node* newNode = new Node();\n    if (!newNode) {\n        cout << \"Memory error\\n\";\n        return NULL;\n    }\n    newNode->data = data;\n    newNode->next = NULL;\n    return newNode;\n}\n\nvoid push(Node** head_ref, int new_data) {\n    Node* new_node = createNode(new_data);\n    new_node->next = *head_ref;\n    *head_ref = new_node;\n}\n\nvoid printList(Node* node) {\n    while (node != NULL) {\n        cout << node->data << \" \";\n        node = node->next;\n    }\n    cout << endl;\n}\n\nNode* reverse(Node* head, int k) {\n    // TODO: implement\n    return head;\n}\n\nint main() {\n    int n;\n    cin >> n;\n    Node* head = NULL;\n    for (int i = 0; i < n; i++) {\n        int data;\n        cin >> data;\n        push(&head, data);\n    }\n    int k;\n    cin >> k;\n    head = reverse(head, k);\n    printList(head);\n    return 0;\n}",
+    "java": "import java.util.Scanner;\n\nclass Node {\n    int data;\n    Node next;\n    Node(int data) {\n        this.data = data;\n        this.next = null;\n    }\n}\n\nclass LinkedList {\n    Node head;\n\n    void push(int new_data) {\n        Node new_node = new Node(new_data);\n        new_node.next = head;\n        head = new_node;\n    }\n\n    void printList() {\n        Node node = head;\n        while (node != null) {\n            System.out.print(node.data + \" \");\n            node = node.next;\n        }\n        System.out.println();\n    }\n\n    Node reverse(int k) {\n        // TODO: implement\n        return head;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        LinkedList list = new LinkedList();\n        for (int i = 0; i < n; i++) {\n            int data = scanner.nextInt();\n            list.push(data);\n        }\n        int k = scanner.nextInt();\n        list.head = list.reverse(k);\n        list.printList();\n    }\n}",
+    "python": "class Node:\n    def __init__(self, data=None):\n        self.data = data\n        self.next = None\n\nclass LinkedList:\n    def __init__(self):\n        self.head = None\n\n    def push(self, new_data):\n        new_node = Node(new_data)\n        new_node.next = self.head\n        self.head = new_node\n\n    def printList(self):\n        node = self.head\n        while node:\n            print(node.data, end=\" \")\n            node = node.next\n        print()\n\n    def reverse(self, k):\n        # TODO: implement\n        pass\n\ndef main():\n    n = int(input())\n    linked_list = LinkedList()\n    for _ in range(n):\n        data = int(input())\n        linked_list.push(data)\n    k = int(input())\n    linked_list.head = linked_list.reverse(k)\n    linked_list.printList()\n\nif __name__ == \"__main__\":\n    main()\n",
+    "javascript": "class Node {\n    constructor(data) {\n        this.data = data;\n        this.next = null;\n    }\n}\n\nclass LinkedList {\n    constructor() {\n        this.head = null;\n    }\n\n    push(new_data) {\n        let new_node = new Node(new_data);\n        new_node.next = this.head;\n        this.head = new_node;\n    }\n\n    printList() {\n        let node = this.head;\n        let output = '';\n        while (node !== null) {\n            output += node.data + ' ';\n            node = node.next;\n        }\n        console.log(output);\n    }\n\n    reverse(k) {\n        // TODO: implement\n        return null;\n    }\n}\n\nlet main = () => {\n    let n = parseInt(readline());\n    let list = new LinkedList();\n    for (let i = 0; i < n; i++) {\n        let data = parseInt(readline());\n        list.push(data);\n    }\n    let k = parseInt(readline());\n    list.head = list.reverse(k);\n    list.printList();\n}\n\nmain();\n"
+  },
+  "functionSignature": {
+    "cpp": "Node* reverse(Node* head, int k)",
+    "java": "Node reverse(int k)",
+    "python": "def reverse(self, k):",
+    "javascript": "reverse(k)"
+  },
+  "solutions": {
+    "python": "import sys\nit = iter(sys.stdin.read().split())\nn = int(next(it))\nnums = [int(next(it)) for _ in range(n)]\nk = int(next(it))\nclass Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\nclass LinkedList:\n    def __init__(self):\n        self.head = None\n    def append(self, data):\n        if not self.head:\n            self.head = Node(data)\n        else:\n            current = self.head\n            while current.next:\n                current = current.next\n            current.next = Node(data)\n    def print_list(self):\n        current = self.head\n        result = []\n        while current:\n            result.append(str(current.data))\n            current = current.next\n        print(' '.join(result))\ndef reverse_in_groups(head, k):\n    current = head\n    prev = None\n    next_node = None\n    count = 0\n    while current and count < k:\n        next_node = current.next\n        current.next = prev\n        prev = current\n        current = next_node\n        count += 1\n    if next_node:\n        head.next = reverse_in_groups(next_node, k)\n    return prev\ndef main():\n    ll = LinkedList()\n    for num in nums:\n        ll.append(num)\n    ll.head = reverse_in_groups(ll.head, k)\n    ll.print_list()\nif __name__ == '__main__':\n    main()",
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\nstruct Node {\n    int data;\n    Node* next;\n};\nNode* newNode(int data) {\n    Node* node = new Node();\n    node->data = data;\n    node->next = nullptr;\n    return node;\n}\nNode* reverse_in_groups(Node* head, int k) {\n    Node* current = head;\n    Node* prev = nullptr;\n    Node* next_node = nullptr;\n    int count = 0;\n    while (current && count < k) {\n        next_node = current->next;\n        current->next = prev;\n        prev = current;\n        current = next_node;\n        count += 1;\n    }\n    if (next_node) {\n        head->next = reverse_in_groups(next_node, k);\n    }\n    return prev;\n}\nvoid print_list(Node* head) {\n    while (head) {\n        cout << head->data << ' ';\n        head = head->next;\n    }\n    cout << endl;\n}\nint main() {\n    int n, k;\n    cin >> n;\n    vector<int> nums(n);\n    for (int i = 0; i < n; i++) {\n        cin >> nums[i];\n    }\n    cin >> k;\n    Node* head = nullptr;\n    for (int num : nums) {\n        Node* node = newNode(num);\n        if (!head) {\n            head = node;\n        } else {\n            Node* current = head;\n            while (current->next) {\n                current = current->next;\n            }\n            current->next = node;\n        }\n    }\n    head = reverse_in_groups(head, k);\n    print_list(head);\n    return 0;\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.5
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5\n1 2 3 4 5\n3",
+      "output": "3 2 1 5 4",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "4\n1 2 3 4\n2",
+      "output": "2 1 4 3",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint_1",
+      "input": "1\n1\n1",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "boundary_1",
+      "input": "2\n1 2\n1",
+      "output": "1 2",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    },
+    {
+      "id": "boundary_2",
+      "input": "3\n1 2 3\n2",
+      "output": "2 1 3",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    },
+    {
+      "id": "duplicate_1",
+      "input": "5\n1 1 1 1 1\n3",
+      "output": "1 1 1 1 1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "duplicate"
+    },
+    {
+      "id": "sorted_1",
+      "input": "5\n1 2 3 4 5\n2",
+      "output": "2 1 4 3 5",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sorted"
+    },
+    {
+      "id": "reverse_sorted_1",
+      "input": "5\n5 4 3 2 1\n3",
+      "output": "3 4 5 1 2",
+      "isVisible": false,
+      "weight": 1,
+      "category": "reverse_sorted"
+    },
+    {
+      "id": "negative_1",
+      "input": "5\n-1 -2 -3 -4 -5\n3",
+      "output": "-3 -2 -1 -5 -4",
+      "isVisible": false,
+      "weight": 1,
+      "category": "negative"
+    },
+    {
+      "id": "zero_1",
+      "input": "5\n0 0 0 0 0\n3",
+      "output": "0 0 0 0 0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "zero"
+    },
+    {
+      "id": "one_1",
+      "input": "5\n1 1 1 1 1\n1",
+      "output": "1 1 1 1 1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "one"
+    },
+    {
+      "id": "repeated_1",
+      "input": "5\n1 2 3 1 2\n2",
+      "output": "2 1 1 3 2",
+      "isVisible": false,
+      "weight": 1,
+      "category": "repeated"
+    },
+    {
+      "id": "large_random_13",
+      "input": "754\n115 26 760 282 251 229 143 755 105 693 759 914 559 90 605 433 33 31 96 224 239 518 617 28 575 204 734 666 719 559 430 226 460 604 285 829 891 7 778 826 164 715 433 349 285 160 221 981 782 345 105 95 390 100 368 868 353 619 271 827 45 748 471 550 128 997 945 388 81 566 301 850 644 634 907 883 371 592 197 722 72 47 678 234 792 297 82 876 239 888 104 390 285 465 651 855 374 167 380 364 215 687 274 719 960 700 664 74 624 651 176 547 747 251 168 474 389 277 948 656 705 571 225 702 333 864 787 795 58 235 842 33 825 324 411 275 68 217 936 966 581 898 736 323 218 672 512 406 906 937 659 470 147 272 143 253 763 575 552 270 765 599 439 920 598 409 371 225 142 522 506 94 774 49 882 113 157 643 164 812 697 433 611 66 395 391 611 480 542 258 995 567 882 966 12 697 739 118 699 907 550 769 274 788 657 349 115 301 446 162 465 4 977 740 897 737 270 996 513 781 183 520 935 109 892 641 306 862 655 520 624 204 157 383 781 166 553 977 798 945 544 941 1 614 332 501 20 115 952 372 900 852 827 315 246 60 247 900 581 970 81 88 750 498 836 71 779 546 785 129 132 676 487 970 563 170 272 541 894 622 434 988 217 952 553 774 748 707 206 731 320 409 688 666 383 449 922 530 463 124 254 231 66 347 22 603 568 236 603 226 8 73 725 647 61 235 70 928 33 881 339 73 527 244 286 686 498 220 553 136 741 958 904 585 591 485 249 804 485 827 417 195 97 100 675 442 363 434 421 479 885 747 56 690 670 662 101 63 413 746 348 820 883 112 255 197 195 550 460 144 433 188 286 474 256 896 946 78 454 828 883 877 564 101 52 668 554 857 16 993 96 949 772 870 243 171 417 498 493 219 886 411 925 61 169 389 3 400 272 949 803 804 466 293 434 714 981 749 803 570 678 736 499 159 195 304 223 992 60 594 754 556 63 766 322 59 52 599 489 515 942 874 544 162 59 984 521 83 872 191 71 610 70 692 883 241 414 123 965 912 584 253 593 609 41 635 84 430 674 598 579 536 324 958 268 210 686 734 322 245 272 406 135 688 661 308 469 324 952 770 959 75 10 470 637 577 103 76 551 219 519 272 136 956 358 903 71 901 251 379 292 162 449 854 557 721 310 627 827 670 542 9 684 837 568 307 955 680 107 962 900 138 271 119 912 110 761 567 160 279 289 620 216 735 352 209 704 650 874 271 518 501 258 928 930 867 53 95 650 434 850 284 46 4 342 790 134 653 269 166 760 453 565 723 438 575 10 115 78 968 905 708 926 153 559 37 855 379 597 566 152 441 131 43 316 374 921 956 816 996 882 41 921 367 216 699 256 683 106 363 799 574 906 896 417 998 636 768 159 948 953 243 886 167 1000 820 831 182 903 423 26 184 755 947 341 802 954 422 822 686 885 753 831 255 274 164 807 719 111 392 894 40 880 482 228 205 837 941 472 359 313 841 815 893 234 229 25 676 198 409 337 286 886 72 991 792 286 360 657 522 410 696 864 550 340 962 29 119 899 994 268 183 595 986 272 40 112 611 445 354 747 806 322 447 621 524 119 395 922 591 195 261 46 726 447 2 533 948 826 552 704 737 963 760 755 687 202 373 442 72 972 681 943 339 639 322 680 869 128 738 922 308 520 317 683 419 335 413 714 303 568 131 197 431\n86",
+      "output": "297 792 234 678 47 72 722 197 592 371 883 907 634 644 850 301 566 81 388 945 997 128 550 471 748 45 827 271 619 353 868 368 100 390 95 105 345 782 981 221 160 285 349 433 715 164 826 778 7 891 829 285 604 460 226 430 559 719 666 734 204 575 28 617 518 239 224 96 31 33 433 605 90 559 914 759 693 105 755 143 229 251 282 760 26 115 94 506 522 142 225 371 409 598 920 439 599 765 270 552 575 763 253 143 272 147 470 659 937 906 406 512 672 218 323 736 898 581 966 936 217 68 275 411 324 825 33 842 235 58 795 787 864 333 702 225 571 705 656 948 277 389 474 168 251 747 547 176 651 624 74 664 700 960 719 274 687 215 364 380 167 374 855 651 465 285 390 104 888 239 876 82 900 247 60 246 315 827 852 900 372 952 115 20 501 332 614 1 941 544 945 798 977 553 166 781 383 157 204 624 520 655 862 306 641 892 109 935 520 183 781 513 996 270 737 897 740 977 4 465 162 446 301 115 349 657 788 274 769 550 907 699 118 739 697 12 966 882 567 995 258 542 480 611 391 395 66 611 433 697 812 164 643 157 113 882 49 774 100 97 195 417 827 485 804 249 485 591 585 904 958 741 136 553 220 498 686 286 244 527 73 339 881 33 928 70 235 61 647 725 73 8 226 603 236 568 603 22 347 66 231 254 124 463 530 922 449 383 666 688 409 320 731 206 707 748 774 553 952 217 988 434 622 894 541 272 170 563 970 487 676 132 129 785 546 779 71 836 498 750 88 81 970 581 594 60 992 223 304 195 159 499 736 678 570 803 749 981 714 434 293 466 804 803 949 272 400 3 389 169 61 925 411 886 219 493 498 417 171 243 870 772 949 96 993 16 857 554 668 52 101 564 877 883 828 454 78 946 896 256 474 286 188 433 144 460 550 195 197 255 112 883 820 348 746 413 63 101 662 670 690 56 747 885 479 421 434 363 442 675 721 557 854 449 162 292 379 251 901 71 903 358 956 136 272 519 219 551 76 103 577 637 470 10 75 959 770 952 324 469 308 661 688 135 406 272 245 322 734 686 210 268 958 324 536 579 598 674 430 84 635 41 609 593 253 584 912 965 123 414 241 883 692 70 610 71 191 872 83 521 984 59 162 544 874 942 515 489 599 52 59 322 766 63 556 754 41 882 996 816 956 921 374 316 43 131 441 152 566 597 379 855 37 559 153 926 708 905 968 78 115 10 575 438 723 565 453 760 166 269 653 134 790 342 4 46 284 850 434 650 95 53 867 930 928 258 501 518 271 874 650 704 209 352 735 216 620 289 279 160 567 761 110 912 119 271 138 900 962 107 680 955 307 568 837 684 9 542 670 827 627 310 119 29 962 340 550 864 696 410 522 657 360 286 792 991 72 886 286 337 409 198 676 25 229 234 893 815 841 313 359 472 941 837 205 228 482 880 40 894 392 111 719 807 164 274 255 831 753 885 686 822 422 954 802 341 947 755 184 26 423 903 182 831 820 1000 167 886 243 953 948 159 768 636 998 417 896 906 574 799 363 106 683 256 699 216 367 921 431 197 131 568 303 714 413 335 419 683 317 520 308 922 738 128 869 680 322 639 339 943 681 972 72 442 373 202 687 755 760 963 737 704 552 826 948 533 2 447 726 46 261 195 591 922 395 119 524 621 447 322 806 747 354 445 611 112 40 272 986 595 183 268 994 899",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    },
+    {
+      "id": "large_random_14",
+      "input": "488\n694 767 925 179 631 583 309 416 562 854 1 312 294 216 441 805 594 622 671 330 477 453 453 692 219 524 485 813 923 983 816 754 174 675 87 291 528 680 649 635 344 96 839 975 770 241 689 318 231 826 204 151 26 48 251 487 626 871 787 75 467 425 908 645 590 200 736 714 394 507 410 250 152 672 705 6 915 769 882 789 907 110 798 436 225 181 824 981 713 531 476 52 571 256 940 869 125 468 137 821 476 684 544 573 610 325 973 774 913 454 628 835 737 914 517 437 851 929 562 457 919 163 762 883 487 461 266 770 254 861 653 284 785 797 534 497 642 245 282 451 80 731 293 241 279 344 328 915 554 83 142 155 237 393 711 157 724 220 66 425 418 339 556 478 426 64 212 853 431 399 927 789 599 969 713 21 878 902 784 590 390 489 7 966 361 306 772 400 874 914 977 856 430 552 766 753 560 820 618 920 226 500 225 280 447 498 30 399 345 685 696 818 415 742 170 861 479 942 131 638 547 28 929 404 607 578 679 28 86 659 439 139 888 473 187 52 267 389 336 217 466 335 346 780 901 389 285 771 975 852 432 259 855 84 482 20 768 553 54 975 359 230 666 71 800 981 668 42 773 32 973 254 205 860 21 637 157 245 130 485 686 118 578 971 224 477 717 263 786 378 172 621 622 987 766 736 118 797 839 168 988 319 111 593 27 952 320 590 694 930 982 385 407 965 733 204 78 607 708 851 643 249 105 714 792 309 871 701 615 825 124 816 580 802 43 356 546 439 678 380 71 519 664 350 13 870 431 843 502 109 444 984 371 651 913 849 471 725 157 446 181 752 535 989 667 277 631 828 942 552 794 496 477 447 846 749 607 275 331 873 252 851 958 89 286 903 462 250 769 476 584 625 685 389 345 30 507 872 333 187 500 218 364 817 265 349 287 902 611 719 902 283 570 11 530 971 196 88 248 738 417 501 569 777 247 708 488 662 729 503 459 812 18 96 302 227 415 709 250 314 680 596 378 485 567 544 353 436 764 564 339 361 720 465 278 314 258 237 124 739 198 324 123 761 549 974 781 707 190 197 222 757 496 284 742 604 779 538 612 290 103 853 199 304 233 370 184 310\n2",
+      "output": "767 694 179 925 583 631 416 309 854 562 312 1 216 294 805 441 622 594 330 671 453 477 692 453 524 219 813 485 983 923 754 816 675 174 291 87 680 528 635 649 96 344 975 839 241 770 318 689 826 231 151 204 48 26 487 251 871 626 75 787 425 467 645 908 200 590 714 736 507 394 250 410 672 152 6 705 769 915 789 882 110 907 436 798 181 225 981 824 531 713 52 476 256 571 869 940 468 125 821 137 684 476 573 544 325 610 774 973 454 913 835 628 914 737 437 517 929 851 457 562 163 919 883 762 461 487 770 266 861 254 284 653 797 785 497 534 245 642 451 282 731 80 241 293 344 279 915 328 83 554 155 142 393 237 157 711 220 724 425 66 339 418 478 556 64 426 853 212 399 431 789 927 969 599 21 713 902 878 590 784 489 390 966 7 306 361 400 772 914 874 856 977 552 430 753 766 820 560 920 618 500 226 280 225 498 447 399 30 685 345 818 696 742 415 861 170 942 479 638 131 28 547 404 929 578 607 28 679 659 86 139 439 473 888 52 187 389 267 217 336 335 466 780 346 389 901 771 285 852 975 259 432 84 855 20 482 553 768 975 54 230 359 71 666 981 800 42 668 32 773 254 973 860 205 637 21 245 157 485 130 118 686 971 578 477 224 263 717 378 786 621 172 987 622 736 766 797 118 168 839 319 988 593 111 952 27 590 320 930 694 385 982 965 407 204 733 607 78 851 708 249 643 714 105 309 792 701 871 825 615 816 124 802 580 356 43 439 546 380 678 519 71 350 664 870 13 843 431 109 502 984 444 651 371 849 913 725 471 446 157 752 181 989 535 277 667 828 631 552 942 496 794 447 477 749 846 275 607 873 331 851 252 89 958 903 286 250 462 476 769 625 584 389 685 30 345 872 507 187 333 218 500 817 364 349 265 902 287 719 611 283 902 11 570 971 530 88 196 738 248 501 417 777 569 708 247 662 488 503 729 812 459 96 18 227 302 709 415 314 250 596 680 485 378 544 567 436 353 564 764 361 339 465 720 314 278 237 258 739 124 324 198 761 123 974 549 707 781 197 190 757 222 284 496 604 742 538 779 290 612 853 103 304 199 370 233 310 184",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    },
+    {
+      "id": "large_random_15",
+      "input": "825\n547 130 281 47 998 56 567 300 715 967 130 654 890 771 503 106 894 13 588 292 481 491 452 349 189 989 53 259 964 883 490 117 842 67 411 504 76 591 645 703 55 156 153 831 577 972 312 88 255 122 572 783 427 621 611 810 634 232 795 536 390 462 931 454 305 881 603 440 313 583 636 62 625 984 758 102 971 782 213 641 217 271 677 84 161 246 178 566 77 161 3 419 462 706 609 482 299 34 238 296 724 290 720 881 465 73 704 240 947 271 807 811 641 604 678 824 957 203 436 118 558 231 664 153 931 273 847 146 74 62 170 812 315 610 767 845 583 944 296 450 128 480 706 312 717 413 966 279 513 553 506 449 83 613 41 911 443 753 331 619 257 27 94 235 985 691 857 882 590 602 974 22 784 689 842 276 591 42 782 775 180 482 532 668 453 939 285 186 600 447 651 834 504 993 94 482 357 419 342 329 687 108 879 165 338 422 711 508 296 679 968 411 834 779 564 38 466 91 323 259 332 119 994 792 414 886 527 845 2 674 891 556 474 424 56 193 531 371 638 775 511 641 453 779 53 209 274 563 135 950 295 449 902 716 497 125 30 997 646 624 819 246 727 163 319 565 15 566 418 96 231 862 935 117 473 970 121 664 853 158 511 956 734 299 522 723 280 426 855 495 484 250 468 565 149 393 196 944 614 521 765 901 140 885 72 283 792 809 875 425 349 957 807 520 274 841 3 290 744 306 858 602 594 676 502 887 153 458 552 496 354 341 566 782 557 387 467 956 330 891 194 715 245 586 393 240 877 795 421 45 326 763 485 723 936 831 391 396 680 812 841 668 156 508 988 38 130 515 989 605 340 891 103 896 866 451 103 539 933 468 16 740 148 420 892 671 994 159 77 481 801 993 272 347 639 710 408 666 83 873 337 873 691 880 547 390 978 325 642 736 909 778 500 894 555 37 633 71 241 647 701 944 295 233 765 93 445 101 779 649 721 894 103 455 171 711 307 926 30 48 333 816 58 301 368 384 442 150 251 544 422 580 699 812 185 175 180 81 625 892 392 635 700 247 510 935 598 147 238 473 654 261 471 262 683 10 921 824 477 923 295 694 560 162 76 453 968 354 602 307 655 986 435 707 257 468 866 310 204 394 874 495 110 243 391 586 368 589 303 717 303 23 850 675 406 282 9 580 886 703 797 763 997 51 933 621 764 509 853 926 925 294 795 819 236 622 822 361 225 652 195 636 257 695 774 739 786 676 698 859 141 644 100 926 643 662 41 317 808 452 35 594 374 750 135 93 932 303 335 766 426 180 206 136 806 553 898 995 375 544 514 936 280 851 169 264 936 845 967 494 991 826 303 765 892 347 824 118 480 987 78 145 773 990 232 881 693 742 691 407 991 867 824 571 375 93 810 405 15 271 550 127 466 378 689 767 689 269 599 391 843 654 963 381 111 692 240 483 26 635 906 966 575 336 938 625 227 664 65 651 844 476 932 718 310 665 419 120 144 47 969 39 312 505 119 100 241 909 551 139 398 465 380 687 973 761 714 969 554 430 602 761 745 159 907 425 671 102 854 502 631 418 962 975 287 34 707 380 223 455 456 974 242 876 372 102 703 377 558 924 661 368 63 408 283 195 992 126 972 869 844 466 94 679 218 658 655 612 995 22 52 806 342 250 129 806 579 211 71 850 784 568 213 601 222 833 891 239 337 793 152 808 923 611 3 284 880 149 134 554 257 818 179 113 677 888 27 135 16 367 809 808 244 603 332 17 179 272 54 130 760 432 539 117 764 66 488 460 797 371 526 608 112 463 516 227 969 630 45 745 803 931 888 675 534 309 470 659 988 32 63 491 868 412 437 703 111 503 730 932 455 76 921 83 330\n78",
+      "output": "782 971 102 758 984 625 62 636 583 313 440 603 881 305 454 931 462 390 536 795 232 634 810 611 621 427 783 572 122 255 88 312 972 577 831 153 156 55 703 645 591 76 504 411 67 842 117 490 883 964 259 53 989 189 349 452 491 481 292 588 13 894 106 503 771 890 654 130 967 715 300 567 56 998 47 281 130 547 911 41 613 83 449 506 553 513 279 966 413 717 312 706 480 128 450 296 944 583 845 767 610 315 812 170 62 74 146 847 273 931 153 664 231 558 118 436 203 957 824 678 604 641 811 807 271 947 240 704 73 465 881 720 290 724 296 238 34 299 482 609 706 462 419 3 161 77 566 178 246 161 84 677 271 217 641 213 424 474 556 891 674 2 845 527 886 414 792 994 119 332 259 323 91 466 38 564 779 834 411 968 679 296 508 711 422 338 165 879 108 687 329 342 419 357 482 94 993 504 834 651 447 600 186 285 939 453 668 532 482 180 775 782 42 591 276 842 689 784 22 974 602 590 882 857 691 985 235 94 27 257 619 331 753 443 957 349 425 875 809 792 283 72 885 140 901 765 521 614 944 196 393 149 565 468 250 484 495 855 426 280 723 522 299 734 956 511 158 853 664 121 970 473 117 935 862 231 96 418 566 15 565 319 163 727 246 819 624 646 997 30 125 497 716 902 449 295 950 135 563 274 209 53 779 453 641 511 775 638 371 531 193 56 481 77 159 994 671 892 420 148 740 16 468 933 539 103 451 866 896 103 891 340 605 989 515 130 38 988 508 156 668 841 812 680 396 391 831 936 723 485 763 326 45 421 795 877 240 393 586 245 715 194 891 330 956 467 387 557 782 566 341 354 496 552 458 153 887 502 676 594 602 858 306 744 290 3 841 274 520 807 147 598 935 510 247 700 635 392 892 625 81 180 175 185 812 699 580 422 544 251 150 442 384 368 301 58 816 333 48 30 926 307 711 171 455 103 894 721 649 779 101 445 93 765 233 295 944 701 647 241 71 633 37 555 894 500 778 909 736 642 325 978 390 547 880 691 873 337 873 83 666 408 710 639 347 272 993 801 739 774 695 257 636 195 652 225 361 822 622 236 819 795 294 925 926 853 509 764 621 933 51 997 763 797 703 886 580 9 282 406 675 850 23 303 717 303 589 368 586 391 243 110 495 874 394 204 310 866 468 257 707 435 986 655 307 602 354 968 453 76 162 560 694 295 923 477 824 921 10 683 262 471 261 654 473 238 378 466 127 550 271 15 405 810 93 375 571 824 867 991 407 691 742 693 881 232 990 773 145 78 987 480 118 824 347 892 765 303 826 991 494 967 845 936 264 169 851 280 936 514 544 375 995 898 553 806 136 206 180 426 766 335 303 932 93 135 750 374 594 35 452 808 317 41 662 643 926 100 644 141 859 698 676 786 974 456 455 223 380 707 34 287 975 962 418 631 502 854 102 671 425 907 159 745 761 602 430 554 969 714 761 973 687 380 465 398 139 551 909 241 100 119 505 312 39 969 47 144 120 419 665 310 718 932 476 844 651 65 664 227 625 938 336 575 966 906 635 26 483 240 692 111 381 963 654 843 391 599 269 689 767 689 130 54 272 179 17 332 603 244 808 809 367 16 135 27 888 677 113 179 818 257 554 134 149 880 284 3 611 923 808 152 793 337 239 891 833 222 601 213 568 784 850 71 211 579 806 129 250 342 806 52 22 995 612 655 658 218 679 94 466 844 869 972 126 992 195 283 408 63 368 661 924 558 377 703 102 372 876 242 330 83 921 76 455 932 730 503 111 703 437 412 868 491 63 32 988 659 470 309 534 675 888 931 803 745 45 630 969 227 516 463 112 608 526 371 797 460 488 66 764 117 539 432 760",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

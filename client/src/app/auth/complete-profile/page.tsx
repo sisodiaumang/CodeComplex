@@ -30,7 +30,7 @@ export default function CompleteProfilePage() {
       });
       const me = await api<Me>("/user/me");
       setUser(me);
-      router.replace("/dashboard");
+      router.replace("/battle");
     } catch (err) {
       setError(errorMessage(err));
       setLoading(false);
@@ -42,7 +42,7 @@ export default function CompleteProfilePage() {
       <Link href="/" className="mb-6 flex items-center gap-2">
         <LogoMark size={28} />
         <span className="text-lg font-bold tracking-tight text-text">
-          Dev<span className="text-primary">War</span>
+          Code<span className="text-primary">Complex</span>
         </span>
       </Link>
       <div className="w-full max-w-sm rounded-lg border border-border bg-surface p-5 shadow-sm">

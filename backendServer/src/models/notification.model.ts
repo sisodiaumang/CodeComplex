@@ -20,6 +20,7 @@ new mongoose.Schema<INotification>(
         enum:[
             "FRIEND_REQUEST",
             "FRIEND_ACCEPTED",
+            "FRIEND_REMOVED",
             "ROOM_INVITE",
             "MATCH_STARTED",
             "MATCH_RESULT",

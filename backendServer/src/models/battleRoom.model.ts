@@ -86,6 +86,14 @@ const battleRoomSchema =
             isRanked: {
                 type: Boolean,
                 default: true
+            },
+            isSolo: {
+                type: Boolean,
+                default: false
+            },
+            isPrivate: {
+                type: Boolean,
+                default: true
             }
         },
         {

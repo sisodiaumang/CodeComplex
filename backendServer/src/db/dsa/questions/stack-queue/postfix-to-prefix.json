@@ -1,0 +1,278 @@
+{
+  "_id": "postfix-to-prefix",
+  "title": "Postfix to Prefix",
+  "slug": "postfix-to-prefix",
+  "difficulty": "Medium",
+  "category": "ARRAY",
+  "subCategory": "Prefix / Infix / Postfix",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 10,
+    "points": 500,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "STACK",
+      "QUEUE"
+    ],
+    "patterns": [
+      "prefix",
+      "infix",
+      "postfix"
+    ],
+    "prerequisites": [
+      "Implement Stack using Linked List"
+    ],
+    "variants": [],
+    "tags": [
+      "Stack",
+      "Queue",
+      "Prefix",
+      "Infix",
+      "Postfix"
+    ],
+    "keywords": [
+      "Stack Implementation",
+      "Postfix to Prefix Conversion"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "Given a postfix expression consisting of operands and binary operators, convert it to the equivalent prefix expression. The expression is provided as a sequence of tokens separated by single spaces. Operands are alphanumeric strings (e.g., variables like a, b1, X) and operators are one of the characters '+', '-', '*', '/', '^'. The expression is guaranteed to be valid and each operator always has exactly two operands. Your task is to read the postfix expression, perform the conversion using an appropriate data structure, and output the resulting prefix expression in the same token‑space format.\n\n**Input Format**\n- The first line contains a single integer `N`, the number of tokens in the postfix expression.\n- The second line contains `N` tokens separated by a single space, representing the postfix expression.\n\n**Output Format**\n- Output a single line containing `N` tokens separated by a single space, representing the equivalent prefix expression.\n\n**Constraints**\n- `1 ≤ N ≤ 1000`\n- Each token is either an operand consisting of 1 to 10 alphanumeric characters or one of the operators `+ - * / ^`.\n- The given postfix expression is syntactically correct.\n\n**Notes**\n- Use a stack to build the prefix expression: when an operand is encountered, push it onto the stack; when an operator is encountered, pop the top two elements, combine them as `operator operand1 operand2`, and push the resulting string back onto the stack.\n- After processing all tokens, the stack will contain exactly one element – the required prefix expression.\n\n**Examples**\n\n**Example 1**\nInput:\n5\na b + c *\nOutput:\n* + a b c\nExplanation:\nThe postfix `a b + c *` corresponds to `(a + b) * c`. Converting to prefix yields `* + a b c`.\n\n**Example 2**\nInput:\n7\nA B C * + D -\nOutput:\n- + A * B C D\nExplanation:\nThe postfix expression represents `A + (B * C) - D`. Its prefix form is `- + A * B C D`.",
+    "inputFormat": "N\npostfix_tokens",
+    "outputFormat": "prefix_expression",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "N",
+        "type": "integer",
+        "min": 1,
+        "max": 1000,
+        "description": "Number of tokens in the expression"
+      }
+    ],
+    "examples": [
+      {
+        "input": "5\na b + c *",
+        "output": "* + a b c",
+        "explanation": "Convert (a + b) * c from postfix to prefix."
+      },
+      {
+        "input": "7\nA B C * + D -",
+        "output": "- + A * B C D",
+        "explanation": "Convert A + (B * C) - D from postfix to prefix."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Start by reading the input and pushing operands onto a stack."
+    },
+    {
+      "order": 2,
+      "text": "When an operator is encountered, pop the top two elements from the stack and construct the prefix expression by combining them with the operator."
+    },
+    {
+      "order": 3,
+      "text": "Use a stack to store the intermediate results, ensuring that the final prefix expression is constructed correctly."
+    },
+    {
+      "order": 4,
+      "text": "Consider using a loop to iterate through the input tokens, processing each operand and operator accordingly."
+    },
+    {
+      "order": 5,
+      "text": "The key to solving this problem lies in the order in which you pop elements from the stack and combine them with operators."
+    }
+  ],
+  "editorial": {
+    "title": "From Postfix to Prefix: A Linear‑Time Stack Trick",
+    "intuition": "The key insight is that a postfix expression can be evaluated from left to right while simultaneously building its prefix form. Whenever an operator is seen, the two most recent operands (or sub‑expressions) are already available on a stack; the operator can be prefixed to them, and the resulting string is pushed back. This mirrors the natural recursive definition of prefix notation and keeps the process linear.",
+    "bruteForce": "A naive approach would try every possible parenthesisation or repeatedly scan the token list to locate operands for each operator, leading to quadratic or worse behaviour. Such methods are correct because they exhaustively explore all ways to combine operands, but they become prohibitively slow for N up to 1000, as each operator might trigger a linear scan of the stack or repeated string concatenations.",
+    "betterSolution": "The optimal method uses a single stack of strings. Scan the tokens once: push operands, and when an operator appears, pop the top two strings, concatenate them with the operator in front, and push the result back. This produces the final prefix expression in O(N) time and O(N) space.",
+    "optimalSolution": "The algorithm runs in linear time because each token is processed exactly once, and each stack operation is O(1). The stack never holds more than N elements, so the space usage is also linear. This matches the known complexity bounds.",
+    "proofOfCorrectness": "By induction on the number of processed tokens, the stack invariant holds: after processing the first k tokens, the stack contains the correct prefix representations of the sub‑expressions formed by those tokens, in the order they would appear in a left‑to‑right traversal. The base case (k=0) is trivial. For the inductive step, if the next token is an operand, pushing it preserves the invariant. If it is an operator, the two top elements are precisely the prefix strings of its left and right operands (by the induction hypothesis). Prefixing the operator to them yields the correct prefix string for the combined sub‑expression, and pushing it preserves the invariant. After all N tokens, the stack holds a single element, which is the prefix form of the entire expression.",
+    "dryRun": "Consider the postfix expression \"a b + c *\". Tokens: a, b, +, c, *. Stack evolves: [] → [a] → [a,b] → [+ a b] → [+ a b, c] → [* + a b c]. The final stack top is \"* + a b c\", the desired prefix form.",
+    "commonMistakes": [
+      "Assuming operators are unary; the algorithm requires binary operators.\nTreating the stack as a queue, which reverses operand order.\nConcatenating strings without spaces, leading to ambiguous output.\nNot handling the case where the input has only one token.\nUsing recursion instead of a stack, causing stack overflow for large N.\nIgnoring the operator set and treating other symbols as operands."
+    ],
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(N)"
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nint main() {\n    // TODO: implement conversion from postfix to prefix\n    return 0;\n}",
+    "java": "import java.io.*;\nimport java.util.*;\n\npublic class Main {\n    public static void main(String[] args) throws IOException {\n        // TODO: implement conversion from postfix to prefix\n    }\n}",
+    "python": "import sys\n\ndef solve():\n    # TODO: implement conversion from postfix to prefix\n    pass\n\nif __name__ == \"__main__\":\n    solve()",
+    "javascript": "function solve() {\n    // TODO: implement conversion from postfix to prefix\n    return null;\n}\n\nsolve();"
+  },
+  "functionSignature": {
+    "cpp": "int main()",
+    "java": "public static void main(String[] args) throws IOException",
+    "python": "def solve()",
+    "javascript": "function solve()"
+  },
+  "solutions": {
+    "python": "import sys\n\ndef main():\n    it = iter(sys.stdin.read().split())\n    try:\n        n = int(next(it))\n    except StopIteration:\n        return\n    tokens = [next(it) for _ in range(n)]\n    stack = []\n    operators = set(['+', '-', '*', '/', '^'])\n    for tok in tokens:\n        if tok in operators:\n            # binary operator: pop right then left\n            right = stack.pop()\n            left = stack.pop()\n            stack.append(' '.join([tok, left, right]))\n        else:\n            stack.append(tok)\n    # final prefix expression\n    if stack:\n        sys.stdout.write(stack[-1])\n\nif __name__ == \"__main__\":\n    main()\n",
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\nint main(){\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int n;\n    if(!(cin>>n)) return 0;\n    vector<string> tokens(n);\n    for(int i=0;i<n;++i) cin>>tokens[i];\n    vector<string> st;\n    const unordered_set<string> ops={\"+\",\"-\",\"*\",\"/\",\"^\"};\n    for(const string &tok:tokens){\n        if(ops.count(tok)){\n            string right=st.back(); st.pop_back();\n            string left=st.back(); st.pop_back();\n            st.push_back(tok+\" \"+left+\" \"+right);\n        }else{\n            st.push_back(tok);\n        }\n    }\n    if(!st.empty()) cout<<st.back();\n    return 0;\n}\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.2
+  },
+  "testCases": [
+    {
+      "id": "sample",
+      "input": "5\na b + c *",
+      "output": "* + a b c",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint",
+      "input": "1\n0",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "max_constraint",
+      "input": "1\n1000000000",
+      "output": "1000000000",
+      "isVisible": false,
+      "weight": 1,
+      "category": "max_constraint"
+    },
+    {
+      "id": "boundary",
+      "input": "3\n-1 0 1",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    },
+    {
+      "id": "duplicate",
+      "input": "6\n1 1 1 1 1 1",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "duplicate"
+    },
+    {
+      "id": "sorted",
+      "input": "6\n1 2 3 4 5 6",
+      "output": "6",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sorted"
+    },
+    {
+      "id": "reverse_sorted",
+      "input": "6\n6 5 4 3 2 1",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "reverse_sorted"
+    },
+    {
+      "id": "negative",
+      "input": "5\n-5 -4 -3 -2 -1",
+      "output": "-1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "negative"
+    },
+    {
+      "id": "zero",
+      "input": "5\n0 0 0 0 0",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "zero"
+    },
+    {
+      "id": "one",
+      "input": "2\n1 1",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "one"
+    },
+    {
+      "id": "repeated",
+      "input": "8\n2 2 2 2 3 3 3 3",
+      "output": "3",
+      "isVisible": false,
+      "weight": 1,
+      "category": "repeated"
+    },
+    {
+      "id": "large_random",
+      "input": "10\n309 -772 -949 518 -437 -499 -543 -715 508 -791",
+      "output": "-791",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    },
+    {
+      "id": "adversarial",
+      "input": "12\n385 516 827 116 -822 209 -136 -935 -939 -809 -553 -524",
+      "output": "-524",
+      "isVisible": false,
+      "weight": 1,
+      "category": "adversarial"
+    },
+    {
+      "id": "random_13",
+      "input": "21\n6 9 -10 7 -4 10 7 3 -3 4 8 -2 -10 -5 3 0 -2 -6 -4 0 -7",
+      "output": "-7",
+      "isVisible": false,
+      "weight": 1,
+      "category": "random"
+    },
+    {
+      "id": "random_14",
+      "input": "22\n-8 2 -7 1 1 9 -2 -9 4 7 -7 2 -8 7 -1 10 9 1 8 -4 -8 -9",
+      "output": "-9",
+      "isVisible": false,
+      "weight": 1,
+      "category": "random"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

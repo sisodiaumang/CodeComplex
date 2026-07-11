@@ -29,8 +29,8 @@ function apply(theme: Theme) {
 const ORDER: Theme[] = ["light", "dark", "system"];
 
 export const useTheme = create<ThemeState>((set) => ({
-  theme: "light",
-  resolved: "light",
+  theme: "dark",
+  resolved: "dark",
   setTheme: (t) => {
     const r = apply(t);
     set({ theme: t, resolved: r });
@@ -50,7 +50,7 @@ export function initTheme() {
   const theme: Theme =
     saved === "light" || saved === "dark" || saved === "system"
       ? saved
-      : "system";
+      : "dark";
   const r = apply(theme);
   useTheme.setState({ theme, resolved: r });
 

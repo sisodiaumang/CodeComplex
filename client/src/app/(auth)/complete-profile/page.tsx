@@ -29,7 +29,7 @@ export default function CompleteProfilePage() {
       // Refresh user in store
       const me = await api<Me>("/user/me");
       setUser(me);
-      router.replace("/dashboard");
+      router.replace("/battle");
     } catch (err) {
       setError(errorMessage(err));
       setLoading(false);

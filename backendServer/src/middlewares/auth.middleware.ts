@@ -27,10 +27,18 @@ export const verifyJWT = asyncHandler(
             );
         }
 
-        const decoded = jwt.verify(
-            token,
-            env.JWT_ACCESS_SECRET
-        ) as JwtPayload;
+        let decoded: JwtPayload;
+        try {
+            decoded = jwt.verify(
+                token,
+                env.JWT_ACCESS_SECRET
+            ) as JwtPayload;
+        } catch (error) {
+            throw new ApiError(
+                401,
+                "Invalid or expired access token"
+            );
+        }
 
         const user = await User.findById(
             decoded._id
@@ -63,6 +71,28 @@ export const verifyJWT = asyncHandler(
         }
 
         req.user = user;
+
+        next();
+    }
+);
+
+export const verifyAdminOrModerator = asyncHandler(
+    async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ) => {
+        const user = req.user;
+
+        if (!user) {
+            throw new ApiError(401, "Unauthorized request");
+        }
+
+        const allowedRoles = ["ADMIN", "MODERATOR", "OWNER"];
+
+        if (!allowedRoles.includes(user.role)) {
+            throw new ApiError(403, "Access denied. Admin or Moderator privileges required.");
+        }
 
         next();
     }

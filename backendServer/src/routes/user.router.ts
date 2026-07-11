@@ -17,8 +17,12 @@ import {
     getUserByUsername,
     uploadProfileImage,
     updateBio,
-    updateCountry
+    updateCountry,
+    updateFullName,
+    updateSocials,
+    updateMascot
 } from "../controllers/user.controllers.js";
+import { createReport } from "../controllers/admin.controller.js";
 
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 import { uploadAvatar } from "../middlewares/uploadSingleImage.middleware.js";
@@ -35,6 +39,9 @@ import {
     verifyEmailChangeSchema,
     updateBioSchema,
     updateCountrySchema,
+    updateFullNameSchema,
+    updateSocialsSchema,
+    updateMascotSchema,
 } from "../validators/auth.validator.js";
 
 const userRouter = Router();
@@ -65,6 +72,10 @@ userRouter.route("/me").get(verifyJWT, getMe);
 userRouter.route("/avatar").patch(verifyJWT, uploadAvatar, uploadProfileImage);
 userRouter.route("/bio").patch(verifyJWT, validateRequest(updateBioSchema), updateBio);
 userRouter.route("/country").patch(verifyJWT, validateRequest(updateCountrySchema), updateCountry);
+userRouter.route("/fullname").patch(verifyJWT, validateRequest(updateFullNameSchema), updateFullName);
+userRouter.route("/socials").patch(verifyJWT, validateRequest(updateSocialsSchema), updateSocials);
+userRouter.route("/mascot").patch(verifyJWT, validateRequest(updateMascotSchema), updateMascot);
+userRouter.route("/report").post(verifyJWT, createReport);
 
 // ─── Public profile lookup — keep LAST among GET routes ───────────────
 // A param route like "/:username" matches any path segment, so if it were

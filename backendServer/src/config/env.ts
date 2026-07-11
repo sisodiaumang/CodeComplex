@@ -51,6 +51,7 @@ export const env = {
   JUDGE0_API_HOST: z.string().min(1).optional().parse(getEnv("JUDGE0_API_HOST")),
 
   XAI_API_KEY: z.string().min(1).optional().parse(getEnv("XAI_API_KEY")),
+  GROQ_API_KEY: z.string().min(1).optional().parse(getEnv("GROQ_API_KEY")),
 
   GOOGLE_CLIENT_ID: z.string().min(1).optional().parse(getEnv("GOOGLE_CLIENT_ID")),
   GOOGLE_CLIENT_SECRET: z.string().min(1).optional().parse(getEnv("GOOGLE_CLIENT_SECRET")),
@@ -59,7 +60,7 @@ export const env = {
   OAUTH_CALLBACK_URL: z.string().min(1).default("http://localhost:8000/api/v1/auth").parse(getEnv("OAUTH_CALLBACK_URL")),
   CLIENT_URL: z.string().min(1).default("http://localhost:3000").parse(getEnv("CLIENT_URL")),
   EMAIL_FROM_ADDRESS: z.string().min(1).optional().parse(getEnv("EMAIL_FROM_ADDRESS")),
-  APP_NAME: z.string().min(1).default("DevWar").parse(getEnv("APP_NAME")),
+  APP_NAME: z.string().min(1).default("CodeComplex").parse(getEnv("APP_NAME")),
   EMAIL_USER: z.string().min(1).optional().parse(getEnv("EMAIL_USER")),
   EMAIL_PASS: z.string().min(1).optional().parse(getEnv("EMAIL_PASS")),
 

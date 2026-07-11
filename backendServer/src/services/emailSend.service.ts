@@ -18,7 +18,7 @@ if (env.NODE_ENV === "production" && (!env.EMAIL_USER || !env.EMAIL_PASS)) {
 }
 
 const FROM_ADDRESS = env.EMAIL_FROM_ADDRESS ?? env.EMAIL_USER ?? "noreply@devarena.dev";
-const APP_NAME = env.APP_NAME ?? 'DevWar';
+const APP_NAME = env.APP_NAME ?? 'CodeComplex';
 
 function buildVerificationHtml(otp: string): string {
     return `

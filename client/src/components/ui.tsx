@@ -62,7 +62,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 // ── Input / Field ────────────────────────────────────────────────────────────
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  label?: string;
+  label?: React.ReactNode;
   error?: string;
   hint?: string;
 }
@@ -107,7 +107,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
 // ── Select ───────────────────────────────────────────────────────────────────
 
 interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
-  label?: string;
+  label?: React.ReactNode;
 }
 
 export function Select({ className, label, id, children, ...props }: SelectProps) {
@@ -256,6 +256,7 @@ export function Avatar({
       height={size}
       className={cn("shrink-0 rounded-full object-cover", className)}
       style={{ width: size, height: size, minWidth: size, minHeight: size }}
+      referrerPolicy="no-referrer"
     />
   ) : (
     <span

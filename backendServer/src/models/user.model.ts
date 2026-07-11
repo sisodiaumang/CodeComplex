@@ -83,6 +83,32 @@ const userSchema = new mongoose.Schema<IUser>(
             maxlength: 2
         },
 
+        githubProfile: {
+            type: String,
+            default: ""
+        },
+
+        linkedinProfile: {
+            type: String,
+            default: ""
+        },
+
+        leetcodeProfile: {
+            type: String,
+            default: ""
+        },
+        mascot: {
+            type: {
+                type: String,
+                default: "cat",
+                enum: ["cat", "dog", "panda", "crab"]
+            },
+            color: {
+                type: String,
+                default: "#FF6B00"
+            }
+        },
+
         // FIX: "OWNER" role is intentionally kept but must only be assigned
         // via a seed/migration script — never through a user-facing API.
         // All role-elevation endpoints must guard against assigning OWNER.

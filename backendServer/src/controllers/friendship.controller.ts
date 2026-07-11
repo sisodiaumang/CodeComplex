@@ -29,6 +29,18 @@ function buildFriendUserDto(u: any) {
     };
 }
 
+function emitFriendshipUpdate(userIds: any[]) {
+    try {
+        for (const id of userIds) {
+            if (id) {
+                io.to(`user:${String(id)}`).emit("friendship:update");
+            }
+        }
+    } catch (e) {
+        console.error("Socket emit friendship:update error", e);
+    }
+}
+
 export const sendFriendRequest = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const senderId = req.user._id;
@@ -103,8 +115,7 @@ export const sendFriendRequest = async (req: Request, res: Response, next: NextF
             console.error("[Friendship] Failed to create FRIEND_REQUEST notification:", notifyErr);
         }
 
-        // socket event is expected to be emitted by socket layer.
-        // if your socket layer listens to DB changes, it will handle it.
+        emitFriendshipUpdate([senderId, receiverId]);
 
         return res.status(201).json({ success: true, message: "Friend request sent" });
     } catch (err) {
@@ -145,6 +156,8 @@ export const acceptFriendRequest = async (req: Request, res: Response, next: Nex
         });
         io.to(`user:${other}`).emit("notification:new", notification);
 
+        emitFriendshipUpdate([userId, other]);
+
         return res.status(200).json({ success: true, message: "Friend request accepted" });
     } catch (err) {
         next(err);
@@ -166,6 +179,8 @@ export const rejectFriendRequest = async (req: Request, res: Response, next: Nex
         }
 
         await Friendship.deleteOne({ _id: fr._id });
+
+        emitFriendshipUpdate([userId, fr.sender]);
 
         return res.status(200).json({ success: true, message: "Friend request rejected" });
     } catch (err) {
@@ -189,6 +204,8 @@ export const cancelFriendRequest = async (req: Request, res: Response, next: Nex
 
         await Friendship.deleteOne({ _id: fr._id });
 
+        emitFriendshipUpdate([userId, fr.receiver]);
+
         return res.status(200).json({ success: true, message: "Friend request canceled" });
     } catch (err) {
         next(err);
@@ -202,13 +219,16 @@ export const removeFriend = async (req: Request, res: Response, next: NextFuncti
             return res.status(400).json({ success: false, message: "Invalid friendId" });
         }
 
-        const userId = req.user._id;
+        const userId = req.user._id.toString();
 
-        // friendId is the Friendship._id
+        // friendId can be the Friendship._id OR the other user's ID
         const fr = await Friendship.findOne({
-            _id: friendId,
             status: "ACCEPTED",
-            $or: [{ sender: userId }, { receiver: userId }],
+            $or: [
+                { _id: friendId, $or: [{ sender: userId }, { receiver: userId }] },
+                { sender: userId, receiver: friendId },
+                { sender: friendId, receiver: userId }
+            ],
         });
 
         if (!fr) {
@@ -219,14 +239,17 @@ export const removeFriend = async (req: Request, res: Response, next: NextFuncti
 
         await Friendship.deleteOne({ _id: fr._id });
 
-        await Notification.create({
-            recipient: other,
+        const notification = await Notification.create({
+            recipient: other as any,
             sender: userId,
             type: "FRIEND_REMOVED",
             title: "Friend Removed",
-            message: "A friend removed you",
+            message: "A friend removed you from their friends list",
             relatedEntityId: fr._id,
-        } as any);
+        });
+
+        io.to(`user:${other}`).emit("notification:new", notification);
+        emitFriendshipUpdate([userId, other]);
 
         return res.status(200).json({ success: true, message: "Friend removed" });
     } catch (err) {
@@ -283,7 +306,10 @@ export const getFriends = async (req: Request, res: Response, next: NextFunction
 export const getIncomingRequests = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const userId = req.user._id;
-        const requests = await Friendship.find({ receiver: userId, status: "PENDING" }).sort({ createdAt: -1 }).limit(50);
+        const requests = await Friendship.find({ receiver: userId, status: "PENDING" })
+            .sort({ createdAt: -1 })
+            .limit(50)
+            .populate("sender", "_id username fullName avatar country");
 
         return res.status(200).json({
             success: true,
@@ -297,7 +323,10 @@ export const getIncomingRequests = async (req: Request, res: Response, next: Nex
 export const getOutgoingRequests = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const userId = req.user._id;
-        const requests = await Friendship.find({ sender: userId, status: "PENDING" }).sort({ createdAt: -1 }).limit(50);
+        const requests = await Friendship.find({ sender: userId, status: "PENDING" })
+            .sort({ createdAt: -1 })
+            .limit(50)
+            .populate("receiver", "_id username fullName avatar country");
 
         return res.status(200).json({
             success: true,

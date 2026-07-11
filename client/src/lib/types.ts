@@ -27,7 +27,23 @@ export interface Me {
   role?: "USER" | "ADMIN" | "MODERATOR" | "OWNER";
   isVerified?: boolean;
   oauthProvider?: "google" | "github";
+  githubProfile?: string;
+  linkedinProfile?: string;
+  leetcodeProfile?: string;
   createdAt?: string;
+  mascot?: {
+    type: string;
+    color: string;
+  };
+}
+
+export interface UserProfileData {
+  ratings: RatingsMap;
+  peakRatings: RatingsMap;
+  stats: ProfileStats;
+  streak: number;
+  badges: any[];
+  achievements: any[];
 }
 
 export interface PublicUser {
@@ -37,7 +53,16 @@ export interface PublicUser {
   avatar?: Avatar | string;
   bio?: string;
   country?: string;
+  githubProfile?: string;
+  linkedinProfile?: string;
+  leetcodeProfile?: string;
   createdAt?: string;
+  memberSince?: string;
+  profileData?: UserProfileData;
+  mascot?: {
+    type: string;
+    color: string;
+  };
 }
 
 export type Difficulty = "EASY" | "MEDIUM" | "HARD";
@@ -60,6 +85,7 @@ export interface BattleRoom {
   questionSlug?: string;
   matchId?: string;
   isRanked?: boolean;
+  isSolo?: boolean;
   teams: {
     teamA: RoomMember[];
     teamB: RoomMember[];

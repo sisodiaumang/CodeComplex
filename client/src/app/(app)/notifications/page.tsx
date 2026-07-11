@@ -152,7 +152,7 @@ export default function NotificationsPage() {
                   </div>
 
                   <div className="flex shrink-0 items-center gap-1">
-                    {n.type === "ROOM_INVITE" && n.metadata?.roomCode && (
+                    {n.type === "ROOM_INVITE" && !!n.metadata?.roomCode && (
                       <Button
                         variant="primary"
                         size="sm"

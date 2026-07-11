@@ -10,7 +10,8 @@ export interface IUserProfile extends Document {
         backend: number,
         fullstack: number,
         promptWar: number,
-        team: number
+        team: number,
+        bugFix: number
     }
 
     peakRatings:{
@@ -19,7 +20,8 @@ export interface IUserProfile extends Document {
         backend: number,
         fullstack: number,
         promptWar: number,
-        team: number
+        team: number,
+        bugFix: number
     }
 
     stats: {

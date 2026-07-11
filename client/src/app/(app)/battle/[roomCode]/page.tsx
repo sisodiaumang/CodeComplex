@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -18,7 +18,25 @@ import {
   Send,
   Search,
   X,
+  RotateCcw,
+  Code2,
+  Terminal,
+  Trophy,
+  CheckCircle2,
+  XCircle,
+  AlertCircle,
+  ArrowRight,
+  Maximize2,
+  ChevronDown,
+  MessageSquare,
+  Volume2,
+  AlertTriangle,
+  Settings,
+  Sparkles,
+  Eye,
+  EyeOff,
 } from "lucide-react";
+import Editor from "@monaco-editor/react";
 import { api, errorMessage } from "@/lib/api";
 import {
   asUser,
@@ -27,8 +45,12 @@ import {
   type PublicUser,
   type RoomMember,
 } from "@/lib/types";
-import { cn } from "@/lib/utils";
+import { cn, timeAgo } from "@/lib/utils";
 import { useAuth } from "@/stores/auth-store";
+import { useTheme } from "@/stores/theme-store";
+import { socket } from "@/stores/socket-store";
+import { ChatConsole } from "@/components/ChatConsole";
+import KeyboardMascotAnimation from "@/components/KeyboardMascotAnimation";
 import {
   Alert,
   Avatar,
@@ -65,6 +87,7 @@ export default function BattleLobbyPage() {
   const [copied, setCopied] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
   const [showInvite, setShowInvite] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
 
   const roomQuery = useQuery({
     queryKey: ["battle", roomCode],
@@ -74,6 +97,8 @@ export default function BattleLobbyPage() {
   });
 
   const room = normalizeRoom(roomQuery.data);
+
+
 
   const hostId = room ? memberId(room.host) : null;
   const isHost = Boolean(
@@ -121,7 +146,23 @@ export default function BattleLobbyPage() {
 
   if (roomQuery.isLoading) return <Spinner />;
 
-  if (!room || room.status === "CANCELLED" || room.status === "FINISHED") {
+  const resolvedMatchId = room?.matchId && typeof room.matchId === "object"
+    ? (room.matchId as any)._id
+    : room?.matchId;
+
+  // If the room has transitioned to STARTED or FINISHED and has a valid matchId,
+  // we mount the CodingWorkspace so players can play or view the results scoreboard.
+  if (room && (room.status === "STARTED" || room.status === "FINISHED") && resolvedMatchId) {
+    return (
+      <CodingWorkspace
+        room={room}
+        matchId={resolvedMatchId}
+        onLeave={() => router.push("/battle")}
+      />
+    );
+  }
+
+  if (!room || room.status === "CANCELLED" || (room.status === "FINISHED" && !resolvedMatchId)) {
     return (
       <div className="mx-auto max-w-md pt-16 text-center">
         <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-surface-2">
@@ -154,6 +195,16 @@ export default function BattleLobbyPage() {
   const totalPlayers = teamA.length + teamB.length;
   const totalCapacity = room.teamSize * 2;
 
+  const inTeamA = teamA.some((m) => {
+    const id = memberId(m);
+    return user && (id === user._id || id === user.username);
+  });
+  const inTeamB = teamB.some((m) => {
+    const id = memberId(m);
+    return user && (id === user._id || id === user.username);
+  });
+  const userTeam = inTeamA ? "A" : inTeamB ? "B" : null;
+
   return (
     <div className="mx-auto max-w-4xl space-y-5 px-4 py-6">
       {/* ── Room header ── */}
@@ -162,6 +213,18 @@ export default function BattleLobbyPage() {
           <div className="space-y-2">
             <div className="flex flex-wrap items-center gap-2">
               <ModeBadge type={room.battleType} />
+              <Badge
+                className={cn(
+                  "border font-medium",
+                  room.isSolo
+                    ? "border-blue-500/20 bg-blue-500/10 text-blue-600"
+                    : room.isRanked !== false
+                      ? "border-amber-500/20 bg-amber-500/10 text-amber-600"
+                      : "border-purple-500/20 bg-purple-500/10 text-purple-600"
+                )}
+              >
+                {room.isSolo ? "Solo Practice" : room.isRanked !== false ? "Ranked" : "Practice"}
+              </Badge>
               {room.difficulty && (
                 <Badge className="border border-border bg-surface-2 text-text-muted">
                   {room.difficulty}
@@ -197,6 +260,23 @@ export default function BattleLobbyPage() {
           </div>
 
           <div className="flex items-center gap-3">
+
+            {/* Chat Toggle Button */}
+            {userTeam && (
+              <button
+                onClick={() => setChatOpen(!chatOpen)}
+                className={cn(
+                  "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold font-mono border transition-all cursor-pointer h-9 shadow-sm",
+                  chatOpen
+                    ? "bg-primary border-primary text-white"
+                    : "bg-surface-1 border-border text-text-muted hover:text-text hover:border-primary/50"
+                )}
+              >
+                <MessageSquare className="size-3.5" />
+                <span>Chat</span>
+              </button>
+            )}
+
             <div className="flex items-center gap-1.5 rounded-lg bg-surface-2 px-3 py-1.5 text-xs text-text-faint">
               <Users className="size-3.5" />
               {totalPlayers}/{totalCapacity}
@@ -222,36 +302,50 @@ export default function BattleLobbyPage() {
       {started && <Alert tone="success">Battle started — good luck!</Alert>}
 
       {/* ── Teams ── */}
-      <div className="grid gap-5 sm:grid-cols-[1fr_auto_1fr]">
-        <TeamPanel
-          label="Team A"
-          color="blue"
-          members={teamA}
-          capacity={room.teamSize}
-          hostId={hostId}
-          onJoin={act(`/battle/${roomCode}/team-a`)}
-          disabled={started}
-        />
-
-        <div className="flex items-center justify-center">
-          <div className="flex size-11 items-center justify-center rounded-full border border-border bg-surface-1">
-            <Swords className="size-4 text-text-faint" />
-          </div>
+      {room.isSolo ? (
+        <div className="grid gap-5">
+          <TeamPanel
+            label="Your Team"
+            color="blue"
+            members={teamA}
+            capacity={room.teamSize}
+            hostId={hostId}
+            onJoin={act(`/battle/${roomCode}/team-a`)}
+            disabled={started}
+          />
         </div>
+      ) : (
+        <div className="grid gap-5 sm:grid-cols-[1fr_auto_1fr]">
+          <TeamPanel
+            label="Team A"
+            color="blue"
+            members={teamA}
+            capacity={room.teamSize}
+            hostId={hostId}
+            onJoin={act(`/battle/${roomCode}/team-a`)}
+            disabled={started}
+          />
 
-        <TeamPanel
-          label="Team B"
-          color="red"
-          members={teamB}
-          capacity={room.teamSize}
-          hostId={hostId}
-          onJoin={act(`/battle/${roomCode}/team-b`)}
-          disabled={started}
-        />
-      </div>
+          <div className="flex items-center justify-center">
+            <div className="flex size-11 items-center justify-center rounded-full border border-border bg-surface-1">
+              <Swords className="size-4 text-text-faint" />
+            </div>
+          </div>
+
+          <TeamPanel
+            label="Team B"
+            color="red"
+            members={teamB}
+            capacity={room.teamSize}
+            hostId={hostId}
+            onJoin={act(`/battle/${roomCode}/team-b`)}
+            disabled={started}
+          />
+        </div>
+      )}
 
       {/* ── Invite friends ── */}
-      {!started && (
+      {!started && !room.isSolo && (
         <Card>
           <button
             onClick={() => setShowInvite(!showInvite)}
@@ -322,6 +416,16 @@ export default function BattleLobbyPage() {
             Waiting for host to start...
           </p>
         </div>
+      )}
+
+      {userTeam && (
+        <ChatConsole
+          roomCode={roomCode}
+          isOpen={chatOpen}
+          onClose={() => setChatOpen(false)}
+          userTeam={userTeam}
+          roomStatus={room.status}
+        />
       )}
     </div>
   );
@@ -535,12 +639,1256 @@ function InvitePanel({ roomCode }: { roomCode: string }) {
             </li>
           );
         })}
-        {filtered.length === 0 && (
-          <p className="py-3 text-center text-sm text-text-faint">
-            No friends match &ldquo;{search.trim()}&rdquo;
-          </p>
-        )}
       </ul>
     </div>
   );
 }
+
+/* ─── Coding Workspace ─────────────────────────────────────────────────── */
+
+interface CodingWorkspaceProps {
+  room: BattleRoom;
+  matchId: string;
+  onLeave: () => void;
+}
+
+function CodingWorkspace({ room, matchId, onLeave }: CodingWorkspaceProps) {
+  const queryClient = useQueryClient();
+  const user = useAuth((s) => s.user);
+  
+  const [chatOpen, setChatOpen] = useState(false);
+  const teamA = room.teams?.teamA ?? [];
+  const teamB = room.teams?.teamB ?? [];
+  const inTeamA = teamA.some((m) => {
+    const id = memberId(m);
+    return user && (id === user._id || id === user.username);
+  });
+  const inTeamB = teamB.some((m) => {
+    const id = memberId(m);
+    return user && (id === user._id || id === user.username);
+  });
+  const userTeam = inTeamA ? "A" : inTeamB ? "B" : null;
+
+  const [selectedLang, setSelectedLang] = useState<string>("cpp");
+  const [codeByLang, setCodeByLang] = useState<Record<string, string>>({});
+  const [consoleTab, setConsoleTab] = useState<"result" | "submissions">("result");
+  const [activeTab, setActiveTab] = useState<"description" | "submissions">("description");
+  const { resolved: resolvedTheme } = useTheme();
+  
+  // Submission execution state
+  const [submitting, setSubmitting] = useState(false);
+  const [latestSubmission, setLatestSubmission] = useState<any | null>(null);
+  
+  const [showResultsModal, setShowResultsModal] = useState(false);
+  const [hasTriggeredModal, setHasTriggeredModal] = useState(false);
+
+  // Moderation / Flag Report state variables
+  const [reportModalOpen, setReportModalOpen] = useState(false);
+  const [reportTargetType, setReportTargetType] = useState<"USER" | "QUESTION">("USER");
+  const [reportedPlayerUsername, setReportedPlayerUsername] = useState("");
+  const [reportReason, setReportReason] = useState("");
+  const [reportDetails, setReportDetails] = useState("");
+  const [submittingReport, setSubmittingReport] = useState(false);
+  const [reportSuccess, setReportSuccess] = useState(false);
+  const [reportError, setReportError] = useState("");
+
+  const submitReport = async () => {
+    setSubmittingReport(true);
+    setReportError("");
+    try {
+      const payload: any = {
+        targetType: reportTargetType,
+        reason: reportReason,
+        details: reportDetails,
+        matchId: matchId || undefined,
+      };
+
+      if (reportTargetType === "USER") {
+        payload.reportedUsername = reportedPlayerUsername;
+      } else {
+        payload.reportedQuestionId = questionQuery.data?.question?._id;
+      }
+
+      await api("/user/report", {
+        method: "POST",
+        body: payload,
+      });
+
+      setReportSuccess(true);
+      setReportReason("");
+      setReportDetails("");
+      setReportedPlayerUsername("");
+    } catch (err: any) {
+      setReportError(errorMessage(err) || "Failed to submit report. Please try again.");
+    } finally {
+      setSubmittingReport(false);
+    }
+  };
+
+  const opponentsList = [
+    ...teamA.map((m) => asUser(m)?.username),
+    ...teamB.map((m) => asUser(m)?.username),
+  ].filter((username): username is string => Boolean(username) && username !== user?.username);
+
+  // Queries
+  const questionQuery = useQuery({
+    queryKey: ["match", matchId, "question"],
+    queryFn: () => api<{ question: any }>(`/match/${matchId}/question`),
+    enabled: Boolean(matchId),
+  });
+
+  const liveMatchQuery = useQuery({
+    queryKey: ["match", matchId, "live"],
+    queryFn: () => api<any>(`/match/${matchId}/live`),
+    enabled: Boolean(matchId) && room?.status !== "FINISHED",
+    refetchInterval: room?.status === "FINISHED" ? false : 3000,
+  });
+
+  const submissionsQuery = useQuery({
+    queryKey: ["match", matchId, "submissions"],
+    queryFn: () => api<any[]>(`/submission/match/${matchId}`),
+    enabled: Boolean(matchId),
+    refetchInterval: room?.status === "FINISHED" ? false : 3000,
+  });
+
+  const isRankedMatch = room && !room.isSolo && room.isRanked !== false;
+
+  const ratingChangesQuery = useQuery({
+    queryKey: ["match", matchId, "rating-changes"],
+    queryFn: () => api<{ success: boolean; data: any[] }>(`/rating/match/${matchId}`),
+    enabled: Boolean(matchId && (room?.status === "FINISHED" || liveMatchQuery.data?.status === "COMPLETED" || liveMatchQuery.data?.status === "ABANDONED")),
+    refetchInterval: (query) => {
+      if (!isRankedMatch) return false;
+      const historyData = query.state.data?.data || [];
+      const hasRecord = historyData.some(
+        (h: any) => h.user === user?._id || h.user === user?.username
+      );
+      return hasRecord ? false : 2000;
+    },
+    retry: 5,
+    retryDelay: 1000,
+  });
+
+  useEffect(() => {
+    const liveMatchStatus = liveMatchQuery.data?.status;
+    const isEnded = room?.status === "FINISHED" || liveMatchStatus === "COMPLETED" || liveMatchStatus === "ABANDONED";
+    if (isEnded && !hasTriggeredModal) {
+      setShowResultsModal(true);
+      setHasTriggeredModal(true);
+    }
+  }, [liveMatchQuery.data?.status, room?.status, hasTriggeredModal]);
+
+  const question = questionQuery.data?.question;
+  const liveMatch = liveMatchQuery.data;
+  const matchSubmissions = submissionsQuery.data || [];
+
+  // Opponent typing indicator logic
+  const [typingState, setTypingState] = useState<Record<string, boolean>>({});
+  const [opponentPetState, setOpponentPetState] = useState<Record<string, { type: string; color: string }>>({});
+  const [lastActiveOpponentName, setLastActiveOpponentName] = useState<string | null>(null);
+
+  // Sync mascot preferences from room members on load/change
+  useEffect(() => {
+    if (!room || !room.teams) return;
+    const newPets: Record<string, { type: string; color: string }> = {};
+    const processMember = (member: any) => {
+      if (member && typeof member === "object" && member.username) {
+        newPets[member.username] = {
+          type: member.mascot?.type ?? "cat",
+          color: member.mascot?.color ?? "#FF6B00",
+        };
+      }
+    };
+    (room.teams.teamA ?? []).forEach(processMember);
+    (room.teams.teamB ?? []).forEach(processMember);
+    
+    if (Object.keys(newPets).length > 0) {
+      setOpponentPetState((prev) => ({
+        ...prev,
+        ...newPets,
+      }));
+    }
+  }, [room]);
+
+  useEffect(() => {
+    const activeName = Object.keys(typingState).find((username) => typingState[username]);
+    if (activeName) {
+      setLastActiveOpponentName(activeName);
+    }
+  }, [typingState]);
+
+  const [hideMascots, setHideMascots] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("mascot-hidden") === "true";
+    }
+    return false;
+  });
+
+  const toggleHideMascots = () => {
+    const next = !hideMascots;
+    setHideMascots(next);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("mascot-hidden", String(next));
+    }
+  };
+
+  const [myPetType, setMyPetType] = useState("cat");
+  const [myPetColor, setMyPetColor] = useState("#FF6B00");
+
+  useEffect(() => {
+    if (user?.mascot) {
+      setMyPetType(user.mascot.type);
+      setMyPetColor(user.mascot.color);
+    } else if (typeof window !== "undefined") {
+      setMyPetType(localStorage.getItem("mascot-type") ?? "cat");
+      setMyPetColor(localStorage.getItem("mascot-color") ?? "#FF6B00");
+    }
+  }, [user?.mascot]);
+
+  const isTypingRef = useRef(false);
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    const handleOpponentTyping = ({ username, isTyping, pet }: { username: string; isTyping: boolean; pet?: { type: string; color: string } }) => {
+      setTypingState((prev) => ({ ...prev, [username]: isTyping }));
+      if (pet) {
+        setOpponentPetState((prev) => ({ ...prev, [username]: pet }));
+      }
+    };
+
+    socket.on("battle:opponent-typing", handleOpponentTyping);
+
+    return () => {
+      socket.off("battle:opponent-typing", handleOpponentTyping);
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+      if (isTypingRef.current) {
+        socket.emit("battle:typing", { roomCode: room.roomCode, isTyping: false });
+      }
+    };
+  }, [room.roomCode]);
+
+  const handleEditorChange = (val: string | undefined) => {
+    setCodeByLang(prev => ({ ...prev, [selectedLang]: val ?? "" }));
+
+    if (!isTypingRef.current) {
+      isTypingRef.current = true;
+      socket.emit("battle:typing", {
+        roomCode: room.roomCode,
+        isTyping: true,
+        pet: { type: myPetType, color: myPetColor }
+      });
+    }
+
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
+
+    typingTimeoutRef.current = setTimeout(() => {
+      isTypingRef.current = false;
+      socket.emit("battle:typing", { roomCode: room.roomCode, isTyping: false });
+    }, 2000);
+  };
+
+  const isOpponentTyping = Object.values(typingState).some(Boolean);
+  const activeOpponentName = Object.keys(typingState).find((username) => typingState[username]);
+  const activeOpponentPet = (activeOpponentName ? opponentPetState[activeOpponentName] : null)
+    || (lastActiveOpponentName ? opponentPetState[lastActiveOpponentName] : null)
+    || Object.values(opponentPetState)[0]
+    || null;
+
+  // Initialize starter code when question changes
+  useEffect(() => {
+    if (question && question.starterCode) {
+      const initial: Record<string, string> = {};
+      const supported = question.judgeConfig?.supportedLanguages || ["cpp", "java", "python", "javascript"];
+      
+      for (const lang of supported) {
+        initial[lang] = question.starterCode[lang] || "";
+      }
+      setCodeByLang(initial);
+      
+      // Set default selected language based on supported languages
+      if (supported.length > 0) {
+        setSelectedLang(supported[0]);
+      }
+    }
+  }, [question]);
+
+  // Timer countdown
+  const [timeLeft, setTimeLeft] = useState(0);
+  useEffect(() => {
+    if (!liveMatch?.timer?.endsAt) return;
+    const endsAtTime = new Date(liveMatch.timer.endsAt).getTime();
+    
+    const tick = () => {
+      const diff = Math.max(0, Math.floor((endsAtTime - Date.now()) / 1000));
+      setTimeLeft(diff);
+      if (diff === 0) {
+        clearInterval(interval);
+      }
+    };
+    
+    tick();
+    const interval = setInterval(tick, 1000);
+    return () => clearInterval(interval);
+  }, [liveMatch?.timer?.endsAt]);
+
+  const formatTime = (secs: number) => {
+    const m = Math.floor(secs / 60);
+    const s = secs % 60;
+    return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
+  };
+
+  // Submit code mutation
+  const submitCodeMutation = useMutation({
+    mutationFn: (payload: { matchId: string; language: string; code: string }) =>
+      api<{ submissionId: string; status: string }>("/submission", {
+        method: "POST",
+        body: payload,
+      }),
+    onSuccess: async (res) => {
+      const subId = res?.submissionId;
+      if (!subId) {
+        setSubmitting(false);
+        return;
+      }
+      
+      // Poll submission status until settled (not PENDING or RUNNING)
+      let attempts = 0;
+      const poll = async () => {
+        try {
+          const sub = await api<any>(`/submission/${subId}`);
+          
+          if (sub.status === "PENDING" || sub.status === "RUNNING") {
+            attempts++;
+            if (attempts < 20) {
+              setTimeout(poll, 1500);
+            } else {
+              setSubmitting(false);
+            }
+          } else {
+            setLatestSubmission(sub);
+            setSubmitting(false);
+            setConsoleTab("result");
+            queryClient.invalidateQueries({ queryKey: ["match", matchId] });
+          }
+        } catch {
+          setSubmitting(false);
+        }
+      };
+      
+      setTimeout(poll, 1500);
+    },
+    onError: (err) => {
+      setSubmitting(false);
+      alert("Submission failed: " + errorMessage(err));
+    }
+  });
+
+  const handleResetCode = () => {
+    if (question && question.starterCode && question.starterCode[selectedLang]) {
+      if (confirm("Reset editor to starter code? Your current edits in this language will be discarded.")) {
+        setCodeByLang(prev => ({ ...prev, [selectedLang]: question.starterCode[selectedLang] }));
+      }
+    }
+  };
+
+  const handleSubmit = () => {
+    const currentCode = codeByLang[selectedLang] || "";
+    if (currentCode.trim().length === 0) return;
+    
+    setSubmitting(true);
+    setLatestSubmission(null);
+    submitCodeMutation.mutate({
+      matchId,
+      language: selectedLang,
+      code: currentCode
+    });
+  };
+
+  const [resigning, setResigning] = useState(false);
+  const resignMutation = useMutation({
+    mutationFn: () => api(`/match/${matchId}/abandon`, { method: "POST", body: { reason: "Forfeited via Resign button" } }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["battle", "me", "active"] });
+      onLeave();
+    },
+    onError: (err) => {
+      alert("Resignation failed: " + errorMessage(err));
+    },
+    onSettled: () => {
+      setResigning(false);
+    }
+  });
+
+  const handleResign = () => {
+    if (confirm("Are you sure you want to resign and forfeit this match? This will count as a loss and end the battle.")) {
+      setResigning(true);
+      resignMutation.mutate();
+    }
+  };
+
+  const solved = matchSubmissions.some((sub: any) => {
+    const subUserId = typeof sub.userId === "object" && sub.userId ? sub.userId._id : sub.userId;
+    return subUserId === user?._id && sub.status === "ACCEPTED";
+  });
+  
+  const matchEnded = room?.status === "FINISHED" || liveMatch?.status === "COMPLETED" || liveMatch?.status === "ABANDONED" || (liveMatch?.timer?.endsAt && new Date(liveMatch.timer.endsAt).getTime() <= Date.now());
+  const canLeaveSafely = solved || matchEnded;
+
+  const hasEmbeddedFormats = !!question?.statement?.markdown && (
+    question.statement.markdown.toLowerCase().includes("input format") || 
+    question.statement.markdown.toLowerCase().includes("examples")
+  );
+
+  const supportedLangs = question?.judgeConfig?.supportedLanguages || ["cpp", "java", "python", "javascript"];
+
+  return (
+    <div className="fixed inset-0 z-50 flex flex-col bg-bg text-text antialiased font-sans">
+      {/* Header Panel */}
+      <header className="h-14 border-b border-border bg-surface flex items-center justify-between px-6 shrink-0 shadow-sm select-none">
+        <div className="flex items-center gap-3">
+          {canLeaveSafely ? (
+            <div className="flex items-center gap-3">
+              <button onClick={onLeave} className="flex items-center gap-1.5 text-text-muted hover:text-text text-sm font-semibold transition-colors cursor-pointer">
+                <DoorOpen className="size-4 text-emerald-500" /> Leave Arena
+              </button>
+              {(liveMatch?.status === "COMPLETED" || liveMatch?.status === "ABANDONED") && (
+                <button
+                  onClick={() => setShowResultsModal(true)}
+                  className="flex items-center gap-1.5 text-amber-500 hover:text-amber-400 text-sm font-semibold transition-colors cursor-pointer"
+                >
+                  <Trophy className="size-4" /> View Results
+                </button>
+              )}
+            </div>
+          ) : (
+            <button onClick={handleResign} disabled={resigning} className="flex items-center gap-1.5 text-red-500 hover:text-red-400 text-sm font-semibold transition-colors cursor-pointer disabled:opacity-50">
+              <XCircle className="size-4" /> Resign
+            </button>
+          )}
+          <span className="text-border">|</span>
+          <div className="flex items-center gap-2">
+            <span className="font-mono text-sm font-bold bg-surface-3 px-2 py-0.5 rounded border border-border/60">
+              Room Code: {room.roomCode}
+            </span>
+          </div>
+        </div>
+
+        {/* Timer countdown banner */}
+        <div className="flex items-center gap-2 bg-primary/5 dark:bg-primary-subtle border border-primary/20 rounded-full px-4 py-1">
+          <Clock className="size-4 text-primary animate-pulse" />
+          <span className="font-mono text-sm font-black tracking-wider text-primary">
+            {formatTime(timeLeft)}
+          </span>
+          <Badge className="border border-emerald-500/20 bg-emerald-500/10 text-emerald-500 font-bold select-none tracking-wide text-[10px] scale-90 uppercase">
+            Live Round
+          </Badge>
+        </div>
+
+        {/* Voice and Chat controls */}
+        <div className="flex items-center gap-3">
+          {userTeam && (
+            <button
+              onClick={() => setReportModalOpen(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold font-mono border bg-surface border-border text-text-muted hover:text-text hover:border-red-500/50 cursor-pointer h-9 shadow-sm"
+            >
+              <AlertTriangle className="size-3.5 text-red-500" />
+              <span>Report</span>
+            </button>
+          )}
+          {userTeam && (
+            <button
+              onClick={() => setChatOpen(!chatOpen)}
+              className={cn(
+                "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold font-mono border transition-all cursor-pointer h-9 shadow-sm",
+                chatOpen
+                  ? "bg-primary border-primary text-white"
+                  : "bg-surface border-border text-text-muted hover:text-text hover:border-primary/50"
+              )}
+            >
+              <MessageSquare className="size-3.5" />
+              <span>Chat</span>
+            </button>
+          )}
+        </div>
+
+        {/* Score Board */}
+        <div className="flex items-center gap-5">
+          <div className="flex items-center gap-2.5">
+            <div className="text-right">
+              <span className="text-[10px] text-text-faint font-semibold uppercase block">Team A</span>
+              <span className="font-mono text-sm font-bold text-blue-400">{liveMatch?.score?.teamA ?? 0} pts</span>
+            </div>
+            <div className="text-center font-mono text-xs font-bold text-text-faint px-1.5 py-0.5 bg-surface-2 rounded border border-border/50">VS</div>
+            <div className="text-left">
+              <span className="text-[10px] text-text-faint font-semibold uppercase block">Team B</span>
+              <span className="font-mono text-sm font-bold text-red-400">{liveMatch?.score?.teamB ?? 0} pts</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Workspace (IDE splitter layout) */}
+      <main className="flex-1 flex flex-col md:flex-row overflow-hidden min-h-0">
+        {/* Left Side: Question Pane */}
+        <div className="flex-1 md:max-w-[45%] border-r border-border bg-surface/30 flex flex-col overflow-hidden min-h-0">
+          <div className="flex items-center justify-between border-b border-border bg-surface px-4 h-10 shrink-0">
+            <div className="flex gap-2">
+              <button
+                onClick={() => setActiveTab("description")}
+                className={cn(
+                  "h-10 px-3 text-xs font-semibold border-b-2 transition-all cursor-pointer",
+                  activeTab === "description"
+                    ? "border-primary text-text font-bold"
+                    : "border-transparent text-text-muted hover:text-text"
+                )}
+              >
+                <Code2 className="size-3.5 inline mr-1" /> Description
+              </button>
+              <button
+                onClick={() => setActiveTab("submissions")}
+                className={cn(
+                  "h-10 px-3 text-xs font-semibold border-b-2 transition-all cursor-pointer",
+                  activeTab === "submissions"
+                    ? "border-primary text-text font-bold"
+                    : "border-transparent text-text-muted hover:text-text"
+                )}
+              >
+                <Terminal className="size-3.5 inline mr-1" /> Team Submissions
+              </button>
+            </div>
+          </div>
+
+          <div className="flex-1 overflow-y-auto scrollbar-thin">
+            {activeTab === "description" ? (
+              <div className="p-6 space-y-5">
+                {questionQuery.isLoading ? (
+                  <Spinner className="py-20" />
+                ) : !question ? (
+                  <div className="text-center py-20 text-sm text-text-faint">Question statement is loading...</div>
+                ) : (
+                  <>
+                    <div className="space-y-2">
+                      <h2 className="text-xl font-bold tracking-tight text-text">
+                        {question.title}
+                      </h2>
+                      <div className="flex items-center gap-2">
+                        <Badge
+                          className={cn(
+                            "border font-medium text-xs",
+                            question.difficulty === "Easy" && "border-emerald-500/20 bg-emerald-500/10 text-emerald-500",
+                            question.difficulty === "Medium" && "border-amber-500/20 bg-amber-500/10 text-amber-500",
+                            question.difficulty === "Hard" && "border-red-500/20 bg-red-500/10 text-red-500"
+                          )}
+                        >
+                          {question.difficulty}
+                        </Badge>
+                        <Badge className="border border-border bg-surface-2 text-text-muted text-xs capitalize">
+                          {question.category?.toLowerCase()}
+                        </Badge>
+                      </div>
+                    </div>
+
+                    {/* Statement markdown text description */}
+                    <div className="prose dark:prose-invert max-w-none text-[13px] leading-relaxed text-text-muted font-sans whitespace-pre-wrap">
+                      {question.statement?.markdown?.replace(/\\n/g, "\n")}
+                    </div>
+
+                    {/* Input / Output Formats */}
+                    {!hasEmbeddedFormats && question.statement?.inputFormat && (
+                      <div className="space-y-1.5 pt-2">
+                        <h4 className="text-xs font-bold text-text uppercase tracking-wider font-mono">Input Format</h4>
+                        <div className="text-[13px] leading-relaxed text-text-muted font-sans whitespace-pre-wrap">
+                          {question.statement.inputFormat.replace(/\\n/g, "\n")}
+                        </div>
+                      </div>
+                    )}
+
+                    {!hasEmbeddedFormats && question.statement?.outputFormat && (
+                      <div className="space-y-1.5 pt-2">
+                        <h4 className="text-xs font-bold text-text uppercase tracking-wider font-mono">Output Format</h4>
+                        <div className="text-[13px] leading-relaxed text-text-muted font-sans whitespace-pre-wrap">
+                          {question.statement.outputFormat.replace(/\\n/g, "\n")}
+                        </div>
+                      </div>
+                    )}
+
+                    {!hasEmbeddedFormats && question.statement?.notes && (
+                      <div className="space-y-1.5 pt-2 border-t border-border/10">
+                        <h4 className="text-xs font-bold text-text-faint uppercase tracking-wider font-mono">Notes</h4>
+                        <div className="text-[12px] italic leading-relaxed text-text-faint font-sans whitespace-pre-wrap">
+                          {question.statement.notes.replace(/\\n/g, "\n")}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Examples */}
+                    {!hasEmbeddedFormats && question.statement?.examples && question.statement.examples.length > 0 && (
+                      <div className="space-y-3">
+                        <h3 className="text-xs font-bold text-text uppercase tracking-wider font-mono">Examples</h3>
+                        {question.statement.examples.map((ex: any, idx: number) => (
+                          <div key={idx} className="bg-surface-2 border border-border/50 rounded-lg p-4 text-[13px] font-mono leading-relaxed space-y-1.5 shadow-sm">
+                            <span className="text-text font-bold block mb-1 text-xs text-text-muted">Example {idx + 1}:</span>
+                            <div className="text-text-muted text-xs space-y-1">
+                              <span className="text-text-faint block font-semibold uppercase tracking-wider text-[10px]">Input:</span>
+                              <pre className="text-text bg-surface-3/50 px-3 py-1.5 rounded border border-border/40 font-mono whitespace-pre-wrap leading-relaxed select-text">{ex.input}</pre>
+                            </div>
+                            <div className="text-text-muted text-xs space-y-1">
+                              <span className="text-text-faint block font-semibold uppercase tracking-wider text-[10px]">Output:</span>
+                              <pre className="text-text bg-surface-3/50 px-3 py-1.5 rounded border border-border/40 font-mono whitespace-pre-wrap leading-relaxed select-text">{ex.output}</pre>
+                            </div>
+                             {ex.explanation && (
+                               <div className="text-text-faint mt-1.5 leading-relaxed bg-surface-3/55 px-2.5 py-1.5 rounded border border-border/30 text-xs whitespace-pre-wrap">
+                                 <span className="text-text-muted font-bold">Explanation:</span> {ex.explanation?.replace(/\\n/g, "\n")}
+                               </div>
+                             )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Constraints */}
+                    {!hasEmbeddedFormats && question.statement?.constraints && question.statement.constraints.length > 0 && (
+                      <div className="space-y-3 pt-2">
+                        <h3 className="text-xs font-bold text-text uppercase tracking-wider font-mono">Constraints</h3>
+                        <ul className="list-disc pl-5 text-xs text-text-muted space-y-2">
+                          {question.statement.constraints.map((c: any, idx: number) => (
+                            <li key={idx} className="leading-relaxed">
+                              <code className="bg-surface-2 border border-border/50 px-1 py-0.5 rounded font-mono text-[11px] text-text font-bold mr-1">{c.variable}</code>: {c.description} (Min: {c.min}, Max: {c.max})
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    {/* Hints */}
+                    {question.hints && question.hints.length > 0 && (
+                      <div className="space-y-2 pt-2 border-t border-border/10">
+                        <h3 className="text-xs font-bold text-text uppercase tracking-wider font-mono">Hints</h3>
+                        <div className="space-y-2">
+                          {question.hints.map((hint: any, idx: number) => (
+                            <details key={idx} className="bg-surface-2 border border-border/50 rounded-lg group transition-all duration-200">
+                              <summary className="px-4 py-2.5 text-xs font-semibold text-text-muted hover:text-text cursor-pointer select-none outline-none list-none flex items-center justify-between">
+                                <span>Hint {hint.order || idx + 1}</span>
+                                <ChevronDown className="size-3 text-text-faint transition-transform duration-200 group-open:rotate-180" />
+                              </summary>
+                               <div className="px-4 pb-3 text-xs text-text-muted leading-relaxed border-t border-border/30 pt-2 font-mono whitespace-pre-wrap">
+                                 {hint.text?.replace(/\\n/g, "\n")}
+                               </div>
+                            </details>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+            ) : (
+              <div className="p-0 divide-y divide-border/40">
+                <div className="px-5 py-4 border-b border-border bg-surface shrink-0">
+                  <h3 className="text-xs font-bold text-text uppercase tracking-wider font-mono">Submissions Log</h3>
+                </div>
+                {matchSubmissions.length === 0 ? (
+                  <div className="py-20 text-center text-xs text-text-faint">No submissions yet. Be the first to submit!</div>
+                ) : (
+                  matchSubmissions.map((sub: any) => {
+                    const isAccepted = sub.status === "ACCEPTED";
+                    const isCompErr = sub.judgeResult === "COMPILATION_ERROR";
+                    return (
+                      <div key={sub._id} className="px-5 py-3.5 flex items-center justify-between text-xs hover:bg-surface-2/40 transition-colors">
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-2">
+                            <span className="font-semibold text-text">{sub.userId?.username}</span>
+                            <Badge className="text-[10px] scale-90 border border-border uppercase bg-surface-3">{sub.language}</Badge>
+                          </div>
+                          <p className="text-[11px] text-text-faint font-mono">
+                            Sub #{sub.submissionNumber} · {timeAgo(sub.createdAt)}
+                          </p>
+                        </div>
+                        <div className="text-right space-y-1">
+                          <span className={cn(
+                            "font-bold uppercase tracking-wider font-mono text-[10px] px-2 py-0.5 rounded border inline-block",
+                            isAccepted
+                              ? "border-emerald-500/20 bg-emerald-500/10 text-emerald-500"
+                              : isCompErr
+                                ? "border-amber-500/20 bg-amber-500/10 text-amber-500"
+                                : "border-red-500/20 bg-red-500/10 text-red-500"
+                          )}>
+                            {sub.judgeResult || sub.status}
+                          </span>
+                          <p className="text-[10px] text-text-faint font-mono font-bold">
+                            Score: {sub.score} / 100
+                          </p>
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Right Side: Code Editor Workspace */}
+        <div className="flex-1 flex flex-col overflow-hidden min-h-0 bg-surface/10">
+          {/* Editor Header Bar */}
+          <div className="h-10 border-b border-border bg-surface flex items-center justify-between px-4 shrink-0 select-none">
+            <div className="flex items-center gap-2">
+              <div className="relative">
+                <select
+                  value={selectedLang}
+                  onChange={(e) => setSelectedLang(e.target.value)}
+                  className="appearance-none rounded border border-border bg-surface-2 hover:bg-surface-3 hover:border-border-strong pl-3 pr-8 py-1 text-xs font-semibold text-text-muted hover:text-text cursor-pointer transition-colors outline-none h-7"
+                >
+                  {supportedLangs.map((lang: string) => (
+                    <option key={lang} value={lang}>
+                      {lang === "cpp" ? "C++" : lang === "java" ? "Java" : lang === "python" ? "Python" : lang === "javascript" ? "JavaScript" : lang.toUpperCase()}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 size-3 text-text-faint pointer-events-none" />
+              </div>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <button
+                onClick={toggleHideMascots}
+                className="flex items-center justify-center size-7 rounded border border-border bg-surface hover:bg-surface-2 text-text-muted hover:text-text transition-colors cursor-pointer"
+                title={hideMascots ? "Show typing mascot pet" : "Hide typing mascot pet"}
+              >
+                {hideMascots ? (
+                  <EyeOff className="size-3.5 text-text-muted" />
+                ) : (
+                  <Eye className="size-3.5 text-primary" />
+                )}
+              </button>
+              <button
+                onClick={handleResetCode}
+                className="flex items-center justify-center size-7 rounded border border-border bg-surface hover:bg-surface-2 text-text-muted hover:text-text transition-colors cursor-pointer"
+                title="Reset starter code"
+              >
+                <RotateCcw className="size-3.5" />
+              </button>
+            </div>
+          </div>
+
+          {/* Monaco Editor Container */}
+          <div className="flex-1 relative min-h-[300px] border-b border-border">
+            {/* Floating Animal Typing Animation */}
+            {!hideMascots && (
+              <div className="absolute top-3.5 right-3.5 z-10 animate-in fade-in duration-300">
+                <KeyboardMascotAnimation active={isOpponentTyping} pet={activeOpponentPet} />
+              </div>
+            )}
+
+            {questionQuery.isLoading ? (
+              <div className="absolute inset-0 flex items-center justify-center bg-surface/50"><Spinner /></div>
+            ) : (
+              <Editor
+                height="100%"
+                theme={resolvedTheme === "dark" ? "vs-dark" : "light"}
+                language={selectedLang === "cpp" ? "cpp" : selectedLang === "java" ? "java" : selectedLang === "python" ? "python" : "javascript"}
+                value={codeByLang[selectedLang] ?? ""}
+                onChange={handleEditorChange}
+                options={{
+                  minimap: { enabled: false },
+                  fontSize: 14,
+                  automaticLayout: true,
+                  fontFamily: "var(--font-mono)",
+                  lineHeight: 22,
+                  padding: { top: 12 },
+                }}
+              />
+            )}
+          </div>
+
+          {/* Bottom Terminal Output Drawer */}
+          <div className="h-56 bg-surface/80 border-t border-border flex flex-col shrink-0 overflow-hidden select-none">
+            <div className="h-9 border-b border-border bg-surface flex items-center justify-between px-4 shrink-0">
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setConsoleTab("result")}
+                  className={cn(
+                    "h-9 px-3 text-xs font-semibold border-b-2 transition-all cursor-pointer",
+                    consoleTab === "result"
+                      ? "border-primary text-text font-bold"
+                      : "border-transparent text-text-muted hover:text-text"
+                  )}
+                >
+                  Console Outcome
+                </button>
+              </div>
+              <div className="flex items-center">
+                <Button
+                  size="sm"
+                  onClick={handleSubmit}
+                  loading={submitting}
+                  disabled={submitting || (codeByLang[selectedLang] || "").trim().length === 0}
+                  className="h-7 px-4 text-xs font-bold gap-1 bg-primary hover:bg-primary-hover text-white shadow-sm"
+                >
+                  <Send className="size-3" /> Submit Solution
+                </Button>
+              </div>
+            </div>
+
+            {/* Console tab content container */}
+            <div className={cn("flex-1 overflow-y-auto p-4 scrollbar-thin font-mono text-xs select-text", resolvedTheme === "dark" ? "bg-[#090a0f]" : "bg-surface")}>
+              {submitting ? (
+                <div className="flex flex-col items-center justify-center py-8 space-y-2">
+                  <Spinner className="py-2" />
+                  <p className="text-text-muted text-xs animate-pulse">Compiling solution & running test cases on Judge0...</p>
+                </div>
+              ) : latestSubmission ? (
+                <div className="space-y-4">
+                  {/* Verdict header block */}
+                  {latestSubmission.status === "ACCEPTED" ? (
+                    <div className="flex items-center gap-2 p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-lg text-emerald-500">
+                      <CheckCircle2 className="size-4 shrink-0" />
+                      <div>
+                        <span className="font-black text-sm block">ACCEPTED</span>
+                        <span className="text-[11px] text-emerald-500/80">All test cases passed! Score: {latestSubmission.score ?? 100}/100</span>
+                      </div>
+                    </div>
+                  ) : latestSubmission.judgeResult === "COMPILATION_ERROR" ? (
+                    <div className="flex items-center gap-2 p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg text-amber-500">
+                      <AlertCircle className="size-4 shrink-0" />
+                      <div>
+                        <span className="font-black text-sm block">COMPILATION ERROR</span>
+                        <span className="text-[11px] text-amber-500/80">Failed to compile your source code. Check the details below.</span>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-500">
+                      <XCircle className="size-4 shrink-0" />
+                      <div>
+                        <span className="font-black text-sm block uppercase">{latestSubmission.judgeResult || latestSubmission.status}</span>
+                        <span className="text-[11px] text-red-500/80">Failing on test cases. Score: {latestSubmission.score ?? 0}/100</span>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Submission statistics (execution time, memory) */}
+                  {latestSubmission.status !== "PENDING" && latestSubmission.status !== "RUNNING" && (
+                    <div className="grid grid-cols-3 gap-3">
+                      <div className="bg-surface-2 p-2.5 rounded border border-border/40 text-center">
+                        <span className="text-text-faint text-[10px] block uppercase font-sans">Pass Rate</span>
+                        <span className="text-text font-bold font-mono text-sm">{latestSubmission.passedTestCases ?? 0} / {latestSubmission.totalTestCases ?? 0}</span>
+                      </div>
+                      <div className="bg-surface-2 p-2.5 rounded border border-border/40 text-center">
+                        <span className="text-text-faint text-[10px] block uppercase font-sans">Time</span>
+                        <span className="text-text font-bold font-mono text-sm">
+                          {typeof latestSubmission.executionTime === "number" ? `${latestSubmission.executionTime}s` : "0.00s"}
+                        </span>
+                      </div>
+                      <div className="bg-surface-2 p-2.5 rounded border border-border/40 text-center">
+                        <span className="text-text-faint text-[10px] block uppercase font-sans">Memory</span>
+                        <span className="text-text font-bold font-mono text-sm">
+                          {typeof latestSubmission.memoryUsage === "number" ? `${(latestSubmission.memoryUsage / 1024).toFixed(1)}MB` : "0.0MB"}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Error feedback if compilation error or execution error */}
+                  {latestSubmission.feedback && (
+                    <div className="space-y-1.5 pt-2">
+                      <span className="text-text-muted text-xs block font-sans font-bold">Compiler / Runtime Logs:</span>
+                      <pre className="bg-surface p-3 border border-border/50 rounded overflow-x-auto text-[11px] text-text-muted leading-relaxed font-mono whitespace-pre max-h-40">
+                        {latestSubmission.feedback}
+                      </pre>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center py-8 text-center text-text-faint text-xs space-y-1">
+                  <Terminal className="size-5 text-text-faint" />
+                  <p>Welcome challenger! Click "Submit Solution" to compile and run your code against the judge.</p>
+                  <p className="text-[10px] text-text-faint/60">Results, pass rates, and compilation errors will render here.</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </main>
+
+      {userTeam && (
+        <ChatConsole
+          roomCode={room.roomCode}
+          isOpen={chatOpen}
+          onClose={() => setChatOpen(false)}
+          userTeam={userTeam}
+          roomStatus={room.status}
+        />
+      )}
+
+      {/* Post-Match Results Overlay Modal */}
+      {showResultsModal && (
+        <div className="fixed inset-0 z-55 flex items-center justify-center bg-black/85 backdrop-blur-md animate-fadeIn p-4">
+          <div className="bg-surface border border-border shadow-2xl rounded-xl max-w-md w-full overflow-hidden flex flex-col select-none relative animate-scaleUp">
+            
+            {/* Close button to view code */}
+            <button
+              onClick={() => setShowResultsModal(false)}
+              className="absolute top-3 right-3 text-text-faint hover:text-text p-1 rounded-md transition-colors cursor-pointer"
+              title="Close and inspect code"
+            >
+              <X className="size-4" />
+            </button>
+
+            {/* Header */}
+            <div className="p-6 text-center border-b border-border/60 bg-surface-2/40">
+              <div className="mx-auto mb-3 flex size-14 items-center justify-center rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-500">
+                <Trophy className="size-6" />
+              </div>
+              <h2 className="text-lg font-black tracking-wider font-mono text-text uppercase">
+                Battle Results
+              </h2>
+              <p className="text-[11px] text-text-faint font-mono mt-1">
+                Room Code: {room.roomCode}
+              </p>
+            </div>
+
+            {/* Content */}
+            <div className="p-6 space-y-5 flex-1">
+              {ratingChangesQuery.isLoading ? (
+                <div className="flex flex-col items-center justify-center py-6 space-y-2">
+                  <Spinner className="py-2" />
+                  <p className="text-xs text-text-muted font-mono animate-pulse">Calculating rating updates...</p>
+                </div>
+              ) : (
+                (() => {
+                  const myHistory = ratingChangesQuery.data?.data?.find(
+                    (h: any) => h.user === user?._id || h.user === user?.username
+                  );
+
+                  if (!myHistory) {
+                    if (isRankedMatch) {
+                      return (
+                        <div className="flex flex-col items-center justify-center py-6 space-y-2">
+                          <Spinner className="py-2" />
+                          <p className="text-xs text-text-muted font-mono animate-pulse">Calculating rating updates...</p>
+                        </div>
+                      );
+                    }
+
+                    return (
+                      <div className="text-center py-4 space-y-1">
+                        <p className="text-sm font-semibold text-text">Battle Complete!</p>
+                        <p className="text-xs text-text-faint max-w-xs mx-auto leading-relaxed">
+                          This was a casual match. Rating adjustments are only recorded for competitive ranked rooms.
+                        </p>
+                      </div>
+                    );
+                  }
+
+                  const isPositive = myHistory.change > 0;
+                  const isZero = myHistory.change === 0;
+
+                  return (
+                    <div className="space-y-4 text-center">
+                      {myHistory.result && (
+                        <p className="text-xs font-semibold text-text-muted capitalize">
+                          {myHistory.result}
+                        </p>
+                      )}
+
+                      {/* Elo Delta Indicator */}
+                      <div className="py-3 bg-surface-2/60 rounded-lg border border-border/50">
+                        <span className="text-[10px] text-text-faint uppercase font-bold font-mono tracking-wider block">
+                          Rating Change ({myHistory.category || "DSA"})
+                        </span>
+                        <div className="flex items-center justify-center gap-1.5 mt-1">
+                          <span
+                            className={cn(
+                              "text-3xl font-black font-mono tracking-wider",
+                              isPositive
+                                ? "text-emerald-500"
+                                : isZero
+                                ? "text-text-muted"
+                                : "text-danger"
+                            )}
+                          >
+                            {isPositive ? `+${myHistory.change}` : myHistory.change}
+                          </span>
+                          <span className="text-[10px] text-text-faint font-bold font-mono uppercase">
+                            Elo
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Rating Flow */}
+                      <div className="flex items-center justify-center gap-6 font-mono text-xs font-semibold">
+                        <div>
+                          <span className="text-[9px] text-text-faint block uppercase">Old Rating</span>
+                          <span className="text-text-muted">{myHistory.oldRating}</span>
+                        </div>
+                        <div className="text-text-faint text-sm">➔</div>
+                        <div>
+                          <span className="text-[9px] text-text-faint block uppercase">New Rating</span>
+                          <span className="text-emerald-500 font-bold">{myHistory.newRating}</span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })()
+              )}
+            </div>
+
+            {/* Footer buttons */}
+            <div className="p-4 border-t border-border/60 bg-surface-2/30 flex gap-2.5 shrink-0">
+              {solved ? (
+                <>
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => setShowResultsModal(false)}
+                    className="flex-1 text-xs"
+                  >
+                    Inspect Code
+                  </Button>
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    onClick={onLeave}
+                    className="flex-1 text-xs"
+                  >
+                    Return to Lobby
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={onLeave}
+                    className="flex-1 text-xs"
+                  >
+                    Return to Lobby
+                  </Button>
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    onClick={() => setShowResultsModal(false)}
+                    className="flex-1 text-xs bg-primary hover:bg-primary-hover text-white font-bold"
+                  >
+                    Continue to Edit
+                  </Button>
+                </>
+              )}
+            </div>
+
+          </div>
+        </div>
+      )}
+
+      {/* Report Player / Question Modal */}
+      {reportModalOpen && (
+        <div className="fixed inset-0 z-55 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 transition-all duration-300">
+          <div className="bg-surface border border-border shadow-2xl rounded-2xl max-w-md w-full overflow-hidden flex flex-col relative animate-scaleUp select-text">
+            
+            {/* Close button */}
+            <button
+              onClick={() => {
+                setReportModalOpen(false);
+                setReportTargetType("USER");
+                setReportReason("");
+                setReportDetails("");
+                setReportedPlayerUsername("");
+                setReportSuccess(false);
+                setReportError("");
+              }}
+              className="absolute top-4 right-4 text-text-muted hover:text-text hover:bg-surface-2 p-1.5 rounded-lg transition-colors cursor-pointer"
+              title="Close"
+            >
+              <X className="size-4" />
+            </button>
+
+            {/* Header */}
+            <div className="p-6 border-b border-border bg-surface-2/30 flex items-center gap-4">
+              <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-500 rounded-xl shadow-inner">
+                <AlertTriangle className="size-5" />
+              </div>
+              <div>
+                <h2 className="text-md font-bold tracking-tight text-text">
+                  File Match Report
+                </h2>
+                <p className="text-[11px] text-text-muted mt-0.5 leading-relaxed">
+                  Flag cheating behavior or report question issues to platform moderators.
+                </p>
+              </div>
+            </div>
+
+            {/* Content */}
+            <div className="p-6 space-y-5">
+              {reportSuccess ? (
+                <div className="text-center py-6 space-y-4">
+                  <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-500">
+                    <CheckCircle2 className="size-6" />
+                  </div>
+                  <div className="space-y-1">
+                    <h3 className="text-sm font-black text-text uppercase tracking-wider font-mono">Report Submitted</h3>
+                    <p className="text-xs text-text-muted max-w-xs mx-auto leading-relaxed">
+                      Thank you for keeping DevArena fair. Administrators will review your report and audits.
+                    </p>
+                  </div>
+                  <Button
+                    onClick={() => {
+                      setReportModalOpen(false);
+                      setReportSuccess(false);
+                    }}
+                    className="h-9 px-6 text-xs font-bold bg-primary text-white border-none"
+                  >
+                    Close Window
+                  </Button>
+                </div>
+              ) : (
+                <>
+                  {reportError && (
+                    <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-500 text-xs rounded-xl flex items-center gap-2 animate-shake">
+                      <AlertCircle className="size-4 shrink-0" />
+                      <span>{reportError}</span>
+                    </div>
+                  )}
+
+                  {/* Target Type Selector */}
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-text-muted uppercase tracking-widest font-mono">Report Target</label>
+                    <div className="grid grid-cols-2 gap-3">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setReportTargetType("USER");
+                          setReportReason("");
+                        }}
+                        className={cn(
+                          "flex flex-col items-center gap-2 py-3.5 px-4 rounded-xl border text-center transition-all cursor-pointer font-bold",
+                          reportTargetType === "USER"
+                            ? "bg-primary border-primary text-white shadow-[0_4px_12px_rgba(255,107,0,0.25)]"
+                            : "bg-surface-2 border-border text-text-muted hover:text-text hover:bg-surface-3"
+                        )}
+                      >
+                        <Users className="size-4" />
+                        <span className="text-[11px] uppercase font-mono tracking-wider">Report Player</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setReportTargetType("QUESTION");
+                          setReportReason("");
+                        }}
+                        className={cn(
+                          "flex flex-col items-center gap-2 py-3.5 px-4 rounded-xl border text-center transition-all cursor-pointer font-bold",
+                          reportTargetType === "QUESTION"
+                            ? "bg-primary border-primary text-white shadow-[0_4px_12px_rgba(255,107,0,0.25)]"
+                            : "bg-surface-2 border-border text-text-muted hover:text-text hover:bg-surface-3"
+                        )}
+                      >
+                        <Terminal className="size-4" />
+                        <span className="text-[11px] uppercase font-mono tracking-wider">Report Question</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* If target type is USER, show player dropdown */}
+                  {reportTargetType === "USER" && (
+                    <div className="space-y-2 animate-fadeIn">
+                      <label className="text-[10px] font-black text-text-muted uppercase tracking-widest font-mono">Target Player</label>
+                      <select
+                        value={reportedPlayerUsername}
+                        onChange={(e) => setReportedPlayerUsername(e.target.value)}
+                        className="h-10 w-full rounded-lg border border-border bg-surface px-3 text-xs text-text focus:border-primary focus:outline-none transition-colors cursor-pointer"
+                      >
+                        <option value="">Select a player in the match...</option>
+                        {opponentsList.map((op: any) => (
+                          <option key={op} value={op}>{op}</option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+
+                  {/* Reason selector based on target type */}
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-text-muted uppercase tracking-widest font-mono">Select Reason</label>
+                    <select
+                      value={reportReason}
+                      onChange={(e) => setReportReason(e.target.value)}
+                      className="h-10 w-full rounded-lg border border-border bg-surface px-3 text-xs text-text focus:border-primary focus:outline-none transition-colors cursor-pointer"
+                    >
+                      <option value="">Choose a reason...</option>
+                      {reportTargetType === "USER" ? (
+                        <>
+                          <option value="CHEATING">Suspected Cheating / Scripting</option>
+                          <option value="OFFENSIVE_CHAT">Offensive Chat / Toxic Behavior</option>
+                          <option value="SPAMMING">Spamming / Abuse</option>
+                          <option value="ABANDONING">AFK / Leaving match</option>
+                          <option value="OTHER">Other Issue</option>
+                        </>
+                      ) : (
+                        <>
+                          <option value="WRONG_DESCRIPTION">Wrong / Incorrect Description</option>
+                          <option value="WRONG_STARTER_CODE">Wrong / Invalid Starter Code</option>
+                          <option value="WRONG_TEST_CASES">Incorrect or Failing Test Cases</option>
+                          <option value="OTHER">Other / Content feedback</option>
+                        </>
+                      )}
+                    </select>
+                  </div>
+
+                  {/* Details text area */}
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-text-muted uppercase tracking-widest font-mono">Description / Details</label>
+                    <textarea
+                      value={reportDetails}
+                      onChange={(e) => setReportDetails(e.target.value)}
+                      placeholder={
+                        reportTargetType === "USER"
+                          ? "Please specify any cheating methods, timestamps, or context..."
+                          : "Please specify the incorrect parts of the statement, starter code issues, or sample case errors..."
+                      }
+                      rows={3}
+                      className="w-full rounded-lg border border-border bg-surface p-3 text-xs text-text placeholder:text-text-faint focus:border-primary focus:outline-none resize-none font-sans leading-relaxed transition-colors"
+                    />
+                  </div>
+
+                  {/* Submit Button */}
+                  <div className="pt-2 flex justify-end gap-3 border-t border-border/40">
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => setReportModalOpen(false)}
+                      className="h-9 text-xs font-semibold px-4 cursor-pointer"
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      size="sm"
+                      loading={submittingReport}
+                      disabled={
+                        !reportReason ||
+                        !reportDetails.trim() ||
+                        (reportTargetType === "USER" && !reportedPlayerUsername)
+                      }
+                      onClick={submitReport}
+                      className={cn(
+                        "h-9 text-xs font-bold px-5 rounded-lg transition-all text-white border-none",
+                        (!reportReason || !reportDetails.trim() || (reportTargetType === "USER" && !reportedPlayerUsername))
+                          ? "bg-danger/40 cursor-not-allowed opacity-50"
+                          : "bg-gradient-to-r from-red-600 to-amber-600 shadow-md shadow-red-500/20 hover:shadow-red-500/35 hover:from-red-500 hover:to-amber-500 active:scale-95 cursor-pointer"
+                      )}
+                    >
+                      Submit Report
+                    </Button>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+

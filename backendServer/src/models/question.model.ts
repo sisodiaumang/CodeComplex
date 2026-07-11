@@ -460,13 +460,6 @@ questionSchema.index({ slug: 1 }, { unique: true });
 questionSchema.index({ difficulty: 1 });
 questionSchema.index({ category: 1 });
 questionSchema.index({ mode: 1 });
-questionSchema.index({ "metadata.topics": 1 });
-questionSchema.index({ "metadata.patterns": 1 });
-questionSchema.index({ "metadata.tags": 1 });
-questionSchema.index({ "metadata.keywords": 1 });
-questionSchema.index({ "metadata.prerequisites": 1 });
-questionSchema.index({ "metadata.variants": 1 });
-questionSchema.index({ "metadata.companies.name": 1 });
 questionSchema.index({ isDeleted: 1 });
 questionSchema.index({ createdBy: 1 });
 

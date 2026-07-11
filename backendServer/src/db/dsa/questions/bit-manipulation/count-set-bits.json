@@ -1,0 +1,276 @@
+{
+  "_id": "count-set-bits",
+  "title": "Count Set Bits",
+  "slug": "count-set-bits",
+  "difficulty": "Easy",
+  "category": "STRING",
+  "subCategory": "Learn Bit Manipulation",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 100,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "Bit Manipulation"
+    ],
+    "patterns": [
+      "Bitwise Operations"
+    ],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "Bit Manipulation",
+      "Easy"
+    ],
+    "keywords": [
+      "Bit",
+      "Set",
+      "Count",
+      "Bitwise"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given an integer n, return the total number of set bits (1-bits) in the binary representation of all numbers from 1 to n.",
+    "inputFormat": "1\nn",
+    "outputFormat": "result",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The input integer."
+      }
+    ],
+    "examples": [
+      {
+        "input": "5",
+        "output": "7",
+        "explanation": "For numbers from 1 to 5, the binary representations are 1 (1), 10 (2), 11 (3), 100 (4), and 101 (5). The total number of set bits is 1 + 1 + 2 + 1 + 2 = 7."
+      },
+      {
+        "input": "10",
+        "output": "17",
+        "explanation": "For numbers from 1 to 10, the binary representations are 1 (1), 10 (2), 11 (3), 100 (4), 101 (5), 110 (6), 111 (7), 1000 (8), 1001 (9), and 1010 (10). The total number of set bits is 1 + 1 + 2 + 1 + 2 + 2 + 3 + 1 + 2 + 2 = 18."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Consider using bitwise operations to count set bits in a number."
+    },
+    {
+      "order": 2,
+      "text": "Use a loop to iterate from 1 to n and count set bits for each number."
+    },
+    {
+      "order": 3,
+      "text": "Use a counter variable to keep track of the total set bits."
+    },
+    {
+      "order": 4,
+      "text": "Implement a helper function to count set bits in a number using bitwise operations."
+    },
+    {
+      "order": 5,
+      "text": "Put the helper function and loop together to solve the problem."
+    }
+  ],
+  "editorial": {
+    "title": "Counting Set Bits from 1 to n",
+    "intuition": "The number of 1‑bits in the binary representation of all integers up to n can be counted by looking at each bit position independently. In a fixed position i, the pattern of 0s and 1s repeats every 2^{i+1} numbers: first 2^i zeros, then 2^i ones. This periodicity lets us compute how many full cycles fit into 1…n and how many extra numbers remain, giving a closed‑form count for that bit. Summing over all bit positions yields the total.",
+    "bruteForce": "A straightforward approach iterates through every integer from 1 to n, converts each to binary, and counts the 1s. While this is conceptually simple and always correct, its time complexity is O(n log n), which becomes prohibitive for n up to 10,000 and certainly for larger inputs. It also uses O(1) additional space but spends a lot of time in the inner loop.",
+    "betterSolution": "The key observation is the periodicity of each bit position: in every block of size 2^{i+1} the i‑th bit is set exactly 2^i times. By counting full blocks and the remainder, we can compute the contribution of each bit in O(1) time. Repeating this for all bit positions (there are at most log_2 n of them) gives an O(log n) algorithm.",
+    "optimalSolution": "The provided reference solution implements this idea. It iterates over i from 0 while 2^i ≤ n, computing block_size=2^{i+1}, full_blocks=n//block_size, and remainder=n%block_size. The contribution of bit i is full_blocks*2^i plus any extra ones from the remainder, calculated as max(0, remainder-2^i+1). Summing these contributions yields the total set bits in 1…n. The algorithm runs in O(log n) time and uses O(1) extra space.",
+    "proofOfCorrectness": "For a fixed bit i, the sequence of values of that bit over the natural numbers is 0 repeated 2^i times followed by 1 repeated 2^i times, repeating every 2^{i+1} numbers. Therefore, in any complete block of size 2^{i+1}, the bit contributes exactly 2^i set bits. The number of complete blocks in 1…n is floor(n / 2^{i+1}), giving the term full_blocks*2^i. The remaining numbers after the last complete block form a prefix of the next block; the bit is set in this prefix only when the index exceeds 2^i-1. Thus the extra contribution is max(0, remainder-2^i+1). Summing these contributions over all i counts each set bit exactly once, proving correctness.",
+    "dryRun": "For n=5: binary numbers 1(1),2(10),3(11),4(100),5(101). The algorithm considers bits i=0,1,2. i=0: block_size=2, full_blocks=2, count+=2*1=2, remainder=1, extra=max(0,1-1+1)=1 → total 3. i=1: block_size=4, full_blocks=1, count+=1*2=2, remainder=1, extra=max(0,1-2+1)=0 → total 5. i=2: block_size=8>n stops. Final count=5, matching the manual count.",
+    "commonMistakes": [
+      "Assuming the pattern length is 2^i instead of 2^{i+1}, leading to off‑by‑one errors.",
+      "Using integer division incorrectly when computing remainder contributions.",
+      "Neglecting to include the +1 in the remainder calculation for the last partial block.",
+      "Iterating over all bits up to a fixed limit (e.g., 32) instead of stopping when 2^i>n, wasting time but still correct."
+    ],
+    "timeComplexity": "O(log n)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nint countSetBits(int n){\n    // TODO\n}\n\nint main() {\n    ios_base::sync_with_stdio(false);\n    cin.tie(NULL);\n    int n;\n    cin >> n;\n    cout << countSetBits(n);\n    return 0;\n}",
+    "java": "import java.util.Scanner;\n\npublic class Main {\n    public static int countSetBits(int n){\n        // TODO\n    }\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        System.out.println(countSetBits(n));\n    }\n}",
+    "python": "import sys\n\ndef countSetBits(n):\n    # TODO\n    pass\n\ndef main():\n    n = int(sys.stdin.readline().strip())\n    print(countSetBits(n))\n\nif __name__ == '__main__':\n    main()",
+    "javascript": "const readline = require('readline');\nconst rl = readline.createInterface({\n    input: process.stdin,\n    output: process.stdout\n});\n\nlet n;\n\nrl.on('line', (line) => {\n    n = parseInt(line);\n    rl.close();\n});\n\nrl.on('close', () => {\n    console.log(countSetBits(n));\n});\n\nfunction countSetBits(n) {\n    // TODO\n}"
+  },
+  "functionSignature": {
+    "cpp": "int countSetBits(int n)",
+    "java": "public static int countSetBits(int n)",
+    "python": "def countSetBits(n):",
+    "javascript": "function countSetBits(n) {}"
+  },
+  "solutions": {
+    "python": "import sys\nit = iter(sys.stdin.read().split())\ntry:\n    n = int(next(it))\nexcept StopIteration:\n    sys.exit()\n# Function to count total set bits from 1 to n\ndef total_set_bits(n: int) -> int:\n    count = 0\n    i = 0\n    while (1 << i) <= n:\n        # block size = 2^(i+1)\n        block_size = 1 << (i + 1)\n        full_blocks = n // block_size\n        count += full_blocks * (1 << i)\n        remainder = n % block_size\n        count += max(0, remainder - (1 << i) + 1)\n        i += 1\n    return count\nresult = total_set_bits(n)\nprint(result)",
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\nlong long totalSetBits(long long n){\n    long long count = 0;\n    for(int i = 0; (1LL<<i) <= n; ++i){\n        long long blockSize = 1LL << (i+1);\n        long long fullBlocks = n / blockSize;\n        count += fullBlocks * (1LL<<i);\n        long long remainder = n % blockSize;\n        count += max(0LL, remainder - (1LL<<i) + 1);\n    }\n    return count;\n}\nint main(){\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    long long n;\n    if(!(cin>>n)) return 0;\n    cout << totalSetBits(n);\n    return 0;\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "1",
+      "input": "5",
+      "output": "7",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "2",
+      "input": "10",
+      "output": "17",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "3",
+      "input": "1",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "4",
+      "input": "10000",
+      "output": "64613",
+      "isVisible": false,
+      "weight": 1,
+      "category": "max_constraint"
+    },
+    {
+      "id": "5",
+      "input": "2",
+      "output": "2",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    },
+    {
+      "id": "6",
+      "input": "3",
+      "output": "4",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    },
+    {
+      "id": "7",
+      "input": "4",
+      "output": "5",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    },
+    {
+      "id": "8",
+      "input": "100",
+      "output": "319",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    },
+    {
+      "id": "9",
+      "input": "1000",
+      "output": "4938",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    },
+    {
+      "id": "10",
+      "input": "9999",
+      "output": "64608",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    },
+    {
+      "id": "11",
+      "input": "1825",
+      "output": "9657",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    },
+    {
+      "id": "12",
+      "input": "410",
+      "output": "1714",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    },
+    {
+      "id": "13",
+      "input": "4507",
+      "output": "26708",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    },
+    {
+      "id": "14",
+      "input": "4013",
+      "output": "23837",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    },
+    {
+      "id": "15",
+      "input": "3658",
+      "output": "21181",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

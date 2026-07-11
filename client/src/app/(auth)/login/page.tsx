@@ -29,7 +29,7 @@ export default function LoginPage() {
       // Cookie is set by the server; hydrate the store and go in.
       const me = data?.user ?? (await api<Me>("/user/me"));
       setUser(me);
-      router.replace("/dashboard");
+      router.replace("/battle");
     } catch (err) {
       setError(errorMessage(err));
       setLoading(false);
@@ -109,7 +109,7 @@ export default function LoginPage() {
       </div>
 
       <p className="mt-5 text-center text-xs text-text-muted">
-        New to DevWar?{" "}
+        New to CodeComplex?{" "}
         <Link href="/signup" className="font-semibold text-primary hover:underline">
           Create an account
         </Link>

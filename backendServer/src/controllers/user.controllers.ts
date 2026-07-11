@@ -848,6 +848,9 @@ const getMe = asyncHandler(async (req, res) => {
 
     if (!user) throw new ApiError(404, "User not found");
 
+    const profile = await UserProfile.findOne({ userId: user._id })
+        .populate("badges achievements");
+
     return res.status(200).json(
         new ApiResponse(
             200,
@@ -863,7 +866,19 @@ const getMe = asyncHandler(async (req, res) => {
                 isVerified: user.isVerified,
                 oauthProvider: user.oauthProvider,
                 lastSeen: user.lastSeen,
-                createdAt: user.createdAt
+                githubProfile: user.githubProfile,
+                linkedinProfile: user.linkedinProfile,
+                leetcodeProfile: user.leetcodeProfile,
+                mascot: user.mascot,
+                createdAt: user.createdAt,
+                profileData: profile ? {
+                    ratings: profile.ratings,
+                    peakRatings: profile.peakRatings,
+                    stats: profile.stats,
+                    streak: profile.streak,
+                    badges: profile.badges,
+                    achievements: profile.achievements
+                } : null
             },
             "User fetched successfully"
         )
@@ -882,10 +897,13 @@ const getUserByUsername = asyncHandler(async (req, res) => {
     const user = await User.findOne({ username })
         .select(
             // Public-safe fields only — no email, no role internals
-            "username fullName avatar bio country createdAt"
+            "username fullName avatar bio country githubProfile linkedinProfile leetcodeProfile mascot createdAt"
         );
 
     if (!user) throw new ApiError(404, "User not found");
+
+    const profile = await UserProfile.findOne({ userId: user._id })
+        .populate("badges achievements");
 
     return res.status(200).json(
         new ApiResponse(
@@ -895,13 +913,25 @@ const getUserByUsername = asyncHandler(async (req, res) => {
                 fullName: user.fullName,
                 avatar: user.avatar,
                 bio: user.bio,
+                githubProfile: user.githubProfile,
+                linkedinProfile: user.linkedinProfile,
+                leetcodeProfile: user.leetcodeProfile,
+                mascot: user.mascot,
                 country: {
                     code: user.country,
                     name: user.country
                         ? countries.getName(user.country, "en")
                         : null
                 },
-                memberSince: user.createdAt
+                memberSince: user.createdAt,
+                profileData: profile ? {
+                    ratings: profile.ratings,
+                    peakRatings: profile.peakRatings,
+                    stats: profile.stats,
+                    streak: profile.streak,
+                    badges: profile.badges,
+                    achievements: profile.achievements
+                } : null
             },
             "User fetched successfully"
         )
@@ -969,6 +999,34 @@ const updateBio = asyncHandler(async (req, res) => {
 });
 
 
+// ─── updateMascot ──────────────────────────────────────────────────────────────
+
+const updateMascot = asyncHandler(async (req, res) => {
+    const { type, color } = req.body;
+
+    if (typeof type !== "string" || typeof color !== "string") {
+        throw new ApiError(400, "Mascot type and color are required");
+    }
+
+    const validTypes = ["cat", "dog", "panda", "crab"];
+    if (!validTypes.includes(type)) {
+        throw new ApiError(400, `Invalid mascot type. Must be one of: ${validTypes.join(", ")}`);
+    }
+
+    const user = await User.findByIdAndUpdate(
+        req.user!._id,
+        { $set: { mascot: { type, color } } },
+        { new: true, runValidators: true }
+    ).select("-password");
+
+    if (!user) throw new ApiError(404, "User not found");
+
+    return res.status(200).json(
+        new ApiResponse(200, { mascot: user.mascot }, "Mascot updated successfully")
+    );
+});
+
+
 // ─── updateCountry ─────────────────────────────────────────────────────────────
 
 const updateCountry = asyncHandler(async (req, res) => {
@@ -1006,6 +1064,64 @@ const updateCountry = asyncHandler(async (req, res) => {
 });
 
 
+const updateFullName = asyncHandler(async (req, res) => {
+    const { fullName } = req.body;
+    if (typeof fullName !== "string") throw new ApiError(400, "Full name must be a string");
+    const trimmedName = fullName.trim();
+    if (trimmedName.length < 3 || trimmedName.length > 50) {
+        throw new ApiError(400, "Full name must be 3–50 characters");
+    }
+    const user = await User.findByIdAndUpdate(
+        req.user!._id,
+        { $set: { fullName: trimmedName } },
+        { new: true, runValidators: true }
+    ).select("-password");
+    if (!user) throw new ApiError(404, "User not found");
+    return res.status(200).json(
+        new ApiResponse(200, { fullName: user.fullName }, "Full name updated successfully")
+    );
+});
+
+
+const updateSocials = asyncHandler(async (req, res) => {
+    const { githubProfile, linkedinProfile, leetcodeProfile } = req.body;
+
+    const updates: Record<string, string> = {};
+    if (typeof githubProfile === "string") {
+        updates.githubProfile = githubProfile.trim();
+    }
+    if (typeof linkedinProfile === "string") {
+        updates.linkedinProfile = linkedinProfile.trim();
+    }
+    if (typeof leetcodeProfile === "string") {
+        updates.leetcodeProfile = leetcodeProfile.trim();
+    }
+
+    if (Object.keys(updates).length === 0) {
+        throw new ApiError(400, "No valid social profile fields provided");
+    }
+
+    const user = await User.findByIdAndUpdate(
+        req.user!._id,
+        { $set: updates },
+        { new: true, runValidators: true }
+    ).select("-password");
+
+    if (!user) throw new ApiError(404, "User not found");
+
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            {
+                githubProfile: user.githubProfile,
+                linkedinProfile: user.linkedinProfile,
+                leetcodeProfile: user.leetcodeProfile
+            },
+            "Social profiles updated successfully"
+        )
+    );
+});
+
 // ─── Exports ───────────────────────────────────────────────────────────────────
 
 export {
@@ -1026,4 +1142,7 @@ export {
     uploadProfileImage,
     updateBio,
     updateCountry,
+    updateFullName,
+    updateSocials,
+    updateMascot
 };

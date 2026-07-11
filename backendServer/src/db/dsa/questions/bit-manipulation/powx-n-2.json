@@ -1,0 +1,293 @@
+{
+  "_id": "powx-n-2",
+  "title": "Pow(x, n)",
+  "slug": "powx-n-2",
+  "difficulty": "Easy",
+  "category": "DP",
+  "subCategory": "Advanced Maths",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 100,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "Bit Manipulation",
+      "Maths"
+    ],
+    "patterns": [
+      "Divide and Conquer"
+    ],
+    "prerequisites": [
+      "Basic Maths"
+    ],
+    "variants": [],
+    "tags": [
+      "Bit Manipulation",
+      "Easy",
+      "Maths"
+    ],
+    "keywords": [
+      "Bitwise",
+      "Exponentiation",
+      "Power"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Implement the myPow function, which calculates the value of a number raised to a power.\n\nThe function should take two parameters: a double x and an integer n, and return the value of x raised to the power of n.\n\nNote that the function should handle the case where n is negative, and the case where n is extremely large, which may cause overflow.\n\nThe function should not use the built-in pow function or any similar functions.",
+    "inputFormat": "2\n1\n-2\n",
+    "outputFormat": "1\n0.25\n",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "x",
+        "type": "double",
+        "min": -100,
+        "max": 100,
+        "description": "the base"
+      },
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": -2147483648,
+        "max": 2147483647,
+        "description": "the exponent"
+      }
+    ],
+    "examples": [
+      {
+        "input": "2\n1",
+        "output": "2",
+        "explanation": "2^1 = 2"
+      },
+      {
+        "input": "2.1\n3",
+        "output": "9.261",
+        "explanation": "2.1^3 = 9.261"
+      },
+      {
+        "input": "2\n-3",
+        "output": "0.125",
+        "explanation": "2^(-3) = 1 / 2^3 = 0.125"
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First, consider the case where n is negative. In this case, you can use the property of exponents that states a^(-n) = 1 / a^n."
+    },
+    {
+      "order": 2,
+      "text": "Next, consider the case where n is extremely large. To handle this, you can use a divide-and-conquer approach, where you repeatedly divide n by 2 and calculate the square of x."
+    },
+    {
+      "order": 3,
+      "text": "When n is large, you can use the property of exponents that states a^(2n) = (a^n)^2. This allows you to break down the problem into smaller sub-problems, each of which involves calculating the square of x."
+    },
+    {
+      "order": 4,
+      "text": "To handle the case where x is extremely large, you can use a technique called exponentiation by squaring. This involves repeatedly squaring x and dividing n by 2 in each iteration, until n becomes 0."
+    },
+    {
+      "order": 5,
+      "text": "The key to solving this problem efficiently is to use a recursive approach, where you repeatedly divide the problem into smaller sub-problems and solve each sub-problem using a base case (e.g., x^0 = 1) and a recursive case (e.g., x^(2n) = (x^n)^2)."
+    }
+  ],
+  "editorial": {
+    "title": "Fast Exponentiation: From Brute Force to Logarithmic Power",
+    "intuition": "The naive way multiplies the base n times, which is linear in the exponent and utterly impractical for large |n|.  The key observation is that powers can be combined: (x^a)(x^b)=x^{a+b}.  If we repeatedly square the base, we can represent any exponent as a sum of powers of two, and only multiply when the corresponding bit of n is set.  This reduces the number of multiplications to the number of bits in n, i.e. O(log|n|).",
+    "bruteForce": "A straightforward implementation would loop n times, multiplying the result by x each iteration.  For n up to 2^31−1 this would require billions of multiplications, far exceeding time limits.  Moreover, handling negative exponents would need an extra division step, but the overall linear complexity remains the bottleneck.",
+    "betterSolution": "The optimal strategy is binary exponentiation (also called exponentiation by squaring).  We treat n in binary; for each bit we square the current base.  If the bit is 1 we multiply the running result by that squared base.  Negative exponents are handled by inverting the base and making n positive before the loop.",
+    "optimalSolution": "The algorithm runs in O(log|n|) time and O(1) auxiliary space.  It performs at most 2·⌊log2|n|⌋+1 multiplications: one for each bit of n and one for each set bit.  The space usage is constant because we only keep a few floating‑point variables.",
+    "proofOfCorrectness": "Let n be expressed in binary as n=∑_{i=0}^{k} b_i·2^i, where b_i∈{0,1}.  During the loop we maintain two invariants: (1) x holds the value of the original base raised to 2^i, and (2) result holds the product of base^{∑_{j<i} b_j·2^j}.  Initially i=0, x is the base, and result=1, satisfying the invariants.  Each iteration squares x, so after i steps x=base^{2^i}.  If b_i=1 we multiply result by x, thus adding base^{2^i} to the exponent accumulated in result.  After the final iteration all bits have been processed, so result=base^{∑_{i} b_i·2^i}=base^n.  For negative n we first replace base with 1/base and n with –n, which preserves the equality because (1/base)^{–n}=base^n.  Hence the algorithm always returns the correct value.",
+    "dryRun": "Example: x=2, n=13 (1101₂).  Start result=1, x=2.  i=0: bit=1 → result=2, x=4.  i=1: bit=0 → result=2, x=16.  i=2: bit=1 → result=32, x=256.  i=3: bit=1 → result=512, x=65536.  Final result=512=2^{13}.",
+    "commonMistakes": [
+      "Assuming the algorithm works for negative n without first inverting the base and flipping the sign of n; this leads to incorrect results for odd negative exponents.",
+      "Using integer division when converting a negative exponent to positive, which truncates toward zero and can produce wrong magnitudes.",
+      "Mixing up the order of squaring and multiplication: multiplying before squaring causes the base to be raised to the wrong power.",
+      "Treating the exponent as unsigned and ignoring the sign bit, which fails for the minimum 32‑bit integer where –n would overflow.",
+      "Implementing the loop with n >>= 1 before processing the current bit, which skips the least significant bit entirely.",
+      "Using a data type that cannot represent the intermediate squared values, causing overflow or loss of precision."
+    ],
+    "timeComplexity": "O(log |n|)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\ndouble myPow(double x, long long n) {\n    // TODO: implement fast exponentiation handling negative powers\n    return 0.0;\n}\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    double x; long long n;\n    if (!(cin >> x >> n)) return 0;\n    double result = myPow(x, n);\n    cout << result;\n    return 0;\n}",
+    "java": "import java.util.*;\n\npublic class Main {\n    public static double myPow(double x, int n) {\n        // TODO: implement fast exponentiation handling negative powers\n        return 0.0;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        double x = sc.nextDouble();\n        int n = sc.nextInt();\n        double result = myPow(x, n);\n        System.out.println(result);\n        sc.close();\n    }\n}",
+    "python": "import sys\n\ndef myPow(x: float, n: int) -> float:\n    # TODO: implement fast exponentiation handling negative powers\n    return 0.0\n\ndef solve():\n    data = sys.stdin.read().strip().split()\n    if not data:\n        return\n    x = float(data[0])\n    n = int(data[1])\n    result = myPow(x, n)\n    print(result)\n\nif __name__ == \"__main__\":\n    solve()",
+    "javascript": "const fs = require('fs');\n\nfunction myPow(x, n) {\n    // TODO: implement fast exponentiation handling negative powers\n    return 0.0;\n}\n\nfunction solve() {\n    const input = fs.readFileSync(0, 'utf8').trim().split(/\\s+/);\n    if (input.length < 2) return;\n    const x = parseFloat(input[0]);\n    const n = parseInt(input[1], 10);\n    const result = myPow(x, n);\n    console.log(result);\n}\n\nsolve();"
+  },
+  "functionSignature": {
+    "cpp": "double myPow(double x, long long n)",
+    "java": "static double myPow(double x, int n)",
+    "python": "def myPow(x: float, n: int) -> float",
+    "javascript": "function myPow(x, n)"
+  },
+  "solutions": {
+    "python": "import sys\nit = iter(sys.stdin.read().split())\ntry:\n    x = float(next(it))\nexcept StopIteration:\n    sys.exit()\ntry:\n    n = int(next(it))\nexcept StopIteration:\n    n = 0\n\ndef myPow(x: float, n: int) -> float:\n    if n == 0:\n        return 1.0\n    if n < 0:\n        x = 1.0 / x\n        n = -n\n    result = 1.0\n    while n:\n        if n & 1:\n            result *= x\n        x *= x\n        n >>= 1\n    return result\n\nres = myPow(x, n)\n# Remove trailing zeros and unnecessary decimal point\nout = ('{:.10f}'.format(res)).rstrip('0').rstrip('.')\nprint(out)\n",
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\ndouble myPow(double x, long long n) {\n    if (n == 0) return 1.0;\n    if (n < 0) {\n        x = 1.0 / x;\n        n = -n;\n    }\n    double result = 1.0;\n    while (n) {\n        if (n & 1) result *= x;\n        x *= x;\n        n >>= 1;\n    }\n    return result;\n}\n\nint main(){\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    double x; long long n;\n    if(!(cin>>x)) return 0;\n    if(!(cin>>n)) n=0;\n    double res = myPow(x, n);\n    // format similar to python output: trim trailing zeros\n    std::ostringstream oss;\n    oss.setf(std::ios::fixed); oss.precision(10);\n    oss<<res;\n    string s = oss.str();\n    // trim trailing zeros and dot\n    while(!s.empty() && s.back()=='0') s.pop_back();\n    if(!s.empty() && s.back()=='.') s.pop_back();\n    if(s.empty()) s=\"0\";\n    cout<<s;\n    return 0;\n}\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "2\n1",
+      "output": "2",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "2.1\n3",
+      "output": "9.261",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_3",
+      "input": "2\n-3",
+      "output": "0.125",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_x",
+      "input": "-100\n1",
+      "output": "-100",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "max_x",
+      "input": "100\n1",
+      "output": "100",
+      "isVisible": false,
+      "weight": 1,
+      "category": "max_constraint"
+    },
+    {
+      "id": "min_n",
+      "input": "2\n-2147483648",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "max_n",
+      "input": "2\n2147483647",
+      "output": "inf",
+      "isVisible": false,
+      "weight": 1,
+      "category": "max_constraint"
+    },
+    {
+      "id": "boundary_x_0",
+      "input": "0\n1",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    },
+    {
+      "id": "boundary_n_0",
+      "input": "2\n0",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    },
+    {
+      "id": "boundary_x_-1",
+      "input": "-1\n1",
+      "output": "-1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    },
+    {
+      "id": "boundary_n_-1",
+      "input": "2\n-1",
+      "output": "0.5",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    },
+    {
+      "id": "negative_x",
+      "input": "-2\n1",
+      "output": "-2",
+      "isVisible": false,
+      "weight": 1,
+      "category": "negative"
+    },
+    {
+      "id": "one_x",
+      "input": "1\n1",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "one"
+    },
+    {
+      "id": "large_random_0",
+      "input": "27.885359691576753\n-966241705",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    },
+    {
+      "id": "large_random_1",
+      "input": "-55.35785237023545\n1015636137",
+      "output": "-inf",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

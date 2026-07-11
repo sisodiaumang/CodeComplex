@@ -7,6 +7,7 @@ import Question from "../models/question.model.js";
 import Friendship from "../models/friendship.model.js";
 import User from "../models/user.model.js";
 import Notification from "../models/notification.model.js";
+import UserProfile from "../models/userProfile.model.js";
 import { io } from "../index.js";
 import { createMatchForRoom, MatchServiceError } from "../services/match.service.js";
 import { IBattleRoom } from "../interfaces/battleRoom.interface.js";
@@ -134,7 +135,7 @@ export const getActiveRoom = async (
                 { "teams.teamB": userId },
                 { host: userId }
             ]
-        }).populate("host teams.teamA teams.teamB", "username avatar");
+        }).populate("host teams.teamA teams.teamB", "username avatar mascot");
 
         if (!room) {
             res.status(200).json({ success: true, room: null });
@@ -169,6 +170,8 @@ export const createRoom = async (
             maxTeamSize: teamSize = 1,
             difficulty,
             isRanked = true,
+            isSolo = false,
+            isPrivate = true,
             topics
         } = req.body;
 
@@ -181,10 +184,15 @@ export const createRoom = async (
             return;
         }
 
-        if (!topics || !Array.isArray(topics) || topics.length < 3) {
+        const actualIsRanked = isSolo ? false : isRanked;
+        const actualTeamSize = isSolo ? 1 : teamSize;
+        const actualIsPrivate = isSolo ? true : isPrivate;
+
+        const minTopics = actualIsRanked !== false ? 3 : 1;
+        if (!topics || !Array.isArray(topics) || topics.length < minTopics) {
             res.status(400).json({
                 success: false,
-                message: "Select at least 3 topics"
+                message: `Select at least ${minTopics} topic${minTopics > 1 ? "s" : ""}`
             });
             return;
         }
@@ -209,11 +217,6 @@ export const createRoom = async (
         }
 
         // Generate a unique room code (retry on collision).
-        // FIX (W3): previously `roomCode` could still hold a known-duplicate
-        // value after the loop exited via the attempt-count guard, causing
-        // BattleRoom.create to throw a raw MongoDB duplicate-key error (500).
-        // Now roomCode is only ever assigned once a non-colliding candidate
-        // is confirmed, and we fail fast with a clear 503 otherwise.
         let roomCode = "";
 
         for (let i = 0; i < 5; i++) {
@@ -238,8 +241,10 @@ export const createRoom = async (
             host: hostId,
             battleType,
             difficulty,
-            teamSize,
-            isRanked,
+            teamSize: actualTeamSize,
+            isRanked: actualIsRanked,
+            isSolo,
+            isPrivate: actualIsPrivate,
             topics: topics ?? [],
             status: "WAITING",
             teams: {
@@ -249,9 +254,9 @@ export const createRoom = async (
         });
 
         const populated = await BattleRoom.findById(room._id)
-            .populate("host", "username fullName avatar")
-            .populate("teams.teamA", "username fullName avatar")
-            .populate("teams.teamB", "username fullName avatar");
+            .populate("host", "username fullName avatar mascot")
+            .populate("teams.teamA", "username fullName avatar mascot")
+            .populate("teams.teamB", "username fullName avatar mascot");
 
         res.status(201).json({
             success: true,
@@ -371,9 +376,9 @@ export const joinRoom = async (
         markRoomAction(userIdStr);
 
         const populated = await BattleRoom.findById(joined._id)
-            .populate("host", "username fullName avatar")
-            .populate("teams.teamA", "username fullName avatar")
-            .populate("teams.teamB", "username fullName avatar");
+            .populate("host", "username fullName avatar mascot")
+            .populate("teams.teamA", "username fullName avatar mascot")
+            .populate("teams.teamB", "username fullName avatar mascot");
 
         // Notify everyone already in the room
         io.to(roomCode).emit("battle:update", populated);
@@ -404,9 +409,9 @@ export const getRoomDetails = async (
         const { roomCode } = req.params;
 
         const room = await BattleRoom.findOne({ roomCode })
-            .populate("host", "username fullName avatar")
-            .populate("teams.teamA", "username fullName avatar")
-            .populate("teams.teamB", "username fullName avatar")
+            .populate("host", "username fullName avatar mascot")
+            .populate("teams.teamA", "username fullName avatar mascot")
+            .populate("teams.teamB", "username fullName avatar mascot")
             .populate("matchId");
 
         if (!room) {
@@ -523,9 +528,9 @@ export const joinTeamA = async (
         markRoomAction(userIdStr);
 
         const populated = await BattleRoom.findById(moved._id)
-            .populate("host", "username fullName avatar")
-            .populate("teams.teamA", "username fullName avatar")
-            .populate("teams.teamB", "username fullName avatar");
+            .populate("host", "username fullName avatar mascot")
+            .populate("teams.teamA", "username fullName avatar mascot")
+            .populate("teams.teamB", "username fullName avatar mascot");
 
         io.to(roomCode).emit("battle:team-update", populated);
 
@@ -636,9 +641,9 @@ export const joinTeamB = async (
         markRoomAction(userIdStr);
 
         const populated = await BattleRoom.findById(moved._id)
-            .populate("host", "username fullName avatar")
-            .populate("teams.teamA", "username fullName avatar")
-            .populate("teams.teamB", "username fullName avatar");
+            .populate("host", "username fullName avatar mascot")
+            .populate("teams.teamA", "username fullName avatar mascot")
+            .populate("teams.teamB", "username fullName avatar mascot");
 
         io.to(roomCode).emit("battle:team-update", populated);
 
@@ -718,9 +723,9 @@ export const startBattle = async (
         }
 
         const populatedRoom = await BattleRoom.findById(room._id)
-            .populate("host", "username fullName avatar")
-            .populate("teams.teamA", "username fullName avatar")
-            .populate("teams.teamB", "username fullName avatar");
+            .populate("host", "username fullName avatar mascot")
+            .populate("teams.teamA", "username fullName avatar mascot")
+            .populate("teams.teamB", "username fullName avatar mascot");
 
         io.to(roomCode).emit("battle:match-created", {
             room: populatedRoom,
@@ -849,9 +854,9 @@ export const leaveRoom = async (
         markRoomAction(userIdStr);
 
         const populated = await BattleRoom.findById(room._id)
-            .populate("host", "username fullName avatar")
-            .populate("teams.teamA", "username fullName avatar")
-            .populate("teams.teamB", "username fullName avatar");
+            .populate("host", "username fullName avatar mascot")
+            .populate("teams.teamA", "username fullName avatar mascot")
+            .populate("teams.teamB", "username fullName avatar mascot");
 
         if (hostTransferred) {
             io.to(roomCode).emit("battle:host-change", populated);
@@ -989,7 +994,7 @@ export const inviteToRoom = async (
         }
 
         const notification = await Notification.create({
-            recipient: targetId,
+            recipient: new mongoose.Types.ObjectId(targetId as string),
             sender: senderId,
             type: "ROOM_INVITE",
             title: "Battle Invite",
@@ -1046,6 +1051,261 @@ export const getRoomInvitableFriends = async (
             .limit(30);
 
         res.status(200).json({ success: true, data: users });
+    } catch (err) {
+        next(err);
+    }
+};
+
+// ─────────────────────────────────────────────
+const getRatingKey = (battleType: string): string => {
+    switch (battleType) {
+        case "DSA": return "dsa";
+        case "FRONTEND": return "frontend";
+        case "BACKEND": return "backend";
+        case "FULLSTACK": return "fullstack";
+        case "PROMPT_WAR": return "promptWar";
+        case "BUG_FIX": return "bugFix";
+        default: return "dsa";
+    }
+};
+
+// 11. POST /battle/matchmaking — Find or Create Matchmaking Room
+// ─────────────────────────────────────────────
+export const startMatchmaking = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+): Promise<void> => {
+    try {
+        const userId = req.user._id;
+        const userIdStr = userId.toString();
+
+        const {
+            battleType,
+            maxTeamSize: teamSize = 1,
+            difficulty,
+            isRanked = true,
+            topics
+        } = req.body;
+
+        // Validate required fields
+        if (!battleType || !difficulty) {
+            res.status(400).json({
+                success: false,
+                message: "battleType and difficulty are required"
+            });
+            return;
+        }
+
+        const actualIsRanked = isRanked;
+        const actualTeamSize = teamSize;
+
+        const minTopics = actualIsRanked !== false ? 3 : 1;
+        if (!topics || !Array.isArray(topics) || topics.length < minTopics) {
+            res.status(400).json({
+                success: false,
+                message: `Select at least ${minTopics} topic${minTopics > 1 ? "s" : ""}`
+            });
+            return;
+        }
+
+        // 1. Prevent player from being in multiple active rooms
+        const existingRoom = await BattleRoom.findOne({
+            status: { $in: ["WAITING", "STARTED"] },
+            $or: [
+                { "teams.teamA": userId },
+                { "teams.teamB": userId },
+                { host: userId }
+            ]
+        });
+
+        if (existingRoom) {
+            res.status(200).json({
+                success: true,
+                message: "You are already in an active room",
+                data: existingRoom
+            });
+            return;
+        }
+
+        // Fetch player rating
+        const ratingKey = getRatingKey(battleType);
+        const playerProfile = await UserProfile.findOne({ userId });
+        const playerRating = playerProfile ? ((playerProfile.ratings as any)[ratingKey] ?? 1200) : 1200;
+
+        // 2. Search for a matching WAITING public room
+        const rooms = await BattleRoom.find({
+            status: "WAITING",
+            isPrivate: false,
+            isSolo: false,
+            battleType,
+            difficulty,
+            teamSize: actualTeamSize,
+            isRanked: actualIsRanked,
+            topics: { $all: topics, $size: topics.length }
+        }).sort({ createdAt: 1 });
+
+        let candidateRooms = rooms;
+
+        // Apply Skill-Based Matchmaking (SBMM) for Ranked matches
+        if (actualIsRanked && rooms.length > 0) {
+            const hostIds = rooms.map(r => r.host);
+            const hostProfiles = await UserProfile.find({ userId: { $in: hostIds } });
+            const hostRatingMap = new Map<string, number>();
+            for (const hp of hostProfiles) {
+                hostRatingMap.set(hp.userId.toString(), (hp.ratings as any)[ratingKey] ?? 1200);
+            }
+
+            candidateRooms = rooms.filter(room => {
+                const hostRating = hostRatingMap.get(room.host.toString()) ?? 1200;
+                return Math.abs(hostRating - playerRating) <= 200;
+            });
+        }
+
+        let joinedRoom = null;
+        for (const room of candidateRooms) {
+            const hasSpaceInA = room.teams.teamA.length < room.teamSize;
+            const hasSpaceInB = room.teams.teamB.length < room.teamSize;
+
+            if (hasSpaceInA || hasSpaceInB) {
+                let updated = null;
+                if (hasSpaceInA) {
+                    updated = await BattleRoom.findOneAndUpdate(
+                        {
+                            _id: room._id,
+                            status: "WAITING",
+                            "teams.teamA": { $ne: userId },
+                            "teams.teamB": { $ne: userId },
+                            $expr: { $lt: [{ $size: "$teams.teamA" }, "$teamSize"] }
+                        },
+                        { $push: { "teams.teamA": userId } },
+                        { new: true }
+                    );
+                }
+                if (!updated && hasSpaceInB) {
+                    updated = await BattleRoom.findOneAndUpdate(
+                        {
+                            _id: room._id,
+                            status: "WAITING",
+                            "teams.teamA": { $ne: userId },
+                            "teams.teamB": { $ne: userId },
+                            $expr: { $lt: [{ $size: "$teams.teamB" }, "$teamSize"] }
+                        },
+                        { $push: { "teams.teamB": userId } },
+                        { new: true }
+                    );
+                }
+
+                if (updated) {
+                    joinedRoom = updated;
+                    break;
+                }
+            }
+        }
+
+        // 3. If joined an existing room
+        if (joinedRoom) {
+            const roomCode = joinedRoom.roomCode;
+            let populated = await BattleRoom.findById(joinedRoom._id)
+                .populate("host", "username fullName avatar mascot")
+                .populate("teams.teamA", "username fullName avatar mascot")
+                .populate("teams.teamB", "username fullName avatar mascot");
+
+            if (!populated) {
+                res.status(404).json({
+                    success: false,
+                    message: "Room not found"
+                });
+                return;
+            }
+
+            const totalPlayers = populated.teams.teamA.length + populated.teams.teamB.length;
+            const isFull = totalPlayers >= (populated.teamSize * 2);
+
+            if (isFull) {
+                const questionSlug = await pickRandomQuestion(populated);
+                if (questionSlug) {
+                    try {
+                        const match = await createMatchForRoom(populated, { questionSlug, durationInMinutes: 30 });
+                        
+                        const refetched = await BattleRoom.findById(populated._id)
+                            .populate("host", "username fullName avatar mascot")
+                            .populate("teams.teamA", "username fullName avatar mascot")
+                            .populate("teams.teamB", "username fullName avatar mascot");
+
+                        if (refetched) {
+                            populated = refetched;
+                        }
+
+                        io.to(roomCode).emit("battle:match-created", {
+                            room: populated,
+                            match
+                        });
+                    } catch (startErr) {
+                        console.error("[Matchmaking] Auto-start match failed:", startErr);
+                        io.to(roomCode).emit("battle:update", populated);
+                    }
+                } else {
+                    io.to(roomCode).emit("battle:update", populated);
+                }
+            } else {
+                io.to(roomCode).emit("battle:update", populated);
+            }
+
+            res.status(200).json({
+                success: true,
+                message: "Matched and joined room",
+                data: populated
+            });
+            return;
+        }
+
+        // 4. If no matching room, create a new public room
+        let roomCode = "";
+        for (let i = 0; i < 5; i++) {
+            const candidate = generateRoomCode();
+            const collision = await BattleRoom.findOne({ roomCode: candidate });
+            if (!collision) {
+                roomCode = candidate;
+                break;
+            }
+        }
+
+        if (!roomCode) {
+            res.status(503).json({
+                success: false,
+                message: "Could not generate a unique room code, try again."
+            });
+            return;
+        }
+
+        const newRoom = await BattleRoom.create({
+            roomCode,
+            host: userId,
+            battleType,
+            difficulty,
+            teamSize: actualTeamSize,
+            isRanked: actualIsRanked,
+            isSolo: false,
+            isPrivate: false,
+            topics: topics ?? [],
+            status: "WAITING",
+            teams: {
+                teamA: [userId],
+                teamB: []
+            }
+        });
+
+        const populatedNewRoom = await BattleRoom.findById(newRoom._id)
+            .populate("host", "username fullName avatar mascot")
+            .populate("teams.teamA", "username fullName avatar mascot")
+            .populate("teams.teamB", "username fullName avatar mascot");
+
+        res.status(201).json({
+            success: true,
+            message: "Matchmaking room created",
+            data: populatedNewRoom
+        });
     } catch (err) {
         next(err);
     }

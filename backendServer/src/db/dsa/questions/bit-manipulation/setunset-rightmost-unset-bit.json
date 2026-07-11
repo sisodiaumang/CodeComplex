@@ -1,0 +1,277 @@
+{
+  "_id": "setunset-rightmost-unset-bit",
+  "title": "Set/Unset Rightmost Unset Bit",
+  "slug": "setunset-rightmost-unset-bit",
+  "difficulty": "Easy",
+  "category": "STRING",
+  "subCategory": "Learn Bit Manipulation",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 10,
+    "points": 100,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "Bit Manipulation"
+    ],
+    "patterns": [
+      "Bitwise Operations"
+    ],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "Bit Manipulation",
+      "Easy"
+    ],
+    "keywords": [
+      "Bitwise",
+      "Rightmost",
+      "Unset Bit"
+    ],
+    "interviewFrequency": 1,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "You are given a non-negative integer n. The task is to set the rightmost unset bit (i.e., the rightmost 0) to 1 and unset (set to 0) the rightmost set bit (i.e., the rightmost 1) in the binary representation of n. If no such bits exist (i.e., all bits are 0 or all bits are 1), return the original number.\n\nFor example, if n = 10 (1010 in binary), the output should be 8 (1000 in binary) because the rightmost unset bit (0) is set to 1 and the rightmost set bit (1) is unset to 0.",
+    "inputFormat": "1\nn",
+    "outputFormat": "1\nresult",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 0,
+        "max": 4294967295,
+        "description": "The input number."
+      }
+    ],
+    "examples": [
+      {
+        "input": "1\n10",
+        "output": "1\r\n9",
+        "explanation": "Binary representation of 10 is 1010. The rightmost unset bit is the second bit from the right (0), and the rightmost set bit is the third bit from the right (1). After setting the rightmost unset bit to 1 and unsetting the rightmost set bit to 0, we get 1000 which is 8."
+      },
+      {
+        "input": "1\n15",
+        "output": "1\r\n30",
+        "explanation": "Binary representation of 15 is 1111. There are no unset bits and no set bits that can be changed according to the rules, so the output remains 15."
+      },
+      {
+        "input": "1\n0",
+        "output": "1\r\n0",
+        "explanation": "Binary representation of 0 is 0. There are no bits to change."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "To solve this problem, you can start by understanding how bit manipulation works and how to convert a number to its binary representation."
+    },
+    {
+      "order": 2,
+      "text": "Consider using bitwise operators to solve this problem. Bitwise operators allow you to manipulate bits directly, which can be useful for this task."
+    },
+    {
+      "order": 3,
+      "text": "You can use the bitwise AND operator (&) to find the rightmost unset bit and the bitwise OR operator (|) to set it to 1."
+    },
+    {
+      "order": 4,
+      "text": "To find the rightmost set bit, you can use the bitwise AND operator (&) with a number that has all bits set to the right of the set bit, and then use the bitwise OR operator (|) to unset it."
+    },
+    {
+      "order": 5,
+      "text": "You can use the bitwise AND operator (&) with a number that has all bits set to the right of the rightmost set bit, and the bitwise OR operator (|) with a number that has all bits set to the right of the rightmost unset bit to achieve the desired result."
+    }
+  ],
+  "editorial": {
+    "title": "Flipping the Rightmost Unset Bit: From Brute Force to Bitwise Elegance",
+    "intuition": "The task is to toggle the least‑significant 0 bit of a 32‑bit unsigned integer, leaving all other bits untouched. A naïve scan from the least significant bit upwards works, but it examines up to 32 bits per test case, which is acceptable for small inputs yet unnecessary when a constant‑time bit trick exists. The key observation is that the pattern of bits around the target position can be expressed with a few arithmetic and bitwise operations, turning the problem into a one‑liner that runs in O(1).",
+    "bruteForce": "A straightforward approach loops over each bit position i from 0 to 31, checks whether the i‑th bit of n is 0, and if so flips it and stops. This guarantees correctness because it directly implements the specification: find the first unset bit and set it. However, the loop incurs a constant factor of up to 32 iterations per test case, which is trivial for a single number but becomes noticeable when t is large (e.g., millions of test cases). The time complexity is O(32·t) ≈ O(t), but the constant factor is higher than necessary, and the code is more verbose.",
+    "betterSolution": "The optimal solution exploits two well‑known bit‑tricks:\n1. The expression `n & -n` isolates the least‑significant set bit of n.\n2. The expression `(~n) & (n + 1)` isolates the least‑significant unset bit of n.\nWith these masks we can construct the result in constant time: if either mask is zero (meaning n is all 1s or all 0s), the number remains unchanged; otherwise we set the zero bit and clear the original least‑significant set bit. This yields a single arithmetic expression that runs in O(1) per test case.\nThe provided reference code implements exactly this logic, using 64‑bit masking to avoid overflow on Python’s arbitrary‑precision integers.",
+    "optimalSolution": "The reference solution runs in O(t) time and O(1) extra space, matching the theoretical lower bound for processing t independent inputs. It achieves this by performing a fixed number of bitwise operations per test case, regardless of the value of n. The use of 64‑bit masks (`0xFFFFFFFFFFFFFFFF`) ensures that the operations stay within the bounds of the 32‑bit unsigned domain, even though Python integers are unbounded.\n\nThe algorithm’s steps:\n1. Compute `zero_mask = (~n) & (n + 1)` – the least‑significant unset bit.\n2. Compute `one_mask = n & -n` – the least‑significant set bit.\n3. If either mask is zero, return n unchanged.\n4. Otherwise, return `(n | zero_mask) & (~one_mask)`, which sets the zero bit and clears the original one bit.\n\nAll operations are constant‑time bitwise manipulations, so the overall complexity is linear in the number of test cases and constant in space.",
+    "proofOfCorrectness": "Let n be the input. By definition, `zero_mask` is 0 iff all bits of n are 1; otherwise it has a single 1 at the position of the least‑significant 0 bit. Similarly, `one_mask` is 0 iff all bits of n are 0; otherwise it has a single 1 at the position of the least‑significant 1 bit.\n\nIf either mask is zero, the desired operation cannot change n (either there is no 0 to set or no 1 to clear), so returning n is correct.\n\nOtherwise, `n | zero_mask` sets the target 0 bit to 1 while leaving all other bits unchanged. The subsequent `& (~one_mask)` clears the original least‑significant 1 bit, which is guaranteed to be distinct from the newly set bit because the masks are disjoint. Thus the final result has the least‑significant 0 bit set and all other bits identical to n, exactly as required.\n\nSince the algorithm covers all possible n and performs the correct bit manipulations, it is correct for every test case.",
+    "dryRun": "Consider n = 0b10101100 (172). \n1. `zero_mask = (~n) & (n+1) = 0b01010000 & 0b10101101 = 0b00000000`? Actually compute: ~n = 0b01010011, n+1=0b10101101, AND gives 0b00000001 (bit 0). \n2. `one_mask = n & -n = 0b10101100 & 0b01010100 = 0b00000100` (bit 2). \n3. Result = (n | zero_mask) & (~one_mask) = 0b10101101 & 0b11111011 = 0b10101001 (169). \nThe least‑significant 0 bit (bit 0) is set, and the original least‑significant 1 bit (bit 2) is cleared, matching the specification.",
+    "commonMistakes": [
+      "Assuming the operation only flips a single bit without clearing the original set bit; the problem requires both actions.\nUsing signed integers or incorrect mask sizes can lead to overflow or sign extension errors.\nNeglecting the case where n is all 1s (no unset bit) or all 0s (no set bit), which should leave n unchanged.\nImplementing the logic with a loop that stops after setting the bit but fails to clear the original set bit.\nUsing `n & -n` incorrectly on languages where two’s complement is not guaranteed.\nMisinterpreting the bit order (most‑significant vs least‑significant) when constructing the masks."
+    ],
+    "timeComplexity": "O(t) where t is the number of test cases (each case O(1))",
+    "spaceComplexity": "O(1) additional space aside from input storage"
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nlong long solve(long long n) {\n    // TODO: implement the logic to set the rightmost unset bit and unset the rightmost set bit\n    return 0; // placeholder\n}\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    long long n;\n    if(!(cin >> n)) return 0;\n    cout << solve(n);\n    return 0;\n}\n",
+    "java": "import java.io.*;\nimport java.util.*;\n\npublic class Main {\n    public static long solve(long n) {\n        // TODO: implement the logic to set the rightmost unset bit and unset the rightmost set bit\n        return 0L; // placeholder\n    }\n    public static void main(String[] args) throws Exception {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        String line = br.readLine();\n        if(line == null || line.isEmpty()) return;\n        long n = Long.parseLong(line.trim());\n        System.out.print(solve(n));\n    }\n}\n",
+    "python": "import sys\n\ndef solve():\n    # TODO: implement the logic to set the rightmost unset bit and unset the rightmost set bit\n    pass\n\nif __name__ == \"__main__\":\n    data = sys.stdin.read().strip().split()\n    if not data:\n        sys.exit(0)\n    n = int(data[0])\n    # placeholder output\n    print(0)\n",
+    "javascript": "const fs = require('fs');\n\nfunction solve(n) {\n    // TODO: implement the logic to set the rightmost unset bit and unset the rightmost set bit\n    return 0; // placeholder\n}\n\nconst input = fs.readFileSync(0, 'utf8').trim().split(/\\s+/);\nif (input.length > 0) {\n    const n = Number(input[0]);\n    console.log(solve(n));\n}\n"
+  },
+  "functionSignature": {
+    "cpp": "long long solve(long long n)",
+    "java": "public static long solve(long n)",
+    "python": "def solve()",
+    "javascript": "function solve(n)"
+  },
+  "solutions": {
+    "python": "import sys\nit = iter(sys.stdin.read().split())\ntry:\n    t = int(next(it))\nexcept StopIteration:\n    sys.exit()\nout = []\nfor _ in range(t):\n    n = int(next(it))\n    zero_mask = (~n) & (n + 1) & 0xFFFFFFFFFFFFFFFF\n    one_mask = n & -n\n    if zero_mask == 0 or one_mask == 0:\n        res = n\n    else:\n        res = (n | zero_mask) & (~one_mask)\n    out.append(str(res))\nprint(t)\nprint('\\n'.join(out))\n",
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\nint main(){\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    long long t;\n    if(!(cin>>t)) return 0;\n    vector<unsigned long long> results;\n    for(long long i=0;i<t;++i){\n        unsigned long long n;cin>>n;\n        unsigned long long zero_mask = (~n) & (n+1);\n        unsigned long long one_mask = n & (~n + 1); // n & -n\n        unsigned long long res;\n        if(zero_mask==0 || one_mask==0) res=n;\n        else res = (n | zero_mask) & (~one_mask);\n        results.push_back(res);\n    }\n    cout<<t<<\"\\n\";\n    for(size_t i=0;i<results.size();++i){\n        if(i) cout<<\"\\n\";\n        cout<<results[i];\n    }\n    return 0;\n}\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample",
+      "input": "1\n10",
+      "output": "1\r\n9",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint",
+      "input": "1\n0",
+      "output": "1\r\n0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "max_constraint",
+      "input": "1\n1000000000",
+      "output": "1\r\n999999489",
+      "isVisible": false,
+      "weight": 1,
+      "category": "max_constraint"
+    },
+    {
+      "id": "boundary",
+      "input": "3\n-1 0 1",
+      "output": "3\r\n-1\r\n0\r\n2",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    },
+    {
+      "id": "duplicate",
+      "input": "6\n1 1 1 1 1 1",
+      "output": "6\r\n2\r\n2\r\n2\r\n2\r\n2\r\n2",
+      "isVisible": false,
+      "weight": 1,
+      "category": "duplicate"
+    },
+    {
+      "id": "sorted",
+      "input": "6\n1 2 3 4 5 6",
+      "output": "6\r\n2\r\n1\r\n6\r\n1\r\n6\r\n5",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sorted"
+    },
+    {
+      "id": "reverse_sorted",
+      "input": "6\n6 5 4 3 2 1",
+      "output": "6\r\n5\r\n6\r\n1\r\n6\r\n1\r\n2",
+      "isVisible": false,
+      "weight": 1,
+      "category": "reverse_sorted"
+    },
+    {
+      "id": "negative",
+      "input": "5\n-5 -4 -3 -2 -1",
+      "output": "5\r\n-2\r\n-7\r\n-2\r\n-3\r\n-1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "negative"
+    },
+    {
+      "id": "zero",
+      "input": "5\n0 0 0 0 0",
+      "output": "5\r\n0\r\n0\r\n0\r\n0\r\n0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "zero"
+    },
+    {
+      "id": "one",
+      "input": "2\n1 1",
+      "output": "2\r\n2\r\n2",
+      "isVisible": false,
+      "weight": 1,
+      "category": "one"
+    },
+    {
+      "id": "repeated",
+      "input": "8\n2 2 2 2 3 3 3 3",
+      "output": "8\r\n1\r\n1\r\n1\r\n1\r\n6\r\n6\r\n6\r\n6",
+      "isVisible": false,
+      "weight": 1,
+      "category": "repeated"
+    },
+    {
+      "id": "large_random",
+      "input": "10\n309 -772 -949 518 -437 -499 -543 -715 508 -791",
+      "output": "10\r\n310\r\n-775\r\n-946\r\n517\r\n-434\r\n-498\r\n-542\r\n-714\r\n505\r\n-790",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    },
+    {
+      "id": "adversarial",
+      "input": "12\n385 516 827 116 -822 209 -136 -935 -939 -809 -553 -524",
+      "output": "12\r\n386\r\n513\r\n830\r\n113\r\n-823\r\n210\r\n-143\r\n-934\r\n-938\r\n-802\r\n-546\r\n-527",
+      "isVisible": false,
+      "weight": 1,
+      "category": "adversarial"
+    },
+    {
+      "id": "random_13",
+      "input": "21\n6 9 -10 7 -4 10 7 3 -3 4 8 -2 -10 -5 3 0 -2 -6 -4 0 -7",
+      "output": "21\r\n5\r\n10\r\n-11\r\n14\r\n-7\r\n9\r\n14\r\n6\r\n-2\r\n1\r\n1\r\n-3\r\n-11\r\n-2\r\n6\r\n0\r\n-3\r\n-7\r\n-7\r\n0\r\n-6",
+      "isVisible": false,
+      "weight": 1,
+      "category": "random"
+    },
+    {
+      "id": "random_14",
+      "input": "22\n-8 2 -7 1 1 9 -2 -9 4 7 -7 2 -8 7 -1 10 9 1 8 -4 -8 -9",
+      "output": "22\r\n-15\r\n1\r\n-6\r\n2\r\n2\r\n10\r\n-3\r\n-2\r\n1\r\n14\r\n-6\r\n1\r\n-15\r\n14\r\n-1\r\n9\r\n10\r\n2\r\n1\r\n-7\r\n-15\r\n-2",
+      "isVisible": false,
+      "weight": 1,
+      "category": "random"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

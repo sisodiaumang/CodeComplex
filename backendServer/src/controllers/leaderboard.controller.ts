@@ -35,11 +35,13 @@ function getCategory(battleType: BattleType):
     | "backend"
     | "fullstack"
     | "promptWar"
-    | "team" {
+    | "team"
+    | "bugFix" {
     switch (battleType) {
         case "DSA":
-        case "BUG_FIX":
             return "dsa";
+        case "BUG_FIX":
+            return "bugFix";
         case "FRONTEND":
             return "frontend";
         case "BACKEND":

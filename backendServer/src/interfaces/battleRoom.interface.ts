@@ -50,4 +50,6 @@ export interface IBattleRoom extends Document {
 
     };
     isRanked: boolean;
+    isSolo?: boolean;
+    isPrivate: boolean;
 }

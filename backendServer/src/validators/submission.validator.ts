@@ -3,9 +3,8 @@ import { z } from "zod";
 export const submitCodeSchema = z.object({
     body: z.object({
         matchId: z.string().min(1),
-        questionSlug: z.string().min(1),
-        language: z.enum(["CPP", "JAVA", "PYTHON", "JAVASCRIPT", "TYPESCRIPT"]),
-        sourceCode: z.string().min(1).max(40000),
+        language: z.string().min(1),
+        code: z.string().min(1).max(40000),
     }).strict(),
 });
 

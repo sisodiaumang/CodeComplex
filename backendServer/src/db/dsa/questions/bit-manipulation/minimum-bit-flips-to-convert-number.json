@@ -1,0 +1,282 @@
+{
+  "_id": "minimum-bit-flips-to-convert-number",
+  "title": "Minimum Bit Flips to Convert Number",
+  "slug": "minimum-bit-flips-to-convert-number",
+  "difficulty": "Medium",
+  "category": "STRING",
+  "subCategory": "Interview Problems",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 300,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "Bit Manipulation"
+    ],
+    "patterns": [
+      "Bitwise Operations"
+    ],
+    "prerequisites": [
+      "Binary Number System"
+    ],
+    "variants": [],
+    "tags": [
+      "Bit Manipulation",
+      "Interview Problem"
+    ],
+    "keywords": [
+      "Bit Flips",
+      "Binary Conversion",
+      "Bitwise XOR"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "You are given two integers `a` and `b`. The goal is to convert `a` to `b` by performing a series of bit flip operations. A bit flip operation flips a single bit in the binary representation of a number. The task is to find the minimum number of bit flip operations required to convert `a` to `b`.",
+    "inputFormat": "2\n%d %d",
+    "outputFormat": "%d",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "a",
+        "type": "integer",
+        "min": 0,
+        "max": 1000000,
+        "description": "The first integer."
+      },
+      {
+        "variable": "b",
+        "type": "integer",
+        "min": 0,
+        "max": 1000000,
+        "description": "The second integer."
+      }
+    ],
+    "examples": [
+      {
+        "input": "2\n7 2",
+        "output": "2",
+        "explanation": "The binary representation of 7 is 111 and 2 is 010. We need to flip 3 bits to convert 7 to 2."
+      },
+      {
+        "input": "2\n10 7",
+        "output": "3",
+        "explanation": "The binary representation of 10 is 1010 and 7 is 0111. We need to flip 2 bits to convert 10 to 7."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Start by understanding the problem: you need to convert a to b by flipping bits.\n\nHint: Think about the binary representation of numbers and how bit flips would change the number."
+    },
+    {
+      "order": 2,
+      "text": "Consider the possible bit flips: left or right, top or bottom, or flip the entire bit.\n\nHint: Think about how flipping a bit affects the binary representation of a number."
+    },
+    {
+      "order": 3,
+      "text": "Create a function that takes two integers and returns the minimum number of bit flips needed.\n\nHint: Use a loop to iterate through all possible bit flips and count the number of flips needed to convert a to b."
+    },
+    {
+      "order": 4,
+      "text": "Implement the function using a loop.\n\nHint: Use two variables to keep track of the current number (a) and the desired number (b), and iterate through all possible bit flips.\n\nHint: Keep track of the minimum number of flips found so far."
+    }
+  ],
+  "editorial": {
+    "title": "Counting the Bits that Change",
+    "intuition": "Two numbers differ only where their binary representations disagree. Each disagreement forces a flip, so the task reduces to counting mismatched bits. The XOR operation isolates exactly those positions: a bit is 1 in the result iff the two operands differ there. Thus the answer is simply the population count of a ^ b.",
+    "bruteForce": "A naive approach would examine every bit position up to the maximum bit length of the inputs, testing whether the bits differ and incrementing a counter. While this works, it still loops over a fixed number of positions (e.g., 32 or 64), which is constant for the given constraints but conceptually O(1) in the bit‑width. The provided solution improves this by iterating only over the set bits of the XOR, which in the worst case still visits all bits but in practice is faster and clearer.",
+    "betterSolution": "The optimal method is to compute a ^ b and then count the number of 1s in that result. This can be done with a simple loop that shifts the XOR right until it becomes zero, adding xor & 1 to the counter each time. The loop runs exactly as many times as there are bits in the XOR, which is bounded by the machine word size, giving O(1) time and O(1) space.",
+    "optimalSolution": "Compute xor = a ^ b. Initialize count = 0. While xor > 0: count += xor & 1; xor >>= 1. Output count. This runs in constant time and uses constant extra memory.",
+    "proofOfCorrectness": "For any bit position i, the XOR bit i is 1 iff a_i ≠ b_i. Therefore each 1 in the XOR corresponds to a necessary flip. The loop adds 1 to the counter exactly for each such position, so the final count equals the number of differing bits, which is the minimal number of flips required. No smaller number of flips can achieve equality because every differing bit must be flipped at least once.",
+    "dryRun": "Let a=5 (101), b=1 (001). XOR = 100 (4). Loop: xor=4 → count+=0, xor=2; xor=2 → count+=0, xor=1; xor=1 → count+=1, xor=0. Result count=1, which is correct.",
+    "commonMistakes": [
+      "Misinterpreting the problem as needing to flip bits in one number only, ignoring that both numbers can be changed;",
+      "Using a fixed 32‑bit loop even when the numbers are smaller, leading to unnecessary iterations;",
+      "Counting set bits in a or b separately instead of in a ^ b;",
+      "Using built‑in popcount functions that may not be available in all languages;",
+      "Failing to handle the case where a and b are equal, resulting in an off‑by‑one error;",
+      "Overlooking that the input may contain leading zeros in binary representation, which do not affect the XOR result."
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\nint solve(int a, int b) {\n    // TODO: implement\n    return 0;\n}\nint main() {\n    int t; scanf(\"%d\", &t);\n    while (t--) {\n        int a, b; scanf(\"%d %d\", &a, &b);\n        int res = solve(a, b);\n        printf(\"%d\\n\", res);\n    }\n    return 0;\n}",
+    "java": "import java.util.Scanner;\npublic class Main {\n    public static int solve(int a, int b) {\n        // TODO: implement\n        return 0;\n    }\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int t = sc.nextInt();\n        while (t-- > 0) {\n            int a = sc.nextInt(), b = sc.nextInt();\n            int res = solve(a, b);\n            System.out.println(res);\n        }\n    }\n}",
+    "python": "import sys\ndef solve(a, b):\n    # TODO: implement\n    pass\ndef main():\n    t = int(sys.stdin.readline().strip())\n    for _ in range(t):\n        a, b = map(int, sys.stdin.readline().strip().split())\n        res = solve(a, b)\n        print(res)\nif __name__ == '__main__':\n    main()",
+    "javascript": "const readline = require('readline');\nconst rl = readline.createInterface({\n    input: process.stdin,\n    output: process.stdout\n});\nlet lines = [];\nrl.on('line', (line) => {\n    lines.push(line);\n});\nrl.on('close', () => {\n    let t = parseInt(lines.shift());\n    while (t-- > 0) {\n        let [a, b] = lines.shift().split(' ').map(Number);\n        let res = solve(a, b);\n        console.log(res);\n    }\n});\nfunction solve(a, b) {\n    // TODO: implement\n    return null;\n}"
+  },
+  "functionSignature": {
+    "cpp": "int solve(int a, int b)",
+    "java": "public static int solve(int a, int b)",
+    "python": "def solve(a, b)",
+    "javascript": "function solve(a, b)"
+  },
+  "solutions": {
+    "python": "import sys\nit = iter(sys.stdin.read().split())\nn = int(next(it))\na = int(next(it))\nb = int(next(it))\nprint(bin(a ^ b).count('1'))",
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\nint main(){\n    int n;\n    cin >> n;\n    int a, b;\n    cin >> a >> b;\n    cout << __builtin_popcount(a ^ b) << '\\n';\n    return 0;\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.2
+  },
+  "testCases": [
+    {
+      "id": "sample_0",
+      "input": "2\n7 2",
+      "output": "2",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_1",
+      "input": "2\n10 7",
+      "output": "3",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint_2",
+      "input": "2\n0 98246",
+      "output": "12",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "max_constraint_3",
+      "input": "2\n1000000 229258",
+      "output": "11",
+      "isVisible": false,
+      "weight": 1,
+      "category": "max_constraint"
+    },
+    {
+      "id": "max_constraint_4",
+      "input": "2\n1000000 243962",
+      "output": "13",
+      "isVisible": false,
+      "weight": 1,
+      "category": "max_constraint"
+    },
+    {
+      "id": "max_constraint_5",
+      "input": "2\n1000000 529903",
+      "output": "14",
+      "isVisible": false,
+      "weight": 1,
+      "category": "max_constraint"
+    },
+    {
+      "id": "boundary_6",
+      "input": "2\n631262 631262",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    },
+    {
+      "id": "boundary_7",
+      "input": "2\n27824 27824",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    },
+    {
+      "id": "duplicate_8",
+      "input": "2\n588508 588508",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "duplicate"
+    },
+    {
+      "id": "duplicate_9",
+      "input": "2\n208496 208496",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "duplicate"
+    },
+    {
+      "id": "sorted_10",
+      "input": "2\n750800 1432254",
+      "output": "14",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sorted"
+    },
+    {
+      "id": "sorted_11",
+      "input": "2\n735392 1306805",
+      "output": "8",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sorted"
+    },
+    {
+      "id": "reverse_sorted_12",
+      "input": "2\n671047 439898",
+      "output": "10",
+      "isVisible": false,
+      "weight": 1,
+      "category": "reverse_sorted"
+    },
+    {
+      "id": "zero_13",
+      "input": "2\n0 0",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "zero"
+    },
+    {
+      "id": "one_14",
+      "input": "2\n1 1",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "one"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

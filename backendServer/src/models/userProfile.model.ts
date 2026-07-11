@@ -17,7 +17,8 @@ const userProfileSchema =
                 backend:   { type: Number, default: 1200, min: 0 },
                 fullstack: { type: Number, default: 1200, min: 0 },
                 team:      { type: Number, default: 1200, min: 0 },
-                promptWar: { type: Number, default: 1200, min: 0 }
+                promptWar: { type: Number, default: 1200, min: 0 },
+                bugFix:    { type: Number, default: 1200, min: 0 }
             },
 
             // FIX (rating-controller spec): "peakRating" in the spec's
@@ -31,7 +32,8 @@ const userProfileSchema =
                 backend:   { type: Number, default: 1200, min: 0 },
                 fullstack: { type: Number, default: 1200, min: 0 },
                 team:      { type: Number, default: 1200, min: 0 },
-                promptWar: { type: Number, default: 1200, min: 0 }
+                promptWar: { type: Number, default: 1200, min: 0 },
+                bugFix:    { type: Number, default: 1200, min: 0 }
             },
 
             stats: {
@@ -82,15 +84,7 @@ userProfileSchema.index({ "ratings.backend": -1 });
 userProfileSchema.index({ "ratings.fullstack": -1 });
 userProfileSchema.index({ "ratings.team": -1 });
 userProfileSchema.index({ "ratings.promptWar": -1 });
-
-// FIX: Compound indexes for leaderboard queries that filter by userId
-// (e.g. "top N players, with the current user's rank shown").
-userProfileSchema.index({ "ratings.dsa": -1, userId: 1 });
-userProfileSchema.index({ "ratings.frontend": -1, userId: 1 });
-userProfileSchema.index({ "ratings.backend": -1, userId: 1 });
-userProfileSchema.index({ "ratings.fullstack": -1, userId: 1 });
-userProfileSchema.index({ "ratings.team": -1, userId: 1 });
-userProfileSchema.index({ "ratings.promptWar": -1, userId: 1 });
+userProfileSchema.index({ "ratings.bugFix": -1 });
 
 
 const UserProfile: mongoose.Model<IUserProfile> =

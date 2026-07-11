@@ -1,0 +1,288 @@
+{
+  "_id": "subsets-i",
+  "title": "Subsets I",
+  "slug": "subsets-i",
+  "difficulty": "Medium",
+  "category": "DP",
+  "subCategory": "Subsequences Pattern",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 200,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "Recursion",
+      "Backtracking"
+    ],
+    "patterns": [
+      "Subsequences"
+    ],
+    "prerequisites": [
+      "Recursion Basics"
+    ],
+    "variants": [],
+    "tags": [
+      "Recursion",
+      "Backtracking",
+      "Subsequences",
+      "Medium"
+    ],
+    "keywords": [
+      "Subsets",
+      "Recursion",
+      "Backtracking",
+      "Subsequences"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "Given an integer array of size N, generate all possible subsets (the power set) of the array. Each subset should be printed in non‑decreasing order of its elements, and the collection of subsets must be printed in lexicographic order based on the sequence of elements. The empty subset is represented by an empty line.\n\n**Input Format**\n- The first line contains a single integer N, the number of elements in the array.\n- The second line contains N space‑separated integers A1, A2, ..., AN.\n\n**Output Format**\n- Print each subset on a separate line. Elements inside a subset are printed in increasing order, separated by a single space. The subsets themselves must appear in lexicographic order. The empty subset is printed as an empty line.\n\n**Constraints**\n- 1 ≤ N ≤ 16\n- -1000 ≤ Ai ≤ 1000\n- All Ai are distinct.\n\n**Example**\nInput:\n3\n1 2 3\n\nOutput:\n\n1\n1 2\n1 2 3\n1 3\n2\n2 3\n3\n\nExplanation:\nThe power set of {1,2,3} contains 2^3 = 8 subsets. They are listed in lexicographic order, with the empty subset printed first as an empty line.\n",
+    "inputFormat": "The first line contains an integer N.\nThe second line contains N space-separated integers.\n",
+    "outputFormat": "Each line contains one subset of the given set, elements sorted in increasing order and separated by a single space. Subsets are printed in lexicographic order. The empty subset is represented by an empty line.\n",
+    "notes": "Lexicographic order means that for two subsets X and Y, X comes before Y if at the first position where they differ, the element in X is smaller than the element in Y, or X is a prefix of Y.\n",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "N",
+        "type": "int",
+        "min": 1,
+        "max": 16
+      },
+      {
+        "variable": "Ai",
+        "type": "int",
+        "min": -1000,
+        "max": 1000
+      }
+    ],
+    "examples": [
+      {
+        "input": "3\n1 2 3",
+        "output": "1\r\n1 2\r\n1 2 3\r\n1 3\r\n2\r\n2 3\r\n3",
+        "explanation": "All 8 subsets of {1,2,3} are printed in lexicographic order; the first line is empty representing the empty subset."
+      },
+      {
+        "input": "4\n4 1 3 2",
+        "output": "1\r\n1 2\r\n1 2 3\r\n1 2 3 4\r\n1 2 4\r\n1 3\r\n1 3 4\r\n1 4\r\n2\r\n2 3\r\n2 3 4\r\n2 4\r\n3\r\n3 4\r\n4",
+        "explanation": "The input array is first sorted to {1,2,3,4}. The power set is then generated and printed in lexicographic order, with the empty subset as the first line."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Initialize an empty set to store the subsets."
+    },
+    {
+      "order": 2,
+      "text": "Create a function recursively to generate subsets and add them to the set."
+    },
+    {
+      "order": 3,
+      "text": "Implement a helper function to print the elements of a subset in lexicographic order."
+    },
+    {
+      "order": 4,
+      "text": "Call the recursive function with the whole array as input and print the subsets in set order."
+    },
+    {
+      "order": 5,
+      "text": "Implement a helper function to check if a subset is lexicographically less than another subset."
+    }
+  ],
+  "editorial": {
+    "title": "Optimal Subset Generation",
+    "intuition": "The problem requires generating all subsets of a given array of integers. A key observation is that subsets can be generated recursively by either including or excluding the current element.",
+    "bruteForce": "A brute force approach would involve generating all possible subsets using bit manipulation or recursion, resulting in a time complexity of O(2^n * n) and space complexity of O(n). This approach is correct but slow for large inputs.",
+    "betterSolution": "An optimal approach is to use a backtracking algorithm with sorting and duplicate skipping.",
+    "optimalSolution": "The optimal solution uses a backtracking approach with a sorted array and skips duplicates to avoid duplicate subsets. This approach has a time complexity of O(2^n * n) and space complexity of O(n).",
+    "proofOfCorrectness": "The correctness of the optimal solution can be proven by showing that it generates all possible subsets exactly once. The backtracking approach ensures that all subsets are generated, and the duplicate skipping ensures that no duplicates are generated.",
+    "dryRun": "A dry run of the algorithm with a small input, such as [1, 2, 2], demonstrates that it correctly generates all subsets without duplicates.",
+    "commonMistakes": [
+      "Not sorting the input array, leading to duplicate subsets",
+      "Not skipping duplicates, leading to duplicate subsets",
+      "Using a flawed recursive approach that misses some subsets",
+      "Not considering the base case of the recursion correctly",
+      "Incorrectly handling the inclusion or exclusion of the current element",
+      "Not properly managing the recursion stack"
+    ],
+    "timeComplexity": "O(2^n * n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nvector<vector<int>> subsets;\nvector<int> nums;\n\nvoid backtrack(int start, vector<int>& path) {\n    // TODO: implement\n    subsets.push_back(path);\n    for (int i = start; i < nums.size(); i++) {\n        path.push_back(nums[i]);\n        backtrack(i + 1, path);\n        path.pop_back();\n    }\n}\n\nvoid solve() {\n    int n;\n    cin >> n;\n    nums.resize(n);\n    for (int i = 0; i < n; i++) {\n        cin >> nums[i];\n    }\n    sort(nums.begin(), nums.end());\n    vector<int> path;\n    backtrack(0, path);\n    for (const auto& subset : subsets) {\n        for (int num : subset) {\n            cout << num << \" \";\n        }\n        cout << endl;\n    }\n}\n\nint main() {\n    solve();\n    return 0;\n}",
+    "java": "import java.util.*;\n\npublic class Main {\n    private static List<List<Integer>> subsets = new ArrayList<>();\n    private static int[] nums;\n\n    public static void backtrack(int start, List<Integer> path) {\n        // TODO: implement\n        subsets.add(new ArrayList<>(path));\n        for (int i = start; i < nums.length; i++) {\n            path.add(nums[i]);\n            backtrack(i + 1, path);\n            path.remove(path.size() - 1);\n        }\n    }\n\n    public static void solve() {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        nums = new int[n];\n        for (int i = 0; i < n; i++) {\n            nums[i] = scanner.nextInt();\n        }\n        Arrays.sort(nums);\n        List<Integer> path = new ArrayList<>();\n        backtrack(0, path);\n        for (List<Integer> subset : subsets) {\n            for (int num : subset) {\n                System.out.print(num + \" \");\n            }\n            System.out.println();\n        }\n    }\n\n    public static void main(String[] args) {\n        solve();\n    }\n}",
+    "python": "import sys\n\ndef backtrack(start, path, nums, subsets):\n    # TODO: implement\n    subsets.append(path[:])\n    for i in range(start, len(nums)):\n        path.append(nums[i])\n        backtrack(i + 1, path, nums, subsets)\n        path.pop()\n\ndef solve():\n    try:\n        n = int(sys.stdin.readline().strip())\n        nums = list(map(int, sys.stdin.readline().strip().split()))\n        nums.sort()\n        subsets = []\n        backtrack(0, [], nums, subsets)\n        for subset in subsets:\n            print(' '.join(map(str, subset))) \n    except Exception as e:\n        pass\n\nif __name__ == '__main__':\n    solve()\n",
+    "javascript": "const readline = require('readline');\n\nfunction backtrack(start, path, nums, subsets) {\n    // TODO: implement\n    subsets.push([...path]);\n    for (let i = start; i < nums.length; i++) {\n        path.push(nums[i]);\n        backtrack(i + 1, path, nums, subsets);\n        path.pop();\n    }\n}\n\nfunction solve() {\n    const rl = readline.createInterface({\n        input: process.stdin,\n        output: process.stdout\n    });\n    let n, nums;\n    rl.on('line', line => {\n        if (n === undefined) {\n            n = parseInt(line);\n        } else {\n            nums = line.split(' ').map(Number).sort((a, b) => a - b);\n            let subsets = [];\n            backtrack(0, [], nums, subsets);\n            for (let subset of subsets) {\n                console.log(subset.join(' '));\n            }\n            rl.close();\n        }\n    });\n}\nsolve();"
+  },
+  "functionSignature": {
+    "cpp": "void backtrack(int start, vector<int>& path)",
+    "java": "public static void backtrack(int start, List<Integer> path)",
+    "python": "def backtrack(start, path, nums, subsets):",
+    "javascript": "function backtrack(start, path, nums, subsets)"
+  },
+  "solutions": {
+    "python": "import sys\nit = iter(sys.stdin.read().split())\nn = int(next(it))\nnums = sorted([int(next(it)) for _ in range(n)])\ndef backtrack(start, path):\n\tif path: print(' '.join(map(str, path)))\n\tfor i in range(start, n):\n\t\tif i > start and nums[i] == nums[i - 1]: continue\n\t\tbacktrack(i + 1, path + [nums[i]])\nbacktrack(0, [])\nprint()",
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\nint main(){\n\tint n;\n\tcin >> n;\n\tvector<int> nums(n);\n\tfor(int i = 0; i < n; i++) cin >> nums[i];\n\tsort(nums.begin(), nums.end());\n\tfunction<void(int, vector<int>)> backtrack = [&](int start, vector<int> path){\n\t\tif(!path.empty()){\n\t\t\tfor(int x: path) cout << x << ' ';\n\t\t\tcout << '\\n';\n\t\t}\n\t\tfor(int i = start; i < n; i++){\n\t\t\tif(i > start && nums[i] == nums[i - 1]) continue;\n\t\t\tpath.push_back(nums[i]);\n\t\t\tbacktrack(i + 1, path);\n\t\t\tpath.pop_back();\n\t\t}\n\t};\n\tbacktrack(0, {});\n\tcout << '\\n';\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.2
+  },
+  "testCases": [
+    {
+      "id": "sample_0",
+      "input": "3\n1 2 3",
+      "output": "1\r\n1 2\r\n1 2 3\r\n1 3\r\n2\r\n2 3\r\n3",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_1",
+      "input": "4\n4 1 3 2",
+      "output": "1\r\n1 2\r\n1 2 3\r\n1 2 3 4\r\n1 2 4\r\n1 3\r\n1 3 4\r\n1 4\r\n2\r\n2 3\r\n2 3 4\r\n2 4\r\n3\r\n3 4\r\n4",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint_1",
+      "input": "1\n-1000",
+      "output": "-1000",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "max_constraint_1",
+      "input": "1\n1000",
+      "output": "1000",
+      "isVisible": false,
+      "weight": 1,
+      "category": "max_constraint"
+    },
+    {
+      "id": "min_constraint_2",
+      "input": "2\n-1000 -1000",
+      "output": "-1000\r\n-1000 -1000",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "max_constraint_2",
+      "input": "2\n1000 1000",
+      "output": "1000\r\n1000 1000",
+      "isVisible": false,
+      "weight": 1,
+      "category": "max_constraint"
+    },
+    {
+      "id": "min_constraint_3",
+      "input": "3\n-1000 -1000 -1000",
+      "output": "-1000\r\n-1000 -1000\r\n-1000 -1000 -1000",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "max_constraint_3",
+      "input": "3\n1000 1000 1000",
+      "output": "1000\r\n1000 1000\r\n1000 1000 1000",
+      "isVisible": false,
+      "weight": 1,
+      "category": "max_constraint"
+    },
+    {
+      "id": "min_constraint_4",
+      "input": "4\n-1000 -1000 -1000 -1000",
+      "output": "-1000\r\n-1000 -1000\r\n-1000 -1000 -1000\r\n-1000 -1000 -1000 -1000",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "max_constraint_4",
+      "input": "4\n1000 1000 1000 1000",
+      "output": "1000\r\n1000 1000\r\n1000 1000 1000\r\n1000 1000 1000 1000",
+      "isVisible": false,
+      "weight": 1,
+      "category": "max_constraint"
+    },
+    {
+      "id": "min_constraint_5",
+      "input": "5\n-1000 -1000 -1000 -1000 -1000",
+      "output": "-1000\r\n-1000 -1000\r\n-1000 -1000 -1000\r\n-1000 -1000 -1000 -1000\r\n-1000 -1000 -1000 -1000 -1000",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "max_constraint_5",
+      "input": "5\n1000 1000 1000 1000 1000",
+      "output": "1000\r\n1000 1000\r\n1000 1000 1000\r\n1000 1000 1000 1000\r\n1000 1000 1000 1000 1000",
+      "isVisible": false,
+      "weight": 1,
+      "category": "max_constraint"
+    },
+    {
+      "id": "min_constraint_6",
+      "input": "6\n-1000 -1000 -1000 -1000 -1000 -1000",
+      "output": "-1000\r\n-1000 -1000\r\n-1000 -1000 -1000\r\n-1000 -1000 -1000 -1000\r\n-1000 -1000 -1000 -1000 -1000\r\n-1000 -1000 -1000 -1000 -1000 -1000",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "max_constraint_6",
+      "input": "6\n1000 1000 1000 1000 1000 1000",
+      "output": "1000\r\n1000 1000\r\n1000 1000 1000\r\n1000 1000 1000 1000\r\n1000 1000 1000 1000 1000\r\n1000 1000 1000 1000 1000 1000",
+      "isVisible": false,
+      "weight": 1,
+      "category": "max_constraint"
+    },
+    {
+      "id": "min_constraint_7",
+      "input": "7\n-1000 -1000 -1000 -1000 -1000 -1000 -1000",
+      "output": "-1000\r\n-1000 -1000\r\n-1000 -1000 -1000\r\n-1000 -1000 -1000 -1000\r\n-1000 -1000 -1000 -1000 -1000\r\n-1000 -1000 -1000 -1000 -1000 -1000\r\n-1000 -1000 -1000 -1000 -1000 -1000 -1000",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

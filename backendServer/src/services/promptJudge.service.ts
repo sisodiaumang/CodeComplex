@@ -28,8 +28,8 @@ import type {
     IPromptWarScenario,
 } from "../interfaces/promptWarScenario.interface.js";
 
-const JUDGE_MODEL_DEFAULT = "grok-2-vision-1212";
-const XAI_API_URL = "https://api.x.ai/v1/chat/completions";
+const JUDGE_MODEL_DEFAULT = "llama-3.3-70b-versatile";
+const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
 
 const SOURCE_PROMPT_CHAR_LIMIT = 20_000;
 
@@ -66,12 +66,13 @@ interface RawVerdict {
 import { env } from "../config/env.js";
 
 function getApiKey(): string {
-    if (!env.XAI_API_KEY) {
+    const key = env.GROQ_API_KEY || env.XAI_API_KEY;
+    if (!key) {
         throw new Error(
-            "[PromptJudge] XAI_API_KEY is not set. Add it to environment to enable PROMPT_WAR judging."
+            "[PromptJudge] GROQ_API_KEY or XAI_API_KEY is not set. Add it to environment to enable PROMPT_WAR judging."
         );
     }
-    return env.XAI_API_KEY;
+    return key;
 }
 
 // OpenAI-compatible message blocks
@@ -95,13 +96,19 @@ interface GrokResponse {
         message: { content: string };
         finish_reason: string;
     }[];
+    usage?: {
+        prompt_tokens?: number;
+        completion_tokens?: number;
+        total_tokens?: number;
+    };
+    model?: string;
     error?: { message: string };
 }
 
 async function callGrok(request: GrokRequest): Promise<string> {
     const apiKey = getApiKey();
 
-    const res = await fetch(XAI_API_URL, {
+    const res = await fetch(GROQ_API_URL, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -113,7 +120,7 @@ async function callGrok(request: GrokRequest): Promise<string> {
     if (!res.ok) {
         const body = await res.text().catch(() => "");
         throw new Error(
-            `[PromptJudge] xAI API request failed: ${res.status} ${res.statusText}` +
+            `[PromptJudge] Groq API request failed: ${res.status} ${res.statusText}` +
                 (body ? ` — ${body.slice(0, 300)}` : "")
         );
     }
@@ -121,7 +128,28 @@ async function callGrok(request: GrokRequest): Promise<string> {
     const data = (await res.json()) as GrokResponse;
 
     if (data.error) {
-        throw new Error(`[PromptJudge] xAI API error: ${data.error.message}`);
+        throw new Error(`[PromptJudge] Groq API error: ${data.error.message}`);
+    }
+
+    // Log token usage asynchronously in the background
+    if (data.usage) {
+        import("../models/tokenUsage.model.js")
+            .then(({ default: TokenUsage }) => {
+                const promptTokens = data.usage?.prompt_tokens ?? 0;
+                const completionTokens = data.usage?.completion_tokens ?? 0;
+                const totalTokens = data.usage?.total_tokens ?? 0;
+                const cost = (promptTokens * 5 + completionTokens * 15) / 1_000_000;
+
+                TokenUsage.create({
+                    promptTokens,
+                    completionTokens,
+                    totalTokens,
+                    model: data.model || "grok-2",
+                    feature: "PROMPT_WAR",
+                    cost,
+                }).catch((e) => console.error("[TokenUsage] Failed to create record:", e));
+            })
+            .catch((e) => console.error("[TokenUsage] Failed to load model:", e));
     }
 
     const text = data.choices?.[0]?.message?.content;
