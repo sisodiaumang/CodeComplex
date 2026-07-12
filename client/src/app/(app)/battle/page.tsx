@@ -74,6 +74,12 @@ const TOPICS_BY_MODE: Record<BattleType, { key: string; label: string }[]> = {
     { key: "CREATIVE", label: "Creative" },
     { key: "DATA_EXTRACTION", label: "Data Extraction" },
     { key: "SUMMARIZATION", label: "Summarization" },
+    { key: "ADVERSARIAL_DEFENSE", label: "Adversarial Defense" },
+    { key: "STRUCTURED_OUTPUT", label: "Structured Output" },
+    { key: "CHATBOT_PERSONA", label: "Chatbot Persona" },
+    { key: "CLASSIFICATION", label: "Classification" },
+    { key: "QUERY_TRANSLATION", label: "Query Translation" },
+    { key: "AGENTIC_PLANNING", label: "Agentic Planning" },
   ],
 };
 

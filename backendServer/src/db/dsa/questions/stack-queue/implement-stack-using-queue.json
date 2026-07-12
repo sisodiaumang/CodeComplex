@@ -1,0 +1,277 @@
+{
+  "_id": "implement-stack-using-queue",
+  "title": "Implement Stack using Queue",
+  "slug": "implement-stack-using-queue",
+  "difficulty": "Easy",
+  "category": "ARRAY",
+  "subCategory": "Learning",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 200,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "Stack",
+      "Queue"
+    ],
+    "patterns": [
+      "stack using queue",
+      "queue implementation of stack"
+    ],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "implementation",
+      "data structures"
+    ],
+    "keywords": [
+      "stack",
+      "queue",
+      "implementation"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Implement a stack using two queues. A stack is a Last In First Out (LIFO) data structure, whereas a queue is a First In First Out (FIFO) data structure. You must use only standard queue operations (enqueue and dequeue) to implement a stack.",
+    "inputFormat": "The input consists of a series of operations on the stack. The first line contains an integer 'n', the number of operations. Then, 'n' lines follow, each containing a string representing an operation. The operations can be 'push x' to push an element 'x' onto the stack, 'pop' to remove the top element from the stack, or 'top' to retrieve the top element of the stack without removing it.",
+    "outputFormat": "For each 'top' operation, print the top element of the stack. For each 'pop' operation, if the stack is not empty, print nothing; if the stack is empty, print 'Invalid Operation'.",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 1000,
+        "description": "The number of operations."
+      },
+      {
+        "variable": "x",
+        "type": "integer",
+        "min": -10000,
+        "max": 10000,
+        "description": "The element to be pushed onto the stack."
+      }
+    ],
+    "examples": [
+      {
+        "input": "5\npush 1\npush 2\ntop\npop\ntop",
+        "output": "2\r\n1",
+        "explanation": "The stack is implemented using two queues. The 'push' operations add elements to the stack, 'top' retrieves the top element, and 'pop' removes the top element."
+      },
+      {
+        "input": "4\npush 1\npop\npop\ntop",
+        "output": "Invalid Operation\r\nInvalid Operation",
+        "explanation": "When the stack is empty, 'pop' and 'top' operations should return 'Invalid Operation'."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "To implement a stack using queues, think about how you can utilize the FIFO nature of queues to mimic the LIFO behavior of a stack. Consider using two queues and how elements can be moved between them to achieve the desired order."
+    },
+    {
+      "order": 2,
+      "text": "One approach to solving this problem is to use one queue as the main storage and the other queue to help achieve the LIFO order during pop operations. Think about how you can rotate or move elements between these two queues to ensure the most recently added element is always the first one to be removed."
+    },
+    {
+      "order": 3,
+      "text": "For the push operation, it's straightforward: simply enqueue the new element into the main queue. For the pop operation, consider how you can use the second queue to temporarily hold elements from the main queue, except for the last element which will be dequeued and returned as the result of the pop operation. Think about the process of rotating elements between the two queues to maintain the correct order."
+    }
+  ],
+  "editorial": {
+    "title": "Implementing Stack using Queue: A Complexity Analysis",
+    "intuition": "The problem requires implementing a stack using two queues. A stack follows the Last-In-First-Out (LIFO) principle, whereas a queue follows the First-In-First-Out (FIFO) principle. The key observation is that we can use two queues to mimic the behavior of a stack by cleverly managing the elements in the queues.",
+    "bruteForce": "A brute force approach would involve iterating through each operation (push, pop, top) and performing the corresponding action. However, this approach would be slow because it would not optimize the use of the queues, potentially leading to inefficient operations.",
+    "betterSolution": "The optimal approach involves using two queues, q1 and q2. When pushing an element, we append it to q2 and then move all elements from q1 to q2. We then swap q1 and q2. This ensures that the most recently added element is always at the front of q1, allowing for efficient pop and top operations.",
+    "optimalSolution": "The optimal solution has a time complexity of O(n) and a space complexity of O(n), where n is the number of operations. This is because in the worst-case scenario, we might need to move all elements from one queue to the other for each operation.",
+    "proofOfCorrectness": "The correctness of the optimal solution can be proven by showing that it maintains the LIFO property of a stack. When pushing an element, it is added to the end of q2 and then moved to the front of q1 through the swapping process. When popping or accessing the top element, we simply remove or return the front element of q1, ensuring that the most recently added element is always processed first.",
+    "dryRun": "A dry run with sample inputs (e.g., push 1, push 2, pop, top) verifies that the solution behaves as expected, processing operations in O(n) time and using O(n) space.",
+    "commonMistakes": [
+      "Not swapping the queues after pushing an element, leading to incorrect ordering.",
+      "Not checking if a queue is empty before popping or accessing the top element, leading to errors.",
+      "Using only one queue, which cannot efficiently implement a stack.",
+      "Not considering the amortized time complexity, which can lead to an incorrect assessment of the solution's efficiency.",
+      "Incorrectly handling edge cases, such as popping from an empty stack."
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "class Stack {\nprivate:\n    queue<int> q1;\n    queue<int> q2;\npublic:\n    void push(int x);\n    void pop();\n    int top();\n};\n\n// @driver-code-start\nint main() {\n    ios_base::sync_with_stdio(false);\n    cin.tie(NULL);\n    Stack stack;\n    int n;\n    cin >> n;\n    while (n--) {\n        string operation;\n        cin >> operation;\n        if (operation == \"push\") {\n            int x;\n            cin >> x;\n            stack.push(x);\n        } else if (operation == \"pop\") {\n            stack.pop();\n        } else if (operation == \"top\") {\n            cout << stack.top() << endl;\n        }\n    }\n    return 0;\n}",
+    "java": "public class Stack {\n    private java.util.Queue<Integer> q1;\n    private java.util.Queue<Integer> q2;\n\n    public void push(int x);\n    public void pop();\n    public int top();\n}\n\n// @driver-code-start\npublic class Main {\n    public static void main(String[] args) {\n        java.util.Scanner scanner = new java.util.Scanner(System.in);\n        Stack stack = new Stack();\n        int n = scanner.nextInt();\n        while (n-- > 0) {\n            String operation = scanner.next();\n            if (operation.equals(\"push\")) {\n                int x = scanner.nextInt();\n                stack.push(x);\n            } else if (operation.equals(\"pop\")) {\n                stack.pop();\n            } else if (operation.equals(\"top\")) {\n                System.out.println(stack.top());\n            }\n        }\n    }\n}",
+    "python": "class Stack:\n    def __init__(self):\n        self.q1 = []\n        self.q2 = []\n\n    def push(self, x: int) -> None:\n        pass\n    def pop(self) -> None:\n        pass\n    def top(self) -> int:\n        pass\n\n# @driver-code-start\nimport sys\nit = iter(sys.stdin.read().split())\nn = int(next(it))\nstack = Stack()\nfor _ in range(n):\n    op = next(it)\n    if op == 'push':\n        x = int(next(it))\n        stack.push(x)\n    elif op == 'pop':\n        stack.pop()\n    elif op == 'top':\n        print(stack.top())",
+    "javascript": "class Stack {\n    constructor() {\n        this.q1 = [];\n        this.q2 = [];\n    }\n\n    push(x);\n    pop();\n    top();\n}\n\n// @driver-code-start\nconst readline = require('readline').createInterface({\n    input: process.stdin,\n    output: process.stdout\n});\nlet i = 0;\nlet n;\nlet stack = new Stack();\nreadline.on('line', line => {\n    if (i === 0) {\n        n = parseInt(line);\n    } else {\n        let op = line.split(' ')[0];\n        if (op === 'push') {\n            let x = parseInt(line.split(' ')[1]);\n            stack.push(x);\n        } else if (op === 'pop') {\n            stack.pop();\n        } else if (op === 'top') {\n            console.log(stack.top());\n        }\n    }\n    i++;\n    if (i > n) {\n        readline.close();\n    }\n});"
+  },
+  "functionSignature": {
+    "cpp": "class Stack {\nprivate:\n    queue<int> q1;\n    queue<int> q2;\npublic:\n    void push(int x);\n    void pop();\n    int top();\n};",
+    "java": "public class Stack {\n    private Queue<Integer> q1;\n    private Queue<Integer> q2;\n\n    public void push(int x);\n    public void pop();\n    public int top();\n}",
+    "python": "class Stack:\n    def __init__(self):\n        self.q1 = deque()\n        self.q2 = deque()\n\n    def push(self, x: int) -> None:\n    def pop(self) -> None:\n    def top(self) -> int:",
+    "javascript": "class Stack {\n    constructor() {\n        this.q1 = [];\n        this.q2 = [];\n    }\n\n    push(x);\n    pop();\n    top();\n}"
+  },
+  "solutions": {
+    "python": "import sys\nit = iter(sys.stdin.read().split())\nn = int(next(it))\nq1 = []\nq2 = []\nfor _ in range(n):\n    op = next(it)\n    if op == 'push':\n        x = int(next(it))\n        q2.append(x)\n        while q1:\n            q2.append(q1.pop(0))\n        q1, q2 = q2, q1\n    elif op == 'pop':\n        if q1:\n            q1.pop(0)\n        else:\n            print('Invalid Operation')\n    elif op == 'top':\n        if q1:\n            print(q1[0])\n        else:\n            print('Invalid Operation')",
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\nint main() {\n    int n;\n    cin >> n;\n    queue<int> q1, q2;\n    for (int i = 0; i < n; i++) {\n        string op;\n        cin >> op;\n        if (op == \"push\") {\n            int x;\n            cin >> x;\n            q2.push(x);\n            while (!q1.empty()) {\n                q2.push(q1.front());\n                q1.pop();\n            }\n            swap(q1, q2);\n        } else if (op == \"pop\") {\n            if (!q1.empty()) {\n                q1.pop();\n            } else {\n                cout << \"Invalid Operation\" << endl;\n            }\n        } else if (op == \"top\") {\n            if (!q1.empty()) {\n                cout << q1.front() << endl;\n            } else {\n                cout << \"Invalid Operation\" << endl;\n            }\n        }\n    }\n    return 0;\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5\npush 1\npush 2\ntop\npop\ntop",
+      "output": "2\r\n1",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "4\npush 1\npop\npop\ntop",
+      "output": "Invalid Operation\r\nInvalid Operation",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint_3",
+      "input": "5\npush -10000\ntop\npop\npush -10000\npop",
+      "output": "-10000",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "boundary_4",
+      "input": "3\npush 10000\ntop\npop",
+      "output": "10000",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    },
+    {
+      "id": "duplicate_5",
+      "input": "4\npush 1\npush 1\ntop\npop",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "duplicate"
+    },
+    {
+      "id": "random_medium_6",
+      "input": "6\npush 10\npush 20\ntop\npop\npush 30\ntop",
+      "output": "20\r\n30",
+      "isVisible": false,
+      "weight": 1,
+      "category": "random_medium"
+    },
+    {
+      "id": "sorted_7",
+      "input": "5\npush 1\npush 2\npush 3\ntop\npop",
+      "output": "3",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sorted"
+    },
+    {
+      "id": "reverse_sorted_8",
+      "input": "5\npush 3\npush 2\npush 1\ntop\npop",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "reverse_sorted"
+    },
+    {
+      "id": "repeated_9",
+      "input": "6\npush 1\npush 1\npush 1\ntop\npop\ntop",
+      "output": "1\r\n1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "repeated"
+    },
+    {
+      "id": "random_medium_10",
+      "input": "7\npush 5\npush -3\npush 100\npop\ntop\npush 20\ntop",
+      "output": "-3\r\n20",
+      "isVisible": false,
+      "weight": 1,
+      "category": "random_medium"
+    },
+    {
+      "id": "zero_11",
+      "input": "5\npush 0\ntop\npop\ntop\npop",
+      "output": "0\r\nInvalid Operation\r\nInvalid Operation",
+      "isVisible": false,
+      "weight": 1,
+      "category": "zero"
+    },
+    {
+      "id": "one_12",
+      "input": "3\npush 1\ntop\npop",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "one"
+    },
+    {
+      "id": "negative_13",
+      "input": "4\npush -10\npush -20\ntop\npop",
+      "output": "-20",
+      "isVisible": false,
+      "weight": 1,
+      "category": "negative"
+    },
+    {
+      "id": "random_medium_14",
+      "input": "8\npush 10\npush 20\ntop\npop\npush -5\ntop\npop\npop",
+      "output": "20\r\n-5",
+      "isVisible": false,
+      "weight": 1,
+      "category": "random_medium"
+    },
+    {
+      "id": "adversarial_16",
+      "input": "10\npush 1\npop\ntop\npop\npush 2\npush 3\npop\npop\ntop\npop",
+      "output": "Invalid Operation\r\nInvalid Operation\r\nInvalid Operation\r\nInvalid Operation",
+      "isVisible": false,
+      "weight": 1,
+      "category": "adversarial"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

@@ -1,0 +1,279 @@
+{
+  "_id": "find-starting-point-of-loop",
+  "title": "Find Starting Point of Loop",
+  "slug": "find-starting-point-of-loop",
+  "difficulty": "Medium",
+  "category": "TREE",
+  "subCategory": "Medium LL Problems",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 25,
+    "points": 500,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "Linked List",
+      "Medium"
+    ],
+    "patterns": [
+      "detect cycle",
+      "find loop"
+    ],
+    "prerequisites": [
+      "Basic LL Problems"
+    ],
+    "variants": [],
+    "tags": [
+      "linked list",
+      "detect cycle",
+      "find loop"
+    ],
+    "keywords": [
+      "tortoise and hare",
+      "floyd's cycle-finding algorithm"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "Given the head of a linked list, find the node where the cycle begins. If the list has a cycle, return the node where the cycle begins. Otherwise, return null. The linked list is defined as a sequence of nodes where each node has a value and a next pointer. The next pointer of the last node in the list points to the node where the cycle begins. The cycle is defined as a sequence of nodes where each node points to the next node, and the last node points back to a previous node in the sequence. The node where the cycle begins is the node that is pointed to by the last node in the cycle. The function should take as input the head of the linked list and return the node where the cycle begins, or null if the list does not have a cycle. The input linked list is represented as a sequence of node values, where each value is an integer. The sequence of node values is terminated by a -1, which indicates the end of the list. The next pointer of each node is represented by the index of the next node in the sequence. For example, if the input sequence is [1, 2, 3, 4, 5, -1], the linked list has the following structure: 1 -> 2 -> 3 -> 4 -> 5 -> null. If the input sequence is [1, 2, 3, 4, 5, 2, -1], the linked list has the following structure: 1 -> 2 -> 3 -> 4 -> 5 -> 2 -> null, where the node with value 2 is the node where the cycle begins.",
+    "inputFormat": "The first line contains the number of nodes in the linked list. The second line contains the node values, separated by spaces. The node values are integers. The last node value is -1, which indicates the end of the list. The next lines contain the next pointers, one per line. Each next pointer is an integer that represents the index of the next node in the sequence.",
+    "outputFormat": "The output is the value of the node where the cycle begins, or -1 if the list does not have a cycle.",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 0,
+        "max": 10000,
+        "description": "The number of nodes in the linked list"
+      },
+      {
+        "variable": "node values",
+        "type": "integer",
+        "min": -1,
+        "max": 10000,
+        "description": "The values of the nodes in the linked list"
+      }
+    ],
+    "examples": [
+      {
+        "input": "5\n1 2 3 4 5\n1\n2\n3\n4\n-1",
+        "output": "-1",
+        "explanation": "The linked list does not have a cycle."
+      },
+      {
+        "input": "6\n1 2 3 4 5 2\n1\n2\n3\n4\n5\n-1",
+        "output": "-1",
+        "explanation": "The node with value 2 is the node where the cycle begins."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "To find the starting point of a loop in a linked list, we first need to detect whether a loop exists. This can be done by using two pointers that move at different speeds through the list. If a loop exists, these two pointers will eventually meet."
+    },
+    {
+      "order": 2,
+      "text": "Once we've determined that a loop exists, we can find the starting point of the loop by resetting one of the pointers to the head of the list and keeping the other pointer at the meeting point. Then, we move both pointers one step at a time. The point where they meet again is the start of the loop."
+    },
+    {
+      "order": 3,
+      "text": "The key insight here is that the distance from the head of the list to the start of the loop is equal to the distance from the meeting point to the start of the loop. This is because the fast pointer has traveled twice the distance of the slow pointer when they meet, and the extra distance traveled by the fast pointer is exactly the distance around the loop."
+    }
+  ],
+  "editorial": {
+    "title": "Finding the Starting Point of a Loop in a Linked List",
+    "intuition": "The problem can be solved by first detecting whether a cycle exists in the linked list, and if so, finding the starting point of the cycle. The brute force approach involves traversing the list and checking every node to see if it has been visited before, but this is inefficient due to its high time complexity.",
+    "bruteForce": "The brute force approach is correct but slow because it requires checking every node against all previously visited nodes, resulting in a time complexity of O(n^2). This is impractical for large linked lists.",
+    "betterSolution": "A better solution involves using the Floyd's Tortoise and Hare algorithm to detect the cycle and then finding the starting point.",
+    "optimalSolution": "The optimal solution uses Floyd's Tortoise and Hare algorithm, which involves two pointers moving at different speeds through the list. If a cycle exists, these two pointers will eventually meet. Then, by resetting one of the pointers to the start of the list and moving both pointers at the same speed, the point where they meet again is the start of the cycle. This approach has a time complexity of O(n) and a space complexity of O(n) due to the creation of the linked list.",
+    "proofOfCorrectness": "The proof of correctness for this approach lies in the fact that the distance from the start of the list to the start of the cycle is equal to the distance from the meeting point to the start of the cycle. By moving the two pointers at the same speed after the meeting point, they will meet again at the start of the cycle.",
+    "dryRun": "To test the solution, a dry run can be performed with a sample linked list that contains a cycle, verifying that the function correctly returns the value of the node at the start of the cycle.",
+    "commonMistakes": [
+      "Not handling the case where the list does not contain a cycle",
+      "Incorrectly implementing the Floyd's Tortoise and Hare algorithm",
+      "Not resetting one of the pointers to the start of the list after detecting the cycle",
+      "Moving the pointers at different speeds after the meeting point",
+      "Not checking for the case where the next pointer is -1, indicating the end of the list"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nstruct ListNode {\n    int val;\n    ListNode *next;\n    ListNode(int x) : val(x), next(NULL) {}\n};\n\nListNode* solve(ListNode* head) {\n    // TODO: implement\n    return nullptr;\n}\n\n// @driver-code-start\nint main() {\n    int n;\n    if (cin >> n) {\n        ListNode* dummy = new ListNode(0);\n        ListNode* cur = dummy;\n        vector<ListNode*> nodes(n);\n        for (int i = 0; i < n; i++) {\n            int val; cin >> val;\n            cur->next = new ListNode(val);\n            cur = cur->next;\n            nodes[i] = cur;\n        }\n        int pos;\n        cin >> pos;\n        if (pos >= 0 && pos < n) {\n            cur->next = nodes[pos];\n        }\n        ListNode* ans = solve(dummy->next);\n        if (!ans) cout << -1 << endl;\n        else {\n            for (int i = 0; i < n; i++) {\n                if (nodes[i] == ans) {\n                    cout << i << endl;\n                    return 0;\n                }\n            }\n            cout << -1 << endl;\n        }\n    }\n    return 0;\n}\n",
+    "java": "import java.util.*;\n\npublic class Main {\n    public static ListNode solve(ListNode head) {\n        // TODO: implement\n        return null;\n    }\n\n    // @driver-code-start\npublic static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        if (scanner.hasNextInt()) {\n            int n = scanner.nextInt();\n            ListNode dummy = new ListNode(0);\n            ListNode cur = dummy;\n            ListNode[] nodes = new ListNode[n];\n            for (int i = 0; i < n; i++) {\n                cur.next = new ListNode(scanner.nextInt());\n                cur = cur.next;\n                nodes[i] = cur;\n            }\n            int pos = scanner.nextInt();\n            if (pos >= 0 && pos < n) {\n                cur.next = nodes[pos];\n            }\n            ListNode ans = solve(dummy.next);\n            if (ans == null) System.out.println(-1);\n            else {\n                int index = -1;\n                for (int i = 0; i < n; i++) {\n                    if (nodes[i] == ans) { index = i; break; }\n                }\n                System.out.println(index);\n            }\n        }\n    }\n}\n\nclass ListNode {\n    int val;\n    ListNode next;\n    ListNode() {}\n    ListNode(int val) { this.val = val; }\n    ListNode(int val, ListNode next) { this.val = val; this.next = next; }\n}\n",
+    "python": "import sys\n\nclass ListNode:\n    def __init__(self, val=0, next=None):\n        self.val = val\n        self.next = next\n\ndef solve(head):\n    # TODO: implement\n    pass\n\n# @driver-code-start\ndef main():\n    import sys\n    input_data = sys.stdin.read().split()\n    if not input_data:\n        return\n    n = int(input_data[0])\n    dummy = ListNode(0)\n    cur = dummy\n    nodes = []\n    for i in range(n):\n        cur.next = ListNode(int(input_data[1+i]))\n        cur = cur.next\n        nodes.append(cur)\n    pos = int(input_data[n+1])\n    if pos >= 0 and pos < n:\n        cur.next = nodes[pos]\n    ans = solve(dummy.next)\n    if not ans:\n        print(-1)\n    else:\n        try:\n            print(nodes.index(ans))\n        except ValueError:\n            print(-1)\n\nif __name__ == \"__main__\":\n    main()\n",
+    "javascript": "// @driver-code-start\nconst readline = require(\"readline\");\nconst rl = readline.createInterface({\n    input: process.stdin,\n    output: process.stdout\n});\nlet input = \"\";\nrl.on(\"line\", (line) => {\n    input += line + \"\\n\";\n});\nrl.on(\"close\", () => {\n    const inputLines = input.trim().split(\"\\n\");\n    if (inputLines.length < 3) return;\n    const n = parseInt(inputLines[0]);\n    const arr = inputLines[1].split(\" \").map(Number);\n    const pos = parseInt(inputLines[2]);\n    const dummy = new ListNode(0);\n    let cur = dummy;\n    const nodes = [];\n    for (let i = 0; i < n; i++) {\n        cur.next = new ListNode(arr[i]);\n        cur = cur.next;\n        nodes.push(cur);\n    }\n    if (pos >= 0 && pos < n) {\n        cur.next = nodes[pos];\n    }\n    const solution = new Solution();\n    let ans = solution.solve(dummy.next);\n    if (!ans) console.log(-1);\n    else {\n        console.log(nodes.indexOf(ans));\n    }\n});\nclass ListNode {\n    constructor(val, next) {\n        this.val = (val===undefined ? 0 : val)\n        this.next = (next===undefined ? null : next)\n    }\n}\n\nclass Solution {\n    solve(head) {\n        // TODO: implement\n        return null;\n    }\n}\n"
+  },
+  "functionSignature": {
+    "cpp": "ListNode* solve(ListNode* head)",
+    "java": "public static ListNode solve(ListNode head)",
+    "python": "def solve(head):",
+    "javascript": "function solve(head)"
+  },
+  "solutions": {
+    "python": "\nimport sys\nit = iter(sys.stdin.read().split())\nn = int(next(it))\nnums = [int(next(it)) for _ in range(n)]\nnext_pointers = []\nwhile True:\n    try:\n        next_pointers.append(int(next(it)))\n    except StopIteration:\n        break\n\nclass Node:\n    def __init__(self, val):\n        self.val = val\n        self.next = None\n\ndef find_cycle(head):\n    slow = head\n    fast = head\n    while fast and fast.next:\n        slow = slow.next\n        fast = fast.next.next\n        if slow == fast:\n            break\n    else:\n        return -1\n\n    slow = head\n    while slow != fast:\n        slow = slow.next\n        fast = fast.next\n\n    return slow.val\n\nnodes = [Node(num) for num in nums]\nfor i in range(len(next_pointers)):\n    if next_pointers[i] == -1:\n        nodes[i].next = None\n    else:\n        nodes[i].next = nodes[next_pointers[i]]\n\nprint(find_cycle(nodes[0]))\n",
+    "cpp": "\n#include <bits/stdc++.h>\nusing namespace std;\n\nstruct Node {\n    int val;\n    Node* next;\n    Node(int x) : val(x), next(NULL) {}\n};\n\nint find_cycle(Node* head) {\n    Node* slow = head;\n    Node* fast = head;\n    while (fast && fast->next) {\n        slow = slow->next;\n        fast = fast->next->next;\n        if (slow == fast) break;\n    }\n    if (!fast || !fast->next) return -1;\n\n    slow = head;\n    while (slow != fast) {\n        slow = slow->next;\n        fast = fast->next;\n    }\n\n    return slow->val;\n}\n\nint main() {\n    int n;\n    if (!(cin >> n)) return 0;\n    vector<int> nums(n);\n    for (int i = 0; i < n; i++) cin >> nums[i];\n    vector<int> next_pointers;\n    int x;\n    while (cin >> x) next_pointers.push_back(x);\n\n    vector<Node*> nodes;\n    for (int num : nums) nodes.push_back(new Node(num));\n\n    for (int i = 0; i < next_pointers.size(); i++) {\n        if (next_pointers[i] == -1) nodes[i]->next = NULL;\n        else nodes[i]->next = nodes[next_pointers[i]];\n    }\n\n    cout << find_cycle(nodes[0]) << endl;\n    return 0;\n}\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.2
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5\n1 2 3 4 5\n1\n2\n3\n4\n-1",
+      "output": "-1",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "6\n1 2 3 4 5 2\n1\n2\n3\n4\n5\n-1",
+      "output": "-1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint_3",
+      "input": "1\n1\n0",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "boundary_4",
+      "input": "5\n1 2 3 4 5\n1\n2\n3\n1",
+      "output": "2",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    },
+    {
+      "id": "duplicate_5",
+      "input": "6\n1 2 2 3 4 5\n1\n2\n3\n4\n2",
+      "output": "2",
+      "isVisible": false,
+      "weight": 1,
+      "category": "duplicate"
+    },
+    {
+      "id": "random_medium_6",
+      "input": "10\n10 20 30 40 50 60 70 80 90 100\n1\n2\n3\n4\n5\n6\n7\n8\n1",
+      "output": "20",
+      "isVisible": false,
+      "weight": 1,
+      "category": "random_medium"
+    },
+    {
+      "id": "sorted_7",
+      "input": "7\n1 2 3 4 5 6 -1\n1\n2\n3\n4\n5\n0",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sorted"
+    },
+    {
+      "id": "reverse_sorted_8",
+      "input": "7\n6 5 4 3 2 1 -1\n1\n2\n3\n4\n5\n0",
+      "output": "6",
+      "isVisible": false,
+      "weight": 1,
+      "category": "reverse_sorted"
+    },
+    {
+      "id": "repeated_9",
+      "input": "7\n1 1 1 1 1 1 -1\n1\n2\n3\n4\n5\n0",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "repeated"
+    },
+    {
+      "id": "random_medium_10",
+      "input": "7\n10 20 3 40 15 8 -1\n1\n5\n3\n2\n4\n0",
+      "output": "10",
+      "isVisible": false,
+      "weight": 1,
+      "category": "random_medium"
+    },
+    {
+      "id": "one_12",
+      "input": "1\n1\n-1\n",
+      "output": "-1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "one"
+    },
+    {
+      "id": "negative_13",
+      "input": "3\n1 2 3\n1\n2\n0\n",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "negative"
+    },
+    {
+      "id": "random_medium_14",
+      "input": "7\n10 20 30 40 50 60 70\n1\n2\n3\n4\n5\n0\n2\n",
+      "output": "10",
+      "isVisible": false,
+      "weight": 1,
+      "category": "random_medium"
+    },
+    {
+      "id": "large_random_15",
+      "input": "10\n1 2 3 4 5 6 7 8 9 -1\n1\n3\n5\n7\n9\n2\n4\n6\n8",
+      "output": "-1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    },
+    {
+      "id": "adversarial_16",
+      "input": "5\n1 2 3 4 -1\n1\n2\n0\n1\n3",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "adversarial"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

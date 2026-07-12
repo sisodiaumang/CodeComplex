@@ -1,0 +1,293 @@
+{
+  "_id": "fractional-knapsack",
+  "title": "Fractional Knapsack",
+  "slug": "fractional-knapsack",
+  "difficulty": "Medium",
+  "category": "GREEDY",
+  "subCategory": "Easy Problems",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 25,
+    "points": 500,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "Greedy Algorithms"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "Greedy",
+      "Knapsack",
+      "Fractional"
+    ],
+    "keywords": [
+      "Greedy Algorithms",
+      "Fractional Knapsack",
+      "Knapsack Problem"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "You are given a set of `n` items, where the `i`-th item has a value `v_i` and a weight `w_i`. You have a knapsack that can carry at most `W` weight units. Unlike the 0/1 knapsack, you are allowed to take fractions of an item. Your task is to determine the maximum total value that can be placed in the knapsack.\n\n**Input Format**\n- The first line contains a single integer `n`, the number of items.\n- The second line contains a single integer `W`, the maximum weight capacity of the knapsack.\n- The third line contains `n` integers `v_1 v_2 ... v_n`, the values of the items.\n- The fourth line contains `n` integers `w_1 w_2 ... w_n`, the weights of the items.\n\n**Output Format**\n- Print a single line containing the maximum total value that fits into the knapsack. Your answer must be accurate to within `10^-6` absolute or relative error.\n\n**Notes**\n- You may take any fraction of an item; the value contributed by a fraction is proportional to the fraction of its weight taken.\n- Sorting items by their value‑to‑weight ratio and taking them greedily yields the optimal solution.\n\n**Constraints**\n- `1 ≤ n ≤ 100000`\n- `1 ≤ W ≤ 10^9`\n- `1 ≤ v_i ≤ 10^9`\n- `1 ≤ w_i ≤ 10^9`\n\n**Examples**\n\n**Example 1**\n```\n3\n50\n60 100 120\n10 20 30\n```\n**Output**\n```\n240.000000\n```\n**Explanation**\nTake the whole first item (value 60, weight 10), the whole second item (value 100, weight 20) and 2/3 of the third item (value 120 * 2/3 = 80, weight 30 * 2/3 = 20). Total value = 60 + 100 + 80 = 240.\n\n**Example 2**\n```\n2\n10\n500 400\n5 5\n```\n**Output**\n```\n900.000000\n```\n**Explanation**\nBoth items fit exactly, giving a total value of 500 + 400 = 900.",
+    "inputFormat": "n\nW\nv_1 v_2 ... v_n\nw_1 w_2 ... w_n",
+    "outputFormat": "maximum_total_value",
+    "notes": "All numbers are integers. The answer should be printed with at least 6 digits after the decimal point.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "int",
+        "min": 1,
+        "max": 100000
+      },
+      {
+        "variable": "W",
+        "type": "int",
+        "min": 1,
+        "max": 1000000000
+      },
+      {
+        "variable": "v_i",
+        "type": "int",
+        "min": 1,
+        "max": 1000000000
+      },
+      {
+        "variable": "w_i",
+        "type": "int",
+        "min": 1,
+        "max": 1000000000
+      }
+    ],
+    "examples": [
+      {
+        "input": "3\n50\n60 100 120\n10 20 30",
+        "output": "240.000000",
+        "explanation": "Take items 1 and 2 completely and 2/3 of item 3."
+      },
+      {
+        "input": "2\n10\n500 400\n5 5",
+        "output": "900.000000",
+        "explanation": "Both items fit exactly."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "The problem is a variation of the classic 0/1 knapsack problem, but with the added flexibility of being able to take fractions of an item."
+    },
+    {
+      "order": 2,
+      "text": "The key to solving this problem is to first calculate the value-to-weight ratio for each item, which will be used to determine the optimal items to include in the knapsack."
+    },
+    {
+      "order": 3,
+      "text": "The optimal solution can be achieved by sorting the items by their value-to-weight ratio in descending order and then taking the items greedily, with the goal of maximizing the total value that fits in the knapsack."
+    },
+    {
+      "order": 4,
+      "text": "The greedy approach works because the value-to-weight ratio is a measure of the 'bang for the buck' that each item provides, and by choosing the items with the highest ratios first, we maximize the total value that we can get for a given amount of weight."
+    },
+    {
+      "order": 5,
+      "text": "We can use a priority queue or a sorting algorithm to efficiently sort the items by their value-to-weight ratio, and then iterate through the sorted list to determine the optimal items to include in the knapsack."
+    }
+  ],
+  "editorial": {
+    "title": "Fractional Knapsack: From Brute Force to Greedy Optimality",
+    "intuition": "The problem asks for the maximum value that can be packed into a knapsack of capacity W when items can be split arbitrarily.  The key insight is that value per unit weight is the only metric that matters: if an item has a higher value density than another, it is always better to take as much of the former as possible before considering the latter.  This observation turns a potentially combinatorial search into a simple sorting and greedy selection.",
+    "bruteForce": "A brute‑force approach would enumerate all subsets of items and, for each subset, try every possible fractional split, computing the resulting value.  Even for small n this is infeasible: the number of subsets is 2ⁿ, and each subset requires solving a linear program to decide the fractions, leading to exponential time and memory usage.  While correct in principle, it cannot handle the given limits (n up to 100 000).",
+    "betterSolution": "The optimal strategy is to sort items by decreasing value density (vᵢ/wᵢ) and then iterate through this order, taking as much of each item as the remaining capacity allows.  This greedy algorithm runs in O(n log n) time due to sorting and uses O(n) additional space for the item list.",
+    "optimalSolution": "The algorithm proceeds as follows:\n1. Compute the density dᵢ = vᵢ / wᵢ for every item.\n2. Sort items in descending order of dᵢ.\n3. Initialize remaining capacity R = W and total value T = 0.\n4. For each item (v, w) in sorted order:\n   • If R == 0, stop.\n   • Take t = min(w, R) units of the item.\n   • Add v * (t / w) to T.\n   • Decrease R by t.\n5. Output T.\nThis matches the reference solution’s logic and complexity.",
+    "proofOfCorrectness": "Assume an optimal solution that does not follow the greedy order.  There must exist two items i and j such that i appears after j in the solution but has a higher density (dᵢ > dⱼ).  Consider the portions of i and j used in the solution.  Swapping a small amount of j for the same amount of i increases total value because dᵢ > dⱼ, and capacity constraints remain satisfied.  Repeating this swap eliminates all inversions, yielding a solution that takes items in non‑increasing density order.  Thus any optimal solution can be transformed into the greedy one without decreasing value, proving optimality.",
+    "dryRun": "Consider items: (v,w) = (60,20), (100,50), (120,30) with W=50.\nDensities: 3.0, 2.0, 4.0 → order: (120,30), (60,20), (100,50).\nTake 30 of first: value 120, capacity left 20.\nTake 20 of second: value 60, capacity left 0.\nTotal = 180, which is optimal.",
+    "commonMistakes": [
+      "Sorting by value instead of density, leading to suboptimal picks.",
+      "Using integer division when computing v * (t / w), which truncates fractions.",
+      "Failing to handle large numbers with floating‑point precision, causing incorrect rounding.",
+      "Assuming the greedy algorithm works for 0‑weight items (division by zero).",
+      "Not breaking the loop when remaining capacity reaches zero, wasting time.",
+      "Using a stable sort when the order of equal densities matters, though it does not affect correctness."
+    ],
+    "timeComplexity": "O(n log n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\ndouble solve() {\n    // TODO: implement\n    int n;\n    long long W;\n    if(!(cin >> n)) return 0;\n    cin >> W;\n    vector<long long> v(n), w(n);\n    for(int i=0;i<n;i++) cin >> v[i];\n    for(int i=0;i<n;i++) cin >> w[i];\n    vector<pair<double,int>> ratio(n);\n    for(int i=0;i<n;i++) ratio[i] = { (double)v[i]/w[i], i };\n    sort(ratio.begin(), ratio.end(), [&](const auto& a, const auto& b){ return a.first > b.first; });\n    double ans = 0.0;\n    long long remaining = W;\n    for(auto &p: ratio){\n        int i = p.second;\n        if(remaining==0) break;\n        if(w[i] <= remaining){\n            ans += v[i];\n            remaining -= w[i];\n        } else {\n            ans += (double)v[i] * remaining / w[i];\n            remaining = 0;\n        }\n    }\n    cout.setf(ios::fixed); cout<<setprecision(6)<<ans<<\"\\n\";\n    return ans;\n}\n\n// @driver-code-start\nint main(){\n    solve();\n    return 0;\n}",
+    "java": "import java.io.*;\nimport java.util.*;\n\npublic class Main {\n    public static void solve() {\n        // TODO: implement\n        try {\n            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n            int n = Integer.parseInt(br.readLine().trim());\n            long W = Long.parseLong(br.readLine().trim());\n            long[] v = new long[n];\n            long[] w = new long[n];\n            StringTokenizer st = new StringTokenizer(br.readLine());\n            for(int i=0;i<n;i++) v[i] = Long.parseLong(st.nextToken());\n            st = new StringTokenizer(br.readLine());\n            for(int i=0;i<n;i++) w[i] = Long.parseLong(st.nextToken());\n            Integer[] idx = new Integer[n];\n            for(int i=0;i<n;i++) idx[i]=i;\n            Arrays.sort(idx, (a,b) -> Double.compare((double)v[b]/w[b], (double)v[a]/w[a]));\n            double ans = 0.0;\n            long remaining = W;\n            for(int iIdx: idx){\n                if(remaining==0) break;\n                if(w[iIdx] <= remaining){\n                    ans += v[iIdx];\n                    remaining -= w[iIdx];\n                } else {\n                    ans += (double)v[iIdx] * remaining / w[iIdx];\n                    remaining = 0;\n                }\n            }\n            System.out.printf(\"%.6f\\n\", ans);\n        } catch (Exception e) {\n            // handle\n        }\n    }\n    // @driver-code-start\npublic static void main(String[] args) {\n        solve();\n    }\n}",
+    "python": "import sys\n\ndef solve():\n    # TODO: implement\n    data = sys.stdin.read().strip().split()\n    if not data:\n        return\n    it = iter(data)\n    n = int(next(it))\n    W = int(next(it))\n    v = [int(next(it)) for _ in range(n)]\n    w = [int(next(it)) for _ in range(n)]\n    items = sorted(((v[i]/w[i], v[i], w[i]) for i in range(n)), key=lambda x: x[0], reverse=True)\n    ans = 0.0\n    remaining = W\n    for _, val, wt in items:\n        if remaining == 0:\n            break\n        if wt <= remaining:\n            ans += val\n            remaining -= wt\n        else:\n            ans += val * remaining / wt\n            remaining = 0\n    print(f\"{ans:.6f}\")\n\n# @driver-code-start\nif __name__ == \"__main__\":\n    solve()",
+    "javascript": "// @driver-code-start\nconst fs = require('fs');\nfunction solve() {\n    // TODO: implement\n    const input = fs.readFileSync(0, 'utf8').trim().split(/\\s+/).map(Number);\n    if (input.length === 0) return;\n    let idx = 0;\n    const n = input[idx++];\n    const W = input[idx++];\n    const v = input.slice(idx, idx + n); idx += n;\n    const w = input.slice(idx, idx + n); idx += n;\n    const items = [];\n    for (let i = 0; i < n; i++) {\n        items.push({ratio: v[i] / w[i], val: v[i], wt: w[i]});\n    }\n    items.sort((a, b) => b.ratio - a.ratio);\n    let ans = 0.0;\n    let remaining = W;\n    for (const item of items) {\n        if (remaining === 0) break;\n        if (item.wt <= remaining) {\n            ans += item.val;\n            remaining -= item.wt;\n        } else {\n            ans += item.val * remaining / item.wt;\n            remaining = 0;\n        }\n    }\n    console.log(ans.toFixed(6));\n}\nsolve();"
+  },
+  "functionSignature": {
+    "cpp": "double solve();",
+    "java": "public static void solve();",
+    "python": "def solve():",
+    "javascript": "function solve()"
+  },
+  "solutions": {
+    "python": "import sys\nit = iter(sys.stdin.read().split())\nn = int(next(it))\nW = int(next(it))\nvalues = [int(next(it)) for _ in range(n)]\nweights = [int(next(it)) for _ in range(n)]\nitems = sorted(zip(values, weights), key=lambda x: x[0] / x[1], reverse=True)\ntotal_value = 0\nfor value, weight in items:\n    if W >= weight:\n        W -= weight\n        total_value += value\n    else:\n        fraction = W / weight\n        total_value += value * fraction\n        break\nprint(f\"{total_value:.6f}\")",
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\nint main() {\n    int n;\n    cin >> n;\n    long long W;\n    cin >> W;\n    vector<long long> values(n);\n    for (int i = 0; i < n; i++) cin >> values[i];\n    vector<long long> weights(n);\n    for (int i = 0; i < n; i++) cin >> weights[i];\n    vector<pair<long long, long long>> items(n);\n    for (int i = 0; i < n; i++) items[i] = {values[i], weights[i]};\n    sort(items.begin(), items.end(), [](const auto& a, const auto& b) {\n        return a.first * b.second > b.first * a.second;\n    });\n    double total_value = 0;\n    for (const auto& item : items) {\n        if (W >= item.second) {\n            W -= item.second;\n            total_value += item.first;\n        } else {\n            double fraction = (double)W / item.second;\n            total_value += item.first * fraction;\n            break;\n        }\n    }\n    printf(\"%.6f\\n\", total_value);\n    return 0;\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.2
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "3\n50\n60 100 120\n10 20 30",
+      "output": "240.000000",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "2\n10\n500 400\n5 5",
+      "output": "900.000000",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint_1",
+      "input": "1\n1\n1\n1",
+      "output": "1.000000",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "boundary_1",
+      "input": "2\n10\n10 10\n5 5",
+      "output": "20.000000",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    },
+    {
+      "id": "sorted_1",
+      "input": "3\n10\n10 20 30\n5 10 15",
+      "output": "20.000000",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sorted"
+    },
+    {
+      "id": "reverse_sorted_1",
+      "input": "3\n10\n30 20 10\n15 10 5",
+      "output": "20.000000",
+      "isVisible": false,
+      "weight": 1,
+      "category": "reverse_sorted"
+    },
+    {
+      "id": "large_random_8",
+      "input": "82\n14593\n26855093 796233791 295310486 262950629 239670712 149827707 790779947 110053354 726600540 795285933 957970517 585582862 93349857 634036507 453035111 34126397 31994524 100604503 234760739 249817735 542621109 646412690 28492781 602632298 213500299 768820205 697808099 753041956 585126462 450455978 236696313 482334539 632719212 298704997 869119331 933404115 6977992 814763203 865241840 171432882 749621471 453778757 365341214 298362083 166944845 231191391 819795580 361415647 109747452 99585093 407943840 103848422 385451172 909990149 369319645 648245889 284027114 866647392 46654553 783543541 493303706 575770530 134031071 990307113 406448197 84611067 592749117 314797777 890566477 674996844 664130527 950746572 925250737 388302653 619927152 206468300 756528253 74684277 49203559 710026087 244703908 830075811\n310727956 85675981 918390410 249957311 930379757 108449461 408157430 298471887 486845605 682560972 895619256 391735569 174648507 397478787 381469013 224956460 719595114 286665250 753573824 733953719 695822699 76667862 654049437 681802745 183758721 573528322 782893942 262863731 175452092 496348125 407437182 289854269 993631209 687194507 738908274 598020239 235809994 735098956 348195936 905005354 824970420 833223567 60062916 245938495 882403819 34467369 864411348 338715136 430747415 287484584 71069473 226541100 980472441 609004944 940992572 770854580 337882806 228306012 703771910 536045485 424806517 949921300 981987994 690256941 492688427 153407201 284412920 149926920 264814271 799925831 602764447 578722459 282116656 802099970 627694431 460027314 964029982 626563709 428853030 388690726 235493871 148532578",
+      "output": "135620.737299",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    },
+    {
+      "id": "large_random_9",
+      "input": "66\n64687\n97613239 811514915 50590822 924602214 117734862 164112120 673715058 171779361 850488740 730661142 453290811 640389326 68212357 413140754 409760585 639830323 502564737 568132203 269953852 594021783 924255164 12327653 730448746 773869167 122998995 731980934 950034368 576567502 806248901 286501363 825276601 688227493 365260636 119778235 315143363 466825639 169820595 487182121 3484631 775340445 940439932 772751235 282811833 537500248 818150684 191825998 545119048 979926684 114257752 934712198 671410972 320452651 903735582 686066794 545098870 653876786 213579171 164109920 401486940 818739737 173461958 579153817 836043812 990456050 569462920 986224888\n614069 643111854 348059919 524636386 20912993 120117055 997612045 389747630 943520429 892994063 866267852 330190784 257109966 62196679 258633899 942755631 609194873 84564738 91969691 785879796 521828281 876198297 74316371 816690354 571988890 822308462 135034325 137859288 708402052 510330568 590347117 177303723 284602385 566585409 936767847 651325258 454340904 227416585 997413272 579064767 810959829 783757515 740739736 215984312 765523130 334702823 428414719 721218383 697801252 400957213 470406377 965953267 555742830 484779556 129927270 266186632 241266932 68747288 363016615 22585367 631691673 594768705 247083813 631832765 236456622 7721110",
+      "output": "10282733.033573",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    },
+    {
+      "id": "large_random_10",
+      "input": "10\n92779\n677641646 63215225 245824374 72370546 972187338 33729407 923026481 354794896 76082501 552070933\n255555532 299012687 718309418 521209850 230035023 578998029 142068764 776693899 947451609 613152855",
+      "output": "602788.899330",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    },
+    {
+      "id": "large_random_11",
+      "input": "74\n61954\n260916299 842478696 507850825 867043304 437077309 204451096 101281558 104078667 707577343 462837685 380424120 454814085 441417712 501463917 927537644 782839239 58165866 723019673 701642484 693830225 105675388 65082364 432311311 781913387 364323394 859629661 925213848 117326730 266992706 205718273 204235260 575832442 481695136 150519598 452991961 197018782 299085575 496743110 268227632 938972144 991348896 80943909 475808014 867607279 924866554 919087452 590907305 105128698 54318807 700235247 580451873 897677789 15846123 100140142 994678971 809134797 911280106 253810545 178575193 436383775 521453190 516854672 229509409 928411293 430613730 968990654 62959285 176777763 406919289 2314314 419212170 284759616 994841204 841889394\n843026228 488561519 306284029 454200827 747959431 784374110 841128036 596751694 710678905 771385011 522559455 166211830 203901284 318587605 233754556 62795958 621890097 789991778 582177669 65452691 803132647 336730607 61380747 53839921 627255919 511947771 539931482 987184410 915601011 570292351 169042106 61073977 545276697 86019029 914122101 199528038 73574219 638914081 72972421 725003956 925371324 252548262 433550700 128727267 955938727 611684319 264371718 621609601 638360086 42672288 665055834 88029014 450139321 705849061 626713348 606907789 561333670 339699536 279995033 219321647 719112791 769005092 337352359 256287096 285201413 424971818 140529482 721221888 693101195 322119409 490941150 339492675 997525839 807308349",
+      "output": "1016640.459791",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    },
+    {
+      "id": "large_random_12",
+      "input": "10\n1221\n492080330 666964668 604509818 107354054 78663097 577280547 228872699 543189556 284756780 142224155\n374745383 945820705 73864105 944109233 262298394 396776693 306002885 169379375 470497097 895226829",
+      "output": "9992.762896",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    },
+    {
+      "id": "adversarial_13",
+      "input": "70\n92215\n324825306 656783996 866616965 702201722 567945748 8399997 717112653 877358887 595499670 321455483 712308210 111225159 942881650 144193988 283968124 123940588 955321750 114929003 797163847 594019366 166910923 292431671 302533495 649431083 226161868 770530218 368164907 218610947 738194421 681007819 915808163 283450554 542678845 524557081 269639389 972097650 975128351 908496945 54544900 99104723 681057737 454811021 890505736 297083133 47337804 3807156 358153606 827982964 140466537 684095278 281272328 173497328 795890632 474417267 592362343 757704656 459225331 602269165 10382762 120123667 80792473 948228269 741976667 970585915 160045823 585823119 38684920 896139579 396442647 625464885\n593269305 159014494 461479974 136843585 44913400 330989882 391541579 965274019 854829816 924172365 42836794 965212977 384194738 225567964 732363534 267930514 716114303 110373809 379759539 837643440 601170350 949332408 939215633 436344400 666430219 804745463 165950384 994031335 998452142 254194772 928363302 174484942 858872155 870559511 190108533 946413445 442697756 26614159 192587045 790880075 992660673 356681426 840081099 999455947 442073643 861393417 719307303 927781682 789262020 870535451 266467545 286480451 170937381 845436944 752991722 116066794 410751047 936481957 41580227 921907486 505399562 238836385 214289693 876803189 986180221 494246838 375442873 327696199 881044230 853995722",
+      "output": "3147837.426806",
+      "isVisible": false,
+      "weight": 1,
+      "category": "adversarial"
+    },
+    {
+      "id": "adversarial_14",
+      "input": "30\n29220\n25409495 708705239 207371534 427849589 352468588 299147755 928091907 74539965 830353158 299708183 377040285 688785774 546970179 429151400 729627020 905874276 575757258 355569463 29635853 123847258 941712823 280477684 191735735 623403480 285042338 41078353 116396352 640563508 466609284 371178706\n782269303 844420825 336808456 468574365 650911798 549136332 124173719 413600441 965835851 619106700 204095532 273506212 47659675 761052405 468213198 1815993 558260222 993828766 865984449 578158428 737507242 772482078 796662827 791388193 720081873 211564863 391079830 463102057 75133803 713219782",
+      "output": "14575852.629784",
+      "isVisible": false,
+      "weight": 1,
+      "category": "adversarial"
+    },
+    {
+      "id": "adversarial_15",
+      "input": "43\n81679\n337064354 712306874 910549477 133815414 772830249 966417933 322468581 544518648 332091878 716070803 438508550 350236226 432074126 748621834 317457353 595295871 136674238 205986734 451450816 713962537 407104144 727264604 803303364 969380074 186860434 660904108 611072119 323142471 436019894 588343097 895205589 435875 326283246 308071260 225681937 461588883 843702119 622753914 651397898 702984811 346012479 499277267 474364122\n474765467 725449224 229460135 548868900 508079793 852266894 967635538 854725079 790232589 182204746 707435607 91048515 304713333 553462379 712807630 679615070 664926228 359905655 100273739 878775498 806528434 252188236 722408849 333310362 241206080 866040318 213814139 158220115 26226564 49621605 262897677 510173761 656350430 912398904 825159147 78198717 488999386 445002644 951482264 676205432 618121923 208773244 771318049",
+      "output": "1357923.551176",
+      "isVisible": false,
+      "weight": 1,
+      "category": "adversarial"
+    },
+    {
+      "id": "adversarial_16",
+      "input": "90\n50329\n530833446 429123993 261976302 158453522 704436923 738328948 5953698 958486185 806341967 923891023 826830796 950761027 114447238 835822551 456497253 234978882 188856884 863406383 747229580 556152901 498806646 53921578 598509919 267574610 985125922 910894218 130307806 490122160 143171769 860514524 498906880 716806129 570298516 600141463 639362058 340696085 810943525 957161301 475209598 657830421 875106573 772314531 957799500 542001425 458209400 891816853 973727855 588273031 478796090 963369871 170894499 798493950 925023117 509677795 483258727 278304808 807214180 265471645 901795908 684683756 297760793 822286181 835021999 559741413 520332087 672966011 256888295 294846764 472309606 83197118 766162967 306798269 251785566 291751879 360613551 343285530 958880264 579984034 86519603 148578018 161953190 248315127 411281013 745122941 164073401 758511780 229730156 68965205 445461014 437656495\n355281185 582624279 500282415 446434188 66857304 222086736 894310084 451125672 418197539 971562913 826561920 627150494 746812124 20972274 919909015 945597898 822050913 618142808 408431022 512153090 6330866 377698144 320632896 809037760 418744975 916382758 957392815 897356829 449920676 577909931 802638840 788807317 586405097 858851905 647737534 964017594 236801620 524232415 235602192 293062062 467975320 521454128 31165167 417532244 360916348 718197582 729223045 856998798 434131720 777583840 177215429 902486083 501856352 987350299 137039297 668143327 573510888 28955007 973807455 423076026 635540031 606011278 711890570 29100608 90137897 690147184 460219457 145706211 930774553 495744936 195130057 53992715 279340714 407059677 351492251 227268504 488229687 350948015 362388456 817364174 944506246 407083674 298775767 807464399 893271901 452651789 270874492 896478773 87946148 504988122",
+      "output": "3965403.735687",
+      "isVisible": false,
+      "weight": 1,
+      "category": "adversarial"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

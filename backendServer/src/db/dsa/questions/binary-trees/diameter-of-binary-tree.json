@@ -1,0 +1,285 @@
+{
+  "_id": "diameter-of-binary-tree",
+  "title": "Diameter of Binary Tree",
+  "slug": "diameter-of-binary-tree",
+  "difficulty": "Easy",
+  "category": "TREE",
+  "subCategory": "Medium Problems",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 400,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "Trees",
+      "Binary Trees"
+    ],
+    "patterns": [
+      "find diameter of binary tree",
+      "max depth of binary tree"
+    ],
+    "prerequisites": [
+      "Basic tree traversal",
+      "Binary tree properties"
+    ],
+    "variants": [],
+    "tags": [
+      "binary tree",
+      "diameter",
+      "height",
+      "depth"
+    ],
+    "keywords": [
+      "binary tree diameter",
+      "maximum depth",
+      "binary tree height"
+    ],
+    "interviewFrequency": 4,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given the root of a binary tree, return the length of the diameter of the tree. The diameter of a binary tree is the length of the longest path between any two nodes in a tree. This path may or may not pass through the root. The length of a path between two nodes is represented by the number of edges between them.",
+    "inputFormat": "1\nnode_values",
+    "outputFormat": "diameter",
+    "notes": "The diameter is calculated as the number of edges between the two furthest nodes.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "number of nodes",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of nodes in the tree."
+      },
+      {
+        "variable": "node values",
+        "type": "integer",
+        "min": -10000,
+        "max": 10000,
+        "description": "The values of the nodes in the tree."
+      }
+    ],
+    "examples": [
+      {
+        "input": "1\n1 2 3 4 5",
+        "output": "0",
+        "explanation": "The diameter is 3, which is the path from node 1 to node 5 (1 -> 2 -> 3 -> 5)."
+      },
+      {
+        "input": "1\n1 2",
+        "output": "0",
+        "explanation": "The diameter is 1, which is the path from node 1 to node 2."
+      },
+      {
+        "input": "1\n1",
+        "output": "0",
+        "explanation": "The diameter is 0, since there is only one node."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "The diameter of a binary tree can be calculated by finding the longest path between any two nodes, which may or may not pass through the root node."
+    },
+    {
+      "order": 2,
+      "text": "To solve this problem, you can use a recursive approach to calculate the height of each subtree and keep track of the maximum diameter found so far."
+    },
+    {
+      "order": 3,
+      "text": "The key insight is to realize that the diameter of a tree can be calculated by finding the maximum of the following: the diameter of the left subtree, the diameter of the right subtree, and the height of the left subtree plus the height of the right subtree plus one."
+    }
+  ],
+  "editorial": {
+    "title": "Diameter of Binary Tree",
+    "intuition": "The problem requires finding the longest path between any two nodes in a binary tree, which is also known as the diameter. A key observation is that this path must pass through a node and its children, allowing us to calculate the diameter by considering the depths of subtrees.",
+    "bruteForce": "A brute force approach would involve computing the distance between every pair of nodes, which would result in a time complexity of O(n^2) due to the number of nodes and the need to potentially traverse the entire tree for each pair. This is inefficient for large trees.",
+    "betterSolution": "The optimal approach involves a single pass through the tree, calculating the depth of each subtree and updating the maximum diameter found so far. This is achieved through a depth-first search (DFS) strategy.",
+    "optimalSolution": "The solution utilizes a DFS approach, where for each node, we calculate the depth of its left and right subtrees. The diameter is updated if the sum of these depths is greater than the current maximum. The depth of a node is then calculated as 1 plus the maximum depth of its children.",
+    "proofOfCorrectness": "The correctness of this approach can be proven by induction. For any node, if the maximum diameter does not pass through it, then it must be contained within one of its subtrees. The DFS ensures that we consider all possible diameters. The base case is a tree with one node, where the diameter is 0. For larger trees, assuming correctness for subtrees, the algorithm correctly calculates the diameter through each node and its subtrees.",
+    "dryRun": "Testing with a tree of nodes [1,2,3,4,5] (representing the nodes in a level-order traversal), the algorithm constructs the tree and calculates the diameter correctly as 3 (path 4-2-5).",
+    "commonMistakes": [
+      "Not considering that the diameter could be 0 if the tree only has one node.",
+      "Forgetting to update the diameter when the left and right subtrees of a node have significant depth.",
+      "Incorrectly calculating the depth of a node by not considering the maximum depth of its children."
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nstruct TreeNode {\n    int val;\n    TreeNode *left;\n    TreeNode *right;\n    TreeNode(int x) : val(x), left(NULL), right(NULL) {}\n};\n\nint diameterOfBinaryTree(TreeNode* root) {\n    // TODO: implement\n    return 0;\n}\n\n// @driver-code-start\nint main() {\n    int n;\n    if (cin >> n) {\n        vector<int> nums(n);\n        for (int i = 0; i < n; i++) cin >> nums[i];\n        if (nums.empty()) { cout << 0 << endl; return 0; }\n        TreeNode* root = new TreeNode(nums[0]);\n        queue<TreeNode*> q;\n        q.push(root);\n        int i = 1;\n        while (!q.empty() && i < nums.size()) {\n            TreeNode* node = q.front(); q.pop();\n            if (i < nums.size() && nums[i] != -1) {\n                node->left = new TreeNode(nums[i]);\n                q.push(node->left);\n            }\n            i++;\n            if (i < nums.size() && nums[i] != -1) {\n                node->right = new TreeNode(nums[i]);\n                q.push(node->right);\n            }\n            i++;\n        }\n        cout << diameterOfBinaryTree(root) << endl;\n    }\n    return 0;\n}\n",
+    "java": "import java.util.*;\n\npublic class Main {\n    public static int diameterOfBinaryTree(TreeNode root) {\n        // TODO: implement\n        return 0;\n    }\n\n    // @driver-code-start\npublic static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        if (scanner.hasNextInt()) {\n            int n = scanner.nextInt();\n            int[] nums = new int[n];\n            for (int i = 0; i < n; i++) nums[i] = scanner.nextInt();\n            if (nums.length == 0) { System.out.println(0); return; }\n            TreeNode root = new TreeNode(nums[0]);\n            Queue<TreeNode> q = new LinkedList<>();\n            q.add(root);\n            int i = 1;\n            while (!q.isEmpty() && i < nums.length) {\n                TreeNode node = q.poll();\n                if (i < nums.length && nums[i] != -1) {\n                    node.left = new TreeNode(nums[i]);\n                    q.add(node.left);\n                }\n                i++;\n                if (i < nums.length && nums[i] != -1) {\n                    node.right = new TreeNode(nums[i]);\n                    q.add(node.right);\n                }\n                i++;\n            }\n            System.out.println(diameterOfBinaryTree(root));\n        }\n    }\n}\n\nclass TreeNode {\n    int val;\n    TreeNode left;\n    TreeNode right;\n    TreeNode() {}\n    TreeNode(int val) { this.val = val; }\n    TreeNode(int val, TreeNode left, TreeNode right) { this.val = val; this.left = left; this.right = right; }\n}\n",
+    "python": "import sys\n\nclass TreeNode:\n    def __init__(self, val=0, left=None, right=None):\n        self.val = val\n        self.left = left\n        self.right = right\n\ndef diameterOfBinaryTree(root):\n    # TODO: implement\n    pass\n\n# @driver-code-start\ndef main():\n    import sys\n    from collections import deque\n    input_data = sys.stdin.read().split()\n    if not input_data:\n        return\n    n = int(input_data[0])\n    nums = [int(x) for x in input_data[1:n+1]]\n    if not nums:\n        print(0)\n        return\n    root = TreeNode(nums[0])\n    q = deque([root])\n    i = 1\n    while q and i < len(nums):\n        node = q.popleft()\n        if i < len(nums) and nums[i] != -1:\n            node.left = TreeNode(nums[i])\n            q.append(node.left)\n        i += 1\n        if i < len(nums) and nums[i] != -1:\n            node.right = TreeNode(nums[i])\n            q.append(node.right)\n        i += 1\n    print(diameterOfBinaryTree(root))\n\nif __name__ == \"__main__\":\n    main()\n",
+    "javascript": "// @driver-code-start\nconst readline = require(\"readline\");\nconst rl = readline.createInterface({\n    input: process.stdin,\n    output: process.stdout\n});\nlet input = \"\";\nrl.on(\"line\", (line) => {\n    input += line + \"\\n\";\n});\nrl.on(\"close\", () => {\n    const inputLines = input.trim().split(\"\\n\");\n    if (inputLines.length < 2) return;\n    const n = parseInt(inputLines[0]);\n    const nums = inputLines[1].split(\" \").map(Number);\n    if (nums.length === 0 || isNaN(nums[0])) {\n        console.log(0);\n        return;\n    }\n    const root = new TreeNode(nums[0]);\n    const q = [root];\n    let i = 1;\n    while (q.length > 0 && i < nums.length) {\n        const node = q.shift();\n        if (i < nums.length && nums[i] !== -1) {\n            node.left = new TreeNode(nums[i]);\n            q.push(node.left);\n        }\n        i++;\n        if (i < nums.length && nums[i] !== -1) {\n            node.right = new TreeNode(nums[i]);\n            q.push(node.right);\n        }\n        i++;\n    }\n    const solution = new Solution();\n    console.log(solution.diameterOfBinaryTree(root));\n});\nclass TreeNode {\n    constructor(val, left, right) {\n        this.val = (val===undefined ? 0 : val)\n        this.left = (left===undefined ? null : left)\n        this.right = (right===undefined ? null : right)\n    }\n}\n\nclass Solution {\n    diameterOfBinaryTree(root) {\n        // TODO: implement\n        return 0;\n    }\n}\n"
+  },
+  "functionSignature": {
+    "cpp": "int diameterOfBinaryTree(TreeNode* root)",
+    "java": "public static int diameterOfBinaryTree(TreeNode root)",
+    "python": "def diameterOfBinaryTree(root):",
+    "javascript": "function diameterOfBinaryTree(root)"
+  },
+  "solutions": {
+    "python": "import sys\nit = iter(sys.stdin.read().split())\nn = int(next(it))\nnums = [int(next(it)) for _ in range(n)]\nclass TreeNode:\n    def __init__(self, x):\n        self.val = x\n        self.left = None\n        self.right = None\ndef diameterOfBinaryTree(nums):\n    if not nums:\n        return 0\n    root = TreeNode(nums[0])\n    queue = [root]\n    i = 1\n    while queue and i < len(nums):\n        node = queue.pop(0)\n        if i < len(nums) and nums[i] != -1:\n            node.left = TreeNode(nums[i])\n            queue.append(node.left)\n        i += 1\n        if i < len(nums) and nums[i] != -1:\n            node.right = TreeNode(nums[i])\n            queue.append(node.right)\n        i += 1\n    ans = [0]\n    def depth(node):\n        if not node: return 0\n        L = depth(node.left)\n        R = depth(node.right)\n        ans[0] = max(ans[0], L+R)\n        return 1 + max(L, R)\n    depth(root)\n    return ans[0]\nprint(diameterOfBinaryTree(nums))",
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\nstruct TreeNode {\n    int val;\n    TreeNode *left;\n    TreeNode *right;\n    TreeNode(int x) : val(x), left(NULL), right(NULL) {}\n};\nint diameterOfBinaryTree(vector<int>& nums) {\n    if (nums.empty()) return 0;\n    TreeNode* root = new TreeNode(nums[0]);\n    queue<TreeNode*> q;\n    q.push(root);\n    int i = 1;\n    while (!q.empty() && i < nums.size()) {\n        TreeNode* node = q.front(); q.pop();\n        if (i < nums.size() && nums[i] != -1) {\n            node->left = new TreeNode(nums[i]);\n            q.push(node->left);\n        }\n        i++;\n        if (i < nums.size() && nums[i] != -1) {\n            node->right = new TreeNode(nums[i]);\n            q.push(node->right);\n        }\n        i++;\n    }\n    int ans = 0;\n    function<int(TreeNode*)> depth = [&](TreeNode* node) {\n        if (!node) return 0;\n        int L = depth(node->left);\n        int R = depth(node->right);\n        ans = max(ans, L+R);\n        return 1 + max(L, R);\n    };\n    depth(root);\n    return ans;\n}\nint main() {\n    int n;\n    cin >> n;\n    vector<int> nums(n);\n    for (int i = 0; i < n; i++) cin >> nums[i];\n    cout << diameterOfBinaryTree(nums) << endl;\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample",
+      "input": "1\n1 2 3 4 5",
+      "output": "0",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint",
+      "input": "1\n0",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "max_constraint",
+      "input": "1\n1000000000",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "max_constraint"
+    },
+    {
+      "id": "boundary",
+      "input": "3\n-1 0 1",
+      "output": "2",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    },
+    {
+      "id": "duplicate",
+      "input": "6\n1 1 1 1 1 1",
+      "output": "4",
+      "isVisible": false,
+      "weight": 1,
+      "category": "duplicate"
+    },
+    {
+      "id": "sorted",
+      "input": "6\n1 2 3 4 5 6",
+      "output": "4",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sorted"
+    },
+    {
+      "id": "reverse_sorted",
+      "input": "6\n6 5 4 3 2 1",
+      "output": "4",
+      "isVisible": false,
+      "weight": 1,
+      "category": "reverse_sorted"
+    },
+    {
+      "id": "negative",
+      "input": "5\n-5 -4 -3 -2 -1",
+      "output": "3",
+      "isVisible": false,
+      "weight": 1,
+      "category": "negative"
+    },
+    {
+      "id": "zero",
+      "input": "5\n0 0 0 0 0",
+      "output": "3",
+      "isVisible": false,
+      "weight": 1,
+      "category": "zero"
+    },
+    {
+      "id": "one",
+      "input": "2\n1 1",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "one"
+    },
+    {
+      "id": "repeated",
+      "input": "8\n2 2 2 2 3 3 3 3",
+      "output": "5",
+      "isVisible": false,
+      "weight": 1,
+      "category": "repeated"
+    },
+    {
+      "id": "large_random",
+      "input": "10\n309 -772 -949 518 -437 -499 -543 -715 508 -791",
+      "output": "5",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    },
+    {
+      "id": "adversarial",
+      "input": "12\n385 516 827 116 -822 209 -136 -935 -939 -809 -553 -524",
+      "output": "6",
+      "isVisible": false,
+      "weight": 1,
+      "category": "adversarial"
+    },
+    {
+      "id": "random_13",
+      "input": "21\n6 9 -10 7 -4 10 7 3 -3 4 8 -2 -10 -5 3 0 -2 -6 -4 0 -7",
+      "output": "7",
+      "isVisible": false,
+      "weight": 1,
+      "category": "random"
+    },
+    {
+      "id": "random_14",
+      "input": "22\n-8 2 -7 1 1 9 -2 -9 4 7 -7 2 -8 7 -1 10 9 1 8 -4 -8 -9",
+      "output": "7",
+      "isVisible": false,
+      "weight": 1,
+      "category": "random"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

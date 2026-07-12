@@ -1,0 +1,285 @@
+{
+  "_id": "candy",
+  "title": "Candy",
+  "slug": "candy",
+  "difficulty": "Hard",
+  "category": "GREEDY",
+  "subCategory": "Medium / Hard Problems",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 10,
+    "points": 500,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "Greedy Algorithms"
+    ],
+    "patterns": [
+      "candy problem",
+      "children and candies"
+    ],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "algorithm",
+      "greedy",
+      "problem"
+    ],
+    "keywords": [
+      "candy",
+      "children",
+      "greedy algorithm"
+    ],
+    "interviewFrequency": 4,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "You are given a line of N children, each with a rating value. You must distribute candies to the children subject to the following rules: 1) Every child must receive at least one candy. 2) Any child with a higher rating than an immediate neighbor must receive more candies than that neighbor. Your task is to compute the minimum total number of candies required to satisfy both conditions.\n\nInput Format:\n- The first line contains a single integer N, the number of children.\n- The second line contains N space‑separated integers rating[1], rating[2], ..., rating[N] representing the rating of each child in order.\n\nOutput Format:\n- Output a single integer, the minimum total number of candies needed.\n\nNotes:\n- The children are arranged in a straight line; only the left and right neighbors affect the distribution.\n- The answer can be large, so use 64‑bit integer types where appropriate.\n",
+    "inputFormat": "N\nratings[1] ratings[2] ... ratings[N]",
+    "outputFormat": "minimum_total_candies",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "N",
+        "type": "integer",
+        "min": 1,
+        "max": 100000,
+        "description": "Number of children"
+      },
+      {
+        "variable": "rating[i]",
+        "type": "integer",
+        "min": 1,
+        "max": 1000000,
+        "description": "Rating of the i‑th child"
+      }
+    ],
+    "examples": [
+      {
+        "input": "3\n1 2 2",
+        "output": "4",
+        "explanation": "Give candies [1,2,1] → total 4."
+      },
+      {
+        "input": "10\n2 4 2 6 1 7 8 9 2 1",
+        "output": "19",
+        "explanation": "One optimal distribution is [1,2,1,2,1,2,3,4,1,1] → total 19."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Start by initializing a candies array of the same length as the ratings array, where each element is initially set to 1. This represents that every child receives at least one candy."
+    },
+    {
+      "order": 2,
+      "text": "Then, iterate through the ratings array from left to right. For each child, if their rating is higher than their left neighbor's rating, update the candies array to assign this child one more candy than their left neighbor."
+    },
+    {
+      "order": 3,
+      "text": "Now, iterate through the ratings array from right to left. For each child, if their rating is higher than their right neighbor's rating, update the candies array to assign this child one more candy than their right neighbor."
+    },
+    {
+      "order": 4,
+      "text": "Finally, calculate the total number of candies by summing up all elements in the candies array."
+    },
+    {
+      "order": 5,
+      "text": "The key insight is that we are essentially building two separate arrays, one from the left and one from the right, and then combining them to get the final answer. This way, we ensure that each child receives at least one candy and any child with a higher rating than an immediate neighbor receives more candies."
+    }
+  ],
+  "editorial": {
+    "title": "Distributing Candies Efficiently",
+    "intuition": "The problem asks for the minimal candies that respect local inequalities between adjacent children. A naive approach checks every possible distribution, which explodes combinatorially. The key insight is that each child’s candy count depends only on its immediate neighbors, so we can propagate constraints in two passes.",
+    "bruteForce": "A brute‑force solution would enumerate all assignments of candies that satisfy the inequalities, perhaps via backtracking or dynamic programming over all possible counts. While correct, this explodes in time: for N up to 100 000 the state space is astronomically large, leading to exponential or at best quadratic runtimes that quickly become infeasible.",
+    "betterSolution": "The optimal strategy is to perform two linear scans. First, sweep left‑to‑right, ensuring that any child with a higher rating than the left neighbor gets one more candy than that neighbor. Second, sweep right‑to‑left, correcting any violations where a child has a higher rating than the right neighbor but not enough candies. The final candy array is the pointwise maximum of the two passes, guaranteeing all constraints are met with the minimal total.",
+    "optimalSolution": "After the first pass each child satisfies the left inequality. The second pass only increases candies when necessary to satisfy the right inequality, never decreasing any value. Thus every child ends up with the smallest possible number that respects both neighbors, and the sum is minimal.",
+    "proofOfCorrectness": "Let C be the candies after the two passes. For any adjacent pair (i,i+1): if rating[i]>rating[i+1], the second pass ensures C[i]>C[i+1] because it sets C[i]=C[i+1]+1 when needed. If rating[i]<rating[i+1], the first pass ensures C[i+1]>C[i]. If ratings are equal, neither pass changes candies, so inequalities are not violated. Any other distribution that satisfies the constraints must give each child at least as many candies as C, because C already satisfies the minimal requirement from each direction. Therefore C is optimal.",
+    "dryRun": "Consider ratings [1,0,2].\n- Start with candies [1,1,1].\n- Left‑to‑right: child1 (rating0) < child0, no change; child2 (rating2) > child1, set candies[2]=candies[1]+1=2 → [1,1,2].\n- Right‑to‑left: child1 rating0 < child2, no change; child0 rating1 > child1, but candies[0]=1 <= candies[1]=1, so set candies[0]=candies[1]+1=2 → [2,1,2].\nSum=5, which is minimal.",
+    "commonMistakes": [
+      "Assuming a single pass suffices; the right inequality can still fail after the left pass.",
+      "Using a greedy increase only when strictly greater, ignoring equal ratings that may need adjustment in the opposite direction.",
+      "Overlooking that candies must be integers; using floating point or negative values leads to invalid solutions.",
+      "Implementing the second pass incorrectly by comparing to the original candies instead of the updated ones.",
+      "Not initializing all candies to 1, leading to zero or negative counts.",
+      "Misinterpreting the problem as requiring equal candies for equal ratings, which is unnecessary."
+    ],
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(N)"
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nlong long solve() {\n    // TODO: implement\n    long long result = 0;\n    return result;\n}\n\n// @driver-code-start\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    cout << solve();\n    return 0;\n}",
+    "java": "import java.io.*;\nimport java.util.*;\n\npublic class Main {\n    public static long solve() throws IOException {\n        // TODO: implement\n        long result = 0L;\n        return result;\n    }\n\n    // @driver-code-start\npublic static void main(String[] args) throws Exception {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        System.out.print(solve());\n    }\n}",
+    "python": "import sys\n\ndef solve():\n    # TODO: implement\n    result = 0\n    print(result)\n\n# @driver-code-start\nif __name__ == \"__main__\":\n    solve()",
+    "javascript": "// @driver-code-start\nconst fs = require('fs');\nfunction solve() {\n    // TODO: implement\n    let result = 0;\n    return result;\n}\nconst input = fs.readFileSync(0, 'utf8');\nconsole.log(solve());"
+  },
+  "functionSignature": {
+    "cpp": "long long solve()",
+    "java": "public static long solve() throws IOException",
+    "python": "def solve()",
+    "javascript": "function solve()"
+  },
+  "solutions": {
+    "python": "import sys\n\ndef solve():\n    it = iter(sys.stdin.read().split())\n    try:\n        n = int(next(it))\n    except StopIteration:\n        return\n    ratings = [int(next(it)) for _ in range(n)]\n    candies = [1] * n\n    # left to right\n    for i in range(1, n):\n        if ratings[i] > ratings[i-1]:\n            candies[i] = candies[i-1] + 1\n    # right to left\n    for i in range(n-2, -1, -1):\n        if ratings[i] > ratings[i+1] and candies[i] <= candies[i+1]:\n            candies[i] = candies[i+1] + 1\n    print(sum(candies))\n\nif __name__ == \"__main__\":\n    solve()\n",
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\nint main(){\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int n;\n    if(!(cin>>n)) return 0;\n    vector<long long> rating(n);\n    for(int i=0;i<n;++i) cin>>rating[i];\n    vector<long long> candy(n,1);\n    for(int i=1;i<n;++i){\n        if(rating[i]>rating[i-1]) candy[i]=candy[i-1]+1;\n    }\n    for(int i=n-2;i>=0;--i){\n        if(rating[i]>rating[i+1] && candy[i]<=candy[i+1])\n            candy[i]=candy[i+1]+1;\n    }\n    long long total=0;\n    for(long long c: candy) total+=c;\n    cout<<total;\n    return 0;\n}\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.5
+  },
+  "testCases": [
+    {
+      "id": "sample",
+      "input": "3\n1 2 2",
+      "output": "4",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint",
+      "input": "1\n0",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "max_constraint",
+      "input": "1\n1000000000",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "max_constraint"
+    },
+    {
+      "id": "boundary",
+      "input": "3\n-1 0 1",
+      "output": "6",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    },
+    {
+      "id": "duplicate",
+      "input": "6\n1 1 1 1 1 1",
+      "output": "6",
+      "isVisible": false,
+      "weight": 1,
+      "category": "duplicate"
+    },
+    {
+      "id": "sorted",
+      "input": "6\n1 2 3 4 5 6",
+      "output": "21",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sorted"
+    },
+    {
+      "id": "reverse_sorted",
+      "input": "6\n6 5 4 3 2 1",
+      "output": "21",
+      "isVisible": false,
+      "weight": 1,
+      "category": "reverse_sorted"
+    },
+    {
+      "id": "negative",
+      "input": "5\n-5 -4 -3 -2 -1",
+      "output": "15",
+      "isVisible": false,
+      "weight": 1,
+      "category": "negative"
+    },
+    {
+      "id": "zero",
+      "input": "5\n0 0 0 0 0",
+      "output": "5",
+      "isVisible": false,
+      "weight": 1,
+      "category": "zero"
+    },
+    {
+      "id": "one",
+      "input": "2\n1 1",
+      "output": "2",
+      "isVisible": false,
+      "weight": 1,
+      "category": "one"
+    },
+    {
+      "id": "repeated",
+      "input": "8\n2 2 2 2 3 3 3 3",
+      "output": "9",
+      "isVisible": false,
+      "weight": 1,
+      "category": "repeated"
+    },
+    {
+      "id": "large_random",
+      "input": "10\n309 -772 -949 518 -437 -499 -543 -715 508 -791",
+      "output": "24",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    },
+    {
+      "id": "adversarial",
+      "input": "12\n385 516 827 116 -822 209 -136 -935 -939 -809 -553 -524",
+      "output": "28",
+      "isVisible": false,
+      "weight": 1,
+      "category": "adversarial"
+    },
+    {
+      "id": "random_13",
+      "input": "21\n6 9 -10 7 -4 10 7 3 -3 4 8 -2 -10 -5 3 0 -2 -6 -4 0 -7",
+      "output": "43",
+      "isVisible": false,
+      "weight": 1,
+      "category": "random"
+    },
+    {
+      "id": "random_14",
+      "input": "22\n-8 2 -7 1 1 9 -2 -9 4 7 -7 2 -8 7 -1 10 9 1 8 -4 -8 -9",
+      "output": "41",
+      "isVisible": false,
+      "weight": 1,
+      "category": "random"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

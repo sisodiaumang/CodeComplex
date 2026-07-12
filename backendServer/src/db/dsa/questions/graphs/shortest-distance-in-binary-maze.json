@@ -1,0 +1,321 @@
+{
+  "_id": "shortest-distance-in-binary-maze",
+  "title": "Shortest Distance in Binary Maze",
+  "slug": "shortest-distance-in-binary-maze",
+  "difficulty": "Hard",
+  "category": "GRAPH",
+  "subCategory": "Shortest Path Algorithms",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 45,
+    "points": 800,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "Graphs",
+      "Shortest Path Algorithms",
+      "Breadth-First Search",
+      "Depth-First Search"
+    ],
+    "patterns": [
+      "shortest path",
+      "binary maze",
+      "graph traversal",
+      "maze traversal",
+      "distance calculation",
+      "pathfinding"
+    ],
+    "prerequisites": [
+      "Bellman-Ford Algorithm",
+      "Dijkstra's Algorithm",
+      "Floyd-Warshall Algorithm"
+    ],
+    "variants": [],
+    "tags": [
+      "graph theory",
+      "shortest path",
+      "binary tree",
+      "maze",
+      "pathfinding",
+      "breadth-first search",
+      "depth-first search",
+      "graph traversal"
+    ],
+    "keywords": [
+      "shortest distance",
+      "binary maze",
+      "graph traversal",
+      "pathfinding algorithm",
+      "breadth-first search",
+      "depth-first search",
+      "maze traversal",
+      "distance calculation",
+      "graph theory",
+      "shortest path algorithm"
+    ],
+    "interviewFrequency": 4,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "You are given a rectangular binary maze of size N rows and M columns. Each cell of the maze is either open (represented by 0) or blocked (represented by 1). From any open cell you can move to its four directly adjacent cells (up, down, left, right) provided the destination cell is also open. Moving to any adjacent open cell costs exactly 1 unit of distance.\n\nYour task is to compute the minimum number of moves required to travel from a given source cell to a given destination cell. If the destination cannot be reached, output -1.\n\n**Input Format**\n- The first line contains two integers N and M — the number of rows and columns of the maze.\n- The next N lines each contain a string of length M consisting only of characters '0' and '1' describing the maze. '0' denotes an open cell, '1' denotes a blocked cell.\n- The following line contains two integers sr and sc — the 0‑based row and column indices of the source cell.\n- The final line contains two integers dr and dc — the 0‑based row and column indices of the destination cell.\n\n**Output Format**\n- Print a single integer — the length of the shortest path from the source to the destination. If no such path exists, print -1.\n\n**Constraints**\n- 1 ≤ N ≤ 1000\n- 1 ≤ M ≤ 1000\n- 0 ≤ sr < N, 0 ≤ sc < M\n- 0 ≤ dr < N, 0 ≤ dc < M\n- The maze contains only characters '0' and '1'.\n\n**Notes**\n- The source and destination cells are guaranteed to be open (i.e., their values in the maze are '0').\n- Because N·M can be up to 10⁶, an O(N·M) solution using BFS is required.\n",
+    "inputFormat": "N M\nmazeRow1\nmazeRow2\n...\nmazeRowN\nsr sc\ndr dc",
+    "outputFormat": "shortestDistance",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "N",
+        "type": "integer",
+        "min": 1,
+        "max": 1000
+      },
+      {
+        "variable": "M",
+        "type": "integer",
+        "min": 1,
+        "max": 1000
+      },
+      {
+        "variable": "sr",
+        "type": "integer",
+        "min": 0
+      },
+      {
+        "variable": "sc",
+        "type": "integer",
+        "min": 0
+      },
+      {
+        "variable": "dr",
+        "type": "integer",
+        "min": 0
+      },
+      {
+        "variable": "dc",
+        "type": "integer",
+        "min": 0
+      }
+    ],
+    "examples": [
+      {
+        "input": "3 4\n0101\n0000\n1110\n0 0\n2 3",
+        "output": "5",
+        "explanation": "One of the shortest paths is (0,0) → (0,1) → (1,1) → (1,2) → (1,3) → (2,3) with 5 moves."
+      },
+      {
+        "input": "5 5\n00000\n01110\n01010\n01110\n00000\n0 0\n4 4",
+        "output": "8",
+        "explanation": "The path goes around the central blocked region, requiring 8 moves."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "The problem can be solved using Breadth-First Search (BFS) algorithm. BFS is suitable for finding the shortest path in an unweighted graph or maze."
+    },
+    {
+      "order": 2,
+      "text": "The BFS algorithm starts from the source cell and explores all its neighboring cells at the current depth level before moving to the next depth level. This process continues until the destination cell is found or all reachable cells have been visited."
+    },
+    {
+      "order": 3,
+      "text": "To implement BFS, you need to maintain a queue to store the cells to be visited. The queue will be initialized with the source cell. Then, in each iteration, you will dequeue a cell, mark it as visited, and enqueue all its unvisited neighboring cells."
+    },
+    {
+      "order": 4,
+      "text": "To determine whether the destination cell is reachable, you need to keep track of the visited cells. You can use a separate data structure, such as a boolean matrix or a set, to store the visited cells."
+    },
+    {
+      "order": 5,
+      "text": "Since the maze is rectangular and you can move only to adjacent open cells, you can use a 4-directional movement (up, down, left, right) to explore the neighboring cells."
+    }
+  ],
+  "editorial": {
+    "title": "Shortest Path in a Binary Maze: From Brute Force to Optimal BFS",
+    "intuition": "In a maze where every cell is either open or blocked, the shortest route from a start to a destination is simply the one that visits the fewest cells. Because every move has the same cost, the problem reduces to finding the minimum number of steps in an unweighted graph where vertices are open cells and edges connect orthogonally adjacent open cells. The key insight is that a breadth‑first search (BFS) explores the graph in layers of increasing distance, guaranteeing that the first time we reach the target we have used the shortest possible path.",
+    "bruteForce": "A naïve approach would enumerate all simple paths from the start, perhaps via depth‑first search or recursive backtracking, keeping track of the path length and updating a global minimum. While this guarantees correctness—every possible route is considered—the number of paths grows exponentially with the size of the maze. In the worst case of an all‑open grid, the algorithm would explore on the order of 4^(N*M) possibilities, which quickly becomes infeasible even for modest dimensions. The time complexity is therefore exponential, and the space usage can balloon due to recursion depth and path storage.",
+    "betterSolution": "Instead of exploring paths arbitrarily, we treat the maze as an unweighted graph and apply BFS. BFS maintains a queue of frontier cells and a visited matrix. Each dequeue yields a cell at distance d from the start; all its unvisited, open neighbors are enqueued with distance d+1. When the destination is dequeued, d is the length of the shortest path. This method visits each cell at most once and processes each edge a constant number of times, leading to linear time in the number of cells.",
+    "optimalSolution": "The optimal solution is exactly the BFS described above. It runs in O(N*M) time and uses O(N*M) space for the visited matrix and queue, matching the theoretical lower bound for exploring all reachable cells in an unweighted graph. The algorithm is simple to implement and scales to the maximum input size of 1000×1000.",
+    "proofOfCorrectness": "BFS explores vertices in non‑decreasing order of their distance from the start. When a vertex is first dequeued, all shorter paths to it have already been examined, because any shorter path would have required reaching the vertex earlier in the queue. Therefore, the distance assigned to the destination upon its first dequeue is the minimal possible. Since we never revisit a cell once marked visited, we avoid cycles and redundant work, preserving correctness while ensuring linearity.",
+    "dryRun": "Consider a 3×3 maze with all cells open and start at (0,0), destination at (2,2). BFS queue evolves as follows:\n1. Start: queue=[(0,0,0)]\n2. Dequeue (0,0,0); enqueue neighbors (1,0,1),(0,1,1)\n3. Dequeue (1,0,1); enqueue (2,0,2),(1,1,2)\n4. Dequeue (0,1,1); enqueue (0,2,2),(1,1,2) – (1,1,2) already enqueued\n5. Dequeue (2,0,2); enqueue (2,1,3)\n6. Dequeue (1,1,2); enqueue (1,2,3),(2,1,3)\n7. Dequeue (0,2,2); enqueue (1,2,3)\n8. Dequeue (2,1,3); enqueue (2,2,4) – destination reached with distance 4, which is optimal.",
+    "commonMistakes": [
+      "Assuming a depth‑first search will find the shortest path; DFS can get trapped in long branches before exploring shorter ones.\nTreating diagonal moves as allowed when the problem specifies only orthogonal moves.\nNot marking cells as visited upon enqueueing, leading to multiple enqueues of the same cell and exponential blowup.\nUsing recursion for BFS, which can cause stack overflow on large grids.\nMisinterpreting the input format, e.g., reading the maze rows as integers instead of strings.\nIgnoring the case where start equals destination and immediately returning 0."
+    ],
+    "timeComplexity": "O(N*M)",
+    "spaceComplexity": "O(N*M)"
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nint solve() {\n    // TODO: implement BFS to find shortest path\n    return -1;\n}\n\n// @driver-code-start\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    cout << solve();\n    return 0;\n}",
+    "java": "import java.io.*;\nimport java.util.*;\n\npublic class Main {\n    public static int solve() {\n        // TODO: implement BFS to find shortest path\n        return -1;\n    }\n\n    // @driver-code-start\npublic static void main(String[] args) throws Exception {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        // Input reading can be added here\n        System.out.print(solve());\n    }\n}",
+    "python": "import sys\n\ndef solve():\n    # TODO: implement BFS to find shortest path\n    pass\n\n# @driver-code-start\nif __name__ == \"__main__\":\n    solve()",
+    "javascript": "// @driver-code-start\nconst fs = require('fs');\n\nfunction solve() {\n    // TODO: implement BFS to find shortest path\n    return -1;\n}\n\nconsole.log(solve());"
+  },
+  "functionSignature": {
+    "cpp": "int solve()",
+    "java": "public static int solve()",
+    "python": "def solve():",
+    "javascript": "function solve()"
+  },
+  "solutions": {
+    "python": "import sys\nfrom collections import deque\n\ndef main():\n    data = sys.stdin.read().split()\n    it = iter(data)\n    try:\n        n = int(next(it))\n    except StopIteration:\n        return\n    m = int(next(it))\n    maze = []\n    for _ in range(n):\n        row = list(next(it).strip())\n        maze.append(row)\n    sr = int(next(it)); sc = int(next(it))\n    dr = int(next(it)); dc = int(next(it))\n    if (sr, sc) == (dr, dc):\n        print(0)\n        return\n    # BFS\n    q = deque()\n    q.append((sr, sc, 0))\n    visited = [[False]*m for _ in range(n)]\n    visited[sr][sc] = True\n    dirs = [(1,0),(-1,0),(0,1),(0,-1)]\n    while q:\n        r,c,d = q.popleft()\n        nd = d+1\n        for drc, dcc in dirs:\n            nr = r + drc\n            nc = c + dcc\n            if 0 <= nr < n and 0 <= nc < m and not visited[nr][nc] and maze[nr][nc] == '0':\n                if (nr, nc) == (dr, dc):\n                    print(nd)\n                    return\n                visited[nr][nc] = True\n                q.append((nr, nc, nd))\n    print(-1)\n\nif __name__ == \"__main__\":\n    main()\n",
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\nint main(){\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int n,m;\n    if(!(cin>>n>>m)) return 0;\n    vector<string> maze(n);\n    for(int i=0;i<n;++i){\n        cin>>maze[i];\n    }\n    int sr,sc,dr,dc;\n    cin>>sr>>sc;\n    cin>>dr>>dc;\n    if(sr==dr && sc==dc){\n        cout<<0<<\"\\n\";\n        return 0;\n    }\n    vector<vector<char>> visited(n, vector<char>(m,0));\n    queue<array<int,3>> q;\n    q.push({sr,sc,0});\n    visited[sr][sc]=1;\n    const int dirs[4][2]={{1,0},{-1,0},{0,1},{0,-1}};\n    while(!q.empty()){\n        auto cur=q.front();q.pop();\n        int r=cur[0],c=cur[1],d=cur[2];\n        int nd=d+1;\n        for(auto &dir:dirs){\n            int nr=r+dir[0];\n            int nc=c+dir[1];\n            if(nr>=0 && nr<n && nc>=0 && nc<m && !visited[nr][nc] && maze[nr][nc]=='0'){\n                if(nr==dr && nc==dc){\n                    cout<<nd<<\"\\n\";\n                    return 0;\n                }\n                visited[nr][nc]=1;\n                q.push({nr,nc,nd});\n            }\n        }\n    }\n    cout<<-1<<\"\\n\";\n    return 0;\n}\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.5
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "3 4\n0101\n0000\n1110\n0 0\n2 3",
+      "output": "5",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "5 5\n00000\n01110\n01010\n01110\n00000\n0 0\n4 4",
+      "output": "8",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint_3",
+      "input": "1 1\n0\n0 0\n0 0",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "boundary_4",
+      "input": "3 3\n110\n010\n110\n1 1\n2 2",
+      "output": "2",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    },
+    {
+      "id": "duplicate_5",
+      "input": "3 3\n110\n010\n110\n1 1\n1 1",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "duplicate"
+    },
+    {
+      "id": "sorted_6",
+      "input": "3 3\n010\n010\n010\n0 0\n2 2",
+      "output": "-1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sorted"
+    },
+    {
+      "id": "reverse_sorted_7",
+      "input": "3 3\n010\n010\n010\n2 2\n0 0",
+      "output": "-1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "reverse_sorted"
+    },
+    {
+      "id": "repeated_8",
+      "input": "3 3\n000\n000\n000\n0 0\n1 1",
+      "output": "2",
+      "isVisible": false,
+      "weight": 1,
+      "category": "repeated"
+    },
+    {
+      "id": "repeated_9",
+      "input": "5 5\n11111\n10001\n10001\n10001\n11111\n2 2\n4 4",
+      "output": "-1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "repeated"
+    },
+    {
+      "id": "zero_10",
+      "input": "3 3\n000\n000\n000\n0 0\n2 2",
+      "output": "4",
+      "isVisible": false,
+      "weight": 1,
+      "category": "zero"
+    },
+    {
+      "id": "one_11",
+      "input": "3 3\n000\n001\n000\n0 0\n2 2",
+      "output": "4",
+      "isVisible": false,
+      "weight": 1,
+      "category": "one"
+    },
+    {
+      "id": "negative_12",
+      "input": "5 5\n11111\n10001\n10101\n10001\n11111\n0 0\n4 4",
+      "output": "-1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "negative"
+    },
+    {
+      "id": "adversarial_14",
+      "input": "5 5\n01010\n10101\n01010\n10101\n01010\n0 0\n4 4",
+      "output": "-1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "adversarial"
+    },
+    {
+      "id": "adversarial_16",
+      "input": "3 3\n101\n010\n101\n0 0\n2 2",
+      "output": "-1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "adversarial"
+    },
+    {
+      "id": "large_random_17",
+      "input": "10 10\n0000000000\n0000000000\n0000000000\n0000000000\n0000000000\n0000000000\n0000000000\n0000000000\n0000000000\n0000000000\n0 0\n9 9",
+      "output": "18",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

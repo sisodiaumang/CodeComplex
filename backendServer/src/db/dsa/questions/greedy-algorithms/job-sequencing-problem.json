@@ -1,0 +1,290 @@
+{
+  "_id": "job-sequencing-problem",
+  "title": "Job Sequencing Problem",
+  "slug": "job-sequencing-problem",
+  "difficulty": "Medium",
+  "category": "GREEDY",
+  "subCategory": "Medium / Hard Problems",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 500,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "Greedy Algorithms"
+    ],
+    "patterns": [
+      "sequence",
+      "jobs",
+      "deadlines"
+    ],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "scheduling",
+      "greedy"
+    ],
+    "keywords": [
+      "deadlines",
+      "sequences",
+      "greedy",
+      "algorithm"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "You are given a list of N jobs. Each job i has a deadline Di (the latest time slot by which the job must be completed) and a profit Pi earned if the job is completed before or on its deadline. Each job takes exactly one unit of time to complete and only one job can be scheduled at any given time slot. Your task is to schedule a subset of the jobs to maximize the total profit.\n\n**Input Format**\n- The first line contains an integer N, the number of jobs.\n- The second line contains N integers D1 D2 ... DN, the deadlines of the jobs.\n- The third line contains N integers P1 P2 ... PN, the profits of the jobs.\n\n**Output Format**\n- A single integer, the maximum total profit that can be earned by scheduling the jobs optimally.\n\n**Constraints**\n- 1 ≤ N ≤ 1000\n- 1 ≤ Di ≤ 1000\n- 1 ≤ Pi ≤ 10^6\n\n**Notes**\n- Time slots are considered to be integer values starting from 1. A job with deadline Di can be scheduled in any free slot t where 1 ≤ t ≤ Di.\n- If multiple schedules yield the same maximum profit, any of them is acceptable; you only need to output the profit value.\n\n**Examples**\n\n**Example 1**\nInput:\n5\n2 1 2 1 3\n60 100 20 40 30\nOutput:\n190\nExplanation:\nOne optimal schedule is:\n- Job 2 (deadline 1, profit 100) at time slot 1\n- Job 1 (deadline 2, profit 60) at time slot 2\n- Job 5 (deadline 3, profit 30) at time slot 3\nTotal profit = 100 + 60 + 30 = 190.\n\n**Example 2**\nInput:\n4\n4 1 1 1\n20 10 40 30\nOutput:\n90\nExplanation:\nSchedule jobs with profits 40, 30, and 20 at time slots 1, 2, and 4 respectively. The job with profit 10 cannot be scheduled because its deadline is 1 and the slot is already taken. Total profit = 40 + 30 + 20 = 90.",
+    "inputFormat": "N\nD1 D2 ... DN\nP1 P2 ... PN",
+    "outputFormat": "maxProfit",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "N",
+        "type": "integer",
+        "min": 1,
+        "max": 1000
+      },
+      {
+        "variable": "Di",
+        "type": "integer",
+        "min": 1,
+        "max": 1000
+      },
+      {
+        "variable": "Pi",
+        "type": "integer",
+        "min": 1,
+        "max": 1000000
+      }
+    ],
+    "examples": [
+      {
+        "input": "5\n2 1 2 1 3\n60 100 20 40 30",
+        "output": "190",
+        "explanation": "Schedule jobs with profits 100, 60, and 30 to achieve maximum profit 190."
+      },
+      {
+        "input": "4\n4 1 1 1\n20 10 40 30",
+        "output": "60",
+        "explanation": "Optimal schedule yields total profit 90."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Sort the jobs by their deadlines and then by their profits in descending order."
+    },
+    {
+      "order": 2,
+      "text": "Consider using dynamic programming to solve this problem, as it involves finding the optimal subset of jobs."
+    },
+    {
+      "order": 3,
+      "text": "The problem can be solved by considering each job one by one and deciding whether to include it in the optimal subset or not."
+    },
+    {
+      "order": 4,
+      "text": "Use a 2D table to store the maximum profit that can be obtained by considering the first i jobs and the deadline j."
+    },
+    {
+      "order": 5,
+      "text": "The key to solving this problem is to find a way to efficiently calculate the maximum profit that can be obtained by considering each job and its deadline."
+    }
+  ],
+  "editorial": {
+    "title": "Greedy Job Sequencing: From Brute Force to Optimality",
+    "intuition": "The key insight is that a job’s profit is independent of when it’s scheduled, only that it finishes before its deadline. By always picking the most profitable job that still has a free slot, we never lose the opportunity to schedule a higher‑profit job later, because any lower‑profit job that could have occupied that slot would be replaced by the higher‑profit one without harming feasibility.",
+    "bruteForce": "A straightforward brute‑force approach would enumerate all subsets of jobs and all possible orderings, checking for deadline constraints and computing total profit. While this guarantees correctness, its time complexity explodes exponentially—O(2^N · N!)—making it infeasible even for modest N. Even a simpler backtracking that tries to place jobs one by one still suffers from factorial growth, as each job can be scheduled in many positions, leading to a combinatorial explosion.",
+    "betterSolution": "The optimal greedy strategy sorts jobs by decreasing profit and then, for each job, places it in the latest available time slot that does not exceed its deadline. This approach runs in O(N log N + D_max) time, where D_max ≤ 1000, and uses O(N + D_max) space, matching the known bounds for the problem.",
+    "optimalSolution": "By sorting jobs by profit and always assigning a job to the latest possible slot, we ensure that higher‑profit jobs occupy the most restrictive positions. Lower‑profit jobs are only scheduled if they fit into remaining slots, guaranteeing that no better profit configuration is missed.",
+    "proofOfCorrectness": "Assume an optimal schedule S. Consider the jobs in decreasing profit order. For the first job j in this order, if S schedules j in a slot earlier than the latest available slot ≤ its deadline, we can shift j to that later slot without violating any deadlines, because all jobs scheduled after j in S have deadlines ≥ j’s deadline and thus can be moved earlier if needed. Repeating this argument for each subsequent job shows that the greedy schedule is at least as profitable as S, proving optimality.",
+    "dryRun": "With jobs (profit, deadline): (100,2), (50,1), (20,1). Sorted: (100,2),(50,1),(20,1). Slot array [False,False,False]. Place 100 in slot 2 → [False,False,True]. Place 50 in slot 1 → [False,True,True]. 20 cannot fit. Total profit 150, which is optimal.",
+    "commonMistakes": [
+      "Assuming the latest free slot is always the best without sorting by profit; this leads to suboptimal schedules.",
+      "Using a 0‑indexed array for slots but treating deadlines as 1‑indexed, causing off‑by‑one errors.",
+      "Neglecting to handle the case where all deadlines are zero, leading to an empty slot array.",
+      "Overlooking that D_max can be as large as 1000, so initializing a slot array of size D_max+1 is acceptable but miscalculating its size can waste memory.",
+      "Implementing the inner loop to search for a free slot in ascending order, which defeats the greedy choice of the latest slot.",
+      "Failing to sort jobs in descending profit order, resulting in a schedule that is not guaranteed optimal."
+    ],
+    "timeComplexity": "O(N log N + D_max) where D_max is the maximum deadline (≤1000)",
+    "spaceComplexity": "O(N + D_max)"
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nlong long solve(const vector<int>& deadlines, const vector<int>& profits) {\n    // TODO: implement\n    return 0LL;\n}\n\n// @driver-code-start\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int N;\n    if(!(cin >> N)) return 0;\n    vector<int> D(N), P(N);\n    for(int i=0;i<N;++i) cin >> D[i];\n    for(int i=0;i<N;++i) cin >> P[i];\n    cout << solve(D, P) << \"\\n\";\n    return 0;\n}",
+    "java": "import java.io.*;\nimport java.util.*;\n\npublic class Main {\n    public static long solve(int[] deadlines, int[] profits) {\n        // TODO: implement\n        return 0L;\n    }\n\n    // @driver-code-start\npublic static void main(String[] args) throws Exception {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        int N = Integer.parseInt(br.readLine().trim());\n        int[] D = new int[N];\n        int[] P = new int[N];\n        StringTokenizer st = new StringTokenizer(br.readLine());\n        for(int i=0;i<N;i++) D[i] = Integer.parseInt(st.nextToken());\n        st = new StringTokenizer(br.readLine());\n        for(int i=0;i<N;i++) P[i] = Integer.parseInt(st.nextToken());\n        System.out.println(solve(D, P));\n    }\n}",
+    "python": "import sys\n\ndef solve():\n    # TODO: implement\n    pass\n\n# @driver-code-start\nif __name__ == \"__main__\":\n    solve()",
+    "javascript": "// @driver-code-start\nconst fs = require('fs');\n\nfunction solve() {\n    // TODO: implement\n    return null;\n}\n\nconst input = fs.readFileSync(0, 'utf8').trim().split(/\\s+/).map(Number);\nlet idx = 0;\nconst N = input[idx++];\nconst D = input.slice(idx, idx + N); idx += N;\nconst P = input.slice(idx, idx + N);\nconsole.log(solve(D, P));"
+  },
+  "functionSignature": {
+    "cpp": "long long solve(const vector<int>& deadlines, const vector<int>& profits)",
+    "java": "public static long solve(int[] deadlines, int[] profits)",
+    "python": "def solve()",
+    "javascript": "function solve(deadlines, profits)"
+  },
+  "solutions": {
+    "python": "import sys\n\ndef main():\n    it = iter(sys.stdin.read().split())\n    try:\n        n = int(next(it))\n    except StopIteration:\n        return\n    deadlines = [int(next(it)) for _ in range(n)]\n    profits = [int(next(it)) for _ in range(n)]\n    jobs = list(zip(profits, deadlines))\n    jobs.sort(reverse=True)  # sort by profit descending\n    max_dead = max(deadlines) if deadlines else 0\n    slot = [False] * (max_dead + 1)  # 1-indexed slots\n    total = 0\n    for profit, deadline in jobs:\n        # find latest free slot <= deadline\n        for t in range(min(deadline, max_dead), 0, -1):\n            if not slot[t]:\n                slot[t] = True\n                total += profit\n                break\n    sys.stdout.write(str(total))\n\nif __name__ == \"__main__\":\n    main()\n",
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\nint main(){\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int n;\n    if(!(cin>>n)) return 0;\n    vector<int> d(n), p(n);\n    for(int i=0;i<n;i++) cin>>d[i];\n    for(int i=0;i<n;i++) cin>>p[i];\n    vector<pair<int,int>> jobs; jobs.reserve(n);\n    int maxd=0;\n    for(int i=0;i<n;i++){\n        jobs.emplace_back(p[i], d[i]);\n        maxd = max(maxd, d[i]);\n    }\n    sort(jobs.begin(), jobs.end(), [](const auto& a, const auto& b){return a.first>b.first;});\n    vector<char> slot(maxd+1, 0); // 1-indexed\n    long long total=0;\n    for(auto &job: jobs){\n        int profit = job.first;\n        int deadline = job.second;\n        for(int t=min(deadline, maxd); t>=1; --t){\n            if(!slot[t]){ slot[t]=1; total+=profit; break; }\n        }\n    }\n    cout<<total;\n    return 0;\n}\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.2
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5\n2 1 2 1 3\n60 100 20 40 30",
+      "output": "190",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "4\n4 1 1 1\n20 10 40 30",
+      "output": "60",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint_0",
+      "input": "1\n1\n1",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "boundary_0",
+      "input": "10\n1 2 3 4 5 6 7 8 9 10\n1 2 3 4 5 6 7 8 9 10",
+      "output": "55",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    },
+    {
+      "id": "duplicate_0",
+      "input": "5\n2 2 2 2 2\n60 100 20 40 30",
+      "output": "160",
+      "isVisible": false,
+      "weight": 1,
+      "category": "duplicate"
+    },
+    {
+      "id": "sorted_0",
+      "input": "5\n1 2 3 4 5\n10 20 30 40 50",
+      "output": "150",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sorted"
+    },
+    {
+      "id": "reverse_sorted_0",
+      "input": "5\n5 4 3 2 1\n50 40 30 20 10",
+      "output": "150",
+      "isVisible": false,
+      "weight": 1,
+      "category": "reverse_sorted"
+    },
+    {
+      "id": "large_random_0",
+      "input": "91\n115 26 760 282 251 229 143 755 105 693 759 914 559 90 605 433 33 31 96 224 239 518 617 28 575 204 734 666 719 559 430 226 460 604 285 829 891 7 778 826 164 715 433 349 285 160 221 981 782 345 105 95 390 100 368 868 353 619 271 827 45 748 471 550 128 997 945 388 81 566 301 850 644 634 907 883 371 592 197 722 72 47 678 234 792 297 82 876 239 888 104\n398592 291477 475436 666564 874629 382555 170556 388163 372529 219685 702730 279947 735912 982154 716752 679515 74871 638721 665823 179452 560087 764545 256703 171340 484715 397888 283061 970343 671089 721591 584005 230284 717871 340036 883795 805636 813695 58656 240175 861723 33660 844152 330777 420652 280747 69404 221232 957493 988713 594732 918939 752788 329964 222956 687278 523482 414851 927658 958973 674080 481142 149812 277747 146414 258608 781178 588638 565159 275505 783301 612983 449246 941436 611879 418802 379581 229975 145052 534278 517489 95326 792496 49406 902932 114976 160266 657925 167754 830556 713537 442667",
+      "output": "45941898",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    },
+    {
+      "id": "large_random_1",
+      "input": "86\n66 395 391 611 480 542 258 995 567 882 966 12 697 739 118 699 907 550 769 274 788 657 349 115 301 446 162 465 4 977 740 897 737 270 996 513 781 183 520 935 109 892 641 306 862 655 520 624 204 157 383 781 166 553 977 798 945 544 941 1 614 332 501 20 115 952 372 900 852 827 315 246 60 247 900 581 970 81 88 750 498 836 71 779 546 785\n131870 134629 691799 498370 992843 576511 173149 277933 553307 914813 636060 443693 222087 974037 565493 791953 765389 723379 210923 747582 326859 418374 704315 681447 391560 459382 943314 542718 473418 126883 259948 235613 67137 354509 22057 616887 580829 241293 617025 230915 7541 74442 742226 661760 61734 240063 70675 949402 32939 901394 346480 74300 539132 249566 292005 701475 508994 224644 565428 138740 758491 980958 925246 598783 604202 495632 254802 822734 495949 846722 426834 199660 98908 101640 690994 451990 371508 444155 431072 489711 905799 764492 56803 706074 685198 677569",
+      "output": "40989169",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    },
+    {
+      "id": "large_random_2",
+      "input": "22\n63 413 746 348 820 883 112 255 197 195 550 460 144 433 188 286 474 256 896 946 78 454\n847273 903190 897547 577058 102665 53046 683824 566848 876639 15475 97794 971367 790171 889922 247862 174390 426157 509232 504741 224131 906652 420522",
+      "output": "11686506",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    },
+    {
+      "id": "large_random_3",
+      "input": "17\n169 389 3 400 272 949 803 804 466 293 434 714 981 749 803 570 678\n753306 510312 162317 199123 311121 228276 61325 607315 771477 568533 63919 784310 328839 59943 52579 612555 499949",
+      "output": "6575199",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    },
+    {
+      "id": "large_random_4",
+      "input": "74\n942 874 544 162 59 984 521 83 872 191 71 610 70 692 883 241 414 123 965 912 584 253 593 609 41 635 84 430 674 598 579 536 324 958 268 210 686 734 322 245 272 406 135 688 661 308 469 324 952 770 959 75 10 470 637 577 103 76 551 219 519 272 136 956 358 903 71 901 251 379 292 162 449 854\n569606 737716 317213 641391 846306 685744 554635 8204 700306 856796 581543 313922 977018 695614 108619 984540 920783 140815 277313 121036 932932 112236 778481 580098 162999 285578 295443 634211 220862 752471 359537 213488 720893 665047 894344 276808 529960 512263 263320 949315 952274 887205 53267 96782 665096 444152 869635 290121 46229 3718 349760 808578 137175 668062 274681 169431 777237 463299 578479 739946 448463 588154 10140 117309 78899 990958 926005 724587 947838 156295 572093 37779 875137 387152",
+      "output": "37315342",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    },
+    {
+      "id": "adversarial_0",
+      "input": "696\n1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000\n3 214 307 23 586 512 644 404 34 278 201 108 38 551 455 685 283 582 366 509 90 50 158 315 135 585 616 320 187 192 581 217 635 529 97 324 49 13 606 580 556 150 429 424 81 673 18 540 93 625 624 226 515 578 262 511 165 358 191 345 604 76 122 622 638 212 484 301 154 287 465 378 299 288 35 246 136 302 657 47 663 656 662 169 321 314 101 253 459 537 323 206 336 421 420 398 5 71 380 267 462 449 375 89 401 548 610 471 504 508 494 372 613 258 12 63 364 82 414 599 672 399 118 57 601 67 61 641 608 194 310 435 257 355 235 523 271 479 350 149 412 281 526 623 104 650 120 510 338 171 603 655 450 545 539 37 69 658 207 473 232 576 51 469 270 188 172 227 264 503 74 60 298 690 538 210 305 105 640 263 20 670 463 486 689 415 402 68 352 161 54 443 649 480 607 362 146 382 558 296 77 631 116 391 617 199 58 679 203 490 156 107 196 331 31 64 365 78 525 593 369 481 466 176 275 148 19 247 411 17 211 30 589 221 259 385 432 88 474 407 121 73 147 493 653 671 609 381 346 668 33 242 600 605 269 28 24 141 406 8 370 92 185 117 560 100 620 145 594 361 667 452 95 675 162 99 379 629 129 327 342 438 491 170 554 218 177 639 535 405 396 518 329 505 114 573 571 9 230 252 244 349 397 353 209 124 44 98 265 559 285 648 306 144 356 133 676 499 475 446 677 536 470 557 434 659 292 238 618 575 433 45 126 166 138 376 661 681 248 492 691 139 597 642 91 223 408 236 326 186 222 55 570 430 7 175 332 260 514 190 513 448 273 178 22 290 62 612 351 521 501 53 646 614 634 546 39 102 688 682 193 347 496 388 498 297 56 160 84 403 368 664 564 311 86 189 519 132 660 239 637 587 59 567 678 65 123 79 458 500 103 127 16 387 21 334 400 36 333 115 180 27 277 384 10 527 42 502 130 563 426 489 143 627 390 549 440 233 109 168 495 134 572 94 680 444 70 543 590 692 456 645 289 304 619 14 669 319 516 240 602 85 371 208 654 348 343 173 488 15 249 224 140 547 561 113 460 598 596 280 377 383 276 215 428 541 542 506 386 153 555 483 4 532 626 295 666 530 439 11 357 584 300 628 464 565 592 427 684 32 213 478 615 418 696 66 220 157 393 237 155 142 83 328 579 279 577 293 80 451 282 245 497 534 284 254 266 461 569 163 457 437 517 454 325 544 553 137 468 125 686 52 476 531 181 225 436 110 6 695 250 647 507 394 200 425 467 75 487 251 48 674 151 204 231 318 241 96 344 528 291 87 174 485 630 219 588 453 477 330 694 687 294 312 1 562 416 309 583 179 389 431 197 693 568 303 413 335 419 317 520 308 128 633 339 651 442 373 202 552 533 2 632 46 261 195 591 395 643 524 621 447 322 354 445 611 112 665 272 595 183 268 119 29 340 550 410 522 360 652 72 286 337 409 198 25 229 234 313 359 472 205 228 482 40 392 111 164 274 255 422 341 184 26 423 182 167 243 159 636 417 574 363 106 683 256 216 367 41 374 316 43 131 441 152 566",
+      "output": "242556",
+      "isVisible": false,
+      "weight": 1,
+      "category": "adversarial"
+    },
+    {
+      "id": "adversarial_1",
+      "input": "144\n1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000\n83 14 115 21 58 135 15 132 120 3 74 18 116 50 72 95 78 93 90 123 36 45 2 75 76 47 141 40 71 27 96 137 54 79 86 16 7 67 25 131 100 55 59 28 62 124 97 102 29 121 109 35 119 65 60 52 1 139 143 103 17 107 66 94 77 64 104 108 114 23 111 24 73 53 68 32 19 128 48 46 38 8 42 6 130 140 22 57 91 144 13 56 12 30 136 88 106 31 9 118 5 70 63 142 92 81 41 49 69 87 133 43 110 11 126 51 89 80 44 34 101 61 138 20 125 84 112 105 37 4 117 134 113 26 85 129 33 10 127 39 99 98 122 82",
+      "output": "10440",
+      "isVisible": false,
+      "weight": 1,
+      "category": "adversarial"
+    },
+    {
+      "id": "adversarial_2",
+      "input": "192\n1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000\n140 104 106 6 63 101 189 49 14 22 39 180 103 64 134 142 113 184 18 80 21 167 137 141 44 55 41 11 173 160 97 114 92 56 151 183 54 62 69 158 174 172 65 131 72 188 128 169 38 74 168 50 29 67 179 155 130 187 86 111 112 177 75 90 133 42 116 132 2 135 166 15 23 33 115 91 81 146 1 157 19 93 186 99 178 125 71 9 27 73 149 163 181 153 3 77 82 109 148 85 170 59 16 164 123 51 8 46 83 182 175 88 13 47 110 31 118 159 156 48 89 5 152 122 154 53 79 126 26 190 40 108 161 162 100 35 61 25 145 127 147 10 12 36 176 105 78 119 17 57 191 144 7 121 60 28 96 98 150 165 95 117 32 138 68 4 171 24 185 143 102 58 37 20 120 30 87 192 124 66 43 70 129 136 94 139 34 52 45 107 84 76",
+      "output": "18528",
+      "isVisible": false,
+      "weight": 1,
+      "category": "adversarial"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

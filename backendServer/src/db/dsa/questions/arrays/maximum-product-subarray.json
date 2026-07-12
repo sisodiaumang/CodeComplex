@@ -1,0 +1,291 @@
+{
+  "_id": "maximum-product-subarray",
+  "title": "Maximum Product Subarray",
+  "slug": "maximum-product-subarray",
+  "difficulty": "Hard",
+  "category": "DP",
+  "subCategory": "General",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 500,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "Arrays",
+      "General"
+    ],
+    "patterns": [
+      "Maximum",
+      "Product",
+      "Subarray"
+    ],
+    "prerequisites": [
+      "Array Basics",
+      "Dynamic Programming"
+    ],
+    "variants": [],
+    "tags": [
+      "Dynamic Programming",
+      "Array"
+    ],
+    "keywords": [
+      "Maximum Product",
+      "Subarray",
+      "Dynamic Programming"
+    ],
+    "interviewFrequency": 4,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "Given an integer array `nums`, find the contiguous subarray within the array that has the largest product. The product of an empty subarray is considered to be 0. It is guaranteed that the input array will not contain more than 20000 elements. Return the maximum product of the subarray. Note that the input array may contain duplicate elements and negative numbers. The maximum product should be calculated considering the product of all numbers in the subarray, not the sum. For example, given the input array `[-2,3,-4]`, the maximum product subarray is `[-2,3]` which has a product of `6`. If the input array is `[0,2]`, the function should return `2`, because the maximum product of the subarray is `2`. If the input array is `[-4,-3,-2]`, the function should return `12`, because the maximum product of the subarray is `12`.",
+    "inputFormat": "The first line contains an integer `n`, the size of the input array. The second line contains `n` space-separated integers, representing the elements of the input array.",
+    "outputFormat": "The function should output a single integer, representing the maximum product of the subarray.",
+    "notes": "This problem can be solved using dynamic programming, where we keep track of the maximum and minimum product up to each position in the array.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 20000,
+        "description": "The size of the input array."
+      },
+      {
+        "variable": "nums[i]",
+        "type": "integer",
+        "min": -100,
+        "max": 100,
+        "description": "The elements of the input array."
+      }
+    ],
+    "examples": [
+      {
+        "input": "3\n-2 3 -4",
+        "output": "24",
+        "explanation": "The maximum product subarray is [-2, 3, -4] which has a product of 24."
+      },
+      {
+        "input": "2\n0 2",
+        "output": "2",
+        "explanation": "The maximum product subarray is [2] which has a product of 2."
+      },
+      {
+        "input": "3\n-4 -3 -2",
+        "output": "12",
+        "explanation": "The maximum product subarray is [-4, -3] which has a product of 12."
+      },
+      {
+        "input": "1\n5",
+        "output": "5",
+        "explanation": "The maximum product subarray is [5] which has a product of 5."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "To find the maximum product subarray, we need to consider both positive and negative numbers in the array, as a negative number can become maximum by multiplying with another negative number. We should start by initializing variables to track the maximum and minimum product ending at each position."
+    },
+    {
+      "order": 2,
+      "text": "We can use dynamic programming to solve this problem. At each step, we need to update the maximum and minimum product ending at the current position based on the previous maximum and minimum product and the current number. This is because a negative number can turn a maximum product into a minimum product and vice versa."
+    },
+    {
+      "order": 3,
+      "text": "The key insight is to maintain two variables, max_so_far and min_so_far, where max_so_far stores the maximum product ending at the current position and min_so_far stores the minimum product ending at the current position. We update these variables at each step based on the current number and the previous max_so_far and min_so_far values. We also need to handle the case when the current number is zero, as it can reset the maximum product."
+    }
+  ],
+  "editorial": {
+    "title": "Maximum Product Subarray",
+    "intuition": "The problem asks for the maximum product of a subarray within a given array of integers. Initially, one might consider using a brute force approach, checking every possible subarray. However, this method is inefficient due to its high time complexity. A more efficient approach involves tracking the maximum and minimum product up to each position in the array, considering the impact of negative numbers which can turn a maximum product into a minimum and vice versa.",
+    "bruteForce": "The brute force method involves checking all possible subarrays, calculating their product, and keeping track of the maximum product found. This approach, while straightforward, is highly inefficient for large inputs due to its exponential time complexity, making it impractical for arrays of significant size.",
+    "betterSolution": "A better solution recognizes the need to keep track of both the maximum and minimum product ending at each position, due to the potential for a negative number to flip the maximum to a minimum and vice versa. This insight significantly reduces the computational complexity.",
+    "optimalSolution": "The optimal solution iterates through the array once, maintaining variables to track the maximum and minimum product ending at the current position. It updates these variables based on the current number and the previous maximum and minimum products. This approach ensures that all possible subarrays are considered in terms of their potential to produce the maximum product, leveraging the fact that the maximum product subarray must end at one of the elements of the array.",
+    "proofOfCorrectness": "The correctness of the optimal solution can be proven by induction, showing that at each step, the algorithm correctly updates the maximum and minimum product variables based on the current element and the previous state. This ensures that when the algorithm terminates, it has considered all relevant subarrays and their potential products, guaranteeing the identification of the maximum product subarray.",
+    "dryRun": "To validate the solution, one can perform a dry run with a small, manually solvable example, verifying that the algorithm correctly identifies the maximum product subarray. This step helps in confirming the logic and implementation details.",
+    "commonMistakes": [
+      "Forgetting to handle the case where the current number is negative, which can flip the maximum product to a minimum and vice versa.",
+      "Not initializing the result variable with the first element of the array, which is a potential maximum product subarray.",
+      "Failing to update the maximum and minimum product variables correctly at each step, leading to incorrect results.",
+      "Not considering the impact of zero in the array, which can reset the maximum and minimum product variables.",
+      "Implementing the algorithm with unnecessary complexity, such as using additional data structures or nested loops."
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nint solve(vector<int>& nums) {\n    // TODO: implement\n    return 0;\n}\n\n// @driver-code-start\nint main() {\n    int n;\n    if (cin >> n) {\n        vector<int> nums(n);\n        for (int i = 0; i < n; i++) cin >> nums[i];\n        cout << solve(nums) << endl;\n    }\n    return 0;\n}\n",
+    "java": "import java.util.*;\n\npublic class Main {\n    public static int solve(int[] nums) {\n        // TODO: implement\n        return 0;\n    }\n\n    // @driver-code-start\npublic static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        if (scanner.hasNextInt()) {\n            int n = scanner.nextInt();\n            int[] nums = new int[n];\n            for (int i = 0; i < n; i++) nums[i] = scanner.nextInt();\n            System.out.println(solve(nums));\n        }\n    }\n}\n",
+    "python": "import sys\n\ndef solve(nums):\n    # TODO: implement\n    pass\n\n# @driver-code-start\ndef main():\n    import sys\n    input_data = sys.stdin.read().split()\n    if not input_data:\n        return\n    n = int(input_data[0])\n    nums = [int(x) for x in input_data[1:n+1]]\n    print(solve(nums))\n\nif __name__ == \"__main__\":\n    main()\n",
+    "javascript": "// @driver-code-start\nconst readline = require(\"readline\");\nconst rl = readline.createInterface({\n    input: process.stdin,\n    output: process.stdout\n});\nlet input = \"\";\nrl.on(\"line\", (line) => {\n    input += line + \"\\n\";\n});\nrl.on(\"close\", () => {\n    const inputLines = input.trim().split(\"\\n\");\n    if (inputLines.length < 2) return;\n    const n = parseInt(inputLines[0]);\n    const nums = inputLines[1].split(\" \").map(Number);\n    const solution = new Solution();\n    console.log(solution.solve(nums));\n});\n\nclass Solution {\n    solve(nums) {\n        // TODO: implement\n        return 0;\n    }\n}\n"
+  },
+  "functionSignature": {
+    "cpp": "int solve(vector<int>& nums)",
+    "java": "public static int solve(int[] nums)",
+    "python": "def solve(nums):",
+    "javascript": "function solve(nums)"
+  },
+  "solutions": {
+    "python": "\nimport sys\nit = iter(sys.stdin.read().split())\nn = int(next(it))\nnums = [int(next(it)) for _ in range(n)]\n\nmax_product = min_product = result = nums[0]\nfor i in range(1, n):\n    temp = max_product\n    max_product = max(nums[i], max_product * nums[i], min_product * nums[i])\n    min_product = min(nums[i], temp * nums[i], min_product * nums[i])\n    result = max(result, max_product)\n\nprint(result)\n",
+    "cpp": "\n#include <bits/stdc++.h>\nusing namespace std;\nint main(){\n    int n;\n    if(!(cin >> n)) return 0;\n    vector<long long> nums(n);\n    for(int i = 0; i < n; i++) cin >> nums[i];\n\n    long long max_product = nums[0];\n    long long min_product = nums[0];\n    long long result = nums[0];\n    for(int i = 1; i < n; i++){\n        long long temp = max_product;\n        max_product = max(nums[i], max(max_product * nums[i], min_product * nums[i]));\n        min_product = min(nums[i], min(temp * nums[i], min_product * nums[i]));\n        result = max(result, max_product);\n    }\n    cout << result << endl;\n    return 0;\n}\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.5
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "3\n-2 3 -4",
+      "output": "24",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "2\n0 2",
+      "output": "2",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_3",
+      "input": "3\n-4 -3 -2",
+      "output": "12",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_4",
+      "input": "1\n5",
+      "output": "5",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint_5",
+      "input": "1\n-100",
+      "output": "-100",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "boundary_6",
+      "input": "5\n2 3 4 5 -1",
+      "output": "120",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    },
+    {
+      "id": "duplicate_7",
+      "input": "6\n1 1 1 1 1 1",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "duplicate"
+    },
+    {
+      "id": "random_medium_8",
+      "input": "10\n-10 5 3 -8 12 -5 2 9 -4 7",
+      "output": "36288000",
+      "isVisible": false,
+      "weight": 1,
+      "category": "random_medium"
+    },
+    {
+      "id": "sorted_9",
+      "input": "5\n2 3 4 5 6",
+      "output": "720",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sorted"
+    },
+    {
+      "id": "reverse_sorted_10",
+      "input": "5\n6 5 4 3 2",
+      "output": "720",
+      "isVisible": false,
+      "weight": 1,
+      "category": "reverse_sorted"
+    },
+    {
+      "id": "repeated_11",
+      "input": "5\n2 2 2 2 2",
+      "output": "32",
+      "isVisible": false,
+      "weight": 1,
+      "category": "repeated"
+    },
+    {
+      "id": "random_medium_12",
+      "input": "10\n-1 5 -2 0 3 4 -5 1 6 -3",
+      "output": "1080",
+      "isVisible": false,
+      "weight": 1,
+      "category": "random_medium"
+    },
+    {
+      "id": "zero_13",
+      "input": "5\n0 0 0 0 0",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "zero"
+    },
+    {
+      "id": "one_14",
+      "input": "5\n1 1 1 1 1",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "one"
+    },
+    {
+      "id": "negative_15",
+      "input": "5\n-10 -20 -30 -40 -50",
+      "output": "1200000",
+      "isVisible": false,
+      "weight": 1,
+      "category": "negative"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

@@ -208,7 +208,6 @@ export async function createMatchForRoom(
 // ─────────────────────────────────────────────────────────────────────────
 
 export async function applyRankedRatings(match: InstanceType<typeof Match>): Promise<void> {
-    if (match.matchType !== "RANKED") return;
 
     // FIX (B2): idempotency guard lives here — at the loop level — so it
     // fires once per match rather than once per winner/loser pairing.
@@ -256,7 +255,6 @@ export async function applyAbandonRating(
     winnerId: string,
     abandonerId: string
 ): Promise<void> {
-    if (match.matchType !== "RANKED") return;
 
     try {
         const { updateRatings } = await import("./rating.service.js");

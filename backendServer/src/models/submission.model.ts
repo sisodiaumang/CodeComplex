@@ -209,6 +209,47 @@ submissionSchema.index(
 // FIX: Index to support AI-score leaderboard queries efficiently.
 submissionSchema.index({ status: 1, aiScore: -1 });
 
+submissionSchema.post("save", async function (doc, next) {
+    if (doc.status === "ACCEPTED") {
+        try {
+            const UserProfile = mongoose.model("UserProfile");
+            
+            // Check if this user has already solved this question slug previously
+            const alreadySolved = await mongoose.model("Submission").exists({
+                userId: doc.userId,
+                questionSlug: doc.questionSlug,
+                status: "ACCEPTED",
+                _id: { $ne: doc._id }
+            });
+
+            if (!alreadySolved) {
+                let statField: string | null = null;
+                if (doc.battleType === "DSA") {
+                    statField = "stats.dsaSolved";
+                } else if (doc.battleType === "FRONTEND") {
+                    statField = "stats.frontendCompleted";
+                } else if (doc.battleType === "BACKEND") {
+                    statField = "stats.backendCompleted";
+                } else if (doc.battleType === "FULLSTACK") {
+                    statField = "stats.fullstackCompleted";
+                }
+
+                if (statField) {
+                    await UserProfile.findOneAndUpdate(
+                        { userId: doc.userId },
+                        { $inc: { [statField]: 1 } },
+                        { upsert: true }
+                    );
+                    console.log(`[SubmissionModel] Incremented ${statField} for user ${doc.userId}`);
+                }
+            }
+        } catch (err) {
+            console.error("[SubmissionModel] Failed to update user profile stats:", err);
+        }
+    }
+    next();
+});
+
 
 const Submission: mongoose.Model<ISubmission> =
     (mongoose.models.Submission as mongoose.Model<ISubmission>) ||

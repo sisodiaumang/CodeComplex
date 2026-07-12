@@ -47,13 +47,42 @@ async function pickRandomQuestion(
     // Shuffle topics so we try in random order
     const shuffled = [...topics].sort(() => Math.random() - 0.5);
 
+    const FRONTEND_TYPES = ["FRONTEND", "FULLSTACK"];
+    const BACKEND_TYPES  = ["BACKEND"];
+    const PROMPT_TYPES   = ["PROMPT_WAR"];
+
+    let Model: any = Question;
+    let queryField = "category";
+    let isQuestionModel = true;
+
+    if (FRONTEND_TYPES.includes(room.battleType)) {
+        const { default: FrontendQuestion } = await import("../models/frontendQuestion.model.js");
+        Model = FrontendQuestion;
+        queryField = "topics";
+        isQuestionModel = false;
+    } else if (BACKEND_TYPES.includes(room.battleType)) {
+        const { default: BackendQuestion } = await import("../models/backendQuestion.model.js");
+        Model = BackendQuestion;
+        queryField = "topics";
+        isQuestionModel = false;
+    } else if (PROMPT_TYPES.includes(room.battleType)) {
+        const { default: PromptWarScenario } = await import("../models/promptWarScenerio.model.js");
+        Model = PromptWarScenario;
+        queryField = "topics";
+        isQuestionModel = false;
+    }
+
     for (const topic of shuffled) {
-        const questions = await Question.find({
-            category: topic as any,
+        const query: any = {
             difficulty: difficulty as any,
-            isDeleted: { $ne: true },
             "battleConfig.enabled": true,
-        })
+        };
+        query[queryField] = topic;
+        if (isQuestionModel) {
+            query.isDeleted = { $ne: true };
+        }
+
+        const questions = await Model.find(query)
             .select("slug")
             .lean();
 

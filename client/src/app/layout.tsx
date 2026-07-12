@@ -22,7 +22,7 @@ const code = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "CodeComplex — Competitive Engineering Platform",
+  title: "CodeComplex",
   description:
     "Battle other developers in real-time DSA, bug-fix, backend, frontend and prompt-war challenges.",
 };

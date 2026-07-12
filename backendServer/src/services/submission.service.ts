@@ -1,11 +1,14 @@
 import Submission from "../models/submission.model.js";
 import Match from "../models/match.model.js";
 import BattleRoom from "../models/battleRoom.model.js";
+import Question from "../models/question.model.js";
 import * as judgeService from "./judge.service.js";
 import { judgeBackendSubmission } from "./backendJudge.service.js";
 import { judgeFrontendSubmission } from "./frontendJudge.service.js";
 import { judgePromptWarSubmission } from "./promptJudge.service.js";
 import { applySubmissionScore } from "./score.service.js";
+import { runLocally } from "./localRunner.service.js";
+import { runAiReview } from "./aiReview.service.js";
 import { io } from "../index.js";
 import { BattleType } from "../interfaces/battleRoom.interface.js";
 
@@ -173,9 +176,104 @@ export async function createAndJudge(params: {
     // Fire-and-forget — submitCode responds immediately with PENDING (per
     // the spec's response shape); judging result arrives via socket events
     // and is also fetchable via GET /:submissionId once done.
-    judgeSubmission(submission._id.toString()).catch((err) => {
-        console.error(`[SubmissionService] Judging failed for submission ${submission._id}:`, err);
-    });
+    if (battleType === "PROMPT_WAR") {
+        (async () => {
+            try {
+                const { default: BattleRoom } = await import("../models/battleRoom.model.js");
+                const room = await BattleRoom.findById(battleRoomId);
+                
+                if (room && !room.isSolo) {
+                    // Find if there is already a submission for the opponent team in this match
+                    const opponentTeam = team === "A" ? "B" : "A";
+                    const opponentSub = await Submission.findOne({
+                        matchId,
+                        team: opponentTeam,
+                        battleType: "PROMPT_WAR"
+                    });
+                    
+                    if (opponentSub) {
+                        console.log(`[PromptWar] Both teams have submitted. Triggering dual judging for A: ${opponentSub._id} and B: ${submission._id}`);
+                        
+                        // Judge opponent's submission
+                        judgeSubmission(opponentSub._id.toString()).then(async () => {
+                            // Judge current submission
+                            await judgeSubmission(submission._id.toString());
+                            
+                            // Retrieve updated scores to resolve the match
+                            const { default: Match } = await import("../models/match.model.js");
+                            const freshMatch = await Match.findById(matchId);
+                            if (freshMatch && freshMatch.status === "ONGOING") {
+                                const subA = await Submission.findById(team === "A" ? submission._id : opponentSub._id);
+                                const subB = await Submission.findById(team === "B" ? submission._id : opponentSub._id);
+                                if (subA && subB) {
+                                    const scoreA = subA.score ?? 0;
+                                    const scoreB = subB.score ?? 0;
+                                    
+                                    const { settleMatchAsWon } = await import("./match.service.js");
+                                    if (scoreA > scoreB) {
+                                        await settleMatchAsWon(freshMatch, "A");
+                                        io.to((room as any).roomCode).emit("match:ended", {
+                                            matchId: freshMatch._id,
+                                            winnerTeam: "A",
+                                            teamAScore: scoreA,
+                                            teamBScore: scoreB
+                                        });
+                                    } else if (scoreB > scoreA) {
+                                        await settleMatchAsWon(freshMatch, "B");
+                                        io.to((room as any).roomCode).emit("match:ended", {
+                                            matchId: freshMatch._id,
+                                            winnerTeam: "B",
+                                            teamAScore: scoreA,
+                                            teamBScore: scoreB
+                                        });
+                                    } else {
+                                        // Tie / Draw
+                                        freshMatch.status = "COMPLETED";
+                                        freshMatch.winnerTeam = "DRAW";
+                                        freshMatch.endedAt = new Date();
+                                        await freshMatch.save();
+                                        await BattleRoom.findByIdAndUpdate(freshMatch.battleRoomId, { status: "FINISHED" });
+                                        
+                                        const { applyRankedRatings } = await import("./match.service.js");
+                                        await applyRankedRatings(freshMatch);
+
+                                        io.to((room as any).roomCode).emit("match:ended", {
+                                            matchId: freshMatch._id,
+                                            winnerTeam: null,
+                                            teamAScore: scoreA,
+                                            teamBScore: scoreB
+                                        });
+                                    }
+                                }
+                            }
+                        }).catch((err) => {
+                            console.error("[PromptWar] Error during dual judging:", err);
+                        });
+                    } else {
+                        console.log(`[PromptWar] Team ${team} submitted. Waiting for opponent team ${opponentTeam} to submit.`);
+                    }
+                } else {
+                    // Solo room: judge immediately and settle match
+                    judgeSubmission(submission._id.toString()).then(async () => {
+                        const { default: Match } = await import("../models/match.model.js");
+                        const freshMatch = await Match.findById(matchId);
+                        if (freshMatch && freshMatch.status === "ONGOING") {
+                            const { settleMatchAsWon } = await import("./match.service.js");
+                            await settleMatchAsWon(freshMatch, team as "A" | "B");
+                        }
+                    }).catch((err) => {
+                        console.error(`[SubmissionService] Solo Prompt War judging failed:`, err);
+                    });
+                }
+            } catch (err) {
+                console.error("[PromptWar] Error initiating judge flow:", err);
+            }
+        })();
+    } else {
+        judgeSubmission(submission._id.toString()).catch((err) => {
+            console.error(`[SubmissionService] Judging failed for submission ${submission._id}:`, err);
+        });
+    }
 
     return submission;
 }
@@ -716,10 +814,25 @@ export async function judgeSubmission(submissionId: string): Promise<void> {
 
         const judgeResult: JudgeResult = passed ? "ACCEPTED" : "WRONG_ANSWER";
 
-        const firstFailure = criteriaResults.find((r) => r.rawScore < 60);
-        const feedback = firstFailure
-            ? `${summary} Criterion "${firstFailure.description}": ${firstFailure.feedback}`
-            : summary;
+        let feedbackDetails = "";
+        
+        // Add AI Detection disclaimer if likely AI generated
+        if (result.aiGeneratedLikelihood && result.aiGeneratedLikelihood > 30) {
+            feedbackDetails += `⚠️ [AI DETECTION WARN]: Prompt was suspected to be AI-generated (approx. ${result.aiGeneratedLikelihood}% likelihood).\n`;
+            if (result.aiGeneratedFeedback) {
+                feedbackDetails += `Reason: ${result.aiGeneratedFeedback}\n`;
+            }
+            feedbackDetails += `Note: A penalty has been automatically applied, reducing your overall rubric score.\n\n`;
+        }
+
+        feedbackDetails += `${summary}\n\nGrading Breakdown:\n`;
+        for (const r of criteriaResults) {
+            const statusIndicator = r.rawScore >= 80 ? "✓" : r.rawScore >= 60 ? "⚠" : "✗";
+            feedbackDetails += `${statusIndicator} [${r.id}] (Weight: ${r.weight}%)\n`;
+            feedbackDetails += `  Score: ${r.rawScore}/100\n`;
+            feedbackDetails += `  Feedback: ${r.feedback}\n\n`;
+        }
+        const feedback = feedbackDetails.trim();
 
         submission.status = status;
         submission.judgeResult = judgeResult;
@@ -779,85 +892,70 @@ export async function judgeSubmission(submissionId: string): Promise<void> {
     // throw (unseeded/typo'd slug, question with no test cases configured).
     // An uncaught throw here would leave the submission stuck on RUNNING
     // forever — resolve to ERROR instead, same as a compile/runtime failure.
-    let judged: Awaited<ReturnType<typeof judgeService.judgeAgainstTestCases>>;
+    let judged: any;
     let testCasesCount = 0;
+    const forceLocal = process.env.JUDGE_MODE === "local";
+
     try {
         const testCases = await judgeService.getTestCases(submission.questionSlug);
         testCasesCount = testCases?.length ?? 0;
-        judged = await judgeService.judgeAgainstTestCases(
-            submission.language as judgeService.SubmissionLanguage,
-            submission.sourceCode,
-            testCases
-        );
+
+        if (forceLocal) {
+            console.log(`[SubmissionService] JUDGE_MODE=local. Running local compiler/runner for "${submission.questionSlug}"...`);
+            judged = await runLocally(
+                submission.language || "",
+                submission.sourceCode || "",
+                testCases
+            );
+        } else {
+            judged = await judgeService.judgeAgainstTestCases(
+                submission.language as judgeService.SubmissionLanguage,
+                submission.sourceCode,
+                testCases
+            );
+
+            // Check if local Judge0 returned a sandbox / cgroups permission error
+            const firstFailDesc = judged.firstFailure?.status?.description;
+            const lastResultDesc = judged.lastResult?.status?.description;
+            const hasSandboxError = 
+                firstFailDesc === "Internal Error" || 
+                lastResultDesc === "Internal Error" ||
+                judged.firstFailure?.stderr?.includes("/box") ||
+                judged.lastResult?.stderr?.includes("/box");
+
+            if (hasSandboxError) {
+                console.log(`[SubmissionService] Local Judge0 returned a sandbox error. Running local compiler/runner instead...`);
+                judged = await runLocally(
+                    submission.language || "",
+                    submission.sourceCode || "",
+                    testCases
+                );
+            }
+        }
     } catch (err) {
         const reason = err instanceof Error ? err.message : String(err);
 
-        // INTERCEPT: Local Mock Judge0 Fallback for local testing / offline development
+        // Fallback to local compiler/runner if it is a connection error
         const isConnectionError = reason.includes("fetch failed") || reason.includes("ECONNREFUSED") || reason.includes("ENOTFOUND");
         if (isConnectionError && testCasesCount > 0) {
-            console.log(`[SubmissionService] Local Judge0 is down/unconfigured. Running local mock evaluator fallback for "${submission.questionSlug}"...`);
-            
-            const codeLower = submission.sourceCode.toLowerCase();
-            let isCorrect = false;
-
-            if (submission.questionSlug.includes("linear-search")) {
-                isCorrect = codeLower.includes("linearsearch") && (codeLower.includes("==") || codeLower.includes("equals"));
-            } else if (submission.questionSlug.includes("binary-search")) {
-                isCorrect = codeLower.includes("binarysearch") && codeLower.includes("mid") && codeLower.includes("while");
-            } else if (submission.questionSlug.includes("two-sum")) {
-                isCorrect = codeLower.includes("twosum") && (codeLower.includes("map") || codeLower.includes("for"));
-            } else {
-                isCorrect = submission.sourceCode.trim().length > 10;
+            console.log(`[SubmissionService] Local Judge0 is down. Running local compiler/runner fallback...`);
+            try {
+                const testCases = await judgeService.getTestCases(submission.questionSlug);
+                judged = await runLocally(
+                    submission.language || "",
+                    submission.sourceCode || "",
+                    testCases
+                );
+            } catch (localErr) {
+                console.error("[SubmissionService] Local compiler/runner failed, falling back to mock evaluator:", localErr);
+                // Trigger the Mock Evaluator fallback
+                await executeMockFallback(submission, match, testCasesCount);
+                return;
             }
-
-            const passed = isCorrect ? testCasesCount : 0;
-            const score = isCorrect ? 100 : 0;
-            const status = (isCorrect ? "ACCEPTED" : "REJECTED") as SubmissionStatus;
-            const judgeResult: JudgeResult = isCorrect ? "ACCEPTED" : "WRONG_ANSWER";
-            
-            submission.status = status;
-            submission.judgeResult = judgeResult;
-            submission.passedTestCases = passed;
-            submission.totalTestCases = testCasesCount;
-            submission.score = score;
-            submission.executionTime = 0.04;
-            submission.memoryUsage = 1240;
-            submission.feedback = isCorrect
-                ? `Accepted — All test cases passed! (Mock Judge0 Fallback Mode)`
-                : `Wrong Answer — Failed on test case 1 (Mock Judge0 Fallback Mode)`;
-            
-            (submission as any).judgedAt = new Date();
-            await submission.save();
-
-            await emitToRoom(match.battleRoomId, "submission:judged", {
-                submissionId: submission._id,
-                matchId: submission.matchId,
-                status,
-                judgeResult,
-                score,
-                passedTestCases: passed,
-                totalTestCases: testCasesCount,
-            });
-
-            emitToUser(submission.userId, status === "ACCEPTED" ? "submission:accepted" : "submission:failed", {
-                submissionId: submission._id,
-                matchId: submission.matchId,
-                status,
-                judgeResult,
-                score,
-                passedTestCases: passed,
-                totalTestCases: testCasesCount,
-                feedback: submission.feedback ?? null,
-            });
-
-            if (status === "ACCEPTED" || status === "PARTIAL") {
-                await applySubmissionScore(submission.matchId.toString(), submission.team as "A" | "B", score);
-            }
-            return;
+        } else {
+            submission.status = "ERROR";
+            submission.feedback = `Judging failed: ${reason}`;
         }
-
-        submission.status = "ERROR";
-        submission.feedback = `Judging failed: ${reason}`;
         (submission as any).judgedAt = new Date();
         await submission.save();
 
@@ -891,16 +989,51 @@ export async function judgeSubmission(submissionId: string): Promise<void> {
     const representativeResult = passed === total ? lastResult : (firstFailure ?? lastResult);
     const judgeResult = mapJudge0StatusToResult(representativeResult.status.description);
     const status = mapJudgeResultToStatus(judgeResult, passed, total);
-    const score = total > 0 ? Math.round((passed / total) * 100) : 0;
+    const rawScore = total > 0 ? Math.round((passed / total) * 100) : 0;
+
+    let finalScore = rawScore;
+    let aiScore = 0;
+    let aiReviewFeedback = "";
+    if (passed > 0) {
+        try {
+            const lang = (submission.language || "CPP").toLowerCase();
+            const delimiter = lang === "python" ? "# @driver-code-start" : "// @driver-code-start";
+            const userCode = submission.sourceCode.split(delimiter)[0];
+            const aiReview = await runAiReview(userCode, submission.language || "CPP");
+            aiScore = aiReview.score;
+            aiReviewFeedback = aiReview.feedback;
+            const correctnessPortion = Math.round((passed / total) * 90);
+            finalScore = correctnessPortion + aiScore;
+        } catch (e) {
+            console.error("[SubmissionService] AI Code Review failed:", e);
+        }
+    }
 
     submission.status = status;
     submission.judgeResult = judgeResult;
     submission.passedTestCases = passed;
     submission.totalTestCases = total;
-    submission.score = score;
+    submission.score = finalScore;
+    submission.aiScore = aiScore;
     submission.executionTime = representativeResult.time ? parseFloat(representativeResult.time) : undefined;
     submission.memoryUsage = representativeResult.memory ?? undefined;
-    submission.feedback = representativeResult.compile_output || representativeResult.stderr || undefined;
+    let feedback = "";
+    if (representativeResult.compile_output) {
+        feedback += `Compiler Output:\n${representativeResult.compile_output}\n\n`;
+    }
+    if (representativeResult.stderr) {
+        feedback += `Runtime Logs (stderr):\n${representativeResult.stderr}\n\n`;
+    }
+    if (firstFailure) {
+        feedback += `Failed on Test Case ${firstFailure.testCaseIndex}\n`;
+        feedback += `Input:\n${firstFailure.input}\n`;
+        feedback += `Expected Output:\n${firstFailure.expectedOutput}\n`;
+        feedback += `Actual Output:\n${firstFailure.actualOutput}\n`;
+    }
+    if (aiReviewFeedback) {
+        feedback += `\nAI Code Review (Naming & Structure):\nScore: ${aiScore}/10\nFeedback: ${aiReviewFeedback}\n`;
+    }
+    submission.feedback = feedback.trim() || undefined;
     (submission as any).judgedAt = new Date();
 
     await submission.save();
@@ -910,7 +1043,7 @@ export async function judgeSubmission(submissionId: string): Promise<void> {
         matchId: submission.matchId,
         status,
         judgeResult,
-        score,
+        score: finalScore,
         passedTestCases: passed,
         totalTestCases: total,
     });
@@ -920,13 +1053,113 @@ export async function judgeSubmission(submissionId: string): Promise<void> {
         matchId: submission.matchId,
         status,
         judgeResult,
-        score,
+        score: finalScore,
         passedTestCases: passed,
         totalTestCases: total,
         feedback: submission.feedback ?? null,
     });
 
     if (status === "ACCEPTED" || status === "PARTIAL") {
-        await applySubmissionScore(submission.matchId.toString(), submission.team as "A" | "B", score);
+        await applySubmissionScore(submission.matchId.toString(), submission.team as "A" | "B", finalScore);
+    }
+}
+
+async function executeMockFallback(submission: any, match: any, testCasesCount: number) {
+    const codeLower = submission.sourceCode.toLowerCase();
+    let isCorrect = false;
+
+    // Check if user submitted unchanged starter code
+    let isUnchanged = false;
+    try {
+        const questionDoc = await Question.findOne({ slug: submission.questionSlug });
+        if (questionDoc) {
+            const langKey = (submission.language || "").toLowerCase();
+            const starter = (questionDoc.starterCode as any)?.[langKey] || "";
+            if (starter) {
+                const normalize = (str: string) => str.replace(/\s+/g, "");
+                isUnchanged = normalize(submission.sourceCode) === normalize(starter);
+            }
+        }
+    } catch (qErr) {
+        console.error("[SubmissionService] Error fetching question for starter code check:", qErr);
+    }
+
+    if (isUnchanged) {
+        isCorrect = false;
+    } else if (submission.questionSlug.includes("linear-search")) {
+        isCorrect = codeLower.includes("linearsearch") && (codeLower.includes("==") || codeLower.includes("equals"));
+    } else if (submission.questionSlug.includes("binary-search")) {
+        isCorrect = codeLower.includes("binarysearch") && codeLower.includes("mid") && codeLower.includes("while");
+    } else if (submission.questionSlug.includes("two-sum")) {
+        isCorrect = codeLower.includes("twosum") && (codeLower.includes("map") || codeLower.includes("for"));
+    } else {
+        isCorrect = submission.sourceCode.trim().length > 10;
+    }
+
+    const passed = isCorrect ? testCasesCount : 0;
+    const rawScore = isCorrect ? 100 : 0;
+    const status = (isCorrect ? "ACCEPTED" : "REJECTED") as SubmissionStatus;
+    const judgeResult: JudgeResult = isCorrect ? "ACCEPTED" : "WRONG_ANSWER";
+
+    let finalScore = rawScore;
+    let aiScore = 0;
+    let aiReviewFeedback = "";
+    if (isCorrect) {
+        try {
+            const lang = (submission.language || "CPP").toLowerCase();
+            const delimiter = lang === "python" ? "# @driver-code-start" : "// @driver-code-start";
+            const userCode = submission.sourceCode.split(delimiter)[0];
+            const aiReview = await runAiReview(userCode, submission.language || "CPP");
+            aiScore = aiReview.score;
+            aiReviewFeedback = aiReview.feedback;
+            finalScore = 90 + aiScore;
+        } catch (e) {
+            console.error("[SubmissionService] AI Code Review failed in mock fallback:", e);
+        }
+    }
+
+    submission.status = status;
+    submission.judgeResult = judgeResult;
+    submission.passedTestCases = passed;
+    submission.totalTestCases = testCasesCount;
+    submission.score = finalScore;
+    submission.aiScore = aiScore;
+    submission.executionTime = 0.04;
+    submission.memoryUsage = 1240;
+    
+    let feedback = isCorrect
+        ? `Accepted — All test cases passed! (Mock Judge0 Fallback Mode)`
+        : `Wrong Answer — Failed on test case 1 (Mock Judge0 Fallback Mode)`;
+    if (aiReviewFeedback) {
+        feedback += `\n\nAI Code Review (Naming & Structure):\nScore: ${aiScore}/10\nFeedback: ${aiReviewFeedback}`;
+    }
+    submission.feedback = feedback;
+
+    (submission as any).judgedAt = new Date();
+    await submission.save();
+
+    await emitToRoom(match.battleRoomId, "submission:judged", {
+        submissionId: submission._id,
+        matchId: submission.matchId,
+        status,
+        judgeResult,
+        score: finalScore,
+        passedTestCases: passed,
+        totalTestCases: testCasesCount,
+    });
+
+    emitToUser(submission.userId, status === "ACCEPTED" ? "submission:accepted" : "submission:failed", {
+        submissionId: submission._id,
+        matchId: submission.matchId,
+        status,
+        judgeResult,
+        score: finalScore,
+        passedTestCases: passed,
+        totalTestCases: testCasesCount,
+        feedback: submission.feedback ?? null,
+    });
+
+    if (status === "ACCEPTED" || status === "PARTIAL") {
+        await applySubmissionScore(submission.matchId.toString(), submission.team as "A" | "B", finalScore);
     }
 }

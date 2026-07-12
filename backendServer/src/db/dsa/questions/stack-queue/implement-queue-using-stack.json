@@ -1,0 +1,277 @@
+{
+  "_id": "implement-queue-using-stack",
+  "title": "Implement Queue using Stack",
+  "slug": "implement-queue-using-stack",
+  "difficulty": "Easy",
+  "category": "ARRAY",
+  "subCategory": "Learning",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 100,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "Stack",
+      "Queue"
+    ],
+    "patterns": [
+      "queue using stack"
+    ],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "implementation",
+      "data-structure"
+    ],
+    "keywords": [
+      "queue",
+      "stack",
+      "implementation",
+      "data-structure"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "You are given two empty stacks. Implement a queue using these two stacks. A queue is a First-In-First-Out (FIFO) data structure, i.e., the element that is added first will be the first one to be removed. You must use only the given two stacks to implement the queue operations (enqueue and dequeue).",
+    "inputFormat": "The first line contains an integer 'n' representing the number of operations to be performed on the queue. The next 'n' lines contain the operations. Each operation is represented by a string which can be either 'push x' (enqueue 'x' into the queue) or 'pop' (dequeue an element from the queue).",
+    "outputFormat": "For each 'pop' operation, print the dequeued element if the queue is not empty. If the queue is empty, print -1.",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 1000,
+        "description": "number of operations"
+      },
+      {
+        "variable": "x",
+        "type": "integer",
+        "min": -10000,
+        "max": 10000,
+        "description": "value to be pushed into the queue"
+      }
+    ],
+    "examples": [
+      {
+        "input": "5\npush 1\npush 2\npop\npush 3\npop",
+        "output": "1\r\n2",
+        "explanation": "Initially, the queue is empty. After 'push 1', the queue becomes [1]. After 'push 2', the queue becomes [1, 2]. After 'pop', we remove 1 from the queue, so it becomes [2] and we print 1. After 'push 3', the queue becomes [2, 3]. After 'pop', we remove 2 from the queue, so it becomes [3] and we print 2."
+      },
+      {
+        "input": "4\npush 1\npop\npop\npush 2",
+        "output": "1\r\n-1",
+        "explanation": "Initially, the queue is empty. After 'push 1', the queue becomes [1]. After 'pop', we remove 1 from the queue, so it becomes [] and we print 1. After 'pop', the queue is empty, so we print -1. After 'push 2', the queue becomes [2]."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "To implement a queue using two stacks, recall the basic operations of a queue (enqueue and dequeue) and the properties of stacks (LIFO). Think about how you can utilize the given stacks to mimic the FIFO behavior of a queue."
+    },
+    {
+      "order": 2,
+      "text": "Consider using one stack for enqueue operations and the other stack for dequeue operations. Think about how elements can be transferred between the two stacks to maintain the FIFO order when dequeuing elements."
+    },
+    {
+      "order": 3,
+      "text": "A key insight is to use one stack to store the elements in the order they are enqueued, and then use the second stack to reverse the order of elements when it's time to dequeue. This way, the oldest element (the one that was enqueued first) will be at the top of the second stack and can be popped off easily."
+    }
+  ],
+  "editorial": {
+    "title": "Implement Queue using Stack",
+    "intuition": "The problem requires implementing a queue using two stacks. A queue follows the FIFO (First-In-First-Out) principle, whereas a stack follows the LIFO (Last-In-First-Out) principle. The key observation is that we can use two stacks to mimic the behavior of a queue by cleverly using the stacks for enqueue and dequeue operations.",
+    "bruteForce": "A brute force approach would involve iterating through the stack elements for every dequeue operation, which would result in a time complexity of O(n^2) for 'n' operations. This is inefficient and can be optimized.",
+    "betterSolution": "The optimal approach involves using two stacks, stack1 and stack2. For the enqueue operation, we simply push the element onto stack1. For the dequeue operation, if stack2 is empty, we pop all elements from stack1 and push them onto stack2, then pop the top element from stack2. This way, we ensure that the oldest element (the one that was enqueued first) is always at the top of stack2 and gets dequeued first.",
+    "optimalSolution": "The optimal solution has a time complexity of O(n) and space complexity of O(n), as each element is pushed and popped exactly once across the two stacks.",
+    "proofOfCorrectness": "The correctness can be proven by showing that the FIFO order is maintained. When an element is enqueued, it goes onto stack1. When stack2 is empty and a dequeue is called, all elements from stack1 are transferred to stack2, effectively reversing their order. The top element of stack2 (originally the bottom of stack1) is then dequeued, maintaining the FIFO order. Subsequent dequeues will continue this process, ensuring that elements are dequeued in the correct order.",
+    "dryRun": "A dry run with a sequence of push and pop operations confirms that the implementation behaves like a queue, with elements being dequeued in the order they were enqueued.",
+    "commonMistakes": [
+      "Not handling the case when stack2 is empty during a dequeue operation correctly.",
+      "Forgetting that elements need to be transferred from stack1 to stack2 in a specific order to maintain FIFO.",
+      "Incorrectly assuming that a single stack can be used to implement a queue.",
+      "Overcomplicating the solution by trying to use more than two stacks.",
+      "Not considering the time and space complexity implications of the solution."
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass MyQueue {\npublic:\n    void push(int x);\n    int pop();\n    int peek();\n    bool empty();\n};\n\n// @driver-code-start\nint main() {\n    int n;\n    if (cin >> n) {\n        MyQueue q;\n        while (n--) {\n            string op;\n            cin >> op;\n            if (op == \"push\") {\n                int x;\n                cin >> x;\n                q.push(x);\n            } else if (op == \"pop\") {\n                cout << q.pop() << endl;\n            } else if (op == \"peek\") {\n                cout << q.peek() << endl;\n            } else if (op == \"empty\") {\n                cout << (q.empty() ? \"true\" : \"false\") << endl;\n            }\n        }\n    }\n    return 0;\n}\n",
+    "java": "import java.util.*;\n\nclass MyQueue {\n    public void push(int x) {}\n    public int pop() {}\n    public int peek() {}\n    public boolean empty() {}\n}\n\npublic class Main {\n    // @driver-code-start\npublic static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        if (scanner.hasNextInt()) {\n            int n = scanner.nextInt();\n            MyQueue q = new MyQueue();\n            while (n-- > 0) {\n                String op = scanner.next();\n                if (op.equals(\"push\")) {\n                    q.push(scanner.nextInt());\n                } else if (op.equals(\"pop\")) {\n                    System.out.println(q.pop());\n                } else if (op.equals(\"peek\")) {\n                    System.out.println(q.peek());\n                } else if (op.equals(\"empty\")) {\n                    System.out.println(q.empty() ? \"true\" : \"false\");\n                }\n            }\n        }\n    }\n}\n",
+    "python": "import sys\nfrom collections import deque\n\nclass MyQueue:\n    def __init__(self):\n        pass\n    def push(self, x: int) -> None:\n        pass\n    def pop(self) -> int:\n        pass\n    def peek(self) -> int:\n        pass\n    def empty(self) -> bool:\n        pass\n\n# @driver-code-start\ndef main():\n    import sys\n    input_data = sys.stdin.read().split()\n    if not input_data:\n        return\n    n = int(input_data[0])\n    q = MyQueue()\n    idx = 1\n    for _ in range(n):\n        op = input_data[idx]\n        idx += 1\n        if op == \"push\":\n            x = int(input_data[idx])\n            idx += 1\n            q.push(x)\n        elif op == \"pop\":\n            print(q.pop())\n        elif op == \"peek\":\n            print(q.peek())\n        elif op == \"empty\":\n            print(\"true\" if q.empty() else \"false\")\n\nif __name__ == \"__main__\":\n    main()\n",
+    "javascript": "// @driver-code-start\nconst readline = require(\"readline\");\nconst rl = readline.createInterface({\n    input: process.stdin,\n    output: process.stdout\n});\nlet input = \"\";\nrl.on(\"line\", (line) => {\n    input += line + \"\\n\";\n});\nrl.on(\"close\", () => {\n    const inputLines = input.trim().split(\"\\n\");\n    if (inputLines.length < 2) return;\n    const n = parseInt(inputLines[0]);\n    const q = new MyQueue();\n    let idx = 1;\n    const ops = inputLines[1].split(\" \");\n    for (let i = 0; i < n; i++) {\n        const op = ops[idx++];\n        if (op === \"push\") {\n            q.push(Number(ops[idx++]));\n        } else if (op === \"pop\") {\n            console.log(q.pop());\n        } else if (op === \"peek\") {\n            console.log(q.peek());\n        } else if (op === \"empty\") {\n            console.log(q.empty() ? \"true\" : \"false\");\n        }\n    }\n});\n\nclass MyQueue {\n    constructor() {}\n    push(x) {}\n    pop() {}\n    peek() {}\n    empty() {}\n}"
+  },
+  "functionSignature": {
+    "cpp": "class MyQueue {\npublic:\n    void push(int x);\n    int pop();\n    int peek();\n    bool empty();\n};",
+    "java": "class MyQueue {\n    public void push(int x) {}\n    public int pop() {}\n    public int peek() {}\n    public boolean empty() {}\n}",
+    "python": "class MyQueue:\n    def __init__(self):\n        pass\n    def push(self, x: int) -> None:\n        pass\n    def pop(self) -> int:\n        pass\n    def peek(self) -> int:\n        pass\n    def empty(self) -> bool:\n        pass",
+    "javascript": "class MyQueue {\n    constructor() {}\n    push(x) {}\n    pop() {}\n    peek() {}\n    empty() {}\n}"
+  },
+  "solutions": {
+    "python": "import sys\nit = iter(sys.stdin.read().split())\ndef enqueue(stack1, stack2, x):\n    stack1.append(x)\ndef dequeue(stack1, stack2):\n    if not stack2:\n        while stack1:\n            stack2.append(stack1.pop())\n    if stack2:\n        return stack2.pop()\n    return -1\nn = int(next(it))\nstack1, stack2 = [], []\nfor _ in range(n):\n    op = next(it)\n    if op == 'push':\n        x = int(next(it))\n        enqueue(stack1, stack2, x)\n    else:\n        print(dequeue(stack1, stack2))",
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\nvoid enqueue(stack<int>& stack1, stack<int>& stack2, int x){\n    stack1.push(x);\n}\nint dequeue(stack<int>& stack1, stack<int>& stack2){\n    if(stack2.empty()){\n        while(!stack1.empty()){\n            stack2.push(stack1.top());\n            stack1.pop();\n        }\n    }\n    if(!stack2.empty()){\n        int top = stack2.top();\n        stack2.pop();\n        return top;\n    }\n    return -1;\n}\nint main(){\n    int n;\n    cin >> n;\n    stack<int> stack1, stack2;\n    for(int i = 0; i < n; i++){\n        string op;\n        cin >> op;\n        if(op == \"push\"){\n            int x;\n            cin >> x;\n            enqueue(stack1, stack2, x);\n        } else {\n            cout << dequeue(stack1, stack2) << endl;\n        }\n    }\n    return 0;\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5\npush 1\npush 2\npop\npush 3\npop",
+      "output": "1\r\n2",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "4\npush 1\npop\npop\npush 2",
+      "output": "1\r\n-1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "boundary_4",
+      "input": "2\npush 10000\npop",
+      "output": "10000",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    },
+    {
+      "id": "duplicate_5",
+      "input": "4\npush 1\npush 2\npush 1\npop",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "duplicate"
+    },
+    {
+      "id": "random_medium_6",
+      "input": "5\npush 10\npush 20\npop\npush 30\npop",
+      "output": "10\r\n20",
+      "isVisible": false,
+      "weight": 1,
+      "category": "random_medium"
+    },
+    {
+      "id": "sorted_7",
+      "input": "5\npush 1\npush 2\npush 3\npop\npop",
+      "output": "1\r\n2",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sorted"
+    },
+    {
+      "id": "reverse_sorted_8",
+      "input": "5\npush 3\npush 2\npush 1\npop\npop",
+      "output": "3\r\n2",
+      "isVisible": false,
+      "weight": 1,
+      "category": "reverse_sorted"
+    },
+    {
+      "id": "repeated_9",
+      "input": "5\npush 1\npush 1\npush 1\npop\npop",
+      "output": "1\r\n1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "repeated"
+    },
+    {
+      "id": "random_medium_10",
+      "input": "7\npush 5\npop\npush -3\npush 10\npop\npop\npush 20",
+      "output": "5\r\n-3\r\n10",
+      "isVisible": false,
+      "weight": 1,
+      "category": "random_medium"
+    },
+    {
+      "id": "zero_11",
+      "input": "2\npush 0\npop",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "zero"
+    },
+    {
+      "id": "one_12",
+      "input": "3\npush 1\npush 2\npop",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "one"
+    },
+    {
+      "id": "negative_13",
+      "input": "2\npush -10\npop",
+      "output": "-10",
+      "isVisible": false,
+      "weight": 1,
+      "category": "negative"
+    },
+    {
+      "id": "random_medium_14",
+      "input": "6\npush 10\npush 20\npush 30\npop\npush 40\npop",
+      "output": "10\r\n20",
+      "isVisible": false,
+      "weight": 1,
+      "category": "random_medium"
+    },
+    {
+      "id": "adversarial_21",
+      "input": "10\npush 1\npop\npush 2\npop\npush 3\npop\npush 4\npop\npush 5\npop",
+      "output": "1\r\n2\r\n3\r\n4\r\n5",
+      "isVisible": false,
+      "weight": 1,
+      "category": "adversarial"
+    },
+    {
+      "id": "random_medium_22",
+      "input": "7\npush 10\npush 20\npush 30\npop\npush 40\npush 50\npop\npop",
+      "output": "10\r\n20",
+      "isVisible": false,
+      "weight": 1,
+      "category": "random_medium"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

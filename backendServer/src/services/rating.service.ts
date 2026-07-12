@@ -183,40 +183,42 @@ export async function updateRatings(
     const winnerNewRating = Math.max(MIN_RATING, winnerOldRating + winnerDelta);
     const loserNewRating  = Math.max(MIN_RATING, loserOldRating  + loserDelta);
 
-    // ── Update winner profile ──────────────────────────────────────────────────
-    await UserProfile.findOneAndUpdate(
-        { userId: new mongoose.Types.ObjectId(winnerId) },
-        {
-            $set:  { [`ratings.${category}`]: winnerNewRating },
-            // peakRatings must only ever ratchet upward — $max never lowers it
-            // and needs no fetch-then-compare round trip.
-            $max:  { [`peakRatings.${category}`]: winnerNewRating },
-            $inc:  {
-                "stats.wins":         1,
-                "stats.totalMatches": 1,
-                streak:               1,   // increment win streak
+    if (match.matchType === "RANKED") {
+        // ── Update winner profile ──────────────────────────────────────────────────
+        await UserProfile.findOneAndUpdate(
+            { userId: new mongoose.Types.ObjectId(winnerId) },
+            {
+                $set:  { [`ratings.${category}`]: winnerNewRating },
+                // peakRatings must only ever ratchet upward — $max never lowers it
+                // and needs no fetch-then-compare round trip.
+                $max:  { [`peakRatings.${category}`]: winnerNewRating },
+                $inc:  {
+                    "stats.wins":         1,
+                    "stats.totalMatches": 1,
+                    streak:               1,   // increment win streak
+                }
             }
-        }
-    );
+        );
 
-    // ── Update loser profile ───────────────────────────────────────────────────
-    // FIX (W6): $set and $inc CAN target different paths in the same update
-    // document — the earlier split into two findOneAndUpdate calls (with a
-    // misleading no-op $max: {} placeholder) was unnecessary. One round-trip
-    // now handles the rating set, stats increment, and streak reset together.
-    await UserProfile.findOneAndUpdate(
-        { userId: new mongoose.Types.ObjectId(loserId) },
-        {
-            $set:  { [`ratings.${category}`]: loserNewRating, streak: 0 },
-            // A loss can't raise peak, but keep the write symmetric so a
-            // brand-new profile's peak is initialised alongside its rating.
-            $max:  { [`peakRatings.${category}`]: loserNewRating },
-            $inc:  {
-                "stats.losses":       1,
-                "stats.totalMatches": 1,
+        // ── Update loser profile ───────────────────────────────────────────────────
+        // FIX (W6): $set and $inc CAN target different paths in the same update
+        // document — the earlier split into two findOneAndUpdate calls (with a
+        // misleading no-op $max: {} placeholder) was unnecessary. One round-trip
+        // now handles the rating set, stats increment, and streak reset together.
+        await UserProfile.findOneAndUpdate(
+            { userId: new mongoose.Types.ObjectId(loserId) },
+            {
+                $set:  { [`ratings.${category}`]: loserNewRating, streak: 0 },
+                // A loss can't raise peak, but keep the write symmetric so a
+                // brand-new profile's peak is initialised alongside its rating.
+                $max:  { [`peakRatings.${category}`]: loserNewRating },
+                $inc:  {
+                    "stats.losses":       1,
+                    "stats.totalMatches": 1,
+                }
             }
-        }
-    );
+        );
+    }
 
     // ── Write RatingHistory for winner ────────────────────────────────────────
     await RatingHistory.create({
@@ -332,24 +334,26 @@ export async function updateRatingsForDraw(
     const newRatingA = Math.max(MIN_RATING, ratingA + deltaA);
     const newRatingB = Math.max(MIN_RATING, ratingB + deltaB);
 
-    await Promise.all([
-        UserProfile.findOneAndUpdate(
-            { userId: new mongoose.Types.ObjectId(playerAId) },
-            {
-                $set: { [`ratings.${category}`]: newRatingA, streak: 0 },
-                $max: { [`peakRatings.${category}`]: newRatingA },
-                $inc: { "stats.draws": 1, "stats.totalMatches": 1 },
-            }
-        ),
-        UserProfile.findOneAndUpdate(
-            { userId: new mongoose.Types.ObjectId(playerBId) },
-            {
-                $set: { [`ratings.${category}`]: newRatingB, streak: 0 },
-                $max: { [`peakRatings.${category}`]: newRatingB },
-                $inc: { "stats.draws": 1, "stats.totalMatches": 1 },
-            }
-        ),
-    ]);
+    if (match.matchType === "RANKED") {
+        await Promise.all([
+            UserProfile.findOneAndUpdate(
+                { userId: new mongoose.Types.ObjectId(playerAId) },
+                {
+                    $set: { [`ratings.${category}`]: newRatingA, streak: 0 },
+                    $max: { [`peakRatings.${category}`]: newRatingA },
+                    $inc: { "stats.draws": 1, "stats.totalMatches": 1 },
+                }
+            ),
+            UserProfile.findOneAndUpdate(
+                { userId: new mongoose.Types.ObjectId(playerBId) },
+                {
+                    $set: { [`ratings.${category}`]: newRatingB, streak: 0 },
+                    $max: { [`peakRatings.${category}`]: newRatingB },
+                    $inc: { "stats.draws": 1, "stats.totalMatches": 1 },
+                }
+            ),
+        ]);
+    }
 
     await RatingHistory.insertMany([
         {

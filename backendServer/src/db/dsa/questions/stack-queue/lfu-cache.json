@@ -1,0 +1,296 @@
+{
+  "_id": "lfu-cache",
+  "title": "LFU Cache",
+  "slug": "lfu-cache",
+  "difficulty": "Hard",
+  "category": "ARRAY",
+  "subCategory": "Implementation Problems",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 60,
+    "points": 500,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "STACK",
+      "QUEUE",
+      "ARRAY",
+      "HASHING"
+    ],
+    "patterns": [],
+    "prerequisites": [
+      "Implementing a Stack",
+      "Implementing a Queue"
+    ],
+    "variants": [],
+    "tags": [
+      "Cache",
+      "LFU",
+      "Least Frequently Used",
+      "Hash Map"
+    ],
+    "keywords": [
+      "LFU Cache",
+      "Least Frequently Used Cache",
+      "Cache Implementation",
+      "Hash Map Implementation"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "Design and implement a Least Frequently Used (LFU) cache. It should support the following operations: get and put.\n\n- get(key) - Get the value of the key if the key exists in the cache, otherwise return -1.\n- put(key, value) - Set or insert the value if the key is not already present. When the cache reaches its capacity, it should invalidate the least frequently used item before inserting a new item. When there are multiple keys with the same frequency, the least recently used key should be evicted.\n\nExample 1:\n\nInput: [\"LFUCache\",\"get\",\"put\",\"get\",\"put\",\"get\",\"put\",\"get\"]\n[[2],[1],[1,1],[1],[2,2],[2],[1],[1],[2]]\nOutput: [null,1,null,1,null,-1,null,-1,null]\n\nFollow up: Could you do this in O(1) time complexity?",
+    "inputFormat": "The first line contains an integer for the number of operations. Each operation is represented by a line containing the operation type (\"get\" or \"put\") followed by the key and optionally the value (if it's a put operation).",
+    "outputFormat": "For each get operation, output the value of the key if it exists in the cache; otherwise, output -1.",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "capacity",
+        "type": "number",
+        "min": 0,
+        "max": 10000,
+        "description": "The capacity of the LFU cache."
+      },
+      {
+        "variable": "key",
+        "type": "number",
+        "min": 0,
+        "max": 10000,
+        "description": "The key to get or put."
+      },
+      {
+        "variable": "value",
+        "type": "number",
+        "min": 0,
+        "max": 10000,
+        "description": "The value to put."
+      }
+    ],
+    "examples": [
+      {
+        "input": "6\nget 1\nput 1 1\nget 1\nput 2 2\nget 2\nget 1",
+        "output": "-1\r\n-1\r\n-1\r\n-1",
+        "explanation": "The LFU cache with capacity 2 is initially empty. get 1 returns -1. put 1 1 inserts 1:1 into the cache. get 1 returns 1. put 2 2 inserts 2:2 into the cache. get 2 returns 2. get 1 returns 1."
+      },
+      {
+        "input": "4\nput 1 1\nput 2 2\nget 1\nput 3 3",
+        "output": "-1",
+        "explanation": "The LFU cache with capacity 2 initially empty. put 1 1 inserts 1:1. put 2 2 inserts 2:2. get 1 returns 1. put 3 3 evicts key 2."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "To implement an LFU cache, you need to track the frequency of each key and the order in which keys were last accessed. Consider using data structures that can efficiently store and update this information."
+    },
+    {
+      "order": 2,
+      "text": "A simple approach could involve using a dictionary to store key-value pairs and another data structure to track the frequency of each key. However, updating frequencies and handling evictions efficiently could be challenging."
+    },
+    {
+      "order": 3,
+      "text": "To achieve O(1) time complexity for both get and put operations, consider using a combination of a dictionary and a doubly linked list, or a more complex data structure like a combination of dictionaries and a data structure that can efficiently handle ordered data, such as a heap or a balanced binary search tree."
+    },
+    {
+      "order": 4,
+      "text": "The key to solving this problem efficiently is to use a data structure that can track the order of elements based on their frequency and their recent usage. Consider using a combination of a frequency map and a map of doubly linked lists, where each linked list represents a frequency level."
+    },
+    {
+      "order": 5,
+      "text": "The core technique here involves using a combination of hash maps and a doubly linked list to track the frequency and recent usage of keys. The frequency map allows for O(1) access to a key's frequency, and the linked list allows for efficient insertion and removal of keys based on their frequency and recent usage."
+    }
+  ],
+  "editorial": {
+    "title": "LFU Cache Optimal Solution",
+    "intuition": "The key observation that unlocks the optimal approach is that we need to keep track of the frequency of each key and evict the least frequently used key when the cache is full. We can achieve this by using a combination of a hash map and a doubly linked list, but in this case, we use a defaultdict of OrderedDicts to store the nodes with the same frequency count.",
+    "bruteForce": "A brute force approach would be to use a list to store all the keys and their corresponding values, and then iterate through the list to find the key and update its value. However, this approach would result in a time complexity of O(n) for get and put operations, which is inefficient.",
+    "betterSolution": "The optimal solution uses a hash map (key2node) to store the keys and their corresponding nodes, and another hash map (count2node) to store the frequency counts and their corresponding nodes. This allows us to achieve O(1) time complexity for get and put operations.",
+    "optimalSolution": "The optimal solution uses a Node class to store the key, value, and frequency count of each node. The LFUCache class uses a hash map (key2node) to store the keys and their corresponding nodes, and another hash map (count2node) to store the frequency counts and their corresponding nodes. The get operation updates the frequency count of the accessed node and returns its value. The put operation updates the value of the node if it exists, or adds a new node if it doesn't exist, and evicts the least frequently used node if the cache is full.",
+    "proofOfCorrectness": "The correctness of the optimal solution can be proved by showing that it maintains the following invariants: (1) the frequency count of each node is accurate, (2) the nodes with the same frequency count are stored in the correct order, and (3) the cache is full if and only if the least frequently used node is evicted. The proof involves showing that the get and put operations maintain these invariants.",
+    "dryRun": "A dry run of the optimal solution with a few test cases can help verify its correctness. For example, we can test the solution with a cache of size 2 and a sequence of get and put operations, and verify that it returns the correct values and evicts the least frequently used nodes correctly.",
+    "commonMistakes": [
+      "Not updating the frequency count of the accessed node in the get operation",
+      "Not evicting the least frequently used node when the cache is full",
+      "Not maintaining the correct order of nodes with the same frequency count",
+      "Using a single hash map to store both the keys and their corresponding nodes, and the frequency counts and their corresponding nodes"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(capacity)"
+  },
+  "starterCode": {
+    "cpp": "#include <iostream>\n#include <unordered_map>\nusing namespace std;\n\nclass Node {\npublic:\n    int key, value, count;\n    Node(int k, int v, int c) : key(k), value(v), count(c) {}\n};\n\nclass LFUCache {\nprivate:\n    int capacity;\n    unordered_map<int, Node*> cache;\n    // TODO: implement\n    void update(Node* node) {}\npublic:\n    LFUCache(int capacity) {\n        this->capacity = capacity;\n    }\n    int get(int key) {\n        // TODO: implement\n        return -1;\n    }\n    void put(int key, int value) {\n        // TODO: implement\n    }\n};\n\n// @driver-code-start\nint main() {\n    ios_base::sync_with_stdio(false);\n    cin.tie(NULL);\n    // TODO: implement\n    return 0;\n}",
+    "java": "import java.util.HashMap;\nimport java.util.Map;\n\nclass Node {\n    int key, value, count;\n    Node(int k, int v, int c) {\n        key = k;\n        value = v;\n        count = c;\n    }\n}\n\npublic class LFUCache {\n    private int capacity;\n    private Map<Integer, Node> cache;\n    // TODO: implement\n    public void update(Node node) {}\n    public LFUCache(int capacity) {\n        this.capacity = capacity;\n        cache = new HashMap<>();\n    }\n    public int get(int key) {\n        // TODO: implement\n        return -1;\n    }\n    public void put(int key, int value) {\n        // TODO: implement\n    }\n}",
+    "python": "from collections import defaultdict\n\nclass Node:\n    def __init__(self, key, value, count):\n        self.key = key\n        self.value = value\n        self.count = count\n\nclass LFUCache:\n    def __init__(self, capacity: int):\n        self.capacity = capacity\n        self.cache = {}\n        # TODO: implement\n        pass\n    def get(self, key: int) -> int:\n        # TODO: implement\n        pass\n    def put(self, key: int, value: int) -> None:\n        # TODO: implement\n        pass\n",
+    "javascript": "class Node {\n    constructor(key, value, count) {\n        this.key = key;\n        this.value = value;\n        this.count = count;\n    }\n}\n\nclass LFUCache {\n    constructor(capacity) {\n        this.capacity = capacity;\n        this.cache = new Map();\n        // TODO: implement\n    }\n    get(key) {\n        // TODO: implement\n        return -1;\n    }\n    put(key, value) {\n        // TODO: implement\n    }\n}"
+  },
+  "functionSignature": {
+    "cpp": "LFUCache(int capacity)",
+    "java": "public LFUCache(int capacity)",
+    "python": "def __init__(self, capacity: int)",
+    "javascript": "constructor(capacity)"
+  },
+  "solutions": {
+    "python": "import sys\nfrom collections import defaultdict, OrderedDict\n\nclass Node:\n    def __init__(self, key, val, count):\n        self.key = key\n        self.val = val\n        self.count = count\n\nclass LFUCache:\n\n    def __init__(self, capacity: int):\n        self.capacity = capacity\n        self.key2node = {}\n        self.count2node = defaultdict(OrderedDict)\n        self.minCount = None\n\n    def get(self, key: int) -> int:\n        if key not in self.key2node:\n            return -1\n        node = self.key2node[key]\n        del self.count2node[node.count][key]\n\n        # if there are no nodes with that count anymore, we need to update minCount\n        if not self.count2node[node.count]:\n            del self.count2node[node.count]\n            if node.count == self.minCount:\n                self.minCount += 1\n\n        node.count += 1\n        self.count2node[node.count][key] = node\n\n        return node.val\n\n    def put(self, key: int, value: int) -> None:\n        if not self.capacity:\n            return\n\n        if key in self.key2node:\n            self.key2node[key].val = value\n            self.get(key)  # increase the count\n            return\n\n        if len(self.key2node) == self.capacity:\n            # remove the LFU node\n            k, n = self.count2node[self.minCount].popitem(last=False)\n            del self.key2node[k]\n\n        self.count2node[1][key] = self.key2node[key] = Node(key, value, 1)\n        self.minCount = 1\n\ndef main():\n    it = iter(sys.stdin.read().split())\n    n = int(next(it))\n    cache = LFUCache(0)\n    for _ in range(n):\n        op = next(it)\n        if op == 'get':\n            key = int(next(it))\n            print(cache.get(key))\n        elif op == 'put':\n            key = int(next(it))\n            val = int(next(it))\n            cache.put(key, val)\n\nif __name__ == '__main__':\n    main()",
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nstruct Node {\n    int key, val, count;\n    Node(int k, int v, int c) : key(k), val(v), count(c) {}\n};\n\nclass LFUCache {\nprivate:\n    int capacity;\n    unordered_map<int, Node*> key2node;\n    unordered_map<int, list<Node*>> count2node;\n    int minCount;\n\npublic:\n    LFUCache(int capacity) : capacity(capacity), minCount(0) {}\n\n    int get(int key) {\n        if (key2node.find(key) == key2node.end()) return -1;\n        Node* node = key2node[key];\n        count2node[node->count].remove(node);\n        if (count2node[node->count].empty()) {\n            count2node.erase(node->count);\n            if (node->count == minCount) minCount++;\n        }\n        node->count++;\n        count2node[node->count].push_back(node);\n        return node->val;\n    }\n\n    void put(int key, int value) {\n        if (!capacity) return;\n        if (key2node.find(key) != key2node.end()) {\n            key2node[key]->val = value;\n            get(key);\n            return;\n        }\n        if (key2node.size() == capacity) {\n            Node* node = *count2node[minCount].begin();\n            key2node.erase(node->key);\n            count2node[minCount].pop_front();\n            if (count2node[minCount].empty()) count2node.erase(minCount);\n        }\n        Node* node = new Node(key, value, 1);\n        key2node[key] = node;\n        count2node[1].push_back(node);\n        minCount = 1;\n    }\n};\n\nint main() {\n    ios_base::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int n;\n    cin >> n;\n    LFUCache cache(0);\n    for (int i = 0; i < n; i++) {\n        string op;\n        cin >> op;\n        if (op == \"get\") {\n            int key;\n            cin >> key;\n            cout << cache.get(key) << '\\n';\n        } else {\n            int key, val;\n            cin >> key >> val;\n            cache.put(key, val);\n        }\n    }\n    return 0;\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.5
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "6\nget 1\nput 1 1\nget 1\nput 2 2\nget 2\nget 1",
+      "output": "-1\r\n-1\r\n-1\r\n-1",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "4\nput 1 1\nput 2 2\nget 1\nput 3 3",
+      "output": "-1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint_3",
+      "input": "3\nget 0\nput 0 0\nget 0",
+      "output": "-1\r\n-1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "duplicate_5",
+      "input": "5\nput 1 1\nput 1 2\nget 1\nput 1 3\nget 1",
+      "output": "-1\r\n-1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "duplicate"
+    },
+    {
+      "id": "random_medium_6",
+      "input": "7\nput 1 10\nput 2 20\nget 1\nput 3 30\nget 2\nput 4 40\nget 3",
+      "output": "-1\r\n-1\r\n-1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "random_medium"
+    },
+    {
+      "id": "sorted_7",
+      "input": "5\nget 1\nput 1 1\nget 1\nput 2 2\nget 1",
+      "output": "-1\r\n-1\r\n-1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sorted"
+    },
+    {
+      "id": "reverse_sorted_8",
+      "input": "5\nput 3 3\nput 2 2\nput 1 1\nget 3\nget 2",
+      "output": "-1\r\n-1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "reverse_sorted"
+    },
+    {
+      "id": "repeated_9",
+      "input": "7\nput 1 1\nput 2 2\nget 1\nget 2\nput 1 1\nget 1\nget 2",
+      "output": "-1\r\n-1\r\n-1\r\n-1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "repeated"
+    },
+    {
+      "id": "random_medium_10",
+      "input": "8\nput 5 5\nget 3\nput 2 2\nget 5\nput 1 1\nget 2\nget 5\nput 3 3",
+      "output": "-1\r\n-1\r\n-1\r\n-1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "random_medium"
+    },
+    {
+      "id": "zero_11",
+      "input": "2\nget 0\nput 0 0",
+      "output": "-1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "zero"
+    },
+    {
+      "id": "one_12",
+      "input": "3\nput 1 1\nget 1\nput 2 2",
+      "output": "-1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "one"
+    },
+    {
+      "id": "negative_13",
+      "input": "4\nput -1 -1\nget -1\nput 0 0\nget 0",
+      "output": "-1\r\n-1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "negative"
+    },
+    {
+      "id": "random_medium_14",
+      "input": "7\nput 1 10\nput 2 20\nget 1\nput 3 30\nget 2\nget 3\nput 4 40",
+      "output": "-1\r\n-1\r\n-1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "random_medium"
+    },
+    {
+      "id": "large_random_15",
+      "input": "10\nget 1\nput 2 2\nget 1\nput 3 3\nget 2\nput 4 4\nget 3\nget 4\nput 5 5\nget 1",
+      "output": "-1\r\n-1\r\n-1\r\n-1\r\n-1\r\n-1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    },
+    {
+      "id": "adversarial_16",
+      "input": "5\nput 1 1\nput 2 2\nget 1\nput 1 1\nget 2",
+      "output": "-1\r\n-1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "adversarial"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

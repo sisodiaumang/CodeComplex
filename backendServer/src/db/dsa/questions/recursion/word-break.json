@@ -1,0 +1,303 @@
+{
+  "_id": "word-break",
+  "title": "Word Break",
+  "slug": "word-break",
+  "difficulty": "Medium",
+  "category": "DP",
+  "subCategory": "Hard / Backtracking",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 650,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "Recursion",
+      "Dynamic Programming"
+    ],
+    "patterns": [
+      "Backtracking",
+      "Memoization"
+    ],
+    "prerequisites": [
+      "Recursion Basics",
+      "String Manipulation"
+    ],
+    "variants": [],
+    "tags": [
+      "Medium",
+      "Recursion",
+      "Dynamic Programming"
+    ],
+    "keywords": [
+      "Word Break",
+      "Recursion",
+      "Backtracking",
+      "Dynamic Programming",
+      "String"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "Given a non-empty string s and a dictionary wordDict containing a list of non-empty words, determine if s can be segmented into a space-separated sequence of one or more dictionary words.\n\nNote that the same word in the dictionary may be reused multiple times in the segmentation.\n\nYou should return a boolean indicating whether it is possible to segment the string.\n\nExample:\nInput: s = \"leetcode\", wordDict = [\"leet\", \"code\"]\nOutput: true\nExplanation: Return true because \"leetcode\" can be segmented as \"leet code\".\n\nExample:\nInput: s = \"applepenapple\", wordDict = [\"apple\", \"pen\"]\nOutput: true\nExplanation: Return true because \"applepenapple\" can be segmented as \"apple pen apple\".\n\nExample:\nInput: s = \"catsandog\", wordDict = [\"cats\", \"dog\", \"sand\", \"and\", \"cat\"]\nOutput: false\nExplanation: Return false because \"catsandog\" cannot be segmented into words from wordDict.",
+    "inputFormat": "The first line contains a string s. The second line contains an integer n, the number of words in the dictionary. The next n lines contain the words in the dictionary, one word per line.",
+    "outputFormat": "A single boolean value indicating whether the string can be segmented into words from the dictionary.",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "s",
+        "type": "string",
+        "min": 1,
+        "max": 300,
+        "description": "The input string"
+      },
+      {
+        "variable": "wordDict",
+        "type": "array",
+        "min": 1,
+        "max": 1000,
+        "description": "The dictionary of words"
+      },
+      {
+        "variable": "word",
+        "type": "string",
+        "min": 1,
+        "max": 20,
+        "description": "The length of each word in the dictionary"
+      }
+    ],
+    "examples": [
+      {
+        "input": "leetcode\n4\nleet\ncode\nleet\ncode",
+        "output": "True",
+        "explanation": "The string 'leetcode' can be segmented into 'leet code'."
+      },
+      {
+        "input": "applepenapple\n3\napple\npen\napple",
+        "output": "True",
+        "explanation": "The string 'applepenapple' can be segmented into 'apple pen apple'."
+      },
+      {
+        "input": "catsandog\n5\ncats\ndog\nsand\nand\ncat",
+        "output": "False",
+        "explanation": "The string 'catsandog' cannot be segmented into words from the dictionary."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Think about using a set to store seen words and a queue to process the remaining characters."
+    },
+    {
+      "order": 2,
+      "text": "Implement a recursive function to check if a word is in the dictionary and a helper function to process the remaining characters."
+    },
+    {
+      "order": 3,
+      "text": "In the recursive function, check if the current character is the start of a word in the dictionary and call the helper function with the remaining characters."
+    },
+    {
+      "order": 4,
+      "text": "In the helper function, if there are more words to process, process them and return true. Otherwise, return false."
+    },
+    {
+      "order": 5,
+      "text": "In the helper function, check if the current character is already in the seen set and process the remaining characters if it's not."
+    }
+  ],
+  "editorial": {
+    "title": "Unlocking the Optimal Approach to Word Break",
+    "intuition": "The problem can be solved by finding a way to divide the input string into substrings that exist in the given dictionary. A key observation is that if a substring from the start of the string to a certain index can be segmented into words from the dictionary, then we only need to check if the remaining part of the string can also be segmented.",
+    "bruteForce": "A brute force approach would involve generating all possible substrings of the input string and checking if they exist in the dictionary. However, this approach is highly inefficient due to its exponential time complexity, making it impractical for large inputs.",
+    "betterSolution": "Dynamic programming offers a more efficient solution by storing the segmentation status of substrings as we progress through the input string.",
+    "optimalSolution": "The optimal solution utilizes dynamic programming to track which substrings can be segmented into words from the dictionary. It iterates over the string, updating a boolean array dp where dp[i] is True if the substring s[0..i] can be segmented into words from the dictionary.",
+    "proofOfCorrectness": "The correctness of the dynamic programming approach can be proven by induction. The base case dp[0] is True since an empty string can always be segmented. For any position i, if dp[j] is True and s[j:i] is in the dictionary, then dp[i] can be set to True, indicating that s[0:i] can be segmented into words from the dictionary.",
+    "dryRun": "A dry run with the example s = 'leetcode' and wordDict = ['leet', 'code'] illustrates the process: dp[0] is initialized to True. As we iterate through 'leetcode', when i=4, since dp[0] is True and 'leet' is in the dictionary, dp[4] is set to True. When i=8, since dp[4] is True and 'code' is in the dictionary, dp[8] is set to True, indicating that 'leetcode' can be segmented into words from the dictionary.",
+    "commonMistakes": [
+      "Overlooking the potential for dynamic programming to reduce complexity.",
+      "Not initializing the dp array correctly, specifically not setting dp[0] to True.",
+      "Failing to consider all substrings ending at the current position.",
+      "Incorrectly updating the dp array, leading to incorrect segmentation results.",
+      "Not properly handling edge cases, such as an empty string or a dictionary with no words."
+    ],
+    "timeComplexity": "O(n*m)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nbool solve(string s, vector<string>& wordDict) {\n    // TODO: implement\n    return false;\n}\n\n// @driver-code-start\nint main() {\n    string s;\n    if (cin >> s) {\n        int n;\n        cin >> n;\n        vector<string> wordDict(n);\n        for (int i = 0; i < n; i++) cin >> wordDict[i];\n        cout << (solve(s, wordDict) ? \"1\" : \"0\") << endl;\n    }\n    return 0;\n}\n",
+    "java": "import java.util.*;\n\npublic class Main {\n    public static boolean solve(String s, List<String> wordDict) {\n        // TODO: implement\n        return false;\n    }\n\n    // @driver-code-start\npublic static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        if (scanner.hasNext()) {\n            String s = scanner.next();\n            int n = scanner.nextInt();\n            List<String> wordDict = new ArrayList<>();\n            for (int i = 0; i < n; i++) wordDict.add(scanner.next());\n            System.out.println(solve(s, wordDict) ? \"1\" : \"0\");\n        }\n    }\n}\n",
+    "python": "import sys\n\ndef solve(s, wordDict):\n    # TODO: implement\n    pass\n\n# @driver-code-start\ndef main():\n    import sys\n    input_data = sys.stdin.read().split()\n    if not input_data:\n        return\n    s = input_data[0]\n    n = int(input_data[1])\n    wordDict = input_data[2:2+n]\n    print(\"1\" if solve(s, wordDict) else \"0\")\n\nif __name__ == \"__main__\":\n    main()\n",
+    "javascript": "// @driver-code-start\nconst readline = require(\"readline\");\nconst rl = readline.createInterface({\n    input: process.stdin,\n    output: process.stdout\n});\nlet input = \"\";\nrl.on(\"line\", (line) => {\n    input += line + \"\\n\";\n});\nrl.on(\"close\", () => {\n    const inputLines = input.trim().split(\"\\n\");\n    if (inputLines.length < 3) return;\n    const s = inputLines[0].trim();\n    const n = parseInt(inputLines[1]);\n    const wordDict = inputLines[2].split(\" \");\n    const solution = new Solution();\n    console.log(solution.solve(s, wordDict) ? \"1\" : \"0\");\n});\nclass Solution {\n    solve(s, wordDict) {\n        // TODO: implement\n        return false;\n    }\n}\n"
+  },
+  "functionSignature": {
+    "cpp": "bool solve(string s, vector<string>& wordDict)",
+    "java": "public static boolean solve(String s, List<String> wordDict)",
+    "python": "def solve(s, wordDict):",
+    "javascript": "function solve(s, wordDict)"
+  },
+  "solutions": {
+    "python": "import sys\nit = iter(sys.stdin.read().split())\ns = next(it)\nwordDict = set()\nn = int(next(it))\nfor _ in range(n):\n    wordDict.add(next(it))\ndp = [False] * (len(s) + 1)\ndp[0] = True\nfor i in range(1, len(s) + 1):\n    for j in range(i):\n        if dp[j] and s[j:i] in wordDict:\n            dp[i] = True\n            break\nprint(dp[-1])",
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\nint main() {\n    string s; cin >> s;\n    int n; cin >> n;\n    unordered_set<string> wordDict;\n    for (int i = 0; i < n; i++) {\n        string word; cin >> word;\n        wordDict.insert(word);\n    }\n    vector<bool> dp(s.size() + 1, false);\n    dp[0] = true;\n    for (int i = 1; i <= s.size(); i++) {\n        for (int j = 0; j < i; j++) {\n            if (dp[j] && wordDict.find(s.substr(j, i - j)) != wordDict.end()) {\n                dp[i] = true;\n                break;\n            }\n        }\n    }\n    cout << (dp.back() ? \"true\" : \"false\") << endl;\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.2
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "leetcode\n4\nleet\ncode\nleet\ncode",
+      "output": "True",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "applepenapple\n3\napple\npen\napple",
+      "output": "True",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_3",
+      "input": "catsandog\n5\ncats\ndog\nsand\nand\ncat",
+      "output": "False",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint_4",
+      "input": "a\n1\na",
+      "output": "True",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "duplicate_6",
+      "input": "catcat\n2\ncat\ncat",
+      "output": "True",
+      "isVisible": false,
+      "weight": 1,
+      "category": "duplicate"
+    },
+    {
+      "id": "min_constraint_7",
+      "input": "ab\n1\na",
+      "output": "False",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "sorted_8",
+      "input": "leetcode\n4\nleet\ncode\nleetco\nde",
+      "output": "True",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sorted"
+    },
+    {
+      "id": "reverse_sorted_9",
+      "input": "leetcode\n4\nde\ncode\nleetco\nleet",
+      "output": "True",
+      "isVisible": false,
+      "weight": 1,
+      "category": "reverse_sorted"
+    },
+    {
+      "id": "repeated_10",
+      "input": "aaaa\n2\na\naa",
+      "output": "True",
+      "isVisible": false,
+      "weight": 1,
+      "category": "repeated"
+    },
+    {
+      "id": "repeated_11",
+      "input": "aaaa\n3\na\naa\naaa",
+      "output": "True",
+      "isVisible": false,
+      "weight": 1,
+      "category": "repeated"
+    },
+    {
+      "id": "zero_12",
+      "input": "leetcode 0",
+      "output": "False",
+      "isVisible": false,
+      "weight": 1,
+      "category": "zero"
+    },
+    {
+      "id": "one_13",
+      "input": "apple 1\napple",
+      "output": "True",
+      "isVisible": false,
+      "weight": 1,
+      "category": "one"
+    },
+    {
+      "id": "negative_14",
+      "input": "-1 1\na",
+      "output": "False",
+      "isVisible": false,
+      "weight": 1,
+      "category": "negative"
+    },
+    {
+      "id": "adversarial_16",
+      "input": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa 1 a",
+      "output": "True",
+      "isVisible": false,
+      "weight": 1,
+      "category": "adversarial"
+    },
+    {
+      "id": "large_random_17",
+      "input": "abcdefghijklmnopqrstuvwxyzaaaaabbbbbccccc 6 aaa aaab bbbb bbbc cccc dddd",
+      "output": "False",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

@@ -255,7 +255,12 @@ export async function judgeAgainstTestCases(
 ): Promise<{
     passed: number;
     total: number;
-    firstFailure: JudgeRunResult | null;
+    firstFailure: (JudgeRunResult & {
+        testCaseIndex: number;
+        input: string;
+        expectedOutput: string;
+        actualOutput: string;
+    }) | null;
     lastResult: JudgeRunResult;
 }> {
     if (testCases.length === 0) {
@@ -268,19 +273,31 @@ export async function judgeAgainstTestCases(
     );
 
     let passed = 0;
-    let firstFailure: JudgeRunResult | null = null;
+    let firstFailure: (JudgeRunResult & {
+        testCaseIndex: number;
+        input: string;
+        expectedOutput: string;
+        actualOutput: string;
+    }) | null = null;
 
     for (let i = 0; i < results.length; i++) {
         const result = results[i];
         const actualOutput = (result.stdout ?? "").trim();
+        const expectedOutput = testCases[i].expectedOutput.trim();
         const isAccepted =
             result.status.description === "Accepted" &&
-            actualOutput === testCases[i].expectedOutput.trim();
+            actualOutput === expectedOutput;
 
         if (isAccepted) {
             passed++;
         } else if (!firstFailure) {
-            firstFailure = result;
+            firstFailure = {
+                ...result,
+                testCaseIndex: i + 1,
+                input: testCases[i].input,
+                expectedOutput: testCases[i].expectedOutput,
+                actualOutput: result.stdout ?? "",
+            };
         }
     }
 

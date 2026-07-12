@@ -52,6 +52,7 @@ export const env = {
 
   XAI_API_KEY: z.string().min(1).optional().parse(getEnv("XAI_API_KEY")),
   GROQ_API_KEY: z.string().min(1).optional().parse(getEnv("GROQ_API_KEY")),
+  GROQ_API_KEYS: z.string().min(1).optional().parse(getEnv("GROQ_API_KEYS")),
 
   GOOGLE_CLIENT_ID: z.string().min(1).optional().parse(getEnv("GOOGLE_CLIENT_ID")),
   GOOGLE_CLIENT_SECRET: z.string().min(1).optional().parse(getEnv("GOOGLE_CLIENT_SECRET")),

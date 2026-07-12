@@ -1,0 +1,292 @@
+{
+  "_id": "two-sum-in-bst",
+  "title": "Two Sum in BST",
+  "slug": "two-sum-in-bst",
+  "difficulty": "Hard",
+  "category": "TREE",
+  "subCategory": "Practice Problems",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 500,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "BINARY SEARCH TREES",
+      "PRACTICE PROBLEMS",
+      "BINARY SEARCH"
+    ],
+    "patterns": [
+      "two sum",
+      "bst",
+      "binary search tree"
+    ],
+    "prerequisites": [
+      "INSERT INTO BST",
+      "SEARCH IN BST",
+      "DELETE FROM BST"
+    ],
+    "variants": [],
+    "tags": [
+      "BINARY SEARCH TREES",
+      "PRACTICE PROBLEMS",
+      "BINARY SEARCH"
+    ],
+    "keywords": [
+      "BINARY SEARCH TREES",
+      "PRACTICE PROBLEMS",
+      "BINARY SEARCH",
+      "TREE TRAVERSAL"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "Given a binary search tree (BST) and an integer target, determine whether there exist two distinct nodes in the BST such that the sum of their values equals the target. The BST is constructed by inserting the given node values in the order they appear in the input. Each node value is unique.\n\n**Input Format**\n- The first line contains an integer `n`, the number of nodes in the BST.\n- The second line contains `n` space‑separated integers `a1 a2 ... an`, the values to be inserted into the BST in the given order.\n- The third line contains a single integer `target`, the value to search for.\n\n**Output Format**\n- Print `YES` if there exist two distinct nodes whose values sum to `target`; otherwise, print `NO`.\n\n**Notes**\n- The BST property must be maintained during insertion: for any node, all values in its left subtree are smaller and all values in its right subtree are larger.\n- The two nodes must be different; using the same node twice is not allowed.\n- An efficient solution runs in O(n) time and O(h) auxiliary space, where `h` is the height of the BST, by using an in‑order and reverse in‑order traversal simultaneously (two‑pointer technique on the sorted order of values).",
+    "inputFormat": "n\na1 a2 ... an\ntarget",
+    "outputFormat": "YES or NO",
+    "notes": "The input guarantees that all node values are distinct. The BST may be unbalanced; solutions should not rely on the tree being perfectly balanced.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 100000,
+        "description": "Number of nodes in the BST"
+      },
+      {
+        "variable": "ai",
+        "type": "integer",
+        "min": -1000000000,
+        "max": 1000000000,
+        "description": "Value of each node, all distinct"
+      },
+      {
+        "variable": "target",
+        "type": "integer",
+        "min": -2000000000,
+        "max": 2000000000,
+        "description": "Target sum to find"
+      }
+    ],
+    "examples": [
+      {
+        "input": "5\n4 2 6 1 3\n9",
+        "output": "YES",
+        "explanation": "The BST contains nodes with values {1,2,3,4,6}. The pair (3,6) sums to 9."
+      },
+      {
+        "input": "5\n5 3 8 2 4\n14",
+        "output": "NO",
+        "explanation": "No two distinct node values add up to 14."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "The problem involves a binary search tree (BST) and a target sum. Think about how you can traverse the BST to find pairs of nodes that add up to the target."
+    },
+    {
+      "order": 2,
+      "text": "Consider the properties of a BST, specifically that an in-order traversal results in a sorted array of node values. How could you leverage this property to find a pair of nodes that sum to the target?"
+    },
+    {
+      "order": 3,
+      "text": "An efficient solution could involve traversing the BST in a way that allows you to keep track of the values you've seen so far and check if the complement of the current node's value (target - current node's value) has been seen. Think about how two pointers or a similar technique could be applied to take advantage of the sorted nature of the in-order traversal."
+    }
+  ],
+  "editorial": {
+    "title": "Optimizing Two Sum in BST",
+    "intuition": "The problem can be solved efficiently by leveraging the properties of a Binary Search Tree (BST) and the two-pointer technique. The key observation is that an in-order traversal of the BST yields a sorted array, allowing us to apply the two-pointer approach to find the target sum.",
+    "bruteForce": "A brute-force approach would involve checking every pair of nodes in the BST, resulting in a time complexity of O(n^2). This is inefficient for large inputs.",
+    "betterSolution": "The optimal solution involves performing an in-order traversal of the BST to obtain a sorted array, then applying the two-pointer technique to find the target sum.",
+    "optimalSolution": "The optimal solution has a time complexity of O(n) and a space complexity of O(h), where h is the height of the BST. This is because we perform a single pass through the BST for the in-order traversal and then a single pass through the sorted array for the two-pointer technique.",
+    "proofOfCorrectness": "The correctness of the optimal solution follows from the fact that the in-order traversal of a BST produces a sorted array. The two-pointer technique is then used to find a pair of elements that sum to the target value. If such a pair is found, the algorithm terminates; otherwise, it continues until the pointers meet.",
+    "dryRun": "A dry run of the optimal solution with sample inputs verifies its correctness. For instance, with a sample BST and target sum, the algorithm correctly identifies whether a pair of nodes sums to the target value.",
+    "commonMistakes": [
+      "Not leveraging the properties of the BST to reduce the search space.",
+      "Using a brute-force approach that results in a high time complexity.",
+      "Failing to handle edge cases, such as an empty BST or a target sum that is not achievable.",
+      "Not using the two-pointer technique to efficiently find the target sum in the sorted array.",
+      "Incorrectly implementing the in-order traversal or the two-pointer technique."
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(h)"
+  },
+  "starterCode": {
+    "cpp": "#include <iostream>\nusing namespace std;\nstruct Node {\n    int val;\n    Node* left;\n    Node* right;\n    Node(int x) : val(x), left(NULL), right(NULL) {}\n};\nNode* insert(Node* root, int x) {\n    if (root == NULL) return new Node(x);\n    if (x < root->val) root->left = insert(root->left, x);\n    else root->right = insert(root->right, x);\n    return root;\n}\nvoid inorder(Node* root, int& prev) {\n    if (root) {\n        inorder(root->left, prev);\n        // TODO: implement\n        prev = root->val;\n    }\n}\nbool twoSum(int* arr, int n, int target) {\n    Node* root = NULL;\n    for (int i = 0; i < n; i++) root = insert(root, arr[i]);\n    int prev = 0;\n    inorder(root, prev);\n    return false;\n}\n// @driver-code-start\nint main() {\n    int n;\n    cin >> n;\n    int* arr = new int[n];\n    for (int i = 0; i < n; i++) cin >> arr[i];\n    int target;\n    cin >> target;\n    if (twoSum(arr, n, target)) cout << \"YES\" << endl;\n    else cout << \"NO\" << endl;\n    return 0;\n}",
+    "java": "import java.util.*;\npublic class Main {\n    static class Node {\n        int val;\n        Node left;\n        Node right;\n        Node(int x) { val = x; }\n    }\n    static Node insert(Node root, int x) {\n        if (root == null) return new Node(x);\n        if (x < root.val) root.left = insert(root.left, x);\n        else root.right = insert(root.right, x);\n        return root;\n    }\n    static boolean twoSum(int[] arr, int n, int target) {\n        Node root = null;\n        for (int i = 0; i < n; i++) root = insert(root, arr[i]);\n        // TODO: implement\n        return false;\n    }\n    // @driver-code-start\npublic static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int[] arr = new int[n];\n        for (int i = 0; i < n; i++) arr[i] = scanner.nextInt();\n        int target = scanner.nextInt();\n        if (twoSum(arr, n, target)) System.out.println(\"YES\");\n        else System.out.println(\"NO\");\n    }\n}",
+    "python": "class Node:\n    def __init__(self, x):\n        self.val = x\n        self.left = None\n        self.right = None\ndef insert(root, x):\n    if root is None: return Node(x)\n    if x < root.val: root.left = insert(root.left, x)\n    else: root.right = insert(root.right, x)\n    return root\ndef twoSum(arr, n, target):\n    root = None\n    for i in range(n): root = insert(root, arr[i])\n    # TODO: implement\n    return False\n# @driver-code-start\nif __name__ == '__main__':\n    n = int(input())\n    arr = list(map(int, input().split()))\n    target = int(input())\n    if twoSum(arr, n, target): print('YES')\n    else: print('NO')",
+    "javascript": "class Node {\n    constructor(x) {\n        this.val = x;\n        this.left = null;\n        this.right = null;\n    }\n}\nfunction insert(root, x) {\n    if (root === null) return new Node(x);\n    if (x < root.val) root.left = insert(root.left, x);\n    else root.right = insert(root.right, x);\n    return root;\n}\nfunction twoSum(arr, n, target) {\n    let root = null;\n    for (let i = 0; i < n; i++) root = insert(root, arr[i]);\n    const solution = new Solution();\n        console.log(solution.twoSum(arr, n, target));: implement\n    return false;\n}\n// @driver-code-start\nconst readline = require('readline');\nconst rl = readline.createInterface({\n    input: process.stdin,\n    output: process.stdout\n});\nlet lines = [];\nrl.on('line', (line) => {\n    lines.push(line);\n});\nrl.on('close', () => {\n    let n = parseInt(lines[0]);\n    let arr = lines[1].split(' ').map(Number);\n    let target = parseInt(lines[2]);\n    if (twoSum(arr, n, target)) console.log('YES');\n    else console.log('NO');\n});\n\nclass Solution {\n    twoSum(arr, n, target) {\n        // TODO: implement\n        return false;\n    }\n}\n"
+  },
+  "functionSignature": {
+    "cpp": "bool twoSum(int* arr, int n, int target)",
+    "java": "static boolean twoSum(int[] arr, int n, int target)",
+    "python": "def twoSum(arr, n, target):",
+    "javascript": "function twoSum(arr, n, target)"
+  },
+  "solutions": {
+    "python": "import sys\nit = iter(sys.stdin.read().split())\nn = int(next(it))\nnums = [int(next(it)) for _ in range(n)]\ntarget = int(next(it))\n\nclass TreeNode:\n    def __init__(self, x):\n        self.val = x\n        self.left = None\n        self.right = None\n\ndef insert(root, val):\n    if not root:\n        return TreeNode(val)\n    if val < root.val:\n        root.left = insert(root.left, val)\n    else:\n        root.right = insert(root.right, val)\n    return root\n\ndef inorder(root, res):\n    if root:\n        inorder(root.left, res)\n        res.append(root.val)\n        inorder(root.right, res)\n\nroot = None\nfor num in nums:\n    root = insert(root, num)\n\ninorder_res = []\ninorder(root, inorder_res)\n\nleft, right = 0, len(inorder_res) - 1\nwhile left < right:\n    cur_sum = inorder_res[left] + inorder_res[right]\n    if cur_sum == target:\n        if inorder_res[left] != inorder_res[right]:\n            print('YES')\n            sys.exit()\n        left += 1\n        right -= 1\n    elif cur_sum < target:\n        left += 1\n    else:\n        right -= 1\nprint('NO')",
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\nstruct TreeNode {\n    int val;\n    TreeNode *left;\n    TreeNode *right;\n    TreeNode(int x) : val(x), left(NULL), right(NULL) {}\n};\n\nTreeNode* insert(TreeNode* root, int val) {\n    if (!root) return new TreeNode(val);\n    if (val < root->val) root->left = insert(root->left, val);\n    else root->right = insert(root->right, val);\n    return root;\n}\n\nvoid inorder(TreeNode* root, vector<int>& res) {\n    if (root) {\n        inorder(root->left, res);\n        res.push_back(root->val);\n        inorder(root->right, res);\n    }\n}\n\nint main() {\n    int n;\n    cin >> n;\n    vector<int> nums(n);\n    for (int i = 0; i < n; i++) cin >> nums[i];\n    int target;\n    cin >> target;\n\n    TreeNode* root = NULL;\n    for (int num : nums) root = insert(root, num);\n\n    vector<int> inorder_res;\n    inorder(root, inorder_res);\n\n    int left = 0, right = inorder_res.size() - 1;\n    while (left < right) {\n        long long cur_sum = (long long)inorder_res[left] + inorder_res[right];\n        if (cur_sum == target) {\n            if (inorder_res[left] != inorder_res[right]) {\n                cout << \"YES\" << endl;\n                return 0;\n            }\n            left++;\n            right--;\n        } else if (cur_sum < target) left++;\n        else right--;\n    }\n    cout << \"NO\" << endl;\n    return 0;\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.5
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5\n4 2 6 1 3\n9",
+      "output": "YES",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "5\n5 3 8 2 4\n14",
+      "output": "NO",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint_1",
+      "input": "1\n-1000000000\n-2000000000",
+      "output": "NO",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "boundary_1",
+      "input": "2\n1 2\n3",
+      "output": "YES",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    },
+    {
+      "id": "boundary_2",
+      "input": "2\n-1000000000 1000000000\n0",
+      "output": "YES",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    },
+    {
+      "id": "sorted_1",
+      "input": "5\n1 2 3 4 5\n6",
+      "output": "YES",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sorted"
+    },
+    {
+      "id": "reverse_sorted_1",
+      "input": "5\n5 4 3 2 1\n6",
+      "output": "YES",
+      "isVisible": false,
+      "weight": 1,
+      "category": "reverse_sorted"
+    },
+    {
+      "id": "zero_1",
+      "input": "2\n0 0\n0",
+      "output": "NO",
+      "isVisible": false,
+      "weight": 1,
+      "category": "zero"
+    },
+    {
+      "id": "one_1",
+      "input": "1\n1\n2",
+      "output": "NO",
+      "isVisible": false,
+      "weight": 1,
+      "category": "one"
+    },
+    {
+      "id": "repeated_1",
+      "input": "3\n1 1 1\n2",
+      "output": "NO",
+      "isVisible": false,
+      "weight": 1,
+      "category": "repeated"
+    },
+    {
+      "id": "large_random_0",
+      "input": "91\n-760918337 -946289816 592467581 -409379029 -474098744 -520658577 -700344588 581559892 -779893293 453201078 590571865 915941032 171165722 -813300287 268073012 -93929780 -931747207 -936010953 -798790995 -530478523 -500364532 85242216 292825378 -943014439 205264595 -572999404 537640408 395616196 506083910 170252923 -99088046 -526607376 -35330923 265438422 -402590008 738238661 866808229 -986044017 629526405 730483678 -657134238 499242941 -92442488 -269317573 -403275836 -666110312 -537617219 639591159 -277168708 -780505098 -800829816 -184112322 -792303157 -229097657 819980297 -261360712 296491777 -431945773 733294783 -906690895 567087080 -13392589 151541058 -731937860 980614224 -187103607 -830777868 185498232 -370404448 781132953 349993687 328261053 901493143 850501472 -223394696 239854303 -587063402 513056504 -850631447 -901592884 420052172 -510592185 660151621 -378544090 -828648040 836780819 -500085380 860759513 -783101080 -183685141 -403056228\n-52617581",
+      "output": "NO",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    },
+    {
+      "id": "large_random_1",
+      "input": "91\n791238511 -216528864 -650702988 -205042428 -237061975 -550087081 439190226 -426669502 507147647 467907436 391645397 -846664277 308098873 363605489 -632482560 147056643 565787882 -474272539 -649095817 -7303751 -185125637 -420291463 987262417 374389012 477816546 196040476 -528380013 470197911 -303608129 810010706 649940838 666447132 -879874170 -508123012 764807637 -931065263 728822695 -322569730 -138505171 -425030833 -857861056 -546917802 960944880 218009887 881985143 541709159 -324234389 -543387977 407543818 72090968 -150386968 899842598 963975986 380513881 -14623148 -693185599 -431174161 -700146162 -470371460 599851660 205528893 157444916 -435766690 604199939 255388860 -79945373 928059962 253127416 -142293941 -222618549 -529012260 -702934846 94199380 59817199 -804773524 623029829 -898818358 849204427 -764530278 -671775761 347430114 -656441280 700977478 461322282 -93418380 280778650 -863575288 -173718494 -180478831 279660644 5129473\n272528809",
+      "output": "NO",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    },
+    {
+      "id": "large_random_2",
+      "input": "42\n188043565 848510326 -975344696 460897491 547738332 -754002011 463961867 900068734 153135002 612497800 -426997276 650553201 376454985 -269478729 -760443532 -369713276 -66348723 -660358811 -25635759 -993030740 550680889 880879862 545502469 -434376335 75000495 636301367 -616348006 90238094 959853367 -771484498 869424395 342821943 -359094700 807471163 372133587 90197738 307753571 -572841660 -671780162 -197026122 637479472 -653076086\n316615266",
+      "output": "NO",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    },
+    {
+      "id": "large_random_3",
+      "input": "77\n972449774 -998771864 286223706 -303880163 49272770 -958174015 -759765891 995224088 -220504742 887040856 785988124 732535702 -339618433 -485780069 -875606643 -482732204 885511260 218389745 -830870525 -816060620 571759591 43656560 752396592 -851367260 633380706 143977779 644616922 -729931352 -724281426 416804102 20661135 180694232 -645392555 -430795231 133170817 873535693 302650515 -91318193 -545166832 994826543 158129533 621919657 567515029 481479470 -568031377 531046259 -330594355 -143170563 442436764 395602503 -198085576 -59187248 931906533 111485658 -30440889 -740145461 -467626738 -517466137 -862505426 -273966771 -954829268 263383345 189537409 -505832375 263665529 -527086757 -984557781 -847543509 520076855 355283291 -873569552 -508351254 -855258909 944374675 -932541187 846052960 -290410210\n-1695669997",
+      "output": "NO",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    },
+    {
+      "id": "large_random_4",
+      "input": "75\n-488888938 -401974627 436618835 42419699 -539929955 157996057 -715862473 553387797 894903217 226305709 237405089 15053308 -478167404 684957391 15701648 734086606 -125845383 -591097809 -797436886 -791842667 415154685 -74324631 -239151761 -90371832 -117164578 2927833 855075286 565678477 -883668269 446039345 403284967 387660448 -788649225 -869835273 -135377379 563826773 -271353213 719259320 850427695 -765346541 -466014590 -588563456 -591529481 151664882 -36609730 -698960806 -94016080 -605962437 -401828852 -6513782 -463544737 877944287 982697790 -838112183 -48383974 735214557 849733107 838174903 181814609 -789742606 -891362388 400470492 160903744 795355576 -968307756 -799719717 989357940 618269592 822560210 -492378912 -642849615 -127232451 42906379 33709343 -540981184\n1713645169",
+      "output": "NO",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

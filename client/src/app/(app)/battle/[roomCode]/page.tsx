@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -63,6 +63,92 @@ import {
 } from "@/components/ui";
 
 /* ─── helpers ─────────────────────────────────────────────────────────── */
+
+function splitCode(language: string, fullCode: string): { visibleCode: string; hiddenCode: string; splitType: "before" | "after" | "none" } {
+  if (!fullCode) return { visibleCode: "", hiddenCode: "", splitType: "none" };
+
+  const lang = language.toLowerCase();
+
+  // check for explicit delimiters first
+  const explicitDelimiter = lang === "python" || lang === "python3" ? "# @driver-code-start" : "// @driver-code-start";
+  const explicitIndex = fullCode.indexOf(explicitDelimiter);
+  if (explicitIndex !== -1) {
+    let visible = fullCode.substring(0, explicitIndex).trim() + "\n";
+    if (lang === "java" && visible.includes("public class Main") && !visible.endsWith("}")) {
+      visible += "\n}\n";
+    }
+    return {
+      visibleCode: visible,
+      hiddenCode: fullCode.substring(explicitIndex + explicitDelimiter.length).trim(),
+      splitType: "after"
+    };
+  }
+
+  if (lang === "cpp" || lang === "c++") {
+    const mainIndex = fullCode.indexOf("int main(");
+    if (mainIndex !== -1) {
+      return {
+        visibleCode: fullCode.substring(0, mainIndex).trim() + "\n",
+        hiddenCode: fullCode.substring(mainIndex),
+        splitType: "after"
+      };
+    }
+  } else if (lang === "python" || lang === "python3") {
+    let mainIndex = fullCode.indexOf("def main():");
+    if (mainIndex === -1) {
+      mainIndex = fullCode.indexOf("if __name__ ==");
+    }
+    if (mainIndex !== -1) {
+      return {
+        visibleCode: fullCode.substring(0, mainIndex).trim() + "\n",
+        hiddenCode: fullCode.substring(mainIndex),
+        splitType: "after"
+      };
+    }
+  } else if (lang === "java") {
+    const mainIndex = fullCode.indexOf("public static void main(");
+    if (mainIndex !== -1) {
+      let visible = fullCode.substring(0, mainIndex).trim() + "\n";
+      if (visible.includes("public class Main") && !visible.endsWith("}")) {
+        visible += "\n}\n";
+      }
+      return {
+        visibleCode: visible,
+        hiddenCode: fullCode.substring(mainIndex),
+        splitType: "after"
+      };
+    }
+  } else if (lang === "javascript" || lang === "js") {
+    const solutionIndex = fullCode.indexOf("class Solution");
+    if (solutionIndex !== -1) {
+      return {
+        visibleCode: fullCode.substring(solutionIndex),
+        hiddenCode: fullCode.substring(0, solutionIndex),
+        splitType: "before"
+      };
+    }
+  }
+
+  return { visibleCode: fullCode, hiddenCode: "", splitType: "none" };
+}
+
+function combineCode(language: string, visibleCode: string, hiddenCode: string, splitType: "before" | "after" | "none"): string {
+  if (splitType === "none" || !hiddenCode) return visibleCode;
+
+  const lang = language.toLowerCase();
+  let processedVisible = visibleCode.trim();
+
+  if (lang === "java" && processedVisible.includes("public class Main") && processedVisible.endsWith("}")) {
+    processedVisible = processedVisible.slice(0, -1).trim();
+  }
+
+  if (splitType === "before") {
+    return hiddenCode + "\n" + processedVisible;
+  } else {
+    const delimiter = lang === "python" || lang === "python3" ? "# @driver-code-start" : "// @driver-code-start";
+    return processedVisible + "\n\n" + delimiter + "\n" + hiddenCode;
+  }
+}
 
 function normalizeRoom(data: unknown): BattleRoom | null {
   if (!data || typeof data !== "object") return null;
@@ -677,6 +763,73 @@ function CodingWorkspace({ room, matchId, onLeave }: CodingWorkspaceProps) {
   
   // Submission execution state
   const [submitting, setSubmitting] = useState(false);
+
+  // Resizable layout states
+  const [leftWidth, setLeftWidth] = useState<number>(45); // width in %
+  const [bottomHeight, setBottomHeight] = useState<number>(224); // height in px
+  const [fontSize, setFontSize] = useState<number>(14); // editor text size
+  const [isDragging, setIsDragging] = useState<boolean>(false);
+  
+  const isDraggingLeftRef = useRef(false);
+  const isDraggingBottomRef = useRef(false);
+
+  const handleMouseMoveLeft = useCallback((e: MouseEvent) => {
+    if (!isDraggingLeftRef.current) return;
+    const newWidth = (e.clientX / window.innerWidth) * 100;
+    setLeftWidth(Math.max(20, Math.min(80, newWidth)));
+  }, []);
+
+  const handleMouseUpLeft = useCallback(() => {
+    isDraggingLeftRef.current = false;
+    setIsDragging(false);
+    document.body.style.cursor = "";
+    document.removeEventListener("mousemove", handleMouseMoveLeft);
+    document.removeEventListener("mouseup", handleMouseUpLeft);
+  }, [handleMouseMoveLeft]);
+
+  const handleMouseDownLeft = (e: React.MouseEvent) => {
+    e.preventDefault();
+    isDraggingLeftRef.current = true;
+    setIsDragging(true);
+    document.body.style.cursor = "col-resize";
+    document.addEventListener("mousemove", handleMouseMoveLeft);
+    document.addEventListener("mouseup", handleMouseUpLeft);
+  };
+
+  const handleMouseMoveBottom = useCallback((e: MouseEvent) => {
+    if (!isDraggingBottomRef.current) return;
+    const rightPanel = document.getElementById("right-workspace-panel");
+    if (!rightPanel) return;
+    const rect = rightPanel.getBoundingClientRect();
+    const newHeight = rect.bottom - e.clientY;
+    setBottomHeight(Math.max(100, Math.min(rect.height - 100, newHeight)));
+  }, []);
+
+  const handleMouseUpBottom = useCallback(() => {
+    isDraggingBottomRef.current = false;
+    setIsDragging(false);
+    document.body.style.cursor = "";
+    document.removeEventListener("mousemove", handleMouseMoveBottom);
+    document.removeEventListener("mouseup", handleMouseUpBottom);
+  }, [handleMouseMoveBottom]);
+
+  const handleMouseDownBottom = (e: React.MouseEvent) => {
+    e.preventDefault();
+    isDraggingBottomRef.current = true;
+    setIsDragging(true);
+    document.body.style.cursor = "row-resize";
+    document.addEventListener("mousemove", handleMouseMoveBottom);
+    document.addEventListener("mouseup", handleMouseUpBottom);
+  };
+
+  useEffect(() => {
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMoveLeft);
+      document.removeEventListener("mouseup", handleMouseUpLeft);
+      document.removeEventListener("mousemove", handleMouseMoveBottom);
+      document.removeEventListener("mouseup", handleMouseUpBottom);
+    };
+  }, [handleMouseMoveLeft, handleMouseUpLeft, handleMouseMoveBottom, handleMouseUpBottom]);
   const [latestSubmission, setLatestSubmission] = useState<any | null>(null);
   
   const [showResultsModal, setShowResultsModal] = useState(false);
@@ -758,7 +911,6 @@ function CodingWorkspace({ room, matchId, onLeave }: CodingWorkspaceProps) {
     queryFn: () => api<{ success: boolean; data: any[] }>(`/rating/match/${matchId}`),
     enabled: Boolean(matchId && (room?.status === "FINISHED" || liveMatchQuery.data?.status === "COMPLETED" || liveMatchQuery.data?.status === "ABANDONED")),
     refetchInterval: (query) => {
-      if (!isRankedMatch) return false;
       const historyData = query.state.data?.data || [];
       const hasRecord = historyData.some(
         (h: any) => h.user === user?._id || h.user === user?.username
@@ -773,7 +925,6 @@ function CodingWorkspace({ room, matchId, onLeave }: CodingWorkspaceProps) {
     const liveMatchStatus = liveMatchQuery.data?.status;
     const isEnded = room?.status === "FINISHED" || liveMatchStatus === "COMPLETED" || liveMatchStatus === "ABANDONED";
     if (isEnded && !hasTriggeredModal) {
-      setShowResultsModal(true);
       setHasTriggeredModal(true);
     }
   }, [liveMatchQuery.data?.status, room?.status, hasTriggeredModal]);
@@ -905,7 +1056,9 @@ function CodingWorkspace({ room, matchId, onLeave }: CodingWorkspaceProps) {
       const supported = question.judgeConfig?.supportedLanguages || ["cpp", "java", "python", "javascript"];
       
       for (const lang of supported) {
-        initial[lang] = question.starterCode[lang] || "";
+        const fullCode = question.starterCode[lang] || "";
+        const { visibleCode } = splitCode(lang, fullCode);
+        initial[lang] = visibleCode;
       }
       setCodeByLang(initial);
       
@@ -915,6 +1068,14 @@ function CodingWorkspace({ room, matchId, onLeave }: CodingWorkspaceProps) {
       }
     }
   }, [question]);
+
+  // Initialize Prompt War state
+  useEffect(() => {
+    if (room.battleType === "PROMPT_WAR") {
+      setSelectedLang("javascript");
+      setCodeByLang(prev => ({ ...prev, javascript: prev.javascript ?? "" }));
+    }
+  }, [room.battleType]);
 
   // Timer countdown
   const [timeLeft, setTimeLeft] = useState(0);
@@ -990,7 +1151,8 @@ function CodingWorkspace({ room, matchId, onLeave }: CodingWorkspaceProps) {
   const handleResetCode = () => {
     if (question && question.starterCode && question.starterCode[selectedLang]) {
       if (confirm("Reset editor to starter code? Your current edits in this language will be discarded.")) {
-        setCodeByLang(prev => ({ ...prev, [selectedLang]: question.starterCode[selectedLang] }));
+        const { visibleCode } = splitCode(selectedLang, question.starterCode[selectedLang]);
+        setCodeByLang(prev => ({ ...prev, [selectedLang]: visibleCode }));
       }
     }
   };
@@ -999,12 +1161,17 @@ function CodingWorkspace({ room, matchId, onLeave }: CodingWorkspaceProps) {
     const currentCode = codeByLang[selectedLang] || "";
     if (currentCode.trim().length === 0) return;
     
+    // Combine visible user code with hidden driver code if it exists
+    const fullStarterCode = question?.starterCode?.[selectedLang] || "";
+    const { hiddenCode, splitType } = splitCode(selectedLang, fullStarterCode);
+    const combinedCode = combineCode(selectedLang, currentCode, hiddenCode, splitType);
+
     setSubmitting(true);
     setLatestSubmission(null);
     submitCodeMutation.mutate({
       matchId,
       language: selectedLang,
-      code: currentCode
+      code: combinedCode
     });
   };
 
@@ -1034,6 +1201,11 @@ function CodingWorkspace({ room, matchId, onLeave }: CodingWorkspaceProps) {
     const subUserId = typeof sub.userId === "object" && sub.userId ? sub.userId._id : sub.userId;
     return subUserId === user?._id && sub.status === "ACCEPTED";
   });
+
+  const hasSubmitted = matchSubmissions.some((sub: any) => {
+    const subUserId = typeof sub.userId === "object" && sub.userId ? sub.userId._id : sub.userId;
+    return subUserId === user?._id;
+  });
   
   const matchEnded = room?.status === "FINISHED" || liveMatch?.status === "COMPLETED" || liveMatch?.status === "ABANDONED" || (liveMatch?.timer?.endsAt && new Date(liveMatch.timer.endsAt).getTime() <= Date.now());
   const canLeaveSafely = solved || matchEnded;
@@ -1052,7 +1224,16 @@ function CodingWorkspace({ room, matchId, onLeave }: CodingWorkspaceProps) {
         <div className="flex items-center gap-3">
           {canLeaveSafely ? (
             <div className="flex items-center gap-3">
-              <button onClick={onLeave} className="flex items-center gap-1.5 text-text-muted hover:text-text text-sm font-semibold transition-colors cursor-pointer">
+              <button 
+                onClick={() => {
+                  if (liveMatch?.status === "COMPLETED" || liveMatch?.status === "ABANDONED" || room?.status === "FINISHED") {
+                    setShowResultsModal(true);
+                  } else {
+                    onLeave();
+                  }
+                }} 
+                className="flex items-center gap-1.5 text-text-muted hover:text-text text-sm font-semibold transition-colors cursor-pointer"
+              >
                 <DoorOpen className="size-4 text-emerald-500" /> Leave Arena
               </button>
               {(liveMatch?.status === "COMPLETED" || liveMatch?.status === "ABANDONED") && (
@@ -1117,24 +1298,36 @@ function CodingWorkspace({ room, matchId, onLeave }: CodingWorkspaceProps) {
 
         {/* Score Board */}
         <div className="flex items-center gap-5">
-          <div className="flex items-center gap-2.5">
+          {room.isSolo ? (
             <div className="text-right">
-              <span className="text-[10px] text-text-faint font-semibold uppercase block">Team A</span>
-              <span className="font-mono text-sm font-bold text-blue-400">{liveMatch?.score?.teamA ?? 0} pts</span>
+              <span className="text-[10px] text-text-faint font-semibold uppercase block">Score</span>
+              <span className="font-mono text-sm font-bold text-primary">
+                {(userTeam === "B" ? liveMatch?.score?.teamB : liveMatch?.score?.teamA) ?? 0} pts
+              </span>
             </div>
-            <div className="text-center font-mono text-xs font-bold text-text-faint px-1.5 py-0.5 bg-surface-2 rounded border border-border/50">VS</div>
-            <div className="text-left">
-              <span className="text-[10px] text-text-faint font-semibold uppercase block">Team B</span>
-              <span className="font-mono text-sm font-bold text-red-400">{liveMatch?.score?.teamB ?? 0} pts</span>
+          ) : (
+            <div className="flex items-center gap-2.5">
+              <div className="text-right">
+                <span className="text-[10px] text-text-faint font-semibold uppercase block">Team A</span>
+                <span className="font-mono text-sm font-bold text-blue-400">{liveMatch?.score?.teamA ?? 0} pts</span>
+              </div>
+              <div className="text-center font-mono text-xs font-bold text-text-faint px-1.5 py-0.5 bg-surface-2 rounded border border-border/50">VS</div>
+              <div className="text-left">
+                <span className="text-[10px] text-text-faint font-semibold uppercase block">Team B</span>
+                <span className="font-mono text-sm font-bold text-red-400">{liveMatch?.score?.teamB ?? 0} pts</span>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </header>
 
       {/* Main Workspace (IDE splitter layout) */}
-      <main className="flex-1 flex flex-col md:flex-row overflow-hidden min-h-0">
+      <main className="flex-1 flex flex-row overflow-hidden min-h-0">
         {/* Left Side: Question Pane */}
-        <div className="flex-1 md:max-w-[45%] border-r border-border bg-surface/30 flex flex-col overflow-hidden min-h-0">
+        <div 
+          style={{ width: `${leftWidth}%` }}
+          className="border-r border-border bg-surface/30 flex flex-col overflow-hidden min-h-0 shrink-0 min-w-[280px]"
+        >
           <div className="flex items-center justify-between border-b border-border bg-surface px-4 h-10 shrink-0">
             <div className="flex gap-2">
               <button
@@ -1187,101 +1380,150 @@ function CodingWorkspace({ room, matchId, onLeave }: CodingWorkspaceProps) {
                           {question.difficulty}
                         </Badge>
                         <Badge className="border border-border bg-surface-2 text-text-muted text-xs capitalize">
-                          {question.category?.toLowerCase()}
+                          {room.battleType === "PROMPT_WAR" ? "Prompt War" : question.category?.toLowerCase()}
                         </Badge>
                       </div>
                     </div>
 
-                    {/* Statement markdown text description */}
-                    <div className="prose dark:prose-invert max-w-none text-[13px] leading-relaxed text-text-muted font-sans whitespace-pre-wrap">
-                      {question.statement?.markdown?.replace(/\\n/g, "\n")}
-                    </div>
-
-                    {/* Input / Output Formats */}
-                    {!hasEmbeddedFormats && question.statement?.inputFormat && (
-                      <div className="space-y-1.5 pt-2">
-                        <h4 className="text-xs font-bold text-text uppercase tracking-wider font-mono">Input Format</h4>
-                        <div className="text-[13px] leading-relaxed text-text-muted font-sans whitespace-pre-wrap">
-                          {question.statement.inputFormat.replace(/\\n/g, "\n")}
+                    {room.battleType === "PROMPT_WAR" ? (
+                      <>
+                        {/* Scenario Brief */}
+                        <div className="prose dark:prose-invert max-w-none text-[13px] leading-relaxed text-text-muted font-sans whitespace-pre-wrap">
+                          {question.scenario}
                         </div>
-                      </div>
-                    )}
 
-                    {!hasEmbeddedFormats && question.statement?.outputFormat && (
-                      <div className="space-y-1.5 pt-2">
-                        <h4 className="text-xs font-bold text-text uppercase tracking-wider font-mono">Output Format</h4>
-                        <div className="text-[13px] leading-relaxed text-text-muted font-sans whitespace-pre-wrap">
-                          {question.statement.outputFormat.replace(/\\n/g, "\n")}
+                        {/* Target Artifact Type */}
+                        <div className="space-y-1.5 pt-2">
+                          <h4 className="text-xs font-bold text-text uppercase tracking-wider font-mono">Target Artifact</h4>
+                          <Badge className="border border-primary/20 bg-primary/10 text-primary font-bold text-xs uppercase">
+                            {question.targetArtifactType || "text"}
+                          </Badge>
                         </div>
-                      </div>
-                    )}
 
-                    {!hasEmbeddedFormats && question.statement?.notes && (
-                      <div className="space-y-1.5 pt-2 border-t border-border/10">
-                        <h4 className="text-xs font-bold text-text-faint uppercase tracking-wider font-mono">Notes</h4>
-                        <div className="text-[12px] italic leading-relaxed text-text-faint font-sans whitespace-pre-wrap">
-                          {question.statement.notes.replace(/\\n/g, "\n")}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Examples */}
-                    {!hasEmbeddedFormats && question.statement?.examples && question.statement.examples.length > 0 && (
-                      <div className="space-y-3">
-                        <h3 className="text-xs font-bold text-text uppercase tracking-wider font-mono">Examples</h3>
-                        {question.statement.examples.map((ex: any, idx: number) => (
-                          <div key={idx} className="bg-surface-2 border border-border/50 rounded-lg p-4 text-[13px] font-mono leading-relaxed space-y-1.5 shadow-sm">
-                            <span className="text-text font-bold block mb-1 text-xs text-text-muted">Example {idx + 1}:</span>
-                            <div className="text-text-muted text-xs space-y-1">
-                              <span className="text-text-faint block font-semibold uppercase tracking-wider text-[10px]">Input:</span>
-                              <pre className="text-text bg-surface-3/50 px-3 py-1.5 rounded border border-border/40 font-mono whitespace-pre-wrap leading-relaxed select-text">{ex.input}</pre>
-                            </div>
-                            <div className="text-text-muted text-xs space-y-1">
-                              <span className="text-text-faint block font-semibold uppercase tracking-wider text-[10px]">Output:</span>
-                              <pre className="text-text bg-surface-3/50 px-3 py-1.5 rounded border border-border/40 font-mono whitespace-pre-wrap leading-relaxed select-text">{ex.output}</pre>
-                            </div>
-                             {ex.explanation && (
-                               <div className="text-text-faint mt-1.5 leading-relaxed bg-surface-3/55 px-2.5 py-1.5 rounded border border-border/30 text-xs whitespace-pre-wrap">
-                                 <span className="text-text-muted font-bold">Explanation:</span> {ex.explanation?.replace(/\\n/g, "\n")}
-                               </div>
-                             )}
+                        {/* Constraints */}
+                        {question.constraints && question.constraints.length > 0 && (
+                          <div className="space-y-3 pt-2">
+                            <h3 className="text-xs font-bold text-text uppercase tracking-wider font-mono">Constraints</h3>
+                            <ul className="list-disc pl-5 text-xs text-text-muted space-y-2">
+                              {question.constraints.map((c: string, idx: number) => (
+                                <li key={idx} className="leading-relaxed">{c}</li>
+                              ))}
+                            </ul>
                           </div>
-                        ))}
-                      </div>
-                    )}
+                        )}
 
-                    {/* Constraints */}
-                    {!hasEmbeddedFormats && question.statement?.constraints && question.statement.constraints.length > 0 && (
-                      <div className="space-y-3 pt-2">
-                        <h3 className="text-xs font-bold text-text uppercase tracking-wider font-mono">Constraints</h3>
-                        <ul className="list-disc pl-5 text-xs text-text-muted space-y-2">
-                          {question.statement.constraints.map((c: any, idx: number) => (
-                            <li key={idx} className="leading-relaxed">
-                              <code className="bg-surface-2 border border-border/50 px-1 py-0.5 rounded font-mono text-[11px] text-text font-bold mr-1">{c.variable}</code>: {c.description} (Min: {c.min}, Max: {c.max})
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-
-                    {/* Hints */}
-                    {question.hints && question.hints.length > 0 && (
-                      <div className="space-y-2 pt-2 border-t border-border/10">
-                        <h3 className="text-xs font-bold text-text uppercase tracking-wider font-mono">Hints</h3>
-                        <div className="space-y-2">
-                          {question.hints.map((hint: any, idx: number) => (
-                            <details key={idx} className="bg-surface-2 border border-border/50 rounded-lg group transition-all duration-200">
-                              <summary className="px-4 py-2.5 text-xs font-semibold text-text-muted hover:text-text cursor-pointer select-none outline-none list-none flex items-center justify-between">
-                                <span>Hint {hint.order || idx + 1}</span>
-                                <ChevronDown className="size-3 text-text-faint transition-transform duration-200 group-open:rotate-180" />
-                              </summary>
-                               <div className="px-4 pb-3 text-xs text-text-muted leading-relaxed border-t border-border/30 pt-2 font-mono whitespace-pre-wrap">
-                                 {hint.text?.replace(/\\n/g, "\n")}
-                               </div>
-                            </details>
-                          ))}
+                        {/* Rubric Criteria */}
+                        {question.evaluationCriteria && question.evaluationCriteria.length > 0 && (
+                          <div className="space-y-3 pt-2">
+                            <h3 className="text-xs font-bold text-text uppercase tracking-wider font-mono">Grading Criteria Rubric</h3>
+                            <div className="space-y-2.5">
+                              {question.evaluationCriteria.map((c: any, idx: number) => (
+                                <div key={idx} className="bg-surface-2 border border-border/50 rounded-lg p-3 text-[12px] leading-relaxed shadow-sm font-sans flex justify-between items-start gap-4">
+                                  <div>
+                                    <span className="text-text font-bold block mb-0.5 text-xs text-text-muted">{c.id}</span>
+                                    <p className="text-text-faint text-xs">{c.description}</p>
+                                  </div>
+                                  <Badge className="shrink-0 bg-surface border border-border text-text-muted text-xs font-semibold">Weight: {c.weight}%</Badge>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        {/* Statement markdown text description */}
+                        <div className="prose dark:prose-invert max-w-none text-[13px] leading-relaxed text-text-muted font-sans whitespace-pre-wrap">
+                          {question.statement?.markdown?.replace(/\\n/g, "\n")}
                         </div>
-                      </div>
+
+                        {/* Input / Output Formats */}
+                        {!hasEmbeddedFormats && question.statement?.inputFormat && (
+                          <div className="space-y-1.5 pt-2">
+                            <h4 className="text-xs font-bold text-text uppercase tracking-wider font-mono">Input Format</h4>
+                            <div className="text-[13px] leading-relaxed text-text-muted font-sans whitespace-pre-wrap">
+                              {question.statement.inputFormat.replace(/\\n/g, "\n")}
+                            </div>
+                          </div>
+                        )}
+
+                        {!hasEmbeddedFormats && question.statement?.outputFormat && (
+                          <div className="space-y-1.5 pt-2">
+                            <h4 className="text-xs font-bold text-text uppercase tracking-wider font-mono">Output Format</h4>
+                            <div className="text-[13px] leading-relaxed text-text-muted font-sans whitespace-pre-wrap">
+                              {question.statement.outputFormat.replace(/\\n/g, "\n")}
+                            </div>
+                          </div>
+                        )}
+
+                        {!hasEmbeddedFormats && question.statement?.notes && (
+                          <div className="space-y-1.5 pt-2 border-t border-border/10">
+                            <h4 className="text-xs font-bold text-text-faint uppercase tracking-wider font-mono">Notes</h4>
+                            <div className="text-[12px] italic leading-relaxed text-text-faint font-sans whitespace-pre-wrap">
+                              {question.statement.notes.replace(/\\n/g, "\n")}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Examples */}
+                        {!hasEmbeddedFormats && question.statement?.examples && question.statement.examples.length > 0 && (
+                          <div className="space-y-3">
+                            <h3 className="text-xs font-bold text-text uppercase tracking-wider font-mono">Examples</h3>
+                            {question.statement.examples.map((ex: any, idx: number) => (
+                              <div key={idx} className="bg-surface-2 border border-border/50 rounded-lg p-4 text-[13px] font-mono leading-relaxed space-y-1.5 shadow-sm">
+                                <span className="text-text font-bold block mb-1 text-xs text-text-muted">Example {idx + 1}:</span>
+                                <div className="text-text-muted text-xs space-y-1">
+                                  <span className="text-text-faint block font-semibold uppercase tracking-wider text-[10px]">Input:</span>
+                                  <pre className="text-text bg-surface-3/50 px-3 py-1.5 rounded border border-border/40 font-mono whitespace-pre-wrap leading-relaxed select-text">{ex.input}</pre>
+                                </div>
+                                <div className="text-text-muted text-xs space-y-1">
+                                  <span className="text-text-faint block font-semibold uppercase tracking-wider text-[10px]">Output:</span>
+                                  <pre className="text-text bg-surface-3/50 px-3 py-1.5 rounded border border-border/40 font-mono whitespace-pre-wrap leading-relaxed select-text">{ex.output}</pre>
+                                </div>
+                                 {ex.explanation && (
+                                   <div className="text-text-faint mt-1.5 leading-relaxed bg-surface-3/55 px-2.5 py-1.5 rounded border border-border/30 text-xs whitespace-pre-wrap">
+                                     <span className="text-text-muted font-bold">Explanation:</span> {ex.explanation?.replace(/\\n/g, "\n")}
+                                   </div>
+                                 )}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+
+                        {/* Constraints */}
+                        {!hasEmbeddedFormats && question.statement?.constraints && question.statement.constraints.length > 0 && (
+                          <div className="space-y-3 pt-2">
+                            <h3 className="text-xs font-bold text-text uppercase tracking-wider font-mono">Constraints</h3>
+                            <ul className="list-disc pl-5 text-xs text-text-muted space-y-2">
+                              {question.statement.constraints.map((c: any, idx: number) => (
+                                <li key={idx} className="leading-relaxed">
+                                  <code className="bg-surface-2 border border-border/50 px-1 py-0.5 rounded font-mono text-[11px] text-text font-bold mr-1">{c.variable}</code>: {c.description} (Min: {c.min}, Max: {c.max})
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+
+                        {/* Hints */}
+                        {question.hints && question.hints.length > 0 && (
+                          <div className="space-y-2 pt-2 border-t border-border/10">
+                            <h3 className="text-xs font-bold text-text uppercase tracking-wider font-mono">Hints</h3>
+                            <div className="space-y-2">
+                              {question.hints.map((hint: any, idx: number) => (
+                                <details key={idx} className="bg-surface-2 border border-border/50 rounded-lg group transition-all duration-200">
+                                  <summary className="px-4 py-2.5 text-xs font-semibold text-text-muted hover:text-text cursor-pointer select-none outline-none list-none flex items-center justify-between">
+                                    <span>Hint {hint.order || idx + 1}</span>
+                                    <ChevronDown className="size-3 text-text-faint transition-transform duration-200 group-open:rotate-180" />
+                                  </summary>
+                                   <div className="px-4 pb-3 text-xs text-text-muted leading-relaxed border-t border-border/30 pt-2 font-mono whitespace-pre-wrap">
+                                     {hint.text?.replace(/\\n/g, "\n")}
+                                   </div>
+                                </details>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </>
                     )}
                   </>
                 )}
@@ -1332,27 +1574,68 @@ function CodingWorkspace({ room, matchId, onLeave }: CodingWorkspaceProps) {
           </div>
         </div>
 
+        {/* Vertical Resize Splitter */}
+        <div 
+          onMouseDown={handleMouseDownLeft}
+          className="w-1.5 hover:w-2 bg-border/20 hover:bg-primary/50 transition-all cursor-col-resize shrink-0 relative z-30 self-stretch flex items-center justify-center group"
+        >
+          <div className="w-[1px] h-6 bg-border group-hover:bg-primary" />
+        </div>
+
         {/* Right Side: Code Editor Workspace */}
-        <div className="flex-1 flex flex-col overflow-hidden min-h-0 bg-surface/10">
+        <div id="right-workspace-panel" className="flex-1 flex flex-col overflow-hidden min-h-0 bg-surface/10">
           {/* Editor Header Bar */}
           <div className="h-10 border-b border-border bg-surface flex items-center justify-between px-4 shrink-0 select-none">
             <div className="flex items-center gap-2">
-              <div className="relative">
-                <select
-                  value={selectedLang}
-                  onChange={(e) => setSelectedLang(e.target.value)}
-                  className="appearance-none rounded border border-border bg-surface-2 hover:bg-surface-3 hover:border-border-strong pl-3 pr-8 py-1 text-xs font-semibold text-text-muted hover:text-text cursor-pointer transition-colors outline-none h-7"
-                >
-                  {supportedLangs.map((lang: string) => (
-                    <option key={lang} value={lang}>
-                      {lang === "cpp" ? "C++" : lang === "java" ? "Java" : lang === "python" ? "Python" : lang === "javascript" ? "JavaScript" : lang.toUpperCase()}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 size-3 text-text-faint pointer-events-none" />
-              </div>
+              {room.battleType === "PROMPT_WAR" ? (
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-black bg-primary/10 border border-primary/20 text-primary px-3 py-1 rounded-full uppercase tracking-wider">
+                    Prompt Instructions Box
+                  </span>
+                  <span className="text-[10px] text-text-faint/80 italic font-medium">
+                    (Only 1 submission attempt allowed)
+                  </span>
+                </div>
+              ) : (
+                <div className="relative">
+                  <select
+                    value={selectedLang}
+                    onChange={(e) => setSelectedLang(e.target.value)}
+                    className="appearance-none rounded border border-border bg-surface-2 hover:bg-surface-3 hover:border-border-strong pl-3 pr-8 py-1 text-xs font-semibold text-text-muted hover:text-text cursor-pointer transition-colors outline-none h-7"
+                  >
+                    {supportedLangs.map((lang: string) => (
+                      <option key={lang} value={lang}>
+                        {lang === "cpp" ? "C++" : lang === "java" ? "Java" : lang === "python" ? "Python" : lang === "javascript" ? "JavaScript" : lang.toUpperCase()}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 size-3 text-text-faint pointer-events-none" />
+                </div>
+              )}
             </div>
             <div className="flex items-center gap-1.5">
+              {/* Font Size Controls */}
+              <div className="flex items-center rounded border border-border bg-surface-2 overflow-hidden h-7 divide-x divide-border mr-1.5 shadow-sm">
+                <button
+                  type="button"
+                  onClick={() => setFontSize(prev => Math.max(12, prev - 1))}
+                  className="px-2 h-full text-[10px] font-bold text-text-muted hover:text-text hover:bg-surface-3 transition-colors cursor-pointer flex items-center justify-center select-none border-none bg-transparent"
+                  title="Decrease text size"
+                >
+                  A-
+                </button>
+                <span className="px-2 h-full flex items-center justify-center text-[10px] font-mono font-bold text-text-faint bg-surface select-none min-w-[34px]">
+                  {fontSize}px
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setFontSize(prev => Math.min(24, prev + 1))}
+                  className="px-2 h-full text-[10px] font-bold text-text-muted hover:text-text hover:bg-surface-3 transition-colors cursor-pointer flex items-center justify-center select-none border-none bg-transparent"
+                  title="Increase text size"
+                >
+                  A+
+                </button>
+              </div>
               <button
                 onClick={toggleHideMascots}
                 className="flex items-center justify-center size-7 rounded border border-border bg-surface hover:bg-surface-2 text-text-muted hover:text-text transition-colors cursor-pointer"
@@ -1366,7 +1649,11 @@ function CodingWorkspace({ room, matchId, onLeave }: CodingWorkspaceProps) {
               </button>
               <button
                 onClick={handleResetCode}
-                className="flex items-center justify-center size-7 rounded border border-border bg-surface hover:bg-surface-2 text-text-muted hover:text-text transition-colors cursor-pointer"
+                disabled={solved || matchEnded || (room.battleType === "PROMPT_WAR" && hasSubmitted)}
+                className={cn(
+                  "flex items-center justify-center size-7 rounded border border-border bg-surface text-text-muted hover:text-text transition-colors",
+                  (solved || matchEnded || (room.battleType === "PROMPT_WAR" && hasSubmitted)) ? "opacity-50 cursor-not-allowed" : "hover:bg-surface-2 cursor-pointer"
+                )}
                 title="Reset starter code"
               >
                 <RotateCcw className="size-3.5" />
@@ -1377,7 +1664,7 @@ function CodingWorkspace({ room, matchId, onLeave }: CodingWorkspaceProps) {
           {/* Monaco Editor Container */}
           <div className="flex-1 relative min-h-[300px] border-b border-border">
             {/* Floating Animal Typing Animation */}
-            {!hideMascots && (
+            {!hideMascots && !room.isSolo && (
               <div className="absolute top-3.5 right-3.5 z-10 animate-in fade-in duration-300">
                 <KeyboardMascotAnimation active={isOpponentTyping} pet={activeOpponentPet} />
               </div>
@@ -1385,6 +1672,17 @@ function CodingWorkspace({ room, matchId, onLeave }: CodingWorkspaceProps) {
 
             {questionQuery.isLoading ? (
               <div className="absolute inset-0 flex items-center justify-center bg-surface/50"><Spinner /></div>
+            ) : room.battleType === "PROMPT_WAR" ? (
+              <textarea
+                value={codeByLang[selectedLang] ?? ""}
+                onChange={(e) => handleEditorChange(e.target.value)}
+                readOnly={solved || matchEnded || hasSubmitted}
+                placeholder={hasSubmitted 
+                  ? "Prompt submitted! Waiting for opponent to submit before LLM grading begins." 
+                  : "Write your prompt engineering instructions here... The sharper instruction wins the judge. Only 1 attempt is allowed."}
+                style={{ fontSize: `${fontSize}px`, lineHeight: `${Math.round(fontSize * 1.5)}px` }}
+                className="w-full h-full p-4 resize-none bg-[#090a0f] text-text font-mono border-none focus:outline-none placeholder:text-text-faint/60"
+              />
             ) : (
               <Editor
                 height="100%"
@@ -1393,19 +1691,31 @@ function CodingWorkspace({ room, matchId, onLeave }: CodingWorkspaceProps) {
                 value={codeByLang[selectedLang] ?? ""}
                 onChange={handleEditorChange}
                 options={{
+                  readOnly: solved || matchEnded,
                   minimap: { enabled: false },
-                  fontSize: 14,
+                  fontSize: fontSize,
                   automaticLayout: true,
                   fontFamily: "var(--font-mono)",
-                  lineHeight: 22,
+                  lineHeight: Math.round(fontSize * 1.5),
                   padding: { top: 12 },
                 }}
               />
             )}
           </div>
 
+          {/* Horizontal Resize Splitter */}
+          <div 
+            onMouseDown={handleMouseDownBottom}
+            className="h-1.5 hover:h-2 bg-border/20 hover:bg-primary/50 transition-all cursor-row-resize shrink-0 relative z-30 w-full flex items-center justify-center group"
+          >
+            <div className="h-[1px] w-6 bg-border group-hover:bg-primary" />
+          </div>
+
           {/* Bottom Terminal Output Drawer */}
-          <div className="h-56 bg-surface/80 border-t border-border flex flex-col shrink-0 overflow-hidden select-none">
+          <div 
+            style={{ height: `${bottomHeight}px` }}
+            className="bg-surface/80 border-t border-border flex flex-col shrink-0 overflow-hidden select-none"
+          >
             <div className="h-9 border-b border-border bg-surface flex items-center justify-between px-4 shrink-0">
               <div className="flex gap-2">
                 <button
@@ -1425,10 +1735,15 @@ function CodingWorkspace({ room, matchId, onLeave }: CodingWorkspaceProps) {
                   size="sm"
                   onClick={handleSubmit}
                   loading={submitting}
-                  disabled={submitting || (codeByLang[selectedLang] || "").trim().length === 0}
+                  disabled={submitting || solved || matchEnded || (codeByLang[selectedLang] || "").trim().length === 0 || (room.battleType === "PROMPT_WAR" && hasSubmitted)}
                   className="h-7 px-4 text-xs font-bold gap-1 bg-primary hover:bg-primary-hover text-white shadow-sm"
                 >
-                  <Send className="size-3" /> Submit Solution
+                  <Send className="size-3" /> 
+                  {room.battleType === "PROMPT_WAR" && hasSubmitted 
+                    ? "Submitted" 
+                    : submitting 
+                      ? "Submitting..." 
+                      : "Submit Solution"}
                 </Button>
               </div>
             </div>
@@ -1438,17 +1753,39 @@ function CodingWorkspace({ room, matchId, onLeave }: CodingWorkspaceProps) {
               {submitting ? (
                 <div className="flex flex-col items-center justify-center py-8 space-y-2">
                   <Spinner className="py-2" />
-                  <p className="text-text-muted text-xs animate-pulse">Compiling solution & running test cases on Judge0...</p>
+                  <p className="text-text-muted text-xs animate-pulse">
+                    {room.battleType === "PROMPT_WAR" 
+                      ? "Judging prompt against scenario criteria using LLM judge..." 
+                      : "Compiling solution & running test cases on Judge0..."}
+                  </p>
                 </div>
               ) : latestSubmission ? (
                 <div className="space-y-4">
                   {/* Verdict header block */}
-                  {latestSubmission.status === "ACCEPTED" ? (
+                  {latestSubmission.status === "PENDING" || latestSubmission.status === "RUNNING" ? (
+                    <div className="flex items-center gap-2 p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg text-amber-500">
+                      <Spinner className="size-4 shrink-0 text-amber-500" />
+                      <div>
+                        <span className="font-black text-sm block uppercase">
+                          {room.battleType === "PROMPT_WAR" ? "PROMPT SUBMITTED" : "GRADING IN PROGRESS"}
+                        </span>
+                        <span className="text-[11px] text-amber-500/80">
+                          {room.battleType === "PROMPT_WAR"
+                            ? "Prompt solution submitted successfully! Waiting for opponent to submit..."
+                            : "Your code is being evaluated. Please wait..."}
+                        </span>
+                      </div>
+                    </div>
+                  ) : latestSubmission.status === "ACCEPTED" ? (
                     <div className="flex items-center gap-2 p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-lg text-emerald-500">
                       <CheckCircle2 className="size-4 shrink-0" />
                       <div>
                         <span className="font-black text-sm block">ACCEPTED</span>
-                        <span className="text-[11px] text-emerald-500/80">All test cases passed! Score: {latestSubmission.score ?? 100}/100</span>
+                        <span className="text-[11px] text-emerald-500/80">
+                          {room.battleType === "PROMPT_WAR" 
+                            ? `All grading criteria satisfied! Score: ${latestSubmission.score ?? 100}/100` 
+                            : `All test cases passed! Score: ${latestSubmission.score ?? 100}/100`}
+                        </span>
                       </div>
                     </div>
                   ) : latestSubmission.judgeResult === "COMPILATION_ERROR" ? (
@@ -1464,38 +1801,61 @@ function CodingWorkspace({ room, matchId, onLeave }: CodingWorkspaceProps) {
                       <XCircle className="size-4 shrink-0" />
                       <div>
                         <span className="font-black text-sm block uppercase">{latestSubmission.judgeResult || latestSubmission.status}</span>
-                        <span className="text-[11px] text-red-500/80">Failing on test cases. Score: {latestSubmission.score ?? 0}/100</span>
+                        <span className="text-[11px] text-red-500/80">
+                          {room.battleType === "PROMPT_WAR"
+                            ? `Rubric evaluation. Score: ${latestSubmission.score ?? 0}/100`
+                            : `Failing on test cases. Score: ${latestSubmission.score ?? 0}/100`}
+                        </span>
                       </div>
                     </div>
                   )}
 
                   {/* Submission statistics (execution time, memory) */}
                   {latestSubmission.status !== "PENDING" && latestSubmission.status !== "RUNNING" && (
-                    <div className="grid grid-cols-3 gap-3">
-                      <div className="bg-surface-2 p-2.5 rounded border border-border/40 text-center">
-                        <span className="text-text-faint text-[10px] block uppercase font-sans">Pass Rate</span>
-                        <span className="text-text font-bold font-mono text-sm">{latestSubmission.passedTestCases ?? 0} / {latestSubmission.totalTestCases ?? 0}</span>
+                    room.battleType === "PROMPT_WAR" ? (
+                      <div className="grid grid-cols-3 gap-3">
+                        <div className="bg-surface-2 p-2.5 rounded border border-border/40 text-center">
+                          <span className="text-text-faint text-[10px] block uppercase font-sans">Criteria Passed</span>
+                          <span className="text-text font-bold font-mono text-sm">{latestSubmission.passedTestCases ?? 0} / {latestSubmission.totalTestCases ?? 0}</span>
+                        </div>
+                        <div className="bg-surface-2 p-2.5 rounded border border-border/40 text-center">
+                          <span className="text-text-faint text-[10px] block uppercase font-sans">Rubric Score</span>
+                          <span className="text-text font-bold font-mono text-sm">{latestSubmission.score ?? 0} / 100</span>
+                        </div>
+                        <div className="bg-surface-2 p-2.5 rounded border border-border/40 text-center">
+                          <span className="text-text-faint text-[10px] block uppercase font-sans">Evaluation Mode</span>
+                          <span className="text-text font-bold font-mono text-sm">LLM Rubric</span>
+                        </div>
                       </div>
-                      <div className="bg-surface-2 p-2.5 rounded border border-border/40 text-center">
-                        <span className="text-text-faint text-[10px] block uppercase font-sans">Time</span>
-                        <span className="text-text font-bold font-mono text-sm">
-                          {typeof latestSubmission.executionTime === "number" ? `${latestSubmission.executionTime}s` : "0.00s"}
-                        </span>
+                    ) : (
+                      <div className="grid grid-cols-3 gap-3">
+                        <div className="bg-surface-2 p-2.5 rounded border border-border/40 text-center">
+                          <span className="text-text-faint text-[10px] block uppercase font-sans">Pass Rate</span>
+                          <span className="text-text font-bold font-mono text-sm">{latestSubmission.passedTestCases ?? 0} / {latestSubmission.totalTestCases ?? 0}</span>
+                        </div>
+                        <div className="bg-surface-2 p-2.5 rounded border border-border/40 text-center">
+                          <span className="text-text-faint text-[10px] block uppercase font-sans">Time</span>
+                          <span className="text-text font-bold font-mono text-sm">
+                            {typeof latestSubmission.executionTime === "number" ? `${latestSubmission.executionTime}s` : "0.00s"}
+                          </span>
+                        </div>
+                        <div className="bg-surface-2 p-2.5 rounded border border-border/40 text-center">
+                          <span className="text-text-faint text-[10px] block uppercase font-sans">Memory</span>
+                          <span className="text-text font-bold font-mono text-sm">
+                            {typeof latestSubmission.memoryUsage === "number" ? `${(latestSubmission.memoryUsage / 1024).toFixed(1)}MB` : "0.0MB"}
+                          </span>
+                        </div>
                       </div>
-                      <div className="bg-surface-2 p-2.5 rounded border border-border/40 text-center">
-                        <span className="text-text-faint text-[10px] block uppercase font-sans">Memory</span>
-                        <span className="text-text font-bold font-mono text-sm">
-                          {typeof latestSubmission.memoryUsage === "number" ? `${(latestSubmission.memoryUsage / 1024).toFixed(1)}MB` : "0.0MB"}
-                        </span>
-                      </div>
-                    </div>
+                    )
                   )}
 
                   {/* Error feedback if compilation error or execution error */}
                   {latestSubmission.feedback && (
                     <div className="space-y-1.5 pt-2">
-                      <span className="text-text-muted text-xs block font-sans font-bold">Compiler / Runtime Logs:</span>
-                      <pre className="bg-surface p-3 border border-border/50 rounded overflow-x-auto text-[11px] text-text-muted leading-relaxed font-mono whitespace-pre max-h-40">
+                      <span className="text-text-muted text-xs block font-sans font-bold">
+                        {room.battleType === "PROMPT_WAR" ? "LLM Judge Rubric Feedback:" : "Compiler / Runtime Logs:"}
+                      </span>
+                      <pre className="bg-surface p-3 border border-border/50 rounded overflow-x-auto text-[11px] text-text-muted leading-relaxed font-mono whitespace-pre-wrap max-h-40">
                         {latestSubmission.feedback}
                       </pre>
                     </div>
@@ -1504,8 +1864,16 @@ function CodingWorkspace({ room, matchId, onLeave }: CodingWorkspaceProps) {
               ) : (
                 <div className="flex flex-col items-center justify-center py-8 text-center text-text-faint text-xs space-y-1">
                   <Terminal className="size-5 text-text-faint" />
-                  <p>Welcome challenger! Click "Submit Solution" to compile and run your code against the judge.</p>
-                  <p className="text-[10px] text-text-faint/60">Results, pass rates, and compilation errors will render here.</p>
+                  <p>
+                    {room.battleType === "PROMPT_WAR"
+                      ? "Welcome challenger! Write your prompt instructions on the box above and click \"Submit Solution\" to grade it."
+                      : "Welcome challenger! Click \"Submit Solution\" to compile and run your code against the judge."}
+                  </p>
+                  <p className="text-[10px] text-text-faint/60">
+                    {room.battleType === "PROMPT_WAR"
+                      ? "LLM judge grading verdict, score, and rubric feedback will render here."
+                      : "Results, pass rates, and compilation errors will render here."}
+                  </p>
                 </div>
               )}
             </div>
@@ -1564,7 +1932,7 @@ function CodingWorkspace({ room, matchId, onLeave }: CodingWorkspaceProps) {
                   );
 
                   if (!myHistory) {
-                    if (isRankedMatch) {
+                    if (ratingChangesQuery.isLoading) {
                       return (
                         <div className="flex flex-col items-center justify-center py-6 space-y-2">
                           <Spinner className="py-2" />
@@ -1576,8 +1944,10 @@ function CodingWorkspace({ room, matchId, onLeave }: CodingWorkspaceProps) {
                     return (
                       <div className="text-center py-4 space-y-1">
                         <p className="text-sm font-semibold text-text">Battle Complete!</p>
-                        <p className="text-xs text-text-faint max-w-xs mx-auto leading-relaxed">
-                          This was a casual match. Rating adjustments are only recorded for competitive ranked rooms.
+                        <p className="text-xs text-text-faint max-w-xs mx-auto leading-relaxed animate-pulse">
+                          {isRankedMatch
+                            ? "Calculating rating updates..."
+                            : "This was a casual match. Rating adjustments are only recorded for competitive ranked rooms."}
                         </p>
                       </div>
                     );
@@ -1597,7 +1967,7 @@ function CodingWorkspace({ room, matchId, onLeave }: CodingWorkspaceProps) {
                       {/* Elo Delta Indicator */}
                       <div className="py-3 bg-surface-2/60 rounded-lg border border-border/50">
                         <span className="text-[10px] text-text-faint uppercase font-bold font-mono tracking-wider block">
-                          Rating Change ({myHistory.category || "DSA"})
+                          {isRankedMatch ? "Rating Change" : "Casual Match Points"} ({myHistory.category || "DSA"})
                         </span>
                         <div className="flex items-center justify-center gap-1.5 mt-1">
                           <span
@@ -1613,7 +1983,7 @@ function CodingWorkspace({ room, matchId, onLeave }: CodingWorkspaceProps) {
                             {isPositive ? `+${myHistory.change}` : myHistory.change}
                           </span>
                           <span className="text-[10px] text-text-faint font-bold font-mono uppercase">
-                            Elo
+                            {isRankedMatch ? "Elo" : "Pts"}
                           </span>
                         </div>
                       </div>
@@ -1621,15 +1991,21 @@ function CodingWorkspace({ room, matchId, onLeave }: CodingWorkspaceProps) {
                       {/* Rating Flow */}
                       <div className="flex items-center justify-center gap-6 font-mono text-xs font-semibold">
                         <div>
-                          <span className="text-[9px] text-text-faint block uppercase">Old Rating</span>
+                          <span className="text-[9px] text-text-faint block uppercase font-sans">Old Rating</span>
                           <span className="text-text-muted">{myHistory.oldRating}</span>
                         </div>
                         <div className="text-text-faint text-sm">➔</div>
                         <div>
-                          <span className="text-[9px] text-text-faint block uppercase">New Rating</span>
+                          <span className="text-[9px] text-text-faint block uppercase font-sans">New Rating</span>
                           <span className="text-emerald-500 font-bold">{myHistory.newRating}</span>
                         </div>
                       </div>
+                      
+                      {!isRankedMatch && (
+                        <p className="text-[10px] text-text-faint/80 italic mt-1 font-sans">
+                          (Casual match: Your profile's permanent competitive rating remains unchanged)
+                        </p>
+                      )}
                     </div>
                   );
                 })()
@@ -1646,7 +2022,7 @@ function CodingWorkspace({ room, matchId, onLeave }: CodingWorkspaceProps) {
                     onClick={() => setShowResultsModal(false)}
                     className="flex-1 text-xs"
                   >
-                    Inspect Code
+                    {room.battleType === "PROMPT_WAR" ? "Inspect Prompt" : "Inspect Code"}
                   </Button>
                   <Button
                     variant="primary"
@@ -1673,7 +2049,7 @@ function CodingWorkspace({ room, matchId, onLeave }: CodingWorkspaceProps) {
                     onClick={() => setShowResultsModal(false)}
                     className="flex-1 text-xs bg-primary hover:bg-primary-hover text-white font-bold"
                   >
-                    Continue to Edit
+                    {room.battleType === "PROMPT_WAR" ? "Inspect Prompt" : "Continue to Edit"}
                   </Button>
                 </>
               )}
@@ -1886,6 +2262,10 @@ function CodingWorkspace({ room, matchId, onLeave }: CodingWorkspaceProps) {
             </div>
           </div>
         </div>
+      )}
+
+      {isDragging && (
+        <div className="fixed inset-0 z-50 select-none bg-transparent" />
       )}
     </div>
   );

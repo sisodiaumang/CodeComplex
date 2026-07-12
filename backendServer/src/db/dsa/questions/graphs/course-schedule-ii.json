@@ -1,0 +1,284 @@
+{
+  "_id": "course-schedule-ii",
+  "title": "Course Schedule II",
+  "slug": "course-schedule-ii",
+  "difficulty": "Medium",
+  "category": "GRAPH",
+  "subCategory": "Topological Sort",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 500,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "Graphs",
+      "Topological Sort"
+    ],
+    "patterns": [
+      "topological sort",
+      "course schedule"
+    ],
+    "prerequisites": [
+      "Graph Traversal",
+      "Topological Sort Basics"
+    ],
+    "variants": [],
+    "tags": [
+      "greedy",
+      "topological sort",
+      "graph traversal"
+    ],
+    "keywords": [
+      "topological sort",
+      "course schedule",
+      "graph",
+      "greedy algorithm"
+    ],
+    "interviewFrequency": 4,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "Given a total of `n` courses labeled from `0` to `n-1` and a list of prerequisite pairs, determine a possible order in which all courses can be completed. Each prerequisite pair `[a, b]` indicates that course `b` must be taken before course `a`. If it is impossible to finish all courses due to a cyclic dependency, output `IMPOSSIBLE`. The required order, if it exists, should be a permutation of all course labels separated by single spaces.\\n\\nThe problem can be solved using topological sorting on a directed graph representing the courses and their prerequisites. Detect cycles to decide impossibility.\\n\\nYour program must read from standard input and write the answer to standard output.",
+    "inputFormat": "The first line contains an integer `n`, the number of courses.\\nThe second line contains an integer `m`, the number of prerequisite pairs.\\nThe next `m` lines each contain two integers `a` and `b` separated by a space, representing the pair `[a, b]`.",
+    "outputFormat": "If a valid ordering exists, output a single line with `n` integers – the course labels in one possible order, separated by single spaces.\\nIf no such ordering exists, output a single line containing the word `IMPOSSIBLE`.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 1000,
+        "description": "Number of courses"
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 0,
+        "max": 1000000,
+        "description": "Number of prerequisite pairs"
+      },
+      {
+        "variable": "prerequisites",
+        "type": "list",
+        "description": "List of `m` pairs `[a,b]` where `0 ≤ a,b < n`"
+      }
+    ],
+    "examples": [
+      {
+        "input": "4\n3\n1 0\n2 0\n3 1\n",
+        "output": "0 1 2 3",
+        "explanation": "One possible order is to take course 0 first, then 1, then 2, and finally 3, satisfying all prerequisites."
+      },
+      {
+        "input": "2\n2\n0 1\n1 0\n",
+        "output": "IMPOSSIBLE",
+        "explanation": "The prerequisites form a cycle, making it impossible to complete both courses."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "The problem involves ordering courses based on prerequisites, suggesting a graph data structure might be useful."
+    },
+    {
+      "order": 2,
+      "text": "The problem can be solved using topological sorting, which is a linear ordering of vertices in a directed acyclic graph (DAG) such that for every directed edge u -> v, vertex u comes before v in the ordering."
+    },
+    {
+      "order": 3,
+      "text": "To detect if it's impossible to finish all courses, you need to identify if there's a cycle in the graph. Topological sorting algorithms can be used to detect cycles by checking if all nodes can be visited and added to the ordering."
+    }
+  ],
+  "editorial": {
+    "title": "Course Schedule II: Optimal Topological Sorting",
+    "intuition": "The problem requires finding a valid order of courses that satisfies all prerequisites. A key observation is that this can be represented as a directed acyclic graph (DAG) and solved using topological sorting.",
+    "bruteForce": "A brute force approach would involve generating all permutations of courses and checking if each permutation satisfies the prerequisites. This approach is correct but extremely slow, with a time complexity of O(n!), making it impractical for large inputs.",
+    "betterSolution": "The optimal approach uses Kahn's algorithm for topological sorting, which is based on the concept of indegree of nodes. By maintaining a queue of nodes with indegree 0 and iteratively removing nodes from the queue, we can efficiently find a valid order.",
+    "optimalSolution": "The optimal solution has a time complexity of O(n + m) and space complexity of O(n + m), making it much more efficient than the brute force approach.",
+    "proofOfCorrectness": "The correctness of Kahn's algorithm can be proven by induction. The base case is when there are no edges in the graph, in which case the algorithm returns a valid order. For the inductive step, assume the algorithm works for graphs with k edges. Consider a graph with k+1 edges. If the node with indegree 0 is removed and its neighbors' indegrees are decremented, the algorithm still works for the remaining graph with k edges. Therefore, the algorithm works for all graphs.",
+    "dryRun": "A dry run of the algorithm on a sample test case, such as n = 4, m = 2, and prerequisites = [[1,0],[2,0]], helps verify its correctness.",
+    "commonMistakes": [
+      "Not handling the case where a valid order does not exist (i.e., the graph has a cycle).",
+      "Incorrectly updating the indegrees of nodes when removing a node from the queue.",
+      "Not checking if all nodes have been visited (i.e., the length of the result is not equal to n)."
+    ],
+    "timeComplexity": "O(n + m)",
+    "spaceComplexity": "O(n + m)"
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nvector<int> solve(int numCourses, vector<vector<int>>& prerequisites) {\n    // TODO: implement\n    return nullptr;\n}\n\n// @driver-code-start\nint main() {\n    int numCourses, numPrerequisites;\n    if (cin >> numCourses >> numPrerequisites) {\n        vector<vector<int>> prerequisites(numPrerequisites, vector<int>(2));\n        for (int i = 0; i < numPrerequisites; i++) cin >> prerequisites[i][0] >> prerequisites[i][1];\n        vector<int> ans = solve(numCourses, prerequisites);\n        if (ans.size() != numCourses) cout << \"IMPOSSIBLE\" << endl;\n        else {\n            for (int x : ans) cout << x << \" \";\n            cout << endl;\n        }\n    }\n    return 0;\n}\n",
+    "java": "import java.util.*;\n\npublic class Main {\n    public static int[] solve(int numCourses, int[][] prerequisites) {\n        // TODO: implement\n        return 0;\n    }\n\n    // @driver-code-start\npublic static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        if (scanner.hasNextInt()) {\n            int numCourses = scanner.nextInt();\n            int numPrerequisites = scanner.nextInt();\n            int[][] prerequisites = new int[numPrerequisites][2];\n            for (int i = 0; i < numPrerequisites; i++) {\n                prerequisites[i][0] = scanner.nextInt();\n                prerequisites[i][1] = scanner.nextInt();\n            }\n            int[] ans = solve(numCourses, prerequisites);\n            if (ans.length != numCourses) System.out.println(\"IMPOSSIBLE\");\n            else {\n                for (int x : ans) System.out.print(x + \" \");\n                System.out.println();\n            }\n        }\n    }\n}\n",
+    "python": "import sys\n\ndef solve(numCourses, prerequisites):\n    # TODO: implement\n    pass\n\n# @driver-code-start\ndef main():\n    import sys\n    input_data = sys.stdin.read().split()\n    if not input_data:\n        return\n    numCourses = int(input_data[0])\n    numPrerequisites = int(input_data[1])\n    prerequisites = []\n    idx = 2\n    for i in range(numPrerequisites):\n        prerequisites.append([int(input_data[idx]), int(input_data[idx+1])])\n        idx += 2\n    ans = solve(numCourses, prerequisites)\n    if len(ans) != numCourses:\n        print(\"IMPOSSIBLE\")\n    else:\n        print(\" \".join(map(str, ans)))\n\nif __name__ == \"__main__\":\n    main()\n",
+    "javascript": "// @driver-code-start\nconst readline = require(\"readline\");\nconst rl = readline.createInterface({\n    input: process.stdin,\n    output: process.stdout\n});\nlet input = \"\";\nrl.on(\"line\", (line) => {\n    input += line + \"\\n\";\n});\nrl.on(\"close\", () => {\n    const inputLines = input.trim().split(\"\\n\");\n    if (inputLines.length < 2) return;\n    const nc_np = inputLines[0].split(\" \").map(Number);\n    const numCourses = nc_np[0];\n    const numPrerequisites = nc_np[1];\n    const flat = inputLines[1].split(\" \").map(Number);\n    const prerequisites = [];\n    for (let i = 0; i < numPrerequisites; i++) {\n        prerequisites.push([flat[i * 2], flat[i * 2 + 1]]);\n    }\n    const solution = new Solution();\n    const ans = solution.solve(numCourses, prerequisites);\n    if (ans.length !== numCourses) console.log(\"IMPOSSIBLE\");\n    else console.log(ans.join(\" \"));\n});\nclass Solution {\n    solve(numCourses, prerequisites) {\n        // TODO: implement\n        return null;\n    }\n}\n"
+  },
+  "functionSignature": {
+    "cpp": "vector<int> solve(int numCourses, vector<vector<int>>& prerequisites)",
+    "java": "public static int[] solve(int numCourses, int[][] prerequisites)",
+    "python": "def solve(numCourses, prerequisites):",
+    "javascript": "function solve(numCourses, prerequisites)"
+  },
+  "solutions": {
+    "python": "import sys\nit = iter(sys.stdin.read().split())\nn = int(next(it))\nm = int(next(it))\nprerequisites = []\nfor _ in range(m):\n    a, b = int(next(it)), int(next(it))\n    prerequisites.append([a, b])\n\ndef topological_sort(n, prerequisites):\n    graph = [[] for _ in range(n)]\n    indegree = [0] * n\n    for a, b in prerequisites:\n        graph[b].append(a)\n        indegree[a] += 1\n\n    queue = [i for i in range(n) if indegree[i] == 0]\n    result = []\n\n    while queue:\n        node = queue.pop(0)\n        result.append(node)\n        for neighbor in graph[node]:\n            indegree[neighbor] -= 1\n            if indegree[neighbor] == 0:\n                queue.append(neighbor)\n\n    if len(result) != n:\n        return None\n    return result\n\nresult = topological_sort(n, prerequisites)\nif result is None:\n    print('IMPOSSIBLE')\nelse:\n    print(' '.join(map(str, result)))",
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\nint main(){\n    int n, m;\n    cin >> n >> m;\n    vector<vector<int>> prerequisites(m, vector<int>(2));\n    for(int i = 0; i < m; i++)\n        cin >> prerequisites[i][0] >> prerequisites[i][1];\n    \n    vector<int> graph[n];\n    vector<int> indegree(n, 0);\n    for(auto& pr : prerequisites){\n        graph[pr[1]].push_back(pr[0]);\n        indegree[pr[0]]++;\n    }\n    \n    queue<int> q;\n    for(int i = 0; i < n; i++)\n        if(indegree[i] == 0)\n            q.push(i);\n    vector<int> result;\n    \n    while(!q.empty()){\n        int node = q.front(); q.pop();\n        result.push_back(node);\n        for(int neighbor : graph[node]){\n            indegree[neighbor]--;\n            if(indegree[neighbor] == 0)\n                q.push(neighbor);\n        }\n    }\n    \n    if(result.size() != n){\n        cout << \"IMPOSSIBLE\";\n    }else{\n        for(int num : result)\n            cout << num << \" \";\n    }\n    return 0;\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.2
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "4\n3\n1 0\n2 0\n3 1\n",
+      "output": "0 1 2 3",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "2\n2\n0 1\n1 0\n",
+      "output": "IMPOSSIBLE",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint_1",
+      "input": "1\n0\n",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "boundary_1",
+      "input": "5\n4\n1 0\n2 1\n3 2\n4 3\n",
+      "output": "0 1 2 3 4",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    },
+    {
+      "id": "duplicate_1",
+      "input": "3\n2\n0 1\n0 1\n",
+      "output": "1 2 0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "duplicate"
+    },
+    {
+      "id": "sorted_1",
+      "input": "5\n4\n0 1\n1 2\n2 3\n3 4\n",
+      "output": "4 3 2 1 0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sorted"
+    },
+    {
+      "id": "reverse_sorted_1",
+      "input": "5\n4\n4 3\n3 2\n2 1\n1 0\n",
+      "output": "0 1 2 3 4",
+      "isVisible": false,
+      "weight": 1,
+      "category": "reverse_sorted"
+    },
+    {
+      "id": "one_1",
+      "input": "2\n1\n0 1\n",
+      "output": "1 0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "one"
+    },
+    {
+      "id": "repeated_1",
+      "input": "3\n2\n0 1\n1 2\n3\n2\n0 1\n1 2\n3\n2\n0 1\n1 2\n3\n2\n0 1\n1 2\n3\n2\n0 1\n1 2\n",
+      "output": "2 1 0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "repeated"
+    },
+    {
+      "id": "large_random_11",
+      "input": "181\n114\n6 70\n62 57\n35 26\n173 139\n22 151\n108 8\n7 23\n55 59\n129 154\n6 143\n50 166\n179 139\n107 56\n114 150\n71 1\n40 178\n108 87\n71 39\n55 86\n26 23\n97 24\n91 88\n154 67\n11 117\n137 31\n96 20\n141 75\n160 158\n92 147\n49 180\n17 11\n169 58\n74 20\n59 25\n97 71\n116 162\n93 41\n94 90\n53 171\n68 179\n174 165\n18 155\n162 43\n136 62\n41 118\n97 69\n163 176\n142 56\n175 83\n14 58\n8 80\n102 68\n16 54\n145 80\n54 167\n127 101\n164 117\n36 67\n35 63\n143 137\n67 149\n109 149\n102 92\n56 35\n130 126\n23 12\n28 39\n160 40\n174 108\n152 16\n98 97\n152 119\n135 64\n141 2\n174 29\n174 137\n68 164\n87 28\n75 111\n40 116\n0 67\n128 45\n129 27\n160 76\n163 129\n155 50\n39 95\n41 138\n135 0\n153 82\n125 4\n28 92\n78 61\n14 61\n145 20\n21 124\n17 136\n32 32\n168 121\n140 42\n67 135\n155 108\n54 138\n176 51\n79 102\n171 166\n95 112\n132 115\n30 63\n57 16\n86 5\n150 141\n58 150\n56 1\n",
+      "output": "IMPOSSIBLE",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    },
+    {
+      "id": "large_random_12",
+      "input": "109\n190\n80 7\n29 8\n4 42\n9 65\n30 35\n85 62\n27 69\n16 92\n73 73\n60 31\n100 60\n103 52\n24 12\n12 84\n55 45\n54 52\n59 93\n6 86\n83 82\n12 7\n51 93\n43 102\n13 31\n24 24\n68 57\n17 54\n23 35\n59 31\n9 56\n103 70\n12 6\n83 69\n107 1\n11 96\n108 30\n21 52\n62 61\n27 51\n7 21\n48 0\n49 33\n100 100\n58 36\n54 89\n93 100\n71 84\n91 62\n19 24\n37 27\n7 74\n94 69\n7 95\n40 7\n6 74\n61 64\n67 20\n7 65\n10 108\n23 8\n76 8\n86 30\n51 15\n72 31\n74 76\n5 79\n10 53\n84 74\n72 66\n40 33\n26 85\n91 40\n30 33\n50 16\n85 82\n38 58\n40 96\n9 1\n58 79\n72 12\n9 68\n27 64\n33 16\n44 8\n31 47\n36 20\n56 106\n69 90\n38 78\n103 83\n67 1\n85 104\n70 38\n84 13\n17 33\n14 13\n95 70\n19 34\n36 77\n26 91\n43 26\n87 81\n33 64\n62 32\n108 6\n11 81\n54 106\n35 5\n0 42\n98 16\n81 33\n20 94\n56 70\n90 54\n71 1\n14 9\n88 19\n69 4\n106 47\n74 70\n18 55\n16 5\n39 46\n101 5\n45 26\n87 31\n85 13\n45 99\n71 52\n79 95\n19 30\n20 102\n103 22\n52 3\n22 94\n42 100\n52 102\n85 94\n103 31\n34 20\n100 89\n13 48\n4 60\n28 25\n104 58\n44 39\n105 101\n29 28\n3 84\n24 51\n42 35\n8 98\n35 44\n82 65\n51 86\n107 68\n42 3\n14 33\n22 74\n33 4\n13 76\n55 44\n93 100\n40 55\n77 65\n14 49\n73 24\n32 5\n90 55\n0 66\n103 68\n87 92\n94 94\n85 25\n46 55\n8 85\n42 79\n40 84\n108 15\n92 38\n64 39\n85 52\n41 51\n89 37\n70 16\n24 53\n85 48\n86 95\n22 78\n72 38\n51 70\n",
+      "output": "IMPOSSIBLE",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    },
+    {
+      "id": "large_random_13",
+      "input": "100\n138\n36 26\n55 74\n77 83\n41 59\n56 56\n86 27\n65 60\n94 21\n84 10\n36 65\n84 81\n79 42\n11 96\n30 86\n39 28\n25 18\n3 5\n31 60\n78 98\n9 58\n53 80\n73 24\n91 89\n49 63\n51 31\n18 83\n88 0\n96 98\n13 99\n54 28\n22 89\n66 59\n6 71\n31 15\n58 17\n59 85\n67 71\n76 40\n96 56\n78 92\n64 54\n70 57\n20 95\n60 57\n33 96\n31 81\n35 98\n99 66\n62 80\n30 35\n56 9\n91 36\n30 34\n42 40\n69 10\n17 19\n29 49\n88 19\n90 27\n8 53\n52 42\n69 59\n53 7\n26 53\n49 98\n74 89\n2 97\n73 48\n61 0\n45 38\n96 49\n53 68\n95 94\n69 77\n28 62\n28 34\n55 62\n3 49\n43 85\n86 51\n92 21\n59 16\n79 68\n3 50\n75 72\n84 3\n10 82\n54 17\n59 23\n6 33\n48 41\n27 58\n41 43\n97 48\n35 96\n53 32\n10 60\n2 95\n69 6\n44 28\n83 8\n99 83\n5 96\n3 31\n25 2\n79 19\n30 16\n60 85\n14 72\n27 59\n89 32\n98 47\n21 77\n77 95\n91 14\n99 20\n39 13\n74 3\n39 73\n86 48\n50 91\n25 9\n75 88\n80 31\n13 89\n98 38\n87 76\n15 72\n5 44\n68 54\n84 47\n8 64\n82 43\n1 53\n62 13\n55 46\n81 58\n90 19\n",
+      "output": "IMPOSSIBLE",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    },
+    {
+      "id": "large_random_14",
+      "input": "155\n122\n133 69\n137 123\n119 111\n151 68\n82 62\n22 71\n115 62\n118 145\n97 86\n7 126\n83 46\n124 54\n90 66\n87 71\n152 70\n142 2\n132 48\n21 61\n104 125\n142 61\n121 125\n114 4\n23 75\n56 103\n62 78\n148 94\n121 141\n135 88\n108 140\n84 90\n116 69\n78 64\n59 30\n49 80\n30 137\n47 49\n55 123\n70 150\n134 152\n72 25\n49 75\n58 92\n45 77\n3 136\n32 70\n11 13\n141 74\n32 125\n26 3\n146 72\n120 122\n112 87\n47 13\n64 122\n29 16\n102 125\n18 147\n13 38\n38 144\n77 21\n63 30\n142 106\n152 57\n133 97\n115 113\n76 150\n109 78\n145 15\n25 53\n54 67\n20 40\n61 44\n141 19\n40 0\n104 115\n152 120\n74 8\n59 73\n72 116\n18 59\n67 150\n50 108\n29 139\n57 38\n68 36\n18 15\n42 78\n152 145\n73 112\n31 119\n77 103\n69 128\n138 126\n112 20\n153 10\n110 82\n154 64\n6 23\n58 147\n150 5\n68 147\n10 44\n120 132\n113 71\n46 149\n111 125\n23 120\n89 104\n85 82\n26 41\n84 105\n126 73\n102 140\n9 116\n22 80\n64 82\n29 103\n131 0\n138 118\n105 13\n48 132\n92 127\n",
+      "output": "IMPOSSIBLE",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    },
+    {
+      "id": "large_random_15",
+      "input": "180\n156\n13 52\n68 140\n33 73\n112 178\n124 31\n7 161\n155 61\n40 79\n141 3\n141 104\n23 57\n29 118\n30 165\n39 127\n74 130\n69 106\n123 120\n62 116\n141 37\n98 48\n153 130\n34 17\n70 106\n87 129\n68 0\n72 76\n150 148\n168 125\n38 114\n137 123\n88 85\n141 139\n96 116\n82 48\n178 61\n146 98\n59 105\n11 81\n121 97\n98 169\n166 38\n126 9\n32 128\n151 84\n25 112\n25 134\n116 3\n36 104\n167 39\n19 120\n67 86\n159 177\n101 166\n20 84\n172 136\n97 81\n160 124\n138 9\n158 17\n60 161\n175 73\n58 23\n111 25\n162 25\n113 42\n177 76\n7 11\n83 14\n75 91\n95 110\n37 62\n135 105\n144 174\n46 43\n44 20\n156 97\n158 174\n61 127\n149 36\n59 118\n163 65\n117 65\n170 2\n119 73\n173 139\n40 18\n113 88\n150 76\n163 108\n176 64\n116 77\n50 98\n123 27\n60 97\n146 91\n147 75\n179 75\n5 168\n101 70\n2 144\n175 12\n155 127\n73 58\n155 90\n56 162\n48 158\n64 173\n168 174\n35 160\n24 160\n165 10\n79 112\n8 148\n93 33\n23 75\n83 106\n44 51\n33 138\n93 135\n128 69\n42 65\n123 75\n86 29\n119 19\n36 57\n173 172\n101 142\n93 23\n101 3\n67 137\n31 116\n94 172\n172 67\n149 97\n163 95\n27 172\n59 120\n6 158\n143 83\n156 56\n165 16\n162 118\n179 77\n166 104\n29 35\n11 9\n77 126\n29 24\n60 137\n34 99\n116 94\n171 178\n138 107\n150 39\n106 167\n25 125\n",
+      "output": "IMPOSSIBLE",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    },
+    {
+      "id": "adversarial_16",
+      "input": "178\n178\n0 1\n1 2\n2 3\n3 4\n4 5\n5 6\n6 7\n7 8\n8 9\n9 10\n10 11\n11 12\n12 13\n13 14\n14 15\n15 16\n16 17\n17 18\n18 19\n19 20\n20 21\n21 22\n22 23\n23 24\n24 25\n25 26\n26 27\n27 28\n28 29\n29 30\n30 31\n31 32\n32 33\n33 34\n34 35\n35 36\n36 37\n37 38\n38 39\n39 40\n40 41\n41 42\n42 43\n43 44\n44 45\n45 46\n46 47\n47 48\n48 49\n49 50\n50 51\n51 52\n52 53\n53 54\n54 55\n55 56\n56 57\n57 58\n58 59\n59 60\n60 61\n61 62\n62 63\n63 64\n64 65\n65 66\n66 67\n67 68\n68 69\n69 70\n70 71\n71 72\n72 73\n73 74\n74 75\n75 76\n76 77\n77 78\n78 79\n79 80\n80 81\n81 82\n82 83\n83 84\n84 85\n85 86\n86 87\n87 88\n88 89\n89 90\n90 91\n91 92\n92 93\n93 94\n94 95\n95 96\n96 97\n97 98\n98 99\n99 100\n100 101\n101 102\n102 103\n103 104\n104 105\n105 106\n106 107\n107 108\n108 109\n109 110\n110 111\n111 112\n112 113\n113 114\n114 115\n115 116\n116 117\n117 118\n118 119\n119 120\n120 121\n121 122\n122 123\n123 124\n124 125\n125 126\n126 127\n127 128\n128 129\n129 130\n130 131\n131 132\n132 133\n133 134\n134 135\n135 136\n136 137\n137 138\n138 139\n139 140\n140 141\n141 142\n142 143\n143 144\n144 145\n145 146\n146 147\n147 148\n148 149\n149 150\n150 151\n151 152\n152 153\n153 154\n154 155\n155 156\n156 157\n157 158\n158 159\n159 160\n160 161\n161 162\n162 163\n163 164\n164 165\n165 166\n166 167\n167 168\n168 169\n169 170\n170 171\n171 172\n172 173\n173 174\n174 175\n175 176\n176 177\n71 0\n",
+      "output": "IMPOSSIBLE",
+      "isVisible": false,
+      "weight": 1,
+      "category": "adversarial"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}
