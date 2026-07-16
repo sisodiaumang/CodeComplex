@@ -1,5 +1,3 @@
-import dns from "dns";
-dns.setServers(["8.8.8.8", "8.8.4.4"]);
 import fs from "fs";
 import path from "path";
 import mongoose from "mongoose";
