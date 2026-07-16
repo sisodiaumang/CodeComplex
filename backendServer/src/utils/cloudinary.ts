@@ -4,25 +4,33 @@ import { env } from "../config/env.js";
 
 import ApiError from "./ApiError.js";
 
-if (
-    !env.CLOUDINARY_CLOUD_NAME ||
-    !env.CLOUDINARY_API_KEY ||
-    !env.CLOUDINARY_API_SECRET
-) {
-    throw new Error(
-        "Cloudinary environment variables are missing"
+const isCloudinaryConfigured = !!(
+    env.CLOUDINARY_CLOUD_NAME &&
+    env.CLOUDINARY_API_KEY &&
+    env.CLOUDINARY_API_SECRET
+);
+
+if (isCloudinaryConfigured) {
+    cloudinary.config({
+        cloud_name: env.CLOUDINARY_CLOUD_NAME,
+        api_key: env.CLOUDINARY_API_KEY,
+        api_secret: env.CLOUDINARY_API_SECRET
+    });
+} else {
+    console.warn(
+        "[WARN] Cloudinary credentials are not set. Avatar/image upload features will not function."
     );
 }
-
-cloudinary.config({
-    cloud_name: env.CLOUDINARY_CLOUD_NAME,
-    api_key: env.CLOUDINARY_API_KEY,
-    api_secret: env.CLOUDINARY_API_SECRET
-});
 
 export const uploadOnCloudinary = async (
     localFilePath: string
 ) => {
+    if (!isCloudinaryConfigured) {
+        if (localFilePath && fs.existsSync(localFilePath)) {
+            fs.unlinkSync(localFilePath);
+        }
+        throw new ApiError(500, "Cloudinary is not configured on this server");
+    }
 
     try {
 
@@ -66,6 +74,9 @@ export const uploadOnCloudinary = async (
 export const deleteCloudinary = async (
     publicId: string
 ) => {
+    if (!isCloudinaryConfigured) {
+        throw new ApiError(500, "Cloudinary is not configured on this server");
+    }
 
     try {
 
