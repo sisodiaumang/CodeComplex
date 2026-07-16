@@ -1,7 +1,12 @@
 import { z } from "zod";
 
-const getEnv = (key: string, fallback?: string): string | undefined =>
-  process.env[key] ?? fallback;
+const getEnv = (key: string, fallback?: string): string | undefined => {
+  const val = process.env[key];
+  if (val === undefined || val === null || val.trim() === "") {
+    return fallback;
+  }
+  return val;
+};
 
 // Centralized environment validation (no direct process.env usage elsewhere).
 export const env = {
