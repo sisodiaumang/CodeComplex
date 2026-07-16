@@ -38,13 +38,15 @@ services:
     environment:
       - PORT=8000
       - NODE_ENV=production
-      - MONGODB_URI=mongodb://mongodb:27017/devwar
-      - REDIS_URL=redis://redis:6379
-      - CLIENT_URL=http://localhost:3000 # Update this on VM to your actual domain name
-      - CORS_ORIGIN=http://localhost:3000 # Update this on VM to your actual domain name
-      # Set secure values for secrets:
-      - JWT_ACCESS_SECRET=default-secure-access-secret-at-least-32-chars-long
-      - JWT_REFRESH_SECRET=default-secure-refresh-secret-at-least-32-chars-long
+      - MONGODB_URI=${MONGODB_URI}
+      - REDIS_URL=${REDIS_URL}
+      - CLIENT_URL=${CLIENT_URL}
+      - CORS_ORIGIN=${CORS_ORIGIN}
+      - JWT_ACCESS_SECRET=${JWT_ACCESS_SECRET}
+      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET}
+      - EMAIL_USER=${EMAIL_USER}
+      - EMAIL_PASS=${EMAIL_PASS}
+      - EMAIL_FROM_ADDRESS=${EMAIL_FROM_ADDRESS}
     networks:
       - devarena-network
 
@@ -54,8 +56,8 @@ services:
       context: ./client
       dockerfile: Dockerfile
       args:
-        - NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1 # Update this on VM to https://yourdomain.com/api/v1
-        - NEXT_PUBLIC_SOCKET_URL=http://localhost:8000 # Update this on VM to https://yourdomain.com
+        - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+        - NEXT_PUBLIC_SOCKET_URL=${NEXT_PUBLIC_SOCKET_URL}
     container_name: devarena-frontend
     restart: always
     ports:
