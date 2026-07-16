@@ -2,6 +2,7 @@ import { Router } from "express";
 
 import {
     submitCode,
+    compileCode,
     getSubmission,
     getMySubmissions,
     getMatchSubmissions,
@@ -34,6 +35,7 @@ router.get("/me", getMySubmissions);
 router.get("/match/:matchId", validateRequest(getMatchSubmissionsSchema), getMatchSubmissions);
 
 router.post("/", validateRequest(submitCodeSchema), submitCode);
+router.post("/compile", validateRequest(submitCodeSchema), compileCode);
 
 // --------------------
 // Dynamic "/:submissionId" routes

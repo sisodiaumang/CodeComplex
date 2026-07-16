@@ -1,0 +1,135 @@
+{
+  "title": "Fix MongoDB Pipeline to Handle Nested Fields with Mixed Types and Optional Keys",
+  "subCategory": "MongoDB Projection",
+  "statement": {
+    "markdown": "You are given a MongoDB collection with documents that have the following structure. You need to write a function that takes a MongoDB pipeline and a list of field names as input, and returns a new pipeline that ignores embedded fields with mixed types and optional keys in the projection stage.",
+    "inputFormat": "The input will be a MongoDB pipeline and a list of field names.",
+    "outputFormat": "The output will be a new MongoDB pipeline.",
+    "notes": "The function should ignore embedded fields with mixed types and optional keys in the projection stage.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of documents in the MongoDB collection"
+      }
+    ],
+    "examples": [
+      {
+        "input": "[object Object]\n[object Object]",
+        "output": "[object Object]\n[object Object]",
+        "explanation": "The function should ignore the 'address' field in the second document because it has a country field which is not present in the first document."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 75,
+    "premium": true,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "MONGODB"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "mongodb"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the $type operator to check the type of each field in the projection stage."
+    },
+    {
+      "order": 2,
+      "text": "Use the $ifNull operator to check if a field is null in the projection stage."
+    },
+    {
+      "order": 3,
+      "text": "Use the $ne operator to check if a field is not equal to an empty string in the projection stage."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial: Fix MongoDB Pipeline to Handle Nested Fields with Mixed Types and Optional Keys",
+    "intuition": "The correct approach is to use the $type operator to check the type of each field in the projection stage, and the $ifNull operator to check if a field is null. We can then use the $ne operator to check if a field is not equal to an empty string.",
+    "bruteForce": "A brute force approach would be to use a recursive function to iterate over each field in the document and check its type and existence.",
+    "betterSolution": "A better solution would be to use the $type operator and the $ifNull operator to simplify the pipeline.",
+    "optimalSolution": "The optimal solution is to use a single pipeline that checks the type and existence of each field in the projection stage.",
+    "proofOfCorrectness": "The correct pipeline will ignore embedded fields with mixed types and optional keys, and will return the expected output.",
+    "dryRun": "You can test the pipeline with the following documents:",
+    "commonMistakes": [
+      "Ignoring the $type operator",
+      "Not using the $ifNull operator",
+      "Not using the $ne operator"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "// Define the function to fix MongoDB pipeline\nfunction fixPipeline(pipeline, fields) {\n    // Your code here\n}"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Define the function to fix MongoDB pipeline\nfunction fixPipeline(pipeline, fields) {\n    // Use the $type operator to check the type of each field in the projection stage\n    pipeline.push({ $project: { _id: 1 } });\n    // This is the bug: we should use the $ifNull operator to check if a field is null, but we are not doing so\n    pipeline.push({ $project: { name: 1, age: 1, address: { street: 1 } } });\n    return pipeline;\n}"
+  },
+  "functionSignature": {
+    "javascript": "function fixPipeline(pipeline, fields) { ... }"
+  },
+  "solutions": {
+    "javascript": "// Define the function to fix MongoDB pipeline\nfunction fixPipeline(pipeline, fields) {\n    // Use the $type operator to check the type of each field in the projection stage\n    pipeline.push({ $project: { _id: 1, name: 1, age: 1 } });\n    // Use the $ifNull operator to check if a field is null\n    pipeline.push({ $project: { address: { $ifNull: { $type: '$address', 'object' } } } });\n    // Use the $ne operator to check if a field is not equal to an empty string\n    pipeline.push({ $project: { address: { street: { $ne: '$address.street', '' } } } });\n    return pipeline;\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "[ { name: 'John', age: 30, address: { street: '123 Main St', city: 'Anytown', state: 'CA', zip: '12345' } }, { name: 'Jane', age: 25, address: { street: '456 Elm St', city: 'Othertown', country: 'USA' } } ]",
+      "output": "[ { name: 'John', age: 30 }, { name: 'Jane', age: 25 } ]",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "[ { name: 'John', age: 30, address: { street: '123 Main St', city: 'Anytown', state: 'CA', zip: '12345' } }, { name: 'Jane', age: 25, address: { street: '456 Elm St', city: 'Othertown', country: 'USA' } } ]",
+      "output": "[ { name: 'John', age: 30 }, { name: 'Jane', age: 25 } ]",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "4bd71ac0795d177ac7900e56",
+  "slug": "fix-mongodb-pipeline-to-handle-nested-fields-with-mixed-types-and-optional-keys-bugfix-hard-mongodb",
+  "mode": "bug_fix",
+  "category": "MONGODB",
+  "difficulty": "Hard"
+}

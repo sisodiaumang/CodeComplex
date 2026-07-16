@@ -1,0 +1,153 @@
+{
+  "_id": "89b84d5ff593ebec52da6344",
+  "title": "Permutation Matrix Validity Bug Fix",
+  "slug": "permutation-matrix-validity-bug-fix-bugfix-medium-recursion",
+  "difficulty": "Medium",
+  "category": "DSA",
+  "subCategory": "BACKTRACKING",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "backtracking"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given a matrix, output all valid permutation matrices, which are matrices containing only zeros and ones such that each row and each column contains exactly one 1. You may NOT use any library functions. Note that some input sets may have more than one solution.",
+    "inputFormat": "2D list of size n x n, where n is the size of the matrix. All entries are 0 and/or 1.",
+    "outputFormat": "List of all valid permutation matrices of the input size.",
+    "notes": "Return matrices as lists of lists. Do not return the same matrix twice.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of matrix"
+      }
+    ],
+    "examples": [
+      {
+        "input": "[[0,1],[1,0]]",
+        "output": "[[[0, 1], [1, 0]], [[1, 0], [0, 1]]]",
+        "explanation": "Two valid permutation matrices of size 2x2"
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Consider a backtracking approach to place ones in the matrix."
+    }
+  ],
+  "editorial": {
+    "title": "Permutation Matrix Validity Bug Fix Editorial",
+    "intuition": "The problem asks for all valid permutation matrices of a given size. A permutation matrix is a square matrix that has exactly one 1 in each row and each column. We can approach this problem by using a backtracking algorithm.",
+    "bruteForce": "A naive approach would be to generate all possible 0-1 matrices of the given size and check if each one is a valid permutation matrix.",
+    "betterSolution": "A more efficient approach is to use a backtracking algorithm. We start from an empty matrix and try to place ones in it. We check if a placement is valid and backtrack to the previous state if it is not.",
+    "optimalSolution": "The optimal solution uses a backtracking algorithm with a small optimization to reduce the number of unnecessary placements.",
+    "proofOfCorrectness": "The solution is correct because it generates all valid permutation matrices and none other.",
+    "dryRun": "Consider a 2x2 matrix. There are two valid permutation matrices: [[0, 1], [1, 0]] and [[1, 0], [0, 1]].",
+    "commonMistakes": [
+      "Forgetting to check if a placement is valid",
+      "Not backtracking in time when a placement is invalid"
+    ],
+    "timeComplexity": "O(n!)",
+    "spaceComplexity": "O(n^2)"
+  },
+  "starterCode": {
+    "cpp": "class Solution { public: vector<vector<int>> solve(int n); };",
+    "java": "public class Solution { public List<List<Integer>> solve(int n); }",
+    "python": "class Solution: def solve(self, n: int) -> List[List[int]]:",
+    "javascript": "var solve = function(n) { // TODO: implement };"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution { public: vector<vector<int>> solve(int n) { vector<vector<int>> res; vector<int> row(n, 0); vector<int> col(n, 0); res.push_back(row); for (int i = 0; i < n; i++) { for (int j = 0; j < n; j++) { if (col[i] + row[j] < n) { res.push_back(row); row[j] = 1; col[i]++; } } } return res; } };",
+    "java": "public class Solution { public List<List<Integer>> solve(int n) { List<List<Integer>> res = new ArrayList<>(); List<Integer> row = new ArrayList<>(Collections.nCopies(n, 0)); List<Integer> col = new ArrayList<>(Collections.nCopies(n, 0)); res.add(row); for (int i = 0; i < n; i++) { for (int j = 0; j < n; j++) { if (col.get(i) + row.get(j) < n) { res.add(row); row.set(j, 1); col.set(i, col.get(i) + 1); } } } return res; } }",
+    "python": "class Solution: def solve(self, n: int) -> List[List[int]]: res = []; row = [0] * n; col = [0] * n; res.append(row); for i in range(n): for j in range(n): if col[i] + row[j] < n: res.append(row); row[j] = 1; col[i] += 1; return res;",
+    "javascript": "var solve = function(n) { var res = []; var row = new Array(n).fill(0); var col = new Array(n).fill(0); res.push(row); for (var i = 0; i < n; i++) { for (var j = 0; j < n; j++) { if (col[i] + row[j] < n) { res.push(row); row[j] = 1; col[i]++; } } } return res; };"
+  },
+  "functionSignature": {
+    "cpp": "vector<vector<int>> solve(int n);",
+    "java": "List<List<Integer>> solve(int n);",
+    "python": "def solve(self, n: int) -> List[List[int]]:",
+    "javascript": "var solve = function(n) { // TODO: implement };"
+  },
+  "solutions": {
+    "python": "from typing import List\n\nclass Solution:\n    def solve(self, n: int) -> List[List[int]]:\n        def backtrack(row: List[int], col: List[int], curr: int):\n            if curr == n:\n                res.append(row[:])\n                return\n\n            for j in range(n):\n                if col[j] == 0 and row[j] == 0:\n                    col[j] = 1\n                    row[j] = 1\n                    backtrack(row, col, curr + 1)\n                    col[j] = 0\n                    row[j] = 0\n\n        res = []\n        backtrack([0] * n, [0] * n, 0)\n        return res\n",
+    "cpp": "from typing import List\n\nclass Solution:\n    def solve(self, n: int) -> List[List[int]]:\n        def backtrack(row: List[int], col: List[int], curr: int):\n            if curr == n:\n                res.append(row[:])\n                return\n\n            for j in range(n):\n                if col[j] == 0 and row[j] == 0:\n                    col[j] = 1\n                    row[j] = 1\n                    backtrack(row, col, curr + 1)\n                    col[j] = 0\n                    row[j] = 0\n\n        res = []\n        backtrack([0] * n, [0] * n, 0)\n        return res",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "3\n0 1 0\n1 0 1\n0 1 0",
+      "output": "[[[0, 1, 0], [1, 0, 1], [0, 1, 0]], [[0, 0, 1], [1, 0, 0], [0, 1, 0]], [[0, 0, 0], [0, 1, 1], [1, 0, 0]], [[1, 0, 0], [0, 0, 1], [0, 1, 0]], [[0, 1, 0], [0, 0, 1], [1, 0, 0]]]",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_hidden_generated",
+      "input": "3\n0 1 0\n1 0 1\n0 1 0",
+      "output": "[[[0, 1, 0], [1, 0, 1], [0, 1, 0]], [[0, 0, 1], [1, 0, 0], [0, 1, 0]], [[0, 0, 0], [0, 1, 1], [1, 0, 0]], [[1, 0, 0], [0, 0, 1], [0, 1, 0]], [[0, 1, 0], [0, 0, 1], [1, 0, 0]]]",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

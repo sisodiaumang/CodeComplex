@@ -1,0 +1,221 @@
+{
+  "_id": "unbounded-knapsack",
+  "title": "Unbounded Knapsack",
+  "slug": "unbounded-knapsack",
+  "difficulty": "Hard",
+  "category": "DP",
+  "subCategory": "DP on Subsequences",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 90,
+    "points": 800,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "Dynamic Programming",
+      "DP on Subsequences"
+    ],
+    "patterns": [],
+    "prerequisites": [
+      "0/1 Knapsack"
+    ],
+    "variants": [],
+    "tags": [
+      "greedy",
+      "dynamic-programming",
+      "unbounded-knapsack",
+      "subsequence"
+    ],
+    "keywords": [
+      "dynamic-programming",
+      "subsequence",
+      "unbounded-knapsack"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "You are given a set of items, each with a weight and a value. Determine the number of each item to include in a collection so that the total weight is less than or equal to a given limit and the total value is as large as possible. This problem is also known as the unbounded knapsack problem, as you can use any number of copies of each item.\n\nThe problem can be stated more formally as follows: given a set of items, each with a weight `w_i` and a value `v_i`, and a knapsack with capacity `W`, find the maximum value that can be obtained by selecting a subset of the items to include in the knapsack, such that the total weight of the selected items does not exceed `W`.",
+    "inputFormat": "The first line contains two integers: the number of items `n` and the knapsack capacity `W`. The next `n` lines each contain two integers: the weight `w_i` and the value `v_i` of the `i`-th item.",
+    "outputFormat": "The maximum value that can be obtained.",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 100,
+        "description": "the number of items"
+      },
+      {
+        "variable": "W",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "the knapsack capacity"
+      },
+      {
+        "variable": "w_i",
+        "type": "integer",
+        "min": 1,
+        "max": 1000,
+        "description": "the weight of the i-th item"
+      },
+      {
+        "variable": "v_i",
+        "type": "integer",
+        "min": 1,
+        "max": 1000,
+        "description": "the value of the i-th item"
+      }
+    ],
+    "examples": [
+      {
+        "input": "3 2\n10 60\n20 100\n30 120",
+        "output": "0",
+        "explanation": "The maximum value that can be obtained is 220, by selecting 2 items of weight 20 and value 100, and 1 item of weight 30 and value 120."
+      },
+      {
+        "input": "2 10\n2 3\n3 4",
+        "output": "15",
+        "explanation": "The maximum value that can be obtained is 7, by selecting 3 items of weight 2 and value 3, and 1 item of weight 3 and value 4."
+      },
+      {
+        "input": "1 5\n2 3",
+        "output": "6",
+        "explanation": "The maximum value that can be obtained is 6, by selecting 3 items of weight 2 and value 3."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "This problem can be solved using dynamic programming. Think about how you can break down the problem into smaller sub-problems."
+    },
+    {
+      "order": 2,
+      "text": "Consider creating a table to store the maximum value that can be obtained for each possible weight from 0 to W. How can you use previously computed values to compute the next ones?"
+    },
+    {
+      "order": 3,
+      "text": "For each item, think about whether including it or not including it will lead to a higher value for a given weight. This is a key insight into how to fill your table."
+    },
+    {
+      "order": 4,
+      "text": "The problem is called 'unbounded' because you can use any number of copies of each item. This means for each item, you need to consider how many times it can be included to maximize value without exceeding the weight limit."
+    }
+  ],
+  "editorial": {
+    "title": "Unbounded Knapsack: A Greedy Approach with Dynamic Programming",
+    "intuition": "The unbounded knapsack problem can be solved optimally by observing that the maximum value for a given capacity can be achieved by considering each item type only once, in a way that maximizes its contribution to the total value.",
+    "bruteForce": "A brute force approach would involve generating all possible combinations of items and checking which combination gives the maximum value without exceeding the capacity. This approach is correct but extremely slow, with an exponential time complexity, because it does not leverage any optimization.",
+    "betterSolution": "The optimal approach uses dynamic programming to build up a solution by iteratively computing the maximum value for each sub-capacity, from 1 to W. This is achieved by considering each item and updating the maximum value for each capacity if including the current item improves the value.",
+    "optimalSolution": "The dynamic programming solution iterates over each capacity from 1 to W and for each item, checks if including it improves the maximum value for the current capacity. This approach has a time complexity of O(nW) and a space complexity of O(W), making it much more efficient than the brute force approach.",
+    "proofOfCorrectness": "The correctness of the dynamic programming solution can be proven by induction on the capacity W. For the base case (W=0), the maximum value is 0, which is correctly computed. For the inductive step, assuming the maximum value is correctly computed for all capacities less than or equal to W, adding an item to achieve a higher value for W+1 can only be done if the item's weight is less than or equal to W+1. The solution correctly considers all such items.",
+    "dryRun": "Testing the solution with sample inputs, such as n=3, W=10, and items [(2, 3), (3, 4), (4, 5)], helps verify its correctness and performance.",
+    "commonMistakes": [
+      "Not considering the unbounded nature of the problem, leading to incorrect application of the 0/1 knapsack solution.",
+      "Incorrectly implementing the dynamic programming recurrence relation.",
+      "Failing to initialize the dp array correctly.",
+      "Not iterating over all items for each capacity.",
+      "Misunderstanding the base case of the dynamic programming approach."
+    ],
+    "timeComplexity": "O(n * W)",
+    "spaceComplexity": "O(W)"
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    int unboundedKnapsack(int W, vector<int>& weights, vector<int>& values) {\n        // TODO: implement\n        return 0;\n    }\n};",
+    "java": "import java.util.*;\n\nclass Solution {\n    public int unboundedKnapsack(int W, int[] weights, int[] values) {\n        // TODO: implement\n        return 0;\n    }\n}",
+    "python": "class Solution:\n    def unboundedKnapsack(self, W: int, weights: list[int], values: list[int]) -> int:\n        # TODO: implement\n        pass",
+    "javascript": "/**\n * @param {number} W\n * @param {number[]} weights\n * @param {number[]} values\n * @return {number}\n */\nvar unboundedKnapsack = function(W, weights, values) {\n    // TODO: implement\n    return 0;\n};"
+  },
+  "functionSignature": {
+    "cpp": "int unboundedKnapsack(int W, vector<int>& weights, vector<int>& values);",
+    "java": "public int unboundedKnapsack(int W, int[] weights, int[] values);",
+    "python": "def unboundedKnapsack(self, W: int, weights: list[int], values: list[int]) -> int:",
+    "javascript": "var unboundedKnapsack = function(W, weights, values);"
+  },
+  "solutions": {
+    "python": "import sys\n\nclass Solution:\n    def unboundedKnapsack(self, W: int, weights: list[int], values: list[int]) -> int:\n        dp = [0] * (W + 1)\n        for w in range(1, W + 1):\n            for i in range(len(weights)):\n                if weights[i] <= w:\n                    dp[w] = max(dp[w], dp[w - weights[i]] + values[i])\n        return dp[W]\n\nif __name__ == '__main__':\n    it = iter(sys.stdin.read().split())\n    try:\n        n, W = int(next(it)), int(next(it))\n        weights, values = [], []\n        for _ in range(n):\n            w, v = int(next(it)), int(next(it))\n            weights.append(w)\n            values.append(v)\n    except StopIteration:\n        sys.exit(0)\n    sol = Solution()\n    ans = sol.unboundedKnapsack(W, weights, values)\n    print(ans)",
+    "cpp": "#include <numeric>\n#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    int unboundedKnapsack(int W, vector<int>& weights, vector<int>& values) {\n        vector<int> dp(W + 1);\n        for (int w = 1; w <= W; w++) {\n            for (int i = 0; i < weights.size(); i++) {\n                if (weights[i] <= w) {\n                    dp[w] = max(dp[w], dp[w - weights[i]] + values[i]);\n                }\n            }\n        }\n        return dp[W];\n    }\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int n, W;\n    if (!(cin >> n >> W)) return 0;\n    vector<int> weights(n), values(n);\n    for (int i = 0; i < n; i++) cin >> weights[i] >> values[i];\n    Solution sol;\n    int ans = sol.unboundedKnapsack(W, weights, values);\n    cout << ans << \"\\n\";\n    return 0;\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.5
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "3 50\n10 60\n20 100\n30 120",
+      "output": "300",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "2 10\n2 3\n3 4",
+      "output": "15",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_3",
+      "input": "1 5\n2 3",
+      "output": "6",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint_4",
+      "input": "1 1\n1 1",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "duplicate_6",
+      "input": "3 10\n2 3\n2 3\n2 3",
+      "output": "15",
+      "isVisible": false,
+      "weight": 1,
+      "category": "duplicate"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

@@ -1,0 +1,154 @@
+{
+  "_id": "ab97f580b6ff1f814cb70f52",
+  "title": "Flawed Breadth-First Search (BFS) in a Graph",
+  "slug": "flawed-breadth-first-search-bfs-in-a-graph-bugfix-easy-graphs",
+  "difficulty": "Easy",
+  "category": "DSA",
+  "subCategory": "BFS",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "graph",
+      "bfs"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given a directed graph and a start node, your code should perform a breadth-first search (BFS) and return the visited nodes in the order they were visited. The graph is represented as an adjacency list.",
+    "inputFormat": "An adjacency list graph represented as a dictionary where each key is a node and its corresponding value is a list of its neighboring nodes. A start node to begin the BFS from.",
+    "outputFormat": "A list of nodes in the order they were visited during the BFS.",
+    "notes": "Note that the input graph will not contain self-loops or parallel edges. The start node will always be present in the graph.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of adjacency list"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"A\":[\"B\",\"C\"],\"B\":[\"D\"],\"C\":[],\"D\":[]}\nA",
+        "output": "['A', 'B', 'C', 'D']",
+        "explanation": "Start from node A and perform BFS"
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Consider using a queue data structure to implement the BFS."
+    }
+  ],
+  "editorial": {
+    "title": "Breadth-First Search (BFS) in a Graph",
+    "intuition": "BFS is a traversal algorithm that explores all the nodes at a given depth before moving to the next depth level.",
+    "bruteForce": "A naive approach is to perform DFS and check if we've visited a node before.",
+    "betterSolution": "Use a queue to keep track of nodes to visit.",
+    "optimalSolution": "Perform BFS using a queue and a set to keep track of visited nodes.",
+    "proofOfCorrectness": "BFS visits all nodes at a given depth level before moving to the next depth level.",
+    "dryRun": "Start from node A and perform BFS on the given graph.",
+    "commonMistakes": [
+      "Forgot to add visited nodes to the result list",
+      "Didn't initialize the queue correctly"
+    ],
+    "timeComplexity": "O(n + m)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n\tvector<string> solve(\n\t\tmap<string, vector<string>>& graph, const string& startNode\n\t) {\n\t\t// TODO: implement BFS\n\t\treturn {};\n\t}\n};",
+    "java": "public class Solution {\npublic List<String> solve(\n\tMap<String, List<String>> graph, String startNode\n\t) {\n\t\t// TODO: implement BFS\n\t\treturn new ArrayList<>();\n\t}\n}",
+    "python": "class Solution:\n\tdef solve(self, graph: dict, startNode: str) -> list:\n\t\t# TODO: implement BFS\n\t\treturn []",
+    "javascript": "var solve = function(graph, startNode) {\n\t\t// TODO: implement BFS\n\t\treturn [];\n};"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n\tvector<string> solve(\n\t\tmap<string, vector<string>>& graph, const string& startNode\n\t) {\n\t\t\ncache.resize(graph.size(), set<string>());\n\t\t\tqueue<string> q;\n\t\t\tq.push(startNode);\n\t\t\tvector<string> result;\n\t\t\twhile (!q.empty()) {\n\t\t\t\tstring node = q.front();\n\t\t\t\tq.pop();\n\t\t\t\tresult.push_back(node);\n\t\t\t\tcache[node].insert(cache[node].end(), graph[node].begin(), graph[node].end());\n\t\t\t}\n\t\t\treturn result;\n\t\t}\n\tprivate:\n\t\tvector<set<string>> cache;\n\t};",
+    "java": "public class Solution {\npublic List<String> solve(\n\tMap<String, List<String>> graph, String startNode\n\t) {\n\t\tSet<String>[] cache = new Set[graph.size()];\n\t\tfor (int i = 0; i < graph.size(); i++) {\n\t\t\tcache[i] = new HashSet<>();\n\t\t}\n\t\tQueue<String> q = new LinkedList<>();\n\t\tq.add(startNode);\n\t\tList<String> result = new ArrayList<>();\n\t\twhile (!q.isEmpty()) {\n\t\t\tString node = q.poll();\n\t\t\tresult.add(node);\n\t\t\tfor (String neighbor : graph.get(node)) {\n\t\t\t\tcache[Integer.parseInt(node)].add(neighbor);\n\t\t\t}\n\t\t}\n\t\treturn result;\n\t}",
+    "python": "class Solution:\n\tdef solve(self, graph: dict, startNode: str) -> list:\n\t\tcache = [[] for _ in range(len(graph))]\n\t\tq = collections.deque([startNode])\n\t\tresult = []\n\t\twhile q:\n\t\t\tnode = q.popleft()\n\t\t\tresult.append(node)\n\t\t\tfor neighbor in graph[node]:\n\t\t\t\tcache[ord(node)].append(neighbor)\n\t\t\tq.extend(cache[ord(node)])\n\t\treturn result",
+    "javascript": "var solve = function(graph, startNode) {\n\t\tcache = Array.from({length: graph.length}, () => []);\n\t\tvar q = [startNode];\n\t\tvar result = [];\n\t\twhile (q.length) {\n\t\t\tvar node = q.shift();\n\t\t\tresult.push(node);\n\t\t\tgraph[node].forEach(function(neighbor) {\n\t\t\t\tcache[node.charCodeAt(0)].push(neighbor);\n\t\t\t});\n\t\t\tq.push.apply(q, cache[node.charCodeAt(0)]);\n\t\t}\n\t\treturn result;\n};"
+  },
+  "functionSignature": {
+    "cpp": "vector<string> solve(map<string, vector<string>>& graph, const string& startNode);",
+    "java": "List<String> solve(Map<String, List<String>> graph, String startNode);",
+    "python": "def solve(self, graph: dict, startNode: str) -> list:",
+    "javascript": "var solve = function(graph, startNode);"
+  },
+  "solutions": {
+    "python": "class Solution:\n\tdef solve(self, graph: dict, startNode: str) -> list:\n\t\tcache = set()\n\t\tq = collections.deque([startNode])\n\t\tresult = []\n\t\twhile q:\n\t\t\tnode = q.popleft()\n\t\t\tcache.add(node)\n\t\t\tresult.append(node)\n\t\t\tfor neighbor in graph[node]:\n\t\t\t\tif neighbor not in cache:\n\t\t\t\t\tq.append(neighbor)\n\t\treturn result\n\ndef read_input():\n\tgraph = {\n\t\t\t'A': ['B', 'C'],\n\t\t\t'B': ['D'],\n\t\t\t'C': [],\n\t\t\t'D': [],\n\t\t}\n\tstartNode = 'A'\n\treturn graph, startNode\nif __name__ == '__main__':\n\tgraph, startNode = read_input()\n\tsolution = Solution()\n\tprint(solution.solve(graph, startNode))",
+    "cpp": "class Solution {\npublic:\n\tvector<string> solve(\n\t\tmap<string, vector<string>>& graph, const string& startNode\n\t) {\n\t\t\ncache = set<string>();\n\t\t\tqueue<string> q;\n\t\t\tq.push(startNode);\n\t\t\tvector<string> result;\n\t\t\twhile (!q.empty()) {\n\t\t\t\tstring node = q.front();\n\t\t\t\tq.pop();\n\t\t\t\tcache.insert(node);\n\t\t\t\tresult.push_back(node);\n\t\t\t\tfor (string neighbor : graph[node]) {\n\t\t\t\ttif (cache.find(neighbor) == cache.end()) {\n\t\t\t\t\tq.push(neighbor);\n\t\t\t\t}\n\t\t\t}\n\t\t\t}\n\t\t\treturn result;\n\t\t}\n\tprivate:\n\t\tset<string> cache;\n\t};\nint main(){\n\tmap<string, vector<string>> graph = {{'A', {'B', 'C'}}, {'B', {'D'}}, {'C', {}}, {'D', {}}};\n\tstring startNode = 'A';\n\tSolution s;\n\tcout << '[' << s.solve(graph, startNode).size() << ']\n';\n\tfor (auto &x: s.solve(graph, startNode))\n\t\tcout << '\"' << x << '\"' << ',' << endl;\n\treturn 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"A\":[\"B\",\"C\"],\"B\":[\"D\"],\"C\":[],\"D\":[]}\nA",
+      "output": "['A', 'B', 'C', 'D']",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"A\":[\"B\",\"C\"],\"B\":[],\"C\":[\"A\"],\"D\":[\"A\"]}\nC",
+      "output": "['C', 'A', 'B', 'D', 'A']",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

@@ -38,6 +38,10 @@ async function seed() {
     const jsonFiles = getFilesRecursively(questionsDir);
     console.log(`Found ${jsonFiles.length} JSON files.`);
 
+    console.log("Cleaning up old prompt war questions from database...");
+    await PromptWarScenario.deleteMany({});
+    console.log("Database cleared.");
+
     let insertedCount = 0;
     let updatedCount = 0;
     let errorCount = 0;
@@ -52,10 +56,16 @@ async function seed() {
           continue;
         }
 
-        const existing = await PromptWarScenario.findById(json._id);
+        const existing = await PromptWarScenario.findOne({
+          $or: [
+            { _id: json._id },
+            { slug: json.slug }
+          ]
+        });
         if (existing) {
-          // Merge and save
-          Object.assign(existing, json);
+          // Merge and save, preventing modifying immutable _id
+          const { _id, ...updateData } = json;
+          Object.assign(existing, updateData);
           await existing.save();
           updatedCount++;
         } else {

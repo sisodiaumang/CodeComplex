@@ -1,0 +1,155 @@
+{
+  "_id": "18666d790faad5bf9ca052b1",
+  "title": "Detecting Strongly Connected Components: Fix the Backtracking",
+  "slug": "detecting-strongly-connected-components-fix-the-backtracking-bugfix-medium-graphs",
+  "difficulty": "Medium",
+  "category": "DSA",
+  "subCategory": "DFS/Backtracking",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 60,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "graph",
+      "scs",
+      "kosaraju"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given a directed graph (represented as an adjacency list), find all strongly connected components (SCCs) using the Kosaraju's algorithm. The Kosaraju's algorithm involves two main steps: 1) finding the reverse graph of the original graph, 2) performing DFS on the original graph and the reverse graph.",
+    "inputFormat": "Input will be in the form of an adjacency list represented as a vector of vectors, where each inner vector represents a list of neighboring nodes. Example: [[1, 2], [0, 3], [0, 3], [1, 2]]",
+    "outputFormat": "Output should be one or more SCCs, represented as lists of node indices. Example: [[2, 3], [0, 1]]",
+    "notes": "Nodes are 0-indexed and represent the vertices of the graph. The nodes are not necessarily connected to each other.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "numNodes",
+        "type": "integer",
+        "min": 0,
+        "max": 10000,
+        "description": "Number of nodes in the graph"
+      }
+    ],
+    "examples": [
+      {
+        "input": "[[1, 2], [0, 3], [0, 3], [1, 2]]",
+        "output": "[[2, 3], [0, 1]]",
+        "explanation": "Two SCCs: {0, 1} and {2, 3}"
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First, find the reverse graph of the original graph."
+    }
+  ],
+  "editorial": {
+    "title": "Kosaraju's Algorithm",
+    "intuition": "Kosaraju's algorithm involves finding the reverse of the graph and then performing DFS on both graphs.",
+    "bruteForce": "Brute force approach: Create a new graph with edges as (j, i) for each (i, j) in the original graph and find SCCs in this new graph.",
+    "betterSolution": "Use DFS to find the order in which nodes are visited in the original graph.",
+    "optimalSolution": "Perform DFS on the original graph to find the order of nodes, then perform DFS on the reverse graph using this order.",
+    "proofOfCorrectness": "Kosaraju's algorithm is correct because the strongly connected component is a set of vertices that have a cycle.",
+    "dryRun": "dry Run details.",
+    "commonMistakes": [
+      "Failing to correctly reverse the graph",
+      "Using an incorrect order for DFS"
+    ],
+    "timeComplexity": "O(V + E)",
+    "spaceComplexity": "O(V + E)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {public: vector<vector<int>> stronglyConnectedComponents(int numNodes, vector<vector<int>>& adjacencyList) { // TODO: implement }};",
+    "java": "public class Solution {public List<List<Integer>> stronglyConnectedComponents(int numNodes, List<List<Integer>> adjacencyList) { // TODO: implement }};",
+    "python": "class Solution: def stronglyConnectedComponents(self, numNodes: int, adjacencyList: List[List[int]]) -> List[List[int]]: # TODO: implement pass",
+    "javascript": "function stronglyConnectedComponents(numNodes, adjacencyList) { // TODO: implement return []; }"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {public: vector<vector<int>> stronglyConnectedComponents(int numNodes, vector<vector<int>>& adjacencyList) { vector<int> reverseGraph[numNodes]; for (int i = 0; i < numNodes; i++) reverseGraph[i].clear(); for (int i = 0; i < numNodes; i++) for (int neighbor : adjacencyList[i]) reverseGraph[neighbor].push_back(i); vector<int> order = findReversePostOrder(numNodes, reverseGraph); vector<vector<int>> sccs; for (int node : order) sccs.push_back(performDfs(numNodes, adjacencyList, node)); return sccs; } private: vector<int> findReversePostOrder(int numNodes, vector<vector<int>>& adjacencyList) { vector<int> reverseGraph[numNodes]; for (int i = 0; i < numNodes; i++) reverseGraph[i].clear(); for (int i = 0; i < numNodes; i++) for (int neighbor : adjacencyList[i]) reverseGraph[neighbor].push_back(i); vector<int> order; for (int i = 0; i < numNodes; i++) if (reverseGraph[i].empty()) order.push_back(i); int current = 0; stack<int> stack; for (int node : order) if (current == 0) { stack.push(node); current++; } else { stack.pop(); int neighbor = stack.top(); for (int nextNeighbor : reverseGraph[neighbor]) stack.push(nextNeighbor); stack.pop(); order.push_back(neighbor); current--; } return order; } vector<vector<int>> performDfs(int numNodes, vector<vector<int>>& adjacencyList, int startNode) { stack<int> stack; stack.push(startNode); vector<bool> visited(numNodes); while (!stack.empty()) { int currentNode = stack.top(); stack.pop(); visited[currentNode] = true; for (int neighbor : adjacencyList[currentNode]) if (!visited[neighbor]) stack.push(neighbor); } return {{startNode}}; } };",
+    "java": "public class Solution {public List<List<Integer>> stronglyConnectedComponents(int numNodes, List<List<Integer>> adjacencyList) { List<List<Integer>> reverseGraph = new ArrayList<>(); for (int i = 0; i < numNodes; i++) reverseGraph.add(new ArrayList<>()); for (int i = 0; i < numNodes; i++) for (int neighbor : adjacencyList.get(i)) reverseGraph.get(neighbor).add(i); List<Integer> order = findReversePostOrder(numNodes, adjacencyList); List<List<Integer>> sccs = new ArrayList<>(); for (int node : order) sccs.add(performDfs(numNodes, adjacencyList, node)); return sccs; } private List<Integer> findReversePostOrder(int numNodes, List<List<Integer>> adjacencyList) { List<List<Integer>> reverseGraph = new ArrayList<>(); for (int i = 0; i < numNodes; i++) reverseGraph.add(new ArrayList<>()); for (int i = 0; i < numNodes; i++) for (int neighbor : adjacencyList.get(i)) reverseGraph.get(neighbor).add(i); List<Integer> order = new ArrayList<>(); for (int i = 0; i < numNodes; i++) if (reverseGraph.get(i).isEmpty()) order.add(i); int current = 0; Stack<Integer> stack = new Stack<>(); for (int node : order) if (current == 0) { stack.push(node); current++; } else { stack.pop(); int neighbor = stack.peek(); for (int nextNeighbor : reverseGraph.get(neighbor)) stack.push(nextNeighbor); stack.pop(); order.add(neighbor); current--; } return order; } List<List<Integer>> performDfs(int numNodes, List<List<Integer>> adjacencyList, int startNode) { Stack<Integer> stack = new Stack<>(); stack.push(startNode); boolean[] visited = new boolean[numNodes]; while (!stack.empty()) { int currentNode = stack.peek(); stack.pop(); visited[currentNode] = true; for (int neighbor : adjacencyList.get(currentNode)) if (!visited[neighbor]) stack.push(neighbor); } return Collections.singletonList(Collections.singletonList(startNode)); } };",
+    "python": "class Solution: def stronglyConnectedComponents(self, numNodes: int, adjacencyList: List[List[int]]) -> List[List[int]]: reverseGraph = [[] for _ in range(numNodes)] for i in range(numNodes): for neighbor in adjacencyList[i]: reverseGraph[neighbor].append(i) order = self.findReversePostOrder(numNodes, adjacencyList) sccs = [] for node in order: sccs.append(self.performDfs(numNodes, adjacencyList, node)) return sccs\ndef findReversePostOrder(self, numNodes: int, adjacencyList: List[List[int]]) -> List[int]: reverseGraph = [[] for _ in range(numNodes)] for i in range(numNodes): for neighbor in adjacencyList[i]: reverseGraph[neighbor].append(i) order = [] for i in range(numNodes): if not reverseGraph[i]: order.append(i) current = 0 stack = [] for node in order: if current == 0: stack.append(node) current += 1 else: stack.pop() neighbor = stack[-1] for nextNeighbor in reverseGraph[neighbor]: stack.append(nextNeighbor) stack.pop() order.append(neighbor) current -= 1 return order\ndef performDfs(self, numNodes: int, adjacencyList: List[List[int]], startNode: int) -> List[int]: stack = [startNode] visited = [False] * numNodes while stack: currentNode = stack[-1] stack.pop() visited[currentNode] = True for neighbor in adjacencyList[currentNode]: if not visited[neighbor]: stack.append(neighbor) return [startNode]",
+    "javascript": "function stronglyConnectedComponents(numNodes, adjacencyList) { let reverseGraph = Array(numNodes).fill().map(() => []); for (let i = 0; i < numNodes; i++) for (let neighbor of adjacencyList[i]) reverseGraph[neighbor].push(i); let order = findReversePostOrder(numNodes, adjacencyList); let sccs = []; for (let node of order) sccs.push(performDfs(numNodes, adjacencyList, node)); return sccs; } function findReversePostOrder(numNodes, adjacencyList) { let reverseGraph = Array(numNodes).fill().map(() => []); for (let i = 0; i < numNodes; i++) for (let neighbor of adjacencyList[i]) reverseGraph[neighbor].push(i); let order = []; for (let i = 0; i < numNodes; i++) if (reverseGraph[i].length === 0) order.push(i); let current = 0; let stack = []; for (let node of order) if (current === 0) { stack.push(node); current++; } else { stack.pop(); let neighbor = stack[stack.length - 1]; for (let nextNeighbor of reverseGraph[neighbor]) stack.push(nextNeighbor); stack.pop(); order.push(neighbor); current--; } return order; } function performDfs(numNodes, adjacencyList, startNode) { let stack = [startNode]; let visited = Array(numNodes).fill(false); while (stack.length) { let currentNode = stack[stack.length - 1]; stack.pop(); visited[currentNode] = true; for (let neighbor of adjacencyList[currentNode]) if (!visited[neighbor]) stack.push(neighbor); } return [startNode]; }"
+  },
+  "functionSignature": {
+    "cpp": "vector<vector<int>> stronglyConnectedComponents(int numNodes, vector<vector<int>>& adjacencyList)",
+    "java": "List<List<Integer>> stronglyConnectedComponents(int numNodes, List<List<Integer>> adjacencyList)",
+    "python": "List[List[int]] stronglyConnectedComponents(self, numNodes: int, adjacencyList: List[List[int]]) -> List[List[int]]",
+    "javascript": "List<List<Integer>> stronglyConnectedComponents(numNodes, adjacencyList)"
+  },
+  "solutions": {
+    "python": "class Solution:\n\tdef stronglyConnectedComponents(self, numNodes: int, adjacencyList: List[List[int]]) -> List[List[int]]:\n\t\treverseGraph = [[] for _ in range(numNodes)]\n\t\tfor i in range(numNodes):\n\t\t\tfor neighbor in adjacencyList[i]:\n\t\t\t\treverseGraph[neighbor].append(i)\n\t\torder = self.findReversePostOrder(numNodes, adjacencyList)\n\t\tsccs = []\n\t\tfor node in order:\n\t\t\tsccs.append(self.performDfs(numNodes, adjacencyList, node))\n\t\treturn sccs\n\ndef findReversePostOrder(self, numNodes: int, adjacencyList: List[List[int]]) -> List[int]:\n\t\treverseGraph = [[] for _ in range(numNodes)]\n\t\tfor i in range(numNodes):\n\t\t\tfor neighbor in adjacencyList[i]:\n\t\t\t\treverseGraph[neighbor].append(i)\n\t\torder = []\n\t\tfor i in range(numNodes):\n\t\t\tif not reverseGraph[i]:\n\t\t\t\torder.append(i)\n\t\tcurrent = 0\n\t\tstack = []\n\t\tfor node in order:\n\t\t\tif current == 0:\n\t\t\t\tstack.append(node)\n\t\t\t\tcurrent += 1\n\t\t\telse:\n\t\t\t\tstack.pop()\n\t\t\tneighbor = stack[-1]\n\t\t\tfor nextNeighbor in reverseGraph[neighbor]:\n\t\t\t\tstack.append(nextNeighbor)\n\t\t\tstack.pop()\n\t\t\torder.append(neighbor)\n\t\t\tpass\n\t\t\tpass\n\t\t\tcurrent -= 1\n\t\t\treturn order\n\ndef performDfs(self, numNodes: int, adjacencyList: List[List[int]], startNode: int) -> List[int]:\n\t\tstack = [startNode]\n\t\tvisited = [False] * numNodes\n\t\tpass\n\t\twhile stack:\n\t\t\tcurrentNode = stack[-1]\n\t\t\tstack.pop()\n\t\t\tvisited[currentNode] = True\n\t\t\tfor neighbor in adjacencyList[currentNode]:\n\t\t\t\tif not visited[neighbor]:\n\t\t\t\t\tstack.append(neighbor)\n\t\t\treturn [startNode]\nif __name__ == '__main__':\n\t\n\tinput = lambda: sys.stdin.readline().rstrip('\\r\\n')\n\tparams = map(int, input().split())\n\tif __name__ == '__main__':\n\t\tsys.stdin.readline()\n\t\tnumNodes, = params\n\t\tadjacencyList = [list(map(int, input().split())) for _ in range(numNodes)]\n\t\tresult = Solution().stronglyConnectedComponents(numNodes, adjacencyList)\n\t\tpass\n\t\tprint(*result, flush=True)\n\n",
+    "cpp": "class Solution {\npublic:\n\tvector<vector<int>> stronglyConnectedComponents(int numNodes, vector<vector<int>>& adjacencyList) {\n\t\tvector<int> reverseGraph[numNodes];\n\t\tfor (int i = 0; i < numNodes; i++) reverseGraph[i].clear();\n\t\tfor (int i = 0; i < numNodes; i++) for (int neighbor : adjacencyList[i]) reverseGraph[neighbor].push_back(i);\n\t\tvector<int> order = findReversePostOrder(numNodes, reverseGraph);\n\t\tvector<vector<int>> sccs;\n\t\tfor (int node : order) sccs.push_back(performDfs(numNodes, adjacencyList, node));\n\t\treturn sccs;\n\t}\n\tvector<int> findReversePostOrder(int numNodes, vector<vector<int>>& reverseGraph) {\n\t\tvector<int> order;\n\t\tfor (int i = 0; i < numNodes; i++) if (reverseGraph[i].empty()) order.push_back(i);\n\t\tint current = 0;\n\t\tstack<int> stack;\n\t\tfor (int node : order) if (current == 0) {\n\t\t\tstack.push(node);\n\t\t\tcurrent++;\n\t\t\t} else {\n\t\t\tstack.pop();\n\t\t\tint neighbor = stack.top();\n\t\t\tfor (int nextNeighbor : reverseGraph[neighbor]) stack.push(nextNeighbor);\n\t\t\tstack.pop();\n\t\t\torder.push_back(neighbor);\n\t\t\tcurrent--;\n\t\t\t}\n\t\treturn order;\n\t}\n\tvector<vector<int>> performDfs(int numNodes, vector<vector<int>>& adjacencyList, int startNode) {\n\t\tstack<int> stack;\n\t\tstack.push(startNode);\n\t\tvector<bool> visited(numNodes);\n\t\twhile (!stack.empty()) {\n\t\t\tint currentNode = stack.top();\n\t\t\tstack.pop();\n\t\t\tvisited[currentNode] = true;\n\t\t\tfor (int neighbor : adjacencyList[currentNode]) if (!visited[neighbor]) stack.push(neighbor);\n\t\t\t}\n\t\treturn {{startNode}};\n\t}\n};",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2000,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5\n[1, 2]\n[0, 2, 3]\n[1, 4]\n[0, 3]\n[2]\n",
+      "output": "[[2, 4], [0, 3], [1], [0], [1]]",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "3\n[0, 1]\n[1]\n[1]\n",
+      "output": "[[0, 1, 2], [0]]",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

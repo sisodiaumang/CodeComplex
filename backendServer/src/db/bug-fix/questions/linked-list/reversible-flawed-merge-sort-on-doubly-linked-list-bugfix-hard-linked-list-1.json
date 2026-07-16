@@ -1,0 +1,158 @@
+{
+  "_id": "a6889092d34aa0eebf178a47",
+  "title": "Reversible Flawed Merge Sort on Doubly Linked List",
+  "slug": "reversible-flawed-merge-sort-on-doubly-linked-list-bugfix-hard-linked-list-1",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "Linked List",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 80,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "linked_list"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Solve the problem and fix the bugs.",
+    "inputFormat": "Input is a doubly linked list with N nodes. The linked list is represented as a Node class with a value (int) and pointers to next and prev nodes.",
+    "outputFormat": "Perform a merge sort on the linked list such that the resulting list is a sorted doubly linked list. If the given list is already sorted, the output should be the same as the input.",
+    "notes": "Merge sort should handle both ascending and descending order. Note that the merge function should be reversible, i.e., if the merged sorted list is traversed in reverse order, it should result in the original list before merging.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "[1, 2, 3, 4, 5]",
+        "output": "[1, 2, 3, 4, 5]",
+        "explanation": "Input is already sorted"
+      },
+      {
+        "input": "[5, 4, 3, 2, 1]",
+        "output": "[1, 2, 3, 4, 5]",
+        "explanation": "Input is not sorted"
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text: Reverse the linked list before and after merge operation to maintain the reversible property."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(N log N)",
+    "spaceComplexity": "O(N)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    void reorderList(Node* head) {\n        // TODO: implement\n    }\n};",
+    "java": "public class Solution {\npublic:\n    void reorderList(Node head) {\n        // TODO: implement\n    }\n};",
+    "python": "class Solution:\n    def reorderList(self, head):\n        # TODO: implement\n        return None",
+    "javascript": "function reorderList(head) {\n    // TODO: implement\n    return head;"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    void reorderList(Node* head) {\n        if (head == NULL || head->next == NULL) return;\n        Node* current = head;\n        Node* prev = NULL;\n        while (current != NULL) {\n            prev = current;\n            current = current->next;\n        }\n        reorderList(head);\n    }\n};",
+    "java": "public class Solution {\npublic:\n    void reorderList(Node head) {\n        if (head == NULL || head.next == NULL) return;\n        Node current = head;\n        Node prev = NULL;\n        while (current != NULL) {\n            prev = current;\n            current = current.next;\n        }\n        reorderList(head);\n    }\n};",
+    "python": "class Solution:\n    def reorderList(self, head):\n        if head is None or head.next is None: return\n        current = head\n        prev = None\n        while current:\n            prev = current\n            current = current.next\n        self.reorderList(head)\n        return None",
+    "javascript": "function reorderList(head) {\n    if (head == null || head.next == null) return;\n    var current = head;\n    var prev = null;\n    while (current != null) {\n        prev = current;\n        current = current.next;\n    }\n    reorderList(head);\n    return head;"
+  },
+  "functionSignature": {
+    "cpp": "void reorderList(Node* head);",
+    "java": "void reorderList(Node head);",
+    "python": "def reorderList(self, head: Node):\n    -> None:",
+    "javascript": "function reorderList(head: Node): void"
+  },
+  "solutions": {
+    "python": "import sys\nfrom collections import defaultdict\n\nclass Node:\n    def __init__(self, x):\n        self.val = x\n        self.next = None\n        self.prev = None\n\nclass Solution:\n    def reorderList(self, head):\n        if head is None or head.next is None: return\n\n        node_map = defaultdict(list)\n        current = head\n        while current:\n            node_map[current.val].append(current)\n            current = current.next\n\n        current = head\n        prev = None\n        while current:\n            for node in node_map[current.val]:\n                if prev:\n                    prev.next = node\n                    node.prev = prev\n                else:\n                    head = node\n                prev = node\n                if node.next:\n                    node_map[node.next.val].remove(node)\n                current = node.next\n                break\n        return head\n\nif __name__ == '__main__':\n    t = int(input())\n    for _ in range(t):\n        n = int(input())\n        values = list(map(int, input().split()))\n        head = None\n        current = None\n        for value in values:\n            node = Node(value)\n            if not head:\n                head = node\n                current = node\n            else:\n                current.next = node\n                node.prev = current\n                current = node\n        s = Solution()\n        s.reorderList(head)\n        current = head\n        prev = None\n        while current:\n            print(current.val, end=' ')\n            current = current.next\n        print('\\n')",
+    "cpp": "#include <iostream>\n#include <vector>\n#include <unordered_map>\n#include <climits>\n\nusing namespace std;\n\nstruct Node {\n    int val;\n    Node* next;\n    Node* prev;\n    Node(int x) : val(x), next(nullptr), prev(nullptr) {}\n};\n\nclass Solution {\npublic:\n    Node* reorderList(Node* head) {\n        if (head == NULL || head->next == NULL) return head;\n        unordered_map<int, vector<Node*>> map;\n        Node* current = head;\n        while (current != NULL) {\n            map[current->val].push_back(current);\n            current = current->next;\n        }\n        current = head;\n        Node* prev = NULL;\n        while (current != NULL) {\n            for (auto node : map[current->val]) {\n                if (prev != NULL) {\n                    prev->next = node;\n                    node->prev = prev;\n                } else {\n                    head = node;\n                }\n                if (node->next != NULL) {\n                    map[node->next->val].erase(find(map[node->next->val].begin(), map[node->next->val].end(), node));\n                }\n                current = node->next;\n                break;\n            }\n            prev = node;\n        }\n        return head;\n    }\n};\n\nint main() {\n    int t;\n    cin >> t;\n    while (t--) {\n        int n;\n        cin >> n;\n        vector<int> values(n);\n        for (int i = 0; i < n; i++) {\n            cin >> values[i];\n        }\n        Solution s;\n        Node* head = NULL;\n        Node* current = NULL;\n        for (int value : values) {\n            Node* node = new Node(value);\n            if (head == NULL) {\n                head = node;\n                current = node;\n            } else {\n                current->next = node;\n                node->prev = current;\n                current = node;\n            }\n        }\n        s.reorderList(head);\n        Node* current_node = head;\n        while (current_node) {\n            cout << current_node->val << ' ';\n            current_node = current_node->next;\n        }\n        cout << '\\n';\n    }\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "First line count, second line elements (stdin match)",
+      "output": "Expected output string",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "Example 2 input",
+      "output": "Example 2 output",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

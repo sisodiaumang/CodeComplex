@@ -30,7 +30,8 @@ import { io } from "../index.js";
 export async function applySubmissionScore(
     matchId: string,
     team: "A" | "B",
-    submissionScore: number
+    submissionScore: number,
+    isFullyCorrect: boolean = false
 ): Promise<void> {
     const scoreField = team === "A" ? "teamAScore" : "teamBScore";
 
@@ -66,9 +67,9 @@ export async function applySubmissionScore(
         });
     }
 
-    // Sudden death: full marks ends the match right now, no need to wait
-    // for the timer.
-    if (updatedScore >= 100 && match.status === "ONGOING") {
+    // Sudden death: full marks or fully correct solution ends the match right now,
+    // no need to wait for the timer.
+    if ((updatedScore >= 100 || isFullyCorrect) && match.status === "ONGOING") {
         await settleMatchAsWon(match, team);
 
         if (room) {

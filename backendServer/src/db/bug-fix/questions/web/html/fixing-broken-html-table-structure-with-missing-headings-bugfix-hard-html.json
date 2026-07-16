@@ -1,0 +1,140 @@
+{
+  "title": "Fixing Broken HTML Table Structure with Missing Headings",
+  "subCategory": "HTML Table Parsing",
+  "statement": {
+    "markdown": "Given a string representing an HTML table structure, fix the bug that prevents the table from being parsed correctly when it has missing table headers. The function should return the corrected HTML string. Note that missing table headers may be at the top of the table or within the table rows. The corrected HTML string should have table headers present in all rows. If a table row does not have a header, the function should add a default header to that row. The default header should be a placeholder string 'Header Not Found'.",
+    "inputFormat": "A string representing an HTML table structure. The string may contain nested HTML tags and attributes.",
+    "outputFormat": "The corrected HTML string with table headers present in all rows.",
+    "notes": "The corrected HTML string should not have any syntax errors and should be valid HTML 5.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of table rows"
+      }
+    ],
+    "examples": [
+      {
+        "input": "<table><tr><td>Cell 1</td></tr><tr><td>Cell 2</td></tr></table>",
+        "output": "<table><tr><th>Header Not Found</th></tr><tr><td>Cell 1</td></tr><tr><td>Cell 2</td></tr></table>",
+        "explanation": "The table has missing headers, so the function adds a default header to each row."
+      },
+      {
+        "input": "<table><tr><th>Header 1</th><th>Header 2</th></tr><tr><td>Cell 1</td><td>Cell 2</td></tr></table>",
+        "output": "<table><tr><th>Header 1</th><th>Header 2</th></tr><tr><th>Header Not Found</th><th>Header Not Found</th></tr></table>",
+        "explanation": "The table row does not have a header, so the function adds a default header to that row."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 75,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "HTML"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "html"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text"
+    },
+    {
+      "order": 2,
+      "text": "Use the DOM parser to parse the HTML string and extract the table structure"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(...) ",
+    "spaceComplexity": "O(...)"
+  },
+  "starterCode": {
+    "javascript": "function fixTable(htmlString) { // implement the function here }",
+    "python": "class Solution: \n def fix_table(self, html_string): \n     # implement the method here \n     pass"
+  },
+  "buggyStarterCode": {
+    "javascript": "function fixTable(htmlString) {\n    var parser = new DOMParser();\n    var doc = parser.parseFromString(htmlString, 'text/html');\n    var table = doc.getElementsByTagName('table')[0];\n    var rows = table.getElementsByTagName('tr');\n    for (var i = 0; i < rows.length; i++) {\n        var cells = rows[i].getElementsByTagName('td');\n        if (cells.length === 0) {\n            continue;\n        }\n        var header = doc.createElement('th');\n        header.textContent = 'Header Not Found';\n        rows[i].insertBefore(header, cells[0]);\n    }\n    return table.outerHTML;\n}",
+    "python": "class Solution:\n    def fix_table(self, html_string):\n        from bs4 import BeautifulSoup\n        soup = BeautifulSoup(html_string, 'html.parser')\n        table = soup.find('table')\n        rows = table.find_all('tr')\n        for row in rows:\n            cells = row.find_all('td')\n            if len(cells) === 0:\n                continue\n            header = soup.new_tag('th')\n            header.string = 'Header Not Found'\n            row.insert(0, header)\n        return str(table)"
+  },
+  "functionSignature": {
+    "javascript": "function fixTable(htmlString) { // implement the function here }",
+    "python": "class Solution: \n def fix_table(self, html_string): \n     # implement the method here \n     pass"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction fixTable(htmlString) {\n    var parser = new DOMParser();\n    var doc = parser.parseFromString(htmlString, 'text/html');\n    var table = doc.getElementsByTagName('table')[0];\n    var rows = table.getElementsByTagName('tr');\n    for (var i = 0; i < rows.length; i++) {\n        var cells = rows[i].getElementsByTagName('td');\n        if (cells.length === 0) {\n            var header = doc.createElement('th');\n            header.textContent = 'Header Not Found';\n            rows[i].insertBefore(header, rows[i].firstChild);\n        } else if (cells.length > 0 && rows[i].querySelectorAll('th').length === 0) {\n            var header = doc.createElement('th');\n            header.textContent = 'Header Not Found';\n            rows[i].insertBefore(header, cells[0]);\n        }\n    }\n    return table.outerHTML;\n}",
+    "python": "class Solution:\n    def fix_table(self, html_string):\n        from bs4 import BeautifulSoup\n        soup = BeautifulSoup(html_string, 'html.parser')\n        table = soup.find('table')\n        rows = table.find_all('tr')\n        for row in rows:\n            cells = row.find_all('td')\n            if len(cells) === 0:\n                var header = soup.new_tag('th')\n                header.string = 'Header Not Found'\n                row.insert(0, header)\n            elif len(cells) > 0 and len(row.find_all('th')) === 0:\n                var header = soup.new_tag('th')\n                header.string = 'Header Not Found'\n                row.insert(0, header)\n        return str(table)"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "<table><tr><td>Cell 1</td></tr><tr><td>Cell 2</td></tr></table>",
+      "output": "<table><tr><th>Header Not Found</th></tr><tr><td>Cell 1</td></tr><tr><td>Cell 2</td></tr></table>",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "<table><tr><th>Header 1</th><th>Header 2</th></tr><tr><td>Cell 1</td><td>Cell 2</td></tr></table>",
+      "output": "<table><tr><th>Header 1</th><th>Header 2</th></tr><tr><th>Header Not Found</th><th>Header Not Found</th></tr></table>",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "ef28c2195512cbe18e34059f",
+  "slug": "fixing-broken-html-table-structure-with-missing-headings-bugfix-hard-html",
+  "mode": "bug_fix",
+  "category": "HTML",
+  "difficulty": "Hard"
+}

@@ -47,7 +47,7 @@ async function pickRandomQuestion(
     // Shuffle topics so we try in random order
     const shuffled = [...topics].sort(() => Math.random() - 0.5);
 
-    const FRONTEND_TYPES = ["FRONTEND", "FULLSTACK"];
+    const FRONTEND_TYPES = ["FRONTEND", "PROJECTS"];
     const BACKEND_TYPES  = ["BACKEND"];
     const PROMPT_TYPES   = ["PROMPT_WAR"];
 
@@ -80,6 +80,11 @@ async function pickRandomQuestion(
         query[queryField] = topic;
         if (isQuestionModel) {
             query.isDeleted = { $ne: true };
+            if (room.battleType === "DSA") {
+                query.mode = "solve";
+            } else if (room.battleType === "BUG_FIX") {
+                query.mode = "bug_fix";
+            }
         }
 
         const questions = await Model.find(query)
@@ -810,7 +815,7 @@ export const leaveRoom = async (
             return;
         }
 
-        if (room.status === "STARTED") {
+        if (room.status === "STARTED" && !room.isSolo) {
             res.status(400).json({
                 success: false,
                 message: "Cannot leave a battle that is already in progress"
@@ -1091,7 +1096,7 @@ const getRatingKey = (battleType: string): string => {
         case "DSA": return "dsa";
         case "FRONTEND": return "frontend";
         case "BACKEND": return "backend";
-        case "FULLSTACK": return "fullstack";
+        case "PROJECTS": return "projects";
         case "PROMPT_WAR": return "promptWar";
         case "BUG_FIX": return "bugFix";
         default: return "dsa";

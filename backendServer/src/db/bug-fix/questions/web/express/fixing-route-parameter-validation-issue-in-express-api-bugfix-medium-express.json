@@ -1,0 +1,136 @@
+{
+  "title": "Fixing Route Parameter Validation Issue in Express API",
+  "subCategory": "Route Parameter Validation",
+  "statement": {
+    "markdown": "Implement a route parameter validation middleware in an Express API. The middleware should validate the `id` parameter in the `/users/:id` route. The `id` should be an integer and should be within the range of 1 to 100. If the validation fails, return a 400 Bad Request response with a message `Invalid ID`. If the validation succeeds, proceed to the next middleware function.",
+    "inputFormat": "The input will be an Express request object with a `params` property containing the `id` parameter.",
+    "outputFormat": "The output should be an Express response object with a status code and a message.",
+    "notes": "You can use the `express-validator` middleware to validate the `id` parameter. The middleware function should return a boolean indicating whether the validation succeeded or failed.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "id",
+        "type": "integer",
+        "min": 1,
+        "max": 100,
+        "description": "ID to be validated"
+      }
+    ],
+    "examples": [
+      {
+        "input": "GET /users/10",
+        "output": "Success message",
+        "explanation": "The ID 10 is within the valid range."
+      },
+      {
+        "input": "GET /users/101",
+        "output": "Invalid ID",
+        "explanation": "The ID 101 is outside the valid range."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "EXPRESS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "express"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the `express-validator` middleware to validate the `id` parameter."
+    }
+  ],
+  "editorial": {
+    "title": "Validation Middleware Implementation",
+    "intuition": "The validation middleware should return a boolean indicating whether the validation succeeded or failed.",
+    "bruteForce": "Use a brute force approach to validate the `id` parameter by checking if it is within the valid range.",
+    "betterSolution": "Use the `express-validator` middleware to validate the `id` parameter.",
+    "optimalSolution": "Create a validation middleware function that uses the `express-validator` middleware to validate the `id` parameter.",
+    "proofOfCorrectness": "The validation middleware function should return true if the `id` is within the valid range and false otherwise.",
+    "dryRun": "Create a test case to validate the `id` parameter.",
+    "commonMistakes": [
+      "Not using the `express-validator` middleware",
+      "Not checking if the `id` is within the valid range"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "const express = require('express');\nconst router = express.Router();\nrouter.get('/users/:id', (req, res, next) => {\n  // validation middleware goes here\n});",
+    "python": "from flask import Flask, request\napp = Flask(__name__)\n@app.route('/users/<int:id>', methods=['GET'])\ndef get_user(id):\n  # validation middleware goes here\n"
+  },
+  "buggyStarterCode": {
+    "javascript": "const express = require('express');\nconst router = express.Router();\nconst { check, validationResult } = require('express-validator');\nrouter.get('/users/:id', (req, res, next) => {\n  const errors = validationResult(req);\n  if (!errors.isEmpty()) {\n    return res.status(400).json({ message: 'Invalid ID' });\n  }\n  // validation middleware fails here\n  const id = req.params.id;\n  if (id > 100) {\n    return res.status(400).json({ message: 'Invalid ID' });\n  }\n  next();\n})",
+    "python": "from flask import Flask, request\napp = Flask(__name__)\n@app.route('/users/<int:id>', methods=['GET'])\ndef get_user(id):\n  # validation middleware fails here\n  if id > 100:\n    return 'Invalid ID', 400\n  return 'Success message'"
+  },
+  "functionSignature": {
+    "javascript": "var validationMiddleware = function(req, res, next);",
+    "python": "def validation_middleware(id: int) -> bool:"
+  },
+  "solutions": {
+    "javascript": "// Solution\nconst express = require('express');\nconst router = express.Router();\nconst { check, validationResult } = require('express-validator');\nrouter.get('/users/:id', (req, res, next) => {\n  const errors = validationResult(req);\n  if (!errors.isEmpty()) {\n    return res.status(400).json({ message: 'Invalid ID' });\n  }\n  const id = req.params.id;\n  if (!Number.isInteger(id) || id < 1 || id > 100) {\n    return res.status(400).json({ message: 'Invalid ID' });\n  }\n  next();\n});",
+    "python": "from flask import Flask, request\nfrom flask import jsonify\napp = Flask(__name__)\n@app.route('/users/<int:id>', methods=['GET'])\ndef get_user(id):\n  if not 1 <= id <= 100:\n    return jsonify({'message': 'Invalid ID'}), 400\n  # Successful response\n  return jsonify({'message': 'Success message'})"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "GET /users/10",
+      "output": "Success message",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "GET /users/101",
+      "output": "Invalid ID",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "f23a4b115f3d596ad4db4cee",
+  "slug": "fixing-route-parameter-validation-issue-in-express-api-bugfix-medium-express",
+  "mode": "bug_fix",
+  "category": "EXPRESS",
+  "difficulty": "Medium"
+}

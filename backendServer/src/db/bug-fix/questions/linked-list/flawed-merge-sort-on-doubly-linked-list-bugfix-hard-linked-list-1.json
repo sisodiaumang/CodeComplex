@@ -1,0 +1,153 @@
+{
+  "_id": "a761b17fd1d17b8ef52523c0",
+  "title": "Flawed Merge Sort on Doubly Linked List",
+  "slug": "flawed-merge-sort-on-doubly-linked-list-bugfix-hard-linked-list-1",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "Two Pointers",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "linked_list"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given a doubly linked list with head node 'head', implement a function to merge sort it in-place, returning the sorted list's head node. Note that it is not necessary to store the whole sorted list in memory.",
+    "inputFormat": "The function will be given the head of a doubly linked list. The list will contain between 1 and 10000 integers, with each integer ranging from -5000 to 5000.",
+    "outputFormat": "Return the head of the sorted linked list.",
+    "notes": "It is acceptable to modify the original list.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "Example input (matching the stdin format that main wrapper expects)",
+        "output": "Expected stdout output",
+        "explanation": "Brief explanation"
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(N log N)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "cpp": "class Solution { public: void mergeSort(node* &head, node* &tail); };",
+    "java": "public class Solution { public void mergeSort(node head, node tail); }",
+    "python": "class Solution: def mergeSort(self, head: Node, tail: Node) -> None:",
+    "javascript": "class Solution { mergeSort(head, tail); }"
+  },
+  "buggyStarterCode": {
+    "cpp": "void Solution::mergeSort(node* &head, node* &tail) { if (!head) return; node* temp = head; node* prev; node* curr = head; while (curr) { prev = curr; curr = curr->next; if (curr) prev->next = curr->next; } mergeSort(temp, prev); }",
+    "java": "public void Solution.mergeSort(node head, node tail) { if (head == null) return; node temp = head; node prev; node curr = head; while (curr != null) { prev = curr; curr = curr.next; if (curr != null) prev.next = curr.next; } mergeSort(temp, prev); }",
+    "python": "def Solution.mergeSort(self, head: Node, tail: Node) -> None: if not head: return; temp = head; prev = None; curr = head; while curr: prev = curr; curr = curr.next; if curr: prev.next = curr.next; self.mergeSort(temp, prev);",
+    "javascript": "function Solution.mergeSort(head, tail) { if (!head) return; let temp = head; let prev; let curr = head; while (curr) { prev = curr; curr = curr.next; if (curr) prev.next = curr.next; } self.mergeSort(temp, prev); }"
+  },
+  "functionSignature": {
+    "cpp": "void mergeSort(node* &head, node* &tail);",
+    "java": "public void mergeSort(node head, node tail);",
+    "python": "def mergeSort(self, head: Node, tail: Node) -> None:",
+    "javascript": "void mergeSort(head, tail);"
+  },
+  "solutions": {
+    "python": "def mergeSort(head: Node) -> Node: if not head: return head\n    slow, fast = head, head\n    while fast.next and fast.next.next:\n        slow = slow.next\n        fast = fast.next.next\n    mid = slow.next\n    slow.next = None\n    return merge(head, mergeSort(mid))\n\ndef merge(head1: Node, head2: Node) -> Node:\n    if not head1:\n        return head2\n    if not head2:\n        return head1\n    if head1.val < head2.val:\n        head1.next = merge(head1.next, head2)\n        return head1\n    else:\n        head2.next = merge(head1, head2.next)\n        return head2\n\nclass Node:\n    def __init__(self, val=0, next=None):\n        self.val = val\n        self.next = next\n\nclass Solution:\n    def mergeSort(self, head: Node) -> Node:\n        return mergeSort(head)\n\nif __name__ == '__main__':\n    t = int(input())\n    for _ in range(t):\n        n = int(input())\n        arr = list(map(int, input().split()))\n        head = Node(arr[0])\n        tail = head\n        for i in range(1, n):\n            tail.next = Node(arr[i])\n            tail = tail.next\n        print(*Solution().mergeSort(head).values())",
+    "cpp": "bool solve(node* &head) { if (!head) return true; if (!head->next) return true; node* prev; node* curr = head; while (curr) { prev = curr; curr = curr->next; if (curr) { prev->next = curr->next; } if (!mergeSort(prev, curr)) return false; } return true; }\n\nvoid Solution::mergeSort(node* &head, node* &tail) {\n    if (!head) return;\n    node* mid = findMiddle(head);\n    node* nextToMid = mid->next;\n    mid->next = NULL;\n\n    if (solve(head)) return;\n    if (solve(nextToMid)) return;\n    mergeLists(&head, &nextToMid);\n}\n\nnode* findMiddle(node* head) { node* slow = head; node* fast = head; while (fast->next && fast->next->next) { slow = slow->next; fast = fast->next->next; } return slow; }\n\nvoid mergeLists(node** head1, node** head2) {\n    if (!(*head1)) { *head1 = *head2; return; }\n    if (!(*head2)) return;\n    if ((*head1)->val < (*head2)->val) { node* next = (*head1)->next; (*head1)->next = mergeLists(&((*head1)->next), head2); return; }\n    if ((*head2)->val < (*head1)->val) { node* next = (*head2)->next; (*head2)->next = mergeLists(head1, &((*head2)->next)); return; }\n    node* next1 = (*head1)->next; node* next2 = (*head2)->next; node* merge = new node((*head1)->val); merge->next = mergeLists(&next1, &next2); *head1 = merge; }\n\nint main() {\n    ios_base::sync_with_stdio(false); cin.tie(NULL);\n    int T; cin >> T;\n    while (T--) {\n      int N; cin >> N;\n      node* head = NULL; node* tail = NULL;\n      for (int i = 0; i < N; i++) {\n          int x; cin >> x;\n          if (head == NULL) {\n              head = new node(x);\n              tail = head;\n          }\n          else {\n              tail->next = new node(x);\n              tail = tail->next;\n          }\n      }\n      solve(head);\n      node* temp = head;\n      while (temp) {\n          cout << temp->val << ' '; temp = temp->next;\n      }\n      cout << '\n';\n    }\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "First line count, second line elements (stdin match)",
+      "output": "Expected output string",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "Example 2 input",
+      "output": "Example 2 output",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

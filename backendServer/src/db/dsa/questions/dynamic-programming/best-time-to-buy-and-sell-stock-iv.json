@@ -1,0 +1,222 @@
+{
+  "_id": "best-time-to-buy-and-sell-stock-iv",
+  "title": "Best Time to Buy and Sell Stock IV",
+  "slug": "best-time-to-buy-and-sell-stock-iv",
+  "difficulty": "Medium",
+  "category": "DP",
+  "subCategory": "DP on Stocks",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 500,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "Dynamic Programming",
+      "DP on Stocks"
+    ],
+    "patterns": [
+      "stock",
+      "buy",
+      "sell",
+      "k transactions"
+    ],
+    "prerequisites": [
+      "0/1 Knapsack Problem",
+      "Unbounded Knapsack Problem"
+    ],
+    "variants": [],
+    "tags": [
+      "Dynamic Programming",
+      "Greedy",
+      "Stocks"
+    ],
+    "keywords": [
+      "stock",
+      "transaction",
+      "buy",
+      "sell",
+      "profit",
+      "maximize"
+    ],
+    "interviewFrequency": 4,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "Given an array of integers `prices` where `prices[i]` is the price of a given stock on the `i-th` day, and an integer `k` representing the maximum number of transactions allowed, find the maximum profit that can be achieved. A transaction is defined as buying and selling the stock once.\n\n**Note:** You may not engage in multiple transactions simultaneously (i.e., you may only hold one share of stock at a time).\n\n**Example 1:**\nInput: `k = 2, prices = [3,2,6,5,0,3]`\nOutput: `7`\nExplanation: Buy on day 2 (price=2) and sell on day 5 (price=7), then buy on day 6 (price=0) and sell on day 6 (price=3).\n\n**Example 2:**\nInput: `k = 0, prices = [1]`\nOutput: `0`",
+    "inputFormat": "2\nk\nprices.length\nprices[0]\nprices[1]\n...\nprices[prices.length-1]",
+    "outputFormat": "max_profit",
+    "notes": "For k > prices.length // 2, the problem reduces to the Best Time to Buy and Sell Stock II problem, which can be solved in O(n) time.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "k",
+        "type": "integer",
+        "min": 0,
+        "max": 1000,
+        "description": "Maximum number of transactions allowed"
+      },
+      {
+        "variable": "prices.length",
+        "type": "integer",
+        "min": 1,
+        "max": 5000,
+        "description": "Number of days"
+      },
+      {
+        "variable": "prices[i]",
+        "type": "integer",
+        "min": 0,
+        "max": 40000,
+        "description": "Price of the stock on the i-th day"
+      }
+    ],
+    "examples": [
+      {
+        "input": "2\n3\n2\n6\n5\n0\n3",
+        "output": "4",
+        "explanation": "Buy on day 2 (price=2) and sell on day 5 (price=7), then buy on day 6 (price=0) and sell on day 6 (price=3)."
+      },
+      {
+        "input": "1\n1\n1",
+        "output": "0",
+        "explanation": "No transactions can be made, so the maximum profit is 0."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "The problem involves finding the maximum profit from a series of transactions with a given limit on the number of transactions. Consider how you would approach this with no limit on transactions."
+    },
+    {
+      "order": 2,
+      "text": "When the number of transactions is unlimited, a common approach is to consider every peak and valley in the price chart. However, with a limited number of transactions, you need to optimize your buy and sell points to maximize profit within the given limit."
+    },
+    {
+      "order": 3,
+      "text": "The problem can be solved using dynamic programming. Think about maintaining a state that tracks the maximum profit after a certain number of transactions and on a specific day. You need to decide whether to buy, sell, or do nothing on each day to maximize profit."
+    },
+    {
+      "order": 4,
+      "text": "Consider a 2D array dp where dp[i][j] represents the maximum profit after i transactions and on the jth day. You need to iterate through each transaction and day, making a decision to buy or sell based on the maximum profit you can get."
+    },
+    {
+      "order": 5,
+      "text": "The core technique here involves recognizing that each transaction has a buy and a sell. For k transactions, you can think of it as finding the best times to buy and sell within the k limits, considering the prices array as a guide. Dynamic programming helps in storing and reusing the results of subproblems, specifically the maximum profit after a certain number of transactions."
+    }
+  ],
+  "editorial": {
+    "title": "Unlocking the Optimal Solution for Best Time to Buy and Sell Stock IV",
+    "intuition": "The problem can be solved using dynamic programming. The key observation is that we can track the maximum profit after 'i' transactions and 'j' days, and then try to extend it to 'i+1' transactions. A crucial insight is that we only need to keep track of the maximum difference between the current profit and the price at each step.",
+    "bruteForce": "A brute force approach would involve trying all possible combinations of buy and sell on each day, which would result in an extremely high time complexity, likely exponential. This approach is impractical for large inputs due to its inefficiency.",
+    "betterSolution": "The optimal approach uses dynamic programming to track the maximum profit after 'i' transactions and 'j' days. It iterates through each transaction and day, updating the maximum profit and difference at each step.",
+    "optimalSolution": "The dynamic programming solution iterates over each transaction from 1 to 'k' and each day from 1 to 'n'. For each transaction 'i' and day 'j', it calculates the maximum profit by choosing the maximum between the profit on the previous day and the price on the current day plus the maximum difference. The maximum difference is updated as the maximum of the current difference and the profit on the previous transaction day minus the price on the current day.",
+    "proofOfCorrectness": "The correctness of the dynamic programming solution can be proven by induction on 'k'. The base case is when 'k' is 0, where the maximum profit is 0. For the inductive step, assume the solution is correct for 'k-1' transactions. Then, for 'k' transactions, the solution chooses the maximum between the profit on the previous day and the price on the current day plus the maximum difference, which is the optimal choice.",
+    "dryRun": "A dry run with sample inputs, such as k=2, n=3, and prices=[3, 3, 5], helps verify the solution. The dynamic programming table is filled as follows: dp[0] = [0, 0, 0], dp[1] = [0, 0, 2], dp[2] = [0, 0, 2]. The final maximum profit is 2, which matches the expected output.",
+    "commonMistakes": [
+      "Not considering the case when 'k' is greater than or equal to 'n/2', where the problem can be reduced to a simpler problem.",
+      "Incorrectly updating the maximum difference.",
+      "Not handling the base case when 'k' is 0.",
+      "Using a greedy approach, which may not always lead to the optimal solution.",
+      "Not considering the case when the price on the current day is less than the price on the previous day.",
+      "Not properly initializing the dynamic programming table."
+    ],
+    "timeComplexity": "O(kn)",
+    "spaceComplexity": "O(kn)"
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    int maxProfit(int k, vector<int>& prices) {\n        // TODO: implement\n        return 0;\n    }\n};",
+    "java": "import java.util.*;\n\nclass Solution {\n    public int maxProfit(int k, int[] prices) {\n        // TODO: implement\n        return 0;\n    }\n}",
+    "python": "from typing import List\n\nclass Solution:\n    def maxProfit(self, k: int, prices: List[int]) -> int:\n        # TODO: implement\n        pass",
+    "javascript": "/**\n * @param {number} k\n * @param {number[]} prices\n * @return {number}\n */\nvar maxProfit = function(k, prices) {\n    // TODO: implement\n    return 0;\n};"
+  },
+  "functionSignature": {
+    "cpp": "int maxProfit(int k, vector<int>& prices);",
+    "java": "public int maxProfit(int k, int[] prices);",
+    "python": "def maxProfit(self, k: int, prices: List[int]) -> int:",
+    "javascript": "var maxProfit = function(k, prices);"
+  },
+  "solutions": {
+    "python": "import sys\nfrom typing import List\n\nclass Solution:\n    def maxProfit(self, k: int, prices: List[int]) -> int:\n        if k == 0 or not prices:\n            return 0\n        n = len(prices)\n        if k >= n // 2:\n            return sum(max(0, b - a) for a, b in zip(prices, prices[1:]))\n        dp = [[0] * n for _ in range(k + 1)]\n        for i in range(1, k + 1):\n            max_diff = -prices[0]\n            for j in range(1, n):\n                dp[i][j] = max(dp[i][j - 1], prices[j] + max_diff)\n                max_diff = max(max_diff, dp[i - 1][j] - prices[j])\n        return dp[k][-1]\n\nif __name__ == '__main__':\n    it = iter(sys.stdin.read().split())\n    try:\n        k = int(next(it))\n        n = int(next(it))\n        prices = [int(next(it)) for _ in range(n)]\n    except StopIteration:\n        sys.exit(0)\n    sol = Solution()\n    print(sol.maxProfit(k, prices))",
+    "cpp": "#include <numeric>\n#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    int maxProfit(int k, vector<int>& prices) {\n        int n = prices.size();\n        if (k == 0 || n == 0) return 0;\n        if (k >= n / 2) {\n            int res = 0;\n            for (int i = 1; i < n; i++) {\n                res += max(0, prices[i] - prices[i - 1]);\n            }\n            return res;\n        }\n        vector<vector<int>> dp(k + 1, vector<int>(n));\n        for (int i = 1; i <= k; i++) {\n            int max_diff = -prices[0];\n            for (int j = 1; j < n; j++) {\n                dp[i][j] = max(dp[i][j - 1], prices[j] + max_diff);\n                max_diff = max(max_diff, dp[i - 1][j] - prices[j]);\n            }\n        }\n        return dp[k][n - 1];\n    }\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int k;\n    cin >> k;\n    int n;\n    cin >> n;\n    vector<int> prices(n);\n    for (int i = 0; i < n; i++) cin >> prices[i];\n    Solution sol;\n    cout << sol.maxProfit(k, prices) << '\\n';\n    return 0;\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.2
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "2\n3\n2\n6\n5\n0\n3",
+      "output": "4",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "1\n1\n1",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint_3",
+      "input": "1\n2\n10\n8",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "boundary_4",
+      "input": "1000\n2\n10000\n20000",
+      "output": "10000",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    },
+    {
+      "id": "duplicate_5",
+      "input": "2\n4\n10\n10\n12\n12",
+      "output": "2",
+      "isVisible": false,
+      "weight": 1,
+      "category": "duplicate"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

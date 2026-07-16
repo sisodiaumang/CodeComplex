@@ -1,0 +1,219 @@
+{
+  "_id": "number-of-ways-to-arrive-at-destination",
+  "title": "Number of Ways to Arrive at Destination",
+  "slug": "number-of-ways-to-arrive-at-destination",
+  "difficulty": "Hard",
+  "category": "GRAPH",
+  "subCategory": "Shortest Path Algorithms",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 45,
+    "points": 500,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "GRAPH",
+      "ALGORITHMS",
+      "DYNAMIC_PROGRAMMING"
+    ],
+    "patterns": [
+      "shortest path",
+      "number of ways",
+      "destination"
+    ],
+    "prerequisites": [
+      "Bellman-Ford Algorithm",
+      "Dijkstra's Algorithm"
+    ],
+    "variants": [],
+    "tags": [
+      "graph algorithms",
+      "shortest path",
+      "dynamic programming"
+    ],
+    "keywords": [
+      "Bellman-Ford",
+      "Dijkstra's",
+      "shortest path algorithms"
+    ],
+    "interviewFrequency": 4,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "You are given a directed weighted graph with **n** nodes numbered from **0** to **n‑1** and **m** edges. Each edge is described by three integers **u**, **v**, **w** meaning there is a directed edge from node **u** to node **v** with weight **w** (the weight is a positive integer). The graph may contain multiple edges between the same pair of vertices and may also contain self‑loops.\n\nYour task is to compute the number of different shortest paths from a given source node **s** to a destination node **t**. Two paths are considered different if the sequences of vertices (or edges) are different, even if they have the same total weight.\n\nBecause the answer can be very large, output it modulo **1000000007**.\n\n**Input Format**\n- The first line contains two integers **n** and **m**, the number of vertices and edges respectively.\n- The next line contains a single integer **m**, the number of edges (repeated for clarity as required by the contract).\n- Each of the next **m** lines contains three integers **u v w**, describing a directed edge.\n- The next line contains two integers **s t**, the source and destination vertices.\n\n**Output Format**\n- A single line containing the number of distinct shortest paths from **s** to **t** modulo 1000000007.\n\n**Notes**\n- The graph is guaranteed to have at least one path from **s** to **t**.\n- The shortest path distance is defined as the minimum possible sum of edge weights along any path from **s** to **t**.\n- Paths may reuse vertices only if doing so does not increase the total distance beyond the shortest possible distance (i.e., cycles with zero total weight are impossible because all weights are positive).\n\n**Constraints**\n- 2 ≤ n ≤ 100000\n- 1 ≤ m ≤ 200000\n- 0 ≤ u, v < n\n- 1 ≤ w ≤ 1000000\n- 0 ≤ s, t < n, s ≠ t\n\n**Examples**\n\n**Example 1**\nInput:\n5 7\n7\n0 1 2\n0 2 3\n1 2 2\n1 3 4\n2 3 1\n2 4 5\n3 4 3\n0 4\nOutput:\n2\nExplanation:\nThe shortest distance from 0 to 4 is 7. There are two different paths with total weight 7: 0→1→2→3→4 and 0→2→3→4.\n\n**Example 2**\nInput:\n4 5\n5\n0 1 1\n0 2 1\n1 3 1\n2 3 1\n1 2 2\n0 3\nOutput:\n2\nExplanation:\nThe shortest distance from 0 to 3 is 2. The two shortest paths are 0→1→3 and 0→2→3.",
+    "inputFormat": "The first line contains two integers n and m.\nThe second line contains a single integer m.\nThe next m lines each contain three integers u v w.\nThe last line contains two integers s t.",
+    "outputFormat": "A single integer – the number of distinct shortest paths from s to t modulo 1000000007.",
+    "notes": "All edge weights are positive, guaranteeing that Dijkstra's algorithm can be used to find shortest distances.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "int",
+        "min": 2,
+        "max": 100000,
+        "description": "Number of vertices"
+      },
+      {
+        "variable": "m",
+        "type": "int",
+        "min": 1,
+        "max": 200000,
+        "description": "Number of edges"
+      },
+      {
+        "variable": "w",
+        "type": "int",
+        "min": 1,
+        "max": 1000000,
+        "description": "Edge weight"
+      }
+    ],
+    "examples": [
+      {
+        "input": "5 7\n7\n0 1 2\n0 2 3\n1 2 2\n1 3 4\n2 3 1\n2 4 5\n3 4 3\n0 4",
+        "output": "1",
+        "explanation": "Two shortest paths of total weight 7."
+      },
+      {
+        "input": "4 5\n5\n0 1 1\n0 2 1\n1 3 1\n2 3 1\n1 2 2\n0 3",
+        "output": "2",
+        "explanation": "Two shortest paths of total weight 2."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "The problem can be solved using a modified version of Dijkstra's algorithm, but we need to consider the concept of paths, not just distances."
+    },
+    {
+      "order": 2,
+      "text": "We need to find the shortest paths from the source node to all other nodes, not just the destination node."
+    },
+    {
+      "order": 3,
+      "text": "To solve this problem, we can use a technique called Bellman-Ford algorithm with a modification to count the number of paths."
+    },
+    {
+      "order": 4,
+      "text": "The key idea is to use a distance array and a count array to keep track of the shortest distance and the number of paths to each node."
+    },
+    {
+      "order": 5,
+      "text": "We can use a priority queue to efficiently select the node with the shortest distance at each step, and update the count array accordingly."
+    }
+  ],
+  "editorial": {
+    "title": "Counting Shortest Paths in a Weighted Graph",
+    "intuition": "The problem asks for how many distinct shortest routes exist from a source vertex to a target vertex in a directed graph with positive edge weights.  A shortest route is defined by the minimal total weight, not by the number of edges.  The key observation is that if we know the shortest distance to every vertex, then any edge that preserves that distance can be used to extend a shortest path.  Thus the number of shortest paths to a vertex can be accumulated from its predecessors whose distances are exactly one edge weight less.",
+    "bruteForce": "A naive approach would enumerate all possible paths from the source to the target, compute their total weights, keep only those with the minimal weight, and count them.  This brute‑force search explodes combinatorially: in the worst case the graph can contain an exponential number of simple paths, so the algorithm would run in exponential time and is infeasible for the given limits (n up to 10^5, m up to 2·10^5).",
+    "betterSolution": "Instead of exploring all paths, we first compute the single‑source shortest distances using Dijkstra’s algorithm.  While running Dijkstra, we maintain an array `ways[v]` that stores how many shortest paths reach vertex `v`.  When we relax an edge (u→v) with weight w, we compare the new distance `dist[u]+w` to the current `dist[v]`.  If it is smaller, we found a better path and reset `ways[v]` to `ways[u]`.  If it is equal, we discovered another shortest path and add `ways[u]` to `ways[v]`.  This dynamic programming over the shortest‑path DAG yields the answer in linearithmic time.",
+    "optimalSolution": "The optimal solution runs Dijkstra’s algorithm once, maintaining two arrays of size n: `dist` for shortest distances and `ways` for path counts.  Each edge is processed at most twice (once per direction if the graph is undirected).  The algorithm runs in O((n+m) log n) time and uses O(n+m) space, which meets the problem’s constraints.",
+    "proofOfCorrectness": "Let `dist[v]` be the minimal distance from s to v computed by Dijkstra.  Consider any vertex v.  Any shortest path to v must end with an edge (u→v) such that `dist[u]+w(u,v)=dist[v]`.  By induction on increasing distance values, assume that for all vertices with distance less than `dist[v]`, `ways[u]` correctly counts the number of shortest paths from s to u.  When processing edge (u→v), if the new distance equals `dist[v]`, we add exactly the number of shortest paths to u to `ways[v]`.  If the new distance is smaller, we found a strictly better path and reset `ways[v]` to `ways[u]`.  Thus after all relaxations, `ways[v]` equals the total number of shortest paths to v.  In particular, `ways[t]` is the required answer.",
+    "dryRun": "For the sample graph with vertices 0→1 (weight 1), 0→2 (weight 1), 1→3 (weight 1), 2→3 (weight 1), s=0 and t=3:  Dijkstra first sets dist[0]=0, ways[0]=1.  Relaxing edges from 0 updates dist[1]=1, ways[1]=1 and dist[2]=1, ways[2]=1.  Next, processing vertex 1 updates dist[3]=2, ways[3]=1.  Processing vertex 2 finds another path to 3 with equal distance 2, so ways[3] becomes 2.  The algorithm outputs 2, matching the two shortest paths 0→1→3 and 0→2→3.",
+    "commonMistakes": [
+      "Using a simple DFS/BFS that counts all paths instead of only shortest ones; this overcounts non‑optimal routes.",
+      "Failing to take the modulo 1e9+7 after each addition, leading to integer overflow.",
+      "Implementing Dijkstra with a priority queue but forgetting to skip stale entries, causing incorrect distance updates.",
+      "Assuming the graph is undirected and not handling directed edges properly.",
+      "Using an adjacency list of size n but not accounting for all m edges, leading to missing relaxations.",
+      "Not initializing ways[s] to 1, which results in zero paths to the target."
+    ],
+    "timeComplexity": "O((n + m) log n)",
+    "spaceComplexity": "O(n + m)"
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    int countPaths(int n, vector<vector<int>>& edges, int s, int t) {\n        // TODO: implement\n        return 0;\n    }\n};",
+    "java": "import java.util.*;\n\nclass Solution {\n    public int countPaths(int n, int[][] edges, int s, int t) {\n        // TODO: implement\n        return 0;\n    }\n}",
+    "python": "class Solution:\n    def countPaths(self, n: int, edges: List[List[int]], s: int, t: int) -> int:\n        # TODO: implement\n        return 0",
+    "javascript": "/**\n * @param {number} n\n * @param {number[][]} edges\n * @param {number} s\n * @param {number} t\n * @return {number}\n */\nvar countPaths = function(n, edges, s, t) {\n    // TODO: implement\n    return 0;\n};"
+  },
+  "functionSignature": {
+    "cpp": "int countPaths(int n, vector<vector<int>>& edges, int s, int t);",
+    "java": "public int countPaths(int n, int[][] edges, int s, int t);",
+    "python": "def countPaths(self, n: int, edges: list[list[int]], s: int, t: int) -> int:",
+    "javascript": "var countPaths = function(n, edges, s, t);"
+  },
+  "solutions": {
+    "python": "import sys\nimport heapq\nMOD = 1000000007\n\nclass Solution:\n    def countPaths(self, n: int, edges: list[list[int]], s: int, t: int) -> int:\n        adj = [[] for _ in range(n)]\n        for u, v, w in edges:\n            adj[u].append((v, w))\n        dist = [float('inf')] * n\n        ways = [0] * n\n        dist[s] = 0\n        ways[s] = 1\n        heap = [(0, s)]\n        while heap:\n            d, u = heapq.heappop(heap)\n            if d > dist[u]:\n                continue\n            for v, w in adj[u]:\n                nd = d + w\n                if nd < dist[v]:\n                    dist[v] = nd\n                    ways[v] = ways[u]\n                    heapq.heappush(heap, (nd, v))\n                elif nd == dist[v]:\n                    ways[v] = (ways[v] + ways[u]) % MOD\n        return ways[t] % MOD\n\nif __name__ == '__main__':\n    data = sys.stdin.read().split()\n    it = iter(data)\n    try:\n        n = int(next(it))\n        m = int(next(it))\n        # second line repeats m, skip it\n        _ = int(next(it))\n        edges = []\n        for _ in range(m):\n            u = int(next(it)); v = int(next(it)); w = int(next(it))\n            edges.append([u, v, w])\n        s = int(next(it)); t = int(next(it))\n    except StopIteration:\n        sys.exit(0)\n    sol = Solution()\n    ans = sol.countPaths(n, edges, s, t)\n    print(ans)",
+    "cpp": "#include <numeric>\n#include <bits/stdc++.h>\nusing namespace std;\nconst int MOD = 1000000007;\n\nclass Solution {\npublic:\n    int countPaths(int n, vector<vector<int>>& edges, int s, int t) {\n        vector<vector<pair<int,int>>> adj(n);\n        for (auto &e : edges) {\n            int u = e[0], v = e[1], w = e[2];\n            adj[u].push_back({v, w});\n        }\n        const long long INF = LLONG_MAX/4;\n        vector<long long> dist(n, INF);\n        vector<int> ways(n, 0);\n        dist[s] = 0;\n        ways[s] = 1;\n        using P = pair<long long,int>;\n        priority_queue<P, vector<P>, greater<P>> pq;\n        pq.push({0, s});\n        while (!pq.empty()) {\n            auto _tmp_binding_0 = pq.top(); auto d = _tmp_binding_0.first; auto u = _tmp_binding_0.second; pq.pop();\n            if (d != dist[u]) continue;\n            for (auto &pr : adj[u]) {\n                int v = pr.first; int w = pr.second;\n                long long nd = d + w;\n                if (nd < dist[v]) {\n                    dist[v] = nd;\n                    ways[v] = ways[u];\n                    pq.push({nd, v});\n                } else if (nd == dist[v]) {\n                    ways[v] = (ways[v] + ways[u]) % MOD;\n                }\n            }\n        }\n        return ways[t] % MOD;\n    }\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int n, m;\n    if (!(cin >> n >> m)) return 0;\n    int m_repeat; cin >> m_repeat; // ignore duplicate\n    vector<vector<int>> edges;\n    edges.reserve(m);\n    for (int i = 0; i < m; ++i) {\n        int u, v, w; cin >> u >> v >> w;\n        edges.push_back({u, v, w});\n    }\n    int s, t; cin >> s >> t;\n    Solution sol;\n    int ans = sol.countPaths(n, edges, s, t);\n    cout << ans << \"\\n\";\n    return 0;\n}\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.5
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5 7\n7\n0 1 2\n0 2 3\n1 2 2\n1 3 4\n2 3 1\n2 4 5\n3 4 3\n0 4",
+      "output": "1",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "4 5\n5\n0 1 1\n0 2 1\n1 3 1\n2 3 1\n1 2 2\n0 3",
+      "output": "2",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "boundary_4",
+      "input": "100 1\n1\n1 1 1\n1 1",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    },
+    {
+      "id": "random_medium_15",
+      "input": "7 5\n5\n1 2 4\n2 3 3\n3 4 2\n4 5 1\n5 6 5\n1 6",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "random_medium"
+    },
+    {
+      "id": "adversarial_17",
+      "input": "2 1\n1\n1 1 0\n1 1 0\n1 1\n",
+      "output": "2",
+      "isVisible": false,
+      "weight": 1,
+      "category": "adversarial"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

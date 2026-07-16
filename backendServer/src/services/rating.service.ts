@@ -14,7 +14,7 @@ type RatingCategory =
     | "dsa"
     | "frontend"
     | "backend"
-    | "fullstack"
+    | "projects"
     | "promptWar"
     | "team"
     | "bugFix";
@@ -24,7 +24,7 @@ const BATTLE_TYPE_TO_CATEGORY: Record<string, RatingCategory> = {
     DSA:        "dsa",
     FRONTEND:   "frontend",
     BACKEND:    "backend",
-    FULLSTACK:  "fullstack",
+    PROJECTS:   "projects",
     PROMPT_WAR: "promptWar",
     BUG_FIX:    "bugFix",    // BUG_FIX now uses its own rating pool
     TEAM:       "team",
@@ -35,7 +35,7 @@ const CATEGORY_TO_HISTORY_ENUM: Record<RatingCategory, BattleType> = {
     dsa:        "DSA",
     frontend:   "FRONTEND",
     backend:    "BACKEND",
-    fullstack:  "FULLSTACK",
+    projects:   "PROJECTS",
     promptWar:  "PROMPT_WAR",
     team:       "TEAM",
     bugFix:     "BUG_FIX",
@@ -255,11 +255,11 @@ export async function updateRatings(
     const winnerChange = winnerDelta >= 0 ? `+${winnerDelta}` : `${winnerDelta}`;
     const loserChange  = loserDelta  >= 0 ? `+${loserDelta}`  : `${loserDelta}`;
 
-    await Notification.insertMany([
+    const notifications = await Notification.insertMany([
         {
             recipient:       new mongoose.Types.ObjectId(winnerId),
             type:            "MATCH_RESULT",
-            title:           "Match Result — Victory 🏆",
+            title:           "Match Result — Victory",
             message:         `You won! Rating: ${winnerOldRating} → ${winnerNewRating} (${winnerChange})`,
             relatedEntityId: match._id,
         },
@@ -271,6 +271,16 @@ export async function updateRatings(
             relatedEntityId: match._id,
         },
     ]);
+
+    try {
+        const { io } = await import("../index.js");
+        if (io) {
+            io.to(`user:${winnerId}`).emit("notification:new", notifications[0]);
+            io.to(`user:${loserId}`).emit("notification:new", notifications[1]);
+        }
+    } catch (e) {
+        console.error("[RatingService] Failed to emit victory/defeat notifications via socket:", e);
+    }
 
     console.log(
         `[RatingService] Match ${matchId} processed. ` +
@@ -377,6 +387,36 @@ export async function updateRatingsForDraw(
             matchType:    match.matchType,
         },
     ]);
+
+    const changeA = deltaA >= 0 ? `+${deltaA}` : `${deltaA}`;
+    const changeB = deltaB >= 0 ? `+${deltaB}` : `${deltaB}`;
+
+    const notifications = await Notification.insertMany([
+        {
+            recipient:       new mongoose.Types.ObjectId(playerAId),
+            type:            "MATCH_RESULT",
+            title:           "Match Result — Draw 🤝",
+            message:         `It's a draw! Rating: ${ratingA} → ${newRatingA} (${changeA})`,
+            relatedEntityId: match._id,
+        },
+        {
+            recipient:       new mongoose.Types.ObjectId(playerBId),
+            type:            "MATCH_RESULT",
+            title:           "Match Result — Draw 🤝",
+            message:         `It's a draw! Rating: ${ratingB} → ${newRatingB} (${changeB})`,
+            relatedEntityId: match._id,
+        },
+    ]);
+
+    try {
+        const { io } = await import("../index.js");
+        if (io) {
+            io.to(`user:${playerAId}`).emit("notification:new", notifications[0]);
+            io.to(`user:${playerBId}`).emit("notification:new", notifications[1]);
+        }
+    } catch (e) {
+        console.error("[RatingService] Failed to emit draw notifications via socket:", e);
+    }
 
     // FIX (D3): ratingProcessed removed here — owned by applyRankedRatings caller.
 

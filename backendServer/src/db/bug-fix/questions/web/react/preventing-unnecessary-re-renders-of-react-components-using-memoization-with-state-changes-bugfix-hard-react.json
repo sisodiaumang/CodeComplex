@@ -1,0 +1,145 @@
+{
+  "title": "Preventing Unnecessary Re-renders of React Components using Memoization with State Changes",
+  "subCategory": "State Management",
+  "statement": {
+    "markdown": "Write a React function component that prevents unnecessary re-renders when the state changes. The component's state consists of two properties: `name` and `age`. The `name` property is displayed on the component's UI, and the `age` property is used for memoization. The component should re-render only when the `name` property changes or when the `age` property changes by 5 or more. Otherwise, it should be memoized.",
+    "inputFormat": "The input is an object with `name` and `age` properties.",
+    "outputFormat": "The output is the rendered component's JSX.",
+    "notes": "Use the `useState` hook to manage the state and the `useMemo` hook to memoize the component.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 100
+      },
+      {
+        "variable": "age",
+        "type": "integer",
+        "min": 1,
+        "max": 100
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"name\": \"John\", \"age\": 25}",
+        "output": "<div>Hello, John!</div>",
+        "explanation": "The component should re-render because the `name` property has changed."
+      },
+      {
+        "input": "{\"name\": \"John\", \"age\": 30}",
+        "output": "<div>Hello, John!</div>",
+        "explanation": "The component should re-render because the `age` property has changed by 5 or more."
+      },
+      {
+        "input": "{\"name\": \"John\", \"age\": 26}",
+        "output": "<div>Hello, John!</div>",
+        "explanation": "The component should be memoized because the `age` property has changed by less than 5."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "REACT"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "react"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the `useState` hook to manage the state and the `useMemo` hook to memoize the component."
+    },
+    {
+      "order": 2,
+      "text": "Use the `useCallback` hook to memoize the component's render function."
+    }
+  ],
+  "editorial": {
+    "title": "Preventing Unnecessary Re-renders with React Memo",
+    "intuition": "React memo can be used to prevent unnecessary re-renders by memoizing the component's render function.",
+    "bruteForce": "One possible solution is to use the `useCallback` hook to memoize the component's render function.",
+    "betterSolution": "A better solution is to use the `useMemo` hook to memoize the component's render function and only re-render when the `name` property changes or when the `age` property changes by 5 or more.",
+    "optimalSolution": "The optimal solution is to use a combination of `useState` and `useMemo` hooks to manage the state and memoize the component's render function.",
+    "proofOfCorrectness": "The proof of correctness is that the component will re-render only when the `name` property changes or when the `age` property changes by 5 or more.",
+    "dryRun": "Step-by-step example run: 1. Initialize the state using `useState`. 2. Memoize the component's render function using `useMemo`. 3. Check if the component should re-render based on the `name` and `age` properties.",
+    "commonMistakes": [
+      "Not using the `useState` hook to manage the state.",
+      "Not using the `useMemo` hook to memoize the component's render function."
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "function Component({ name, age }) {\n  const [state, setState] = useState({ name, age });\n  return (\n    <div>Hello, {name}!</div>\n  );\n}"
+  },
+  "buggyStarterCode": {
+    "javascript": "function Component({ name, age }) {\n  const [state, setState] = useState({ name, age });\n  const memoizedAge = useMemo(() => age, [age]);\n  return (\n    <div>Hello, {name}!</div>\n  );\n}"
+  },
+  "functionSignature": {
+    "javascript": "function Component({ name, age }) {\n  // component implementation\n}"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction Component({ name, age }) {\n  const [state, setState] = useState({ name, age });\n  const shouldMemoize = age >= state.age - 5 && age <= state.age + 5;\n  const memoizedRender = useMemo(() => (\n    <div>Hello, {name}!</div>\n  ), [name, shouldMemoize]);\n  return memoizedRender;\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"name\": \"John\", \"age\": 25}",
+      "output": "<div>Hello, John!</div>",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"name\": \"John\", \"age\": 30}",
+      "output": "<div>Hello, John!</div>",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "bcc786be1e2dbffdd3c2bc7b",
+  "slug": "preventing-unnecessary-re-renders-of-react-components-using-memoization-with-state-changes-bugfix-hard-react",
+  "mode": "bug_fix",
+  "category": "REACT",
+  "difficulty": "Hard"
+}

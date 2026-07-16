@@ -1,0 +1,130 @@
+{
+  "_id": "0b2bf23821951f30f97d1b5c",
+  "title": "Simple Bookstore with Mongoose",
+  "slug": "simple-bookstore-with-mongoose-easy-orm",
+  "difficulty": "Easy",
+  "topics": [
+    "ORM"
+  ],
+  "statement": "Build a REST API for a simple bookstore with Mongoose. The bookstore has books and authors. The API should allow you to create, read, and delete books. Each book has a title, author, and publication year. Each author has a name and birth year. When creating a book, you must also create the author if it does not exist. The API should handle errors properly, such as trying to create a book with a duplicate author or trying to delete a book that does not exist.",
+  "constraints": [
+    "Must use only the in-memory array or mock database provided by Mongoose",
+    "Use Mongoose to define the schema for books and authors"
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/books",
+      "description": "Create a new book. The request body should contain the title, author name, and publication year of the book."
+    },
+    {
+      "method": "GET",
+      "path": "/api/books",
+      "description": "Get a list of all books in the bookstore."
+    },
+    {
+      "method": "GET",
+      "path": "/api/books/:id",
+      "description": "Get a book by its ID."
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/books/:id",
+      "description": "Delete a book by its ID."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\n  \"name\": \"backend-app\",\n  \"version\": \"1.0.0\",\n  \"main\": \"index.js\",\n  \"scripts\": {\n    \"start\": \"node index.js\"\n  },\n  \"dependencies\": {\n    \"express\": \"^4.18.2\",\n    \"mongoose\": \"^6.2.2\"\n  }\n}",
+    "index.js": "const express = require('express');\nconst mongoose = require('mongoose');\nconst app = express();\napp.use(express.json());\n\nmongoose.connect('mongodb://localhost/test', { useNewUrlParser: true, useUnifiedTopology: true });\nconst db = mongoose.connection;\ndb.on('error', console.error.bind(console, 'connection error:'));\ndb.once('open', function() {\n  console.log('Connected to MongoDB');\n});\n\nconst bookSchema = new mongoose.Schema({\n  title: String,\n  author: String,\n  publicationYear: Number\n});\nconst AuthorSchema = new mongoose.Schema({\n  name: String,\n  birthYear: Number\n});\n\nconst Book = mongoose.model('Book', bookSchema);\nconst Author = mongoose.model('Author', AuthorSchema);\n\napp.post('/api/books', async (req, res) => {\n  // TODO: Implement book creation logic\n});\napp.get('/api/books', async (req, res) => {\n  // TODO: Implement book retrieval logic\n});\napp.get('/api/books/:id', async (req, res) => {\n  // TODO: Implement book retrieval by ID logic\n});\napp.delete('/api/books/:id', async (req, res) => {\n  // TODO: Implement book deletion logic\n});\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "POST",
+      "path": "/api/books",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "title": "The Great Gatsby",
+        "author": "F. Scott Fitzgerald",
+        "publicationYear": 1925
+      },
+      "expectedStatus": 201,
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "GET",
+      "path": "/api/books",
+      "expectedStatus": 200,
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "POST",
+      "path": "/api/books",
+      "body": {
+        "title": "The Great Gatsby",
+        "author": "F. Scott Fitzgerald",
+        "publicationYear": 1925
+      },
+      "expectedStatus": 400,
+      "expectedBody": {
+        "error": "Author already exists"
+      },
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "GET",
+      "path": "/api/books/999",
+      "expectedStatus": 404,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "DELETE",
+      "path": "/api/books/999",
+      "expectedStatus": 400,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "mongoose",
+    "prisma",
+    "sequelize",
+    "typeorm",
+    "drizzle",
+    "relations",
+    "populate",
+    "schema",
+    "migration",
+    "orm",
+    "mongodb",
+    "database"
+  ]
+}

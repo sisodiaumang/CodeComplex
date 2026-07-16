@@ -1,0 +1,204 @@
+{
+  "_id": "minimum-cost-to-connect-sticks",
+  "title": "Minimum Cost to Connect Sticks",
+  "slug": "minimum-cost-to-connect-sticks",
+  "difficulty": "Medium",
+  "category": "TREE",
+  "subCategory": "Hard Problems",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 45,
+    "points": 500,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "HEAPS",
+      "PRIORITY QUEUES"
+    ],
+    "patterns": [
+      "MINIMUM COST",
+      "CONNECT STICKS"
+    ],
+    "prerequisites": [
+      "HEAPS",
+      "PRIORITY QUEUES"
+    ],
+    "variants": [],
+    "tags": [
+      "HEAPS",
+      "PRIORITY QUEUES",
+      "MEDIUM",
+      "CONNECT STICKS"
+    ],
+    "keywords": [
+      "MINIMUM COST",
+      "HEAPS",
+      "PRIORITY QUEUES",
+      "CONNECT STICKS"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "You have a collection of `n` sticks of various lengths. You want to connect these sticks into a single stick with the minimum cost. The cost to connect two sticks is equal to the sum of their lengths. You can connect sticks in any order, but you must connect all of them.\n\nYou are given an integer array `sticks` where `sticks[i]` represents the length of the `i-th` stick.\n\nReturn the minimum cost to connect all sticks.",
+    "inputFormat": "sticks.length\n%d\n%s",
+    "outputFormat": "%d",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "sticks",
+        "type": "array",
+        "min": 1,
+        "max": 1000,
+        "description": "length of the sticks array"
+      },
+      {
+        "variable": "sticks[i]",
+        "type": "number",
+        "min": 1,
+        "max": 100,
+        "description": "length of each stick"
+      }
+    ],
+    "examples": [
+      {
+        "input": "4\n1 4 2 5",
+        "output": "22",
+        "explanation": "Connect the sticks 1 and 2, cost = 1 + 2 = 3. Then connect 3 and 4, cost = 3 + 4 = 7. Then connect 5 and 7, cost = 5 + 7 = 12. Total cost = 3 + 7 + 12 = 22."
+      },
+      {
+        "input": "2\n2 3",
+        "output": "5",
+        "explanation": "Connect the sticks 2 and 3, cost = 2 + 3 = 5."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "The problem involves combining sticks in a way that minimizes the total cost, which is the sum of the lengths of the sticks being connected at each step."
+    },
+    {
+      "order": 2,
+      "text": "A greedy approach seems suitable for this problem, as we want to minimize the cost at each step of connecting sticks."
+    },
+    {
+      "order": 3,
+      "text": "Using a priority queue or a similar data structure could help in efficiently selecting the sticks with the smallest lengths to connect at each step, which is crucial for minimizing the total cost."
+    }
+  ],
+  "editorial": {
+    "title": "Merging Sticks: From Brute Force to a Greedy Heap",
+    "intuition": "When you repeatedly glue two sticks together, the total cost is the sum of the lengths of the sticks you combine. The key insight is that the cheapest way to build a large stick is to always merge the two shortest sticks available. This mirrors the classic Huffman coding construction: the optimal merge pattern is a greedy one that never pays more than necessary for any intermediate piece.",
+    "bruteForce": "A straightforward approach is to try every possible pair of sticks at each step, compute the resulting cost recursively, and keep the minimum. This exhaustive search explores all binary tree structures that represent the merge order. For n sticks there are (2n-3)!! possible merge sequences, which grows super‑exponentially. Even with memoization the state space is still O(2^n), making it infeasible for n up to 1000. The brute force method is correct because it examines every possibility, but its time complexity is far beyond practical limits.",
+    "betterSolution": "The optimal strategy is to use a min‑heap (priority queue). Repeatedly pop the two smallest sticks, merge them, add the cost, and push the new stick back. Each heap operation costs O(log n), and we perform n−1 merges, yielding O(n log n) time and O(n) space.",
+    "optimalSolution": "The greedy heap algorithm runs in O(n log n) time and O(n) space, matching the theoretical lower bound for sorting‑based approaches. It is the standard solution for the Minimum Cost to Connect Sticks problem.",
+    "proofOfCorrectness": "Consider any optimal merge sequence. Look at the first merge that does not involve the two globally shortest sticks. Replace that merge with one that does: merge the two smallest sticks first. This cannot increase the total cost because any other merge would involve at least one longer stick, adding more to the running sum. By repeatedly applying this exchange argument we transform any optimal sequence into one that always merges the two smallest sticks, proving the greedy strategy is optimal.",
+    "dryRun": "Example: sticks=[4,3,3,4].\n1) Heap: [3,3,4,4] → pop 3,3 → merge 6, cost=6, heap=[4,4,6]\n2) Heap: [4,4,6] → pop 4,4 → merge 8, cost=14, heap=[6,8]\n3) Heap: [6,8] → pop 6,8 → merge 14, cost=28, heap=[14]\nTotal cost=28, which is minimal.",
+    "commonMistakes": [
+      "Assuming the first merge should be the two longest sticks; this increases cost.",
+      "Using a max‑heap instead of a min‑heap, leading to incorrect results.",
+      "Not updating the heap after each merge, causing stale values.",
+      "Misunderstanding that the cost added at each step is the sum of the two sticks, not their product.",
+      "Overlooking that the algorithm must run until only one stick remains.",
+      "Implementing the algorithm with O(n^2) operations by scanning the array each time instead of using a heap."
+    ],
+    "timeComplexity": "O(NlogN)",
+    "spaceComplexity": "O(N)"
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    int connectSticks(vector<int>& sticks) {\n        // TODO: implement\n        return 0;\n    }\n};",
+    "java": "import java.util.*;\n\nclass Solution {\n    public int connectSticks(int[] sticks) {\n        // TODO: implement\n        return 0;\n    }\n}",
+    "python": "import heapq\nfrom typing import List\n\nclass Solution:\n    def connectSticks(self, sticks: List[int]) -> int:\n        # TODO: implement\n        pass",
+    "javascript": "/**\n * @param {number[]} sticks\n * @return {number}\n */\nvar connectSticks = function(sticks) {\n    // TODO: implement\n    return 0;\n};"
+  },
+  "functionSignature": {
+    "cpp": "int connectSticks(vector<int>& sticks);",
+    "java": "public int connectSticks(int[] sticks);",
+    "python": "def connectSticks(self, sticks: list[int]) -> int:",
+    "javascript": "var connectSticks = function(sticks);"
+  },
+  "solutions": {
+    "python": "import sys\nimport heapq\nclass Solution:\n    def connectSticks(self, sticks: list[int]) -> int:\n        heapq.heapify(sticks)\n        cost = 0\n        while len(sticks) > 1:\n            a = heapq.heappop(sticks)\n            b = heapq.heappop(sticks)\n            heapq.heappush(sticks, a + b)\n            cost += a + b\n        return cost\nif __name__ == '__main__':\n    it = iter(sys.stdin.read().split())\n    try:\n        n = int(next(it))\n        sticks = [int(next(it)) for _ in range(n)]\n    except StopIteration:\n        sys.exit(0)\n    sol = Solution()\n    ans = sol.connectSticks(sticks)\n    print(ans)",
+    "cpp": "#include <numeric>\n#include <bits/stdc++.h>\nusing namespace std;\nclass Solution {\npublic:\n    int connectSticks(vector<int>& sticks) {\n        priority_queue<int, vector<int>, greater<int>> pq;\n        for (int stick : sticks) {\n            pq.push(stick);\n        }\n        int cost = 0;\n        while (pq.size() > 1) {\n            int a = pq.top();\n            pq.pop();\n            int b = pq.top();\n            pq.pop();\n            int sum = a + b;\n            cost += sum;\n            pq.push(sum);\n        }\n        return cost;\n    }\n};\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int n;\n    if (!(cin >> n)) return 0;\n    vector<int> sticks(n);\n    for (int i = 0; i < n; i++) cin >> sticks[i];\n    Solution sol;\n    int ans = sol.connectSticks(sticks);\n    cout << ans << \"\\n\";\n    return 0;\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.2
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "4\n1 4 2 5",
+      "output": "22",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "2\n2 3",
+      "output": "5",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint_3",
+      "input": "2\n1\n2\n",
+      "output": "3",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "duplicate_5",
+      "input": "5\n1\n2\n2\n3\n3\n",
+      "output": "25",
+      "isVisible": false,
+      "weight": 1,
+      "category": "duplicate"
+    },
+    {
+      "id": "sorted_7",
+      "input": "5\n1 2 3 4 5\n",
+      "output": "33",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sorted"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

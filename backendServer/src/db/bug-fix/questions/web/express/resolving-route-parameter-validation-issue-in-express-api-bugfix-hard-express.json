@@ -1,0 +1,148 @@
+{
+  "title": "Resolving Route Parameter Validation Issue in Express API",
+  "subCategory": "Route Parameters",
+  "statement": {
+    "markdown": "Given an Express API with a route parameter validation issue, implement a solution to validate user input for a username and ensure it matches a specific pattern. The input validation should be performed before the route handler is executed. You are provided with a starter code that contains a logical bug affecting the route parameter validation. Your task is to identify and fix the bug.",
+    "inputFormat": "The input format consists of a string representing the username to be validated.",
+    "outputFormat": "The output format consists of a boolean indicating whether the username is valid based on the specified pattern.",
+    "notes": "The route parameter validation should be performed using a middleware function.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 3,
+        "max": 100
+      }
+    ],
+    "examples": [
+      {
+        "input": "john_doe",
+        "output": "true",
+        "explanation": "The username 'john_doe' matches the pattern and is valid."
+      },
+      {
+        "input": "john",
+        "output": "false",
+        "explanation": "The username 'john' does not match the pattern and is invalid."
+      },
+      {
+        "input": "john_doe123",
+        "output": "false",
+        "explanation": "The username 'john_doe123' does not match the pattern and is invalid."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 60,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "EXPRESS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "express"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "The route parameter validation middleware should be implemented using a separate function to ensure reusability."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial: Route Parameter Validation",
+    "intuition": "The correct approach involves implementing a middleware function to validate the route parameter.",
+    "bruteForce": "One way to resolve the issue is to manually implement a validation function to check the pattern of the username.",
+    "betterSolution": "A more efficient solution involves using a regular expression to match the pattern.",
+    "optimalSolution": "The optimal solution is to use the `express-validator` library to simplify the validation process.",
+    "proofOfCorrectness": "The proof of correctness involves demonstrating that the solution meets the requirements and handles edge cases.",
+    "dryRun": "A step-by-step example run involves testing the solution with different input scenarios.",
+    "commonMistakes": [
+      "Incorrect pattern implementation",
+      "Insufficient validation"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "const express = require('express');\nconst app = express();\napp.get('/user/:username', validateParameter, (req, res) => {\n  res.send(`Hello, ${req.params.username}!`);\n});\nfunction validateParameter(req, res, next) {\n  const username = req.params.username;\n  // TO DO: implement the logical bug fix\n  next();\n}\napp.listen(3000, () => console.log('Server listening on port 3000'));",
+    "python": "from fastapi import FastAPI, Depends\nfrom pydantic import BaseModel\nfrom typing import Optional\n\napp = FastAPI()\n\nclass User(BaseModel):\n    username: str\n\n@app.get('/user/{username}', dependencies=[Depends(validate_parameter)])\nasync def read_user(username: str, validate_parameter):\n    # TO DO: implement the logical bug fix\n    return f'Hello, {username}!'\n\ndef validate_parameter(username: str):\n    # TO DO: implement the logical bug fix\n    return True\n"
+  },
+  "buggyStarterCode": {
+    "javascript": "const express = require('express');\nconst app = express();\napp.get('/user/:username', validateParameter, (req, res) => {\n  res.send(`Hello, ${req.params.username}!`);\n});\nfunction validateParameter(req, res, next) {\n  const username = req.params.username;\n  if (username.split(\"_\").length > 2) {\n    res.status(400).send('Invalid username');\n  } else {\n    if (username.match(/^[a-zA-Z0-9]+$/)) {\n      next();\n    } else {\n      res.status(400).send('Invalid username');\n    }\n  }\n}\napp.listen(3000, () => console.log('Server listening on port 3000'));\n",
+    "python": "from fastapi import FastAPI, Depends\nfrom pydantic import BaseModel\nfrom typing import Optional\n\napp = FastAPI()\n\nclass User(BaseModel):\n    username: str\n\n@app.get('/user/{username}', dependencies=[Depends(validate_parameter)])\nasync def read_user(username: str, validate_parameter):\n    if len(username.split('_')) > 2:\n        return {'error': 'Invalid username'}\n    if username.isalnum():\n        return {'error': 'Invalid username'}\n    return f'Hello, {username}!'\n\ndef validate_parameter(username: str):\n    return True\n"
+  },
+  "functionSignature": {
+    "javascript": "function validateParameter(req, res, next) {}",
+    "python": "def validate_parameter(username: str):\n    pass"
+  },
+  "solutions": {
+    "javascript": "// Solution\n// Fix the logical bug by removing the incorrect validation condition\nfunction validateParameter(req, res, next) {\n  const username = req.params.username;\n  if (!(username.match(/^[a-zA-Z0-9_]+$/))) {\n    res.status(400).send('Invalid username');\n  } else {\n    next();\n  }\n}\n",
+    "python": "from fastapi import FastAPI, Depends\nfrom pydantic import BaseModel\nfrom typing import Optional\n\napp = FastAPI()\n\nclass User(BaseModel):\n    username: str\n\n@app.get('/user/{username}', dependencies=[Depends(validate_parameter)])\nasync def read_user(username: str, validate_parameter):\n    if not username.isalnum() and '_' not in username:\n        return {'error': 'Invalid username'}\n    return f'Hello, {username}!'\n\ndef validate_parameter(username: str):\n    return True\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "john_doe",
+      "output": "Hello, john_doe!",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "john",
+      "output": "Invalid username",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    },
+    {
+      "id": "tc_3",
+      "input": "john123",
+      "output": "Invalid username",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "11e66b68a6bf389e858268cd",
+  "slug": "resolving-route-parameter-validation-issue-in-express-api-bugfix-hard-express",
+  "mode": "bug_fix",
+  "category": "EXPRESS",
+  "difficulty": "Hard"
+}

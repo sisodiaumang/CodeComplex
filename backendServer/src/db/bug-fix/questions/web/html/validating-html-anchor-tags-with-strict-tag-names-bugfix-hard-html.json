@@ -1,0 +1,153 @@
+{
+  "title": "Validating HTML Anchor Tags with Strict Tag Names",
+  "subCategory": "Validating HTML Tags",
+  "statement": {
+    "markdown": "You are given a string representing the HTML anchor tags that need to be validated. The task is to check if all anchor tags in the string have a valid tag name (a, area, link) and a corresponding closing tag. A valid tag name is one that matches the pattern a|area|link. The function should return True if all anchor tags are valid and False otherwise. The input string may contain multiple anchor tags, and the tags may be nested within other HTML tags.",
+    "inputFormat": "A string representing the HTML anchor tags.",
+    "outputFormat": "A boolean indicating whether all anchor tags are valid.",
+    "notes": "This problem requires a deep understanding of HTML parsing and tag validation.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The maximum number of HTML tags in the input string."
+      }
+    ],
+    "examples": [
+      {
+        "input": "<a href=\"https://www.example.com\">Example</a>",
+        "output": "True",
+        "explanation": "The anchor tag is valid and has a corresponding closing tag."
+      },
+      {
+        "input": "<a href=\"https://www.example.com\">Example",
+        "output": "False",
+        "explanation": "The anchor tag is missing a closing tag."
+      },
+      {
+        "input": "<area href=\"https://www.example.com\">Example</a>",
+        "output": "False",
+        "explanation": "The area tag is not a valid anchor tag."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 25,
+    "points": 100,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "HTML"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "html"
+    ],
+    "interviewFrequency": 5,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use a stack data structure to keep track of opening tags."
+    },
+    {
+      "order": 2,
+      "text": "Check if the closing tag matches the opening tag."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial Title",
+    "intuition": "The key insight is to use a stack to keep track of opening tags and their corresponding closing tags.",
+    "bruteForce": "One possible approach is to use a regular expression to match all anchor tags and then check if they are valid.",
+    "betterSolution": "",
+    "optimalSolution": "The optimal solution uses a stack to keep track of opening tags and then checks if the closing tag matches the opening tag.",
+    "proofOfCorrectness": "The proof of correctness is based on the stack data structure and the matching of opening and closing tags.",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Not using a stack to keep track of opening tags",
+      "Not checking if the closing tag matches the opening tag"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// Define a function to validate the HTML anchor tags\nfunction validateAnchorTags(s) {\n  // Initialize an empty stack to keep track of opening tags\n  let stack = [];\n  // Iterate over the input string\n  for (let i = 0; i < s.length; i++) {\n    // Check if the current character is the start of a tag\n    if (s[i] === '<') {\n      // Check if the tag is a closing tag\n      if (s[i + 1] === '/') {\n        // Check if the stack is not empty\n        if (stack.length > 0) {\n          // Get the top element from the stack\n          let top = stack.pop();\n          // Check if the closing tag matches the opening tag\n          if (top !== s.substring(i + 2, s.indexOf('>', i))) {\n            return false;\n          }\n        } else {\n          return false;\n        }\n      } else {\n        // Check if the tag is an anchor tag\n        if (!['a', 'area', 'link'].includes(s.substring(i + 1, s.indexOf('>', i)))) {\n          return false;\n        }\n        // Push the opening tag onto the stack\n        stack.push(s.substring(i + 1, s.indexOf('>', i)));\n      }\n    }\n  }\n  // Check if the stack is empty\n  if (stack.length > 0) {\n    return false;\n  }\n  return true;\n};",
+    "python": "class Solution:\n    def validateAnchorTags(self, s: str) -> bool:\n        stack = []\n        for i in range(len(s)):\n            if s[i] == '<':\n                if s[i + 1] == '/':\n                    if not stack:\n                        return False\n                    top = stack.pop()\n                    if top != s.substring(i + 2, s.index('>', i)):\n                        return False\n                else:\n                    if not any(tag in s[i + 1:s.index('>', i)] for tag in ['a', 'area', 'link']):\n                        return False\n                    stack.append(s[i + 1:s.index('>', i)])\n        return not bool(stack)"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Define a function to validate the HTML anchor tags\nfunction validateAnchorTags(s) {\n  // Initialize an empty stack to keep track of opening tags\n  let stack = [];\n  // Iterate over the input string\n  for (let i = 0; i < s.length; i++) {\n    // Check if the current character is the start of a tag\n    if (s[i] === '<') {\n      // Check if the tag is a closing tag\n      if (s[i + 1] === '/') {\n        // Check if the stack is not empty\n        if (stack.length > 0) {\n          // Get the top element from the stack\n          let top = stack.pop();\n          // Check if the closing tag matches the opening tag\n          if (top !== s.substring(i + 2, s.indexOf('>', i))) {\n            return false;\n          }\n        } else {\n          return false;\n        }\n      } else {\n        // Check if the tag is an anchor tag\n        if (!['a', 'area', 'link'].includes(s.substring(i + 1, s.indexOf('>', i)))) {\n          return false;\n        }\n        // Push the opening tag onto the stack\n        stack.push(s.substring(i + 1, s.indexOf('>', i)));\n      }\n    }\n  }\n  // Check if the stack is empty\n  if (stack.length === 0) {\n    return true;\n  }\n  return false;\n};",
+    "python": "class Solution:\n    def validateAnchorTags(self, s: str) -> bool:\n        stack = []\n        for i in range(len(s)):\n            if s[i] == '<':\n                if s[i + 1] == '/':\n                    if not stack:\n                        return False\n                    top = stack.pop()\n                    if top != s.substring(i + 2, s.index('>', i)):\n                        return False\n                else:\n                    if not any(tag in s[i + 1:s.index('>', i)] for tag in ['a', 'area', 'link']):\n                        return False\n                    stack.append(s[i + 1:s.index('>', i)])\n        return stack == []"
+  },
+  "functionSignature": {
+    "javascript": "function validateAnchorTags(s);",
+    "python": "def validateAnchorTags(self, s: str) -> bool:"
+  },
+  "solutions": {
+    "javascript": "// Define a function to validate the HTML anchor tags\nfunction validateAnchorTags(s) {\n  // Initialize an empty stack to keep track of opening tags\n  let stack = [];\n  // Iterate over the input string\n  for (let i = 0; i < s.length; i++) {\n    // Check if the current character is the start of a tag\n    if (s[i] === '<') {\n      // Check if the tag is a closing tag\n      if (s[i + 1] === '/') {\n        // Check if the stack is not empty\n        if (stack.length > 0) {\n          // Get the top element from the stack\n          let top = stack.pop();\n          // Check if the closing tag matches the opening tag\n          if (top !== s.substring(i + 2, s.indexOf('>', i))) {\n            return false;\n          }\n        } else {\n          return false;\n        }\n      } else {\n        // Check if the tag is an anchor tag\n        if (!['a', 'area', 'link'].includes(s.substring(i + 1, s.indexOf('>', i)))) {\n          return false;\n        }\n        // Push the opening tag onto the stack\n        stack.push(s.substring(i + 1, s.indexOf('>', i)));\n      }\n    }\n  }\n  // Check if the stack is empty\n  if (stack.length > 0) {\n    return false;\n  }\n  return true;\n};",
+    "python": "class Solution:\n    def validateAnchorTags(self, s: str) -> bool:\n        stack = []\n        for i in range(len(s)):\n            if s[i] == '<':\n                if s[i + 1] == '/':\n                    if not stack:\n                        return False\n                    top = stack.pop()\n                    if top != s[s.find('>', i) - 1:s.find('>', i)]:\n                        return False\n                else:\n                    if not any(tag in s[i + 1:s.index('>', i)] for tag in ['a', 'area', 'link']):\n                        return False\n                    stack.append(s[i + 1:s.index('>', i)])\n        return not bool(stack)"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "<a href=\"https://www.example.com\">Example</a>",
+      "output": "True",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "<a href=\"https://www.example.com\">Example",
+      "output": "False",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    },
+    {
+      "id": "tc_3",
+      "input": "<area href=\"https://www.example.com\">Example</a>",
+      "output": "False",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "7a423d47f93931386ff04903",
+  "slug": "validating-html-anchor-tags-with-strict-tag-names-bugfix-hard-html",
+  "mode": "bug_fix",
+  "category": "HTML",
+  "difficulty": "Hard"
+}

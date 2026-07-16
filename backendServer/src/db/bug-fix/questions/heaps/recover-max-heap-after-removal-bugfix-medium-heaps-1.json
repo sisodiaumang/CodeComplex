@@ -1,0 +1,153 @@
+{
+  "_id": "8e0b7322e3d6de27ebf922fd",
+  "title": "Recover Max Heap After Removal",
+  "slug": "recover-max-heap-after-removal-bugfix-medium-heaps-1",
+  "difficulty": "Medium",
+  "category": "DSA",
+  "subCategory": "HEAP",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "heap"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "- Recover a max heap from a given array by deleting an element and then heapifying the array.\n- The input array will be initially a max heap.\n- The deletion operation will remove the root element and then heapify the array using the provided function `recover_max_heap`.",
+    "inputFormat": "The input will be an array of integers, where the first number represents the size of the array and the remaining numbers represent the array elements.",
+    "outputFormat": "The output should be a boolean indicating whether the recovered heap is valid (i.e., it satisfies the max heap property) or not.",
+    "notes": "- The `recover_max_heap` function should handle the deletion of the root element and heapify the remaining array in O(n) time complexity.\n- The recovered heap should be valid.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "5\n1 5 4 3 2\n",
+        "output": "true\n",
+        "explanation": "The original array is a max heap: [1, 5, 4, 3, 2]. After deleting the root element (1), the heap becomes: [5, 4, 3, 2]. The `recover_max_heap` function heapifies this array, resulting in a valid max heap: [5, 4, 3, 2, 5]."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    bool recover_max_heap(vector<int>& nums);\n};",
+    "java": "public class Solution {\n    public boolean recover_max_heap(int[] nums);\n}",
+    "python": "class Solution:\n    def recover_max_heap(self, nums: list[int]) -> bool:",
+    "javascript": "function recover_max_heap(nums) {"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    bool recover_max_heap(vector<int>& nums) {\n        // Heapify the array, starting from the last non-leaf node\n        for (int i = nums.size() / 2 - 1; i >= 0; --i) {\n            max_heapify(nums, i);\n        }\n        return true;\n    }\n\n    void max_heapify(vector<int>& nums, int i) {\n        int largest = i;\n        int left = 2 * i + 1;\n        int right = 2 * i + 2;\n\n        if (left < nums.size() && nums[left] > nums[largest]) {\n            largest = left;\n        }\n\n        if (right < nums.size() && nums[right] > nums[largest]) {\n            largest = right;\n        }\n\n        if (largest != i) {\n            // Swap the elements with a temporary variable\n            int temp = nums[i];\n            nums[i] = nums[largest];\n            nums[largest] = temp;\n            max_heapify(nums, largest);\n        }\n    }\n};",
+    "java": "public class Solution {\n    public boolean recover_max_heap(int[] nums) {\n        // Heapify the array, starting from the last non-leaf node\n        for (int i = nums.length / 2 - 1; i >= 0; --i) {\n            max_heapify(nums, i);\n        }\n        return true;\n    }\n\n    void max_heapify(int[] nums, int i) {\n        int largest = i;\n        int left = 2 * i + 1;\n        int right = 2 * i + 2;\n\n        if (left < nums.length && nums[left] > nums[largest]) {\n            largest = left;\n        }\n\n        if (right < nums.length && nums[right] > nums[largest]) {\n            largest = right;\n        }\n\n        if (largest != i) {\n            // Swap the elements with a temporary variable\n            int temp = nums[i];\n            nums[i] = nums[largest];\n            nums[largest] = temp;\n            max_heapify(nums, largest);\n        }\n    }\n}",
+    "python": "class Solution:\n    def recover_max_heap(self, nums: list[int]) -> bool:\n        # Heapify the array, starting from the last non-leaf node\n        for i in range(len(nums) // 2 - 1, -1, -1):\n            self.max_heapify(nums, i)\n        return True\n\n    def max_heapify(self, nums: list[int], i: int) -> None:\n        largest = i\n        left = 2 * i + 1\n        right = 2 * i + 2\n\n        if left < len(nums) and nums[left] > nums[largest]: # BUG: Should be >=\n            largest = left\n        \n        if right < len(nums) and nums[right] > nums[largest]:\n            largest = right\n        \n        if largest != i:\n            # Swap the elements with a temporary variable\n            temp = nums[i]\n            nums[i] = nums[largest]\n            nums[largest] = temp\n            self.max_heapify(nums, largest)\n        return",
+    "javascript": "function recover_max_heap(nums) {\n    // Heapify the array, starting from the last non-leaf node\n    for (let i = Math.floor(nums.length / 2) - 1; i >= 0; --i) {\n        this.max_heapify(nums, i);\n    }\n    return true;\n}\n\nmax_heapify(nums, i) {\n    let largest = i;\n    let left = 2 * i + 1;\n    let right = 2 * i + 2;\n\n    if (left < nums.length && nums[left] > nums[largest]) {\n        largest = left;\n    }\n\n    if (right < nums.length && nums[right] > nums[largest]) {\n        largest = right;\n    }\n\n    if (largest != i) {\n        // Swap the elements with a temporary variable\n        let temp = nums[i];\n        nums[i] = nums[largest];\n        nums[largest] = temp;\n        this.max_heapify(nums, largest);\n    }\n}"
+  },
+  "functionSignature": {
+    "cpp": "bool recover_max_heap(vector<int>& nums);",
+    "java": "boolean recover_max_heap(int[] nums);",
+    "python": "def recover_max_heap(self, nums: list[int]) -> bool:",
+    "javascript": "var recover_max_heap = function(nums) {"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def recover_max_heap(self, nums: list[int]) -> bool:\n        # The max heap property is maintained by the heapify operation in Python's heapq module.\n        # However, for this particular problem, we need to modify the input array to satisfy the max heap property.\n        # This is not a standard use case for the heapq module.\n        # For this problem, we can use the 'heapify' function from the heapq module to heapify the array in-place.\n        import heapq\n        # Remove the root element and heapify the remaining array\n        nums.pop(0)\n        heapq.heapify(nums)\n        return True\n\n    \n    # Helper function to print the heap\n    def print_heap(self, nums: list[int]) -> None:\n        print(nums)\n",
+    "cpp": "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nconst int N = 10010;\nint a[N];\n\nclass Solution {\npublic:\n    bool recover_max_heap(std::vector<int>& nums) {\n        int n = nums.size();\n\n        // The max heap property is satisfied by the given array.\n        // We need to remove the root element and heapify the remaining array.\n        int root = nums[0];\n        nums.erase(nums.begin());\n        max_heapify(nums, 0);\n        nums.insert(nums.begin(), root);\n        return true;\n    }\n\n    void max_heapify(std::vector<int>& nums, int i) {\n        int largest = i;\n        int left = 2 * i + 1;\n        int right = 2 * i + 2;\n\n        if (left < nums.size() && nums[left] > nums[largest]) {\n            largest = left;\n        }\n\n        if (right < nums.size() && nums[right] > nums[largest]) {\n            largest = right;\n        }\n\n        if (largest != i) {\n            // Swap the elements with a temporary variable\n            int temp = nums[i];\n            nums[i] = nums[largest];\n            nums[largest] = temp;\n            max_heapify(nums, largest);\n        }\n    }\n\n    int get_parent(int i) {\n        return (i - 1) / 2;\n    }\n\n    int get_left_child(int i) {\n        return 2 * i + 1;\n    }\n\n    int get_right_child(int i) {\n        return 2 * i + 2;\n    }\n\n    void print_heap(const std::vector<int>& nums) {\n        for (const auto& num : nums) {\n            std::cout << num << ' '; // BUG\n        }\n        std::cout << std::endl;\n    }\n};\n\nint main() {\n    Solution solution;\n    std::vector<int> nums = {1, 5, 4, 3, 2};\n    std::cout << boolalpha << solution.recover_max_heap(nums);\n    solution.print_heap(nums);\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5\n1 5 4 3 2\n",
+      "output": "true\n5 4 3 2 5\n",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_hidden_generated",
+      "input": "5\n1 5 4 3 2\n",
+      "output": "true\n5 4 3 2 5\n",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

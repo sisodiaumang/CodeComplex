@@ -1,0 +1,158 @@
+{
+  "_id": "5b6f77647655b8aab8685911",
+  "title": "Detecting Cycles in an Undirected Graph: Fix the Low Link Values",
+  "slug": "detecting-cycles-in-an-undirected-graph-fix-the-low-link-values-bugfix-medium-graphs-1",
+  "difficulty": "Medium",
+  "category": "DSA",
+  "subCategory": "DFS",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "graph"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given an undirected graph represented as an adjacency list, write a function to detect whether it contains a cycle. The function should return 0 if there is no cycle and 1 if there is a cycle. You can use the Tarjan's algorithm to solve this problem.\n\nThe graph is represented as a dictionary where each key is a node and its corresponding value is a list of its neighbors.\n\nThe function should be able to handle graphs with up to 10,000 nodes.",
+    "inputFormat": "An undirected graph represented as a dictionary where each key is a node and its corresponding value is a list of its neighbors.",
+    "outputFormat": "0 if there is no cycle, 1 if there is a cycle.",
+    "notes": "You can use the Tarjan's algorithm to solve this problem. The graph may contain multiple connected components.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{0: [1, 2], 1: [0, 2], 2: [0, 1], 3: [], 4: [5, 6], 5: [4], 6: [4]}",
+        "output": "0",
+        "explanation": "There is no cycle in this graph."
+      },
+      {
+        "input": "{0: [1, 2], 1: [0, 3], 2: [0], 3: [1], 4: [5, 6], 5: [4], 6: [4]}",
+        "output": "1",
+        "explanation": "There is a cycle in this graph."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(V + E)",
+    "spaceComplexity": "O(V + E)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    int dfs(int node, int parent, vector<vector<int>>& graph, vector<int>& low, vector<int>& disc)\n    {\n        // TODO: implement\n    }\n};\n",
+    "java": "public class Solution {\npublic:\n    int dfs(int node, int parent, List<List<Integer>> graph, int[] low, int[] disc)\n    {\n        // TODO: implement\n    }\n};\n",
+    "python": "class Solution:\n    def dfs(self, node, parent, graph, low, disc):\n        # TODO: implement\n        pass\n",
+    "javascript": "function dfs(node, parent, graph, low, disc)\n{\n    // TODO: implement\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    int dfs(int node, int parent, vector<vector<int>>& graph, vector<int>& low, vector<int>& disc, int time)\n    {\n        if (graph[node].size() == 0) return low[node] = disc[node] = time++;\n        low[node] = time++;\n        for (int v : graph[node])\n            if (v == parent) continue;\n            int temp = dfs(v, node, graph, low, disc, time);\n            if (temp > low[node]) return 1;\n            low[node] = min(low[node], disc[v]);\n        return 0;\n    }\n    int isCyclicUtil(vector<vector<int>>& graph, int V)\n    {\n        vector<int> low(V), disc(V);\n        return dfs(0, -1, graph, low, disc, 0);\n    }\n};\n",
+    "java": "public class Solution {\npublic:\n    int dfs(int node, int parent, List<List<Integer>> graph, int[] low, int[] disc, int time)\n    {\n        if (graph.get(node).size() == 0) return low[node] = disc[node] = time++;\n        low[node] = time++;\n        for (int v : graph.get(node))\n            if (v == parent) continue;\n            int temp = dfs(v, node, graph, low, disc, time);\n            if (temp > low[node]) return 1;\n            low[node] = Math.min(low[node], disc[v]);\n        return 0;\n    }\n    int isCyclicUtil(List<List<Integer>> graph, int V)\n    {\n        int[] low = new int[V];\n        int[] disc = new int[V];\n        return dfs(0, -1, graph, low, disc, 0);\n    }\n};\n",
+    "python": "class Solution:\n    def dfs(self, node, parent, graph, low, disc, time):\n        if not graph[node]: return low[node] = disc[node] = time += 1\n        low[node] = time += 1\n        for v in graph[node]:\n            if v == parent: continue\n            temp = self.dfs(v, node, graph, low, disc, time)\n            if temp > low[node]: return 1\n            low[node] = min(low[node], disc[v])\n        return 0\n    def isCyclicUtil(self, graph, V):\n        low = [0]*V\n        disc = [0]*V\n        return self.dfs(0, -1, graph, low, disc, 0)\n",
+    "javascript": "function dfs(node, parent, graph, low, disc, time)\n{\n    if (!graph[node].length) return low[node] = disc[node] = time++;\n    low[node] = time++;\n    for (let v of graph[node])\n        if (v == parent) continue;\n        let temp = dfs(v, node, graph, low, disc, time);\n        if (temp > low[node]) return 1;\n        low[node] = Math.min(low[node], disc[v]);\n    return 0;\n}\nfunction isCyclicUtil(graph, V)\n{\n    let low = new Array(V).fill(0);\n    let disc = new Array(V).fill(0);\n    return dfs(0, -1, graph, low, disc, 0);\n}"
+  },
+  "functionSignature": {
+    "cpp": "int isCyclicUtil(vector<vector<int>>& graph, int V);",
+    "java": "int isCyclicUtil(List<List<Integer>> graph, int V);",
+    "python": "def isCyclicUtil(self, graph, V):",
+    "javascript": "function isCyclicUtil(graph, V);"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def isCyclicUtil(self, graph, V):\n        low = [0]*V\n        disc = [0]*V\n        def dfs(node, parent):\n            if not graph[node]: return low[node] = disc[node] = node\n            low[node] = node\n            for v in graph[node]:\n                if v == parent: continue\n                temp = dfs(v, node)\n                if temp > low[node]:\n                    return 1\n                low[node] = min(low[node], disc[v])\n            return 0\n        return dfs(0, -1)\n\n\nimport sys\ninput = sys.stdin.readline\nT = int(input())\nfor _ in range(T):\n    n, m = map(int, input().split())\n    graph = [[] for _ in range(n)]\n    for _ in range(m):\n        u, v = map(int, input().split())\n        graph[u-1].append(v-1)\n        graph[v-1].append(u-1)\n    sol = Solution()\n    print(\"YES\" if sol.isCyclicUtil(graph, n) else \"NO\")\n\n",
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\nclass Solution {\npublic:\n    bool isCyclicUtil(vector<vector<int>>& graph, int V)\n    {\n        vector<int> low(V), disc(V);\n        function<bool(int, int)> dfs = [&](int node, int parent) {\n            if (graph[node].size() == 0) return low[node] = disc[node] = node;\n            low[node] = node;\n            for (int v : graph[node])\n                if (v == parent) continue;\n                if (dfs(v, node)) return true;\n                low[node] = min(low[node], disc[v]);\n            return false;\n        };\n        return dfs(0, -1);\n    }\n};\n\nint main() {\n    ios_base::sync_with_stdio(false);\ncin.tie(NULL);\ncout.tie(NULL);\n\n    int T;\n    cin >> T;\n    while (T--) {\n        int n, m;\n        cin >> n >> m;\n        vector<vector<int>> graph(n);\n        for (int i = 0; i < m; i++) {\n            int a, b;\n            cin >> a >> b;\n            a--; b--;\n            graph[a].push_back(b);\n            graph[b].push_back(a);\n        }\n\n        Solution sol;\n        if (sol.isCyclicUtil(graph, n))\n            cout << \"YES\";\n        else\n            cout << \"NO\";\n        cout << endl;\n    }\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5 6\n1 2\n2 3\n4 5\n3 4\n1 4 4 1",
+      "output": "YES",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "3 3\n1 2\n2 3 3 1",
+      "output": "NO",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

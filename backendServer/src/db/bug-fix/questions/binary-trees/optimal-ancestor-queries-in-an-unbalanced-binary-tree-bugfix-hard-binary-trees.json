@@ -1,0 +1,158 @@
+{
+  "_id": "ebb6a0904c86ce6f90f4fd55",
+  "title": "Optimal Ancestor Queries in an Unbalanced Binary Tree",
+  "slug": "optimal-ancestor-queries-in-an-unbalanced-binary-tree-bugfix-hard-binary-trees",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "DFS",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 75,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "tree"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Solve the problem and fix the bugs.",
+    "inputFormat": "Input will consist of n, the size of the input array. This will be followed by n space-separated integers representing the pre-order traversal of a binary tree.",
+    "outputFormat": "For each query, output the minimum depth of the common ancestor of i and j on a new line.",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "5\n1 2 3 4 5",
+        "output": "2\n2\n1\n1",
+        "explanation": "For the first query, the common ancestor of 0 and 1 is node 2. The minimum depth of node 2 is 2. For the second query, the common ancestor of 0 and 3 is node 2. The minimum depth of node 2 is 2. For the third query, the common ancestor of 2 and 4 is node 4. The minimum depth of node 4 is 1. For the fourth query, the common ancestor of 3 and 4 is node 4. The minimum depth of node 4 is 1."
+      },
+      {
+        "input": "6\n1 2 3 4 5 6",
+        "output": "2\n2\n1\n1\n2",
+        "explanation": "For the first query, the common ancestor of 0 and 1 is node 2. The minimum depth of node 2 is 2. For the second query, the common ancestor of 1 and 4 is node 2. The minimum depth of node 2 is 2. For the third query, the common ancestor of 2 and 5 is node 5. The minimum depth of node 5 is 1. For the fourth query, the common ancestor of 3 and 5 is node 5. The minimum depth of node 5 is 1. For the fifth query, the common ancestor of 2 and 6 is node 3. The minimum depth of node 3 is 2."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "You can solve this problem using a combination of DFS and Segment Trees."
+    }
+  ],
+  "editorial": {
+    "title": "Solution Overview",
+    "intuition": "Use a Segment Tree to store the minimum depth of each node. When performing a DFS traversal, update the Segment Tree at each node.",
+    "bruteForce": "brute Force details.",
+    "betterSolution": "",
+    "optimalSolution": "Use a Segment Tree to store the minimum depth of each node. When performing a DFS traversal, update the Segment Tree at each node. Finally, use the Segment Tree to query the minimum depth of the common ancestor of each pair of nodes.",
+    "proofOfCorrectness": "proof Of Correctness details.",
+    "dryRun": "Let's say we have a binary tree with nodes at positions [0, 1, 2, 3, 4]. We can represent the tree as a 0-indexed array, where each element is a node's position. We can create a Segment Tree of size 5, with each node storing the minimum depth of its corresponding leaf node. During the DFS traversal, we update the Segment Tree at each node.",
+    "commonMistakes": [
+      "Not updating the Segment Tree correctly",
+      "Using a Segment Tree of the wrong size"
+    ],
+    "timeComplexity": "O(n log n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "class Solution { public:\n  int solve(vector<int>& preorder);\n};",
+    "java": "public class Solution {\n  public int solve(int[] preorder);\n}",
+    "python": "class Solution:\n  def solve(self, preorder: list[int]) -> int:\n    pass",
+    "javascript": "function solve(preorder) {\n  // Your code here\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\n public:\n  int solve(vector<int>& preorder) {\n    unordered_map<int, int> segmentTree;\n    int index = 0;\n\n    dfs(preorder, 0, preorder.size() - 1, segmentTree, index);\n\n    return segmentTree[0];\n  }\n\n  void dfs(vector<int>& preorder, int left, int right, \n          unordered_map<int, int>& segmentTree, int& index) {\n    if (left > right) return;\n\n    int mid = (left + right) / 2;\n\n    segmentTree[index] = mid - left;\n\n    dfs(preorder, left, mid - 1, segmentTree, index * 2);\n    dfs(preorder, mid + 1, right, segmentTree, index * 2 + 1);\n  }\n}",
+    "java": "public class Solution {\n  public int solve(int[] preorder) {\n    Map<Integer, Integer> segmentTree = new HashMap<>();\n    int index = 0;\n\n    dfs(preorder, 0, preorder.length - 1, segmentTree, index);\n\n    return segmentTree.get(0);\n  }\n\n  void dfs(int[] preorder, int left, int right, \n          Map<Integer, Integer> segmentTree, int index) {\n    if (left > right) return;\n\n    int mid = (left + right) / 2;\n\n    segmentTree.put(index, mid - left);\n\n    dfs(preorder, left, mid - 1, segmentTree, index * 2);\n    dfs(preorder, mid + 1, right, segmentTree, index * 2 + 1);\n  }\n}",
+    "python": "class Solution:\n  def solve(self, preorder: list[int]) -> int:\n    segmentTree = {}\n    index = 0\n\n    def dfs(preorder, left, right, segmentTree, index):\n      if left > right: return None\n\n      mid = (left + right) // 2\n\n      segmentTree[index] = mid - left\n\n      dfs(preorder, left, mid - 1, segmentTree, index * 2)\n      dfs(preorder, mid + 1, right, segmentTree, index * 2 + 1)\n\n    dfs(preorder, 0, len(preorder) - 1, segmentTree, index)\n\n    return segmentTree[0]",
+    "javascript": "function solve(preorder) {\n  let segmentTree = {};\n  let index = 0;\n\n  function dfs(preorder, left, right, segmentTree, index) {\n    if (left > right) return;\n\n    let mid = Math.floor((left + right) / 2);\n\n    segmentTree[index] = mid - left;\n\n    dfs(preorder, left, mid - 1, segmentTree, index * 2);\n    dfs(preorder, mid + 1, right, segmentTree, index * 2 + 1);\n  }\n\n  dfs(preorder, 0, preorder.length - 1, segmentTree, index);\n\n  return segmentTree[0];\n}"
+  },
+  "functionSignature": {
+    "cpp": "int solve(vector<int>& preorder);",
+    "java": "int solve(int[] preorder);",
+    "python": "int solve(self, preorder: list[int]) -> int:",
+    "javascript": "int solve(preorder);"
+  },
+  "solutions": {
+    "python": "class Solution:\n  def solve(self, preorder: list[int]) -> int:\n    segmentTree = {}\n\n    def createSegmentTree(preorder, left, right):\n      if left > right: return None\n\n      index = len(segmentTree)\n\n      if left == right:\n        segmentTree[index] = preorder[left]\n        return index\n\n      mid = (left + right) // 2\n\n      leftChild = createSegmentTree(preorder, left, mid)\n      rightChild = createSegmentTree(preorder, mid + 1, right)\n\n      segmentTree[index] = preorder[left]\n\n      return index\n\n    def updateSegmentTree(segmentTree, index, value):\n      if index == 0:\n        segmentTree[index] = value\n        return\n\n      if (index * 2) == 0:\n        updateSegmentTree(segmentTree, index * 2, value)\n      else:\n        updateSegmentTree(segmentTree, index * 2, value)\n        updateSegmentTree(segmentTree, index * 2 + 1, value)\n\n    def querySegmentTree(segmentTree, left, right, index, low, high):\n      if (left > high) or (right < low):\n        return 0\n\n      if (left >= low) and (right <= high):\n        return segmentTree[index]\n\n      mid = (low + high) // 2\n\n      leftResult = querySegmentTree(segmentTree, left, right, index * 2, low, mid)\n      rightResult = querySegmentTree(segmentTree, left, right, index * 2 + 1, mid + 1, high)\n\n      return max(leftResult, rightResult)\n\n    def solve(self, preorder: list[int]) -> int:\n      createSegmentTree(preorder, 0, len(preorder) - 1)\n\n      root = preorder[0]\n\n      for i in range(len(preorder)):\n        updateSegmentTree(segmentTree, i, preorder[i])\n\n      return querySegmentTree(segmentTree, 0, len(preorder) - 1, 0, 0, len(preorder) - 1)\n\n\n    return\n",
+    "cpp": "class Solution {\n public:\n  int solve(vector<int>& preorder) {\n    unordered_map<int, int> segmentTree;\n\n    int root = preorder[0];\n\n    for (int i = 0; i < preorder.size(); i++) {\n      segmentTree[i] = preorder[i];\n    }\n\n    int index = 0;\n\n    function<void(int, int, int)> dfs = [&] (int left, int right, int index) {\n      if (left > right) return;\n\n      int mid = (left + right) / 2;\n\n      dfs(left, mid - 1, index * 2);\n      dfs(mid + 1, right, index * 2 + 1);\n    };\n\n    dfs(0, preorder.size() - 1, 0);\n\n    return root;\n  }\n };",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5\\n1 2 3 4 5",
+      "output": "2\\n2\\n1\\n1",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "6\\n1 2 3 4 5 6",
+      "output": "2\\n2\\n1\\n1\\n2",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

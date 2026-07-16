@@ -1,0 +1,153 @@
+{
+  "_id": "6d4d31fe2c30eb9f671a4930",
+  "title": "Easy Sudoku Backtracking Bug Fix: Unnecessary Backtrack",
+  "slug": "easy-sudoku-backtracking-bug-fix-unnecessary-backtrack-bugfix-easy-recursion-1",
+  "difficulty": "Easy",
+  "category": "DSA",
+  "subCategory": "BACKTRACKING",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 10,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "backtracking"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given a Sudoku grid, fill in the missing numbers so that each row, column, and box (3x3) contains the numbers 1-9 without repeating any number.",
+    "inputFormat": "A 9x9 Sudoku grid represented as a 2D array of integers, where 0 indicates an empty cell.",
+    "outputFormat": "The modified Sudoku grid with all empty cells filled in.",
+    "notes": "The grid is guaranteed to be solvable.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "board",
+        "type": "2D array of integers",
+        "min": 1,
+        "max": 9,
+        "description": "Sudoku grid, where 0 indicates an empty cell"
+      }
+    ],
+    "examples": [
+      {
+        "input": "[[5,3,0,0,7,0,0,0,0],\n[6,0,0,1,9,5,0,0,0],\n[0,9,8,0,0,0,0,6,0],\n[8,0,0,0,6,0,0,0,3],\n[4,0,0,8,0,3,0,0,1],\n[7,0,0,0,2,0,0,0,6],\n[0,6,0,0,0,0,2,8,0],\n[0,0,0,4,1,9,0,0,5],\n[0,0,0,0,8,0,0,7,9]]",
+        "output": "[[5,3,4,6,7,8,9,1,2],\n[6,7,2,1,9,5,3,4,8],\n[1,9,8,3,4,2,5,6,7],\n[8,5,9,7,6,1,4,2,3],\n[4,2,6,8,5,3,7,9,1],\n[7,1,3,9,2,4,8,5,6],\n[9,6,1,5,3,7,2,8,4],\n[2,8,7,4,1,9,6,3,5],\n[3,4,5,2,8,6,1,7,9]]",
+        "explanation": "The modified Sudoku grid with all empty cells filled in."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "The bug in the code is caused by an unnecessary backtrack call when a cell is already filled in."
+    }
+  ],
+  "editorial": {
+    "title": "Easy Sudoku Backtracking Bug Fix",
+    "intuition": "The goal of this problem is to fix a bug in the backtracking algorithm that is used to solve the Sudoku puzzle.",
+    "bruteForce": "The brute force approach involves trying all possible numbers in each cell until the puzzle is solved.",
+    "betterSolution": "",
+    "optimalSolution": "The optimal solution involves using a backtracking algorithm that only explores valid possibilities.",
+    "proofOfCorrectness": "proof Of Correctness details.",
+    "dryRun": "dry Run details.",
+    "commonMistakes": [
+      "unnecessary backtrack call",
+      "incorrect handling of filled cells"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    void dfs(int i, int j, vector<vector<int>>& board, vector<bool>& visited) {\n        // TODO: implement\n        if (i < 0 || j < 0 || i >= 9 || j >= 9 || visited[i][j]) return;\n        if (board[i][j] != 0) return;\n\n        for (int num = 1; num <= 9; num++) {\n            if (isValid(num, i, j, board)) {\n                board[i][j] = num;\n                visited[i][j] = true;\n                dfs(i + 1, j, board, visited);\n                if (i == 8 && j == 8) return;\n                // UNNECESSARY BACKTRACK CALL\n                board[i][j] = 0;\n                visited[i][j] = false;\n            }\n        }\n    }\n};",
+    "java": "class Solution {\n    public boolean isValid(int[] nums) {\n        // TODO: implement\n        return false;\n    }\n}",
+    "python": "class Solution:\n    def isValid(self, nums: list[int]) -> bool:\n        # TODO: implement\n        pass",
+    "javascript": "var isValid = function(nums) {\n    // TODO: implement\n    return false;\n};"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    vector<vector<int>> solve(vector<vector<int>>& board) {\n        for (int i = 0; i < 9; i++) {\n            for (int j = 0; j < 9; j++) {\n                dfs(i, j, board, visited);\n            }\n        }\n        return board;\n    }\nprivate:\n    void dfs(int i, int j, vector<vector<int>>& board, vector<bool>& visited) {\n        // TODO: implement\n        if (i < 0 || j < 0 || i >= 9 || j >= 9 || visited[i][j]) return;\n        if (board[i][j] != 0) return;\n\n        for (int num = 1; num <= 9; num++) {\n            if (isValid(num, i, j, board)) {\n                board[i][j] = num;\n                visited[i][j] = true;\n                dfs(i + 1, j, board, visited);\n                if (i == 8 && j == 8) return;\n                // UNNECESSARY BACKTRACK CALL\n                board[i][j] = 0;\n                visited[i][j] = false;\n            }\n        }\n    }\n};\n",
+    "java": "public class Solution {\npublic int[][] solve(int[][] board) {\n    for (int i = 0; i < 9; i++) {\n        for (int j = 0; j < 9; j++) {\n            dfs(i, j, board, visited);\n        }\n    }\n    return board;\n}\nprivate void dfs(int i, int j, int[][] board, boolean[][] visited) {\n    // TODO: implement\n    if (i < 0 || j < 0 || i >= 9 || j >= 9 || visited[i][j]) return;\n    if (board[i][j] != 0) return;\n\n    for (int num = 1; num <= 9; num++) {\n        if (isValid(num, i, j, board)) {\n            board[i][j] = num;\n            visited[i][j] = true;\n            dfs(i + 1, j, board, visited);\n            if (i == 8 && j == 8) return;\n            // UNNECESSARY BACKTRACK CALL\n            board[i][j] = 0;\n            visited[i][j] = false;\n        }\n    }\n}\n}",
+    "python": "class Solution:\n    def solve(self, board: List[List[int]]) -> List[List[int]]:\n        for i in range(9):\n            for j in range(9):\n                self.dfs(i, j, board)\n        return board\n\n    def dfs(self, i: int, j: int, board: List[List[int]]) -> None:\n        # TODO: implement\n        if i < 0 or j < 0 or i >= 9 or j >= 9 or self.visited[i][j]:\n            return\n        if board[i][j] != 0:\n            return\n\n        for num in range(1, 10):\n            if self.isValid(num, i, j, board):\n                board[i][j] = num\n                self.visited[i][j] = True\n                self.dfs(i + 1, j, board)\n                if i == 8 and j == 8:\n                    return\n                # UNNECESSARY BACKTRACK CALL\n                board[i][j] = 0\n                self.visited[i][j] = False\n",
+    "javascript": "var Solution = function() {\n    this.solve = function(board) {\n        for (var i = 0; i < 9; i++) {\n            for (var j = 0; j < 9; j++) {\n                this.dfs(i, j, board);\n            }\n        }\n        return board;\n    }\n    this.dfs = function(i, j, board) {\n        // TODO: implement\n        if (i < 0 || j < 0 || i >= 9 || j >= 9 || this.visited[i][j]) return;\n        if (board[i][j] != 0) return;\n\n        for (var num = 1; num <= 9; num++) {\n            if (this.isValid(num, i, j, board)) {\n                board[i][j] = num;\n                this.visited[i][j] = true;\n                this.dfs(i + 1, j, board);\n                if (i == 8 && j == 8) return;\n                // UNNECESSARY BACKTRACK CALL\n                board[i][j] = 0;\n                this.visited[i][j] = false;\n            }\n        }\n    }\n};"
+  },
+  "functionSignature": {
+    "cpp": "bool isValid(int num, int i, int j, vector<vector<int>>& board);",
+    "java": "boolean isValid(int num, int i, int j, int[][] board);",
+    "python": "def isValid(self, num: int, i: int, j: int, board: List[List[int]]) -> bool;",
+    "javascript": "isValid(num, i, j, board);"
+  },
+  "solutions": {
+    "python": "// Python code to solve the problem and print the result\ns = Solution()\ninput_grid = [[5, 3, 0, 0, 7, 0, 0, 0, 0], [6, 0, 0, 1, 9, 5, 0, 0, 0], [0, 9, 8, 0, 0, 0, 0, 6, 0]]\nresult_grid = s.solve(input_grid)\nprint(result_grid)",
+    "cpp": "// C++ code to solve the problem and print the result\n#include <iostream>\n#include <vector>\n#include <algorithm>\n\nint main() {\n    Solution s;\n    std::vector<std::vector<int>> input_grid = {{5, 3, 0, 0, 7, 0, 0, 0, 0}, {6, 0, 0, 1, 9, 5, 0, 0, 0}, {0, 9, 8, 0, 0, 0, 0, 6, 0}};\n    std::vector<std::vector<int>> result_grid = s.solve(input_grid);\n    for (const auto& row : result_grid) {\n        for (const auto& num : row) {\n            std::cout << num << ' ';\n        }\n        std::cout << '\\n';\n    }\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "9\n[5,3,0,0,7,0,0,0,0]\n[6,0,0,1,9,5,0,0,0]\n[0,9,8,0,0,0,0,6,0]\n[8,0,0,0,6,0,0,0,3]\n[4,0,0,8,0,3,0,0,1]\n[7,0,0,0,2,0,0,0,6]\n[0,6,0,0,0,0,2,8,0]\n[0,0,0,4,1,9,0,0,5]\n[0,0,0,0,8,0,0,7,9]\n",
+      "output": "[5,3,4,6,7,8,9,1,2]\n[6,7,2,1,9,5,3,4,8]\n[1,9,8,3,4,2,5,6,7]\n[8,5,9,7,6,1,4,2,3]\n[4,2,6,8,5,3,7,9,1]\n[7,1,3,9,2,4,8,5,6]\n[9,6,1,5,3,7,2,8,4]\n[2,8,7,4,1,9,6,3,5]\n[3,4,5,2,8,6,1,7,9]\n",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_hidden_generated",
+      "input": "9\n[5,3,0,0,7,0,0,0,0]\n[6,0,0,1,9,5,0,0,0]\n[0,9,8,0,0,0,0,6,0]\n[8,0,0,0,6,0,0,0,3]\n[4,0,0,8,0,3,0,0,1]\n[7,0,0,0,2,0,0,0,6]\n[0,6,0,0,0,0,2,8,0]\n[0,0,0,4,1,9,0,0,5]\n[0,0,0,0,8,0,0,7,9]\n",
+      "output": "[5,3,4,6,7,8,9,1,2]\n[6,7,2,1,9,5,3,4,8]\n[1,9,8,3,4,2,5,6,7]\n[8,5,9,7,6,1,4,2,3]\n[4,2,6,8,5,3,7,9,1]\n[7,1,3,9,2,4,8,5,6]\n[9,6,1,5,3,7,2,8,4]\n[2,8,7,4,1,9,6,3,5]\n[3,4,5,2,8,6,1,7,9]\n",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

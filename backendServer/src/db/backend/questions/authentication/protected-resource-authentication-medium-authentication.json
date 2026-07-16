@@ -1,0 +1,143 @@
+{
+  "_id": "d1bdb6ffb0d3b2c056e21e2f",
+  "title": "Protected Resource Authentication",
+  "slug": "protected-resource-authentication-medium-authentication",
+  "difficulty": "Medium",
+  "topics": [
+    "AUTH"
+  ],
+  "statement": "Implement a login API to authenticate users with JSON Web Tokens (JWT) and protect a resource endpoint. The login endpoint should accept username and password, verify the credentials, and return a JWT token if successful. The protected resource endpoint should require this JWT token to be passed in the Authorization header. Use the `jsonwebtoken` library to generate and verify JWT tokens. The login API should also support password reset and email verification features. The password reset feature should accept the new password and send a verification email with a link to reset the password. The email verification feature should send a verification link to the user's email address. The protected resource endpoint should return a 401 Unauthorized response if the JWT token is invalid or missing. Test the API with valid and invalid credentials, JWT tokens, and missing headers.",
+  "constraints": [
+    "Must use `jsonwebtoken` library to generate and verify JWT tokens",
+    "Must use `express.json()` to parse request bodies",
+    "Password reset feature should send a verification email with a link to reset the password",
+    "Email verification feature should send a verification link to the user's email address",
+    "Protected resource endpoint should return 401 Unauthorized response if JWT token is invalid or missing"
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/login",
+      "description": "Login user with username and password, returns JWT token on success"
+    },
+    {
+      "method": "POST",
+      "path": "/api/reset-password",
+      "description": "Reset user password with new password, sends verification email with link to reset password"
+    },
+    {
+      "method": "POST",
+      "path": "/api/verify-email",
+      "description": "Verify user email address, sends verification link to user's email address"
+    },
+    {
+      "method": "GET",
+      "path": "/api/protected-resource",
+      "description": "Return protected resource if JWT token is valid and present in Authorization header"
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\n  \"name\": \"auth-api\",\n  \"version\": \"1.0.0\",\n  \"main\": \"index.js\",\n  \"scripts\": {\n    \"start\": \"node index.js\"\n  },\n  \"dependencies\": {\n    \"express\": \"^4.18.2\",\n    \"jsonwebtoken\": \"^8.5.1\"\n  }\n}",
+    "index.js": "const express = require('express');\nconst jwt = require('jsonwebtoken');\nconst bcrypt = require('bcrypt');\nconst nodemailer = require('nodemailer');\n\nconst app = express();\napp.use(express.json());\nconst PORT = process.env.PORT || 3000;\n\nconst users = [{\n  id: 1,\n  username: 'user1',\n  password: bcrypt.hashSync('password1', 10),\n  email: 'user1@example.com'\n}];\nconst tokens = {};\n\napp.post('/api/login', (req, res) => {\n  // TODO: Login user and return JWT token\n});\n\napp.post('/api/reset-password', (req, res) => {\n  // TODO: Reset user password and send verification email\n});\n\napp.post('/api/verify-email', (req, res) => {\n  // TODO: Verify user email address and send verification link\n});\n\napp.get('/api/protected-resource', (req, res) => {\n  // TODO: Return protected resource if JWT token is valid and present in Authorization header\n});\n\napp.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/api/healthcheck",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "tc1",
+      "method": "POST",
+      "path": "/api/login",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "username": "user1",
+        "password": "password1"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "token": "..."
+      },
+      "isVisible": true
+    },
+    {
+      "id": "tc2",
+      "method": "GET",
+      "path": "/api/protected-resource",
+      "headers": {
+        "Authorization": "Bearer ..."
+      },
+      "expectedStatus": 200,
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "tc3",
+      "method": "POST",
+      "path": "/api/login",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "username": "user1",
+        "password": "wrongpassword"
+      },
+      "expectedStatus": 401,
+      "isVisible": false
+    },
+    {
+      "id": "tc4",
+      "method": "GET",
+      "path": "/api/protected-resource",
+      "headers": {
+        "Authorization": "Bearer invalid-token"
+      },
+      "expectedStatus": 401,
+      "isVisible": false
+    },
+    {
+      "id": "tc5",
+      "method": "GET",
+      "path": "/api/protected-resource",
+      "headers": {},
+      "expectedStatus": 401,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "jwt",
+    "access-token",
+    "refresh-token",
+    "sessions",
+    "cookies",
+    "otp",
+    "email-verification",
+    "password-reset",
+    "login",
+    "signup",
+    "logout",
+    "token-rotation",
+    "mfa",
+    "authentication"
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "_id": "385e0c250954e6e7d48a23d0",
+  "title": "Deep Merge Utility",
+  "slug": "ts-deep-merge",
+  "difficulty": "Medium",
+  "topics": [
+    "TYPESCRIPT"
+  ],
+  "statement": {
+    "markdown": "## TypeScript Deep Merge Utility\n\nCreate a deep merge utility that combines two nested objects while preserving accurate types.\n\n### Requirements:\n1. **Deep Merge Execution**: Recursively walk both objects and merge matching nested objects together, without mutating either input.\n2. **Type Signatures**: Give the function precise TypeScript types so the return type correctly reflects the merged shape (an intersection of both input types).\n3. **Primitive Overrides**: When a key exists in both objects and its value isn't itself an object to merge, the value from `source` should overwrite the value from `target`."
+  },
+  "constraints": [
+    "Must correctly merge nested plain object structures recursively",
+    "Do not mutate source arguments directly"
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "typescript": "export function deepMerge<T, U>(target: T, source: U): T & U {\n  // Implement deep merging behavior typesafe here\n}\n"
+  },
+  "gradingCriteria": [
+    {
+      "id": "merge_utility",
+      "description": "Verify objects are recursively combined and primitive properties overwrite correctly.",
+      "weight": 60
+    },
+    {
+      "id": "typing_safeties",
+      "description": "Verify typescript signatures compile cleanly, predicting nested layouts.",
+      "weight": 40
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "typescript"
+    ],
+    "referenceSolution": "export function deepMerge<T, U>(target: T, source: U): T & U {\n  if (target === null || target === undefined) return source as any;\n  if (source === null || source === undefined) return target as any;\n\n  const isObject = (obj: any) => obj && typeof obj === 'object' && !Array.isArray(obj);\n\n  if (!isObject(target) || !isObject(source)) {\n    return source as any;\n  }\n\n  const result = { ...target } as any;\n\n  Object.keys(source).forEach(key => {\n    const targetVal = result[key];\n    const sourceVal = (source as any)[key];\n\n    if (isObject(targetVal) && isObject(sourceVal)) {\n      result[key] = deepMerge(targetVal, sourceVal);\n    } else {\n      result[key] = sourceVal;\n    }\n  });\n\n  return result;\n}"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

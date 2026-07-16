@@ -1,0 +1,52 @@
+{
+  "_id": "70f17be2f0c22a93fefa9b65",
+  "title": "Accessible Modal Dialog",
+  "slug": "acc-keyboard-modal",
+  "difficulty": "Medium",
+  "topics": [
+    "ACCESSIBILITY"
+  ],
+  "statement": {
+    "markdown": "## Keyboard-Accessible Modal Dialog\n\nImplement an accessible modal dialog managing focus trap mechanics.\n\n### Requirements:\n1. **Focus Trap**: Pressing `Tab` key must cycle focus strictly within modal dialog focusable controls (Cancel, Confirm buttons). Prevent focus escaping to elements behind backdrops.\n2. **Escape key closure**: Pressing `Escape` key closes the dialog.\n3. **State restoring**: Restores keyboard focus back to the triggering element once closed."
+  },
+  "constraints": [
+    "Must trap keyboard focus within modal loop cycles",
+    "Must apply aria-modal='true' and role='dialog' attributes"
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "html": "<div class=\"p-6 text-center text-white font-sans\">\n  <button id=\"open-btn\" class=\"bg-indigo-600 px-4 py-2 rounded font-bold hover:bg-indigo-500 transition-colors\">Open Modal</button>\n  \n  <div id=\"modal-backdrop\" class=\"fixed inset-0 bg-black/60 hidden flex items-center justify-center z-50\">\n    <div id=\"modal-dialog\" role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"modal-title\" class=\"bg-slate-800 p-6 rounded-lg max-w-sm w-full text-left border border-slate-700\">\n      <h2 id=\"modal-title\" class=\"text-xl font-bold mb-4\">Modal Dialog Header</h2>\n      <p class=\"text-slate-400 mb-6\">Manage keyboard focusing trap cycles.</p>\n      <div class=\"flex justify-end gap-3\">\n        <button id=\"cancel-btn\" class=\"px-4 py-2 bg-slate-700 hover:bg-slate-650 rounded font-semibold transition-colors\">Cancel</button>\n        <button id=\"confirm-btn\" class=\"px-4 py-2 bg-indigo-600 hover:bg-indigo-500 rounded font-semibold transition-colors\">Confirm</button>\n      </div>\n    </div>\n  </div>\n</div>",
+    "css": "",
+    "javascript": "const openBtn = document.getElementById('open-btn');\nconst backdrop = document.getElementById('modal-backdrop');\nconst dialog = document.getElementById('modal-dialog');\nconst cancelBtn = document.getElementById('cancel-btn');\nconst confirmBtn = document.getElementById('confirm-btn');\n\n// Implement accessibility focus trap, escape closes, and triggers restoring here\n"
+  },
+  "gradingCriteria": [
+    {
+      "id": "focus_trapping",
+      "description": "Verify focusing cycles loop inside active modal fields.",
+      "weight": 50
+    },
+    {
+      "id": "keyboard_actions",
+      "description": "Verify Escape closes dialogs and restores previous focusing states.",
+      "weight": 50
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "html",
+      "css",
+      "javascript"
+    ],
+    "referenceSolution": "const openBtn = document.getElementById('open-btn');\nconst backdrop = document.getElementById('modal-backdrop');\nconst dialog = document.getElementById('modal-dialog');\nconst cancelBtn = document.getElementById('cancel-btn');\nconst confirmBtn = document.getElementById('confirm-btn');\n\nlet previousActiveElement;\n\nfunction openModal() {\n  previousActiveElement = document.activeElement;\n  backdrop.classList.remove('hidden');\n  cancelBtn.focus();\n  document.addEventListener('keydown', handleKeyDown);\n}\n\nfunction closeModal() {\n  backdrop.classList.add('hidden');\n  document.remove('keydown', handleKeyDown);\n  if (previousActiveElement) {\n    previousActiveElement.focus();\n  }\n}\n\nfunction handleKeyDown(e) {\n  if (e.key === 'Escape') {\n    closeModal();\n    return;\n  }\n  if (e.key === 'Tab') {\n    const focusable = Array.from(dialog.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex=\"-1\"])'));\n    const first = focusable[0];\n    const last = focusable[focusable.length - 1];\n    if (e.shiftKey) {\n      if (document.activeElement === first) {\n        last.focus();\n        e.preventDefault();\n      }\n    } else {\n      if (document.activeElement === last) {\n        first.focus();\n        e.preventDefault();\n      }\n    }\n  }\n}\n\nopenBtn.addEventListener('click', openModal);\ncancelBtn.addEventListener('click', closeModal);\nconfirmBtn.addEventListener('click', closeModal);"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

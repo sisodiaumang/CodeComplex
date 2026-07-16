@@ -1,0 +1,254 @@
+{
+  "_id": "cheapest-flight-within-k-stops",
+  "title": "Cheapest Flight within K Stops",
+  "slug": "cheapest-flight-within-k-stops",
+  "difficulty": "Hard",
+  "category": "GRAPH",
+  "subCategory": "Shortest Path Algorithms",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 500,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "Graphs",
+      "Shortest Path Algorithms"
+    ],
+    "patterns": [
+      "Dijkstra's algorithm",
+      "Breadth-First Search",
+      "Bellman-Ford algorithm"
+    ],
+    "prerequisites": [
+      "Floyd-Warshall algorithm",
+      "Graph Traversal"
+    ],
+    "variants": [],
+    "tags": [
+      "Shortest Path",
+      "Graph Traversal",
+      "Dijkstra's algorithm",
+      "Breadth-First Search"
+    ],
+    "keywords": [
+      "Bellman-Ford algorithm",
+      "Floyd-Warshall algorithm",
+      "Minimum Spanning Tree"
+    ],
+    "interviewFrequency": 4,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "You are given a directed weighted graph representing flights between cities. The graph has `n` cities numbered from `0` to `n-1` and `m` directed flights. Each flight is described by three integers `u v w` meaning there is a flight from city `u` to city `v` that costs `w` units of money.\n\nGiven a source city `src`, a destination city `dst` and an integer `K`, you may take at most `K` stops (i.e., you can use at most `K+1` edges) on your journey. Your task is to find the minimum total cost to travel from `src` to `dst` using at most `K` stops. If there is no such route, output `-1`.\n\nThe answer must be computed efficiently for the given constraints.\n",
+    "inputFormat": "The first line contains two integers `n` and `m` – the number of cities and the number of flights.\nThe second line contains a single integer `m` – the number of flight descriptions that follow.\nEach of the next `m` lines contains three integers `u v w` describing a flight from city `u` to city `v` with cost `w`.\nThe next line contains three integers `src dst K` – the source city, the destination city and the maximum number of stops allowed.\n",
+    "outputFormat": "A single integer – the minimum cost to travel from `src` to `dst` using at most `K` stops, or `-1` if such a trip is impossible.\n",
+    "notes": "A stop is counted each time you land at an intermediate city; the number of edges used must be ≤ K+1. The source and destination cities themselves are not counted as stops.\n",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "int",
+        "min": 1,
+        "max": 1000,
+        "description": "Number of cities"
+      },
+      {
+        "variable": "m",
+        "type": "int",
+        "min": 0,
+        "max": 100000,
+        "description": "Number of flights"
+      },
+      {
+        "variable": "u",
+        "type": "int",
+        "min": 0,
+        "max": "n-1",
+        "description": "Start city of a flight"
+      },
+      {
+        "variable": "v",
+        "type": "int",
+        "min": 0,
+        "max": "n-1",
+        "description": "End city of a flight"
+      },
+      {
+        "variable": "w",
+        "type": "int",
+        "min": 0,
+        "max": 10000,
+        "description": "Cost of a flight"
+      },
+      {
+        "variable": "src",
+        "type": "int",
+        "min": 0,
+        "max": "n-1",
+        "description": "Source city"
+      },
+      {
+        "variable": "dst",
+        "type": "int",
+        "min": 0,
+        "max": "n-1",
+        "description": "Destination city"
+      },
+      {
+        "variable": "K",
+        "type": "int",
+        "min": 0,
+        "max": "n",
+        "description": "Maximum number of stops allowed"
+      }
+    ],
+    "examples": [
+      {
+        "input": "3 3\n3\n0 1 100\n1 2 100\n0 2 500\n0 2 1",
+        "output": "200",
+        "explanation": "The cheapest route from city 0 to city 2 with at most 1 stop is 0→1→2 costing 100+100=200."
+      },
+      {
+        "input": "4 4\n4\n0 1 100\n1 2 100\n2 3 100\n0 3 500\n0 3 0",
+        "output": "500",
+        "explanation": "With K=0 you cannot make any stop, so the direct flight 0→3 costing 500 is the only possible route."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Consider using Dijkstra's algorithm to find the minimum cost to travel from the source to the destination without any stops."
+    },
+    {
+      "order": 2,
+      "text": "However, since we are allowed to take at most K stops, we need to find a way to incorporate this constraint into Dijkstra's algorithm."
+    },
+    {
+      "order": 3,
+      "text": "Think about how you can use a priority queue to efficiently explore different paths and their costs, while also keeping track of the number of stops taken."
+    },
+    {
+      "order": 4,
+      "text": "Consider using a custom comparator for the priority queue to prioritize paths based on their cost and the number of stops taken."
+    },
+    {
+      "order": 5,
+      "text": "You can use Bellman-Ford algorithm as a base to find the shortest path with K stops, since it can handle negative weight edges and can be modified to keep track of the number of stops taken."
+    }
+  ],
+  "editorial": {
+    "title": "Finding the Cheapest Flight with Limited Stops",
+    "intuition": "The problem asks for the minimum‑cost path from a source city to a destination, but we are allowed to use at most K stops (i.e., K + 1 edges). The key observation is that any optimal path with at most K stops can be built by repeatedly relaxing edges, but we only need to perform this relaxation K + 1 times. This mirrors the Bellman–Ford algorithm, which guarantees that after i iterations the shortest paths using at most i edges are known. By stopping early we avoid the O(n m) work of a full Bellman–Ford while still covering all admissible paths.",
+    "bruteForce": "A naïve approach would enumerate every possible sequence of up to K + 1 edges between src and dst, compute its total cost, and keep the minimum. This brute force search explores an exponential number of paths (roughly O(n^K)), which quickly becomes infeasible even for modest n and K. It is correct in that it will eventually find the optimal cost, but its time complexity is astronomically high, making it unusable for the given constraints.",
+    "betterSolution": "The optimal solution is a bounded‑iteration Bellman–Ford. We maintain an array dist of current best known costs from src to every city. For each of the K + 1 iterations we create a copy of dist, then relax every flight (u→v with cost w) by checking if dist[u] + w improves the temporary distance to v. After processing all flights, we replace dist with the updated copy. This guarantees that after i iterations dist contains the cheapest costs using at most i edges. After K + 1 iterations we have considered all paths with at most K stops. The algorithm runs in O(K · m) time and O(n) space, matching the known complexity.",
+    "optimalSolution": "The bounded‑iteration Bellman–Ford is optimal for this problem because it explores exactly the set of admissible paths (those with ≤ K + 1 edges) and never revisits a path that cannot improve the answer. Any algorithm that guarantees the optimal cost must consider all such paths, and the Bellman–Ford relaxation is the most efficient way to do so without enumerating each path individually.",
+    "proofOfCorrectness": "Let dist_i[v] be the value of dist after i iterations. By induction on i, dist_i[v] equals the minimum cost of a path from src to v that uses at most i edges. Base case i = 0: only src has cost 0, others ∞, which is correct for 0‑edge paths. Inductive step: when relaxing edges in iteration i + 1, we consider all paths that end with an edge (u→v). If the best path to u uses at most i edges (by induction hypothesis), then adding edge (u→v) yields a path to v with at most i + 1 edges. We update dist_{i+1}[v] with the minimum over all such extensions, so dist_{i+1}[v] is indeed the cheapest path with ≤ i + 1 edges. After K + 1 iterations, dist_{K+1}[dst] is the cheapest path with ≤ K + 1 edges, i.e., with ≤ K stops. If it remains ∞, no such path exists. Thus the algorithm returns the correct answer.",
+    "dryRun": "Consider n = 4, m = 5, src = 0, dst = 3, K = 1. Flights: (0→1,100), (1→3,200), (0→2,50), (2→3,150), (1→2,10). Initial dist=[0,∞,∞,∞]. Iteration 1: relax all edges → dist=[0,100,50,∞]. Iteration 2 (K+1=2): copy dist, relax again → dist=[0,100,50,200] (via 0→1→3). Result 200 is the cheapest path with at most 1 stop.",
+    "commonMistakes": [
+      "Assuming Dijkstra works with a stop limit; it does not because the cost can decrease with more stops.",
+      "Using a single‑pass relaxation (like standard Bellman–Ford) and stopping after K iterations, forgetting that we need K + 1 passes to allow K stops.",
+      "Modifying the original dist array in place during an iteration, which causes later relaxations in the same pass to use updated values and over‑count stops.",
+      "Treating K as the number of edges instead of stops, leading to an off‑by‑one error.",
+      "Ignoring the case where src equals dst and returning 0 without checking K.",
+      "Using an adjacency list and performing a BFS‑style search that still explores all paths, not exploiting edge relaxation."
+    ],
+    "timeComplexity": "O(K * m) where m is the number of flights",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    int solve(int n, vector<vector<int>>& flights, int src, int dst, int K) {\n        // TODO: implement\n        return 0;\n    }\n};",
+    "java": "import java.util.*;\n\nclass Solution {\n    public int solve(int n, int[][] flights, int src, int dst, int K) {\n        // TODO: implement\n        return 0;\n    }\n}",
+    "python": "class Solution:\n    def solve(self, n: int, flights: list[list[int]], src: int, dst: int, K: int) -> int:\n        # TODO: implement\n        pass",
+    "javascript": "/**\n * @param {number} n\n * @param {number[][]} flights\n * @param {number} src\n * @param {number} dst\n * @param {number} K\n * @return {number}\n */\nvar solve = function(n, flights, src, dst, K) {\n    // TODO: implement\n    return 0;\n};"
+  },
+  "functionSignature": {
+    "cpp": "int solve(int n, vector<vector<int>>& flights, int src, int dst, int K);",
+    "java": "public int solve(int n, int[][] flights, int src, int dst, int K);",
+    "python": "def solve(self, n: int, flights: list[list[int]], src: int, dst: int, K: int) -> int:",
+    "javascript": "var solve = function(n, flights, src, dst, K);"
+  },
+  "solutions": {
+    "python": "import sys\n\nclass Solution:\n    def solve(self, n: int, flights: list[list[int]], src: int, dst: int, K: int) -> int:\n        # Bellman-Ford limited to K+1 edges\n        INF = 10**15\n        dist = [INF] * n\n        dist[src] = 0\n        # Perform K+1 relaxations\n        for i in range(K + 1):\n            tmp = dist.copy()\n            for u, v, w in flights:\n                if dist[u] == INF:\n                    continue\n                if dist[u] + w < tmp[v]:\n                    tmp[v] = dist[u] + w\n            dist = tmp\n        return -1 if dist[dst] == INF else dist[dst]\n\nif __name__ == '__main__':\n    data = sys.stdin.read().split()\n    if not data:\n        sys.exit(0)\n    it = iter(data)\n    n = int(next(it))\n    m = int(next(it))\n    # The next line repeats m according to problem statement, consume it\n    m_check = int(next(it))\n    flights = []\n    for _ in range(m_check):\n        u = int(next(it)); v = int(next(it)); w = int(next(it))\n        flights.append([u, v, w])\n    src = int(next(it)); dst = int(next(it)); K = int(next(it))\n    sol = Solution()\n    ans = sol.solve(n, flights, src, dst, K)\n    print(ans)\n",
+    "cpp": "#include <numeric>\n#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    int solve(int n, vector<vector<int>>& flights, int src, int dst, int K) {\n        const long long INF = 1e15;\n        vector<long long> dist(n, INF);\n        dist[src] = 0;\n        for (int i = 0; i <= K; ++i) {\n            vector<long long> tmp = dist;\n            for (auto &f : flights) {\n                int u = f[0], v = f[1];\n                int w = f[2];\n                if (dist[u] == INF) continue;\n                if (dist[u] + w < tmp[v]) {\n                    tmp[v] = dist[u] + w;\n                }\n            }\n            dist.swap(tmp);\n        }\n        return dist[dst] == INF ? -1 : (int)dist[dst];\n    }\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int n, m;\n    if (!(cin >> n >> m)) return 0;\n    int m_check;\n    cin >> m_check; // as per input format\n    vector<vector<int>> flights;\n    flights.reserve(m_check);\n    for (int i = 0; i < m_check; ++i) {\n        int u, v, w;\n        cin >> u >> v >> w;\n        flights.push_back({u, v, w});\n    }\n    int src, dst, K;\n    cin >> src >> dst >> K;\n    Solution sol;\n    int ans = sol.solve(n, flights, src, dst, K);\n    cout << ans << \"\\n\";\n    return 0;\n}\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.5
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "3 3\n3\n0 1 100\n1 2 100\n0 2 500\n0 2 1",
+      "output": "200",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "4 4\n4\n0 1 100\n1 2 100\n2 3 100\n0 3 500\n0 3 0",
+      "output": "500",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint_3",
+      "input": "2 1\n1\n0 1 10\n0 1 1",
+      "output": "10",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "boundary_4",
+      "input": "1000 0\n0\n0 999 1\n0 999 1",
+      "output": "-1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    },
+    {
+      "id": "duplicate_5",
+      "input": "2 1\n1\n0 1 1\n0 1 1",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "duplicate"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

@@ -1,0 +1,164 @@
+{
+  "_id": "f2a051fba917d01e24a470cd",
+  "title": "Stable Subarray Reversal with Incorrect Shifts",
+  "slug": "stable-subarray-reversal-with-incorrect-shifts-bugfix-hard-arrays-2",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "Two Pointers",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "array"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given an array of integers and two integers left and right indices, return whether the subarray from the left index to the right index is reversed in a stable manner, i.e., the relative order of elements within the subarray is reversed but not the absolute order. However, there might be incorrect shifts in the subarray, meaning some elements are shifted to the right by one position. Now we need to fix these shifts before checking if the subarray is stable.",
+    "inputFormat": "Input will be provided through a file, with each line containing a single integer. The first line contains the number n. The second line contains the left index. The third line contains the right index.",
+    "outputFormat": "Output should be 1 if the subarray is stable after correcting shifts, 0 otherwise.",
+    "notes": "Stability of the subarray means that for any pair of elements i and j, if i < j and a[i] < a[j] after correction, then a[i] > a[j] before correction. Conversely, if a[i] > a[j] after correction, then a[i] < a[j] before correction.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "5\n4 1 2 3 4\n5",
+        "output": "1",
+        "explanation": "The subarray from index 1 to 5 is 2 3 4 1. This is a stable reverse subarray with two shifts."
+      },
+      {
+        "input": "7\n3 1 2 3 4 5 6\n7",
+        "output": "0",
+        "explanation": "The subarray from index 3 to 7 is 3 4 5 6 1 2. This is not a stable reverse subarray because 1 and 2 have switched places."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text: Think about how to detect shifts in the subarray."
+    },
+    {
+      "order": 2,
+      "text": "Second hint text: Check if the subarray is stable."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial Title",
+    "intuition": "Explanation of the correct approach: To solve this problem, we need to first detect the shifts in the subarray, then reverse the subarray while maintaining its stability, finally compare the reversed subarray with the original subarray. However, the original subarray might have shifts. So we must correct the shifts before comparison.",
+    "bruteForce": "Brute force approach summary: We could find all shifts and reverse the subarray in O(n^2), then compare the subarray with the original one.",
+    "betterSolution": "Better solution: We can use two pointers to detect shifts in O(n), then use a stack or deque to reverse the subarray in O(n). Finally, compare the subarray with the original one in O(n).",
+    "optimalSolution": "Optimal solution details: Use two pointers to detect shifts in O(n), then use a stack or deque to reverse the subarray in O(n), and finally compare the subarray with the original one in O(n).",
+    "proofOfCorrectness": "Correctness proof: We must show that our algorithm can correctly detect shifts, reverse the subarray while maintaining its stability, and finally compare the subarray with the original one.",
+    "dryRun": "Step-by-step example run: First detect shifts in the subarray, then reverse it using a stack or deque, finally compare the subarray with the original one.",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\nbool solve(vector<int>& nums)\n{\n\t// TODO: implement\n}",
+    "java": "public class Solution {\npublic boolean solve(int[] nums)\n{\n\t// TODO: implement\n}",
+    "python": "class Solution:\ndef solve(self, nums: list[int]) -> bool:\n\t# TODO: implement\n",
+    "javascript": "var solve = function(nums)\n{\n\t// TODO: implement\n}",
+    "php": "class Solution {\npublic function solve($nums)\n{\n\t// TODO: implement\n}",
+    "swift": "class Solution {\nfunc solve(_ nums: [Int]) -> Bool\n{\n\t// TODO: implement\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\nbool solve(vector<int>& nums)\n{\n\tint left = nums[0], right = nums[1];\n\tvector<int> subarray;\n\tfor (int i = left; i <= right; i++)\n\t\tsubarray.push_back(nums[i]);\n\tfor (int i = 0; i < subarray.size(); i++)\n\t\tif (i + 1 < subarray.size() && subarray[i] > subarray[i + 1])\n\t\t\tsubarray[i + 1] = subarray[i];\n\treturn isStable(subarray);\n}\nbool isStable(vector<int>& subarray)\n{\n\tfor (int i = 0; i < subarray.size(); i++)\n\t\tif (i + 1 < subarray.size() && subarray[i] > subarray[i + 1])\n\t\t\treturn false;\n\treturn true;\n}",
+    "java": "public class Solution {\npublic boolean solve(int[] nums)\n{\n\tint left = nums[0], right = nums[1];\n\tint[] subarray = new int[right - left + 1];\n\tfor (int i = left; i <= right; i++)\n\ttsubarray[i - left] = nums[i];\n\tfor (int i = 0; i < subarray.length; i++)\n\ttif (i + 1 < subarray.length && subarray[i] > subarray[i + 1])\n\ttsubarray[i + 1] = subarray[i];\n\treturn isStable(subarray);\n}\npublic boolean isStable(int[] subarray)\n{\n\tfor (int i = 0; i < subarray.length; i++)\n\ttif (i + 1 < subarray.length && subarray[i] > subarray[i + 1])\n\ttsubarray[i + 1] = subarray[i];\n\treturn true;\n}",
+    "python": "class Solution:\ndef solve(self, nums: list[int]) -> bool:\n\tleft = nums[0]\ntright = nums[1]\n\tsubarray = nums[left:right + 1]\n\tfor i in range(len(subarray)):\n\ttif i + 1 < len(subarray) and subarray[i] > subarray[i + 1]:\n\ttsubarray[i + 1] = subarray[i]\n\treturn self.isStable(subarray)\n\ndef isStable(self, subarray: list[int]) -> bool:\n\tfor i in range(len(subarray)):\n\ttif i + 1 < len(subarray) and subarray[i] < subarray[i + 1]:\n\ttsubarray[i + 1] = subarray[i]\n\treturn True",
+    "javascript": "var solve = function(nums)\n{\n\tleft = nums[0]\ntright = nums[1]\n\tsubarray = nums.slice(left, right + 1)\n\tfor (var i = 0; i < subarray.length; i++)\n\ttif (i + 1 < subarray.length && subarray[i] > subarray[i + 1])\n\ttsubarray[i + 1] = subarray[i]\n\treturn self.isStable(subarray)\n}\nvar isStable = function(subarray)\n{\n\tfor (var i = 0; i < subarray.length; i++)\n\ttif (i + 1 < subarray.length && subarray[i] < subarray[i + 1])\n\ttsubarray[i + 1] = subarray[i]\n\treturn True"
+  },
+  "functionSignature": {
+    "cpp": "bool solve(vector<int>& nums);",
+    "java": "public boolean solve(int[] nums);",
+    "python": "def solve(self, nums: list[int]) -> bool:",
+    "javascript": "var solve = function(nums);"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def solve(self, nums: list[int]) -> bool:\n        left = nums[0]\n        right = nums[1]\n        subarray = [x for x in nums[left:right + 1] if x is not None]\n        for i in range(len(subarray)):\n            if i + 1 < len(subarray) and subarray[i] > subarray[i + 1]:\n                subarray[i + 1] = subarray[i]\n        return self.isStable(subarray)\n\n    def isStable(self, subarray: list[int]) -> bool:\n        for i in range(len(subarray)):\n            if i + 1 < len(subarray) and subarray[i] < subarray[i + 1]:\n                subarray[i + 1] = subarray[i]\n        return True\n\n    def detect_shifts(self, subarray: list[int]) -> list[int]:\n        shifts = list(range(len(subarray)))\n        for i in range(1, len(subarray)):\n            if subarray[i] < subarray[i - 1]:\n                shifts[i] = shifts[i - 1] + 1\n        return shifts\n\n    def reverse_subarray(self, subarray: list[int]) -> list[int]:\n        right_shifts = self.detect_shifts(subarray)\n        reversed_subarray = [None] * len(subarray)\n        for i in range(len(subarray)):\n            if right_shifts[i] == 0:\n                reversed_subarray[i] = subarray[i]\n        for i in range(len(subarray) - 1, -1, -1):\n            if right_shifts[i] > 0:\n                reversed_subarray[i - right_shifts[i]] = subarray[i]\n        return reversed_subarray\n\n    def compare_subarray(self, subarray: list[int], original_subarray: list[int]) -> bool:\n        for i in range(len(subarray)):\n            if subarray[i] != original_subarray[i]:\n                return False\n        return True\n\n    def solve(self, nums: list[int]) -> int:\n        left = nums[0]\n        right = nums[1]\n        subarray = nums[left:right + 1]\n        reversed_subarray = self.reverse_subarray(subarray)\n        return 1 if self.compare_subarray(subarray, reversed_subarray) else 0\n\n    def detect_shifts(self, nums: list[int]) -> int:\n        left = nums[0]\n        right = nums[1]\n        subarray = nums[left:right + 1]\n        shifts = self.detect_shifts(subarray)\n        for i in range(1, len(subarray)):\n            if subarray[i] > subarray[i - 1]:\n                shifts[i] = shifts[i - 1] + 1\n        return shifts[-1]",
+    "cpp": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nclass Solution {\npublic:\n    bool solve(vector<int>& nums) {\n        int left = nums[0], right = nums[1];\n        vector<int> subarray;\n        for (int i = left; i <= right; i++)\n            subarray.push_back(nums[i]);\n        for (int i = 0; i < subarray.size(); i++)\n            if (i + 1 < subarray.size() && subarray[i] > subarray[i + 1])\n                subarray[i + 1] = subarray[i];\n        return isStable(subarray);\n    }\n\n    bool isStable(vector<int>& subarray) {\n        for (int i = 0; i < subarray.size(); i++)\n            if (i + 1 < subarray.size() && subarray[i] > subarray[i + 1])\n                return false;\n        return true;\n    }\n\n    int detect_shifts(vector<int>& nums) {\n        int left = nums[0], right = nums[1];\n        vector<int> subarray;\n        for (int i = left; i <= right; i++)\n            subarray.push_back(nums[i]);\n        int shifts = 0;\n        for (int i = 1; i < subarray.size(); i++)\n            if (subarray[i] < subarray[i - 1])\n                shifts += 1;\n        return shifts;\n    }\n\n    vector<int> reverse_subarray(vector<int>& subarray) {\n        int shifts = detect_shifts(subarray);\n        vector<int> reversed_subarray;\n        for (int i = 0; i < subarray.size(); i++)\n            if (shifts == 0)\n                reversed_subarray.push_back(subarray[i]);\n        for (int i = subarray.size() - 1; i >= 0; i--) {\n            if (shifts > 0) {\n                reversed_subarray.push_back(subarray[i]);\n                shifts -= 1;\n            }\n        }\n        return reversed_subarray;\n    }\n\n    bool compare_subarray(vector<int>& subarray, vector<int>& original_subarray) {\n        for (int i = 0; i < subarray.size(); i++) {\n            if (subarray[i] != original_subarray[i])\n                return false;\n        }\n        return true;\n    }\n\n    int solve(vector<int>& nums) {\n        int left = nums[0], right = nums[1];\n        vector<int> subarray = nums[left:right + 1];\n        vector<int> reversed_subarray = reverse_subarray(subarray);\n        return compare_subarray(subarray, reversed_subarray) ? 1 : 0;\n    }\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5\n4 1 2 3 4\n5",
+      "output": "1",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "7\n3 1 2 3 4 5 6\n7",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

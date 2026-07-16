@@ -1,0 +1,252 @@
+{
+  "_id": "61d999a2a378bf5f5746f0e1",
+  "title": "Bookstore Inventory Management using Mongoose",
+  "slug": "bookstore-inventory-management-using-mongoose-medium-orm",
+  "difficulty": "Medium",
+  "topics": [
+    "ORM"
+  ],
+  "statement": "Create a RESTful API for managing book inventory using MongoDB as the database. Implement CRUD operations for books, authors, and genres. Ensure data consistency and use Mongoose to handle database interactions. Write your API endpoints in Node.js using the Express framework. Implement database seeding and API test cases to verify correctness.",
+  "constraints": [
+    "Must use Mongoose as the ORM library.",
+    "Must use MongoDB as the database.",
+    "Must handle cases where a book's author or genre does not exist in the database."
+  ],
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/api/books",
+      "description": "Retrieve a list of all books in the database. Query parameters: `page` (integer) and `limit` (integer)."
+    },
+    {
+      "method": "GET",
+      "path": "/api/books/:id",
+      "description": "Retrieve a book by its ID. Returns 404 if the book does not exist."
+    },
+    {
+      "method": "POST",
+      "path": "/api/books",
+      "description": "Create a new book. Request body: `title` (string), `authorId` (integer), `genreId` (integer), and `price` (number). Returns the newly created book."
+    },
+    {
+      "method": "PUT",
+      "path": "/api/books/:id",
+      "description": "Update a book by its ID. Request body: `title` (string), `authorId` (integer), `genreId` (integer), and `price` (number). Returns the updated book."
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/books/:id",
+      "description": "Delete a book by its ID. Returns a success message if the book was deleted."
+    },
+    {
+      "method": "GET",
+      "path": "/api/authors",
+      "description": "Retrieve a list of all authors in the database."
+    },
+    {
+      "method": "GET",
+      "path": "/api/genres",
+      "description": "Retrieve a list of all genres in the database."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\"name\":\"bookstore-api\",\"version\":\"1.0.0\",\"main\":\"index.js\",\"scripts\":{\"start\":\"node index.js\"},\"dependencies\":{\"express\":\"^4.18.2\",\"mongoose\":\"^6.6.4\"}}",
+    "index.js": "const express = require('express');\nconst mongoose = require('mongoose');\nconst app = express();\napp.use(express.json());\n\nmongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });\n\nconst bookSchema = new mongoose.Schema({ title: String, authorId: mongoose.Schema.Types.ObjectId, genreId: mongoose.Schema.Types.ObjectId, price: Number });\nconst Book = mongoose.model('Book', bookSchema);\n\n// TODO: Implement API endpoints\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "GET",
+      "path": "/api/books",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": null,
+      "expectedStatus": 200,
+      "expectedBody": [
+        {
+          "_id": {
+            "$oid": "..."
+          },
+          "title": "Book 1",
+          "authorId": {
+            "$oid": "..."
+          },
+          "genreId": {
+            "$oid": "..."
+          },
+          "price": 19.99
+        },
+        {
+          "_id": {
+            "$oid": "..."
+          },
+          "title": "Book 2",
+          "authorId": {
+            "$oid": "..."
+          },
+          "genreId": {
+            "$oid": "..."
+          },
+          "price": 9.99
+        }
+      ],
+      "expectedBodySchema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "_id": {
+              "type": "string"
+            },
+            "title": {
+              "type": "string"
+            },
+            "authorId": {
+              "type": "string"
+            },
+            "genreId": {
+              "type": "string"
+            },
+            "price": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "_id",
+            "title",
+            "authorId",
+            "genreId",
+            "price"
+          ]
+        }
+      },
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "POST",
+      "path": "/api/books",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "title": "New Book",
+        "authorId": "...",
+        "genreId": "...",
+        "price": 14.99
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "_id": {
+          "$oid": "..."
+        },
+        "title": "New Book",
+        "authorId": "...",
+        "genreId": "...",
+        "price": 14.99
+      },
+      "expectedBodySchema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "authorId": {
+            "type": "string"
+          },
+          "genreId": {
+            "type": "string"
+          },
+          "price": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "_id",
+          "title",
+          "authorId",
+          "genreId",
+          "price"
+        ]
+      },
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "GET",
+      "path": "/api/books/does-not-exist",
+      "expectedStatus": 404,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "POST",
+      "path": "/api/books",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "title": ""
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "PUT",
+      "path": "/api/books/:id",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "price": ""
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "mongoose",
+    "prisma",
+    "sequelize",
+    "typeorm",
+    "drizzle",
+    "relations",
+    "populate",
+    "schema",
+    "migration",
+    "orm",
+    "mongodb",
+    "crud",
+    "api"
+  ]
+}

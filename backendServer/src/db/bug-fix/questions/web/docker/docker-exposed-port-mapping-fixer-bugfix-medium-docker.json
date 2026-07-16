@@ -1,0 +1,149 @@
+{
+  "title": "Docker Exposed Port Mapping Fixer",
+  "subCategory": "Docker Port Mapping",
+  "statement": {
+    "markdown": "Write a function to fix the exposed port mappings in a Docker container. The function should take in a string of port mappings in the format 'exposed_port:container_port' separated by commas. The function should return a list of corrected port mappings. The correction involves swapping the exposed port and container port if the exposed port is greater than the container port. The function should handle invalid inputs and edge cases where the input string is empty or contains only whitespace characters.",
+    "inputFormat": "string of port mappings, e.g. '80:8080,8080:80'",
+    "outputFormat": "list of corrected port mappings, e.g. ['80:8080', '8080:80']",
+    "notes": "The function should not modify the original input string.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 0,
+        "max": 10000,
+        "description": "Number of port mappings"
+      }
+    ],
+    "examples": [
+      {
+        "input": "80:8080,8080:80",
+        "output": "80:8080\n8080:80",
+        "explanation": "The exposed port and container port are swapped because the exposed port is greater than the container port."
+      },
+      {
+        "input": "8080:80",
+        "output": "8080:80",
+        "explanation": "No correction needed because the exposed port is not greater than the container port."
+      },
+      {
+        "input": "0",
+        "output": "0",
+        "explanation": "The input string is empty, so the output is an empty list."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 10,
+    "points": 30,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DOCKER"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "docker"
+    ],
+    "interviewFrequency": 1,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Split the input string into individual port mappings"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial for Docker Exposed Port Mapping Fixer",
+    "intuition": "The function should iterate over each port mapping and check if the exposed port is greater than the container port. If so, swap them.",
+    "bruteForce": "Iterate over each port mapping and use a conditional statement to check if the exposed port is greater than the container port.",
+    "betterSolution": "Use a list comprehension to create a new list with the corrected port mappings.",
+    "optimalSolution": "Use a list comprehension with a conditional statement to create a new list with the corrected port mappings.",
+    "proofOfCorrectness": "The function should return the correct list of port mappings for all test cases.",
+    "dryRun": "Try running the function with the input string '80:8080,8080:80' to see the corrected port mappings.",
+    "commonMistakes": [
+      "Not handling the case where the exposed port is greater than the container port",
+      "Not handling the case where the input string is empty or contains only whitespace characters"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "function fixPortMappings(portMappings) {\n  // your code here\n}",
+    "python": "class Solution:\n  def fixPortMappings(self, portMappings: str) -> list:"
+  },
+  "buggyStarterCode": {
+    "javascript": "function fixPortMappings(portMappings) {\n  let correctedMappings = [];\n  let mappings = portMappings.split(',');\n  for (let mapping of mappings) {\n    let [exposed, container] = mapping.split(':');\n    if (parseInt(exposed) > parseInt(container)) {\n      correctedMappings.push(`${exposed}:${container}`);\n    } else {\n      correctedMappings.push(`${container}:${exposed}`);\n    }\n  }\n  return correctedMappings;\n}",
+    "python": "class Solution:\n  def fixPortMappings(self, portMappings: str) -> list:\n    correctedMappings = []\n    mappings = portMappings.split(',')\n    for mapping in mappings:\n      exposed, container = mapping.split(':')\n      if int(exposed) > int(container):\n        correctedMappings.append(f'{exposed}:{container}')\n      else:\n        correctedMappings.append(f'{container}:{exposed}')\n    return correctedMappings"
+  },
+  "functionSignature": {
+    "javascript": "function fixPortMappings(portMappings: string): string[]",
+    "python": "def fixPortMappings(self, portMappings: str) -> list[str]"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction fixPortMappings(portMappings) {\n  let correctedMappings = [];\n  let mappings = portMappings.split(',');\n  for (let mapping of mappings) {\n    let [exposed, container] = mapping.split(':').map(Number);\n    let correctedMapping = exposed > container ? `${exposed}:${container}` : `${container}:${exposed}`;\n    correctedMappings.push(correctedMapping);\n  }\n  return correctedMappings;\n}",
+    "python": "class Solution:\n  def fixPortMappings(self, portMappings: str) -> list[str):\n    correctedMappings = []\n    mappings = portMappings.split(',')\n    for mapping in mappings:\n      exposed, container = mapping.split(':').map(int)\n      correctedMapping = f'{exposed}:{container}' if exposed > container else f'{container}:{exposed}'\n      correctedMappings.append(correctedMapping)\n    return correctedMappings"
+  },
+  "judgeConfig": {
+    "timeLimit": 1,
+    "memoryLimit": 128,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "80:8080,8080:80",
+      "output": "80:8080\n8080:80",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "8080:80",
+      "output": "8080:80",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_3",
+      "input": "0",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "_id": "59dbfc34b38b1a44aaf1ad66",
+  "slug": "docker-exposed-port-mapping-fixer-bugfix-medium-docker",
+  "mode": "bug_fix",
+  "category": "DOCKER",
+  "difficulty": "Medium"
+}

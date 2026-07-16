@@ -1,0 +1,131 @@
+{
+  "title": "SQL Query to Extract Unique Products with Incorrectly Sorted Categories",
+  "subCategory": "SQL Query",
+  "statement": {
+    "markdown": "Write a SQL query that extracts the unique product names along with their respective categories in descending order. However, the product names are currently in incorrect order, and the query needs to be fixed to achieve the desired output.",
+    "inputFormat": "The input will be a table with three columns: `product_name`, `category`, and `price`.",
+    "outputFormat": "The output should be a table with two columns: `product_name` and `category`, sorted in descending order by category and then by product name.",
+    "notes": "Assume that the input table has a reasonable number of rows.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of rows in the input table."
+      }
+    ],
+    "examples": [
+      {
+        "input": "CREATE TABLE products (product_name VARCHAR(255), category VARCHAR(255), price DECIMAL(10, 2));\nINSERT INTO products VALUES ('Product A', 'Electronics', 99.99);\nINSERT INTO products VALUES ('Product B', 'Electronics', 19.99);\nINSERT INTO products VALUES ('Product C', 'Fashion', 49.99);\nINSERT INTO products VALUES ('Product D', 'Fashion', 29.99);",
+        "output": "Product D\tFashion\nProduct C\tFashion\nProduct B\tElectronics\nProduct A\tElectronics",
+        "explanation": "The products are sorted in descending order by category and then by product name."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 75,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "SQL"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "sql"
+    ],
+    "interviewFrequency": 1,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use a subquery to achieve the correct sorting."
+    }
+  ],
+  "editorial": {
+    "title": "SQL Query to Extract Unique Products with Correctly Sorted Categories",
+    "intuition": "To solve this problem, we need to use a subquery to first sort the products by category and then by product name.",
+    "bruteForce": "We can use the `ORDER BY` clause directly on the main query, but this will not work as expected because the product names are also sorted in ascending order.",
+    "betterSolution": "Using a subquery allows us to first sort the products by category in descending order, and then by product name in descending order.",
+    "optimalSolution": "The optimal solution is to use a subquery with the `ORDER BY` clause to first sort the products by category in descending order, and then by product name in descending order.",
+    "proofOfCorrectness": "The subquery will return the products sorted in the correct order, and the outer query will extract the unique product names and categories.",
+    "dryRun": "Step 1: Use a subquery to sort the products by category in descending order.\nStep 2: Use the `ORDER BY` clause to sort the product names in descending order within each category.",
+    "commonMistakes": [
+      "Using the `ORDER BY` clause directly on the main query.",
+      "Sorting the product names in ascending order instead of descending order."
+    ],
+    "timeComplexity": "O(n log n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// No code for JavaScript",
+    "python": "class Solution:\n    def solve(self):\n        pass"
+  },
+  "buggyStarterCode": {
+    "javascript": "// No code for JavaScript",
+    "python": "class Solution:\n    def solve(self):\n        query = \"SELECT DISTINCT product_name, category FROM products ORDER BY category ASC, product_name ASC\""
+  },
+  "functionSignature": {
+    "javascript": "// No function signature for JavaScript",
+    "python": "def solve(self):\n    # Implement the solution here"
+  },
+  "solutions": {
+    "javascript": "// No solution for JavaScript",
+    "python": "class Solution:\n    def solve(self):\n        query = \"SELECT DISTINCT product_name, category FROM (\n            SELECT product_name, category, ROW_NUMBER() OVER (PARTITION BY category ORDER BY product_name DESC) as row_num\n            FROM products\n        ) as subquery\n        WHERE row_num = 1\n        ORDER BY category DESC, product_name DESC\""
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "CREATE TABLE products (product_name VARCHAR(255), category VARCHAR(255), price DECIMAL(10, 2));\nINSERT INTO products VALUES ('Product A', 'Electronics', 99.99);\nINSERT INTO products VALUES ('Product B', 'Electronics', 19.99);\nINSERT INTO products VALUES ('Product C', 'Fashion', 49.99);\nINSERT INTO products VALUES ('Product D', 'Fashion', 29.99);",
+      "output": "Product D\tFashion\nProduct C\tFashion\nProduct B\tElectronics\nProduct A\tElectronics",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "CREATE TABLE products (product_name VARCHAR(255), category VARCHAR(255), price DECIMAL(10, 2));\nINSERT INTO products VALUES ('Product E', 'Electronics', 99.99);\nINSERT INTO products VALUES ('Product F', 'Electronics', 19.99);\nINSERT INTO products VALUES ('Product G', 'Fashion', 49.99);\nINSERT INTO products VALUES ('Product H', 'Fashion', 29.99);",
+      "output": "Product H\tFashion\nProduct G\tFashion\nProduct F\tElectronics\nProduct E\tElectronics",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "bab16f6c77bc4f8a8173893f",
+  "slug": "sql-query-to-extract-unique-products-with-incorrectly-sorted-categories-bugfix-medium-sql",
+  "mode": "bug_fix",
+  "category": "SQL",
+  "difficulty": "Medium"
+}

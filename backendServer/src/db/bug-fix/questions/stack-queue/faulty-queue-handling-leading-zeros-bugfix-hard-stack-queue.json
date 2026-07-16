@@ -1,0 +1,161 @@
+{
+  "_id": "c4263ca1a6dc0d8d91897a30",
+  "title": "Faulty Queue Handling Leading Zeros",
+  "slug": "faulty-queue-handling-leading-zeros-bugfix-hard-stack-queue",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "QUEUE",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 60,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "queue"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given a queue of integers, implement a function to remove all elements from the queue, but only if they are zero. The function should return `true` if the queue was successfully cleared, otherwise, return `false`. Note: the queue can contain negative integers, and the queue is not empty to begin with. You must use a stack to solve this problem.",
+    "inputFormat": "First line contains a single integer N, size of the queue. The following N lines contain one integer each.",
+    "outputFormat": "Return `true` if the queue was successfully cleared, otherwise, return `false`.",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "4\n0\n-1\n1\n0",
+        "output": "false",
+        "explanation": "The queue is [-1, 1, 0]. After processing, [-1, 1] are left behind."
+      },
+      {
+        "input": "5\n0\n0\n-1\n1\n0",
+        "output": "false",
+        "explanation": "The queue is [-1, 1, 0]. After processing, [-1, 1] are left behind."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Think about why the queue cannot be simply dequeued until the front element is zero."
+    },
+    {
+      "order": 2,
+      "text": "A stack can help to temporarily store the dequeued elements when the front element is not zero."
+    }
+  ],
+  "editorial": {
+    "title": "Correct Approach: Handling Zero in the Queue",
+    "intuition": "The problem requires using a stack to handle the zero removal without dequeuing all elements from the queue.",
+    "bruteForce": "You cannot use simple deque operations to solve this problem.",
+    "betterSolution": "",
+    "optimalSolution": "We can use a stack to temporarily store the non-zero elements when dequeuing from the queue, effectively removing all zeros without dequeuing all elements.",
+    "proofOfCorrectness": "In each step, we ensure that the queue either remains unchanged or is processed correctly to remove leading zeros without dequeuing all elements.",
+    "dryRun": "Process the queue step-by-step, storing the non-zero elements in a stack to avoid dequeuing all elements.",
+    "commonMistakes": [
+      "Not handling leading zeros in the queue"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "// TODO: implement a function to clear the queue of leading zeros\nbool Solution::solve(queue<int>& q) {\n\treturn false;\n}",
+    "java": "// TODO: implement a method to clear the queue of leading zeros\npublic boolean solve(Queue<Integer> q) {\n\treturn false;\n}",
+    "python": "from collections import deque\nclass Solution:\n\ndef solve(self, q: deque[int]) -> bool:\n\tpass\n",
+    "javascript": "function solve(q) {\n\t// TODO: implement a function to clear the queue of leading zeros\n\treturn false;\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "bool Solution::solve(queue<int>& q) {\n\tif (q.empty()) return true; // BUG: Queue can be empty initially, and this line is incorrect due to missing check\n\twhile (!q.empty()) {\n\t\tif (q.front() == 0) {\n\t\t\tq.pop();\n\t\t} else {\n\t\t\tbreak;\n\t\t}\n\t}\n\treturn true;\n}",
+    "java": "public boolean solve(Queue<Integer> q) {\n\tif (q.isEmpty()) return true; // BUG: Queue can be empty initially, and this line is incorrect due to missing check\n\twhile (!q.isEmpty()) {\n\t\tif (q.peek() == 0) {\n\t\t\tq.remove();\n\t\t} else {\n\t\t\tbreak;\n\t\t}\n\t}\n\treturn true;\n}",
+    "python": "from collections import deque\nclass Solution:\n\ndef solve(self, q: deque[int]) -> bool:\n\tif not q: return True # BUG: Queue can be empty initially, and this line is incorrect due to missing check\n\twhile q:\n\t\tif q[0] == 0:\n\t\t\tq.popleft()\n\t\telse:\n\t\t\tbreak\n\treturn True\n",
+    "javascript": "function solve(q) {\n\tif (q.length === 0) return true; // BUG: Queue can be empty initially, and this line is incorrect due to missing check\n\twhile (q.length) {\n\t\tif (q[0] === 0) {\n\t\t\tq.shift();\n\t\t} else {\n\t\t\tbreak;\n\t\t}\n\t}\n\treturn true;\n}"
+  },
+  "functionSignature": {
+    "cpp": "bool solve(queue<int>& q);",
+    "java": "public boolean solve(Queue<Integer> q);",
+    "python": "def solve(self, q: deque[int]) -> bool;",
+    "javascript": "var solve = function(q);"
+  },
+  "solutions": {
+    "python": "import sys\nfrom collections import deque\n\nclass Solution:\n\tdef solve(self, q: deque[int]) -> bool:\n\t\tif not q: return True\n\t\tstack = deque()\n\t\twhile q:\n\t\t\tfront = q.popleft()\n\t\t\tif front == 0:\n\t\t\t\twhile q and q[0] == 0:\n\t\t\t\t\tpop = q.popleft()\n\t\t\telse:\n\t\t\t\tstack.appendleft(front)\n\t\t\tif not stack:\n\t\t\t\treturn False\n\t\t\tq = stack\n\t\t\tstack = deque()\n\t\treturn True\n\nif __name__ == '__main__':\n\t# read inputs from stdin\n\tn = int(input())\n\tq = deque(map(int, input().split()))\n\tprint(Solution().solve(q))",
+    "cpp": "#include <iostream>\n#include <deque>\n\nusing namespace std;\n\nclass Solution {\npublic:\n\tbool solve(deque<int>& q) {\n\t\tif (q.empty()) return true;\n\t\tdeque<int> stack;\n\t\twhile (!q.empty()) {\n\t\t\tint front = q.front();\n\t\t\tq.pop_front();\n\t\t\tif (front == 0) {\n\t\t\t\twhile (!q.empty() && q.front() == 0) {\n\t\t\t\t\tq.pop_front();\n\t\t\t\t}\n\t\t\t} else {\n\t\t\t\tstack.push_front(front);\n\t\t\t}\n\t\t\tif (stack.empty()) {\n\t\t\t\treturn false;\n\t\t\t}\n\t\t\tq = stack;\n\t\t\tstack.clear();\n\t\t}\n\t\treturn true;\n\t}\n};\n\nint main() {\n\t// read inputs from cin\n\tint n; cin >> n;\n\tdeque<int> q;\n\tfor (int i = 0; i < n; ++i) {\n\t\tint num; cin >> num;\n\t\tq.push_front(num);\n\t}\n\tSolution solution;\n\tcout << (solution.solve(q) ? \"true\" : \"false\") << endl;\n\treturn 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "4\n0\n-1\n1\n0",
+      "output": "false",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "5\n0\n0\n-1\n1\n0",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

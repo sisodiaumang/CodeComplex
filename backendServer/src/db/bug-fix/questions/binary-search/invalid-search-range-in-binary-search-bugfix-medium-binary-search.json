@@ -1,0 +1,153 @@
+{
+  "_id": "dbc10d67499642c568df8548",
+  "title": "Invalid Search Range in Binary Search",
+  "slug": "invalid-search-range-in-binary-search-bugfix-medium-binary-search",
+  "difficulty": "Medium",
+  "category": "DSA",
+  "subCategory": "BINARY_SEARCH",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "binary_search"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given a sorted array and a target value, find the first index of the target value using binary search.\n\nHowever, there are some constraints that the binary search function should handle:\n1. If the target value is greater than the middle element of the array, the function should continue searching in the right half.\n2. If the target value is less than the middle element, the function should continue searching in the left half.\n3. If the target value is equal to the middle element, the function should search in both halves.\n4. If the left and right pointers are equal and the target value is equal to the left pointer's value, the function should return the left pointer's index.",
+    "inputFormat": "Input is in the format: `n`\\n`array`\\ntarget",
+    "outputFormat": "The first index of the target value in the sorted array. If the target value is not found, return `-1`.\\n\\n",
+    "notes": "This is a variation of binary search that handles certain cases differently.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "5\n1 2 3 4 5\n3",
+        "output": "2",
+        "explanation": "The first index of 3 in the sorted array is 2."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Think about how to handle the case where the target value is equal to the middle element."
+    }
+  ],
+  "editorial": {
+    "title": "Invalid Search Range in Binary Search",
+    "intuition": "The function should continue searching in one half if the target value is greater or less than the middle element.",
+    "bruteForce": "We can use a brute-force approach to search for the target value.",
+    "betterSolution": "We can use a binary search approach to find the first index of the target value.",
+    "optimalSolution": "We can handle the cases where the target value is equal to the middle element by searching in both halves.",
+    "proofOfCorrectness": "We can prove the correctness of the solution by analyzing the base cases and the recursive cases.",
+    "dryRun": "Let's dry run the function with some test cases.",
+    "commonMistakes": [
+      "Searching in the wrong half when the target value is equal to the middle element",
+      "Not handling the case where the left and right pointers are equal"
+    ],
+    "timeComplexity": "O(log n)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    int search(int arr[], int n, int target);\n};\n\n// TODO: implement the search function",
+    "java": "public class Solution {\n    public int search(int[] arr, int n, int target);\n}\n\n// TODO: implement the search function",
+    "python": "class Solution:\n    def search(self, arr: list[int], n: int, target: int) -> int:\n        # TODO: implement the search function",
+    "javascript": "function search(arr, n, target) {\n    // TODO: implement the search function\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    int search(int arr[], int n, int target) {\n        if (target > arr[n/2]) {\n            int result = search(arr, n/2 + 1, target);\n            if (result != -1) return result;\n        } else if (target < arr[n/2]) {\n            int result = search(arr, 0, n/2 - 1, target);\n            if (result != -1) return result;\n        } else {\n            return n/2;\n        }\n        return -1;\n    }\n};",
+    "java": "public class Solution {\n    public int search(int[] arr, int n, int target) {\n        if (target > arr[n/2]) {\n            int result = search(arr, n/2 + 1, target);\n            if (result != -1) return result;\n        } else if (target < arr[n/2]) {\n            int result = search(arr, 0, n/2 - 1, target);\n            if (result != -1) return result;\n        } else {\n            return n/2;\n        }\n        return -1;\n    }\n}",
+    "python": "class Solution:\n    def search(self, arr: list[int], n: int, target: int) -> int:\n        if target > arr[n//2]: \n            result = self.search(arr, n//2 + 1, target)\n            if result != -1: return result\n        elif target < arr[n//2]: \n            result = self.search(arr, 0, n//2 - 1, target)\n            if result != -1: return result\n        else: \n            return n//2\n        return -1",
+    "javascript": "function search(arr, n, target) {\n    if (target > arr[Math.floor(n/2)]) {\n        var result = search(arr, Math.floor(n/2 + 1), target);\n        if (result != -1) return result;\n    } else if (target < arr[Math.floor(n/2)]) {\n        var result = search(arr, 0, Math.floor(n/2 - 1), target);\n        if (result != -1) return result;\n    } else {\n        return Math.floor(n/2);\n    }\n    return -1;\n}"
+  },
+  "functionSignature": {
+    "cpp": "int search(int arr[], int n, int target);",
+    "java": "int search(int[] arr, int n, int target);",
+    "python": "def search(self, arr: list[int], n: int, target: int) -> int:",
+    "javascript": "function search(arr, n, target) {"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def search(self, arr: list[int], n: int, target: int) -> int:\n        left, right = 0, n - 1\n        while left <= right:\n            mid = left + (right - left) // 2\n            if arr[mid] == target:\n                if mid == 0 or arr[mid - 1] != target:\n                    return mid\n                right = mid - 1\n            elif arr[mid] < target:\n                left = mid + 1\n            else:\n                right = mid - 1\n        return -1\n\nif __name__ == '__main__':\n    solver = Solution()\n    n = int(input())\n    arr = [int(x) for x in input().split()]\n    target = int(input())\n    print(solver.search(arr, n, target))",
+    "cpp": "class Solution {\npublic:\n    int search(int arr[], int n, int target) {\n        int left = 0, right = n - 1;\n        while (left <= right) {\n            int mid = left + (right - left) / 2;\n            if (arr[mid] == target) {\n                if (mid == 0 || arr[mid - 1] != target) {\n                    return mid;\n                }\n                right = mid - 1;\n            } else if (arr[mid] < target) {\n                left = mid + 1;\n            } else {\n                right = mid - 1;\n            }\n        }\n        return -1;\n    }\n};\n\nint main() {\n    int n;\n    scanf(\"%d\", &n);\n    int arr[n];\n    for (int i = 0; i < n; i++) {\n        scanf(\"%d\", &arr[i]);\n    }\n    int target;\n    scanf(\"%d\", &target);\n    Solution solution;\n    printf(\"%d\\n\", solution.search(arr, n, target));\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5\n1 2 3 4 5\n3",
+      "output": "2",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_hidden_generated",
+      "input": "5\n1 2 3 4 5\n3",
+      "output": "2",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

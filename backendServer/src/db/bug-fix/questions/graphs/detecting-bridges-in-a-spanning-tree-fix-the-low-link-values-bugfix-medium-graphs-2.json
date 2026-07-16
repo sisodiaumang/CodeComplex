@@ -1,0 +1,153 @@
+{
+  "_id": "1c41de5d96c9c9b8bc5161f3",
+  "title": "Detecting Bridges in a Spanning Tree: Fix the Low Link Values",
+  "slug": "detecting-bridges-in-a-spanning-tree-fix-the-low-link-values-bugfix-medium-graphs-2",
+  "difficulty": "Medium",
+  "category": "DSA",
+  "subCategory": "DFS/Disjoint Set",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "graph"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "You are given a weighted undirected graph with n vertices and m edges. Your task is to find all bridges in the graph. A bridge is an edge that is critical in the sense that its removal increases the number of connected components in the graph. The graph can be represented as an adjacency list using the graph[][] data structure. The function must return an array of pairs, where each pair contains the source and destination of a bridge.",
+    "inputFormat": "The graph will be represented as an adjacency list using the graph[][] data structure, where graph[i] will contain a list of all the vertices that are connected to the ith vertex.",
+    "outputFormat": "Your function must return an array of pairs, where each pair contains the source and destination of a bridge.",
+    "notes": "You are allowed to modify the graph array as needed while traversing.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "Example input (matching the stdin format that main wrapper expects)",
+        "output": "Expected stdout output",
+        "explanation": "Brief explanation"
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(...) ",
+    "spaceComplexity": "O(...)"
+  },
+  "starterCode": {
+    "cpp": "class Solution { public: vector<pair<int, int>> bbridges(int n, vector<vector<int>>& edges); };",
+    "java": "public class Solution { public List<int[]> bridges(int n, int[][] edges); }",
+    "python": "class Solution: def bbridges(self, n, edges): pass",
+    "javascript": "function Solution() { var bridges = function(n, edges) { return []; }; return bridges; }"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution { public: vector<pair<int, int>> bbridges(int n, vector<vector<int>>& edges) { vector<pair<int, int>> res; int timer = 0; for (int i = 1; i <= n; ++i) { dfs(i, i, edges, res, timer); } return res; } void dfs(int u, int p, vector<vector<int>>& edges, vector<pair<int, int>>& res, int& timer) { timer++; for (int v : edges[u]) { if (v == p) { continue; } dfs(v, u, edges, res, timer); // BUG: timer is reused for each DFS call } } };",
+    "java": "public class Solution { public List<int[]> bridges(int n, int[][] edges) { List<int[]> res = new ArrayList<>(); int timer = 0; for (int i = 1; i <= n; ++i) { dfs(i, i, edges, res, timer); } return res; } void dfs(int u, int p, int[][] edges, List<int[]> res, int timer) { timer++; for (int v : edges[u]) { if (v == p) { continue; } dfs(v, u, edges, res, timer); // BUG: timer is reused for each DFS call } } }",
+    "python": "class Solution: def bbridges(self, n, edges): timer = 0 res = [] for i in range(1, n + 1): self.dfs(i, i, edges, res, timer) return res def dfs(self, u, p, edges, res, timer): timer += 1 for v in edges[u]: if v == p: continue self.dfs(v, u, edges, res, timer) # BUG: timer is reused for each DFS call",
+    "javascript": "var Solution = function() { var bridges = function(n, edges) { var timer = 0; var res = []; for (var i = 1; i <= n; ++i) { dfs(i, i, edges, res, timer); } return res; } function dfs(u, p, edges, res, timer) { timer++; for (var v in edges[u]) { if (v == p) { continue; } dfs(v, u, edges, res, timer); // BUG: timer is reused for each DFS call } } return bridges; };"
+  },
+  "functionSignature": {
+    "cpp": "void dfs(int u, int p, vector<vector<int>>& graph, vector<pair<int, int>>& res, int& timer);",
+    "java": "void dfs(int u, int p, int[][] graph, List<int[]> res, int timer);",
+    "python": "def dfs(self, u, p, graph, res):",
+    "javascript": "function dfs(u, p, graph, res):"
+  },
+  "solutions": {
+    "python": "class Solution: def bbridges(self, n, edges): timer = 0 res = [] low = {} disc = {} parent = {} def dfs(u, p, timer, low, disc): low[u] = disc[u] = timer timer += 1 for v in edges[u]: if v == p: continue if v not in low: parent[v] = u dfs(v, u, timer, low, disc) low[u] = min(low[u], low[v]) if parent[u] != -1 and low[v] > disc[u]: res.append((parent[u], v)) return res for i in range(n): low[i] = disc[i] = -1 parent[i] = -1 res = dfs(0, -1, timer, low, disc) return res",
+    "cpp": "class Solution { public: vector<pair<int, int>> bbridges(int n, vector<vector<int>>& edges) { vector<pair<int, int>> res; unordered_map<int, int> low; unordered_map<int, int> disc; unordered_map<int, int> parent; function<void(int, int, int, unordered_map<int, int>&, unordered_map<int, int>&)> dfs = [&](int u, int p, int timer, unordered_map<int, int>& low, unordered_map<int, int>& disc) { low[u] = disc[u] = timer; timer++; for (auto v : edges[u]) { if (v == p) { continue; } if (low.find(v) == low.end()) { parent[v] = u; dfs(v, u, timer, low, disc); } low[u] = min(low[u], low[v]); if (parent[u] != -1 && low[v] > disc[u]) { res.push_back(make_pair(parent[u], v)); } } }; for (int i = 0; i < n; ++i) low[i] = disc[i] = -1; parent[i] = -1; res = dfs(0, -1, timer, low, disc); return res; } };",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "First line count, second line elements (stdin match)",
+      "output": "Expected output string",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "Example 2 input",
+      "output": "Example 2 output",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

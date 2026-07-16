@@ -1,0 +1,143 @@
+{
+  "title": "Fix MongoDB Projection to Ignore Missing Fields",
+  "subCategory": "Query Formatters",
+  "statement": {
+    "markdown": "Given a MongoDB query and a projection, implement a function that formats the query to ignore missing fields. The input query is a dictionary where each key is a field name and each value is a boolean indicating whether the field should be included in the result. The input projection is also a dictionary with the same structure. Your function should return a new dictionary representing the formatted query.",
+    "inputFormat": "Query: { field1: true, field2: false, field3: true } Projection: { field1: true, field2: false, field3: null }",
+    "outputFormat": "Formatted Query: { field1: true, field4: null }",
+    "notes": "Note that if a field is missing from the query, it should be ignored in the formatted query. Also, if a field is null in the projection, it should be removed from the formatted query.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Maximum number of fields in the query"
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Maximum number of fields in the projection"
+      }
+    ],
+    "examples": [
+      {
+        "input": "Query: { field1: true, field2: false, field3: true } Projection: { field1: true, field2: false, field3: null }",
+        "output": "Formatted Query: { field1: true }",
+        "explanation": ""
+      },
+      {
+        "input": "Query: { field1: true, field2: false, field3: true, field4: false } Projection: { field1: true, field2: null, field3: null, field4: true }",
+        "output": "Formatted Query: { field1: true }",
+        "explanation": ""
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "MONGODB"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "mongodb"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text: Iterate over the query and projection dictionaries to build the formatted query"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach: Use a dictionary comprehension to create the formatted query",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(n + m)",
+    "spaceComplexity": "O(n + m)"
+  },
+  "starterCode": {
+    "javascript": "function formatQuery(query, projection) {\n  // TODO: implement function\n}",
+    "python": "class Solution:\n  def formatQuery(self, query, projection):\n    # TODO: implement method\n    pass"
+  },
+  "buggyStarterCode": {
+    "javascript": "function formatQuery(query, projection) {\n  let formattedQuery = {}\n  for (let field in query) {\n    if (query[field] && projection[field]) {\n      formattedQuery[field] = query[field]\n    }\n  }\n  return formattedQuery\n}",
+    "python": "class Solution:\n  def formatQuery(self, query, projection):\n    formatted_query = {}\n    for field in query:\n      if query[field] and projection.get(field):\n        formatted_query[field] = query[field]\n    return formatted_query"
+  },
+  "functionSignature": {
+    "javascript": "var formatQuery = function(query, projection) {",
+    "python": "def formatQuery(self, query: dict, projection: dict) -> dict:"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction formatQuery(query, projection) {\n  let formattedQuery = {}\n  for (let field in query) {\n    if (query[field] !== undefined && projection[field] === undefined) {\n      continue\n    }\n    if (projection[field] === null) {\n      delete query[field]\n    } else {\n      formattedQuery[field] = query[field]\n    }\n  }\n  return formattedQuery\n}",
+    "python": "class Solution:\n  def formatQuery(self, query, projection):\n    # Remove fields with null values in the projection\n    for field in list(query.keys()):\n      if projection.get(field) is None:\n        del query[field]\n    # Remove fields with missing values in the query\n    for field in list(query.keys()):\n      if field not in projection or projection[field] is None:\n        del query[field]\n    return query"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "Query: { field1: true, field2: false, field3: true } Projection: { field1: true, field2: false, field3: null }",
+      "output": "Formatted Query: { field1: true }",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "Query: { field1: true, field2: false, field3: true, field4: false } Projection: { field1: true, field2: null, field3: null, field4: true }",
+      "output": "Formatted Query: { field1: true }",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "d3026d38d15167b27fcb4352",
+  "slug": "fix-mongodb-projection-to-ignore-missing-fields-bugfix-medium-mongodb",
+  "mode": "bug_fix",
+  "category": "MONGODB",
+  "difficulty": "Medium"
+}

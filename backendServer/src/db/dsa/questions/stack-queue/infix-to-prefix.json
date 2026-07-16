@@ -42,7 +42,7 @@
   },
   "statement": {
     "markdown": "Given an infix expression, convert it into a prefix expression. The infix expression is a string that contains operands (a-z, A-Z, 0-9) and operators (+, -, *, /, ^). The prefix expression should be a string where the operator is before its operands. The input infix expression may contain parentheses to group subexpressions. The output prefix expression should not contain any parentheses.\n\nThe input infix expression is a string that may contain whitespace characters, but the output prefix expression should not contain any whitespace characters.\n\nYou need to handle the precedence of operators and the associativity of operators. The precedence of operators from highest to lowest is: ^, *, /, +, -. The associativity of all operators is right.",
-    "inputFormat": "1\nstring",
+    "inputFormat": "N\nstring",
     "outputFormat": "string",
     "notes": "",
     "images": [],
@@ -72,22 +72,22 @@
     "examples": [
       {
         "input": "5+6*7",
-        "output": "+*765",
+        "output": "+5*67",
         "explanation": "The prefix expression for the infix expression '5+6*7' is '+5*67'."
       },
       {
         "input": "(5+6)*7",
-        "output": "*7+65",
+        "output": "*+567",
         "explanation": "The prefix expression for the infix expression '(5+6)*7' is '*+567'."
       },
       {
         "input": "a+b*c",
-        "output": "+*cba",
+        "output": "+a*bc",
         "explanation": "The prefix expression for the infix expression 'a+b*c' is '+a*bc'."
       },
       {
         "input": "(a+b)*c",
-        "output": "*c+ba",
+        "output": "*+abc",
         "explanation": "The prefix expression for the infix expression '(a+b)*c' is '*+abc'."
       }
     ]
@@ -126,20 +126,20 @@
     "spaceComplexity": "O(n)"
   },
   "starterCode": {
-    "cpp": "#include <iostream>\n#include <string>\n#include <stack>\nusing namespace std;\n\nstring solve(string infix) {\n    // TODO: implement\n    return \"\";\n}\n\n// @driver-code-start\nint main() {\n    string s;\n    if (cin >> s) {\n        cout << solve(s) << endl;\n    }\n    return 0;\n}\n",
-    "java": "import java.util.Stack;\nimport java.util.Scanner;\npublic class Main {\n    public static String solve(String infix) {\n        // TODO: implement\n        return \"\";\n    }\n\n    // @driver-code-start\npublic static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        if (scanner.hasNext()) {\n            System.out.println(solve(scanner.next()));\n        }\n    }\n}",
-    "python": "import sys\n\ndef solve(infix: str) -> str:\n    # TODO: implement\n    pass\n\n# @driver-code-start\ndef main():\n    import sys\n    input_data = sys.stdin.read().split()\n    if not input_data:\n        return\n    print(solve(input_data[0]))\n\nif __name__ == \"__main__\":\n    main()\n",
-    "javascript": "// @driver-code-start\nconst readline = require(\"readline\");\nconst rl = readline.createInterface({\n    input: process.stdin,\n    output: process.stdout\n});\nlet input = \"\";\nrl.on(\"line\", (line) => {\n    input += line + \"\\n\";\n});\nrl.on(\"close\", () => {\n    const s = input.trim();\n    const solution = new Solution();\n    console.log(solution.solve(s));\n});\n\nclass Solution {\n    solve(infix) {\n    // TODO: implement\n    return null;\n}\n}"
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    string convertInfixToPrefix(string infix) {\n        // TODO: implement\n        return \"\";\n    }\n};",
+    "java": "import java.util.*;\n\nclass Solution {\n    public String convertInfixToPrefix(String infix) {\n        // TODO: implement\n        return \"\";\n    }\n}",
+    "python": "class Solution:\n    def convertInfixToPrefix(self, infix: str) -> str:\n        # TODO: implement\n        pass",
+    "javascript": "/**\n * @param {string} infix\n * @return {string}\n */\nvar convertInfixToPrefix = function(infix) {\n    // TODO: implement\n    return \"\";\n};"
   },
   "functionSignature": {
-    "cpp": "string solve(string infix)",
-    "java": "public static String solve(String infix)",
-    "python": "def solve(infix: str) -> str",
-    "javascript": "function solve(infix)"
+    "cpp": "string convertInfixToPrefix(string infix);",
+    "java": "public String convertInfixToPrefix(String infix);",
+    "python": "def convertInfixToPrefix(self, infix: str) -> str:",
+    "javascript": "var convertInfixToPrefix = function(infix);"
   },
   "solutions": {
-    "python": "import sys\nit = iter(sys.stdin.read().split())\ndef precedence(op):\n    if op == '^':\n        return 3\n    elif op in ['*', '/']:\n        return 2\n    elif op in ['+', '-']:\n        return 1\n    else:\n        return 0\ninfix = next(it)\noutput = []\nstack = []\nfor char in infix:\n    if char.isalnum():\n        output.append(char)\n    elif char == '(':\n        stack.append(char)\n    elif char == ')':\n        while stack and stack[-1] != '(':\n            output.append(stack.pop())\n        if stack and stack[-1] == '(':\n            stack.pop()\n    else:\n        while stack and stack[-1] != '(' and precedence(char) <= precedence(stack[-1]):\n            output.append(stack.pop())\n        stack.append(char)\nwhile stack:\n    output.append(stack.pop())\nprint(''.join(reversed(output)))",
-    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\nint precedence(char op){\n    if (op == '^')\n        return 3;\n    else if (op == '*' || op == '/')\n        return 2;\n    else if (op == '+' || op == '-')\n        return 1;\n    else\n        return 0;\n}\nint main(){\n    string infix;\n    cin >> infix;\n    string output;\n    stack<char> st;\n    for (char c : infix) {\n        if (isalnum(c)) {\n            output += c;\n        } else if (c == '(') {\n            st.push(c);\n        } else if (c == ')') {\n            while (!st.empty() && st.top() != '(') {\n                output += st.top();\n                st.pop();\n            }\n            if (!st.empty() && st.top() == '(') {\n                st.pop();\n            }\n        } else {\n            while (!st.empty() && st.top() != '(' && precedence(c) <= precedence(st.top())) {\n                output += st.top();\n                st.pop();\n            }\n            st.push(c);\n        }\n    }\n    while (!st.empty()) {\n        output += st.top();\n        st.pop();\n    }\n    reverse(output.begin(), output.end());\n    cout << output;\n}"
+    "python": "import sys\n\nclass Solution:\n    def convertInfixToPrefix(self, infix: str) -> str:\n        precedence = {'+': 1, '-': 1, '*': 2, '/': 2, '^': 3}\n        stack = []\n        prefix = ''\n        infix = infix.replace(' ', '')\n        for char in infix[::-1]:\n            if char.isalnum():\n                prefix = char + prefix\n            elif char == ')':\n                stack.append(char)\n            elif char == '(':\n                while stack and stack[-1] != ')':\n                    prefix = stack.pop() + prefix\n                stack.pop()\n            else:\n                while stack and stack[-1] in precedence and precedence[stack[-1]] > precedence[char]:\n                    prefix = stack.pop() + prefix\n                stack.append(char)\n        while stack:\n            prefix = stack.pop() + prefix\n        return prefix\n\nif __name__ == '__main__':\n    it = iter(sys.stdin.read().split())\n    try:\n        infix = next(it)\n    except StopIteration:\n        sys.exit(0)\n    sol = Solution()\n    ans = sol.convertInfixToPrefix(infix)\n    print(ans)",
+    "cpp": "#include <numeric>\n#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    string convertInfixToPrefix(string infix) {\n        unordered_map<char, int> precedence = {{'+', 1}, {'-', 1}, {'*', 2}, {'/', 2}, {'^', 3}};\n        stack<char> st;\n        string prefix;\n        for (int i = infix.size() - 1; i >= 0; --i) {\n            char c = infix[i];\n            if (isalnum(c)) {\n                prefix = c + prefix;\n            } else if (c == ')') {\n                st.push(c);\n            } else if (c == '(') {\n                while (!st.empty() && st.top() != ')') {\n                    prefix = st.top() + prefix;\n                    st.pop();\n                }\n                if (!st.empty()) {\n                    st.pop();\n                }\n            } else {\n                while (!st.empty() && precedence.find(st.top()) != precedence.end() && precedence[st.top()] > precedence[c]) {\n                    prefix = st.top() + prefix;\n                    st.pop();\n                }\n                st.push(c);\n            }\n        }\n        while (!st.empty()) {\n            prefix = st.top() + prefix;\n            st.pop();\n        }\n        return prefix;\n    }\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    string infix;\n    cin >> infix;\n    Solution sol;\n    string ans = sol.convertInfixToPrefix(infix);\n    cout << ans << '\\n';\n    return 0;\n}"
   },
   "judgeConfig": {
     "timeLimit": 2,
@@ -167,7 +167,7 @@
     {
       "id": "sample",
       "input": "5+6*7",
-      "output": "+*765",
+      "output": "+5*67",
       "isVisible": true,
       "weight": 1,
       "category": "sample"
@@ -203,86 +203,6 @@
       "isVisible": false,
       "weight": 1,
       "category": "duplicate"
-    },
-    {
-      "id": "sorted",
-      "input": "6\n1 2 3 4 5 6",
-      "output": "6",
-      "isVisible": false,
-      "weight": 1,
-      "category": "sorted"
-    },
-    {
-      "id": "reverse_sorted",
-      "input": "6\n6 5 4 3 2 1",
-      "output": "6",
-      "isVisible": false,
-      "weight": 1,
-      "category": "reverse_sorted"
-    },
-    {
-      "id": "negative",
-      "input": "5\n-5 -4 -3 -2 -1",
-      "output": "5",
-      "isVisible": false,
-      "weight": 1,
-      "category": "negative"
-    },
-    {
-      "id": "zero",
-      "input": "5\n0 0 0 0 0",
-      "output": "5",
-      "isVisible": false,
-      "weight": 1,
-      "category": "zero"
-    },
-    {
-      "id": "one",
-      "input": "2\n1 1",
-      "output": "2",
-      "isVisible": false,
-      "weight": 1,
-      "category": "one"
-    },
-    {
-      "id": "repeated",
-      "input": "8\n2 2 2 2 3 3 3 3",
-      "output": "8",
-      "isVisible": false,
-      "weight": 1,
-      "category": "repeated"
-    },
-    {
-      "id": "large_random",
-      "input": "10\n309 -772 -949 518 -437 -499 -543 -715 508 -791",
-      "output": "01",
-      "isVisible": false,
-      "weight": 1,
-      "category": "large_random"
-    },
-    {
-      "id": "adversarial",
-      "input": "12\n385 516 827 116 -822 209 -136 -935 -939 -809 -553 -524",
-      "output": "21",
-      "isVisible": false,
-      "weight": 1,
-      "category": "adversarial"
-    },
-    {
-      "id": "random_13",
-      "input": "21\n6 9 -10 7 -4 10 7 3 -3 4 8 -2 -10 -5 3 0 -2 -6 -4 0 -7",
-      "output": "12",
-      "isVisible": false,
-      "weight": 1,
-      "category": "random"
-    },
-    {
-      "id": "random_14",
-      "input": "22\n-8 2 -7 1 1 9 -2 -9 4 7 -7 2 -8 7 -1 10 9 1 8 -4 -8 -9",
-      "output": "22",
-      "isVisible": false,
-      "weight": 1,
-      "category": "random"
     }
   ],
   "analytics": {

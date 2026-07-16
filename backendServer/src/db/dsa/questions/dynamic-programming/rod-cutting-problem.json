@@ -1,0 +1,197 @@
+{
+  "_id": "rod-cutting-problem",
+  "title": "Rod Cutting Problem",
+  "slug": "rod-cutting-problem",
+  "difficulty": "Hard",
+  "category": "DP",
+  "subCategory": "DP on Subsequences",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 500,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "Dynamic Programming",
+      "DP on Subsequences"
+    ],
+    "patterns": [
+      "maximize profit"
+    ],
+    "prerequisites": [
+      "0/1 Knapsack Problem"
+    ],
+    "variants": [],
+    "tags": [
+      "dynamic programming",
+      "greedy algorithm"
+    ],
+    "keywords": [
+      "rod cutting",
+      "maximize profit"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "Given a rod of length n and a list of prices for rods of lengths 1 to n, determine the optimal way to cut the rod into smaller pieces to maximize revenue. The rod can be cut into pieces of different lengths, and each piece has a corresponding price. The goal is to find the maximum revenue that can be obtained by cutting the rod into smaller pieces.",
+    "inputFormat": "The first line contains an integer n, representing the length of the rod. The second line contains n integers, representing the prices of rods of lengths 1 to n.",
+    "outputFormat": "The maximum revenue that can be obtained by cutting the rod into smaller pieces.",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The length of the rod."
+      },
+      {
+        "variable": "prices",
+        "type": "array",
+        "min": 1,
+        "max": 10000,
+        "description": "The prices of rods of lengths 1 to n."
+      }
+    ],
+    "examples": [
+      {
+        "input": "4\n1 5 8 9",
+        "output": "10",
+        "explanation": "The optimal way to cut a rod of length 4 is to cut it into two pieces of length 2, which gives a revenue of 5 + 5 = 10."
+      },
+      {
+        "input": "8\n1 5 8 9 10 17 17 20",
+        "output": "22",
+        "explanation": "The optimal way to cut a rod of length 10 is to cut it into pieces of lengths 3, 3, and 4, which gives a revenue of 8 + 8 + 20 = 36, or cut it into pieces of lengths 2, 2, 2, 2, and 2, which gives a revenue of 5 + 5 + 5 + 5 + 5 = 25. However, 38 can be achieved with 10 = 3 + 7 or 10 = 2 + 8 or other configurations."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "The problem can be solved using dynamic programming. Think about how the maximum revenue for a rod of length n depends on the maximum revenue for rods of lengths less than n."
+    },
+    {
+      "order": 2,
+      "text": "Consider creating a table to store the maximum revenue for each sub-length of the rod. For each length, you need to consider all possible cuts and choose the one that maximizes revenue."
+    },
+    {
+      "order": 3,
+      "text": "The key to solving this problem is to recognize that the maximum revenue for a rod of length i can be computed by considering all possible cuts of length j, where 1 <= j < i, and choosing the cut that maximizes the sum of the price of the cut piece and the maximum revenue of the remaining rod of length i - j."
+    }
+  ],
+  "editorial": {
+    "title": "Dynamic Programming Approach to Rod Cutting Problem",
+    "intuition": "The problem can be solved using dynamic programming by building up a table of maximum revenues for each sub-length of the rod.",
+    "bruteForce": "A brute force approach would involve trying all possible combinations of cuts for each length of rod, resulting in an exponential time complexity. This is impractical for large inputs.",
+    "betterSolution": "Using dynamic programming, we can store and reuse the maximum revenue for each sub-length, reducing the time complexity to O(n^2).",
+    "optimalSolution": "The optimal solution involves filling up a table 'revenue' where revenue[i] represents the maximum revenue that can be obtained from a rod of length i.",
+    "proofOfCorrectness": "The correctness can be proven by induction on the length of the rod. For a rod of length 1, the maximum revenue is the price of the rod itself. For a rod of length n, the maximum revenue is the maximum of the revenues obtained by cutting the rod at each possible length, which is precisely what the dynamic programming approach computes.",
+    "dryRun": "A dry run with a sample input, such as n = 4 and prices = [1, 5, 8, 9], helps verify that the approach correctly computes the maximum revenue.",
+    "commonMistakes": [
+      "Not initializing the revenue table correctly.",
+      "Not considering all possible cuts for each length.",
+      "Not storing and reusing previously computed revenues.",
+      "Incorrectly handling edge cases, such as a rod of length 0.",
+      "Not verifying the correctness of the approach with sample inputs."
+    ],
+    "timeComplexity": "O(n^2)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    int cutRod(vector<int>& prices) {\n        // TODO: implement\n        return 0;\n    }\n};",
+    "java": "import java.util.*;\n\nclass Solution {\n    public int cutRod(int[] prices) {\n        // TODO: implement\n        return 0;\n    }\n}",
+    "python": "class Solution:\n    def cutRod(self, prices: list[int]) -> int:\n        # TODO: implement\n        pass",
+    "javascript": "/**\n * @param {number[]} prices\n * @return {number}\n */\nvar cutRod = function(prices) {\n    // TODO: implement\n    return 0;\n};"
+  },
+  "functionSignature": {
+    "cpp": "int cutRod(vector<int>& prices);",
+    "java": "public int cutRod(int[] prices);",
+    "python": "def cutRod(self, prices: list[int]) -> int:",
+    "javascript": "var cutRod = function(prices);"
+  },
+  "solutions": {
+    "python": "import sys\n\nclass Solution:\n    def cutRod(self, prices: list[int]) -> int:\n        n = len(prices)\n        dp = [0] * (n + 1)\n        for i in range(1, n + 1):\n            max_val = 0\n            for j in range(1, i + 1):\n                max_val = max(max_val, prices[j - 1] + dp[i - j])\n            dp[i] = max_val\n        return dp[n]\n\nif __name__ == '__main__':\n    it = iter(sys.stdin.read().split())\n    try:\n        n = int(next(it))\n        prices = [int(next(it)) for _ in range(n)]\n    except StopIteration:\n        sys.exit(0)\n    sol = Solution()\n    ans = sol.cutRod(prices)\n    print(ans)",
+    "cpp": "#include <numeric>\n#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    int cutRod(vector<int>& prices) {\n        int n = prices.size();\n        vector<int> dp(n + 1, 0);\n        for (int i = 1; i <= n; i++) {\n            int max_val = 0;\n            for (int j = 1; j <= i; j++) {\n                max_val = max(max_val, prices[j - 1] + dp[i - j]);\n            }\n            dp[i] = max_val;\n        }\n        return dp[n];\n    }\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int n;\n    if (!(cin >> n)) return 0;\n    vector<int> prices(n);\n    for (int i = 0; i < n; i++) cin >> prices[i];\n    Solution sol;\n    int ans = sol.cutRod(prices);\n    cout << ans << \"\\n\";\n    return 0;\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.5
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "4\n1 5 8 9",
+      "output": "10",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "8\n1 5 8 9 10 17 17 20",
+      "output": "22",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint_3",
+      "input": "1\n1",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "boundary_4",
+      "input": "10\n1 5 8 9 10 17 17 20 24 30",
+      "output": "30",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    },
+    {
+      "id": "duplicate_5",
+      "input": "5\n2 2 2 2 2",
+      "output": "10",
+      "isVisible": false,
+      "weight": 1,
+      "category": "duplicate"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

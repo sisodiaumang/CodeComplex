@@ -1,0 +1,157 @@
+{
+  "_id": "f13e5f3bff2baa370fca60c5",
+  "title": "Detecting Bridges in a Spanning Tree: Fix the Edge Traversal",
+  "slug": "detecting-bridges-in-a-spanning-tree-fix-the-edge-traversal-bugfix-medium-graphs",
+  "difficulty": "Medium",
+  "category": "DSA",
+  "subCategory": "DFS/Disjoint Set",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 60,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [
+      "FIND-BRIDGES"
+    ],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "graph",
+      "spanning tree",
+      "bridge detection"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given a graph and a spanning tree, detect bridges in the spanning tree. A bridge is an edge that connects two nodes in a graph and whose removal increases the number of connected components.\n\nYou will be given an adjacency list representation of the graph, along with the root of the spanning tree. Your task is to find and return all the edges in the spanning tree that are bridges.",
+    "inputFormat": "The graph is represented as an adjacency list where each index i contains a list of its adjacent nodes. The spanning tree root is represented as the first node in the graph.",
+    "outputFormat": "Return a list of edges in the spanning tree that are bridges.",
+    "notes": "You may assume that the graph is connected and that the spanning tree is a tree. You may also assume that all edge weights are non-negative.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "4\n1 2 0\n2 0 1 3\n3 2 0 1\n1\n1 2",
+        "output": "1 2",
+        "explanation": "The graph has the following spanning tree: \n 1 -> 2 \n 2 -> 3 \n 3 -> 1 \nThere is only one bridge in this tree, which is the edge 1-2."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use DFS to traverse the spanning tree and detect bridges."
+    }
+  ],
+  "editorial": {
+    "title": "Detecting Bridges in a Spanning Tree",
+    "intuition": "To detect bridges, we can use DFS to traverse the spanning tree. We keep track of the discovery time of each node and the low value of each node. The low value of a node is the smallest discovery time of any node reachable from that node via an edge that has not yet been visited. If an edge has low value less than the discovery time of its end node, then it is a bridge.",
+    "bruteForce": "brute Force details.",
+    "betterSolution": "",
+    "optimalSolution": "Use the Tarjan's algorithm to find strongly connected components in the graph. Then use the result to find the bridges in the spanning tree.",
+    "proofOfCorrectness": "proof Of Correctness details.",
+    "dryRun": "dry Run details.",
+    "commonMistakes": [
+      "Missing low values",
+      "Incorrect DFS traversal"
+    ],
+    "timeComplexity": "O(n+m)",
+    "spaceComplexity": "O(n+m)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    vector<int> findBridges(vector<vector<int>>& graph, int root);\n};",
+    "java": "class Solution {\npublic:\n    List<Integer> findBridges(int[][] graph, int root);\n};",
+    "python": "class Solution:\n    def findBridges(self, graph, root):\n        pass\n",
+    "javascript": "function findBridges(graph, root) {\n    return []; // TODO: implement\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    vector<int> findBridges(vector<vector<int>>& graph, int root) {\n        vector<bool> visited(graph.size(), false);\n        vector<int> result;\n        dfs(graph, root, visited, result);\n        return result;\n    }\n\n    void dfs(vector<vector<int>>& graph, int node, vector<bool>& visited, vector<int>& result) {\n        visited[node] = true;\n        for (int neighbor : graph[node]) {\n            if (!visited[neighbor]) {\n                dfs(graph, neighbor, visited, result);\n            }\n        }\n        result.push_back(node);\n    }\n}",
+    "java": "class Solution {\npublic:\n    List<Integer> findBridges(int[][] graph, int root) {\n        boolean[] visited = new boolean[graph.length];\n        List<Integer> result = new ArrayList();\n        dfs(graph, root, visited, result);\n        return result;\n    }\n\n    void dfs(int[][] graph, int node, boolean[] visited, List<Integer> result) {\n        visited[node] = true;\n        for (int neighbor : graph[node]) {\n            if (!visited[neighbor]) {\n                dfs(graph, neighbor, visited, result);\n            }\n        }\n        result.add(node);\n    }\n}",
+    "python": "class Solution:\n    def findBridges(self, graph, root):\n        visited = [False] * len(graph)\n        result = []\n        self.dfs(graph, root, visited, result)\n        return result\n\n    def dfs(self, graph, node, visited, result):\n        visited[node] = True\n        for neighbor in graph[node]:\n            if not visited[neighbor]:\n                self.dfs(graph, neighbor, visited, result)\n        result.append(node)",
+    "javascript": "function findBridges(graph, root) {\n    let visited = new Array(graph.length).fill(false);\n    let result = [];\n    dfs(graph, root, visited, result);\n    return result;\n\n    function dfs(graph, node, visited, result) {\n        visited[node] = true;\n        for (let neighbor of graph[node]) {\n            if (!visited[neighbor]) {\n                dfs(graph, neighbor, visited, result);\n            }\n        }\n        result.push(node);\n    }\n}"
+  },
+  "functionSignature": {
+    "cpp": "vector<int> findBridges(vector<vector<int>>& graph, int root);",
+    "java": "List<Integer> findBridges(int[][] graph, int root);",
+    "python": "def findBridges(self, graph, root: int) -> list[int];",
+    "javascript": "function findBridges(graph, root);"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def findBridges(self, graph, root):\n        visited = [False] * len(graph)\n        low = [0] * len(graph)\n        disc = [0] * len(graph)\n        timer = 0\n\n        strongComp = [[] for _ in range(len(graph))]\n        edges = [[] for _ in range(len(graph))]\n\n        def dfs(node, parent):\n            global timer\n            visited[node] = True\n            disc[node] = low[node] = timer\n            timer += 1\n            for neighbor in graph[node]:\n                if neighbor == parent:\n                    continue\n                if visited[neighbor]:\n                    low[node] = min(low[node], disc[neighbor])\n                else:\n                    self.dfs(neighbor, node)\n                    low[node] = min(low[node], low[neighbor])\n                    if low[neighbor] > disc[node]:\n                        edges[node].append(neighbor)\n\n                        # Check for articulation points\n                        if parent != -1 and low[neighbor] >= disc[node]:\n                            strongComp[node].append(neighbor)\n\n        dfs(root, -1)\n\n        return [edge for edge in edges if len(edge) > 1]\n",
+    "cpp": "// Full executable C++ solution file that reads from std::cin, calls Solution::findBridges, and prints output to std::cout.\n#include <bits/stdc++.h>\n\n#define int long long\n#define mod 1000000007\n#define inf 1e18\n#define pi 3.1415926535897932\n\nusing namespace std;\n\ntemplate <typename T1, typename T2>\nbool chmin(T1 &a, const T2 &b) { if (a > b) { a = b; return true; } return false; }\n\ntemplate <typename T1, typename T2>\nbool chmax(T1 &a, const T2 &b) { if (a < b) { a = b; return true; } return false; }\n\nint binpow(int a, long long b) {\n    if (b == 0)\n        return 1;\n    else if (b % 2 == 0)\n        return binpow((a * a) % mod, b / 2) % mod;\n    return (binpow(a, b - 1) * a) % mod;\n}\n\nclass Solution {\npublic:\n    vector<int> findBridges(vector<vector<int>>& graph, int root) {\n        int n = graph.size();\n        vector<bool> visited(n, false);\n        vector<int> low(n, 0);\n        vector<int> disc(n, 0);\n        vector<int> timer(1, 0);\n\n        vector<vector<int>> strongComp(n, vector<int>());\n        vector<vector<int>> edges(n, vector<int>());\n\n        function<void(int, int)> dfs = [&](int node, int parent) {\n            visited[node] = true;\n            disc[node] = low[node] = timer[0];\n            timer[0]++;\n            for (int neighbor : graph[node]) {\n                if (neighbor == parent)\n                    continue;\n\n                if (visited[neighbor])\n                    low[node] = min(low[node], disc[neighbor]);\n                else\n                    dfs(neighbor, node);\n                    low[node] = min(low[node], low[neighbor]);\n                    if (low[neighbor] > disc[node])\n                        edges[node].push_back(neighbor);\n\n                        // Check for articulation points\n                        if (parent != -1 && low[neighbor] >= disc[node])\n                            strongComp[node].push_back(neighbor);\n            }\n        };\n\n        dfs(root, -1);\n\n        vector<int> result;\n\n        for (int i = 0; i < n; i++)\n            if (edges[i].size() > 1)\n                result.push_back(i);\n\n        return result;\n    }\n};\n\nint32_t main() {\n    ios_base::sync_with_stdio(false);\n    cin.tie(nullptr);\n\n    int t;\n    cin >> t;\n\n    while (t--) {\n        int n;\n        cin >> n;\n\n        vector<vector<int>> graph(n);\n        for (int i = 0; i < n; i++)\n            graph[i].reserve(n);\n\n        for (int i = 0; i < n; i++) {\n            int m;\n            cin >> m;\n            for (int j = 0; j < m; j++)\n                cin >> graph[i][j];\n        }\n\n        int root;\n        cin >> root;\n\n        Solution solution;\n        vector<int> result = solution.findBridges(graph, root);\n\n        for (int i : result)\n            cout << i << ' ';\n        cout << '\n';\n    }\n    return 0;\n}\n",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "4\n1 2 0\n2 0 1 3\n3 2 0 1\n1\n1 2",
+      "output": "1 2",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "5\n1 0 0 0 0\n0 1 2 0 0\n0 0 1 3 0\n0 0 0 1 4\n1",
+      "output": "1 2 3",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

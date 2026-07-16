@@ -1,0 +1,159 @@
+{
+  "_id": "921cd1b815fe636accb1e331",
+  "title": "N-Queens with Constrained Diagonals",
+  "slug": "n-queens-with-constrained-diagonals-bugfix-hard-recursion",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "BACKTRACKING/COMBINATORICS",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 75,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "backtracking",
+      "combinatorics"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Write a function that places `n` queens on an `n x n` chessboard such that no two queens attack each other. However, the queens also have additional constraints: they cannot be placed on a diagonal, square diagonal from the top-left to bottom-right, or square diagonal from top-right to bottom-left.\n\nThe function `solveNQueens` should return `true` if it is possible to place `n` queens on the board without violating the constraints. Otherwise, it should return `false`.\n\n**Examples:**\n\nGiven `n = 2`, the function should return `false` because there is no way to place 2 queens on a 2x2 board such that they don't attack each other.\n\nGiven `n = 3`, the function should return `true` because one way to place 3 queens on a 3x3 board without violating the constraints is:\n\n```\n  Q . .\n  . . Q\n  . Q .\n```\n\n\n**Notes:**\n\n*   The constraints apply only to the main diagonals and do not include the other two types of diagonals.\n*   The `solveNQueens` function should use backtracking to search for possible placements of the queens.",
+    "inputFormat": "Input is a single integer `n` representing the size of the chessboard.",
+    "outputFormat": "The `solveNQueens` function should return a boolean value indicating whether it is possible to place `n` queens on the board without violating the constraints.",
+    "notes": "The time complexity should be reasonable for a chessboard of size 20x20. Consider using a pruning strategy to improve performance.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 100,
+        "description": "Size of the chessboard (1 <= n <= 100)"
+      }
+    ],
+    "examples": [
+      {
+        "input": "2",
+        "output": "false",
+        "explanation": "No way to place 2 queens on a 2x2 board"
+      },
+      {
+        "input": "3",
+        "output": "true",
+        "explanation": "Example placement of 3 queens on a 3x3 board"
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Consider using a pruning strategy to improve performance. Think about which rows or columns can be eliminated based on the constraints."
+    }
+  ],
+  "editorial": {
+    "title": "N-Queens with Constrained Diagonals Editorial",
+    "intuition": "The `solveNQueens` function should use backtracking to search for possible placements of the queens. The constraints can be checked using bitwise operations and arithmetic.",
+    "bruteForce": "The brute-force approach involves checking all possible placements of the queens on the board. However, this approach is too inefficient for large values of `n.`",
+    "betterSolution": "The better solution involves using a pruning strategy to eliminate rows or columns that cannot contain a queen.",
+    "optimalSolution": "The optimal solution involves using a combination of pruning and bit manipulation to check the constraints efficiently.",
+    "proofOfCorrectness": "The correctness of the solution can be proven by showing that the backtracking search visits all possible placements of the queens and returns `false` when the constraints are violated.",
+    "dryRun": "Start by writing a helper function to check if a given placement of queens satisfies the constraints.",
+    "commonMistakes": [
+      "Failing to prune the search space properly",
+      "Not using bitwise operations to check the constraints"
+    ],
+    "timeComplexity": "O(n!)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    // TODO: implement solveNQueens()\n    bool solveNQueens(int n);\n};",
+    "java": "public class Solution {\npublic:\n    // TODO: implement solveNQueens()\n    boolean solveNQueens(int n);\n}",
+    "python": "class Solution:\n    # TODO: implement solveNQueens()\n    pass",
+    "javascript": "function solveNQueens(n) {\n    // TODO: implement the function\n    return false;"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    bool solveNQueens(int n) {\n        // Bug: Missing base case for n == 1\n        if (n == 1) return true;\n        std::vector<std::vector<char>> board(n, std::vector<char>(n, '.'));\n        return solveNQueensHelper(board, 0);\n    }\n\n    bool solveNQueensHelper(const std::vector<std::vector<char>>& board, int row) {\n        // Bug: Inefficient constraints check\n        if (isUnderAttack(board, row, 0) || isUnderAttack(board, row, n - 1)) return false;\n        return true;\n    }\n\n    bool isUnderAttack(const std::vector<std::vector<char>>& board, int row, int col) {\n        // Bug: Incorrect constraints check\n        bool isUnderAttack = false;\n        for (int i = 0; i < n; ++i) {\n            if (board[row][i] == 'Q' || board[i][col] == 'Q') {\n                isUnderAttack = true;\n                break;\n            }\n        }\n        return isUnderAttack;\n    }\n};",
+    "java": "public class Solution {\npublic:\n    boolean solveNQueens(int n) {\n        // Bug: Missing base case for n == 1\n        if (n == 1) return true;\n        char[][] board = new char[n][n];\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < n; j++) {\n                board[i][j] = '.';\n            }\n        }\n        return solveNQueensHelper(board, 0);\n    }\n\n    boolean solveNQueensHelper(char[][] board, int row) {\n        // Bug: Inefficient constraints check\n        if (isUnderAttack(board, row, 0) || isUnderAttack(board, row, n - 1)) return false;\n        return true;\n    }\n\n    boolean isUnderAttack(char[][] board, int row, int col) {\n        // Bug: Incorrect constraints check\n        boolean isUnderAttack = false;\n        for (int i = 0; i < n; ++i) {\n            if (board[row][i] == 'Q' || board[i][col] == 'Q') {\n                isUnderAttack = true;\n                break;\n            }\n        }\n        return isUnderAttack;\n    }\n}",
+    "python": "class Solution:\n    def solveNQueens(self, n: int) -> bool:\n        # Bug: Missing base case for n == 1\n        if n == 1:\n            return True\n        board = [['.'] * n for _ in range(n)]\n        return self.solveNQueensHelper(board, 0)\n\n    def solveNQueensHelper(self, board: list[list[str]], row: int) -> bool:\n        # Bug: Inefficient constraints check\n        if self.isUnderAttack(board, row, 0) or self.isUnderAttack(board, row, n - 1):\n            return False\n        return True\n\n    def isUnderAttack(self, board: list[list[str]], row: int, col: int) -> bool:\n        # Bug: Incorrect constraints check\n        isUnderAttack = False\n        for i in range(n):\n            if board[row][i] == 'Q' or board[i][col] == 'Q':\n                isUnderAttack = True\n                break\n        return isUnderAttack;",
+    "javascript": "function solveNQueens(n) {\n    // Bug: Missing base case for n == 1\n    if (n == 1) return true;\n    let board = new Array(n).fill('.').map(() => new Array(n).fill('.'));\n    return solveNQueensHelper(board, 0);\n}\n\nfunction solveNQueensHelper(board, row) {\n    // Bug: Inefficient constraints check\n    if (isUnderAttack(board, row, 0) || isUnderAttack(board, row, n - 1)) return false;\n    return true;\n}\n\nfunction isUnderAttack(board, row, col) {\n    // Bug: Incorrect constraints check\n    let isUnderAttack = false;\n    for (let i = 0; i < n; ++i) {\n        if (board[row][i] === 'Q' || board[i][col] === 'Q') {\n            isUnderAttack = true;\n            break;\n        }\n    }\n    return isUnderAttack;\n}"
+  },
+  "functionSignature": {
+    "cpp": "bool solveNQueens(int n);",
+    "java": "public boolean solveNQueens(int n);",
+    "python": "def solveNQueens(self, n: int) -> bool:",
+    "javascript": "var solveNQueens = function(n);"
+  },
+  "solutions": {
+    "python": "from typing import List\n\nclass Solution:\n    def solveNQueens(self, n: int) -> bool:\n        def is_safe(board: List[List[str]], row: int) -> bool:\n            for col in range(n):\n                if board[row][col] == 'Q':\n                    return False\n            return True\n\n        def solve_n_queens_helper(board: List[List[str]], row: int) -> bool:\n            if row == n:\n                return True\n            for col in range(n):\n                if is_safe(board, row):\n                    board[row][col] = 'Q'\n                    if solve_n_queens_helper(board, row + 1):\n                        return True\n                    board[row][col] = '.'\n            return False\n\n        board = [['.'] * n for _ in range(n)]\n        return solve_n_queens_helper(board, 0)\n\nif __name__ == '__main__':\n    n = int(input())\n    solution = Solution()\n    result = solution.solveNQueens(n)\n    print('true' if result else 'false')",
+    "cpp": "#include <bits/stdc++.h>\n\nusing namespace std;\nclass Solution {\npublic:\n    bool solveNQueens(int n) {\n        bool board[n][n];\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < n; j++) {\n                board[i][j] = false;\n            }\n        }\n        bool isSafe(int row, int col) {\n            for (int i = 0; i < n; i++) {\n                if (board[row][i]) return false;\n                if (board[i][col]) return false;\n                if (row - i == col - i) return false;\n                if (row - i == n - 1 - col - i) return false;\n            }\n            return true;\n        }\n\n        bool solve_n_queens_helper(int row) {\n            if (row == n) return true;\n            for (int col = 0; col < n; col++) {\n                if (isSafe(row, col)) {\n                    board[row][col] = true;\n                    if (solve_n_queens_helper(row + 1)) return true;\n                    board[row][col] = false;\n                }\n            }\n            return false;\n        }\n\n        return solve_n_queens_helper(0);\n    }\n};\n\nint main() {\n    int n;\n    cin >> n;\n    Solution solution;\n    bool result = solution.solveNQueens(n);\n    cout << (result ? 'true' : 'false') << endl;\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 1000,
+    "memoryLimit": 262144,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "2\n",
+      "output": "false\n",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "3\n",
+      "output": "true\n",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

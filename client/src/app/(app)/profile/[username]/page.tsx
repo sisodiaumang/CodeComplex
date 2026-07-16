@@ -2,7 +2,7 @@
 
 import { use, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Award, CalendarDays, Pencil, Trophy, ChevronDown } from "lucide-react";
+import { Award, CalendarDays, Pencil, Trophy, ChevronDown, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { api } from "@/lib/api";
 import {
@@ -22,9 +22,11 @@ import {
   Button,
   Card,
   EmptyState,
+  Skeleton,
   Spinner,
   TierBadge,
 } from "@/components/ui";
+import { AchievementIcon } from "@/components/AchievementIcon";
 
 const GithubIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg viewBox="0 0 24 24" fill="currentColor" {...props}>
@@ -86,7 +88,7 @@ const RATING_KEYS: Array<{ key: keyof RatingsMap; mode: BattleType }> = [
   { key: "dsa", mode: "DSA" },
   { key: "frontend", mode: "FRONTEND" },
   { key: "backend", mode: "BACKEND" },
-  { key: "fullstack", mode: "FULLSTACK" },
+  { key: "projects", mode: "PROJECTS" },
   { key: "promptWar", mode: "PROMPT_WAR" },
 ];
 
@@ -112,6 +114,106 @@ const RARITY_STYLES: Record<string, string> = {
   LEGENDARY: "border-draw/30 text-draw",
 };
 
+function ProfileSkeleton() {
+  return (
+    <div className="grid gap-6 lg:grid-cols-[280px_1fr]">
+      {/* Left Column (Sidebar style details) */}
+      <div className="space-y-6">
+        {/* Identity Card Skeleton */}
+        <Card className="overflow-hidden border border-border bg-surface shadow-md">
+          {/* Card Header Gradient banner */}
+          <div className="h-20 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent border-b border-border" />
+          
+          <div className="relative -mt-10 flex flex-col items-center px-4 pb-6 text-center">
+            <Skeleton className="h-20 w-20 rounded-full ring-4 ring-surface shadow-md" />
+            <div className="mt-4 w-full flex flex-col items-center space-y-2">
+              <Skeleton className="h-6 w-36" />
+              <Skeleton className="h-4 w-24" />
+            </div>
+            
+            <div className="mt-5 w-full space-y-4 border-t border-border/60 pt-5">
+              <div className="flex items-center justify-between">
+                <Skeleton className="h-4 w-12" />
+                <Skeleton className="h-4 w-24" />
+              </div>
+              <div className="flex items-center justify-between">
+                <Skeleton className="h-4 w-16" />
+                <Skeleton className="h-4 w-16" />
+              </div>
+            </div>
+            <div className="mt-5 h-9 w-full bg-surface-3 rounded-md animate-pulse" />
+          </div>
+        </Card>
+
+        {/* Streak Card Skeleton */}
+        <Card className="p-5 flex items-center gap-4 border border-border/80 bg-surface shadow-md">
+          <Skeleton className="h-14 w-14 rounded-full" />
+          <div className="space-y-2 flex-1">
+            <Skeleton className="h-3.5 w-24" />
+            <Skeleton className="h-6 w-16" />
+            <Skeleton className="h-3 w-32" />
+          </div>
+        </Card>
+        
+        {/* Bio Card Skeleton */}
+        <Card className="p-5 space-y-3">
+          <Skeleton className="h-3.5 w-10" />
+          <Skeleton className="h-4 w-full" count={3} />
+        </Card>
+      </div>
+
+      {/* Right Column */}
+      <div className="space-y-6">
+        {/* Ratings grid skeleton */}
+        <Card className="p-6 space-y-4">
+          <Skeleton className="h-6 w-44" />
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="border border-border/60 rounded-xl p-4.5 space-y-2 bg-surface-2">
+                <Skeleton className="h-3.5 w-16" />
+                <Skeleton className="h-7 w-20" />
+                <Skeleton className="h-3 w-28" />
+              </div>
+            ))}
+          </div>
+        </Card>
+
+        {/* Activity Chart skeleton */}
+        <Card className="p-6 space-y-4">
+          <div className="flex justify-between items-center">
+            <Skeleton className="h-6 w-32" />
+            <Skeleton className="h-8 w-24 rounded-lg" />
+          </div>
+          <Skeleton className="h-48 w-full rounded-lg" />
+        </Card>
+      </div>
+    </div>
+  );
+}
+
+const BANNER_CLASSES: Record<string, string> = {
+  apprentice: "bg-slate-950 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:10px_10px] border-slate-800 text-slate-400",
+  novice: "bg-blue-950 bg-[radial-gradient(#1e3a8a_1px,transparent_1px)] bg-[size:8px_8px] border-blue-900 text-blue-400",
+  bug_hunter: "bg-emerald-950 bg-[linear-gradient(45deg,#064e3b_25%,transparent_25%),linear-gradient(-45deg,#064e3b_25%,transparent_25%)] bg-[size:6px_6px] border-emerald-900 text-emerald-400",
+  explorer: "bg-indigo-950 bg-[repeating-linear-gradient(45deg,#312e81,#312e81_4px,transparent_4px,transparent_8px)] border-indigo-900/60 text-indigo-400",
+  architect: "bg-zinc-900 bg-[linear-gradient(to_bottom,transparent_95%,#0891b2_95%)] bg-[size:100%_12px] border-cyan-900/60 text-cyan-400",
+  overlord: "bg-rose-950 bg-[repeating-linear-gradient(-45deg,#991b1b,#991b1b_2px,transparent_2px,transparent_8px)] border-rose-900/60 text-rose-400",
+  slinger: "bg-neutral-950 bg-[radial-gradient(#9d174d_1.2px,transparent_1.2px)] bg-[size:12px_12px] border-pink-900/50 text-pink-400",
+  stack_overlord: "bg-stone-900 bg-[linear-gradient(27deg,#1c1917_25%,transparent_25%),linear-gradient(207deg,#1c1917_25%,transparent_25%)] bg-[size:8px_8px] border-amber-900/60 text-amber-400",
+  cyber_sentient: "bg-stone-950 bg-[linear-gradient(to_right,#5b21b6_0.5px,transparent_0.5px),linear-gradient(to_bottom,#5b21b6_0.5px,transparent_0.5px)] bg-[size:16px_16px] border-violet-900/60 text-violet-400",
+  grandmaster: "bg-black bg-[radial-gradient(#d97706_0.8px,transparent_0.8px)] bg-[size:14px_14px] border-amber-500/30 text-amber-500",
+  void_walker: "bg-violet-950 bg-[radial-gradient(#c084fc_1px,transparent_1px)] bg-[size:20px_20px] border-purple-900/60 text-purple-400",
+  stellar_monarch: "bg-slate-950 bg-[radial-gradient(#fcd34d_0.8px,transparent_0.8px)] bg-[size:16px_16px] border-amber-600/40 text-amber-300",
+  binary_beast: "bg-black bg-[linear-gradient(to_bottom,rgba(16,185,129,0.1)_50%,transparent_50%)] bg-[size:100%_4px] border-emerald-900/50 text-emerald-400",
+  quantum_specter: "bg-cyan-950 bg-[repeating-linear-gradient(135deg,#0e7490,#0e7490_3px,transparent_3px,transparent_12px)] border-cyan-800/50 text-cyan-400",
+  neon_shogun: "bg-neutral-950 bg-[linear-gradient(115deg,#701a75_10%,transparent_10%),linear-gradient(295deg,#701a75_10%,transparent_10%)] bg-[size:12px_12px] border-fuchsia-900/60 text-fuchsia-400",
+  apex_predator: "bg-red-950 bg-[radial-gradient(#dc2626_1.2px,transparent_1.2px)] bg-[size:18px_18px] border-red-800/60 text-red-400",
+  shadow_agent: "bg-zinc-950 bg-[linear-gradient(to_right,#3f3f46_1px,transparent_1px),linear-gradient(to_bottom,#3f3f46_1px,transparent_1px)] bg-[size:14px_14px] border-zinc-800 text-zinc-400",
+  solar_flare: "bg-amber-950 bg-[radial-gradient(#f97316_1px,transparent_1px)] bg-[size:10px_10px] border-orange-950/60 text-orange-400",
+  abyss_watcher: "bg-slate-900 bg-[repeating-linear-gradient(45deg,#1e293b,#1e293b_10px,#0f172a_10px,#0f172a_20px)] border-slate-800/80 text-slate-300",
+  celestial_deity: "bg-slate-950 bg-[radial-gradient(#e2e8f0_1.5px,transparent_1.5px),radial-gradient(#fbbf24_1px,transparent_1px)] bg-[size:24px_24px] border-slate-700/50 text-amber-200",
+};
+
 export default function ProfilePage({
   params,
 }: {
@@ -135,7 +237,7 @@ export default function ProfilePage({
     queryFn: () => api<unknown>(`/match/history?username=${username}&limit=100`),
   });
 
-  if (profileQuery.isLoading) return <Spinner />;
+  if (profileQuery.isLoading) return <ProfileSkeleton />;
 
   if (profileQuery.isError || !profileQuery.data) {
     return (
@@ -149,9 +251,9 @@ export default function ProfilePage({
   const profile = profileQuery.data;
   const profileData = profile.profileData;
   
-  const ratings: RatingsMap = profileData?.ratings || { dsa: 1200, frontend: 1200, backend: 1200, fullstack: 1200, promptWar: 1200, team: 1200 };
-  const peakRatings: RatingsMap = profileData?.peakRatings || { dsa: 1200, frontend: 1200, backend: 1200, fullstack: 1200, promptWar: 1200, team: 1200 };
-  const stats = profileData?.stats || { wins: 0, losses: 0, draws: 0, totalMatches: 0, dsaSolved: 0, frontendCompleted: 0, backendCompleted: 0, fullstackCompleted: 0 };
+  const ratings: RatingsMap = profileData?.ratings || { dsa: 1200, frontend: 1200, backend: 1200, projects: 1200, promptWar: 1200, team: 1200 };
+  const peakRatings: RatingsMap = profileData?.peakRatings || { dsa: 1200, frontend: 1200, backend: 1200, projects: 1200, promptWar: 1200, team: 1200 };
+  const stats = profileData?.stats || { wins: 0, losses: 0, draws: 0, totalMatches: 0, dsaSolved: 0, frontendCompleted: 0, backendCompleted: 0, projectsCompleted: 0 };
   const streak = profileData?.streak || 0;
   const achievements = (profileData?.achievements || []) as Achievement[];
   const allMatches = unwrapList<Match>(historyQuery.data, "matches", "history");
@@ -170,7 +272,10 @@ export default function ProfilePage({
   const dsaSolved = stats.dsaSolved ?? 0;
   const frontendCompleted = stats.frontendCompleted ?? 0;
   const backendCompleted = stats.backendCompleted ?? 0;
-  const fullstackCompleted = stats.fullstackCompleted ?? 0;
+  const projectsCompleted = stats.projectsCompleted ?? 0;
+
+  const totalXp = achievements.reduce((sum, a) => sum + (a.xpReward ?? 0), 0);
+  const currentLevel = Math.floor(totalXp / 1000) + 1;
 
   return (
     <div className="grid gap-6 lg:grid-cols-[280px_1fr]">
@@ -179,7 +284,10 @@ export default function ProfilePage({
         {/* Identity Card */}
         <Card className="overflow-hidden border border-border bg-surface shadow-md">
           {/* Card Header (Gradient background with custom mascot!) */}
-          <div className="h-20 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent border-b border-border relative overflow-hidden flex items-center justify-end px-4">
+          <div className={cn(
+            "h-20 bg-gradient-to-r border-b relative overflow-hidden flex items-center justify-end px-4",
+            BANNER_CLASSES[profile.banner ?? "apprentice"] || "from-primary/10 via-primary/5 to-transparent border-border"
+          )}>
             <div className="scale-75 origin-bottom-right translate-y-3 opacity-90 z-10">
               <KeyboardMascotAnimation active={true} pet={profile.mascot} onlyMascot={true} />
             </div>
@@ -199,8 +307,18 @@ export default function ProfilePage({
                   <span className="text-sm" title={profile.country}>{countryFlag(profile.country)}</span>
                 )}
               </h1>
+
+              <div className="flex items-center justify-center gap-1.5 mt-1.5">
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black font-mono tracking-wider bg-primary/10 border border-primary/20 text-primary">
+                  LVL {currentLevel}
+                </span>
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black font-mono tracking-wider bg-surface-3 border border-border/80 text-text-muted">
+                  {totalXp} XP
+                </span>
+              </div>
+
               {profile.fullName && (
-                <p className="text-sm text-text-muted">{profile.fullName}</p>
+                <p className="text-sm text-text-muted mt-1">{profile.fullName}</p>
               )}
             </div>
 
@@ -297,9 +415,14 @@ export default function ProfilePage({
         )}
 
         {/* Achievements Card (moved to left sidebar) */}
-        <Card className="p-5 space-y-4">
+        <Card className="p-5 space-y-4 shadow-sm bg-surface border-border">
           <div className="flex items-center justify-between border-b border-border/40 pb-2.5">
-            <span className="text-xs font-semibold text-text-faint uppercase tracking-wider font-mono">Achievements</span>
+            <Link href="/achievements" className="flex items-center gap-1 group cursor-pointer">
+              <span className="text-xs font-bold text-text-faint group-hover:text-primary transition-colors uppercase tracking-wider font-mono">
+                Achievements
+              </span>
+              <ChevronRight className="size-3.5 text-text-faint group-hover:text-primary transition-colors" />
+            </Link>
             {achievements.length > 0 && (
               <span className="text-[10px] bg-primary/10 text-primary border border-primary/20 rounded px-1.5 py-0.5 font-bold font-mono">
                 {achievements.length}
@@ -311,23 +434,51 @@ export default function ProfilePage({
               No achievements unlocked yet.
             </p>
           ) : (
-            <div className="space-y-3 max-h-[250px] overflow-y-auto pr-1">
-              {achievements.map((a) => (
-                <div
-                  key={a._id ?? a.name}
-                  className="p-2.5 rounded-lg border border-border/50 bg-surface-2 space-y-0.5"
-                >
-                  <p className="text-xs font-bold text-text truncate">
-                    {a.icon || "🏆"} {a.name}
-                  </p>
-                  <p className="text-[10px] text-text-muted leading-relaxed">
-                    {a.description}
-                  </p>
-                  <p className="text-[9px] text-text-faint font-mono uppercase font-bold pt-1">
-                    {a.rarity}
-                  </p>
-                </div>
-              ))}
+            <div className="space-y-3">
+              <div className="space-y-2 max-h-[260px] overflow-y-auto pr-1">
+                {achievements.map((a) => {
+                  const rarityColors: Record<string, string> = {
+                    COMMON: "text-slate-400 border-slate-500/20 bg-slate-500/5",
+                    RARE: "text-blue-400 border-blue-500/20 bg-blue-500/5",
+                    EPIC: "text-purple-400 border-purple-500/20 bg-purple-500/5",
+                    LEGENDARY: "text-amber-400 border-amber-500/25 bg-amber-500/5",
+                  };
+                  const colorClass = rarityColors[a.rarity] || rarityColors.COMMON;
+                  return (
+                    <Link
+                      href="/achievements"
+                      key={a._id ?? a.name}
+                      className="flex items-center gap-3 p-2 rounded-lg border border-border/60 bg-surface-2/40 hover:bg-surface-2 transition-colors cursor-pointer"
+                    >
+                      <div className={cn(
+                        "flex size-9 shrink-0 items-center justify-center rounded-lg border shadow-[inset_0_1px_2px_rgba(0,0,0,0.02)]",
+                        colorClass
+                      )}>
+                        <AchievementIcon
+                          name={a.name}
+                          category={a.category ?? ""}
+                          size="sm"
+                        />
+                      </div>
+                      <div className="min-w-0 flex-1 leading-snug">
+                        <p className="text-xs font-bold text-text truncate">
+                          {a.name}
+                        </p>
+                        <p className="text-[8px] text-text-faint uppercase font-bold tracking-wider font-mono mt-0.5">
+                          {a.rarity}
+                        </p>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+              <div className="pt-1.5 border-t border-border/40">
+                <Link href="/achievements">
+                  <Button variant="ghost" size="sm" className="w-full text-xs font-bold py-1.5 h-8 font-mono border border-border/60 hover:bg-surface-2">
+                    Open Badges Hub
+                  </Button>
+                </Link>
+              </div>
             </div>
           )}
         </Card>
@@ -437,7 +588,7 @@ export default function ProfilePage({
                 { label: "DSA Problems Solved", value: dsaSolved, color: "bg-mode-dsa" },
                 { label: "Frontend Challenges", value: frontendCompleted, color: "bg-mode-frontend" },
                 { label: "Backend Challenges", value: backendCompleted, color: "bg-mode-backend" },
-                { label: "Fullstack Projects", value: fullstackCompleted, color: "bg-mode-fullstack" },
+                { label: "Project Challenges", value: projectsCompleted, color: "bg-mode-projects" },
               ].map((item) => (
                 <div key={item.label} className="space-y-1">
                   <div className="flex items-center justify-between text-xs">
@@ -505,7 +656,7 @@ export default function ProfilePage({
             { label: "Prompt War", value: "PROMPT_WAR", unit: "war", plural: "wars" },
             { label: "Backend", value: "BACKEND", unit: "battle", plural: "battles" },
             { label: "Frontend", value: "FRONTEND", unit: "battle", plural: "battles" },
-            { label: "Fullstack", value: "FULLSTACK", unit: "battle", plural: "battles" },
+            { label: "Projects", value: "PROJECTS", unit: "battle", plural: "battles" },
           ];
 
           const currentModeConfig = MODES.find((m) => m.value === selectedMode) || MODES[0];

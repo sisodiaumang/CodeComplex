@@ -1,0 +1,151 @@
+{
+  "title": "Validating HTML Anchor Tags",
+  "subCategory": "HTML",
+  "statement": {
+    "markdown": "Write a function that validates whether an HTML anchor tag is properly formed. A properly formed anchor tag has the following properties: 1) it contains the 'a' tag, 2) the tag has a 'href' attribute, and 3) the 'href' attribute contains a valid URL. The function should return `true` if the anchor tag is properly formed and `false` otherwise.\n\nYour function should handle the following edge cases: \n- Anchor tags with missing 'href' attribute\n- Anchor tags with 'href' attribute containing an invalid URL\n- Anchor tags with other attributes but no 'href'\n- Anchor tags containing other tags or text\n- Empty anchor tags\n- Anchor tags with a target attribute",
+    "inputFormat": "A string containing an HTML anchor tag",
+    "outputFormat": "A boolean indicating whether the anchor tag is properly formed",
+    "notes": "You can use any library you like to parse the HTML. However, you must not use any libraries that can execute JavaScript or access external resources.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "s",
+        "type": "integer",
+        "min": 0,
+        "max": 20000,
+        "description": "Length of the input string"
+      }
+    ],
+    "examples": [
+      {
+        "input": "<a href='https://www.example.com'>Example</a>",
+        "output": "true",
+        "explanation": "The anchor tag has a valid 'href' attribute and contains a valid URL"
+      },
+      {
+        "input": "<a href='invalid_url'>Example</a>",
+        "output": "false",
+        "explanation": "The 'href' attribute contains an invalid URL"
+      },
+      {
+        "input": "<a>Example</a>",
+        "output": "false",
+        "explanation": "The anchor tag is missing the 'href' attribute"
+      },
+      {
+        "input": "<a target=_blank href='https://www.example.com'>Example</a>",
+        "output": "true",
+        "explanation": "The anchor tag contains a 'target' attribute but still has a valid 'href' attribute"
+      },
+      {
+        "input": "<a href='https://www.example.com'></a>",
+        "output": "true",
+        "explanation": "The anchor tag contains a valid 'href' attribute but no text"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "HTML"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "html"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text: You can use the href attribute to determine whether the anchor tag is properly formed"
+    }
+  ],
+  "editorial": {
+    "title": "Validating HTML Anchor Tags",
+    "intuition": "The intuition behind this problem is to parse the HTML anchor tag and check if it has a valid 'href' attribute. The 'href' attribute should contain a valid URL.",
+    "bruteForce": "One approach to solving this problem is to use a regular expression to parse the 'href' attribute and check if it contains a valid URL. However, this approach may not be efficient for large input strings.",
+    "betterSolution": "A better approach is to use a library like cheerio to parse the HTML anchor tag. This library can handle nested tags and attributes efficiently.",
+    "optimalSolution": "The optimal solution involves using a library like cheerio to parse the HTML anchor tag. We can then check if the tag has a 'href' attribute and if the attribute contains a valid URL.",
+    "proofOfCorrectness": "The proof of correctness involves showing that the function returns true for all properly formed anchor tags and false for all improperly formed anchor tags.",
+    "dryRun": "Step-by-step example run: <a href='https://www.example.com'>Example</a>",
+    "commonMistakes": [
+      "Not checking for missing 'href' attribute",
+      "Not checking for invalid URLs"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// Write your function here",
+    "python": "class Solution:\n    def solve(self, s: str) -> bool:"
+  },
+  "buggyStarterCode": {
+    "javascript": "function solve(s) {\n    if (s.indexOf('a') < 0) return false;\n    if (s.indexOf('href') < 0) return false;\n    if (new URL(s.substring(s.indexOf('href') + 5, s.indexOf('>') - 1)).hostname) return true;\n    return false;\n}",
+    "python": "class Solution:\n    def solve(self, s: str) -> bool:\n        if 'a' not in s:\n            return False\n        if 'href' not in s:\n            return False\n        try:\n            new_url = URL(s.split('href')[1].split('<')[0].split(' ')[0])\n            return new_url.hostname\n        except ValueError:\n            return False\n"
+  },
+  "functionSignature": {
+    "javascript": "function solve(s)",
+    "python": "def solve(self, s: str) -> bool:"
+  },
+  "solutions": {
+    "javascript": "// Solution: use cheerio to parse the HTML anchor tag and check if it has a 'href' attribute and if the attribute contains a valid URL\nfunction solve(s) {\n    const $ = cheerio.load(s);\n    const tag = $('a');\n    if (tag.length === 0 || !tag.attr('href')) return false;\n    const href = tag.attr('href');\n    if (!new URL(href).hostname) return false;\n    return true;\n}",
+    "python": "class Solution:\n    def solve(self, s: str) -> bool:\n        from bs4 import BeautifulSoup\n        soup = BeautifulSoup(s, 'html.parser')\n        tag = soup.find('a')\n        if not tag or not tag.get('href'):\n            return False\n        href = tag.get('href')\n        try:\n            new_url = URL(href)\n            return new_url.hostname\n        except ValueError:\n            return False\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "<a href='https://www.example.com'>Example</a>",
+      "output": "true",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "<a href='invalid_url'>Example</a>",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "2b92534135651d0e71f54ad6",
+  "slug": "validating-html-anchor-tags-bugfix-medium-html",
+  "mode": "bug_fix",
+  "category": "HTML",
+  "difficulty": "Medium"
+}

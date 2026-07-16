@@ -1,0 +1,153 @@
+{
+  "_id": "f9da69d2cb7dc4eb7302b2d9",
+  "title": "Incorrect Midpoint Calculation in Binary Search",
+  "slug": "incorrect-midpoint-calculation-in-binary-search-bugfix-medium-binary-search",
+  "difficulty": "Medium",
+  "category": "DSA",
+  "subCategory": "BINARY_SEARCH",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "binary_search"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given a sorted array of integers `nums` and a target integer `target`, implement a function `solve` that returns `true` if `target` is present in the array and `false` otherwise. The function should use binary search to find the target.",
+    "inputFormat": "The function will be called with a sorted array of integers and a target integer.",
+    "outputFormat": "The function should return a boolean indicating whether the target is present in the array.",
+    "notes": "The array is guaranteed to be sorted in ascending order. Time complexity should be O(log n).",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "4\n1 2 3 4 5\n3",
+        "output": "true",
+        "explanation": "Target 3 is present in the array"
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Consider the midpoint calculation. Is it correct?"
+    }
+  ],
+  "editorial": {
+    "title": "Optimal Solution",
+    "intuition": "Binary search can be implemented using two pointers that move towards each other. The left pointer points to the lower bound, and the right pointer points to the upper bound. The target should be searched between the lower and upper bounds.",
+    "bruteForce": "Brute force approach: O(n log n) due to the sorting operation.",
+    "betterSolution": "A better solution could be a linear search: O(n).",
+    "optimalSolution": "Use binary search: O(log n).",
+    "proofOfCorrectness": "The algorithm is correct because it searches for the target between the lower and upper bounds, which is reduced by half after each iteration.",
+    "dryRun": "Example run: If the lower bound is 1 and the upper bound is 1000, then the midpoint should be 501.",
+    "commonMistakes": [
+      "Incorrect midpoint calculation",
+      "Incorrect range handling"
+    ],
+    "timeComplexity": "O(log n)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {public: bool solve(vector<int>& nums, int target) { int left = 0, right = nums.size() - 1; // TODO: implement}",
+    "java": "public class Solution {public boolean solve(int[] nums, int target) { int left = 0, right = nums.length - 1; // TODO: implement}",
+    "python": "class Solution: def solve(self, nums: list[int], target: int) -> bool: left = 0; right = len(nums) - 1; # TODO: implement",
+    "javascript": "function solve(nums, target) { let left = 0, right = nums.length - 1; // TODO: implement return true; }"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {public: bool solve(vector<int>& nums, int target) { int left = 0, right = nums.size() - 1; int mid = (left + right + nums.size()) / 2; if (nums[mid] == target) return true; if (nums[mid] > target) right = mid; else left = mid + 1; return false; }}",
+    "java": "public class Solution {public boolean solve(int[] nums, int target) { int left = 0, right = nums.length - 1; int mid = (left + right + nums.length) / 2; if (nums[mid] == target) return true; if (nums[mid] > target) right = mid; else left = mid + 1; return false; }}",
+    "python": "class Solution: def solve(self, nums: list[int], target: int) -> bool: left = 0; right = len(nums) - 1; mid = (left + right + len(nums)) // 2; if (nums[mid] == target): return True; if (nums[mid] > target): right = mid; else: left = mid + 1; return False;",
+    "javascript": "function solve(nums, target) { let left = 0, right = nums.length - 1; let mid = (left + right + nums.length) / 2; if (nums[mid] == target) return true; if (nums[mid] > target) right = mid; else left = mid + 1; return false; }"
+  },
+  "functionSignature": {
+    "cpp": "bool solve(vector<int>& nums, int target);",
+    "java": "boolean solve(int[] nums, int target);",
+    "python": "def solve(self, nums: list[int], target: int) -> bool;",
+    "javascript": "function solve(nums, target) {"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def solve(self, nums: list[int], target: int) -> bool:\n        left, right = 0, len(nums) - 1\n        while left <= right:\n            mid = (left + right) // 2\n            if nums[mid] == target:\n                return True\n            elif nums[mid] < target:\n                left = mid + 1\n            else:\n                right = mid - 1\n        return False\n\nif __name__ == '__main__':\n    solver = Solution()\n    for _ in range(int(input())):\n        n = int(input())\n        nums = list(map(int, input().split()))\n        target = int(input())\n        print(solver.solve(nums, target))",
+    "cpp": "class Solution {public:\nbool solve(vector<int>& nums, int target) {\n    int left = 0, right = nums.size() - 1;\n    while (left <= right) {\n        int mid = (left + right) / 2;\n        if (nums[mid] == target) return true;\n        else if (nums[mid] < target) left = mid + 1;\n        else right = mid - 1;\n    }\n    return false;\n}    \n\nint main() {\n    int t;\n    cin >> t;\n    Solution s;\n    while(t-- > 0) {\n        int n;\n        cin >> n;\n        vector<int> nums(n);\n        for (int i = 0; i < n; i++) {\n            cin >> nums[i];\n        }\n        int target;\n        cin >> target;\n        cout << (s.solve(nums, target) ? \"YES\" : \"NO\") << endl;\n    }\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "4\n1 2 3 4 5\n3",
+      "output": "true",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "3\n1 2 3\n5",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

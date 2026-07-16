@@ -1,0 +1,143 @@
+{
+  "title": "Fix CSS Grid Layout with Inconsistent Column Width Calculation",
+  "subCategory": "CSS Grid Layout",
+  "statement": {
+    "markdown": "Given a CSS grid layout with a variable number of columns and dynamic row heights, implement a function that calculates the correct width of each column based on the grid template areas. The buggy function should take a string representing the grid template areas and return an object where the keys are the column names and the values are their respective widths. However, the function contains a subtle bug that causes incorrect column widths when the grid has more than two rows.",
+    "inputFormat": "The input string will be a CSS grid template area string (e.g., '[col1 col2] [col3 col4]').",
+    "outputFormat": "The output should be an object where the keys are the column names and the values are their respective widths.",
+    "notes": "The function should handle grid template areas with a variable number of columns and rows.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of rows in the grid"
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of columns in the grid"
+      }
+    ],
+    "examples": [
+      {
+        "input": "[col1 col2] [col3 col4]",
+        "output": "[object Object]",
+        "explanation": "The grid has two rows and four columns. The column widths are calculated based on the grid template areas."
+      },
+      {
+        "input": "[col1] [col2 col3]",
+        "output": "[object Object]",
+        "explanation": "The grid has two rows and three columns. The column widths are calculated based on the grid template areas."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 25,
+    "points": 75,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "CSS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "css"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 1,
+    "contestEligible": true
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the CSS grid template areas to calculate the column widths. However, be aware of the grid's dynamic row heights and variable number of columns."
+    }
+  ],
+  "editorial": {
+    "title": "Fixing CSS Grid Layout with Inconsistent Column Width Calculation",
+    "intuition": "The correct approach is to parse the grid template areas and calculate the column widths based on the grid's layout.",
+    "bruteForce": "A brute-force approach would involve parsing the grid template areas, iterating over each character to determine the column names, and calculating the column widths based on the grid's layout.",
+    "betterSolution": "A better solution would involve using a more efficient algorithm to parse the grid template areas and calculate the column widths.",
+    "optimalSolution": "The optimal solution involves using a dynamic programming approach to parse the grid template areas and calculate the column widths.",
+    "proofOfCorrectness": "The correctness of the solution can be proven by demonstrating that the calculated column widths match the expected values for various grid templates.",
+    "dryRun": "A dry run of the solution can be performed by testing it with various grid templates to ensure that it produces the correct column widths.",
+    "commonMistakes": [
+      "Incorrectly parsing the grid template areas",
+      "Failing to account for dynamic row heights and variable number of columns"
+    ],
+    "timeComplexity": "O(n*m)",
+    "spaceComplexity": "O(n*m)"
+  },
+  "starterCode": {
+    "javascript": "function calculateColumnWidths(gridTemplateAreas) {\n\tconst columns = gridTemplateAreas.split('] [');\n\tconst columnWidths = {};\n\tfor (const column of columns) {\n\t\tconst columnNames = column.split(' ');\n\t\tfor (const columnName of columnNames) {\n\t\t\t// TO DO: Calculate the column width based on the grid template area\n\t\t}\n\t}\n\treturn columnWidths;\n}",
+    "python": "class Solution:\n\tdef calculateColumnWidths(self, gridTemplateAreas) -> dict:\n\t\tcolumns = gridTemplateAreas.split('] [')\n\t\tcolumnWidths = {}\n\t\tfor column in columns:\n\t\t\tcolumnNames = column.split(' ')\n\t\t\tfor columnName in columnNames:\n\t\t\t\t# TO DO: Calculate the column width based on the grid template area\n\t\t\t\tpass\n\t\treturn columnWidths"
+  },
+  "buggyStarterCode": {
+    "javascript": "function calculateColumnWidths(gridTemplateAreas) {\n\tconst columns = gridTemplateAreas.split('] [');\n\tconst columnWidths = {};\n\tfor (const column of columns) {\n\t\tconst columnNames = column.split(' ');\n\t\tfor (const columnName of columnNames) {\n\t\t\t// TO DO: Calculate the column width based on the grid template area\n\t\t\t// BUG: Incorrectly calculating the column width by adding the column name length to the previous column width\n\t\t\tcolumnWidths[columnName] = columnWidths[columnName] || 0;\n\t\t\tcolumnWidths[columnName] += columnName.length;\n\t\t}\n\t}\n\treturn columnWidths;\n}",
+    "python": "class Solution:\n\tdef calculateColumnWidths(self, gridTemplateAreas) -> dict:\n\t\tcolumns = gridTemplateAreas.split('] [')\n\t\tcolumnWidths = {}\n\t\tfor column in columns:\n\t\t\tcolumnNames = column.split(' ')\n\t\t\tfor columnName in columnNames:\n\t\t\t\t# TO DO: Calculate the column width based on the grid template area\n\t\t\t\t# BUG: Incorrectly calculating the column width by adding the column name length to the previous column width\n\t\t\t\tcolumnWidths[columnName] = columnWidths.get(columnName, 0) + len(columnName)\n\t\treturn columnWidths"
+  },
+  "functionSignature": {
+    "javascript": "function calculateColumnWidths(gridTemplateAreas: string) -> object;",
+    "python": "def calculateColumnWidths(self, gridTemplateAreas: str) -> dict:"
+  },
+  "solutions": {
+    "javascript": "// Solution:\n// 1. Split the grid template areas into columns\n// 2. Split each column into column names\n// 3. Calculate the column width based on the grid template area\n// 4. Return the column widths\nfunction calculateColumnWidths(gridTemplateAreas) {\n\tconst columns = gridTemplateAreas.split('] [');\n\tconst columnWidths = {};\n\tfor (const column of columns) {\n\t\tconst columnNames = column.split(' ');\n\t\tlet previousWidth = 0;\n\t\tfor (const columnName of columnNames) {\n\t\t\tcolumnWidths[columnName] = previousWidth;\n\t\t\tpreviousWidth += columnName.length;\n\t\t}\n\t}\n\treturn columnWidths;\n}",
+    "python": "class Solution:\n\tdef calculateColumnWidths(self, gridTemplateAreas: str) -> dict:\n\t\tcolumns = gridTemplateAreas.split('] [')\n\t\tcolumnWidths = {}\n\t\tpreviousWidth = 0\n\t\tfor column in columns:\n\t\t\tcolumnNames = column.split(' ')\n\t\t\tfor columnName in columnNames:\n\t\t\t\tcolumnWidths[columnName] = previousWidth\n\t\t\t\tpreviousWidth += len(columnName)\n\t\treturn columnWidths"
+  },
+  "judgeConfig": {
+    "timeLimit": 3,
+    "memoryLimit": 512,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 2
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "[col1 col2] [col3 col4]",
+      "output": "[object Object]",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "[col1] [col2 col3]",
+      "output": "[object Object]",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "04a8b841447e3d0049fd65d0",
+  "slug": "fix-css-grid-layout-with-inconsistent-column-width-calculation-bugfix-hard-css",
+  "mode": "bug_fix",
+  "category": "CSS",
+  "difficulty": "Hard"
+}

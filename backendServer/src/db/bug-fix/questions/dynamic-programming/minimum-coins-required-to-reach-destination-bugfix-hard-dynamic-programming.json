@@ -1,0 +1,169 @@
+{
+  "_id": "fa9edb7ec83ac895815157d5",
+  "title": "Minimum Coins Required to Reach Destination",
+  "slug": "minimum-coins-required-to-reach-destination-bugfix-hard-dynamic-programming",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "Dynamic Programming/Two Pointers",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 70,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "dp"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "You are given a grid of dimensions `m x n` and a target destination `(m_x, n_y)`. The rules are as follows:\n      - You can move in four directions (up, down, left, right) by one cell at a time.\n      - You cannot move diagonally.\n      - In each step, you can pick up a coin from the current cell.\n      - Each cell in the grid has a value representing the number of coins in that cell.\n      - The goal is to find the minimum number of steps (i.e., the minimum number of coins) required to reach the target destination from the starting point while collecting the maximum number of coins.\n      - If it is not possible to reach the target destination, return `-1`.\n      The input is represented in the following format:\n      ```\n      m\n      <grid row 1>\n      <grid row 2>\n      ...\n      <grid row m>\n      ```\n      Where `<grid row i>` is the row `i` of the grid represented as a string of comma-separated integers.\n      You can assume that the input is valid and the starting point is `(0,0)`.\n      The output should be the minimum number of steps required to reach the target destination while collecting the maximum number of coins.\n      A step is defined as a move to a new cell plus collecting a coin from that cell.\n      For example, if the input is:\n      ```\n      5\n      1, 2, 3, 4, 5\n      6, 7, 8, 9, 10\n      11, 12, 13, 14, 15\n      16, 17, 18, 19, 20\n      21, 22, 23, 24, 25\n      ```\n      The output for the target destination `(4, 4)` should be `13`.\n      ",
+    "inputFormat": "The first line of the input is an integer representing the number of rows (`m`) in the grid.\n      The next `m` lines of the input are strings representing the rows of the grid.\n      Each row string contains comma-separated integers representing the number of coins in each cell.\n      ",
+    "outputFormat": "The output should be an integer representing the minimum number of steps required to reach the target destination while collecting the maximum number of coins.\n      If it is not possible to reach the target destination, return `-1`.\n      ",
+    "notes": "You can assume that the input is valid and the starting point is `(0,0)`.\n      The target destination is represented as `(m-1, n-1)`.\n      ",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of rows in the grid"
+      },
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of columns in the grid"
+      }
+    ],
+    "examples": [
+      {
+        "input": "5\n1, 2, 3, 4, 5\n6, 7, 8, 9, 10\n11, 12, 13, 14, 15\n16, 17, 18, 19, 20\n21, 22, 23, 24, 25",
+        "output": "13",
+        "explanation": "Target destination is (4, 4)"
+      },
+      {
+        "input": "3\n1, 2, 3\n4, 5, 6\n7, 8, 9",
+        "output": "5",
+        "explanation": "Target destination is (2, 2)"
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use dynamic programming to find the shortest path to the target destination."
+    },
+    {
+      "order": 2,
+      "text": "Use a 2D array to store the minimum number of steps required to reach each cell."
+    }
+  ],
+  "editorial": {
+    "title": "Minimum Coins Required to Reach Destination",
+    "intuition": "The problem can be solved using dynamic programming.\n      Initialize a 2D array `dp` where `dp[i][j]` represents the minimum number of steps required to reach cell `(i,j)`.\n      Fill the first row and first column of the `dp` array with the number of steps required to reach the cells in the first row and first column.\n      Then, fill the rest of the `dp` array by considering all possible moves from the current cell to its neighbors.\n      Finally, return the value of `dp[m-1][n-1]` as the minimum number of steps required to reach the target destination.\n      ",
+    "bruteForce": "Brute force approach would involve trying all possible paths to the target destination and calculating the minimum number of steps required for each path.\n      This approach is not efficient and would exceed the time limit for large input sizes.\n      ",
+    "betterSolution": "Dynamic programming is a better solution because it allows us to store the results of subproblems and reuse them to avoid redundant calculations.\n      ",
+    "optimalSolution": "Optimal solution involves initializing a 2D array `dp` where `dp[i][j]` represents the minimum number of steps required to reach cell `(i,j).\n      We then fill the first row and first column of the `dp` array with the number of steps required to reach the cells in the first row and first column.\n      Next, we fill the rest of the `dp` array by considering all possible moves from the current cell to its neighbors.\n      Finally, we return the value of `dp[m-1][n-1]` as the minimum number of steps required to reach the target destination.\n      ",
+    "proofOfCorrectness": "The correctness of the optimal solution can be proven by induction.\n      For the base case, the minimum number of steps required to reach the cells in the first row and first column is calculated correctly.\n      Then, for the inductive step, we assume that the minimum number of steps required to reach the cells in the previous row and column is correct, and show that the minimum number of steps required to reach the cells in the current row and column is also correct.\n      ",
+    "dryRun": "Let's consider a dry run with the following input:\n      ```\n      3\n      1, 2, 3\n      4, 5, 6\n      7, 8, 9\n      ```\n      The target destination is `(2, 2)`.\n      We initialize the `dp` array as follows:\n      ```\n      |  | 0 1 2\n      ---------\n      0 | 9 10 11\n      1 | 12 13 14\n      2 | 15 16 17\n      ```\n      We fill the rest of the `dp` array by considering all possible moves from the current cell to its neighbors.\n      Finally, we return the value of `dp[2][2]` as the minimum number of steps required to reach the target destination.\n      ",
+    "commonMistakes": [
+      "{\"description\":\"Not initializing the `dp` array correctly.\"}",
+      "{\"description\":\"Not considering all possible moves from the current cell to its neighbors.\"}"
+    ],
+    "timeComplexity": "O(m*n)",
+    "spaceComplexity": "O(m*n)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\n  public:\n  int findMinCoins(vector<vector<int>>& grid, int m, int n) {\n    // TODO: implement\n  }\n};\n",
+    "java": "class Solution {\n  public:\n  int findMinCoins(int[][] grid, int m, int n) {\n    // TODO: implement\n  }\n};\n",
+    "python": "class Solution:\n  def findMinCoins(self, grid, m, n):\n    # TODO: implement\n    return -1\n",
+    "javascript": "function findMinCoins(grid, m, n) {\n  // TODO: implement\n  return -1;\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\n  public:\n  int findMinCoins(vector<vector<int>>& grid, int m, int n) {\n    vector<vector<int>> dp(m, vector<int>(n, -1));\n    dp[0][0] = 0;\n    for (int i = 0; i < m; i++) {\n      for (int j = 0; j < n; j++) {\n        if (i == 0 && j == 0) continue;\n        if (dp[i-1][j] == -1 || dp[i][j-1] == -1) {}\n        else {\n          dp[i][j] = min(dp[i-1][j], dp[i][j-1]) + 1;\n        }\n      }\n    }\n    return dp[m-1][n-1];\n  }\n};\n",
+    "java": "class Solution {\n  public:\n  int findMinCoins(int[][] grid, int m, int n) {\n    int[][] dp = new int[m][n];\n    dp[0][0] = 0;\n    for (int i = 0; i < m; i++) {\n      for (int j = 0; j < n; j++) {\n        if (i == 0 && j == 0) continue;\n        if (dp[i-1][j] == -1 || dp[i][j-1] == -1) {}\n        else {\n          dp[i][j] = Math.min(dp[i-1][j], dp[i][j-1]) + 1;\n        }\n      }\n    }\n    return dp[m-1][n-1];\n  }\n};\n",
+    "python": "class Solution:\n  def findMinCoins(self, grid, m, n):\n    dp = [[-1 for _ in range(n)] for _ in range(m)];\n    dp[0][0] = 0;\n    for i in range(m):\n      for j in range(n):\n        if i == 0 and j == 0: continue;\n        if dp[i-1][j] == -1 or dp[i][j-1] == -1: {}\n        else:\n          dp[i][j] = min(dp[i-1][j], dp[i][j-1]) + 1;\n    return dp[m-1][n-1];\n",
+    "javascript": "function findMinCoins(grid, m, n) {\n  let dp = Array(m).fill().map(() => Array(n).fill(-1));\n  dp[0][0] = 0;\n  for (let i = 0; i < m; i++) {\n    for (let j = 0; j < n; j++) {\n      if (i == 0 && j == 0) continue;\n      if (dp[i-1][j] == -1 || dp[i][j-1] == -1) {}\n      else {\n        dp[i][j] = Math.min(dp[i-1][j], dp[i][j-1]) + 1;\n      }\n    }\n  }\n  return dp[m-1][n-1];\n}"
+  },
+  "functionSignature": {
+    "cpp": "int findMinCoins(vector<vector<int>>& grid, int m, int n);",
+    "java": "int findMinCoins(int[][] grid, int m, int n);",
+    "python": "int findMinCoins(self, grid: list[list[int]], m: int, n: int) -> int;",
+    "javascript": "int findMinCoins(grid, m, n);"
+  },
+  "solutions": {
+    "python": "from typing import List\n\nclass Solution:\n  def findMinCoins(self, grid: List[List[int]], m: int, n: int) -> int:\n    dp = [[-1 for _ in range(n)] for _ in range(m)];\n    dp[0][0] = 0;\n    for i in range(m):\n      for j in range(n):\n        if i == 0 and j == 0: continue;\n        if dp[i-1][j] == -1 or dp[i][j-1] == -1: {}\n        else:\n          dp[i][j] = min(dp[i-1][j], dp[i][j-1]) + 1;\n    return dp[m-1][n-1];\n\ndef main():\n  t = int(input());\n  for _ in range(t):\n    m = int(input());\n    grid = [list(map(int, input().split(','))) for _ in range(m)];\n    n = len(grid[0]);\n    print(Solution().findMinCoins(grid, m, n))\n\nif __name__ == '__main__':\n  main()\n",
+    "cpp": "#include <iostream>\n#include <vector>\n#include <climits>\n\nusing namespace std;\n\nclass Solution {\n  public:\n  int findMinCoins(vector<vector<int>>& grid, int m, int n) {\n    vector<vector<int>> dp(m, vector<int>(n, -1));\n    dp[0][0] = 0;\n    for (int i = 0; i < m; i++) {\n      for (int j = 0; j < n; j++) {\n        if (i == 0 && j == 0) continue;\n        if (dp[i-1][j] == -1 || dp[i][j-1] == -1) {}\n        else {\n          dp[i][j] = min(dp[i-1][j], dp[i][j-1]) + 1;\n        }\n      }\n    }\n    return dp[m-1][n-1];\n  }\n};\n\nint main() {\n  ios_base::sync_with_stdio(false);\n  cin.tie(0);\n  int t;\n  cin >> t;\n  while (t-- > 0) {\n    int m;\n    cin >> m;\n    vector<vector<int>> grid(m);\n    for (int i = 0; i < m; i++) {\n      for (int j = 0; j < n; j++) {\n        cin >> grid[i][j];\n      }\n    }\n    int n = grid[0].size();\n    cout << Solution().findMinCoins(grid, m, n) << endl;\n  }\n  return 0;\n}\n",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 1000,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "3\n1, 2, 3\n4, 5, 6\n7, 8, 9",
+      "output": "5",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "5\n1, 2, 3, 4, 5\n6, 7, 8, 9, 10\n11, 12, 13, 14, 15\n16, 17, 18, 19, 20\n21, 22, 23, 24, 25",
+      "output": "13",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

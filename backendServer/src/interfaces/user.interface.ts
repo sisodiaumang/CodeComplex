@@ -22,6 +22,7 @@ export interface IUser extends Document {
         type: string;
         color: string;
     };
+    banner?: string;
     role: "USER" | "ADMIN"|"MODERATOR"|"OWNER";
 
     isVerified: boolean;

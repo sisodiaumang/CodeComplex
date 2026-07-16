@@ -1,0 +1,131 @@
+{
+  "title": "Fixing Route Middleware Order for a Secure Express API with JWT Authentication",
+  "subCategory": "Route Middleware",
+  "statement": {
+    "markdown": "Write a function to fix the order of route middleware in a secure Express API. The API should authenticate users using a JWT-based middleware, validate user input using a custom middleware, and protect sensitive routes using the `express-rate-limit` library. The `authenticateUser` middleware is currently applied after the `validateInput` middleware, which may lead to security vulnerabilities. Your task is to reorder the middleware to ensure proper authentication and input validation.",
+    "inputFormat": "Express app instance",
+    "outputFormat": "Reordered middleware array",
+    "notes": "The API should reject any requests with invalid or missing JWT tokens.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of routes"
+      }
+    ],
+    "examples": [
+      {
+        "input": "const app = express();",
+        "output": "[ authenticateUser, validateInput, rateLimit ]",
+        "explanation": "Example input and expected output"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 80,
+    "premium": true,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "EXPRESS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "express"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Analyze the current order of middleware and its impact on security"
+    }
+  ],
+  "editorial": {
+    "title": "Fixing Route Middleware Order for a Secure Express API with JWT Authentication",
+    "intuition": "Proper middleware ordering ensures secure authentication and input validation.",
+    "bruteForce": "Apply `authenticateUser` middleware after all other middleware to prevent rejection of valid requests.",
+    "betterSolution": "Reorder middleware to apply `validateInput` before `authenticateUser` to ensure proper input validation.",
+    "optimalSolution": "Combine `validateInput` and `authenticateUser` middleware to create a single authentication and validation function.",
+    "proofOfCorrectness": "The reordered middleware ensures secure authentication and input validation while rejecting invalid requests.",
+    "dryRun": "Test the reordered middleware with valid and invalid JWT tokens to ensure proper behavior.",
+    "commonMistakes": [
+      "Applying `authenticateUser` middleware before `validateInput`",
+      "Failing to reject invalid requests"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// Import required libraries and middleware\nconst express = require('express');\nconst jwt = require('jsonwebtoken');\nconst rateLimit = require('express-rate-limit');\n\n// Define the authenticateUser middleware\nfunction authenticateUser(req, res, next) {\n  // Extract JWT token from request headers\n  const token = req.header('Authorization');\n  // Verify JWT token\n  jwt.verify(token, process.env.SECRET_KEY, (err, user) => {\n    if (err) {\n      return res.status(401).send({ message: 'Invalid or missing JWT token' });\n    }\n    req.user = user;\n    next();\n  });\n}\n\n// Define the validateInput middleware\nfunction validateInput(req, res, next) {\n  // Validate user input\n  if (req.body.username === '') {\n    return res.status(400).send({ message: 'Username is required' });\n  }\n  next();\n}\n\n// Define the rateLimit middleware\nconst rateLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 100 });\n\n// Create the Express app instance\nconst app = express();\n\n// Define routes with middleware\napp.post('/login', rateLimiter, authenticateUser, validateInput, (req, res) => {\n  // Handle login request\n  res.send({ message: 'Logged in successfully' });\n});\n\n// Export the Express app instance\nmodule.exports = app;",
+    "python": "// Import required libraries and middleware\nfrom flask import Flask, request\nfrom flask_limiter import Limiter\nfrom flask_limiter.util import get_remote_address\nimport jwt\n\n# Define the authenticateUser middleware\ndef authenticate_user(req, res, next):\n  # Extract JWT token from request headers\n  token = req.headers.get('Authorization')\n  # Verify JWT token\n  try:\n    jwt.decode(token, secret_key, algorithms=['HS256'])\n  except jwt.ExpiredSignatureError:\n    return res.status(401).send({'message': 'Invalid or missing JWT token'})\n  req.user = jwt.decode(token, secret_key, algorithms=['HS256'])\n  next()\n\n# Define the validateInput middleware\ndef validate_input(req, res, next):\n  # Validate user input\n  if req.json.get('username') == ''\n    return res.status(400).send({'message': 'Username is required'})\n  next()\n\n# Define the rateLimit middleware\nlimiter = Limiter(app, key_func=get_remote_address)\nlimiter.limit('100/h')\n\n# Create the Flask app instance\napp = Flask(__name__)\n\n# Define routes with middleware\n@app.route('/login', methods=['POST'])\n@limiter.limit('100/h')\n@authenticate_user\n@validate_input\ndef login(req, res):\n  # Handle login request\n  return {'message': 'Logged in successfully'}\n\n# Export the Flask app instance\nif __name__ == '__main__':\n  app.run(debug=True)"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Import required libraries and middleware\nconst express = require('express');\nconst jwt = require('jsonwebtoken');\nconst rateLimit = require('express-rate-limit');\n\n// Define the authenticateUser middleware\nfunction authenticateUser(req, res, next) {\n  // Extract JWT token from request headers\n  const token = req.header('Authorization');\n  // Verify JWT token\n  jwt.verify(token, process.env.SECRET_KEY, (err, user) => {\n    if (err) {\n      return res.status(401).send({ message: 'Invalid or missing JWT token' });\n    }\n    req.user = user;\n    next();\n  });\n}\n\n// Define the validateInput middleware\nfunction validateInput(req, res, next) {\n  // Validate user input\n  if (req.body.username === '') {\n    return res.status(400).send({ message: 'Username is required' });\n  }\n  next();\n}\n\n// Define the rateLimit middleware\nconst rateLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 100 });\n\n// Create the Express app instance\nconst app = express();\n\n// Define routes with middleware\napp.post('/login', rateLimiter, validateInput, authenticateUser, (req, res) => {\n  // Handle login request\n  res.send({ message: 'Logged in successfully' });\n});\n\n// Export the Express app instance\nmodule.exports = app;",
+    "python": "// Import required libraries and middleware\nfrom flask import Flask, request\nfrom flask_limiter import Limiter\nfrom flask_limiter.util import get_remote_address\nimport jwt\n\n# Define the authenticateUser middleware\ndef authenticate_user(req, res, next):\n  # Extract JWT token from request headers\n  token = req.headers.get('Authorization')\n  # Verify JWT token\n  try:\n    jwt.decode(token, secret_key, algorithms=['HS256'])\n  except jwt.ExpiredSignatureError:\n    return res.status(401).send({'message': 'Invalid or missing JWT token'})\n  req.user = jwt.decode(token, secret_key, algorithms=['HS256'])\n  next()\n\n# Define the validateInput middleware\ndef validate_input(req, res, next):\n  # Validate user input\n  if req.json.get('username') == ''\n    return res.status(400).send({'message': 'Username is required'})\n  next()\n\n# Define the rateLimit middleware\nlimiter = Limiter(app, key_func=get_remote_address)\nlimiter.limit('100/h')\n\n# Create the Flask app instance\napp = Flask(__name__)\n\n# Define routes with middleware\n@app.route('/login', methods=['POST'])\n@limiter.limit('100/h')\n@validate_input\n@authenticate_user\ndef login(req, res):\n  # Handle login request\n  return {'message': 'Logged in successfully'}\n\n# Export the Flask app instance\nif __name__ == '__main__':\n  app.run(debug=True)"
+  },
+  "functionSignature": {
+    "javascript": "var reorderMiddleware = function(app) {\n  // Reorder middleware array\n};",
+    "python": "def reorder_middleware(app):\n  # Reorder middleware array\n"
+  },
+  "solutions": {
+    "javascript": "// Define the reorderMiddleware function\nvar reorderMiddleware = function(app) {\n  // Reorder middleware array\n  app.post('/login', rateLimiter, validateInput, authenticateUser, (req, res) => {\n    // Handle login request\n    res.send({ message: 'Logged in successfully' });\n  });\n  return [ authenticateUser, validateInput, rateLimit ];\n};\n\n// Define the driver code\nconst express = require('express');\nconst app = express();\n\n// Call the reorderMiddleware function\nconst reorderedMiddleware = reorderMiddleware(app);\n\nconsole.log(reorderedMiddleware);\n",
+    "python": "// Define the reorder_middleware function\ndef reorder_middleware(app):\n  # Reorder middleware array\n  @app.route('/login', methods=['POST'])\n  @limiter.limit('100/h')\n  @authenticate_user\n  @validate_input\n  def login(req, res):\n    # Handle login request\n    return {'message': 'Logged in successfully'}\n  return [ authenticate_user, validate_input, limiter.limit('100/h') ]\n\n// Define the driver code\nfrom flask import Flask\nfrom flask_limiter import Limiter\nfrom flask_limiter.util import get_remote_address\nimport jwt\n\napp = Flask(__name__)\nlimiter = Limiter(app, key_func=get_remote_address)\n\n# Call the reorder_middleware function\nreordered_middleware = reorder_middleware(app)\n\nprint(reordered_middleware)"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "Example input",
+      "output": "[ authenticateUser, validateInput, rateLimit ]",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_hidden_generated",
+      "input": "Example input",
+      "output": "[ authenticateUser, validateInput, rateLimit ]",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "eab926bc98d2922d7be2a529",
+  "slug": "fixing-route-middleware-order-for-a-secure-express-api-with-jwt-authentication-bugfix-hard-express",
+  "mode": "bug_fix",
+  "category": "EXPRESS",
+  "difficulty": "Hard"
+}

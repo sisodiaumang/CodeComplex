@@ -1,0 +1,160 @@
+{
+  "_id": "47d94e92be4b9d2add7bcb49",
+  "title": "Detecting Connected Components in a Graph: Incorrect DFS",
+  "slug": "detecting-connected-components-in-a-graph-incorrect-dfs-bugfix-easy-graphs-2",
+  "difficulty": "Easy",
+  "category": "DSA",
+  "subCategory": "DFS/BFS",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 10,
+    "points": 30,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "graph"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Solve the problem and fix the bugs.",
+    "inputFormat": "The graph is represented as a list of adjacency list of edges, where each edge is a pair of node indices.",
+    "outputFormat": "Return the count of connected components in the graph.",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of nodes in the graph"
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 0,
+        "max": 10000,
+        "description": "Number of edges in the graph"
+      }
+    ],
+    "examples": [
+      {
+        "input": "5\n[[1, 0], [0, 2], [2, 3], [4, 3], [3, 1]]",
+        "output": "2",
+        "explanation": "The graph has two connected components (0, 1) and (2, 3, 4)"
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Consider using a recursive DFS strategy to explore the graph."
+    }
+  ],
+  "editorial": {
+    "title": "Correct Approach to Detecting Connected Components",
+    "intuition": "A connected component in an undirected graph is a subgraph in which any two vertices are connected to each other by paths.",
+    "bruteForce": "We could perform a depth-first search on each unvisited node and count the number of connected components.",
+    "betterSolution": "",
+    "optimalSolution": "We use a set to keep track of visited nodes and iterate over the list of edges to perform DFS.",
+    "proofOfCorrectness": "For each node that is visited during our DFS, we mark it as visited.",
+    "dryRun": "Let's take the graph 0 --1-> 2 --3-> 4 as an example. We first visit node 0, mark it visited, and visit its neighbors.",
+    "commonMistakes": [
+      "Not handling the case when a node has no edges",
+      "Incorrectly counting the number of connected components"
+    ],
+    "timeComplexity": "O(n + m)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\nvoid solve(vector<vector<int>>& edges, int n, int m, vector<bool>& visited);\n};",
+    "java": "public class Solution {\npublic void solve(int[][] edges, int n, int m, boolean[] visited) {\n\t// TODO: implement\n}};",
+    "python": "class Solution:\n    def solve(self, edges, n, m):\n        pass",
+    "javascript": "function solve(edges, n, m) {\n\t// TODO: implement\n\tsolve;\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\nvoid solve(vector<vector<int>>& edges, int n, int m, vector<bool>& visited) {\n\tfor (auto node : edges) {\n\t\tif (!visited[node[0]]) visited[node[0]] = true;\n\t\tif (!visited[node[1]]) visited[node[1]] = true;\n\t}\n\treturn count(visited.begin(), visited.end(), true);\n}};",
+    "java": "public class Solution {\npublic void solve(int[][] edges, int n, int m, boolean[] visited) {\n\tfor (int[] edge : edges) {\n\t\tif (!visited[edge[0]]) visited[edge[0]] = true;\n\t\tif (!visited[edge[1]]) visited[edge[1]] = true;\n\t}\n\treturn count(visited, true);\n}};",
+    "python": "class Solution:\n    def solve(self, edges, n, m):\n        for node in edges:\n            if not self.visited[node[0]]:\n                self.visited[node[0]] = True\n            if not self.visited[node[1]]:\n                self.visited[node[1]] = True\n        return self.visited.count(True)",
+    "javascript": "function solve(edges, n, m) {\n\tfor (var i = 0; i < edges.length; i++) {\n\t\tif (!this.visited[edges[i][0]]) this.visited[edges[i][0]] = true;\n\t\tif (!this.visited[edges[i][1]]) this.visited[edges[i][1]] = true;\n\t}\n\treturn this.visited.filter(function (x) { return x == true; }).length;\n}"
+  },
+  "functionSignature": {
+    "cpp": "void solve(vector<vector<int>>& edges, int n, int m, vector<bool>& visited);",
+    "java": "void solve(int[][] edges, int n, int m, boolean[] visited);",
+    "python": "def solve(self, edges, n, m):",
+    "javascript": "function solve(edges, n, m) {"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def __init__(self):\n        self.visited = set()\n    def solve(self, edges, n, m):\n        for edge in edges:\n            if not edge[0] in self.visited:\n                self.dfs(edge[0], edges)\n        print(len(self.visited))\n    def dfs(self, node, edges):\n        self.visited.add(node)\n        for edge in edges:\n            if edge[0] == node and edge[1] not in self.visited:\n                self.dfs(edge[1], edges)",
+    "cpp": "#include<bits/stdc++.h>\nusing namespace std;\nclass Solution {\npublic:\nvoid solve(vector<vector<int>>& edges, int n, int m, set<int>& visited) {\n\tfor (auto node : edges) {\n\t\tif (!visited.count(node[0])) visited.insert(node[0]);\n\t\tif (!visited.count(node[1])) visited.insert(node[1]);\n\t}\n\tcout << visited.size();\n}};\nint main() {\tint n, m;\tint n;\tscanf('%d %d', &n, &m);\tvector<vector<int>> edges(m, vector<int>(2));\tfor (int i = 0; i < m; i++) {\n\t\tscanf('%d %d', &edges[i][0], &edges[i][1]);\n\t}\tset<int> visited;\tSolution().solve(edges, n, m, visited);\treturn 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "1\n",
+      "output": "1\n",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "2\n",
+      "output": "2\n",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

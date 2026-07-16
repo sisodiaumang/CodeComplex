@@ -4,6 +4,7 @@ import { verifyJWT } from "../middlewares/auth.middleware.js";
 
 import {
     getMyAchievements,
+    getAllAchievements,
     getAchievementProgress,
     getAchievementCategories,
     getUserAchievements,
@@ -12,6 +13,7 @@ import {
 
 const router = Router();
 
+router.get("/", verifyJWT, getAllAchievements);
 router.get("/me", verifyJWT, getMyAchievements);
 router.get("/progress", verifyJWT, getAchievementProgress);
 router.get("/categories", getAchievementCategories);

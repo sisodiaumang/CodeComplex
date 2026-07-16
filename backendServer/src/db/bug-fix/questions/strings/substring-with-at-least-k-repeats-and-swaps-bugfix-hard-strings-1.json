@@ -1,0 +1,169 @@
+{
+  "_id": "9cef1aab31f2ea429dfee42b",
+  "title": "Substring with At Least K Repeats and Swaps",
+  "slug": "substring-with-at-least-k-repeats-and-swaps-bugfix-hard-strings-1",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "Dynamic Programming/Two Pointers",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "string"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given two strings `s` and `t`, return all the starting indices of `substring(t)` that `s` can be rearranged into.  If there are no such indices, return an empty list.  A black box is given which allows you to get any substring of `t` of length at most 11.  You can call this black box at most k times as k is the number of characters in t.  You should return the indices in ascending order.",
+    "inputFormat": "Input will be provided in the format: `string s, int n, int k` where `n` is the length of `t` and `k` is the number of swaps allowed.",
+    "outputFormat": "The method should return a list of integers representing the starting indices of `substring(t)` that `s` can be rearranged into.",
+    "notes": "The black box has a time limit of 2 seconds.  The length of `t` is at most 1000.  The length of `s` is at most 20000.  The length of `t` is at most 11.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 1000,
+        "description": "Length of string t"
+      },
+      {
+        "variable": "k",
+        "type": "integer",
+        "min": 1,
+        "max": 20,
+        "description": "Number of swaps allowed"
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 1,
+        "max": 20000,
+        "description": "Length of string s"
+      }
+    ],
+    "examples": [
+      {
+        "input": "ab, 2, 1",
+        "output": "[0]",
+        "explanation": "The substring \"ab\" can be rearranged into \"ab\" which is a substring of \"ab\""
+      },
+      {
+        "input": "abab, 2, 1",
+        "output": "[0, 1]",
+        "explanation": "The substrings \"ab\" and \"ba\" can be rearranged into \"ab\" which is a substring of \"abab\""
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "optimal Solution details.",
+    "proofOfCorrectness": "proof Of Correctness details.",
+    "dryRun": "dry Run details.",
+    "commonMistakes": [],
+    "timeComplexity": "O(...) ",
+    "spaceComplexity": "O(...)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {public: std::vector<int> findSubstring(string s, int n, int k){    // TODO: implement}",
+    "java": "public class Solution {public static List<Integer> findSubstring(String s, int n, int k){ // TODO: implement}",
+    "python": "class Solution: def findSubstring(self, s, n, k): # TODO: implement, pass",
+    "javascript": "var findSubstring = function(s, n, k){  // var Solution = function(); // TODO: implement}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {public: vector<int> findSubstring(string s, int n, int k){\n  \n  map<char, int> count;\n  for (int i = 0; i < n; ++i){\n    count[s[i]]++;\n  }\n  vector<int> indices;\n  for (int i = 0; i < m - n; ++i){\n    map<char, int> temp = count;\n    for (int j = 0; j < 11; ++j){\n      temp[s[i + j]]++;\n    }\n    if (temp == count){\n      indices.push_back(i);\n    }\n  }\n  return indices;\n}",
+    "java": "public class Solution {public static List<Integer> findSubstring(String s, int n, int k){\n  \n  Map<Character, Integer> count = new HashMap<>();\n  for (int i = 0; i < n; ++i){\n    count.put(s.charAt(i), count.getOrDefault(s.charAt(i), 0) + 1);\n  }\n  List<Integer> indices = new ArrayList<>();\n  for (int i = 0; i < s.length() - n; ++i){\n    Map<Character, Integer> temp = new HashMap<>(count);\n    for (int j = 0; j < 11; ++j){\n      temp.put(s.charAt(i + j), temp.getOrDefault(s.charAt(i + j), 0) + 1);\n    }\n    if (temp.equals(count)){\n      indices.add(i);\n    }\n  }\n  return indices;\n}",
+    "python": "class Solution: def findSubstring(self, s, n, k):\n  count = {}\n  for i in range(n):\n    if s[i] not in count:\n      count[s[i]] = 1\n    else:\n      count[s[i]] += 1\n  indices = []\n  for i in range(len(s) - n):\n    temp = count.copy()\n    for j in range(11):\n      if s[i + j] not in temp:\n        temp[s[i + j]] = 1\n      else:\n        temp[s[i + j]] += 1\n    if temp == count:\n      indices.append(i)\n  return indices",
+    "javascript": "var findSubstring = function(s, n, k){\n  var count = {};\n  for (var i = 0; i < n; ++i){\n    if (s[i] in count){\n      count[s[i]]++;\n    } else {\n      count[s[i]] = 1;\n    }\n  }\n  var indices = [];\n  for (var i = 0; i < s.length - n; ++i){\n    var temp = Object.assign({}, count);\n    for (var j = 0; j < 11; ++j){\n      if (!(s[i + j] in temp)){\n        temp[s[i + j]] = 1;\n      } else {\n        temp[s[i + j]]++;\n      }\n    }\n    if (JSON.stringify(temp) === JSON.stringify(count)){\n      indices.push(i);\n    }\n  }\n  return indices;\n}"
+  },
+  "functionSignature": {
+    "cpp": "vector<int> findSubstring(string& s, int n, int k)",
+    "java": "List<Integer> findSubstring(String s, int n, int k)",
+    "python": "def findSubstring(self, s: str, n: int, k: int) -> List[int]",
+    "javascript": "var findSubstring = function(s, n, k){"
+  },
+  "solutions": {
+    "python": "from typing import List\n\nclass Solution:\n  def findSubstring(self, s: str, n: int, k: int) -> List[int]:\n    count = {}\n    for i in range(n):\n      if s[i] not in count:\n        count[s[i]] = 1\n      else:\n        count[s[i]] += 1\n    indices = []\n    for i in range(len(s) - n):\n      temp = count.copy()\n      for j in range(11):\n        if s[i + j] not in temp:\n          temp[s[i + j]] = 1\n        else:\n          temp[s[i + j]] += 1\n      if temp == count:\n        indices.append(i)\n    return indices\n\ns = input()\narr = list(map(int, input().split()))\nresult = Solution().findSubstring(s, arr[0], arr[1])\nprint(' '.join(map(str, result)))",
+    "cpp": "#include <iostream>\n#include <string>\n#include <map>\n#include <vector>\n#include <sstream>\n\nusing namespace std;\n\nclass Solution {\npublic:\n  vector<int> findSubstring(string& s, int n, int k){\n    map<char, int> count;\n    for (int i = 0; i < n; ++i){\n      count[s[i]]++;\n    }\n    vector<int> indices;\n    for (int i = 0; i < s.size() - n; ++i){\n      if (k >= n - 1){\n        for (int j = 0; j < 11; ++j){\n          if (count[s[i + j]] < s[i + j] - 'a' + 1){\n            break;\n          }\n          if (j == 10){\n            indices.push_back(i);\n          }\n        }\n      }\n    }\n    return indices;\n  }\n};\n\nint main() {\n  string s;\n  cin >> s;\n  int n, k;\n  cin >> n >> k;\n  Solution solution;\n  vector<int> indices = solution.findSubstring(s, n, k);\n  for (auto it : indices){\n    cout << it << ' ';n  }\n  return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "ab 2 1\nabababababab\nabababababababababababababababababababababababab\nabababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababab",
+      "output": "0",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "ab 2 1\naabb\nabababababab\nabababababababababababababababababababababababab",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

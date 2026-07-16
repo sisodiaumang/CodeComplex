@@ -1,0 +1,146 @@
+{
+  "title": "Fixing a React Memoized Component Re-renders on State Change",
+  "subCategory": "Memoization and Caching",
+  "statement": {
+    "markdown": "A React component uses the `useMemo` hook to memoize its state, but it still re-renders unnecessarily when the state changes. Fix the code to prevent unnecessary re-renders.",
+    "inputFormat": "The component's state is an object with two properties: `count` and `person`. The `count` property is an integer, and the `person` property is an object with `name` and `age` properties.",
+    "outputFormat": "The component should not re-render when the state changes unless the `count` property changes.",
+    "notes": "You can use the `useEffect` hook to detect changes to the state, but you should only re-render the component when necessary.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The initial count value"
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The initial age value"
+      }
+    ],
+    "examples": [
+      {
+        "input": "1\n{\"name\":\"John\",\"age\":30}\n2\n{\"name\":\"Alice\",\"age\":25}",
+        "output": "John\nJohn\nAlice\nAlice",
+        "explanation": "The component should not re-render when the state changes unless the `count` property changes."
+      },
+      {
+        "input": "5\n{\"name\":\"Bob\",\"age\":40}\n6\n{\"name\":\"Charlie\",\"age\":35}",
+        "output": "Bob\nBob\nCharlie\nCharlie",
+        "explanation": "The component should not re-render when the state changes unless the `count` property changes."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "REACT"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "react"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the `useMemo` hook to memoize the state."
+    },
+    {
+      "order": 2,
+      "text": "Use the `useEffect` hook to detect changes to the state."
+    },
+    {
+      "order": 3,
+      "text": "Only re-render the component when necessary."
+    }
+  ],
+  "editorial": {
+    "title": "Fixing the React Component Re-renders",
+    "intuition": "The `useMemo` hook is used to memoize the state, but it still re-renders unnecessarily when the state changes. We need to use the `useEffect` hook to detect changes to the state and only re-render the component when necessary.",
+    "bruteForce": "We can use the `useMemo` hook to memoize the state and then use the `useEffect` hook to detect changes to the state. However, this approach is not efficient and can lead to unnecessary re-renders.",
+    "betterSolution": "We can use a combination of the `useMemo` and `useEffect` hooks to memoize the state and detect changes to the state. This approach is more efficient and can prevent unnecessary re-renders.",
+    "optimalSolution": "We can use a custom memoization function to memoize the state and detect changes to the state. This approach is the most efficient and can prevent unnecessary re-renders.",
+    "proofOfCorrectness": "The custom memoization function correctly memoizes the state and detects changes to the state, preventing unnecessary re-renders.",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistaking the `useMemo` hook for `useState`",
+      "Not using the `useEffect` hook to detect changes to the state"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "function Counter() {\n  const [count, setCount] = useState(0);\n  const [person, setPerson] = useState({ name: '', age: 0 });\n  const memoizedState = useMemo(() => ({ count, person }), [count, person]);\n  useEffect(() => {\n    // Fix this code to prevent unnecessary re-renders\n  }, [memoizedState]);\n  return (\n    <div>\n      <p>Count: {count}</p>\n      <p>Name: {person.name}</p>\n      <p>Age: {person.age}</p>\n    </div>\n  );\n}"
+  },
+  "buggyStarterCode": {
+    "javascript": "function Counter() {\n  const [count, setCount] = useState(0);\n  const [person, setPerson] = useState({ name: '', age: 0 });\n  const memoizedState = useMemo(() => ({ count, person }), [count, person]);\n  useEffect(() => {\n    console.log('Component re-rendering...');\n  }, [memoizedState]);\n  return (\n    <div>\n      <p>Count: {count}</p>\n      <p>Name: {person.name}</p>\n      <p>Age: {person.age}</p>\n    </div>\n  );\n}"
+  },
+  "functionSignature": {
+    "javascript": "function Counter() {"
+  },
+  "solutions": {
+    "javascript": "// Solution here"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "1\n{\"name\":\"John\",\"age\":30}\n2\n{\"name\":\"Alice\",\"age\":25}",
+      "output": "John\nJohn\nAlice\nAlice",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "5\n{\"name\":\"Bob\",\"age\":40}\n6\n{\"name\":\"Charlie\",\"age\":35}",
+      "output": "Bob\nBob\nCharlie\nCharlie",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "2b8f1a933b5d5ffaf580ccfb",
+  "slug": "fixing-a-react-memoized-component-re-renders-on-state-change-bugfix-medium-react",
+  "mode": "bug_fix",
+  "category": "REACT",
+  "difficulty": "Medium"
+}

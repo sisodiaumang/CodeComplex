@@ -1,0 +1,148 @@
+{
+  "title": "Fixing Docker Exposed Port Mappings",
+  "subCategory": "Docker port mapping",
+  "statement": {
+    "markdown": "Given a Docker container configuration object, write a function to fix exposed port mappings. If the `EXPOSE` instruction is specified multiple times, combine them into a single list of ports. If no `EXPOSE` instruction is specified, use the default port 80. The function should return the fixed `EXPOSE` instruction as a string.",
+    "inputFormat": "A JSON object containing the container configuration, e.g. `{ 'EXPOSE': ['8080', '8081'] }`",
+    "outputFormat": "The fixed `EXPOSE` instruction as a string, e.g. `'8080 8081'`",
+    "notes": "The function should handle cases where the `EXPOSE` instruction is specified multiple times, as well as cases where it is not specified at all.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of ports in the `EXPOSE` instruction"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"EXPOSE\": ['8080', '8081']}",
+        "output": "8080 8081",
+        "explanation": "The `EXPOSE` instruction is specified multiple times, so the function should combine them into a single list of ports."
+      },
+      {
+        "input": "{\"EXPOSE\": ['8080']}",
+        "output": "8080",
+        "explanation": "The `EXPOSE` instruction is specified once, so the function should return it as is."
+      },
+      {
+        "input": "{}",
+        "output": "80",
+        "explanation": "The `EXPOSE` instruction is not specified, so the function should use the default port 80."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DOCKER"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "docker"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Check if the `EXPOSE` instruction is specified multiple times and combine the ports if so."
+    }
+  ],
+  "editorial": {
+    "title": "Fixing Docker Exposed Port Mappings",
+    "intuition": "The function should handle cases where the `EXPOSE` instruction is specified multiple times, as well as cases where it is not specified at all.",
+    "bruteForce": "Check if the `EXPOSE` instruction is specified multiple times and combine the ports if so. If not specified, use the default port 80.",
+    "betterSolution": "",
+    "optimalSolution": "Use the `join` method to combine the ports into a single string if the `EXPOSE` instruction is specified multiple times. If not specified, use the default port 80.",
+    "proofOfCorrectness": "The function should return the correct `EXPOSE` instruction as a string for all test cases.",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Forgetting to handle cases where the `EXPOSE` instruction is not specified."
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "function fixExposedPorts(config) {",
+    "python": "class Solution:\n    def fixExposedPorts(self, config):"
+  },
+  "buggyStarterCode": {
+    "javascript": "function fixExposedPorts(config) {\n  if (config.EXPOSE) {\n    return config.EXPOSE.join(' ');\n  } else {\n    return '80';\n  }\n}",
+    "python": "class Solution:\n    def fixExposedPorts(self, config):\n        if 'EXPOSE' in config:\n            return ' '.join(config['EXPOSE'])\n        else:\n            return '80'"
+  },
+  "functionSignature": {
+    "javascript": "var fixExposedPorts = function(config);",
+    "python": "def fixExposedPorts(self, config: dict) -> str:"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction fixExposedPorts(config) {\n  if (config.EXPOSE) {\n    return config.EXPOSE.slice(1).join(' ') + ' ' + config.EXPOSE[0];\n  } else {\n    return '80';\n  }\n}",
+    "python": "class Solution:\n    def fixExposedPorts(self, config):\n        if 'EXPOSE' in config:\n            return ' '.join([config['EXPOSE'][-1]] + config['EXPOSE'][:-1])\n        else:\n            return '80'\n\n# Driver code\nif __name__ == '__main__':\n    for _ in range(int(input())):\n        config = eval(input())\n        print(Solution().fixExposedPorts(config))"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"EXPOSE\": ['8080', '8081']}",
+      "output": "8080 8081",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"EXPOSE\": ['8080']}",
+      "output": "8080",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    },
+    {
+      "id": "tc_3",
+      "input": "{}",
+      "output": "80",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "_id": "ad9eca87c589218fee804027",
+  "slug": "fixing-docker-exposed-port-mappings-bugfix-easy-docker",
+  "mode": "bug_fix",
+  "category": "DOCKER",
+  "difficulty": "Easy"
+}

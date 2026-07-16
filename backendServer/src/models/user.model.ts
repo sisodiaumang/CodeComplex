@@ -100,13 +100,16 @@ const userSchema = new mongoose.Schema<IUser>(
         mascot: {
             type: {
                 type: String,
-                default: "cat",
-                enum: ["cat", "dog", "panda", "crab"]
+                default: "cat"
             },
             color: {
                 type: String,
                 default: "#FF6B00"
             }
+        },
+        banner: {
+            type: String,
+            default: "apprentice"
         },
 
         // FIX: "OWNER" role is intentionally kept but must only be assigned

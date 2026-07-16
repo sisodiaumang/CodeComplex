@@ -1,0 +1,138 @@
+{
+  "title": "Docker Compose Service Port Mappings Validator with Unassigned Ports",
+  "subCategory": "Docker port mapping",
+  "statement": {
+    "markdown": "In a Docker Compose file, services can expose ports for external access. However, not all exposed ports must be assigned to a service. Your task is to write a validator function that checks if all exposed ports in a service's ports are assigned to a service. If a port is not assigned, the function should return an error message indicating the port number and service name. The function should return an empty array if all exposed ports are assigned.",
+    "inputFormat": "A Docker Compose file as a string, containing one or more services with port mappings.",
+    "outputFormat": "An array of error messages, where each message is a string containing the unassigned port number and the service name, or an empty array if all ports are assigned.",
+    "notes": "The function should consider only the services and ports explicitly defined in the Docker Compose file.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 100,
+        "description": "The maximum number of services in the Docker Compose file."
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 1,
+        "max": 100,
+        "description": "The maximum number of ports exposed by each service."
+      }
+    ],
+    "examples": [
+      {
+        "input": "version: '3'\nservices:\n  web:\n    ports:\n      - 8080:8080\n      - 8081:8081\n    container_name: web\n\n  db:\n    ports:\n      - 5432:5432\n    container_name: db\n",
+        "output": "[]",
+        "explanation": "All exposed ports in the Docker Compose file are assigned to a service."
+      },
+      {
+        "input": "version: '3'\nservices:\n  web:\n    ports:\n      - 8080:8080\n      - 8081:8081\n    container_name: web\n\n  db:\n    ports:\n      - 5432:5432\n    container_name: db\n\n  api:\n    ports:\n      - 8080:8080\n    container_name: api",
+        "output": "Port 8080 is not assigned to service web",
+        "explanation": "The port 8080 is exposed by both the web and api services, but it is only assigned to the api service."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 75,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DOCKER"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "docker"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(N*M)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "// This function should check if all exposed ports in a service's ports are assigned to a service.\n// If a port is not assigned, it should return an error message indicating the port number and service name.\n// If all ports are assigned, it should return an empty array.\nfunction validatePorts(composeFile) {\n  // Your code here\n}"
+  },
+  "buggyStarterCode": {
+    "javascript": "// This function should check if all exposed ports in a service's ports are assigned to a service.\n// If a port is not assigned, it should return an error message indicating the port number and service name.\n// If all ports are assigned, it should return an empty array.\nfunction validatePorts(composeFile) {\n  const lines = composeFile.split('\\n');\n  const services = {};\n\n  for (const line of lines) {\n    if (line.startsWith('  ports:')) {\n      const service = lines[lines.indexOf(line)].split(':')[0].trim();\n      const ports = lines[lines.indexOf(line) + 1].split('  ').filter(Boolean)[0].split(',').map(port => port.trim());\n      services[service] = ports.map(port => port.split(':')[0].split('-')[0].trim());\n    }\n  }\n\n  const assignedPorts = {};\n  for (const service in services) {\n    for (const port of services[service]) {\n      assignedPorts[port] = service;\n    }\n  }\n\n  const unassignedPorts = [];\n  for (const service in services) {\n    for (const port of services[service]) {\n      if (!assignedPorts[port]) {\n        unassignedPorts.push(port + ' is not assigned to service ' + service);\n      }\n    }\n  }\n\n  return unassignedPorts;\n}"
+  },
+  "functionSignature": {
+    "javascript": "function validatePorts(composeFile: string): string[]"
+  },
+  "solutions": {
+    "javascript": "// This function should check if all exposed ports in a service's ports are assigned to a service.\n// If a port is not assigned, it should return an error message indicating the port number and service name.\n// If all ports are assigned, it should return an empty array.\nfunction validatePorts(composeFile) {\n  const lines = composeFile.split('\\n');\n  const services = {};\n\n  for (const line of lines) {\n    if (line.startsWith('  ports:')) {\n      const service = lines[lines.indexOf(line)].split(':')[0].trim();\n      const ports = lines[lines.indexOf(line) + 1].split('  ').filter(Boolean)[0].split(',').map(port => port.trim());\n      services[service] = ports.map(port => port.split(':')[0].split('-')[0].trim());\n    }\n  }\n\n  const assignedPorts = {};\n  for (const service in services) {\n    for (const port of services[service]) {\n      assignedPorts[port] = service;\n    }\n  }\n\n  const unassignedPorts = [];\n  for (const service in services) {\n    for (const port of services[service]) {\n      if (!assignedPorts[port]) {\n        unassignedPorts.push(port + ' is not assigned to service ' + service);\n      }\n    }\n  }\n\n  return unassignedPorts;\n}\n\n// Driver code\nconst readline = require('readline').createInterface({ input: process.stdin, output: process.stdout });\nreadline.question('', input => {\n  const composeFile = input.trim();\n  const result = validatePorts(composeFile);\n  console.log(JSON.stringify(result));\n  readline.close();\n});"
+  },
+  "judgeConfig": {
+    "timeLimit": 3,
+    "memoryLimit": 512,
+    "supportedLanguages": [
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "version: '3'\nservices:\n  web:\n    ports:\n      - 8080:8080\n      - 8081:8081\n    container_name: web\n\n  db:\n    ports:\n      - 5432:5432\n    container_name: db\n",
+      "output": "[]",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "version: '3'\nservices:\n  web:\n    ports:\n      - 8080:8080\n      - 8081:8081\n    container_name: web\n\n  db:\n    ports:\n      - 5432:5432\n    container_name: db\n\n  api:\n    ports:\n      - 8080:8080\n    container_name: api",
+      "output": "Port 8080 is not assigned to service web",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "0877bacd5ecd20f054d433ed",
+  "slug": "docker-compose-service-port-mappings-validator-with-unassigned-ports-bugfix-hard-docker",
+  "mode": "bug_fix",
+  "category": "DOCKER",
+  "difficulty": "Hard"
+}

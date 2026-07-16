@@ -1,0 +1,136 @@
+{
+  "title": "Optimizing React Memoized Component Re-renders Due to Changing Object Reference",
+  "subCategory": "React Memoization",
+  "statement": {
+    "markdown": "Create a React memoized component that displays a greeting based on the user's name. The component should only re-render when the name changes. However, the current implementation is causing unnecessary re-renders due to changing object references. Fix the code to optimize the re-renders.",
+    "inputFormat": "The input will be an object with a single property `name` of type string.",
+    "outputFormat": "The output will be a string greeting the user by their name.",
+    "notes": "The component should only re-render when the name property changes. Use the `useMemo` hook to memoize the greeting.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of times the component is rendered"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"name\": \"John\"}",
+        "output": "Hello John!",
+        "explanation": "The component should only re-render when the name property changes."
+      },
+      {
+        "input": "{\"name\": \"Jane\"}",
+        "output": "Hello Jane!",
+        "explanation": "The component should only re-render when the name property changes."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "REACT"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "react"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the `useMemo` hook to memoize the greeting."
+    }
+  ],
+  "editorial": {
+    "title": "Optimizing React Memoized Component Re-renders",
+    "intuition": "The `useMemo` hook can be used to memoize the greeting, so that it only re-renders when the name property changes.",
+    "bruteForce": "The brute force approach would be to re-render the component on every state change, but this would cause unnecessary re-renders.",
+    "betterSolution": "Use the `useMemo` hook to memoize the greeting and only re-render the component when the name property changes.",
+    "optimalSolution": "Create a memoized component that uses the `useMemo` hook to memoize the greeting, and only re-renders when the name property changes.",
+    "proofOfCorrectness": "The component should only re-render when the name property changes, which is guaranteed by the `useMemo` hook.",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Not using the `useMemo` hook",
+      "Not checking for object reference changes"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "// Import the useMemo hook\nimport { useMemo } from 'react';\n\n// Define the component\nconst Greeting = ({ name }) => {\n  const greeting = 'Hello ' + name;\n  return <div>{greeting}</div>;\n};\n\n// Export the component\nexport default Greeting;",
+    "python": "// Import the memoize decorator\nfrom functools import lru_cache\n\n// Define the class\nclass Greeting:\n    def __init__(self, name):\n        self.name = name\n\n    def render(self):\n        greeting = f'Hello {self.name}'\n        return greeting\n\n# Export the class\nclass Solution:\n    def __init__(self):\n        pass\n\n    def execute(self):\n        return Greeting('John').render()\n\n# Driver code\nif __name__ == '__main__':\n    solution = Solution()\n    print(solution.execute())"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Import the useMemo hook\nimport { useMemo } from 'react';\n\n// Define the component\nconst Greeting = ({ name }) => {\n  const greeting = 'Hello ' + name;\n  return useMemo(() => <div>{greeting}</div>, [greeting]);\n};\n\n// Export the component\nexport default Greeting;",
+    "python": "// Import the memoize decorator\nfrom functools import lru_cache\n\n// Define the class\nclass Greeting:\n    def __init__(self, name):\n        self.name = name\n\n    def render(self):\n        greeting = f'Hello {self.name}'\n        return lru_cache(maxsize=None)(lambda: greeting)\n\n# Export the class\nclass Solution:\n    def __init__(self):\n        pass\n\n    def execute(self):\n        return Greeting('John').render()\n\n# Driver code\nif __name__ == '__main__':\n    solution = Solution()\n    print(solution.execute())"
+  },
+  "functionSignature": {
+    "javascript": "const Greeting = ({ name }) => { ... };",
+    "python": "class Greeting:\n    def __init__(self, name):\n        self.name = name\n\n    def render(self):\n        ..."
+  },
+  "solutions": {
+    "javascript": "// Use the useMemo hook to memoize the greeting\nconst Greeting = ({ name }) => {\n  const greeting = 'Hello ' + name;\n  return useMemo(() => greeting, [name]);\n};\n\n// Export the component\nexport default Greeting;",
+    "python": "// Import the memoize decorator\nfrom functools import lru_cache\n\n// Define the class\nclass Greeting:\n    def __init__(self, name):\n        self.name = name\n\n    def render(self):\n        greeting = f'Hello {self.name}'\n        return greeting\n\n# Export the class\nclass Solution:\n    def __init__(self):\n        pass\n\n    def execute(self):\n        return Greeting('John').render()\n\n# Driver code\nif __name__ == '__main__':\n    solution = Solution()\n    print(solution.execute())"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"name\": \"John\"}",
+      "output": "Hello John!",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"name\": \"Jane\"}",
+      "output": "Hello Jane!",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "f4adc9bf48411af1bad93249",
+  "slug": "optimizing-react-memoized-component-re-renders-due-to-changing-object-reference-bugfix-easy-react",
+  "mode": "bug_fix",
+  "category": "REACT",
+  "difficulty": "Easy"
+}

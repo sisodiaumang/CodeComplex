@@ -1,0 +1,165 @@
+{
+  "_id": "0a0930b9dd71b519ee42dccc",
+  "title": "Incorrect Longest Increasing Path in Matrix",
+  "slug": "incorrect-longest-increasing-path-in-matrix-bugfix-hard-dynamic-programming",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "DP",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "dp"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given an `m x n` matrix of integers representing a grid, calculate how many distinct paths are there from the top-left to the bottom-right? A path can consist of any number of steps, as long as they are in one of the four main directions (up, down, left, right) and each step must be exactly one cell. There are no obstacles in the grid and all the cells are accessible.\n\nThe bug is in the approach of solving this problem using dynamic programming. The bug will make the solution incorrect for most test cases. The correct approach should involve dynamic programming with memoization. \n\nYou are given a function `longestIncreasingPath` which returns the length of the longest increasing path from the top-left to the bottom-right. However, the function has a bug and will not pass most test cases.",
+    "inputFormat": "An `m x n` matrix of integers",
+    "outputFormat": "The number of distinct paths from the top-left to the bottom-right",
+    "notes": "Each cell in the grid is accessible and there are no obstacles.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 1,
+        "max": 10,
+        "description": "Number of rows"
+      },
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10,
+        "description": "Number of columns"
+      },
+      {
+        "variable": "matrix",
+        "type": "list",
+        "description": "List of lists of integers representing the grid"
+      }
+    ],
+    "examples": [
+      {
+        "input": "[[1,2,3],[4,5,6],[7,8,9]]",
+        "output": "11",
+        "explanation": "There are 11 distinct paths from the top-left to the bottom-right."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use memoization in the dynamic programming approach to handle large grids."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial Solution",
+    "intuition": "The correct approach involves dynamic programming with memoization.",
+    "bruteForce": "The brute force approach involves checking all possible paths from the top-left to the bottom-right, which is inefficient for large grids.",
+    "betterSolution": "Use a memoization table to store the lengths of the longest increasing paths to each cell.",
+    "optimalSolution": "The optimal solution involves using dynamic programming with memoization and checking all possible paths from the top-left to the bottom-right in a bottom-up manner.",
+    "proofOfCorrectness": "The proof of correctness involves showing that the memoization table is correctly filled and that the longest increasing path from the top-left to the bottom-right is correctly calculated.",
+    "dryRun": "A step-by-step example run of the optimal solution.",
+    "commonMistakes": [
+      "Not using memoization",
+      "Not checking all possible paths"
+    ],
+    "timeComplexity": "O(mn)",
+    "spaceComplexity": "O(mn)"
+  },
+  "starterCode": {
+    "cpp": "class Solution { public: int longestIncreasingPath(vector<vector<int>>& matrix); };",
+    "java": "class Solution { public int longestIncreasingPath(int[][] matrix); }",
+    "python": "class Solution: def longestIncreasingPath(self, matrix: List[List[int]]) -> int:",
+    "javascript": "var longestIncreasingPath = function(matrix) { }"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution { public: int longestIncreasingPath(vector<vector<int>>& matrix) { int N = matrix.size(), M = matrix[0].size(); int dp[N][M]; for (int i = 0; i < N; i++) for (int j = 0; j < M; j++) dp[i][j] = 1; for (int i = 0; i < N; i++) for (int j = 0; j < M; j++) { int max_val = 0; for (int x = -1; x <= 1; x++) for (int y = -1; y <= 1; y++) { if (x == 0 && y == 0) continue; int ni = i + x, nj = j + y; if (ni >= 0 && ni < N && nj >= 0 && nj < M) max_val = max(max_val, dp[ni][nj]); } dp[i][j] = max_val + 1; } return dp[0][0]; } };",
+    "java": "class Solution { public int longestIncreasingPath(int[][] matrix) { int N = matrix.length, M = matrix[0].length; int[][] dp = new int[N][M]; for (int i = 0; i < N; i++) for (int j = 0; j < M; j++) dp[i][j] = 1; for (int i = 0; i < N; i++) for (int j = 0; j < M; j++) { int max_val = 0; for (int x = -1; x <= 1; x++) for (int y = -1; y <= 1; y++) { if (x == 0 && y == 0) continue; int ni = i + x, nj = j + y; if (ni >= 0 && ni < N && nj >= 0 && nj < M) max_val = Math.max(max_val, dp[ni][nj]); } dp[i][j] = max_val + 1; } return dp[0][0]; } }",
+    "python": "class Solution: def longestIncreasingPath(self, matrix: List[List[int]]) -> int: N, M = len(matrix), len(matrix[0]) dp = [[1] * M for _ in range(N)] for i in range(N): for j in range(M): max_val = 0 for x, y in [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]: ni, nj = i + x, j + y if 0 <= ni < N and 0 <= nj < M: max_val = max(max_val, dp[ni][nj]) dp[i][j] = max_val + 1 return dp[0][0]",
+    "javascript": "var longestIncreasingPath = function(matrix) { var N = matrix.length, M = matrix[0].length; var dp = Array(N).fill(0).map(() => Array(M).fill(1)); for (var i = 0; i < N; i++) for (var j = 0; j < M; j++) { var max_val = 0; for (var x = -1; x <= 1; x++) for (var y = -1; y <= 1; y++) { if (x == 0 && y == 0) continue; var ni = i + x, nj = j + y; if (0 <= ni && ni < N && 0 <= nj && nj < M) max_val = Math.max(max_val, dp[ni][nj]); } dp[i][j] = max_val + 1; } return dp[0][0]; }"
+  },
+  "functionSignature": {
+    "cpp": "bool solve(vector<vector<int>> matrix);",
+    "java": "public boolean solve(int[][] matrix);",
+    "python": "def solve(self, matrix: List[List[int]]) -> bool:",
+    "javascript": "var solve = function(matrix);"
+  },
+  "solutions": {
+    "python": "class Solution: def solve(self, matrix: List[List[int]]) -> int: N, M = len(matrix), len(matrix[0]) memo = [[False] * M for _ in range(N)] def dfs(i, j): if memo[i][j]: return memo[i][j] ans = 1 for x, y in [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]: ni, nj = i + x, j + y if 0 <= ni < N and 0 <= nj < M and matrix[ni][nj] > matrix[i][j]: ans = max(ans, 1 + dfs(ni, nj)) memo[i][j] = True return ans for i in range(N): for j in range(M): memo[i][j] = False for i in range(N): for j in range(M): memo[i][j] = dfs(i, j) return max(max(row) for row in memo)\n\nif __name__ == '__main__': from sys import stdin, stdout from typing import List def main(): matrix: List[List[int]] = [list(map(int, line.split())) for line in stdin.read().split('\\n') if line] solution = Solution() stdout.write(str(solution.solve(matrix)) + '\\n')\n\nif __name__ == '__main__':\n    main()\n",
+    "cpp": "class Solution { public: int longestIncreasingPath(vector<vector<int>>& matrix) { int N = matrix.size(), M = matrix[0].size(); vector<vector<bool>> memo(N, vector<bool>(M, false)); function<int(int, int)> dfs = [&](int i, int j) { if (memo[i][j]) return memo[i][j]; int ans = 1; for (int x = -1; x <= 1; x++) for (int y = -1; y <= 1; y++) { if (x == 0 && y == 0) continue; int ni = i + x, nj = j + y; if (ni >= 0 && ni < N && nj >= 0 && nj < M && matrix[ni][nj] > matrix[i][j]) ans = max(ans, 1 + dfs(ni, nj)); } memo[i][j] = true; return ans; }; for (int i = 0; i < N; i++) for (int j = 0; j < M; j++) memo[i][j] = false; for (int i = 0; i < N; i++) for (int j = 0; j < M; j++) dfs(i, j); return *max_element(begin(memo[0]), end(memo[0])); } }; int main() { std::ios_base::sync_with_stdio(false); std::cin.tie(nullptr); std::vector<std::string> lines; std::string line; while (std::getline(std::cin, line)) lines.push_back(line); std::istringstream iss; int N, M; for (const auto& line : lines) if (line.length()) { iss.clear(); iss.str(line); iss >> N >> M; break; } std::vector<std::vector<int>> matrix(N, std::vector<int>(M)); int num; for (int i = 0; i < N; i++) for (int j = 0; j < M; j++) { std::cin >> num; matrix[i][j] = num; } Solution solution; std::cout << solution.longestIncreasingPath(matrix) << '\n';\n\nreturn 0;\n",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 1000,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "3 3\n1 2 3\n4 5 6\n7 8 9",
+      "output": "11",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_hidden_generated",
+      "input": "3 3\n1 2 3\n4 5 6\n7 8 9",
+      "output": "11",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

@@ -1,0 +1,143 @@
+{
+  "title": "Docker Compose Port Mapping Validator with Incorrect Port Range",
+  "subCategory": "Docker Port Mapping",
+  "statement": {
+    "markdown": "Given a Docker Compose configuration file, validate that each service port mapping is within the valid port range [0, 65535]. The configuration file is in JSON format. The function should return `true` if all port mappings are valid, and `false` otherwise.\n\nExample configuration file:\n\n```json\n{ \"version\": \"3\", \"services\": { \"web\": { \"build\": \".\", \"port\": 8080 } } \n}\n```",
+    "inputFormat": "Docker Compose configuration file in JSON format as a string",
+    "outputFormat": "True if all port mappings are valid, False otherwise",
+    "notes": "The function should only check the port mappings and ignore other configuration options.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "maxPorts",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Maximum number of services in the configuration file"
+      },
+      {
+        "variable": "maxPortRange",
+        "type": "integer",
+        "min": 0,
+        "max": 65535,
+        "description": "Maximum valid port number"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{ \"version\": \"3\", \"services\": { \"web\": { \"build\": \".\", \"port\": 8080 } } }",
+        "output": "true",
+        "explanation": "Valid port mapping"
+      },
+      {
+        "input": "{ \"version\": \"3\", \"services\": { \"web\": { \"build\": \".\", \"port\": 65536 } } }",
+        "output": "false",
+        "explanation": "Invalid port number"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DOCKER"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "docker"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Check the port number against the valid range"
+    }
+  ],
+  "editorial": {
+    "title": "Validating Docker Compose Port Mappings",
+    "intuition": "The function should iterate over the service port mappings and check if each port number is within the valid range.",
+    "bruteForce": "You can use a simple loop to check each port number against the valid range.",
+    "betterSolution": "",
+    "optimalSolution": "Use a JSON parser to extract the port mappings and check if they are within the valid range.",
+    "proofOfCorrectness": "The function should return True if all port mappings are valid and False otherwise.",
+    "dryRun": "Test the function with the provided examples to see if it returns the correct output.",
+    "commonMistakes": [
+      "Not checking the port number against the valid range",
+      "Not handling invalid JSON input"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// Define a function to validate the Docker Compose configuration file\nfunction validatePorts(config) {\n    // Your code here\n}",
+    "python": "// Define a class to validate the Docker Compose configuration file\nclass Solution:\n    def __init__(self):\n        pass\n    def validatePorts(self, config):\n        # Your code here\n"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Define a function to validate the Docker Compose configuration file\nfunction validatePorts(config) {\n    // Check if the configuration file is in JSON format\n    try {\n        JSON.parse(config);\n    } catch (e) {\n        return false;\n    }\n    // Iterate over the services and check their port mappings\n    for (var service in config.services) {\n        var port = config.services[service].port;\n        // Check if the port number is within the valid range\n        if (port >= 0 && port <= 65535) {\n            return true;\n        }\n    }\n    return true;\n}",
+    "python": "// Define a class to validate the Docker Compose configuration file\nclass Solution:\n    def __init__(self):\n        pass\n    def validatePorts(self, config):\n        try:\n            import json\n            config = json.loads(config)\n        except json.JSONDecodeError:\n            return False\n        # Iterate over the services and check their port mappings\n        for service in config['services']:\n            port = config['services'][service]['port']\n            # Check if the port number is within the valid range\n            if port >= 0 and port <= 65535:\n                return True\n        return True\n"
+  },
+  "functionSignature": {
+    "javascript": "function validatePorts(config: string): boolean;",
+    "python": "def validatePorts(self, config: str) -> bool:"
+  },
+  "solutions": {
+    "javascript": "// Define a function to validate the Docker Compose configuration file\nfunction validatePorts(config) {\n    // Check if the configuration file is in JSON format\n    try {\n        JSON.parse(config);\n    } catch (e) {\n        return false;\n    }\n    // Iterate over the services and check their port mappings\n    for (var service in config.services) {\n        var port = config.services[service].port;\n        // Check if the port number is within the valid range\n        if (port < 0 || port > 65535) {\n            return false;\n        }\n    }\n    return true;\n}",
+    "python": "// Define a class to validate the Docker Compose configuration file\nclass Solution:\n    def __init__(self):\n        pass\n    def validatePorts(self, config):\n        try:\n            import json\n            config = json.loads(config)\n        except json.JSONDecodeError:\n            return False\n        # Iterate over the services and check their port mappings\n        for service in config['services']:\n            port = config['services'][service]['port']\n            # Check if the port number is within the valid range\n            if port < 0 or port > 65535:\n                return False\n        return True\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"version\": \"3\", \"services\": { \"web\": { \"build\": \".\", \"port\": 8080 } }}",
+      "output": "true",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"version\": \"3\", \"services\": { \"web\": { \"build\": \".\", \"port\": 65536 } }}",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "64b2f758b93bf78d57c117ba",
+  "slug": "docker-compose-port-mapping-validator-with-incorrect-port-range-bugfix-easy-docker",
+  "mode": "bug_fix",
+  "category": "DOCKER",
+  "difficulty": "Easy"
+}

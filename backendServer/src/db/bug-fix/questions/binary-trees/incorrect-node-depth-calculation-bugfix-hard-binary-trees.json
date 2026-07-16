@@ -1,0 +1,161 @@
+{
+  "_id": "3f1e8f51d41fe2f67cc05b20",
+  "title": "Incorrect Node Depth Calculation",
+  "slug": "incorrect-node-depth-calculation-bugfix-hard-binary-trees",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "DFS/BFS",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 60,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "tree"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given an unweighted tree and a root node, calculate the depth of each node from the root. However, the given code contains a bug and does not return the correct results.\n\n*   The tree node structure should have values of type int, and pointer references to left and right child nodes.\n*   You should implement a method `calcDepth` in the `TreeNode` class to calculate the depth of each node in the tree.\n*   You should return a vector of integers representing the depth of each node.\n\nThe provided code already attempts to calculate the depth of each node, but it has a subtle bug.",
+    "inputFormat": "A tree represented as a vector of nodes, where each node contains an integer value and pointers to its left and right child nodes.",
+    "outputFormat": "A vector of integers representing the depth of each node in the tree.",
+    "notes": "The tree can be empty, and the input nodes can be null. You should handle these edge cases correctly.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 0,
+        "max": 10000,
+        "description": "Size of the input array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "Example input (matching the stdin format that main wrapper expects)",
+        "output": "Expected stdout output",
+        "explanation": "Brief explanation"
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Think about the tree traversal order that will allow you to correctly calculate the depth of each node."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "class TreeNode { public:\n    int val;\n    TreeNode *left;\n    TreeNode *right;\n\n    TreeNode(int x) : val(x), left(NULL), right(NULL) {}\n\n    vector<int> calcDepth(vector<TreeNode*> nodes);\n\n};",
+    "java": "public class TreeNode {\n    public Integer val;\n    public TreeNode left;\n    public TreeNode right;\n\n    public TreeNode(Integer x) {\n        this.val = x;\n        this.left = null;\n        this.right = null;\n    }\n\n    public List<Integer> calcDepth(List<TreeNode> nodes);\n\n}",
+    "python": "class TreeNode:\n    def __init__(self, val=0, left=None, right=None):\n        self.val = val\n        self.left = left\n        self.right = right\n\n    def calcDepth(self, nodes):\n        pass\n\n",
+    "javascript": "function TreeNode(x) {\n    this.val = x;\n    this.left = null;\n    this.right = null;\n\n}\n\nTreeNode.prototype.calcDepth = function(nodes) {\n    return []; \n};\n\n"
+  },
+  "buggyStarterCode": {
+    "cpp": "vector<int> TreeNode::calcDepth(vector<TreeNode*> nodes) {\n    if (!nodes.size()) return {};\n\n    vector<bool> visited(nodes.size(), false);\n    vector<int> result;\n\n    queue<pair<TreeNode*, int>> q;\n    q.push(make_pair(nodes[0], 0));\n\n    while (!q.empty()) {\n        auto [node, depth] = q.front();\n        q.pop();\n\n        result.push_back(depth);\n\n        if (!visited[node->val]) {\n            q.push(make_pair(node->left, depth + 1));\n            visited[node->val] = true;\n        }\n\n        if (!visited[node->val]) {\n            q.push(make_pair(node->right, depth + 1));\n            visited[node->val] = true;\n        }\n\n    }\n    return result;\n\n}",
+    "java": "public List<Integer> TreeNode.calcDepth(List<TreeNode> nodes) {\n    if (!nodes.isEmpty()) return new ArrayList<>();\n\n    List<Boolean> visited = new ArrayList<>(nodes.size(), false);\n    List<Integer> result = new ArrayList<>();\n\n    Queue<Pair<TreeNode, Integer>> q = new LinkedList<>();\n    q.offer(new Pair<>(nodes.get(0), 0));\n\n    while (!q.isEmpty()) {\n        Pair<TreeNode, Integer> pair = q.poll();\n        TreeNode node = pair.getKey();\n        int depth = pair.getValue();\n\n        result.add(depth);\n\n        if (!((Boolean) visited.get(node.val))) {\n            q.offer(new Pair<>(node.left, depth + 1));\n            visited.set(node.val, true);\n        }\n\n        if (!((Boolean) visited.get(node.val))) {\n            q.offer(new Pair<>(node.right, depth + 1));\n            visited.set(node.val, true);\n        }\n\n    }\n    return result;\n\n}",
+    "python": "class TreeNode:\n    def calcDepth(self, nodes):\n        if not nodes:\n            return []\n\n        visited = [False]*len(nodes);\n        result = [];\n\n        q = collections.deque();\n        q.append((nodes[0], 0));\n\n        while q:\n            node, depth = q.popleft();\n\n            result.append(depth);\n\n            if not visited[node.val]:\n                q.append((node.left, depth + 1));\n                visited[node.val] = True;\n\n            if not visited[node.val]:\n                q.append((node.right, depth + 1));\n                visited[node.val] = True;\n\n        return result;\n\n",
+    "javascript": "TreeNode.prototype.calcDepth = function(nodes) {\n    if (!nodes.length) return [];\n\n    let visited = new Array(nodes.length).fill(false);\n    let result = [];\n\n    let q = []; q.push([nodes[0], 0]);\n\n    while (q.length) {\n        let [node, depth] = q.shift();\n\n        result.push(depth);\n\n        if (!visited[node.val]) {\n            q.push([node.left, depth + 1]);\n            visited[node.val] = true;\n        }\n\n        if (!visited[node.val]) {\n            q.push([node.right, depth + 1]);\n            visited[node.val] = true;\n        }\n\n    }\n    return result;\n\n}"
+  },
+  "functionSignature": {
+    "cpp": "vector<int> calcDepth(vector<TreeNode*> nodes);",
+    "java": "List<Integer> calcDepth(List<TreeNode> nodes);",
+    "python": "def calcDepth(self, nodes: list[TreeNode]) -> list[int]:",
+    "javascript": "calcDepth = function(nodes) {\n    return []; \n};\n\n"
+  },
+  "solutions": {
+    "python": "class TreeNode:\n    def __init__(self, val=0, left=None, right=None):\n        self.val = val\n        self.left = left\n        self.right = right\n\n    def calcDepth(self, nodes):\n        if not nodes:\n            return []\n\n        visited = [False]*len(nodes);\n        result = [];\n\n        q = collections.deque();\n        q.append((nodes[0], 0));\n\n        while q:\n            node, depth = q.popleft();\n            if node:\n                result.append(depth);\n                q.append((node.left, depth + 1));\n                q.append((node.right, depth + 1));\n\n        return result;\n\n\nclass Solution:\n    def solve(self):\n        root = TreeNode(1)\n        root.left = TreeNode(2)\n        root.right = TreeNode(3)\n        root.left.left = TreeNode(4)\n        root.left.right = TreeNode(5)\n\n        print(Solution().solve().calcDepth([root]))\n\n",
+    "cpp": "class TreeNode { public:\n    int val;\n    TreeNode *left;\n    TreeNode *right;\n\n    TreeNode(int x) : val(x), left(NULL), right(NULL) {}\n\n    vector<int> calcDepth(vector<TreeNode*> nodes);\n\n};\n\nclass Solution {\npublic:\n    vector<int> solve(vector<TreeNode*> nodes) {\n        if (!nodes.size()) return vector<int>();\n\n        vector<bool> visited(nodes.size(), false);\n        vector<int> result;\n\n        queue<pair<TreeNode*, int>> q;\n        q.push(make_pair(nodes[0], 0));\n\n        while (!q.empty()) {\n            auto [node, depth] = q.front();\n            q.pop();\n\n            if (node) {\n                result.push_back(depth);\n                q.push(make_pair(node->left, depth + 1));\n                q.push(make_pair(node->right, depth + 1));\n            }\n\n        }\n        return result;\n    }\n};\n\nint main() {\n    Solution solution;\n    TreeNode root(1);\n    root.left = new TreeNode(2);\n    root.right = new TreeNode(3);\n    root.left->left = new TreeNode(4);\n    root.left->right = new TreeNode(5);\n\n    auto result = solution.solve({&root});\n    for (auto depth : result) {\n        std::cout << depth << ' ';\n    }\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5\n1 2 3 4 5",
+      "output": "1 2 2 1 1",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "2\n1 2",
+      "output": "1 1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    },
+    {
+      "id": "tc_3",
+      "input": "3\n1 2 3",
+      "output": "1 1 1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

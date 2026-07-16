@@ -1,0 +1,129 @@
+{
+  "_id": "46e77611bd152cc785ac014d",
+  "title": "Implement a Simple Payment Gateway",
+  "slug": "implement-a-simple-payment-gateway-easy-payment-1",
+  "difficulty": "Easy",
+  "topics": [
+    "PAYMENT"
+  ],
+  "statement": "Create a payment gateway that accepts payments with the following functionality. Your server should have the following endpoints:\n\n*   `/api/payments`: POST - to create a new payment.\n*   `/api/payments/:id`: GET - to retrieve a payment by ID.\n\nYou should accept the payment details in the request body as JSON, with the following structure:\n\n```json\n{\n  \"amount\": number,\n  \"currency\": string\n}\n```\n\nYour server should store the payment details in an in-memory array.\n\nWhen creating a new payment, it should return the payment details in the response body.\n\nWhen retrieving a payment by ID, it should return the corresponding payment details in the response body. If the payment is not found, it should return a 404 status code.\n\nYou should not implement any validation for the payment details, except to check that the amount is a positive number and the currency is a string.\n\nYou can assume that the payment IDs will be positive integers, and that the IDs will be unique for each payment.\n\nYou can use the `express` framework to create the server, and the `express.json()` middleware to parse the request body as JSON.\n\nYou can use the built-in `Array` data type to store the payments in memory.\n\nYou can assume that the server will be started with the environment variable `PORT` set to the port number it should listen on.\n\n",
+  "constraints": [
+    "Must use only the in-memory array provided",
+    "Must implement the endpoints as described above"
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/payments",
+      "description": "Create a new payment. Accepts a JSON body with the payment details."
+    },
+    {
+      "method": "GET",
+      "path": "/api/payments/:id",
+      "description": "Retrieve a payment by ID."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\"name\": \"payment-gateway\",\n  \"version\": \"1.0.0\",\n  \"main\": \"index.js\",\n  \"scripts\": {\n    \"start\": \"node index.js\"\n  },\n  \"dependencies\": {\n    \"express\": \"^4.18.2\"\n  }\n}",
+    "index.js": "const express = require('express');\nconst app = express();\napp.use(express.json());\n\nconst payments = [];\n\n// TODO: Implement payment creation and retrieval endpoints\n\napp.post('/api/payments', (req, res) => {\n    // TODO: Create a new payment and store it in the array\n});\n\napp.get('/api/payments/:id', (req, res) => {\n    // TODO: Retrieve a payment by ID\n});\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "POST",
+      "path": "/api/payments",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "amount": 10,
+        "currency": "USD"
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "amount": 10,
+        "currency": "USD"
+      },
+      "expectedBodySchema": null,
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "GET",
+      "path": "/api/payments/1",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "amount": 10,
+        "currency": "USD"
+      },
+      "expectedBodySchema": null,
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "POST",
+      "path": "/api/payments",
+      "body": {
+        "amount": -10,
+        "currency": "USD"
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "GET",
+      "path": "/api/payments/999",
+      "expectedStatus": 404,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "POST",
+      "path": "/api/payments",
+      "headers": {
+        "Content-Type": "application/xml"
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "stripe",
+    "razorpay",
+    "webhooks",
+    "checkout",
+    "refunds",
+    "subscriptions",
+    "payment",
+    "gateway",
+    "express",
+    "json"
+  ]
+}

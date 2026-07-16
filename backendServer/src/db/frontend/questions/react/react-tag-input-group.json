@@ -1,0 +1,53 @@
+{
+  "_id": "8e40adc4146bb9d3fb1b4310",
+  "title": "React Tag Input Group",
+  "slug": "react-tag-input-group",
+  "difficulty": "Medium",
+  "topics": [
+    "REACT",
+    "REACT_TAG_INPUT_GROUP"
+  ],
+  "statement": {
+    "markdown": "## React Tag Input Group Component\n\nBuild a tag group input text component where typed words are converted into dismissible tag badges.\n\n### Requirements:\n1. **Add Tags**: Typing in the field and pressing **Enter** or **Comma** inserts the word as a tag.\n2. **Dismiss Tag**: Clicking the cross icon (`x`) on any tag badge deletes it from the active list.\n3. **No Duplicates**: Validate input: prevent adding duplicate tags, showing a temporary red warning border on error.\n4. **Initial Tags**: Support a prop `initialTags` to set the default starting tags.\n"
+  },
+  "constraints": [
+    "Must support responsive styles",
+    "Must use React hooks",
+    "Must style elements with Tailwind CSS"
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "html": "",
+    "css": "",
+    "react": "import React, { useState } from 'react';\n\nexport default function TagInput({ initialTags = [], onTagsChange }) {\n  // Implement tag input group component here\n  return null;\n}"
+  },
+  "gradingCriteria": [
+    {
+      "id": "functional_correctness",
+      "description": "Verify that the interactive props, callbacks, and element structures work cleanly.",
+      "weight": 60
+    },
+    {
+      "id": "code_cleanliness",
+      "description": "Verify state structure designs and clean Tailwind CSS layouts.",
+      "weight": 40
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "react",
+      "tailwind"
+    ],
+    "referenceSolution": "import React, { useState } from 'react';\n\nexport default function TagInput({ initialTags = [], onTagsChange }) {\n  const [tags, setTags] = useState(initialTags);\n  const [inputVal, setInputVal] = useState(\"\");\n  const [isDuplicate, setIsDuplicate] = useState(false);\n\n  const handleKeyDown = (e) => {\n    if (e.key === \"Enter\" || e.key === \",\") {\n      e.preventDefault();\n      const cleaned = inputVal.trim().replace(/,/g, '');\n\n      if (!cleaned) return;\n\n      if (tags.includes(cleaned)) {\n        setIsDuplicate(true);\n        return;\n      }\n\n      const updated = [...tags, cleaned];\n      setTags(updated);\n      setInputVal(\"\");\n      setIsDuplicate(false);\n      if (onTagsChange) onTagsChange(updated);\n    }\n  };\n\n  const removeTag = (tagToRemove) => {\n    const updated = tags.filter(tag => tag !== tagToRemove);\n    setTags(updated);\n    if (onTagsChange) onTagsChange(updated);\n  };\n\n  return (\n    <div className=\"w-full max-w-md\">\n      <div className={`flex flex-wrap items-center gap-2 p-2 border-2 rounded-xl bg-white focus-within:ring-2 focus-within:ring-purple-200 transition ${\n        isDuplicate ? 'border-red-400 focus-within:border-red-400' : 'border-gray-200 focus-within:border-purple-500'\n      }`}>\n        {/* Render Active Tag Badges */}\n        {tags.map((tag, idx) => (\n          <span key={idx} className=\"flex items-center gap-1.5 bg-purple-50 text-purple-700 text-sm font-semibold px-2.5 py-1 rounded-lg border border-purple-100\">\n            <span>{tag}</span>\n            <button onClick={() => removeTag(tag)} className=\"text-purple-400 hover:text-purple-600 focus:outline-none\">\n              <svg className=\"w-3.5 h-3.5\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path strokeLinecap=\"round\" strokeLinejoin=\"round\" strokeWidth={2.5} d=\"M6 18L18 6M6 6l12 12\" /></svg>\n            </button>\n          </span>\n        ))}\n\n        {/* Input box */}\n        <input\n          type=\"text\"\n          value={inputVal}\n          onChange={(e) => { setInputVal(e.target.value); setIsDuplicate(false); }}\n          onKeyDown={handleKeyDown}\n          placeholder={tags.length === 0 ? \"Add tag...\" : \"\"}\n          className=\"flex-1 min-w-[120px] py-1 text-sm text-gray-700 bg-transparent outline-none\"\n        />\n      </div>\n      {isDuplicate && (\n        <p className=\"text-red-500 text-xs mt-1.5 font-medium\">Tag already exists!</p>\n      )}\n    </div>\n  );\n}"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

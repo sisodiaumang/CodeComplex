@@ -1,0 +1,140 @@
+{
+  "title": "Fixing Route Parameter Middleware Issue in a Complex Express API",
+  "subCategory": "Router Parameters",
+  "statement": {
+    "markdown": "You are given a complex Express API with multiple routes that use route parameters. However, the middleware is not correctly handling the parameters, resulting in unexpected behavior. Your task is to fix the bug in the code to ensure that the route parameters are correctly passed to the route handlers.\n\nThe API has the following routes:\n\n* `GET /users/:id` - retrieves a user by ID\n* `GET /users` - retrieves a list of all users\n* `POST /users` - creates a new user\n\nThe middleware should correctly handle the `:id` parameter in the `GET /users/:id` route.\n\nYou can assume that the `User` model is correctly implemented and available in the `models` module.",
+    "inputFormat": "The input will be a string representing the route path, and the route parameters will be passed as an object.",
+    "outputFormat": "The output should be the result of the route handler, which will be a string or an object.",
+    "notes": "The middleware should handle the `:id` parameter correctly, and the route handlers should be able to access the parameter values.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of users in the database"
+      }
+    ],
+    "examples": [
+      {
+        "input": "GET /users/1",
+        "output": "User with ID 1",
+        "explanation": "The middleware should correctly pass the `:id` parameter to the route handler."
+      },
+      {
+        "input": "GET /users",
+        "output": "List of all users",
+        "explanation": "The middleware should not pass any parameters to the route handler."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 80,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "EXPRESS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "express"
+    ],
+    "interviewFrequency": 1,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Check the order of the middleware"
+    },
+    {
+      "order": 2,
+      "text": "Check the type of the parameter"
+    }
+  ],
+  "editorial": {
+    "title": "Fixing Route Parameter Middleware Issue in a Complex Express API",
+    "intuition": "The middleware should handle the `:id` parameter correctly, and the route handlers should be able to access the parameter values.",
+    "bruteForce": "Check the order of the middleware and the type of the parameter.",
+    "betterSolution": "Use a middleware that correctly handles route parameters.",
+    "optimalSolution": "Use a middleware that correctly handles route parameters and passes the values to the route handlers.",
+    "proofOfCorrectness": "The middleware should correctly handle the `:id` parameter and pass the value to the route handler.",
+    "dryRun": "Step-by-step example run of the middleware and route handler.",
+    "commonMistakes": [
+      "Incorrect order of middleware",
+      "Incorrect type of parameter"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "// Import required modules\nvar express = require('express');\nvar app = express();\n\n// Define the routes\napp.get('/users/:id', function(req, res) {\n  // Handle the GET /users/:id route\n});\n\napp.get('/users', function(req, res) {\n  // Handle the GET /users route\n});\n\napp.post('/users', function(req, res) {\n  // Handle the POST /users route\n});\n",
+    "python": "// Import required modules\nclass Solution:\n    def __init__(self):\n        pass\n\n    def get_users(self, req, res):\n        # Handle the GET /users route\n        pass\n\n    def get_user(self, req, res):\n        # Handle the GET /users/:id route\n        pass\n\n    def create_user(self, req, res):\n        # Handle the POST /users route\n        pass\n"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Import required modules\nvar express = require('express');\nvar app = express();\n\n// Define the routes\napp.get('/users/:id', function(req, res) {\n  // Handle the GET /users/:id route\n  var id = req.params.id;\n  res.send(\"User with ID \" + id);\n});\n\napp.get('/users', function(req, res) {\n  // Handle the GET /users route\n  res.send(\"List of all users\");\n});\n\napp.post('/users', function(req, res) {\n  // Handle the POST /users route\n  var user = req.body;\n  res.send(\"Created user \" + user.name);\n});\n\n// The bug is in the order of the middleware\napp.use(express.json());\napp.use(express.urlencoded({ extended: true }));\napp.use(function(req, res, next) {\n  // This middleware should handle the :id parameter correctly\n  res.send(\"Middleware error\");\n  next();\n});",
+    "python": "// Import required modules\nclass Solution:\n    def __init__(self):\n        pass\n\n    def get_users(self, req, res):\n        # Handle the GET /users route\n        res.send(\"List of all users\");\n\n    def get_user(self, req, res):\n        # Handle the GET /users/:id route\n        var id = req.params.id;\n        res.send(\"User with ID \" + id);\n\n    def create_user(self, req, res):\n        # Handle the POST /users route\n        var user = req.body;\n        res.send(\"Created user \" + user.name);\n\n    # The bug is in the order of the middleware\n    def process_request(self, req, res):\n        # This middleware should handle the :id parameter correctly\n        res.send(\"Middleware error\");\n"
+  },
+  "functionSignature": {
+    "javascript": "var solve = function(app) { ... };",
+    "python": "def solve(self, app) -> None: ...;"
+  },
+  "solutions": {
+    "javascript": "// Import required modules\nvar express = require('express');\nvar app = express();\n\n// Define the routes\napp.get('/users/:id', function(req, res) {\n  // Handle the GET /users/:id route\n  var id = req.params.id;\n  res.send(\"User with ID \" + id);\n});\n\napp.get('/users', function(req, res) {\n  // Handle the GET /users route\n  res.send(\"List of all users\");\n});\n\napp.post('/users', function(req, res) {\n  // Handle the POST /users route\n  var user = req.body;\n  res.send(\"Created user \" + user.name);\n});\n\n// The correct order of the middleware\napp.use(express.json());\napp.use(express.urlencoded({ extended: true }));\napp.param('id', function(req, res, next, id) {\n  req.params.id = id;\n  next();\n});",
+    "python": "// Import required modules\nclass Solution:\n    def __init__(self):\n        pass\n\n    def get_users(self, req, res):\n        # Handle the GET /users route\n        res.send(\"List of all users\");\n\n    def get_user(self, req, res):\n        # Handle the GET /users/:id route\n        var id = req.params.id;\n        res.send(\"User with ID \" + id);\n\n    def create_user(self, req, res):\n        # Handle the POST /users route\n        var user = req.body;\n        res.send(\"Created user \" + user.name);\n\n    # The correct order of the middleware\n    def process_request(self, req, res):\n        # This middleware should handle the :id parameter correctly\n        res.send(\"Correct middleware\");\n\n    def param(self, id):\n        # This middleware should handle the :id parameter correctly\n        self.req.params.id = id;\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "GET /users/1",
+      "output": "User with ID 1",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "GET /users",
+      "output": "List of all users",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "_id": "91cca2b134216767c1cf4647",
+  "slug": "fixing-route-parameter-middleware-issue-in-a-complex-express-api-bugfix-hard-express",
+  "mode": "bug_fix",
+  "category": "EXPRESS",
+  "difficulty": "Hard"
+}

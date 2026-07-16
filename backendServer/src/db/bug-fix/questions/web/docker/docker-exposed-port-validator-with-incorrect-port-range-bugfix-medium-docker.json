@@ -1,0 +1,136 @@
+{
+  "title": "DOCKER Exposed Port Validator with Incorrect Port Range",
+  "subCategory": "DOCKER Port Mapping",
+  "statement": {
+    "markdown": "Write a function `validateExposedPorts` that takes a Docker Compose configuration file as input and validates the exposed ports against the specified port range. The function should return `true` if the port range is valid and `false` otherwise. The port range is considered valid if it does not include the port 22 (SSH) and does not exceed the maximum port number (65535).",
+    "inputFormat": "A string representing the Docker Compose configuration file",
+    "outputFormat": "A boolean indicating whether the port range is valid",
+    "notes": "The input string is assumed to be a valid Docker Compose configuration file. The function should only consider the exposed ports in the configuration file.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of exposed ports in the configuration file"
+      }
+    ],
+    "examples": [
+      {
+        "input": "version: '3'\n services:\n  web:\n    expose:\n      - 80\n      - 8080\n",
+        "output": "true",
+        "explanation": "The port range is valid because it does not include the port 22 and does not exceed the maximum port number."
+      },
+      {
+        "input": "version: '3'\n services:\n  web:\n    expose:\n      - 22\n      - 8080\n",
+        "output": "false",
+        "explanation": "The port range is invalid because it includes the port 22."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DOCKER"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "docker"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Start by parsing the Docker Compose configuration file to extract the exposed ports."
+    }
+  ],
+  "editorial": {
+    "title": "DOCKER Exposed Port Validator Editorial",
+    "intuition": "The key to solving this problem is to correctly parse the Docker Compose configuration file and extract the exposed ports.",
+    "bruteForce": "One possible approach is to use a regular expression to extract the exposed ports from the configuration file.",
+    "betterSolution": "",
+    "optimalSolution": "Use a YAML parser to parse the configuration file and extract the exposed ports. This approach is more efficient and robust than using a regular expression.",
+    "proofOfCorrectness": "The optimal solution correctly checks if the port range is valid by verifying that it does not include the port 22 and does not exceed the maximum port number.",
+    "dryRun": "Step 1: Parse the Docker Compose configuration file using a YAML parser.\nStep 2: Extract the exposed ports from the configuration file.\nStep 3: Check if the port range is valid by verifying that it does not include the port 22 and does not exceed the maximum port number.",
+    "commonMistakes": [
+      "Failing to correctly parse the Docker Compose configuration file",
+      "Ignoring the port 22 in the validation check"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "var validateExposedPorts = function(nums) {\n    // TODO: implement\n    return false;\n};",
+    "python": "class Solution:\n    def validateExposedPorts(self, composeFile: str) -> bool:\n        return True"
+  },
+  "buggyStarterCode": {
+    "javascript": "var validateExposedPorts = function(nums) {\n    // Buggy code\n    return false;\n};",
+    "python": "class Solution:\n    def validateExposedPorts(self, composeFile: str) -> bool:\n        lines = composeFile.splitlines()\n        exposedPorts = [line.split(':')[-1].split()[0] for line in lines if line.startswith('expose')]\n        return all(int(port) < 65536 for port in exposedPorts)"
+  },
+  "functionSignature": {
+    "javascript": "function validateExposedPorts(config: string): boolean;",
+    "python": "def validateExposedPorts(self, config: str) -> bool:"
+  },
+  "solutions": {
+    "javascript": "// Solution",
+    "python": "class Solution:\n    def validateExposedPorts(self, composeFile: str) -> bool:\n        import yaml\n        config = yaml.safe_load(composeFile)\n        if not config or 'services' not in config:\n            return False\n        services = config['services']\n        for service in services.values():\n            if 'expose' in service:\n                for port in service['expose']:\n                    if int(port) == 22 or int(port) > 65535:\n                        return False\n        return True"
+  },
+  "judgeConfig": {
+    "timeLimit": 1000,
+    "memoryLimit": 65536,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "version: '3'\n services:\n  web:\n    expose:\n      - 80\n      - 8080\n",
+      "output": "true",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "version: '3'\n services:\n  web:\n    expose:\n      - 22\n      - 8080\n",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "_id": "7cfebac2d292745e595a0c7d",
+  "slug": "docker-exposed-port-validator-with-incorrect-port-range-bugfix-medium-docker",
+  "mode": "bug_fix",
+  "category": "DOCKER",
+  "difficulty": "Medium"
+}

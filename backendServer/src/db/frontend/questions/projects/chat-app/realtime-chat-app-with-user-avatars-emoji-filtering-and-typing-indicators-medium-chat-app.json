@@ -1,0 +1,68 @@
+{
+  "_id": "3e665e533a9ba67a4782261f",
+  "title": "Realtime Chat App with User Avatars, Emoji Filtering, and Typing Indicators",
+  "slug": "realtime-chat-app-with-user-avatars-emoji-filtering-and-typing-indicators-medium-chat-app",
+  "difficulty": "Medium",
+  "topics": [
+    "CHAT_APP"
+  ],
+  "statement": {
+    "markdown": "## Projects Challenge: Realtime Chat App with User Avatars, Emoji Filtering, and Typing Indicators\n\nYour objective is to build a fully functional, highly interactive React component representing the target design mockup.\n\n### 🎨 Color Palette\n* `#B7D7CD`\n* `#C06C88`\n* `#411C56`\n* `#090a0f`\n\n### 📐 Target Design Mockup\nUse the visual mockup shown in the panel to guide your coordinate alignment, container proportions, and spacing.\n\n### 📌 Target Design SVG Source\nThe target geometry is defined by the following SVG vector graphic (viewable by the LLM judge):\n```xml\n<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300'><rect x='10' y='10' rx='10' fill='#C06C88' width='380' height='280'/><rect x='30' y='30' rx='10' fill='#B7D7CD' width='340' height='240'/><circle cx='190' cy='150' r='40' fill='#411C56'/><text x='50' y='220' fill='#090a0f' font-size='24'>Room Name</text><text x='50' y='250' fill='#090a0f' font-size='18'>User 1</text><text x='50' y='280' fill='#090a0f' font-size='18'>User 2</text><text x='320' y='220' fill='#090a0f' font-size='24'>Filter</text><text x='320' y='250' fill='#090a0f' font-size='18'>:)</text></svg>\n```\n\n### ⚙️ Requirements\n1. Match the visual presentation (layout, alignment, borders, colors) of the mockup.\n2. Implement all necessary React state variables, event handlers, and input bindings to make the page interactive.\n3. Make sure all interactive controls (buttons, forms, checkboxes, sliders) update the view correctly.\n"
+  },
+  "constraints": [
+    "Must use only specified colors",
+    "Must be fully interactive with state updates",
+    "Typing indicator should appear when a user is typing a message"
+  ],
+  "referenceAssets": [
+    {
+      "url": "http://localhost:8000/public/mockups/realtime-chat-app-with-user-avatars-emoji-filtering-and-typing-indicators-medium-chat-app.svg",
+      "caption": "Recreate target design: Realtime Chat App with User Avatars, Emoji Filtering, and Typing Indicators"
+    }
+  ],
+  "starterCode": {
+    "react": "import React, { useState, useEffect } from 'react';\n\nconst App = () => {\n  const [roomId, setRoomId] = useState('');\n  const [messages, setMessages] = useState([]);\n  const [emojiFilter, setEmojiFilter] = useState('');\n  const [typingIndicator, setTypingIndicator] = useState(false);\n\n  const handleMessageSubmit = (event) => {\n    event.preventDefault();\n    const newMessage = {\n      content: event.target.message.value,\n      user: 'User 1'\n    };\n    setMessages([...messages, newMessage]);\n    event.target.message.value = '';\n  };\n\n  const handleMessageFilter = (event) => {\n    setEmojiFilter(event.target.value);\n  };\n\n  const handleTypingIndicator = () => {\n    setTypingIndicator(true);\n  };\n\n  useEffect(() => {\n    const interval = setInterval(() => {\n      setTypingIndicator(false);\n    }, 5000);\n    return () => clearInterval(interval);\n  }, []);\n\n  return (\n    <div className=\"min-h-screen bg-[#090a0f] text-white p-4 flex items-center justify-center\">\n      <div className=\"bg-[#C06C88] p-4 w-[80%]\" style={{ borderRadius: '10px' }}>\n        <h1 className=\"text-[#B7D7CD] text-3xl font-bold mb-4\">Room Name</h1>\n        <div className=\"flex justify-between items-center mb-4\">\n          <input\n            type=\"text\"\n            name=\"roomId\"\n            placeholder=\"Enter room ID\"\n            className=\"p-2 bg-transparent border-none text-white\"\n            value={roomId}\n            onChange={(event) => setRoomId(event.target.value)}\n          />\n          <button className=\"bg-[#B7D7CD] p-2 text-[#C06C88] hover:bg-[#411C56]\">\n            Create Room\n          </button>\n        </div>\n        <div className=\"bg-[#B7D7CD] p-4 w-full mb-4\" style={{ borderRadius: '10px' }}>\n          <h2 className=\"text-[#C06C88] text-lg font-bold mb-2\">Chat Room</h2>\n          <form onSubmit={handleMessageSubmit}>\n            <input\n              type=\"text\"\n              name=\"message\"\n              placeholder=\"Send a message\"\n              className=\"p-2 bg-transparent border-none text-white w-full\"\n              value={typingIndicator ? '' : ''}\n              disabled={typingIndicator}\n              onChange={(event) => handleTypingIndicator(event)}\n            />\n            <button className=\"bg-[#C06C88] p-2 text-[#B7D7CD] hover:bg-[#411C56]\">\n              Send\n            </button>\n          </form>\n          <ul className=\"list-none mb-4\">\n            {messages.map((message, index) => (\n              <li key={index} className=\"bg-[#B7D7CD] p-2 mb-2\" style={{ borderRadius: '10px' }}>\n                <span className=\"text-[#C06C88] font-bold\">{message.user}</span>\n                <span className=\"text-[#090a0f] ml-2\">:{message.content}</span>\n              </li>\n            ))}\n          </ul>\n          <div className=\"flex justify-between items-center mb-4\">\n            <input\n              type=\"text\"\n              name=\"emojiFilter\"\n              placeholder=\"Filter by emoji\"\n              className=\"p-2 bg-transparent border-none text-white w-full\"\n              value={emojiFilter}\n              onChange={handleMessageFilter}\n            />\n            <button className=\"bg-[#B7D7CD] p-2 text-[#C06C88] hover:bg-[#411C56]\">\n              Apply Filter\n            </button>\n          </div>\n        </div>\n      </div>\n    </div>\n  );\n};\n\nexport default App;"
+  },
+  "gradingCriteria": [
+    {
+      "id": "visual_fidelity",
+      "description": "Evaluate how closely the layout, colors, and positioning match the target visual mockup.",
+      "weight": 30
+    },
+    {
+      "id": "interactive_features",
+      "description": "Verify interactive state updates, form logic, active selections, and handlers.",
+      "weight": 40
+    },
+    {
+      "id": "code_quality",
+      "description": "Review code cleaness, proper semantic elements, and efficient state use.",
+      "weight": 30
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "react"
+    ]
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "tags": [
+    "frontend",
+    "react",
+    "projects",
+    "chat-app",
+    "color:#B7D7CD",
+    "color:#C06C88",
+    "color:#411C56",
+    "color:#090A0F"
+  ]
+}

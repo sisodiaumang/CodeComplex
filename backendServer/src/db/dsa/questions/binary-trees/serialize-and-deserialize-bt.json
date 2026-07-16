@@ -1,0 +1,195 @@
+{
+  "_id": "serialize-and-deserialize-bt",
+  "title": "Serialize and Deserialize BT",
+  "slug": "serialize-and-deserialize-bt",
+  "difficulty": "Hard",
+  "category": "TREE",
+  "subCategory": "Hard Problems",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 60,
+    "points": 500,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "Binary Trees"
+    ],
+    "patterns": [],
+    "prerequisites": [
+      "Binary Tree Basics"
+    ],
+    "variants": [],
+    "tags": [
+      "Serialization",
+      "Deserialization",
+      "Binary Tree"
+    ],
+    "keywords": [
+      "Binary Tree",
+      "Serialization",
+      "Deserialization",
+      "DFS",
+      "BFS"
+    ],
+    "interviewFrequency": 4,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "You are given a binary tree represented in level‑order traversal. The tree may contain null nodes, which are denoted by the integer -1. Your task is to:\n\n1. **Serialize** the tree into a string using preorder traversal. In the serialized string, each node value is written as a decimal integer followed by a comma. Null nodes are represented by the character '#'. The string must end with a trailing comma.\n2. **Deserialize** the produced string back into a binary tree.\n3. Output the inorder traversal of the deserialized tree (values separated by a single space, without trailing space). This step verifies that the deserialization correctly reconstructed the original tree.\n\nThe input and output are strictly line‑oriented as described below.\n\n**Input Format**\n- The first line contains a single integer `N`, the number of entries in the level‑order representation of the tree.\n- The second line contains `N` space‑separated integers. Each integer is either a node value (`-10^9 ≤ value ≤ 10^9`) or `-1` indicating a null node. The entries describe the tree in level order, i.e., the root first, then its left and right children, then the children of those nodes, and so on. The sequence always represents a valid binary tree (all positions after the last non‑null node are omitted).\n\n**Output Format**\n- The first line contains the serialized preorder string of the tree.\n- The second line contains the inorder traversal of the tree obtained after deserializing the string. Node values are printed in order, separated by a single space. No extra spaces or commas should appear.\n\n**Notes**\n- The preorder serialization uses the character `#` for null pointers and a comma after every token (including the final `#`). Example: a tree with root 1, left child 2 and right child null is serialized as `1,2,#,#,#,`.\n- The inorder traversal printed in the second line must reflect the original tree structure; if the tree is empty (i.e., `N = 1` and the only value is `-1`), print an empty line.\n\n**Constraints**\n- `1 ≤ N ≤ 10000`\n- Node values satisfy `-1000000000 ≤ value ≤ 1000000000`\n- The input always describes a binary tree (no dangling children beyond the provided list).\n\n**Examples**\n\n**Example 1**\nInput\n```\n7\n1 2 3 -1 -1 4 5\n```\nOutput\n```\n1,2,#,#,3,4,#,#,5,#,#,\n2 1 4 3 5\n```\nExplanation\nThe level‑order list represents the tree:\n```\n      1\n    /   \\\n   2     3\n        / \\\n       4   5\n```\nPreorder serialization visits nodes as `1,2,#,#,3,4,#,#,5,#,#,`. After deserializing this string, the inorder traversal yields `2 1 4 3 5`.\n\n**Example 2**\nInput\n```\n1\n-1\n```\nOutput\n```\n#,\n\n```\nExplanation\nThe tree is empty. Its preorder serialization is just `#,`. Deserializing it yields an empty tree, so the inorder traversal line is empty.\n",
+    "inputFormat": "The first line contains an integer N, the number of entries in the level‑order representation of the tree.\nThe second line contains N space‑separated integers, each either a node value or -1 for null.\n",
+    "outputFormat": "The first line contains the preorder serialized string of the tree (tokens separated by commas, ending with a comma).\nThe second line contains the inorder traversal of the deserialized tree, node values separated by a single space. If the tree is empty, output an empty line.\n",
+    "notes": "Serialization uses preorder with ',' as delimiter and '#' for null nodes. Deserialization must reconstruct the exact original tree before performing inorder traversal.\n",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "N",
+        "type": "int",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of entries in the level‑order list"
+      }
+    ],
+    "examples": [
+      {
+        "input": "7\n1 2 3 -1 -1 4 5",
+        "output": "1,2,#,#,3,4,#,#,5,#,#,\r\n2 1 4 3 5",
+        "explanation": "Tree serialized and then inorder traversal printed."
+      },
+      {
+        "input": "1\n-1",
+        "output": "#,",
+        "explanation": "Empty tree case."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Consider how to efficiently represent a binary tree in a string using preorder traversal, handling null nodes and comma separation."
+    },
+    {
+      "order": 2,
+      "text": "Think about how to deserialize the string back into a binary tree, taking into account the preorder traversal and the representation of null nodes."
+    },
+    {
+      "order": 3,
+      "text": "Realize that the input level-order traversal can be used to construct the binary tree, and that the preorder serialization can be derived from this construction."
+    },
+    {
+      "order": 4,
+      "text": "Understand that the key to deserialization is to reverse the process of preorder serialization, effectively reconstructing the binary tree from the serialized string."
+    },
+    {
+      "order": 5,
+      "text": "Recognize that a queue data structure can be used to efficiently traverse the level-order representation of the tree, allowing for the construction of the binary tree and its preorder serialization."
+    }
+  ],
+  "editorial": {
+    "title": "Serializing and Deserializing Binary Trees: From Brute Force to Optimal Recursion",
+    "intuition": "The problem asks us to convert a binary tree into a string and back again, preserving its exact structure. A naïve approach would try every possible string until one reconstructs the tree, which is obviously infeasible. The key insight is that a preorder traversal, augmented with a sentinel for null children, uniquely encodes the tree. This observation turns the task into a simple recursive walk that runs in linear time.",
+    "bruteForce": "A brute‑force solution might attempt to generate all possible binary trees with the given number of nodes and compare their serializations to the input string, or it could try to parse the string in every conceivable way, backtracking on failures. Such exhaustive search explores an exponential number of possibilities, leading to time complexity O(2^N) and memory usage that grows with the depth of recursion. While correct in theory, this method is hopelessly slow for N up to 10,000 and would quickly exhaust stack space and time limits.",
+    "betterSolution": "The optimal strategy is to perform a preorder traversal during serialization, writing the node’s value followed by its left and right subtrees. When a null child is encountered, we write a special marker (here '#'). Deserialization simply consumes the tokens in the same preorder order: read a value, create a node, then recursively build its left and right children. Because each node is processed exactly once, the algorithm runs in O(N) time and uses O(N) space for the output string and recursion stack.",
+    "optimalSolution": "The implementation uses a depth‑first search that appends values to a list, then joins them with commas, adding a trailing comma for easy splitting during deserialization. The deserializer splits the string, iterates over the tokens, and recursively reconstructs the tree, stopping when a '#' token is seen. This approach guarantees that the original structure is recovered exactly, as each node’s position in the preorder sequence is fixed by the traversal order.",
+    "proofOfCorrectness": "Let T be the original tree. The serialize function visits nodes in preorder: root, left subtree, right subtree. For each node it writes its value, then recursively processes its left child, then its right child, inserting '#' for null children. Thus the output string is a preorder sequence with explicit null markers. During deserialization, the algorithm reads the first token, creates a node if it is not '#', and recursively builds the left subtree before the right subtree. By induction on the depth of the tree, the first token corresponds to the root, the next tokens correspond to the left subtree’s preorder sequence, and the remaining tokens to the right subtree’s preorder sequence. Therefore the reconstructed tree has the same shape and node values as T. Since the traversal order and null markers are unique, no other tree can produce the same string, ensuring correctness.",
+    "dryRun": "Consider the tree:   1\n  / \\\n 2   3\n    / \n   4  \nSerialization: preorder gives 1,2,#,#,3,4,#,#,#. Deserialization reads 1, creates root; reads 2, creates left child; next two '#' produce null children for node 2; then reads 3, creates right child; reads 4, creates left child of 3; two '#' produce null children for 4; final '#' produces null right child of 3. The resulting tree matches the original.",
+    "commonMistakes": [
+      "Assuming inorder traversal preserves structure; it does not because different trees can share the same inorder list.\nUsing a separator that can appear in node values; the solution uses commas and a sentinel '#', which are safe.\nForgetting to handle the trailing empty token after splitting the serialized string.\nRecursing without a base case for null nodes, leading to infinite recursion.\nUsing an iterative stack that misorders left/right children.\nNot accounting for large recursion depth when N is close to 10,000, which can cause stack overflow in some languages."
+    ],
+    "timeComplexity": "O(N) where N is the number of nodes (building, serialization, deserialization, and inorder traversal each visit every node once).",
+    "spaceComplexity": "O(N) for the tree structure, recursion stack, and auxiliary containers used during serialization/deserialization."
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass TreeNode {\npublic:\n    int val;\n    TreeNode* left;\n    TreeNode* right;\n    TreeNode() : val(0), left(NULL), right(NULL) {}\n    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}\n};\n\nclass Solution {\npublic:\n    string serialize(TreeNode* root) {\n        // TODO: implement preorder serialization\n        return \"\";\n    }\n    TreeNode* deserialize(const string& data) {\n        // TODO: implement deserialization\n        return nullptr;\n    }\n    void inorder(TreeNode* root, vector<int>& res) {\n        // TODO: implement inorder traversal\n    }\n};\n",
+    "java": "import java.util.*;\n\nclass TreeNode {\n    int val;\n    TreeNode left;\n    TreeNode right;\n    TreeNode(int x) { val = x; }\n}\n\nclass Solution {\n    public String serialize(TreeNode root) {\n        // TODO: implement preorder serialization\n        return \"\";\n    }\n    public TreeNode deserialize(String data) {\n        // TODO: implement deserialization\n        return null;\n    }\n    public void inorder(TreeNode root, List<Integer> res) {\n        // TODO: implement inorder traversal\n    }\n}\n",
+    "python": "class TreeNode:\n    def __init__(self, val: int):\n        self.val = val\n        self.left: 'TreeNode | None' = None\n        self.right: 'TreeNode | None' = None\n\nclass Solution:\n    def serialize(self, root: 'TreeNode | None') -> str:\n        # TODO: implement preorder serialization\n        return \"\"\n    def deserialize(self, data: str) -> 'TreeNode | None':\n        # TODO: implement deserialization\n        return None\n    def inorder(self, root: 'TreeNode | None', res: list[int]) -> None:\n        # TODO: implement inorder traversal\n        pass\n",
+    "javascript": "/**\n * @param {TreeNode} root\n * @return {string}\n */\nvar serialize = function(root) {\n    // TODO: implement preorder serialization\n    return \"\";\n};\n/**\n * @param {string} data\n * @return {TreeNode}\n */\nvar deserialize = function(data) {\n    // TODO: implement deserialization\n    return null;\n};\n/**\n * @param {TreeNode} root\n * @param {number[]} res\n */\nvar inorder = function(root, res) {\n    // TODO: implement inorder traversal\n};\n"
+  },
+  "functionSignature": {
+    "cpp": "string serialize(TreeNode* root);",
+    "java": "public String serialize(TreeNode root);",
+    "python": "def serialize(self, root: TreeNode | None) -> str:",
+    "javascript": "var serialize = function(root);"
+  },
+  "solutions": {
+    "python": "import sys\n\nclass TreeNode:\n    __slots__ = ('val', 'left', 'right')\n    def __init__(self, val: int):\n        self.val = val\n        self.left = None\n        self.right = None\n\nclass Solution:\n    def serialize(self, root: TreeNode | None) -> str:\n        res = []\n        def dfs(node):\n            if not node:\n                res.append('#')\n                return\n            res.append(str(node.val))\n            dfs(node.left)\n            dfs(node.right)\n        dfs(root)\n        return ','.join(res) + ','\n\n    def deserialize(self, data: str) -> TreeNode | None:\n        tokens = data.split(',')\n        # last element after split is '' because of trailing comma\n        it = iter(tokens)\n        def build():\n            val = next(it)\n            if val == '#':\n                return None\n            node = TreeNode(int(val))\n            node.left = build()\n            node.right = build()\n            return node\n        # handle possible empty string at end\n        try:\n            return build()\n        except StopIteration:\n            return None\n\n    def inorder(self, root: TreeNode | None, out: list[int]):\n        if not root:\n            return\n        self.inorder(root.left, out)\n        out.append(root.val)\n        self.inorder(root.right, out)\n\ndef build_tree_from_level_order(vals):\n    if not vals:\n        return None\n    if vals[0] == -1:\n        return None\n    nodes = {}\n    root = TreeNode(vals[0])\n    nodes[0] = root\n    from collections import deque\n    q = deque([0])\n    i = 1\n    while q and i < len(vals):\n        idx = q.popleft()\n        node = nodes.get(idx)\n        # left child\n        if i < len(vals):\n            if vals[i] != -1:\n                left = TreeNode(vals[i])\n                node.left = left\n                nodes[2*idx+1] = left\n                q.append(2*idx+1)\n            i += 1\n        # right child\n        if i < len(vals):\n            if vals[i] != -1:\n                right = TreeNode(vals[i])\n                node.right = right\n                nodes[2*idx+2] = right\n                q.append(2*idx+2)\n            i += 1\n    return root\n\nif __name__ == '__main__':\n    data = sys.stdin.read().split()\n    if not data:\n        sys.exit(0)\n    it = iter(data)\n    n = int(next(it))\n    vals = [int(next(it)) for _ in range(n)]\n    root = build_tree_from_level_order(vals)\n    sol = Solution()\n    ser = sol.serialize(root)\n    print(ser)\n    des_root = sol.deserialize(ser)\n    inorder_vals = []\n    sol.inorder(des_root, inorder_vals)\n    if inorder_vals:\n        print(' '.join(map(str, inorder_vals)))\n    else:\n        print()\n",
+    "cpp": "#include <numeric>\n#include <bits/stdc++.h>\nusing namespace std;\n\nstruct TreeNode {\n    int val;\n    TreeNode *left;\n    TreeNode *right;\n    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}\n};\n\nclass Solution {\npublic:\n    string serialize(TreeNode* root) {\n        string res;\n        function<void(TreeNode*)> dfs = [&](TreeNode* node) {\n            if (!node) {\n                res += \"#,\";\n                return;\n            }\n            res += to_string(node->val) + \",\";\n            dfs(node->left);\n            dfs(node->right);\n        };\n        dfs(root);\n        return res;\n    }\n\n    TreeNode* deserialize(const string& data) {\n        vector<string> tokens;\n        string token;\n        for (char c : data) {\n            if (c == ',') {\n                tokens.push_back(token);\n                token.clear();\n            } else {\n                token.push_back(c);\n            }\n        }\n        // tokens may have an extra empty at end if data ends with comma\n        int idx = 0;\n        function<TreeNode*()> build = [&]() -> TreeNode* {\n            if (idx >= (int)tokens.size()) return nullptr;\n            string val = tokens[idx++];\n            if (val == \"#\") return nullptr;\n            TreeNode* node = new TreeNode(stoi(val));\n            node->left = build();\n            node->right = build();\n            return node;\n        };\n        return build();\n    }\n\n    void inorder(TreeNode* root, vector<int>& out) {\n        if (!root) return;\n        inorder(root->left, out);\n        out.push_back(root->val);\n        inorder(root->right, out);\n    }\n};\n\nTreeNode* buildTree(const vector<int>& vals) {\n    if (vals.empty() || vals[0] == -1) return nullptr;\n    unordered_map<int, TreeNode*> nodes;\n    TreeNode* root = new TreeNode(vals[0]);\n    nodes[0] = root;\n    queue<int> q;\n    q.push(0);\n    size_t i = 1;\n    while (!q.empty() && i < vals.size()) {\n        int idx = q.front(); q.pop();\n        TreeNode* cur = nodes[idx];\n        // left\n        if (i < vals.size()) {\n            if (vals[i] != -1) {\n                TreeNode* left = new TreeNode(vals[i]);\n                cur->left = left;\n                nodes[2*idx+1] = left;\n                q.push(2*idx+1);\n            }\n            ++i;\n        }\n        // right\n        if (i < vals.size()) {\n            if (vals[i] != -1) {\n                TreeNode* right = new TreeNode(vals[i]);\n                cur->right = right;\n                nodes[2*idx+2] = right;\n                q.push(2*idx+2);\n            }\n            ++i;\n        }\n    }\n    return root;\n}\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int N;\n    if (!(cin >> N)) return 0;\n    vector<int> vals(N);\n    for (int i = 0; i < N; ++i) cin >> vals[i];\n    TreeNode* root = buildTree(vals);\n    Solution sol;\n    string ser = sol.serialize(root);\n    cout << ser << \"\\n\";\n    TreeNode* desRoot = sol.deserialize(ser);\n    vector<int> inorderVals;\n    sol.inorder(desRoot, inorderVals);\n    for (size_t i = 0; i < inorderVals.size(); ++i) {\n        if (i) cout << ' ';\n        cout << inorderVals[i];\n    }\n    cout << \"\\n\";\n    return 0;\n}\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.5
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "7\n1 2 3 -1 -1 4 5",
+      "output": "1,2,#,#,3,4,#,#,5,#,#,\r\n2 1 4 3 5",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "1\n-1",
+      "output": "#,",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint_3",
+      "input": "1\n1",
+      "output": "1,#,#,\r\n1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "boundary_4",
+      "input": "2\n1 -1",
+      "output": "1,#,#,\r\n1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    },
+    {
+      "id": "duplicate_5",
+      "input": "3\n1 1 1",
+      "output": "1,1,#,#,1,#,#,\r\n1 1 1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "duplicate"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

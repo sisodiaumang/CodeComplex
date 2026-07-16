@@ -1,0 +1,180 @@
+{
+  "_id": "1c2813052b2c07e5dc2cb5d8",
+  "title": "Bugged Queue: Incorrect Enqueue/Dequeue Operations",
+  "slug": "bugged-queue-incorrect-enqueuedequeue-operations-bugfix-hard-stack-queue-1",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "QUEUE",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 25,
+    "points": 60,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "queue"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Implement a Queue data structure using a doubly linked list. The queue should support enqueue and dequeue operations. A dequeue operation can remove an element from either the front or the rear of the queue. The queue should also have a method to check if it's empty.",
+    "inputFormat": "Input is provided through the queue methods. The queue will be empty initially.",
+    "outputFormat": "The queue operations should return the result according to the problem statement.",
+    "notes": "The queue's enqueue and dequeue operations should be O(1) on average.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 100000,
+        "description": "Number of elements in the queue"
+      }
+    ],
+    "examples": [
+      {
+        "input": "[]",
+        "output": "[]",
+        "explanation": "An empty queue"
+      },
+      {
+        "input": "[1, 2, 3]",
+        "output": "[1, 2, 3]",
+        "explanation": "A queue with some elements"
+      },
+      {
+        "input": "[1, 2, 3]",
+        "output": "1",
+        "explanation": "Dequeueing the front element"
+      },
+      {
+        "input": "[1, 2, 3]",
+        "output": "3",
+        "explanation": "Dequeueing the rear element"
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Pay attention to the enqueue and dequeue operations, as well as the checkEmpty method."
+    },
+    {
+      "order": 2,
+      "text": "Consider the edge cases, such as an empty queue or a queue with a single element."
+    }
+  ],
+  "editorial": {
+    "title": "Queue Implementation",
+    "intuition": "To implement the queue, we can use a doubly linked list to store the elements.",
+    "bruteForce": "We can implement the queue by iterating through the linked list for each operation.",
+    "betterSolution": "By maintaining a pointer to the rear and front of the queue, we can achieve O(1) average time complexity.",
+    "optimalSolution": "The optimal solution involves using a doubly linked list and maintaining pointers to the front and rear of the queue.",
+    "proofOfCorrectness": "The queue operations work as follows: enqueue adds an element to the rear, dequeue removes an element from the front, and checkEmpty returns true if the queue is empty.",
+    "dryRun": "To understand the optimal solution, consider the following example: enqueue(1), enqueue(2), dequeue(), dequeue().",
+    "commonMistakes": [
+      "Failing to update the rear pointer after enqueueing an element",
+      "Failing to update the front pointer after dequeuing an element"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "class Queue {\n public:\n    bool checkEmpty();\n    void enqueue(int value);\n    int dequeue(int operation);\n private:\n    class Node {\n        int data;\n        Node* next;\n        Node* prev;\n    };\n    Node* front;\n    Node* rear;\n};",
+    "java": "class Queue {\n public:\n    boolean checkEmpty();\n    void enqueue(int value);\n    int dequeue(int operation);\n private:\n    class Node {\n        int data;\n        Node next;\n        Node prev;\n    };\n    Node front;\n    Node rear;\n};",
+    "python": "class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\n        self.prev = None\n\nclass Queue:\n    def __init__(self):\n        self.front = None\n        self.rear = None\n\n    def checkEmpty(self):\n        # TODO\n        pass\n\n    def enqueue(self, value):\n        # TODO\n        pass\n\n    def dequeue(self, operation):\n        # TODO\n        pass",
+    "javascript": "class Node {\n    constructor(data) {\n        this.data = data;\n        this.next = null;\n        this.prev = null;\n    }\n}\n\nclass Queue {\n    constructor() {\n        this.front = null;\n        this.rear = null;\n    }\n\n    checkEmpty() {\n        // TODO\n        return true;\n    }\n\n    enqueue(value) {\n        // TODO\n        pass;\n    }\n\n    dequeue(operation) {\n        // TODO\n        return 0;\n    }\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Queue {\n public:\n    bool checkEmpty() {\n        return front == rear;\n    }\n\n    void enqueue(int value) {\n        Node* newNode = new Node(value);\n        if (rear) {\n            rear->next = newNode;\n            newNode->prev = rear;\n            rear = newNode;\n        } else {\n            front = rear = newNode;\n        }\n    }\n\n    int dequeue(int operation) {\n        if (!front) {\n            return -1;\n        } else {\n            int tmp = front->data;\n            front = front->next;\n            if (!front) {\n                rear = nullptr;\n            }\n            return tmp;\n        }\n    }\n private:\n    class Node {\n        int data;\n        Node* next;\n        Node* prev;\n    };\n    Node* front;\n    Node* rear;\n};",
+    "java": "class Queue {\n public:\n    boolean checkEmpty() {\n        return front == rear;\n    }\n\n    void enqueue(int value) {\n        Node newNode = new Node(value);\n        if (rear != null) {\n            rear.next = newNode;\n            newNode.prev = rear;\n            rear = newNode;\n        } else {\n            front = rear = newNode;\n        }\n    }\n\n    int dequeue(int operation) {\n        if (front == null) {\n            return -1;\n        } else {\n            int tmp = front.data;\n            front = front.next;\n            if (front == null) {\n                rear = null;\n            }\n            return tmp;\n        }\n    }\n private:\n    class Node {\n        int data;\n        Node next;\n        Node prev;\n    };\n    Node front;\n    Node rear;\n};",
+    "python": "class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\n        self.prev = None\n\nclass Queue:\n    def __init__(self):\n        self.front = None\n        self.rear = None\n\n    def checkEmpty(self):\n        return self.front == self.rear\n\n    def enqueue(self, value):\n        newNode = Node(value)\n        if self.rear:\n            self.rear.next = newNode\n            newNode.prev = self.rear\n            self.rear = newNode\n        else:\n            self.front = self.rear = newNode\n\n    def dequeue(self, operation):\n        if not self.front:\n            return -1\n        else:\n            tmp = self.front.data\n            self.front = self.front.next\n            if not self.front:\n                self.rear = None\n            return tmp",
+    "javascript": "class Node {\n    constructor(data) {\n        this.data = data;\n        this.next = null;\n        this.prev = null;\n    }\n}\n\nclass Queue {\n    constructor() {\n        this.front = null;\n        this.rear = null;\n    }\n\n    checkEmpty() {\n        return this.front == this.rear;\n    }\n\n    enqueue(value) {\n        let newNode = new Node(value);\n        if (this.rear) {\n            this.rear.next = newNode;\n            newNode.prev = this.rear;\n            this.rear = newNode;\n        } else {\n            this.front = this.rear = newNode;\n        }\n    }\n\n    dequeue(operation) {\n        if (!this.front) {\n            return -1;\n        } else {\n            let tmp = this.front.data;\n            this.front = this.front.next;\n            if (!this.front) {\n                this.rear = null;\n            }\n            return tmp;\n        }\n    }\n}"
+  },
+  "functionSignature": {
+    "cpp": "bool checkEmpty();\nvoid enqueue(int value);\nint dequeue(int operation);",
+    "java": "boolean checkEmpty();\nvoid enqueue(int value);\nint dequeue(int operation);",
+    "python": "checkEmpty() -> bool;\nenqueue(value: int);\ndequeue(operation: int) -> int;",
+    "javascript": "checkEmpty() -> bool;\nenqueue(value);\ndequeue(operation) -> int;"
+  },
+  "solutions": {
+    "python": "class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\n        self.prev = None\n\nclass Queue:\n    def __init__(self):\n        self.front = None\n        self.rear = None\n\n    def checkEmpty(self):\n        return self.front == self.rear\n\n    def enqueue(self, value):\n        newNode = Node(value)\n        if self.rear:\n            self.rear.next = newNode\n            newNode.prev = self.rear\n            self.rear = newNode\n        else:\n            self.front = self.rear = newNode\n\n    def dequeue(self, operation):\n        if operation == 0:\n            if not self.front:\n                return None\n            tmp = self.front.data\n            self.front = self.front.next\n            if not self.front:\n                self.rear = None\n            return tmp\n        elif operation == 1:\n            if not self.rear:\n                return None\n            tmp = self.rear.data\n            self.rear = self.rear.prev\n            if not self.rear:\n                self.front = None\n            return tmp\n        else:\n            raise ValueError(\"Invalid operation\")\n\n    def __iter__(self):\n        node = self.front\n        while node:\n            yield node.data\n            node = node.next\n\n    def __str__(self):\n        return str(list(self))\n\n    def __repr__(self):\n        return str(list(self))\n\n\nif __name__ == '__main__':\n    q = Queue()\n    print(q.checkEmpty())  # True\n    q.enqueue(1)\n    q.enqueue(2)\n    print(q.checkEmpty())  # False\n    print(q.dequeue(0))  # 1\n    print(q.dequeue(1))  # 2",
+    "cpp": "class Queue {\n public:\n    bool checkEmpty();\n    void enqueue(int value);\n    int dequeue(int operation);\n private:\n    class Node {\n        int data;\n        Node* next;\n        Node* prev;\n    };\n    Node* front;\n    Node* rear;\n};\n\nbool Queue::checkEmpty() {\n    return front == rear;\n}\n\nvoid Queue::enqueue(int value) {\n    Node* newNode = new Node(value);\n    if (rear) {\n        rear->next = newNode;\n        newNode->prev = rear;\n        rear = newNode;\n    } else {\n        front = rear = newNode;\n    }\n}\n\nint Queue::dequeue(int operation) {\n    if (operation == 0) {\n        if (!front) {\n            return -1;\n        } else {\n            int tmp = front->data;\n            front = front->next;\n            if (!front) {\n                rear = nullptr;\n            }\n            return tmp;\n        }\n    } else if (operation == 1) {\n        if (!rear) {\n            return -1;\n        } else {\n            int tmp = rear->data;\n            rear = rear->prev;\n            if (!rear) {\n                front = nullptr;\n            }\n            return tmp;\n        }\n    } else {\n        throw std::invalid_argument(\"Invalid operation\");\n    }\n}\n\nint main() {\n    Queue q;\n    std::cout << std::boolalpha << q.checkEmpty() << std::endl;  // True\n    q.enqueue(1);\n    q.enqueue(2);\n    std::cout << std::boolalpha << q.checkEmpty() << std::endl;  // False\n    std::cout << q.dequeue(0) << std::endl;  // 1\n    std::cout << q.dequeue(1) << std::endl;  // 2\n    return 0;\n}\n",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "[]\n[]",
+      "output": "[]\n[]",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "[1, 2, 3]\n[0, 1]",
+      "output": "[1, 2, 3]\n1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    },
+    {
+      "id": "tc_3",
+      "input": "[1, 2, 3]\n[1, 0]",
+      "output": "[1, 2, 3]\n3",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

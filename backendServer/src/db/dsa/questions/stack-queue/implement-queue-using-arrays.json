@@ -1,0 +1,204 @@
+{
+  "_id": "implement-queue-using-arrays",
+  "title": "Implement Queue using Arrays",
+  "slug": "implement-queue-using-arrays",
+  "difficulty": "Easy",
+  "category": "ARRAY",
+  "subCategory": "Learning",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "Stack & Queue",
+      "Arrays"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "Implementation",
+      "Data Structures"
+    ],
+    "keywords": [
+      "Queue",
+      "Array",
+      "Stack",
+      "Queue Implementation"
+    ],
+    "interviewFrequency": 4,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Implement a Queue using Arrays. A Queue is a First-In-First-Out (FIFO) data structure, which means the first element added to the queue will be the first one to be removed. You need to implement the following functions: enqueue (add an element to the queue), dequeue (remove an element from the queue), and peek (get the front element of the queue).",
+    "inputFormat": "The first line contains an integer 'q' representing the number of queries. For each query, the first line contains an integer 'queryType' (1 for enqueue, 2 for dequeue, 3 for peek). If the query type is 1, the next line contains an integer 'value' to be added to the queue.",
+    "outputFormat": "For each query of type 2 (dequeue), print 'OK'. For each query of type 3 (peek), print the front element of the queue. If the queue is empty when a dequeue or peek operation is performed, print 'Empty'.",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "q",
+        "type": "integer",
+        "min": 1,
+        "max": 1000,
+        "description": "Number of queries"
+      },
+      {
+        "variable": "value",
+        "type": "integer",
+        "min": -10000,
+        "max": 10000,
+        "description": "Value to be added to the queue"
+      }
+    ],
+    "examples": [
+      {
+        "input": "5\n1\n5\n1\n6\n3\n2\n2",
+        "output": "5\r\nOK\r\nOK",
+        "explanation": "Enqueue 5, Enqueue 6, Peek (front element is 5), Dequeue (remove 5), Dequeue (remove 6)"
+      },
+      {
+        "input": "3\n3\n2\n1\n10",
+        "output": "Empty",
+        "explanation": "Peek (queue is empty), Enqueue 10, Dequeue (remove 10)"
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "To implement a queue using arrays, start by considering the basic operations that a queue supports: adding an element (enqueue), removing an element (dequeue), and viewing the front element (peek). Think about how these operations can be translated into array operations."
+    },
+    {
+      "order": 2,
+      "text": "For the enqueue operation, adding an element to the end of the array is a straightforward approach since it follows the FIFO principle. However, for dequeue and peek operations, you need to consider the front of the queue, which would be the beginning of the array if you were to remove or view elements from there."
+    },
+    {
+      "order": 3,
+      "text": "A key insight is to use two pointers or indices to keep track of the front and rear of the queue within the array. The rear pointer moves forward as elements are added (enqueued), and the front pointer moves forward as elements are removed (dequeued). The peek operation simply returns the element at the front pointer's position."
+    },
+    {
+      "order": 4,
+      "text": "Consider handling edge cases such as an empty queue (when trying to dequeue or peek) and a full queue (when trying to enqueue). You may need to implement checks for these conditions and decide how your implementation will behave in such scenarios, possibly by throwing exceptions or returning specific values to indicate these states."
+    },
+    {
+      "order": 5,
+      "text": "To efficiently manage the queue, especially when dealing with a fixed-size array, consider implementing a circular or dynamic array. A circular array allows the rear pointer to wrap around to the beginning of the array when it reaches the end, maximizing the use of space. A dynamic array can resize itself when the queue is full or when elements are removed, ensuring there's always enough space for new elements and minimizing wasted space."
+    }
+  ],
+  "editorial": {
+    "title": "Implementing a Queue with Python Lists",
+    "intuition": "A queue is a first‑in, first‑out structure. In Python the most natural container is a list, but naïve use of pop(0) makes deletions linear in the queue size. The key observation is that the total number of deletions never exceeds the number of insertions, so we can afford a single linear pass if we avoid shifting elements each time.",
+    "bruteForce": "The straightforward implementation pushes new elements to the end of a list and removes the front element with pop(0). While this is conceptually simple, pop(0) requires moving all remaining elements one position to the left, giving an O(n) cost per deletion. In the worst case of alternating insertions and deletions, the algorithm runs in O(q^2) time, which is unacceptable for the upper bound of 1000 queries.",
+    "betterSolution": "Instead of shifting the whole list, we keep a pointer (head index) to the logical front of the queue. Enqueue appends to the list; dequeue simply increments the head pointer. The front element is then list[head]. When the list grows too large relative to the head, we can slice off the processed part to keep memory usage bounded, but with the given limits this is unnecessary.",
+    "optimalSolution": "Using a head index turns every operation into O(1) amortised time. Enqueue is a single append, dequeue is a pointer increment, and peek is a direct index access. The space usage remains O(q) because we only store the elements that have ever been enqueued.",
+    "proofOfCorrectness": "Let H be the head index. Initially H=0 and the queue is empty. After each enqueue, the new element is appended at position len(queue)-1, preserving order. After each dequeue, H increases by one, so the logical front is always the element at index H. Since H never decreases, no element is ever accessed twice, and the sequence of outputs matches the FIFO order. The algorithm never removes elements from the underlying list, so the relative order of remaining elements is preserved, guaranteeing correctness.",
+    "dryRun": "Consider queries: 1 10, 1 20, 2, 3, 2, 3. Start: queue=[], H=0. Enqueue 10 → [10], H=0. Enqueue 20 → [10,20], H=0. Dequeue → H=1, output OK. Peek → queue[1]=20, output 20. Dequeue → H=2, output OK. Peek → H=2 equals len(queue), so output Empty. The sequence of outputs matches the expected FIFO behaviour.",
+    "commonMistakes": [
+      "Using pop(0) and assuming it is O(1); it is actually O(n).",
+      "Forgetting to handle the empty queue case before peeking or dequeuing.",
+      "Incrementing the head index without checking that the queue is non‑empty, leading to index errors.",
+      "Using a deque from collections when the problem explicitly asks for array‑based implementation.",
+      "Not resetting or trimming the underlying list, causing memory to grow unnecessarily.",
+      "Misinterpreting the query format and reading the wrong number of integers per query."
+    ],
+    "timeComplexity": "O(q)",
+    "spaceComplexity": "O(q)"
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass MyQueue {\nprivate:\n    vector<int> data;\npublic:\n    void push(int x) {\n        // TODO: implement\n    }\n    int pop() {\n        // TODO: implement\n        return 0;\n    }\n    int peek() {\n        // TODO: implement\n        return 0;\n    }\n    bool empty() {\n        // TODO: implement\n        return false;\n    }\n};",
+    "java": "import java.util.*;\n\nclass MyQueue {\n    private List<Integer> data;\n    public MyQueue() {\n        data = new ArrayList<>();\n    }\n    public void push(int x) {\n        // TODO: implement\n    }\n    public int pop() {\n        // TODO: implement\n        return 0;\n    }\n    public int peek() {\n        // TODO: implement\n        return 0;\n    }\n    public boolean empty() {\n        // TODO: implement\n        return false;\n    }\n}",
+    "python": "from collections import deque\n\nclass MyQueue:\n\n    def __init__(self):\n        self.data = deque()\n\n    def push(self, x: int) -> None:\n        # TODO: implement\n        pass\n\n    def pop(self) -> int:\n        # TODO: implement\n        return 0\n\n    def peek(self) -> int:\n        # TODO: implement\n        return 0\n\n    def empty(self) -> bool:\n        # TODO: implement\n        return False",
+    "javascript": "/**\n * @param {number}\n */\nvar MyQueue = function() {\n    this.data = [];\n};\n\n/**\n * @param {number} x\n * @return {void}\n */\nMyQueue.prototype.push = function(x) {\n    // TODO: implement\n};\n\n/**\n * @return {number}\n */\nMyQueue.prototype.pop = function() {\n    // TODO: implement\n    return 0;\n};\n\n/**\n * @return {number}\n */\nMyQueue.prototype.peek = function() {\n    // TODO: implement\n    return 0;\n};\n\n/**\n * @return {boolean}\n */\nMyQueue.prototype.empty = function() {\n    // TODO: implement\n    return false;\n};"
+  },
+  "functionSignature": {
+    "cpp": "void push(int x); int pop(); int peek(); bool empty();",
+    "java": "public void push(int x); public int pop(); public int peek(); public boolean empty();",
+    "python": "def push(self, x: int) -> None:; def pop(self) -> int:; def peek(self) -> int:; def empty(self) -> bool:",
+    "javascript": "var push = function(x);; var pop = function();; var peek = function();; var empty = function();"
+  },
+  "solutions": {
+    "python": "import sys\n\nclass MyQueue:\n\n    def __init__(self):\n        self.queue = []\n\n    def push(self, x: int) -> None:\n        self.queue.append(x)\n\n    def pop(self) -> int:\n        if self.empty():\n            return -1\n        return self.queue.pop(0)\n\n    def peek(self) -> int:\n        if self.empty():\n            return -1\n        return self.queue[0]\n\n    def empty(self) -> bool:\n        return len(self.queue) == 0\n\nif __name__ == '__main__':\n    q = int(sys.stdin.readline().strip())\n    queue = MyQueue()\n    for _ in range(q):\n        queryType = int(sys.stdin.readline().strip())\n        if queryType == 1:\n            value = int(sys.stdin.readline().strip())\n            queue.push(value)\n        elif queryType == 2:\n            if queue.empty():\n                continue\n            else:\n                queue.pop()\n                print('OK')\n        elif queryType == 3:\n            if queue.empty():\n                print('Empty')\n            else:\n                print(queue.peek())",
+    "cpp": "#include <numeric>\n#include <bits/stdc++.h>\nusing namespace std;\n\nclass MyQueue {\nprivate:\n    vector<int> queue;\npublic:\n    MyQueue() {}\n\n    void push(int x) {\n        queue.push_back(x);\n    }\n\n    int pop() {\n        if (empty()) {\n            return -1;\n        }\n        int front = queue[0];\n        queue.erase(queue.begin());\n        return front;\n    }\n\n    int peek() {\n        if (empty()) {\n            return -1;\n        }\n        return queue[0];\n    }\n\n    bool empty() {\n        return queue.empty();\n    }\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int q;\n    cin >> q;\n    MyQueue queue;\n    for (int i = 0; i < q; i++) {\n        int queryType;\n        cin >> queryType;\n        if (queryType == 1) {\n            int value;\n            cin >> value;\n            queue.push(value);\n        } else if (queryType == 2) {\n            if (queue.empty()) {\n                continue;\n            } else {\n                queue.pop();\n                cout << \"OK\" << endl;\n            }\n        } else if (queryType == 3) {\n            if (queue.empty()) {\n                cout << \"Empty\" << endl;\n            } else {\n                cout << queue.peek() << endl;\n            }\n        }\n    }\n    return 0;\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5\n1\n5\n1\n6\n3\n2\n2",
+      "output": "5\r\nOK\r\nOK",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "3\n3\n2\n1\n10",
+      "output": "Empty",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "zero_12",
+      "input": "1\n3\nEmpty",
+      "output": "Empty",
+      "isVisible": false,
+      "weight": 1,
+      "category": "zero"
+    },
+    {
+      "id": "negative_14",
+      "input": "3\n-1\n1\n1\n2\nOK\n1\n3\n-1\n",
+      "output": "OK",
+      "isVisible": false,
+      "weight": 1,
+      "category": "negative"
+    },
+    {
+      "id": "large_random_16",
+      "input": "5\n1\n10\n2\n3\n3\n10\n",
+      "output": "OK\r\nEmpty\r\nEmpty",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

@@ -1,0 +1,136 @@
+{
+  "title": "Fix MongoDB Query Projection to Ignore Embedded Fields",
+  "subCategory": "Query Projection",
+  "statement": {
+    "markdown": "Given a MongoDB query with an embedded document, fix the code to ignore the embedded fields when projecting the output. The query should return the `name` field and the `age` field, but ignore the `address` field. Assume the input is a JSON object representing a MongoDB query.",
+    "inputFormat": "JSON object representing a MongoDB query",
+    "outputFormat": "Projected JSON object with `name` and `age` fields",
+    "notes": "The code should handle nested documents and arrays",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Input query size"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"name\":\"John\",\"age\":30,\"address\":{\"street\":\"123 Main St\",\"city\":\"Anytown\",\"state\":\"CA\"}}",
+        "output": "{\"name\":\"John\",\"age\":30}",
+        "explanation": "Project the `name` and `age` fields, ignoring the `address` field"
+      },
+      {
+        "input": "{\"name\":\"Jane\",\"age\":25,\"address\":{\"street\":\"456 Elm St\",\"city\":\"Othertown\",\"state\":\"NY\"}}",
+        "output": "{\"name\":\"Jane\",\"age\":25}",
+        "explanation": "Project the `name` and `age` fields, ignoring the `address` field"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "MONGODB"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "mongodb"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use MongoDB's built-in projection operator to ignore embedded fields"
+    }
+  ],
+  "editorial": {
+    "title": "Fixing MongoDB Query Projection",
+    "intuition": "Understand how MongoDB's projection operator works and how to use it to ignore embedded fields",
+    "bruteForce": "Brute force approach: manually check each field in the query and project it if it's not an embedded field",
+    "betterSolution": "Use a recursive function to project the query",
+    "optimalSolution": "Use MongoDB's built-in projection operator with a recursive function to project the query",
+    "proofOfCorrectness": "Test the function with multiple inputs and ensure it returns the correct output",
+    "dryRun": "Step-by-step example run: input query, project `name` and `age` fields, ignore `address` field",
+    "commonMistakes": [
+      "Not using the projection operator",
+      "Not handling nested documents and arrays"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// Define a function to project the query object\nfunction projectQuery(query) {\n  // Your code here\n}\n",
+    "python": "class Solution:\n  def projectQuery(self, query):\n    # Your code here\n    pass"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Define a function to project the query object\nfunction projectQuery(query) {\n  // Project the 'name' and 'age' fields\n  var projectedQuery = {\n    name: query.name,\n    age: query.age\n  }\n  // Return the projected query\n  return projectedQuery\n}\n",
+    "python": "class Solution:\n  def projectQuery(self, query):\n    # Project the 'name' and 'age' fields\n    projectedQuery = {\n      'name': query['name'],\n      'age': query['age']\n    }\n    # Return the projected query\n    return projectedQuery"
+  },
+  "functionSignature": {
+    "javascript": "function projectQuery(query) { ... }",
+    "python": "def projectQuery(self, query: dict) -> dict: ..."
+  },
+  "solutions": {
+    "javascript": "// Define a function to project the query object\nfunction projectQuery(query) {\n  // Project the 'name' and 'age' fields using the projection operator\n  var projectedQuery = {\n    name: 1,\n    age: 1,\n    address: 0\n  }\n  // Use the projection operator to project the query\n  return JSON.parse(JSON.stringify(query, projectedQuery))\n}\n",
+    "python": "class Solution:\n  def projectQuery(self, query: dict) -> dict:\n    # Project the 'name' and 'age' fields using the projection operator\n    projectedQuery = {\n      'name': 1,\n      'age': 1,\n      'address': 0\n    }\n    # Use the projection operator to project the query\n    return json.loads(json.dumps(query, default=lambda o: o.__dict__, separators=(',', ':')), object_hook=lambda d: {k: v for k, v in d.items() if k in ['name', 'age']})\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"name\":\"John\",\"age\":30,\"address\":{\"street\":\"123 Main St\",\"city\":\"Anytown\",\"state\":\"CA\"}}",
+      "output": "{\"name\":\"John\",\"age\":30}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"name\":\"Jane\",\"age\":25,\"address\":{\"street\":\"456 Elm St\",\"city\":\"Othertown\",\"state\":\"NY\"}}",
+      "output": "{\"name\":\"Jane\",\"age\":25}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "3758b7448d55c722092563c9",
+  "slug": "fix-mongodb-query-projection-to-ignore-embedded-fields-bugfix-medium-mongodb",
+  "mode": "bug_fix",
+  "category": "MONGODB",
+  "difficulty": "Medium"
+}

@@ -1,0 +1,168 @@
+{
+  "_id": "fd90d087e70aed18f7abdbdb",
+  "title": "Implementing a RESTful API for a Simple Blog",
+  "slug": "implementing-a-restful-api-for-a-simple-blog-medium-rest-api",
+  "difficulty": "Medium",
+  "topics": [
+    "REST_API"
+  ],
+  "statement": "Create a RESTful API for managing blog posts. The API should have the following endpoints:\n\n*   **GET /api/posts**: Retrieves a list of all blog posts.\n*   **GET /api/posts/:id**: Retrieves a single blog post by its ID.\n*   **POST /api/posts**: Creates a new blog post.\n*   **PUT /api/posts/:id**: Updates an existing blog post.\n*   **DELETE /api/posts/:id**: Deletes a blog post by its ID.\n\nThe API should handle the following use cases:\n\n*   Handling pagination: The `/api/posts` endpoint should allow clients to specify the page number and page size. The response should include the total count of blog posts and the current page number.\n*   Handling validation: The `/api/posts` and `/api/posts/:id` endpoints should validate the request body. If the validation fails, the API should return a 400 status code with the validation error message.\n*   Handling errors: The API should handle errors that occur during the execution of the endpoint. If an error occurs, the API should return a 500 status code with the error message.\n\nThe API should use the provided in-memory array of blog posts for data storage. The in-memory array should be initialized with 100 blog posts. The API should also provide a route for deleting the entire in-memory array of blog posts.\n\nThe client should send the following headers with every request:\n\n*   `Content-Type: application/json`\n\nThe client should also send the following query parameters with the `/api/posts` endpoint:\n\n*   `page`: The page number (default: 1)\n*   `size`: The page size (default: 10)\n*   `sort`: The sorting field (default: `createdAt`)\n*   `order`: The sorting order (default: `asc`)\n\nThe API should return the following fields in the response:\n\n*   `id`: The ID of the blog post\n*   `title`: The title of the blog post\n*   `content`: The content of the blog post\n*   `createdAt`: The creation date of the blog post\n*   `updatedAt`: The update date of the blog post\n*   `totalCount`: The total count of blog posts\n*   `currentPage`: The current page number\n*   `pageSize`: The page size\n*   `sortField`: The sorting field\n*   `order`: The sorting order\n",
+  "constraints": [
+    "Must use only the in-memory array provided for data storage.",
+    "Must handle validation errors and return a 400 status code with the validation error message.",
+    "Must handle errors that occur during the execution of the endpoint and return a 500 status code with the error message."
+  ],
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/api/posts",
+      "description": "Retrieves a list of all blog posts. Handles pagination, sorting, and error handling."
+    },
+    {
+      "method": "GET",
+      "path": "/api/posts/:id",
+      "description": "Retrieves a single blog post by its ID. Handles validation and error handling."
+    },
+    {
+      "method": "POST",
+      "path": "/api/posts",
+      "description": "Creates a new blog post. Handles validation and error handling."
+    },
+    {
+      "method": "PUT",
+      "path": "/api/posts/:id",
+      "description": "Updates an existing blog post. Handles validation and error handling."
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/posts/:id",
+      "description": "Deletes a blog post by its ID. Handles error handling."
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/posts",
+      "description": "Deletes the entire in-memory array of blog posts. Handles error handling."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\"name\":\"blog-api\",\"version\":\"1.0.0\",\"main\":\"index.js\",\"scripts\":{\"start\":\"node index.js\"},\"dependencies\":{\"express\":\"^4.18.2\"}}",
+    "index.js": "const express = require('express');\nconst app = express();\napp.use(express.json());\n\n// In-memory array of blog posts\nconst blogPosts = [\n  // Initialize 100 blog posts\n];\n\n// Delete the entire in-memory array of blog posts\napp.delete('/api/posts', (req, res) => {\n  // Clear the in-memory array\n  blogPosts.length = 0;\n  res.status(204).send();\n});\n\n// TODO: Implement endpoints"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "GET",
+      "path": "/api/posts",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "query": {
+        "page": 1,
+        "size": 10
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "totalCount": 100,
+        "currentPage": 1,
+        "pageSize": 10,
+        "sortField": "createdAt",
+        "order": "asc",
+        "posts": []
+      },
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "POST",
+      "path": "/api/posts",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "title": "Test Post",
+        "content": "Test content"
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "id": 101,
+        "title": "Test Post",
+        "content": "Test content",
+        "createdAt": "",
+        "updatedAt": ""
+      },
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "GET",
+      "path": "/api/posts",
+      "query": {
+        "page": 2,
+        "size": 10
+      },
+      "expectedStatus": 200,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "GET",
+      "path": "/api/posts/101",
+      "expectedStatus": 200,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "POST",
+      "path": "/api/posts",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "title": ""
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "crud",
+    "rest-principles",
+    "http-methods",
+    "status-codes",
+    "headers",
+    "query-parameters",
+    "pagination",
+    "filtering",
+    "sorting",
+    "versioning",
+    "api-design",
+    "idempotency",
+    "RESTful API",
+    "Express",
+    "Error Handling",
+    "Validation"
+  ]
+}

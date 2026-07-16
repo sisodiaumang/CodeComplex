@@ -1,0 +1,174 @@
+{
+  "_id": "5a54289c9330efaa5b743719",
+  "title": "Implement a Payment Gateway with Webhooks and Refunds",
+  "slug": "implement-a-payment-gateway-with-webhooks-and-refunds-hard-payment",
+  "difficulty": "Hard",
+  "topics": [
+    "PAYMENT"
+  ],
+  "statement": "Create a payment gateway API that accepts transactions, notifies clients via webhooks, and handles refunds. Clients must authenticate using a valid API key. The API should have the following endpoints:\n\n/transactions - Create a new transaction\n/webhooks - Subscribe to webhooks for transaction updates\n/refunds - Create a refund for a transaction\n\nVisible Test Cases:\n\n1. v_tc1: Create a new transaction with valid API key and payment details (POST /transactions)\n2. v_tc2: Subscribe to webhooks with valid API key (POST /webhooks)\n3. v_tc3: Create a refund for a non-existent transaction with invalid API key (POST /refunds)\n\nHidden Test Cases:\n\n1. h_tc1: Attempt to create a new transaction with missing API key (POST /transactions)\n2. h_tc2: Subscribe to webhooks with invalid API key (POST /webhooks)\n3. h_tc3: Create a refund for a transaction with valid API key but invalid transaction ID (POST /refunds)\n4. h_tc4: Create a new transaction with valid API key but invalid payment details (POST /transactions)\n5. h_tc5: Attempt to subscribe to webhooks with missing API key (POST /webhooks)\n\n**Constraints:**\n\n* Use the Razorpay library for payment processing\n* Handle webhook notifications from both success and failure events\n* Implement validation for payment details, API key, and transaction ID\n* Handle rate limiting for API requests\n\n**API Requirements:**\n\n* API key authentication using a `secretKey` query parameter\n* JSON payload for requests\n\n**Webhook Requirements:**\n\n* Webhook notifications should be triggered for success and failure events\n* Webhook notifications should include the transaction ID and status\n\n**Refund Requirements:**\n\n* Refunds should be created for successful transactions only\n* Refunds should include the transaction ID and reason\n\n**Validation Requirements:**\n\n* API key must be valid for all requests\n* Payment details must be valid for all transactions\n* Transaction ID must be valid for all refunds\n* Webhook notifications must include a valid transaction ID and status\n\n**Expected Response:**\n\n* Successful transactions: 201 Created with transaction ID\n* Successful webhooks: 201 Created with webhook ID\n* Successful refunds: 201 Created with refund ID\n* Failed requests: 401 Unauthorized or 400 Bad Request with error details\n\n**Expected Error Handling:**\n\n* Missing API key: 401 Unauthorized\n* Invalid API key: 401 Unauthorized\n* Missing payment details: 400 Bad Request\n* Invalid transaction ID: 400 Bad Request\n* Invalid payment details: 400 Bad Request\n* Missing webhook notification data: 400 Bad Request\n* Invalid webhook notification data: 400 Bad Request\n",
+  "constraints": [
+    "Use only the in-memory array or mock database provided",
+    "Implement rate limiting for API requests",
+    "Handle webhook notifications from both success and failure events"
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/transactions",
+      "description": "Validates API key, payment details, and transaction ID. Triggers webhook notification for success event."
+    },
+    {
+      "method": "POST",
+      "path": "/webhooks",
+      "description": "Validates API key and webhook notification data"
+    },
+    {
+      "method": "POST",
+      "path": "/refunds",
+      "description": "Validates API key, transaction ID, and refund reason. Triggers webhook notification for success event."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": {
+      "name": "payment-gateway-api",
+      "version": "1.0.0",
+      "main": "index.js",
+      "scripts": {
+        "start": "node index.js"
+      },
+      "dependencies": {
+        "express": "^4.18.2",
+        "razorpay": "^1.7.1"
+      }
+    },
+    "index.js": "const express = require('express');\nconst Razorpay = require('razorpay');\nconst app = express();\napp.use(express.json());\n\n// TODO: Implement API key authentication and rate limiting\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));\n"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "POST",
+      "path": "/transactions",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": "{\"secretKey\":\"valid_api_key\",\"amount\":100,\"currency\":\"INR\",\"payment_method\":\"card\"}",
+      "expectedStatus": 201,
+      "expectedBody": "{\"transactionId\":\"TRX_12345\"}",
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "POST",
+      "path": "/webhooks",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": "{\"secretKey\":\"valid_api_key\",\"webhookUrl\":\"https://example.com/webhook\"}",
+      "expectedStatus": 201,
+      "expectedBody": "{\"webhookId\":\"WHK_12345\"}",
+      "isVisible": true
+    },
+    {
+      "id": "v_tc3",
+      "method": "POST",
+      "path": "/refunds",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": "{\"secretKey\":\"valid_api_key\",\"transactionId\":\"TRX_12345\",\"refundReason\":\"test\"}",
+      "expectedStatus": 201,
+      "expectedBody": "{\"refundId\":\"RFD_12345\"}",
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "POST",
+      "path": "/transactions",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": "{\"amount\":100,\"currency\":\"INR\",\"payment_method\":\"card\"}",
+      "expectedStatus": 401,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "POST",
+      "path": "/webhooks",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": "{\"webhookUrl\":\"https://example.com/webhook\"}",
+      "expectedStatus": 401,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "POST",
+      "path": "/refunds",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": "{\"transactionId\":\"TRX_12345\",\"refundReason\":\"test\"}",
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc4",
+      "method": "POST",
+      "path": "/transactions",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": "{\"secretKey\":\"valid_api_key\",\"amount\":\"invalid_amount\",\"currency\":\"INR\",\"payment_method\":\"card\"}",
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc5",
+      "method": "POST",
+      "path": "/webhooks",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": "{\"secretKey\":\"valid_api_key\",\"webhookUrl\":\"invalid_webhook_url\"}",
+      "expectedStatus": 400,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "stripe",
+    "razorpay",
+    "webhooks",
+    "checkout",
+    "refunds",
+    "subscriptions",
+    "payment",
+    "webhook",
+    "refund"
+  ]
+}

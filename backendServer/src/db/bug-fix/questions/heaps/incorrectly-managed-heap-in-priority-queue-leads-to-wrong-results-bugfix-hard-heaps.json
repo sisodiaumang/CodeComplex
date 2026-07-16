@@ -1,0 +1,169 @@
+{
+  "_id": "fc419839b79d17703e647387",
+  "title": "Incorrectly Managed Heap in Priority Queue Leads to Wrong Results",
+  "slug": "incorrectly-managed-heap-in-priority-queue-leads-to-wrong-results-bugfix-hard-heaps",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "HEAP",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "heap",
+      "priority-queue"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given an array `nums` and `n`, implement a function to build a priority queue and find the `kth` smallest element. However, there's a bug in the code that causes incorrect results due to improper heap management. Fix the bug to get the correct result.",
+    "inputFormat": "n, followed by `n` elements of `nums` in one line, space-separated",
+    "outputFormat": "The `kth` smallest element of `nums`",
+    "notes": "You can assume `1 <= k <= n`.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 100000,
+        "description": "Size of array `nums`"
+      },
+      {
+        "variable": "k",
+        "type": "integer",
+        "min": 1,
+        "max": 100000,
+        "description": "Index of the kth smallest element"
+      }
+    ],
+    "examples": [
+      {
+        "input": "5\n3 6 9 1 8\n3",
+        "output": "3",
+        "explanation": "The 3rd smallest element is 3."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Review heap properties and operations."
+    },
+    {
+      "order": 2,
+      "text": "Check for incorrect usage of heap operations."
+    },
+    {
+      "order": 3,
+      "text": "Verify the implementation of heap operations."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial Title",
+    "intuition": "The correct approach is to use a min-heap to store elements from `nums`. We need to push elements into the heap and then pop the minimum element until we find the `kth` smallest element.",
+    "bruteForce": "The brute force approach would be to sort `nums` and then return the `kth` element. This approach has a time complexity of O(n log n).",
+    "betterSolution": "",
+    "optimalSolution": "The optimal solution uses a min-heap with a time complexity of O(n log k).",
+    "proofOfCorrectness": "proof Of Correctness details.",
+    "dryRun": "dry Run details.",
+    "commonMistakes": [
+      "Using a max-heap instead of a min-heap.",
+      "Not maintaining the heap property correctly."
+    ],
+    "timeComplexity": "O(n log k)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\nint findKthElement(int n, int* nums, int k) {\n\t// TODO: implement\n}\n};",
+    "java": "public class Solution {\npublic int findKthElement(int n, int[] nums, int k) {\n\t// TODO: implement\n}\n}",
+    "python": "class Solution:\n  def find_kth_element(self, n: int, nums: list[int], k: int) -> int:\n    # TODO: implement\n",
+    "javascript": "function findKthElement(n, nums, k) {\n\t// TODO: implement\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\nint findKthElement(int n, int* nums, int k) {\n\tfor (int i = 0; i < n; i++) {\n\t\t// swap the first element with every other element to maintain heap order\n\t\tstd::swap(nums[0], nums[i]);\n\t}\n\treturn k;\n}\n};",
+    "java": "public class Solution {\npublic int findKthElement(int n, int[] nums, int k) {\n\tnum[] temp = new num[n];\n\tfor (int i = 0; i < n; i++) {\n\t\ttemp[i] = nums[0];\n\t}\n\t// swap the first element with every other element to maintain heap order\n\tfor (int i = 0; i < n; i++) {\n\t\tSystem.arraycopy(temp, 0, nums, 0, n);\n\t}\n\treturn k;\n}\n}",
+    "python": "class Solution:\n  def find_kth_element(self, n: int, nums: list[int], k: int) -> int:\n\ttemp_nums = [nums[0]] * n\n\tfor i in range(n):\n\t\t// swap the first element with every other element to maintain heap order\n\t\tnums = [nums[0]] + nums[1:]\n\treturn k",
+    "javascript": "function findKthElement(n, nums, k) {\n\ttemp_nums = new Array(n).fill(nums[0]);\n\tfor (let i = 0; i < n; i++) {\n\t\t// swap the first element with every other element to maintain heap order\n\t\tnums = [nums[0]].concat(nums.slice(1));\n\t}\n\treturn k;"
+  },
+  "functionSignature": {
+    "cpp": "int findKthElement(int n, int* nums, int k);",
+    "java": "int findKthElement(int n, int[] nums, int k);",
+    "python": "def find_kth_element(self, n: int, nums: list[int], k: int) -> int:",
+    "javascript": "function findKthElement(n, nums, k):"
+  },
+  "solutions": {
+    "python": "class Solution:\n  def find_kth_element(self, n: int, nums: list[int], k: int) -> int:\n\timport heapq\n\theap = [\n\t]\n\tnum_heap = 0\n\tnext_heap = 1\n\tnext_heap_pos = 1\n\twhile num_heap < n:\n\t\theap.append(nums[num_heap])\n\t\theap_next_pos = next_heap_pos\n\t\tnext_heap_pos = (next_heap_pos + 1) >> 1\n\t\twhile num_heap * 2 + 2 <= next_heap_pos:\n\t\t\tnum_heap += 1\n\t\t\theapify_up(nums, heap, num_heap)\n\t\theapify_up(nums, heap, num_heap)\n\t\tif next_heap_pos <= k:\n\t\t\theap_next_pos = next_heap_pos\n\t\t\twhile next_heap_pos <= k:\n\t\t\t\tif nums[2 * next_heap_pos - 1] < nums[2 * next_heap_pos]:\n\t\t\t\t\tnext_heap_pos = next_heap_pos * 2\n\t\t\t\tnext_heap_pos = next_heap_pos * 2 + 1\n\t\t\treturn nums[next_heap_pos - 1]\n\t\theapify_up(nums, heap, next_heap_pos - 1)\n\t\tif next_heap_pos <= k:\n\t\t\treturn nums[next_heap_pos - 1]\n\t\theapify_up(nums, heap, next_heap_pos - 1)\n\t\tif next_heap_pos <= k:\n\t\t\treturn nums[next_heap_pos - 1]\n\t\treturn nums[num_heap]\n\ndef heapify_up(nums, heap, index):\n\twhile index > 0:\n\t\th = nums[index]\n\t\tparent_idx = (index - 1) >> 1\n\t\tif heap[parent_idx] > h:\n\t\t\tnums[index] = heap[parent_idx]\n\t\t\tindex = parent_idx\n\t\telse:\n\t\ttnums[index] = h\n\t\tindex = parent_idx\n\treturn",
+    "cpp": "class Solution {\npublic:\nint findKthElement(int n, int* nums, int k) {\n\tint num_heap = 0;\n\tint next_heap = 1;\n\tint next_heap_pos = 1;\n\twhile (num_heap < n) {\n\t\t// Push an element into the heap\n\t\tint heap_next_pos = next_heap_pos;\n\t\tint next_heap_pos_new = (next_heap_pos + 1) / 2;\n\t\twhile (num_heap * 2 + 2 <= next_heap_pos_new) {\n\t\t\t// Bubble up the element to maintain heap order\n\t\t\theapify_up(nums, num_heap);\n\t\t\t++num_heap;\n\t\t\t// Update the new heap position\n\t\t\tnext_heap_pos_new = (next_heap_pos_new + 1) / 2;\n\t\t}\n\t\t// Update the new heap position\n\t\tnext_heap_pos = next_heap_pos_new;\n\t\t// Pop the maximum element\n\t\tif (next_heap_pos <= k) {\n\t\t\tint next_heap_pos_new = 2 * next_heap_pos;\n\t\t\t// Swap the last element with the next element to maintain heap order\n\t\ttswap(nums, next_heap_pos - 1, next_heap_pos_new - 1);\n\t\t\t// Pop the maximum element\n\t\treturn nums[next_heap_pos_new - 1];\n\t\t}\n\t\t// Bubble up the maximum element to maintain heap order\n\t\tnext_heap_pos = next_heap_pos_new;\n\t}\n\t// Return the kth element\n\treturn nums[num_heap];\n}\n\ntemplate<typename T>\nvoid heapify_up(T* nums, int index) {\n\twhile (index > 0) {\n\t\tT h = nums[index];\n\t\tint parent_idx = (index - 1) / 2;\n\t\tif (nums[parent_idx] > h) {\n\t\t\tnums[index] = nums[parent_idx];\n\t\t\tindex = parent_idx;\n\t\t} else {\n\t\t\tnums[index] = h;\n\t\t\tindex = parent_idx;\n\t\t}\n\t}\n\treturn;\n}\n",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 3,
+    "memoryLimit": 1024,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5\n3 6 9 1 8\n5",
+      "output": "3",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "7 10 15 20 25 30 35\n4",
+      "output": "20",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

@@ -1,0 +1,157 @@
+{
+  "_id": "13b4349b13260d2a6db0db48",
+  "title": "N-Queens Puzzle with Rotated Board and Overcounting",
+  "slug": "n-queens-puzzle-with-rotated-board-and-overcounting-bugfix-hard-recursion-2",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "BACKTRACKING",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 60,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "backtracking"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given a board size n, find all configurations that place n queens on a board such that no two queens attack each other. The board is rotated, meaning that the columns and rows are swapped. However, counting each rotated configuration as a unique solution, we overcount due to the board's rotational symmetry.",
+    "inputFormat": "First line contains integer n, representing the size of the board. The next n lines contain the initial state of the board where 0 represents an empty cell and 1 represents a queen. The board is 0-indexed and the first cell is at the top-left corner.",
+    "outputFormat": "Your program should output the number of unique configurations.",
+    "notes": "The input board size is guaranteed to be a perfect square. The input board will never contain two queens in the same row or column, but may contain empty cells between queens in the same row.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "4\n0000\n1010\n0000\n0100",
+        "output": "2",
+        "explanation": "The two valid configurations are: \n 0000\n 1010\n 0000\n 0100\n and \n 0000\n 0100\n 0000\n 1010\n"
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Consider a row and column as identical if they are permutations of each other."
+    },
+    {
+      "order": 2,
+      "text": "When swapping columns and rows, do not forget to adjust the indices of the board accordingly."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial: Rotated Board N-Queens Puzzle",
+    "intuition": "When solving the rotated board N-Queens puzzle, consider using a backtracking algorithm similar to the standard N-Queens problem. However, when swapping columns and rows, keep track of the indices to ensure correct placement and rotation.",
+    "bruteForce": "The brute force solution involves placing a queen in each row and checking if any two queens attack each other. However, due to the rotated symmetry, we must also consider the permutations of rows and columns.",
+    "betterSolution": "To avoid overcounting due to rotational symmetry, use a data structure such as a hashmap to store the unique configurations.",
+    "optimalSolution": "In the optimal solution, we use a backtracking algorithm to place queens on the rotated board. We keep track of the current row, column, and diagonal indices to ensure correct placement. When swapping columns and rows, we adjust the indices accordingly.",
+    "proofOfCorrectness": "The solution is correct because it ensures that no two queens attack each other and correctly handles the rotational symmetry of the board.",
+    "dryRun": "A dry run of the algorithm should include checking if any two queens in the same row or column attack each other, along with handling rotational symmetry.",
+    "commonMistakes": [
+      "Overcounting due to rotational symmetry",
+      "Incorrectly handling column and row swapping"
+    ],
+    "timeComplexity": "O(n!)",
+    "spaceComplexity": "O(n^2)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\n  public:\n    void helper(vector<vector<int>>& board, int row, int n, int& count, int& uniqueCount);\n  ];\n",
+    "java": "public class Solution {\n  public:\n    void helper(int[][] board, int row, int n, int count, int uniqueCount);\n  }\n",
+    "python": "class Solution:\n  def helper(self, board, row, n, count, uniqueCount):\n      pass\n",
+    "javascript": "class Solution {\n  helper(board, row, n, count, uniqueCount) {\n      // TODO: implement\n  }\n};\n"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\n  public:\n    void helper(vector<vector<int>>& board, int row, int n, int& count, int& uniqueCount) {\n      if (row == n) {\n        uniqueCount++;\n      } else {\n        for (int col = 0; col < n; col++) {\n          if (isValid(board, row, col, n)) {\n            board[row][col] = 1;\n            helper(board, row + 1, n, count, uniqueCount);\n            board[row][col] = 0;\n          }\n        }\n      }\n    }\n  private:\n    bool isValid(vector<vector<int>> board, int row, int col, int n) {\n      for (int i = 0; i < row; i++) {\n        if (board[i][col] == 1 ||\n            board[row][(col - i + n) % n] == 1 ||\n            board[(row - i + n) % n][col] == 1) {\n          return false;\n        }\n      }\n      return true;\n    }\n};\n",
+    "java": "public class Solution {\n  public:\n    void helper(int[][] board, int row, int n, int count, int uniqueCount) {\n      if (row == n) {\n        uniqueCount++;\n      } else {\n        for (int col = 0; col < n; col++) {\n          if (isValid(board, row, col, n)) {\n            board[row][col] = 1;\n            helper(board, row + 1, n, count, uniqueCount);\n            board[row][col] = 0;\n          }\n        }\n      }\n    }\n  private:\n    boolean isValid(int[][] board, int row, int col, int n) {\n      for (int i = 0; i < row; i++) {\n        if (board[i][col] == 1 ||\n            board[row][(col - i + n) % n] == 1 ||\n            board[(row - i + n) % n][col] == 1) {\n          return false;\n        }\n      }\n      return true;\n    }\n};\n",
+    "python": "class Solution:\n  def helper(self, board, row, n, count, uniqueCount):\n      if row == n:\n        uniqueCount += 1\n      else:\n        for col in range(n):\n          if self.isValid(board, row, col, n):\n            board[row][col] = 1\n            self.helper(board, row + 1, n, count, uniqueCount)\n            board[row][col] = 0\n\n      def isValid(self, board, row, col, n):\n        for i in range(row):\n          if board[i][col] == 1 or board[row][(col - i + n) % n] == 1 or board[(row - i + n) % n][col] == 1:\n            return False\n        return True\n",
+    "javascript": "class Solution {\n  helper(board, row, n, count, uniqueCount) {\n    if (row == n) {\n      uniqueCount++;\n    } else {\n      for (let col = 0; col < n; col++) {\n        if (this.isValid(board, row, col, n)) {\n          board[row][col] = 1;\n          this.helper(board, row + 1, n, count, uniqueCount);\n          board[row][col] = 0;\n        }\n      }\n    }\n  }\n  isValid(board, row, col, n) {\n    for (let i = 0; i < row; i++) {\n      if (board[i][col] == 1 || (board[row][(col - i + n) % n] == 1 || (board[(row - i + n) % n][col] == 1))) {\n        return false;\n      }\n    }\n    return true;\n  }\n};\n\n"
+  },
+  "functionSignature": {
+    "cpp": "void helper(vector<vector<int>>& board, int row, int n, int& count, int& uniqueCount);",
+    "java": "void helper(int[][] board, int row, int n, int count, int uniqueCount);",
+    "python": "def helper(self, board, row, n, count, uniqueCount):",
+    "javascript": "helper(board, row, n, count, uniqueCount)"
+  },
+  "solutions": {
+    "python": "class Solution:\n  def solve(self):\n    n = self.readInt()\n    board = self.readMatrix(n)\n    count = 0\n    uniqueCount = 0\n    self.helper(board, 0, n, count, uniqueCount)\n    return uniqueCount\n\n  def helper(self, board, row, n, count, uniqueCount):\n    if row == n:\n      uniqueCount += 1\n    else:\n      for col in range(n):\n        if self.isValid(board, row, col, n):\n          board[row][col] = 1\n          self.helper(board, row + 1, n, count, uniqueCount)\n          board[row][col] = 0\n\n      def isValid(self, board, row, col, n):\n        for i in range(row):\n          if board[i][col] == 1 or board[row][(col - i + n) % n] == 1 or board[(row - i + n) % n][col] == 1:\n            return False\n        return True\n\n  def readInt(self):\n    return int(input())\n\n  def readMatrix(self, n):\n    return [list(map(int, input().split())) for _ in range(n)]\n",
+    "cpp": "// Solution",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "4\n0000\n1010\n0000\n0100",
+      "output": "2",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "5\\n00000\\n10000\\n00000\\n00000\\n00000",
+      "output": "2",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

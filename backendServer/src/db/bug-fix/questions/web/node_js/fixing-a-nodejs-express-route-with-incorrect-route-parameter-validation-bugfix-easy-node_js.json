@@ -1,0 +1,131 @@
+{
+  "title": "Fixing a Node.js Express Route with Incorrect Route Parameter Validation",
+  "subCategory": "Route Validation",
+  "statement": {
+    "markdown": "Implement a route parameter validation in a Node.js Express application. The route is designed to accept a string ID as a parameter and return the corresponding user details. However, the current implementation has a logical bug that causes it to fail for certain input types. Fix the bug to ensure the route works correctly for all valid inputs.",
+    "inputFormat": "The input will be a string representing a user ID",
+    "outputFormat": "The output will be a JSON object containing the user details",
+    "notes": "The route should return a 404 error for invalid user IDs",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Maximum number of test cases"
+      }
+    ],
+    "examples": [
+      {
+        "input": "12345",
+        "output": "{\"name\":\"John Doe\",\"email\":\"john@example.com\"}",
+        "explanation": "Valid user ID with corresponding details"
+      },
+      {
+        "input": "abcde",
+        "output": "{\"error\":\"User not found\"}",
+        "explanation": "Invalid user ID with error message"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 10,
+    "points": 30,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "NODE_JS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "node_js"
+    ],
+    "interviewFrequency": 1,
+    "revisionLevel": 1,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Check the data type of the user ID parameter"
+    }
+  ],
+  "editorial": {
+    "title": "Route Parameter Validation",
+    "intuition": "Use a regular expression to validate the user ID parameter",
+    "bruteForce": "Use a try-catch block to catch any errors during route resolution",
+    "betterSolution": "",
+    "optimalSolution": "Use a regular expression to validate the user ID parameter and return a 404 error for invalid IDs",
+    "proofOfCorrectness": "Test the route with valid and invalid user IDs",
+    "dryRun": "Route should return the corresponding user details for valid IDs and a 404 error for invalid IDs",
+    "commonMistakes": [
+      "Invalid data types",
+      "Incorrect route parameter validation"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "const express = require('express');\nconst app = express();\napp.get('/users/:id', (req, res) => {\n  const id = req.params.id;\n  // Fix the bug here\n  res.json({ name: 'John Doe', email: 'john@example.com' });\n});\n"
+  },
+  "buggyStarterCode": {
+    "javascript": "const express = require('express');\nconst app = express();\napp.get('/users/:id', (req, res) => {\n  const id = req.params.id;\n  if (isNaN(id)) {\n    // Return a 404 error for non-numeric IDs\n    res.status(404).json({ error: 'User not found' });\n  } else {\n    // Return the user details for numeric IDs\n    res.json({ name: 'John Doe', email: 'john@example.com' });\n  }\n});\n"
+  },
+  "functionSignature": {
+    "javascript": "app.get('/users/:id', (req, res) => {"
+  },
+  "solutions": {
+    "javascript": "// Solution\nconst express = require('express');\nconst app = express();\napp.get('/users/:id', (req, res) => {\n  const id = req.params.id;\n  if (!/^[0-9]+$/.test(id)) {\n    res.status(404).json({ error: 'User not found' });\n  } else {\n    res.json({ name: 'John Doe', email: 'john@example.com' });\n  }\n});\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 1,
+    "memoryLimit": 128,
+    "supportedLanguages": [
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "12345",
+      "output": "{\"name\":\"John Doe\",\"email\":\"john@example.com\"}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "abcde",
+      "output": "{\"error\":\"User not found\"}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "15d271b891032a16675bbefe",
+  "slug": "fixing-a-nodejs-express-route-with-incorrect-route-parameter-validation-bugfix-easy-node_js",
+  "mode": "bug_fix",
+  "category": "NODE_JS",
+  "difficulty": "Easy"
+}

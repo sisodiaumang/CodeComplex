@@ -1,0 +1,69 @@
+{
+  "_id": "834f177673af6236cef7a5e2",
+  "title": "Highly Advanced Realtime Chat App with Multi-Channel Support and Rich Media",
+  "slug": "highly-advanced-realtime-chat-app-with-multi-channel-support-and-rich-media-hard-chat-app",
+  "difficulty": "Hard",
+  "topics": [
+    "CHAT_APP"
+  ],
+  "statement": {
+    "markdown": "## Projects Challenge: Highly Advanced Realtime Chat App with Multi-Channel Support and Rich Media\n\nYour objective is to build a fully functional, highly interactive React component representing the target design mockup.\n\n### 🎨 Color Palette\n* `#B7D7CD`\n* `#C06C88`\n* `#411C56`\n\n### 📐 Target Design Mockup\nUse the visual mockup shown in the panel to guide your coordinate alignment, container proportions, and spacing.\n\n### 📌 Target Design SVG Source\nThe target geometry is defined by the following SVG vector graphic (viewable by the LLM judge):\n```xml\n\n<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300'>\n  <g transform='translate(0,100)'>\n    <rect x='100' y='0' width='200' height='300' fill='#B7D7CD' rx='10'/>\n  </g>\n  <g transform='translate(50,0)'>\n    <rect x='50' y='0' width='300' height='50' fill='#C06C88'/>\n  </g>\n  <g transform='translate(170,0)'>\n    <text x='0' y='25' text-anchor='start' font-size='24' font-family='Arial' fill='#411C56'>Channel</text>\n  </g>\n  <g transform='translate(50,75)'>\n    <rect x='50' y='0' width='300' height='50' fill='#C06C88'/>\n  </g>\n  <g transform='translate(170,75)'>\n    <text x='0' y='25' text-anchor='start' font-size='24' font-family='Arial' fill='#411C56'>Messages</text>\n  </g>\n  <g transform='translate(50,150)'>\n    <rect x='50' y='0' width='300' height='50' fill='#C06C88'/>\n  </g>\n  <g transform='translate(170,150)'>\n    <text x='0' y='25' text-anchor='start' font-size='24' font-family='Arial' fill='#411C56'>Media</text>\n  </g>\n  <g transform='translate(50,225)'>\n    <rect x='50' y='0' width='300' height='50' fill='#C06C88'/>\n  </g>\n  <g transform='translate(170,225)'>\n    <text x='0' y='25' text-anchor='start' font-size='24' font-family='Arial' fill='#411C56'>Users</text>\n  </g>\n  <g transform='translate(150,50)'>\n    <rect x='0' y='0' width='50' height='50' fill='#411C56'/>\n  </g>\n  <g transform='translate(150,125)'>\n    <rect x='0' y='0' width='50' height='50' fill='#411C56'/>\n  </g>\n  <g transform='translate(150,200)'>\n    <rect x='0' y='0' width='50' height='50' fill='#411C56'/>\n  </g>\n</svg>\n```\n\n### ⚙️ Requirements\n1. Match the visual presentation (layout, alignment, borders, colors) of the mockup.\n2. Implement all necessary React state variables, event handlers, and input bindings to make the page interactive.\n3. Make sure all interactive controls (buttons, forms, checkboxes, sliders) update the view correctly.\n"
+  },
+  "constraints": [
+    "Must use the provided color palette",
+    "Must have a minimum of 3 channels",
+    "Must have a typing indicator that updates in real-time",
+    "Must support rich media (images, videos, etc.)",
+    "Must be fully interactive with state updates"
+  ],
+  "referenceAssets": [
+    {
+      "url": "http://localhost:8000/public/mockups/highly-advanced-realtime-chat-app-with-multi-channel-support-and-rich-media-hard-chat-app.svg",
+      "caption": "Recreate target design: Highly Advanced Realtime Chat App with Multi-Channel Support and Rich Media"
+    }
+  ],
+  "starterCode": {
+    "react": "import React, { useState, useEffect } from 'react';\n              import axios from 'axios';\n              import { Chat } from './Chat';\n\n              const App = () => {\n                const [channels, setChannels] = useState([]);\n                const [messages, setMessages] = useState({});\n                const [typing, setTyping] = useState({});\n\n                useEffect(() => {\n                  axios.get('/api/channels')\n                    .then(response => {\n                      setChannels(response.data);\n                    })\n                    .catch(error => {\n                      console.error(error);\n                    });\n                }, []);\n\n                const handleChannelChange = (channel) => {\n                  // handle channel change logic\n                };\n\n                const handleTypingIndicator = (channel, user) => {\n                  // handle typing indicator logic\n                };\n\n                return (\n                  <div className='min-h-screen bg-[#090a0f] text-white p-4 flex items-center justify-center'>\n                    <div className='w-full max-w-md p-4 bg-white rounded shadow-lg'>\n                      <div className='flex justify-between p-4 border-b'>\n                        <h2 className='text-lg font-bold'>Channels</h2>\n                        <button className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'>\n                          Create Channel\n                        </button>\n                      </div>\n                      <div className='mt-4'>\n                        {channels.map((channel, index) => (\n                          <div key={index} className='mb-4 p-4 border bg-gray-100 rounded'>\n                            <h3 className='text-lg font-bold'>{channel.name}</h3>\n                            <ul className='list-disc ml-4'>\n                              {messages[channel.id].map((message, index) => (\n                                <li key={index}>\n                                  <div className='flex items-center'>\n                                    <img className='w-8 h-8 rounded-full' src={message.avatar} alt={message.name} />\n                                    <div className='ml-2'>\n                                      <p className='text-lg font-bold'>{message.name}</p>\n                                      <p className='text-gray-600'>{message.text}</p>\n                                    </div>\n                                  </div>\n                                </li>\n                              ))}\n                            </ul>\n                            <div className='mt-4'>\n                              <input\n                                type='text'\n                                className='w-full p-4 outline-none border border-gray-300 rounded'\n                                placeholder='Type a message...'\n                              />\n                              <button className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'>\n                                Send\n                              </button>\n                            </div>\n                            {typing[channel.id] && (\n                              <div className='mt-4'>\n                                <p className='text-lg font-bold'>\n                                  {typing[channel.id].name} is typing...\n                                </p>\n                              </div>\n                            )}\n                          </div>\n                        ))}\n                      </div>\n                    </div>\n                  </div>\n                );\n              };\n\n              export default App;"
+  },
+  "gradingCriteria": [
+    {
+      "id": "visual_fidelity",
+      "description": "Evaluate how closely the layout, colors, and positioning match the target visual mockup.",
+      "weight": 35
+    },
+    {
+      "id": "interactive_features",
+      "description": "Verify interactive state updates, form logic, active selections, and handlers.",
+      "weight": 30
+    },
+    {
+      "id": "code_quality",
+      "description": "Review code cleanliness, proper semantic elements, and efficient state use.",
+      "weight": 35
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "react"
+    ]
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "tags": [
+    "frontend",
+    "react",
+    "projects",
+    "chat-app",
+    "color:#B7D7CD",
+    "color:#C06C88",
+    "color:#411C56"
+  ]
+}

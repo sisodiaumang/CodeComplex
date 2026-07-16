@@ -1,0 +1,161 @@
+{
+  "_id": "88d23aa1ca484a6057cbce11",
+  "title": "Detecting and Removing Duplicates in a Linked List",
+  "slug": "detecting-and-removing-duplicates-in-a-linked-list-bugfix-medium-linked-list",
+  "difficulty": "Medium",
+  "category": "DSA",
+  "subCategory": "Detecting and Removing Duplicates",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "linked_list"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Write a function that takes the head of a linked list as input, removes all duplicates from the list, and returns the head of the modified list. Note that you may not have access to the original list. The linked list nodes contain integers.",
+    "inputFormat": "Head of a linked list with possible duplicates (represented as an array of integers in case of a custom implementation)",
+    "outputFormat": "Head of the modified linked list with duplicates removed (can be any implementation)",
+    "notes": "You can assume that the input list is not null.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "[1, 2, 2, 3, 4, 4, 5]",
+        "output": "[1, 2, 3, 4, 5]",
+        "explanation": "The list after removing duplicates has 5 nodes."
+      },
+      {
+        "input": "[1, 1, 1, 2, 2, 2, 3, 3, 3]",
+        "output": "[1, 2, 3]",
+        "explanation": "The list after removing duplicates has 3 nodes."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Consider using a HashSet to keep track of unique node values."
+    },
+    {
+      "order": 2,
+      "text": "Keep track of the previous node to avoid having to traverse the list twice."
+    }
+  ],
+  "editorial": {
+    "title": "Detecting and Removing Duplicates in a Linked List",
+    "intuition": "Remove duplicates from the list by creating a set of unique values and iterating through the list, adding nodes to the new list if their values are not in the set.",
+    "bruteForce": "Iterate through the entire list and remove every node whose value is in a hash set of all values.",
+    "betterSolution": "Use a hash set to keep track of unique values and a single pass to build the new list.",
+    "optimalSolution": "Use a single pass through the list and a hash set to track unique values.",
+    "proofOfCorrectness": "By using a hash set to track unique values, we ensure that no duplicates are added to the new list.",
+    "dryRun": "Remove duplicates from a sample list and verify the output.",
+    "commonMistakes": [
+      "Incorrectly removing nodes from the original list"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n// TODO: implement\n};",
+    "java": "public class Solution {\n\n// TODO: implement\n}",
+    "python": "class Solution:\n    # pass\n",
+    "javascript": "function solve(head) {\n// TODO: implement\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n\tnode* deleteDuplicates(node* head) {\n\t\tif (!head) return NULL;\n\t\t\tnode* current = head -> next;\n\t\t\twhile (current != NULL) {\n\t\t\t\tif (current -> val != head -> val) head -> next = current;\n\t\t\t\telse current = current -> next;\n\t\t\t}\n\t\t\treturn head;\n\t}\n};",
+    "java": "public class Solution {\n\tpublic ListNode deleteDuplicates(ListNode head) {\n\t\tif (head == null) return null;\n\t\t\tnode current = head.next;\n\t\t\twhile (current != null) {\n\t\t\t\tif (current.val != head.val) head.next = current;\n\t\t\t\telse current = current.next;\n\t\t\t}\n\t\t\treturn head;\n\t}\n}",
+    "python": "class Solution:\n\tdef deleteDuplicates(self, head: ListNode) -> ListNode:\n\t\tif not head: return None\n\t\t\ncurrent = head.next\n\t\t\twhile current:\n\t\t\t\tif current.val != head.val: head.next = current\n\t\t\t\telse current = current.next\n\t\t\treturn head",
+    "javascript": "function solve(head) {\n\tif (!head) return null;\n\tvar current = head.next;\n\twhile (current) {\n\t\tif (current.val != head.val) head.next = current;\n\t\telse current = current.next;\n\t}\n\treturn head;"
+  },
+  "functionSignature": {
+    "cpp": "node* deleteDuplicates(node* head);",
+    "java": "ListNode deleteDuplicates(ListNode head);",
+    "python": "def deleteDuplicates(self, head: ListNode) -> ListNode:",
+    "javascript": "function deleteDuplicates(head);"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def deleteDuplicates(self, head: ListNode) -> ListNode:\n        if not head: return None\n\n        dummy = ListNode(0)\n        dummy.next = head\n        current = dummy\n\n        seen = set()\n\n        while current.next:\n            if current.next.val in seen:\n                current.next = current.next.next\n            else:\n                seen.add(current.next.val)\n                current = current.next\n\n        return dummy.next",
+    "cpp": "#include <iostream>\n#include <vector>\n#include <utility>\n\nusing namespace std;\n\nstruct ListNode {\n    int val;\n    ListNode *next;\n    ListNode(int x) : val(x), next(NULL) {}\n};\n\nclass Solution {\npublic:\n    ListNode *deleteDuplicates(ListNode *head) {\n\t\tif (!head) return NULL;\n\n\t\tListNode dummy(0);\n\t\tdummy.next = head;\n\t\tListNode *current = &dummy;\n\n\t\tset<int> seen;\n\n\t\twhile (current->next) {\n\t\t\tif (seen.find(current->next->val) != seen.end())\n\t\t\t\tcurrent->next = current->next->next;\n\t\t\telse\n\t\t\t{\n\t\t\t\tseen.insert(current->next->val);\n\t\t\t\tcurrent = current->next;\n\t\t\t}\n\t\t}\n\t\treturn dummy.next;\n\t}\n};\nint main() {\n\treturn 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "4\n1 2 2 3",
+      "output": "3 2 1",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "5\n1 1 2 3 3",
+      "output": "2 1 3",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

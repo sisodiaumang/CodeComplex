@@ -1,0 +1,53 @@
+{
+  "_id": "3359cb0df4db5ae8061d9d99",
+  "title": "React Toast Notification System",
+  "slug": "react-toast-notification",
+  "difficulty": "Medium",
+  "topics": [
+    "REACT",
+    "REACT_TOAST_NOTIFICATION"
+  ],
+  "statement": {
+    "markdown": "## React Toast Notification System\n\nBuild a dynamic notification toast manager component overlaying the screen.\n\n### Requirements:\n1. **Toast Types**: Supports adding toasts of different kinds: `\"success\"`, `\"error\"`, `\"info\"`, and `\"warning\"` (each with appropriate Tailwind styling colors).\n2. **Auto-Dismiss**: Toasts should fade and dismiss automatically after 4 seconds unless manually dismissed.\n3. **Queue Animation**: Stack multiple toasts in a column in the corner of the screen with smooth slide-in and fade-out transition animations.\n4. **Manual Dismiss**: Add a close button (`x`) to each toast to allow immediate dismissal.\n"
+  },
+  "constraints": [
+    "Must support responsive styles",
+    "Must use React hooks",
+    "Must style elements with Tailwind CSS"
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "html": "",
+    "css": "",
+    "react": "import React, { useState } from 'react';\n\nexport default function ToastContainer() {\n  // Implement toast notification system here\n  return null;\n}"
+  },
+  "gradingCriteria": [
+    {
+      "id": "functional_correctness",
+      "description": "Verify that the interactive props, callbacks, and element structures work cleanly.",
+      "weight": 60
+    },
+    {
+      "id": "code_cleanliness",
+      "description": "Verify state structure designs and clean Tailwind CSS layouts.",
+      "weight": 40
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "react",
+      "tailwind"
+    ],
+    "referenceSolution": "import React, { useState, useEffect } from 'react';\n\nexport default function ToastContainer() {\n  const [toasts, setToasts] = useState([]);\n\n  const addToast = (message, type = \"success\") => {\n    const id = Date.now();\n    setToasts(prev => [...prev, { id, message, type }]);\n  };\n\n  const removeToast = (id) => {\n    setToasts(prev => prev.filter(t => t.id !== id));\n  };\n\n  return (\n    <div className=\"flex flex-col gap-2 items-center\">\n      {/* Test Buttons */}\n      <div className=\"flex gap-2 mb-6\">\n        <button onClick={() => addToast(\"Successfully saved!\", \"success\")} className=\"px-3 py-1.5 bg-green-500 text-white rounded text-sm\">Success</button>\n        <button onClick={() => addToast(\"Failed to fetch data.\", \"error\")} className=\"px-3 py-1.5 bg-red-500 text-white rounded text-sm\">Error</button>\n      </div>\n\n      {/* Portal Container */}\n      <div className=\"fixed top-4 right-4 z-50 flex flex-col gap-2 w-80\">\n        {toasts.map((toast) => (\n          <ToastItem key={toast.id} toast={toast} onClose={removeToast} />\n        ))}\n      </div>\n    </div>\n  );\n}\n\nfunction ToastItem({ toast, onClose }) {\n  useEffect(() => {\n    const timer = setTimeout(() => onClose(toast.id), 4000);\n    return () => clearTimeout(timer);\n  }, [toast, onClose]);\n\n  const typeStyles = {\n    success: \"bg-green-50 text-green-800 border-green-200\",\n    error: \"bg-red-50 text-red-800 border-red-200\",\n    info: \"bg-blue-50 text-blue-800 border-blue-200\",\n    warning: \"bg-yellow-50 text-yellow-800 border-yellow-200\"\n  };\n\n  return (\n    <div className={`flex items-center justify-between p-4 border rounded-xl shadow-lg transition duration-300 animate-slide-in ${typeStyles[toast.type]}`}>\n      <span className=\"text-sm font-medium\">{toast.message}</span>\n      <button onClick={() => onClose(toast.id)} className=\"text-gray-400 hover:text-gray-600 ml-4 focus:outline-none\">\n        <svg className=\"w-4 h-4\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path strokeLinecap=\"round\" strokeLinejoin=\"round\" strokeWidth={2} d=\"M6 18L18 6M6 6l12 12\" /></svg>\n      </button>\n    </div>\n  );\n}"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

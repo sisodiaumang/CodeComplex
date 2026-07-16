@@ -1,0 +1,67 @@
+{
+  "_id": "386f555baaac8aa7906abe15",
+  "title": "Secure Multi-Factor Enrollment Portal",
+  "slug": "secure-multi-factor-enrollment-portal-medium-auth-1",
+  "difficulty": "Medium",
+  "topics": [
+    "AUTH"
+  ],
+  "statement": {
+    "markdown": "## Projects Challenge: Secure Multi-Factor Enrollment Portal\n\nYour objective is to build a fully functional, highly interactive React component representing the target design mockup.\n\n### 🎨 Color Palette\n* `#B7D7CD`\n* `#C06C88`\n* `#411C56`\n\n### 📐 Target Design Mockup\nUse the visual mockup shown in the panel to guide your coordinate alignment, container proportions, and spacing.\n\n### 📌 Target Design SVG Source\nThe target geometry is defined by the following SVG vector graphic (viewable by the LLM judge):\n```xml\n<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300'>\n<g transform='translate(200,150) scale(0.5)'>\n   <!-- Card Container -->\n   <rect x='-100' y='-50' width='200' height='100' rx='10' fill='#B7D7CD'/>\n   <!-- Card Header -->\n   <text x='0' y='-20' textAnchor='left' fill='#C06C88' fontSize='18' fontFamily='Arial'>Multi-Factor Enrollment</text>\n   <!-- Password Field -->\n   <g transform='translate(0,0)'>\n      <rect x='10' y='10' width='180' height='20' rx='5' fill='#411C56' opacity='0.2'/>\n      <text x='10' y='15' textAnchor='left' fill='#FFFFFF' fontSize='14' fontFamily='Arial'>Password</text>\n   </g>\n   <!-- Password Strength Indicator -->\n   <rect x='10' y='-30' width='180' height='10' rx='5' fill='#C06C88'/>\n   <!-- OTP Verification Code Field -->\n   <g transform='translate(0,40)'>\n      <rect x='10' y='10' width='180' height='20' rx='5' fill='#411C56' opacity='0.2'/>\n      <text x='10' y='15' textAnchor='left' fill='#FFFFFF' fontSize='14' fontFamily='Arial'>OTP Verification Code</text>\n   </g>\n   <!-- OTP Verification Code Input -->\n   <g transform='translate(0,70)'>\n      <rect x='10' y='10' width='180' height='20' rx='5' fill='#411C56' opacity='0.2'/>\n      <text x='10' y='15' textAnchor='left' fill='#FFFFFF' fontSize='14' fontFamily='Arial'>Enter OTP Code</text>\n   </g>\n   <!-- Submit Button -->\n   <g transform='translate(0,100)'>\n      <rect x='10' y='10' width='180' height='20' rx='5' fill='#C06C88'/>\n      <text x='10' y='15' textAnchor='left' fill='#FFFFFF' fontSize='14' fontFamily='Arial'>Submit</text>\n   </g>\n</g>\n</svg>\n```\n\n### ⚙️ Requirements\n1. Match the visual presentation (layout, alignment, borders, colors) of the mockup.\n2. Implement all necessary React state variables, event handlers, and input bindings to make the page interactive.\n3. Make sure all interactive controls (buttons, forms, checkboxes, sliders) update the view correctly.\n"
+  },
+  "constraints": [
+    "Must use only specified colors",
+    "Must be fully interactive with state updates for password strength and OTP verification code",
+    "Must handle password strength validation (e.g., password strength indicator changes color based on password strength)"
+  ],
+  "referenceAssets": [
+    {
+      "url": "http://localhost:8000/public/mockups/secure-multi-factor-enrollment-portal-medium-auth-1.svg",
+      "caption": "Recreate target design: Secure Multi-Factor Enrollment Portal"
+    }
+  ],
+  "starterCode": {
+    "react": "import React, { useState } from 'react';\n\nconst App = () => {\n  const [password, setPassword] = useState('');\n  const [strength, setStrength] = useState('Weak');\n  const [otpCode, setOtpCode] = useState('');\n  const [isSubmitted, setIsSubmitted] = useState(false);\n\n  const handlePasswordChange = (e) => {\n    setPassword(e.target.value);\n    if (e.target.value.length > 8 && e.target.value.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{9,}$/)) {\n      setStrength('Strong');\n    } else if (e.target.value.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{5,8}$/)) {\n      setStrength('Good');\n    } else {\n      setStrength('Weak');\n    }\n  };\n\n  const handleOTPChange = (e) => {\n    setOtpCode(e.target.value);\n  };\n\n  const handleSubmit = (e) => {\n    e.preventDefault();\n    setIsSubmitted(true);\n  };\n\n  return (\n    <div className=\"min-h-screen bg-[#090a0f] text-white p-4 flex items-center justify-center\">\n      <div className=\"bg-white rounded shadow-md w-96 p-8\">\n        <h2 className=\"text-lg font-bold mb-4\">Multi-Factor Enrollment</h2>\n        <form onSubmit={handleSubmit}>\n          <div className=\"mb-4\">\n            <label className=\"block text-gray-700 text-sm font-bold mb-2\" >Password</label>\n            <input type=\"password\" value={password} onChange={handlePasswordChange} className=\"shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline\" placeholder=\"Password\"/>\n            <span className=\"bg-{strength} text-white rounded p-1 text-sm ml-2\">{strength}</span>\n          </div>\n          <div className=\"mb-4\">\n            <label className=\"block text-gray-700 text-sm font-bold mb-2\" >OTP Verification Code</label>\n            <input type=\"text\" value={otpCode} onChange={handleOTPChange} className=\"shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline\" placeholder=\"OTP Code\"/>\n          </div>\n          <button type=\"submit\" className=\"bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded\">Submit</button>\n        </form>\n      </div>\n    </div>\n  );\n};\n\nexport default App;"
+  },
+  "gradingCriteria": [
+    {
+      "id": "visual_fidelity",
+      "description": "Evaluate how closely the layout, colors, and positioning match the target visual mockup.",
+      "weight": 30
+    },
+    {
+      "id": "interactive_features",
+      "description": "Verify interactive state updates, password strength validation, and OTP verification code handling.",
+      "weight": 45
+    },
+    {
+      "id": "code_quality",
+      "description": "Review code cleanliness, proper semantic elements, and efficient state use.",
+      "weight": 25
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "react"
+    ]
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "tags": [
+    "frontend",
+    "react",
+    "projects",
+    "auth",
+    "color:#B7D7CD",
+    "color:#C06C88",
+    "color:#411C56"
+  ]
+}

@@ -1,0 +1,153 @@
+{
+  "_id": "a39d7a3d120f2be4a2b91e94",
+  "title": "Fix Heapify to Preserve Unique Elements",
+  "slug": "fix-heapify-to-preserve-unique-elements-bugfix-medium-heaps",
+  "difficulty": "Medium",
+  "category": "DSA",
+  "subCategory": "HEAP",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "heap"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given an array of integers, build a max heap with a constraint that all elements in the heap must be pairwise distinct. If any element needs to be inserted or deleted, the entire array needs to be heapified to ensure the heap property is maintained.\n\nImplement a method solve() that takes the array as input, heapify it to preserve the unique elements, and return true if the array represents a valid max heap, else return false.\n\n**Constraints:** The array is non-empty with n ≤ 10^4 elements.\n\n",
+    "inputFormat": "Input is provided as an array of integers.",
+    "outputFormat": "true if the array represents a valid max heap; false otherwise.",
+    "notes": "If an element is inserted or deleted, the array needs to be heapified.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "[3, 2, 1, 3, 2, 6, 4, 1, 3]",
+        "output": "false",
+        "explanation": "The array does not represent a valid max heap due to duplicate elements"
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(n log n)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    // TODO: implement solve() function to build a max heap with unique elements\n",
+    "java": "public class Solution {\npublic:\n    // TODO: implement solve() function to build a max heap with unique elements\n",
+    "python": "class Solution:\n\tdef solve(self, nums: list[int]) -> bool:\n\t    # TODO: implement to build a max heap with unique elements\n",
+    "javascript": "function solve(nums) {\n    // TODO: implement to build a max heap with unique elements\n"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    bool solve(vector<int>& nums) {\n        for (int i = nums.size() / 2 - 1; i >= 0; --i)\n            heapify(nums, nums.size(), i);\n        return isHeapValid(nums);\n    }\n\n    void heapify(vector<int>& nums, int n, int i) {\n        int largest = i;\n        int left = 2 * i + 1;\n        int right = 2 * i + 2;\n\n        if (left < n && nums[left] > nums[largest])\n            largest = left;\n\n        if (right < n && nums[right] > nums[largest])\n            largest = right;\n\n        if (largest != i) {\n            // BUG: incorrect swap operation\n           nums[i] = nums[largest];\n            nums[largest] = nums[i];\n            heapify(nums, n, largest);\n        }\n    }\n\n    bool isHeapValid(vector<int>& nums) {\n        for (int i = nums.size() - 1; i >= 0; --i)\n            if (!isHeapPropertySatisfied(nums, i))\n                return false;\n        return true;\n    }\n\n    bool isHeapPropertySatisfied(vector<int>& nums, int i) {\n        int left = 2 * i + 1;\n        int right = 2 * i + 2;\n\n        if (left >= nums.size() && right >= nums.size())\n            return true;\n\n        if (left >= nums.size())\n            return nums[i] >= nums[right];\n\n        return nums[i] >= nums[left] && nums[i] >= nums[right];\n    }\n};\n",
+    "java": "public class Solution {\npublic:\n    boolean solve(int[] nums) {\n        for (int i = nums.length / 2 - 1; i >= 0; --i)\n            heapify(nums, nums.length, i);\n        return isHeapValid(nums);\n    }\n\n    void heapify(int[] nums, int n, int i) {\n        int largest = i;\n        int left = 2 * i + 1;\n        int right = 2 * i + 2;\n\n        if (left < n && nums[left] > nums[largest])\n            largest = left;\n\n        if (right < n && nums[right] > nums[largest])\n            largest = right;\n\n        if (largest != i) {\n            // BUG: incorrect swap operation\n           nums[i] = nums[largest];\n            nums[largest] = nums[i];\n            heapify(nums, n, largest);\n        }\n    }\n\n    boolean isHeapValid(int[] nums) {\n        for (int i = nums.length - 1; i >= 0; --i)\n            if (!isHeapPropertySatisfied(nums, i))\n                return false;\n        return true;\n    }\n\n    boolean isHeapPropertySatisfied(int[] nums, int i) {\n        int left = 2 * i + 1;\n        int right = 2 * i + 2;\n\n        if (left >= nums.length && right >= nums.length)\n            return true;\n\n        if (left >= nums.length)\n            return nums[i] >= nums[right];\n\n        return nums[i] >= nums[left] && nums[i] >= nums[right];\n    }\n}",
+    "python": "class Solution:\n\tdef solve(self, nums: list[int]) -> bool:\n\t    for i in range(len(nums) // 2 - 1, -1, -1):\n\t        self.heapify(nums, len(nums), i)\n\t    return self.isHeapValid(nums)\n\n\tdef heapify(self, nums: list[int], n: int, i: int) -> None:\n\t    largest = i\n\t    left = 2 * i + 1\n\t    right = 2 * i + 2\n\n\t    if left < n and nums[left] > nums[largest]:\n\t        largest = left\n\n\t    if right < n and nums[right] > nums[largest]:\n\t        largest = right\n\n\t    if largest != i:\n\t        # BUG: incorrect swap operation\n\t       nums[i] = nums[largest]\n\t        nums[largest] = nums[i]\n\t        self.heapify(nums, n, largest)\n\n\tdef isHeapValid(self, nums: list[int]) -> bool:\n\t    for i in range(len(nums) - 1, -1, -1):\n\t        if not self.isHeapPropertySatisfied(nums, i):\n\t            return False\n\t    return True\n\n\tdef isHeapPropertySatisfied(self, nums: list[int], i: int) -> bool:\n\t    left = 2 * i + 1\n\t    right = 2 * i + 2\n\n\t    if left >= len(nums) and right >= len(nums):\n\t        return True\n\n\t    if left >= len(nums):\n\t        return nums[i] >= nums[right]\n\n\t    return nums[i] >= nums[left] and nums[i] >= nums[right]\n",
+    "javascript": "function solve(nums) {\n\tfor (let i = Math.floor(nums.length / 2) - 1; i >= 0; --i)\n\t    this.heapify(nums, nums.length, i);\n\treturn this.isHeapValid(nums);\n}\n\nheapify(nums, n, i) {\n\tlet largest = i;\n\tlet left = 2 * i + 1;\n\tlet right = 2 * i + 2;\n\n\tif (left < n && nums[left] > nums[largest])\n\t    largest = left;\n\n\tif (right < n && nums[right] > nums[largest])\n\t    largest = right;\n\n\tif (largest != i) {\n\t    // BUG: incorrect swap operation\n\t   nums[i] = nums[largest];\n\t    nums[largest] = nums[i];\n\t    this.heapify(nums, n, largest);\n\t}\n}\n\nisHeapValid(nums) {\n\tfor (let i = nums.length - 1; i >= 0; --i)\n\t    if (!this.isHeapPropertySatisfied(nums, i))\n\t        return false;\n\treturn true;\n}\n\nisHeapPropertySatisfied(nums, i) {\n\tlet left = 2 * i + 1;\n\tlet right = 2 * i + 2;\n\n\tif (left >= nums.length && right >= nums.length)\n\t    return true;\n\n\tif (left >= nums.length)\n\t    return nums[i] >= nums[right];\n\n\treturn nums[i] >= nums[left] && nums[i] >= nums[right];\n}"
+  },
+  "functionSignature": {
+    "cpp": "bool solve(vector<int>& nums);",
+    "java": "public boolean solve(int[] nums);",
+    "python": "def solve(self, nums: list[int]) -> bool",
+    "javascript": "var solve = function(nums);"
+  },
+  "solutions": {
+    "cpp": "class Solution {\npublic:\n    bool solve(vector<int>& nums) {\n        for (int i = nums.size() / 2 - 1; i >= 0; --i)\n            heapify(nums, nums.size(), i);\n        return isHeapValid(nums);\n    }\n\n    void heapify(vector<int>& nums, int n, int i) {\n        int largest = i;\n        int left = 2 * i + 1;\n        int right = 2 * i + 2;\n\n        if (left < n && nums[left] > nums[largest])\n            largest = left;\n\n        if (right < n && nums[right] > nums[largest])\n            largest = right;\n\n        if (largest != i) {\n            swap(nums[i], nums[largest]);\n            heapify(nums, n, largest);\n        }\n    }\n\n    bool isHeapValid(vector<int>& nums) {\n        for (int i = nums.size() - 1; i >= 0; --i)\n            if (!isHeapPropertySatisfied(nums, i))\n                return false;\n        return true;\n    }\n\n    bool isHeapPropertySatisfied(vector<int>& nums, int i) {\n        int left = 2 * i + 1;\n        int right = 2 * i + 2;\n\n        if (left >= nums.size() && right >= nums.size())\n            return true;\n\n        if (left >= nums.size())\n            return nums[i] >= nums[right];\n\n        return nums[i] > nums[left] && nums[i] > nums[right];\n    }\n};\n\nint main() {\n    Solution solution;\n    vector<int> nums = {3, 2, 1, 3, 2, 6, 4, 1, 3};\n    cout << solution.solve(nums) << endl;\n}\n",
+    "java": "public class Solution {\npublic:\n    boolean solve(int[] nums) {\n        for (int i = nums.length / 2 - 1; i >= 0; --i)\n            heapify(nums, nums.length, i);\n        return isHeapValid(nums);\n    }\n\n    void heapify(int[] nums, int n, int i) {\n        int largest = i;\n        int left = 2 * i + 1;\n        int right = 2 * i + 2;\n\n        if (left < n && nums[left] > nums[largest])\n            largest = left;\n\n        if (right < n && nums[right] > nums[largest])\n            largest = right;\n\n        if (largest != i) {\n            swap(nums[i], nums[largest]);\n            heapify(nums, n, largest);\n        }\n    }\n\n    boolean isHeapValid(int[] nums) {\n        for (int i = nums.length - 1; i >= 0; --i)\n            if (!isHeapPropertySatisfied(nums, i))\n                return false;\n        return true;\n    }\n\n    boolean isHeapPropertySatisfied(int[] nums, int i) {\n        int left = 2 * i + 1;\n        int right = 2 * i + 2;\n\n        if (left >= nums.length && right >= nums.length)\n            return true;\n\n        if (left >= nums.length)\n            return nums[i] >= nums[right];\n\n        return nums[i] > nums[left] && nums[i] > nums[right];\n    }\n\n    public static void main(String[] args) {\n        Solution solution = new Solution();\n        int[] nums = {3, 2, 1, 3, 2, 6, 4, 1, 3};\n        System.out.println(solution.solve(nums));\n    }\n}",
+    "python": "class Solution:\n\tdef solve(self, nums: list[int]) -> bool:\n\t    for i in range(len(nums) // 2 - 1, -1, -1):\n\t        self.heapify(nums, len(nums), i)\n\t    return self.isHeapValid(nums)\n\n\tdef heapify(self, nums: list[int], n: int, i: int) -> None:\n\t    largest = i\n\t    left = 2 * i + 1\n\t    right = 2 * i + 2\n\n\t    if left < n and nums[left] > nums[largest]:\n\t        largest = left\n\n\t    if right < n and nums[right] > nums[largest]:\n\t        largest = right\n\n\t    if largest != i:\n\t        # Correct swap operation\n\t        nums[i], nums[largest] = nums[largest], nums[i]\n\t        self.heapify(nums, n, largest)\n\n\tdef isHeapValid(self, nums: list[int]) -> bool:\n\t    for i in range(len(nums) - 1, -1, -1):\n\t        if not self.isHeapPropertySatisfied(nums, i):\n\t            return False\n\t    return True\n\n\tdef isHeapPropertySatisfied(self, nums: list[int], i: int) -> bool:\n\t    left = 2 * i + 1\n\t    right = 2 * i + 2\n\n\t    if left >= len(nums) and right >= len(nums):\n\t        return True\n\n\t    if left >= len(nums):\n\t        return nums[i] >= nums[right]\n\n\t    return nums[i] > nums[left] and nums[i] > nums[right]\n\n\nif __name__ == '__main__':\n\tnums = [3, 2, 1, 3, 2, 6, 4, 1, 3]\n\tsolution = Solution()\n\tprint(solution.solve(nums))\n",
+    "javascript": "class Solution {\n\tsolve(nums) {\n\t\tfor (let i = Math.floor(nums.length / 2) - 1; i >= 0; --i)\n\t\t    this.heapify(nums, nums.length, i);\n\t\treturn this.isHeapValid(nums);\n\t}\n\n\theapify(nums, n, i) {\n\t\tlet largest = i;\n\t\tlet left = 2 * i + 1;\n\t\tlet right = 2 * i + 2;\n\n\t\tif (left < n && nums[left] > nums[largest])\n\t\t    largest = left;\n\n\t\tif (right < n && nums[right] > nums[largest])\n\t\t    largest = right;\n\n\t\tif (largest != i) {\n\t\t\t// Correct swap operation\n\t\ttnums[i], nums[largest] = nums[largest], nums[i]\n\t\tthis.heapify(nums, n, largest);\n\t}\n}\n\n\tisHeapValid(nums) {\n\t\tfor (let i = nums.length - 1; i >= 0; --i)\n\t\t    if (!this.isHeapPropertySatisfied(nums, i))\n\t\t        return false;\n\t\treturn true;\n\t}\n\n\tisHeapPropertySatisfied(nums, i) {\n\t\tlet left = 2 * i + 1;\n\t\tlet right = 2 * i + 2;\n\n\t\tif (left >= nums.length && right >= nums.length)\n\t\t    return true;\n\n\t\tif (left >= nums.length)\n\t\t    return nums[i] >= nums[right];\n\n\t\treturn nums[i] > nums[left] && nums[i] > nums[right];\n\t}\n\n}\n\nconsole.log(new Solution().solve([3, 2, 1, 3, 2, 6, 4, 1, 3]));"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "1\n",
+      "output": "1\n",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "2\n",
+      "output": "2\n",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

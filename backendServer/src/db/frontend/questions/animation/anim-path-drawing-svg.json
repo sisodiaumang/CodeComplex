@@ -1,0 +1,64 @@
+{
+  "_id": "6ffe6ff05ecbe04b268fee6a",
+  "title": "Path Drawing SVG",
+  "slug": "anim-path-drawing-svg",
+  "difficulty": "Medium",
+  "topics": [
+    "ANIMATION"
+  ],
+  "statement": {
+    "markdown": "heading: ## Draw a Path\ntext: Create a simple animation using SVG and JavaScript. The animation should draw a path from the top left to the bottom right of a 400x400 square."
+  },
+  "constraints": [
+    "The animation should last for 3 seconds.",
+    "The path should be drawn from the top left to the bottom right of the square.",
+    "The animation should repeat indefinitely.",
+    "Use a max of 50 SVG paths to draw the animation."
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "html": "<!-- index.html -->\n<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Path Drawing SVG</title>\n    <link rel=\"stylesheet\" href=\"styles.css\">\n</head>\n<body>\n    <svg id=\"my-svg\" width=\"400\" height=\"400\"></svg>\n    <script src=\"script.js\"></script>\n</body>\n</html>",
+    "css": "// styles.css\n@tailwind base;\n@tailwind components;\n@tailwind utilities;",
+    "javascript": "// script.js\nconst svg = document.getElementById('my-svg');\nconst path = document.createElementNS('http://www.w3.org/2000/svg', 'path');\npath.setAttribute('d', 'M0 0');\npath.setAttribute('stroke', 'black');\npath.setAttribute('stroke-width', '2');\npaper.js // missing library for paperjs"
+  },
+  "gradingCriteria": [
+    {
+      "id": "1",
+      "description": "Animation lasts for 3 seconds",
+      "weight": 20
+    },
+    {
+      "id": "2",
+      "description": "Path is drawn from top left to bottom right",
+      "weight": 30
+    },
+    {
+      "id": "3",
+      "description": "Animation repeats indefinitely",
+      "weight": 20
+    },
+    {
+      "id": "4",
+      "description": "Animation uses a max of 50 SVG paths",
+      "weight": 30
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "html",
+      "css",
+      "javascript"
+    ],
+    "referenceSolution": "// script.js\nimport Paper from 'paper.js';\nPaper.init();\nconst paper = new Paper('my-svg');\nconst points = [];\npaper.view.draw = function () {\n    if (points.length < 50) {\n        points.push({x: Math.random() * 400, y: Math.random() * 400});\n        const paths = points.map((point, i) => {\n            return `M ${point.x} ${point.y}`;\n        }).join('\\n');\n        paper.project.activeLayer.item(0).setAttribute('d', paths);\n    } else {\n        paper.project.activeLayer.clear();\n        points = [];\n    }\n}\n// Update the path every 20ms\nsetInterval(paper.view.draw, 20)"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

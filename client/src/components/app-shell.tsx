@@ -7,6 +7,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Swords,
   Trophy,
+  Award,
   History,
   Users,
   Bell,
@@ -19,6 +20,9 @@ import {
   Moon,
   Monitor,
   Shield,
+  AlertTriangle,
+  AlertCircle,
+  CheckCircle2,
 } from "lucide-react";
 import { api } from "@/lib/api";
 import { unwrapList, type AppNotification } from "@/lib/types";
@@ -26,13 +30,15 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/stores/auth-store";
 import { useTheme } from "@/stores/theme-store";
 import { useSocketNotifications } from "@/stores/socket-store";
-import { Avatar, Spinner } from "@/components/ui";
+import { Avatar, Spinner, Alert, Button, Input } from "@/components/ui";
 import { LogoMark } from "@/components/logo";
 import { ThemeToggle } from "./ThemeToggle";
+import { AchievementToastsContainer } from "@/components/AchievementToast";
 
 const NAV = [
   { href: "/battle", label: "Battle", icon: Swords },
   { href: "/leaderboard", label: "Leaderboard", icon: Trophy },
+  { href: "/achievements", label: "Achievements", icon: Award },
   { href: "/matches", label: "Matches", icon: History },
   { href: "/friends", label: "Friends", icon: Users },
 ] as const;
@@ -135,6 +141,7 @@ function UserMenu() {
   const queryClient = useQueryClient();
   const { user, setUser } = useAuth();
   const [open, setOpen] = useState(false);
+  const [reportModalOpen, setReportModalOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -196,6 +203,16 @@ function UserMenu() {
             <Settings className="size-4 text-text-muted" />
             Settings
           </Link>
+          <button
+            onClick={() => {
+              setOpen(false);
+              setReportModalOpen(true);
+            }}
+            className="flex w-full items-center gap-2.5 px-3 py-2 text-sm text-text hover:bg-surface-2 text-left"
+          >
+            <AlertTriangle className="size-4 text-text-muted" />
+            Report Issue
+          </button>
           <div className="my-1 border-t border-border" />
           <button
             onClick={() => {
@@ -209,6 +226,8 @@ function UserMenu() {
           </button>
         </div>
       )}
+
+      <ReportSiteModal isOpen={reportModalOpen} onClose={() => setReportModalOpen(false)} />
     </div>
   );
 }
@@ -335,6 +354,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen bg-bg">
+      <AchievementToastsContainer />
       {/* ── Top navbar (all screens) ── */}
       <header className="fixed inset-x-0 top-0 z-30 h-14 border-b border-sidebar-border bg-sidebar-bg">
         <div className="mx-auto flex h-full max-w-7xl items-center justify-between gap-4 px-4">
@@ -383,6 +403,156 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       <main className="min-h-screen px-4 pb-12 pt-20 sm:px-6 md:px-8">
         <div className="mx-auto max-w-7xl">{children}</div>
       </main>
+    </div>
+  );
+}
+
+function ReportSiteModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+  const [reason, setReason] = useState("");
+  const [details, setDetails] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState("");
+
+  if (!isOpen) return null;
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+    try {
+      await api("/user/report", {
+        method: "POST",
+        body: {
+          targetType: "SITE",
+          reason,
+          details,
+        },
+      });
+      setSuccess(true);
+    } catch (err: any) {
+      setError(err?.message || "Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-55 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 transition-all duration-300">
+      <div className="bg-surface border border-border shadow-2xl rounded-2xl max-w-md w-full overflow-hidden flex flex-col relative animate-scaleUp select-text">
+        {/* Close button */}
+        <button
+          onClick={() => {
+            onClose();
+            setReason("");
+            setDetails("");
+            setSuccess(false);
+            setError("");
+          }}
+          className="absolute top-4 right-4 text-text-muted hover:text-text hover:bg-surface-2 p-1.5 rounded-lg transition-colors cursor-pointer"
+          title="Close"
+        >
+          <X className="size-4" />
+        </button>
+
+        {/* Header */}
+        <div className="p-6 border-b border-border bg-surface-2/30 flex items-center gap-4">
+          <div className="p-3 bg-primary/10 border border-primary/20 text-primary rounded-xl shadow-inner">
+            <AlertTriangle className="size-5" />
+          </div>
+          <div>
+            <h2 className="text-md font-bold tracking-tight text-text">
+              Report an Issue
+            </h2>
+            <p className="text-[11px] text-text-muted mt-0.5 leading-relaxed">
+              Report bugs, performance issues, or suggest site feedback directly to the owners.
+            </p>
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="p-6 space-y-5">
+          {success ? (
+            <div className="text-center py-6 space-y-4">
+              <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-500">
+                <CheckCircle2 className="size-6" />
+              </div>
+              <div className="space-y-1">
+                <h3 className="text-sm font-black text-text uppercase tracking-wider font-mono">Report Submitted</h3>
+                <p className="text-xs text-text-muted max-w-xs mx-auto leading-relaxed">
+                  Thank you for your feedback! The site owners have been notified and will look into this issue.
+                </p>
+              </div>
+              <Button
+                onClick={() => {
+                  onClose();
+                  setReason("");
+                  setDetails("");
+                  setSuccess(false);
+                  setError("");
+                }}
+                className="h-9 px-6 text-xs font-bold bg-primary text-white border-none"
+              >
+                Close Window
+              </Button>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {error && (
+                <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-500 text-xs rounded-xl flex items-center gap-2">
+                  <AlertCircle className="size-4 shrink-0" />
+                  <span>{error}</span>
+                </div>
+              )}
+
+              <Input
+                label="Subject / Reason"
+                name="reason"
+                required
+                value={reason}
+                onChange={(e) => setReason(e.target.value)}
+                placeholder="e.g. Broken links on matches tab, layout bug..."
+                className="w-full"
+              />
+
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[15px] font-medium text-text">Details</label>
+                <textarea
+                  required
+                  rows={4}
+                  value={details}
+                  onChange={(e) => setDetails(e.target.value)}
+                  placeholder="Please describe the issue in detail..."
+                  className="w-full rounded-lg border border-border bg-surface px-4 py-2 text-[15px] text-text focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 placeholder:text-text-faint transition-colors"
+                />
+              </div>
+
+              <div className="flex justify-end gap-3 pt-2">
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={() => {
+                    onClose();
+                    setReason("");
+                    setDetails("");
+                    setError("");
+                  }}
+                  className="h-9 text-xs"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  loading={loading}
+                  className="h-9 text-xs bg-primary text-white border-none"
+                >
+                  Submit Report
+                </Button>
+              </div>
+            </form>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

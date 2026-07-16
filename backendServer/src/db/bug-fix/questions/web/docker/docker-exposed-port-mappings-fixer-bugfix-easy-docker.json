@@ -1,0 +1,143 @@
+{
+  "title": "Docker Exposed Port Mappings Fixer",
+  "subCategory": "Docker port mapping",
+  "statement": {
+    "markdown": "Given a list of Docker containers with their exposed port mappings, fix the function to correctly identify and exclude any duplicate mappings. The function should return a list of unique port mappings in the format 'container_name:port'.",
+    "inputFormat": "A list of Docker containers with their exposed port mappings, where each container is an object with 'name' and 'ports' properties, and 'ports' is a list of port numbers.",
+    "outputFormat": "A list of unique port mappings in the format 'container_name:port'.",
+    "notes": "The function should handle cases where a container has no exposed ports.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 100,
+        "description": "Number of containers"
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 0,
+        "max": 100,
+        "description": "Number of ports per container"
+      }
+    ],
+    "examples": [
+      {
+        "input": "[{\"name\":\"container1\",\"ports\":[8080, 8081]}, {\"name\":\"container2\",\"ports\":[8080, 8082]}, {\"name\":\"container3\",\"ports\":[8083]}]",
+        "output": "container1:8080\ncontainer1:8081\ncontainer2:8080\ncontainer2:8082\ncontainer3:8083",
+        "explanation": "The function should return a list of unique port mappings. Since container1 and container2 both expose port 8080, it should only appear once in the output."
+      },
+      {
+        "input": "[{\"name\":\"container1\",\"ports\":[8080, 8081]}]",
+        "output": "container1:8080\ncontainer1:8081",
+        "explanation": "If a container has no exposed ports, it should be included in the output with an empty list of ports."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DOCKER"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "docker"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the Set data structure to keep track of unique port mappings."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial for Docker Exposed Port Mappings Fixer",
+    "intuition": "The key to solving this problem is to use a Set to keep track of unique port mappings.",
+    "bruteForce": "One possible approach is to iterate over each container's ports and add them to the output list, but this will result in duplicate port mappings.",
+    "betterSolution": "Using a Set to keep track of unique port mappings will eliminate duplicates and produce the correct output.",
+    "optimalSolution": "Iterate over each container's ports, add each port to the Set, and then convert the Set to a list of unique port mappings.",
+    "proofOfCorrectness": "The Set data structure automatically eliminates duplicates, ensuring that the output list contains only unique port mappings.",
+    "dryRun": "Example dry run to illustrate the optimal solution",
+    "commonMistakes": [
+      "Not using a Set to keep track of unique port mappings",
+      "Not converting the Set to a list of port mappings"
+    ],
+    "timeComplexity": "O(n*m)",
+    "spaceComplexity": "O(n*m)"
+  },
+  "starterCode": {
+    "javascript": "function exposedPortMappings(containers) {\n  // YOUR CODE HERE\n}\n",
+    "python": "class Solution:\n  def exposed_port_mappings(self, containers):\n    # YOUR CODE HERE\n"
+  },
+  "buggyStarterCode": {
+    "javascript": "function exposedPortMappings(containers) {\n  let result = [];\n  for (let container of containers) {\n    for (let port of container.ports) {\n      result.push(`${container.name}:${port}`);\n    }\n  }\n  return result;\n}",
+    "python": "class Solution:\n  def exposed_port_mappings(self, containers):\n    result = []\n    for container in containers:\n      for port in container.ports:\n        result.append(f'{container.name}:{port}')\n    return result"
+  },
+  "functionSignature": {
+    "javascript": "var exposedPortMappings = function(containers);",
+    "python": "def exposed_port_mappings(self, containers: List[Dict[str, List[int]]]) -> List[str]:"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction exposedPortMappings(containers) {\n  let result = new Set();\n  for (let container of containers) {\n    for (let port of container.ports) {\n      result.add(`${container.name}:${port}`);\n    }\n  }\n  return Array.from(result);\n}\n",
+    "python": "class Solution:\n  def exposed_port_mappings(self, containers):\n    result = set()\n    for container in containers:\n      for port in container.ports:\n        result.add(f'{container.name}:{port}')\n    return list(result)"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "[{\"name\":\"container1\",\"ports\":[8080, 8081]}, {\"name\":\"container2\",\"ports\":[8080, 8082]}, {\"name\":\"container3\",\"ports\":[8083]}]",
+      "output": "container1:8080\ncontainer1:8081\ncontainer2:8080\ncontainer2:8082\ncontainer3:8083",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "[{\"name\":\"container1\",\"ports\":[8080, 8081]}]",
+      "output": "container1:8080\ncontainer1:8081",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "_id": "6ea143902f71452bdda81e25",
+  "slug": "docker-exposed-port-mappings-fixer-bugfix-easy-docker",
+  "mode": "bug_fix",
+  "category": "DOCKER",
+  "difficulty": "Easy"
+}

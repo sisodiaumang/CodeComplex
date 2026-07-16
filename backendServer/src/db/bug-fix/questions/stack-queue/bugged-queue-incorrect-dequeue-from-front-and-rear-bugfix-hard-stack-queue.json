@@ -1,0 +1,160 @@
+{
+  "_id": "ae112614302ff3cbce502bc2",
+  "title": "Bugged Queue: Incorrect Dequeue from Front and Rear",
+  "slug": "bugged-queue-incorrect-dequeue-from-front-and-rear-bugfix-hard-stack-queue",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "QUEUE",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "queue"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "A Queue has been implemented as a Doubly Linked List. Your task is to fix the dequeue operation at both the front and rear ends of the queue. The buggy implementation provided removes the element at the wrong end.",
+    "inputFormat": "The input will be in the following format:\nsize of elements\nx1 x2 x3 x4 ... xn\n",
+    "outputFormat": "The output should be the dequeued elements in the correct order and any output in the last line if applicable.",
+    "notes": "The input will not contain leading zeros.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "sizeOfElements",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of elements in the input"
+      },
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 1000,
+        "description": "Size of elements in the input"
+      }
+    ],
+    "examples": [
+      {
+        "input": "5\n1 2 3 4 5\n",
+        "output": "1 2 3 4 5\n",
+        "explanation": "The elements in the order of dequeue."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "You should correctly implement the dequeue operation to remove the front and rear elements."
+    }
+  ],
+  "editorial": {
+    "title": "Bugged Queue: Incorrect Dequeue from Front and Rear",
+    "intuition": "To dequeue an element, we need to check at the front and rear. If the queue is not empty at the front, then remove the front element. Otherwise, remove the element at the rear. It is important to maintain the head and tail pointers correctly.",
+    "bruteForce": "Remove the node at the front end, update head as required, and repeat for the rear end.",
+    "betterSolution": "",
+    "optimalSolution": "optimal Solution details.",
+    "proofOfCorrectness": "The correctness of the solution can be proven by checking whether the head and tail pointers are updated correctly.",
+    "dryRun": "Check if the head pointer points to the correct node after removing the front element. Repeat for the rear end.",
+    "commonMistakes": [
+      "not updating head pointer",
+      "not checking for empty queue"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "class Node {\npublic:\n  int data;\n  Node* next;\n  Node* prev;\n};\n\nclass Solution {\npublic:\n  Node* head;\n  Node* tail;\n  void add(int data);\n  int poll();\n};\n\nvoid Solution :: add(int data) {\n  // Add the data to the tail of the queue\n  Node* node = new Node();\n  node->data = data;\n  if (head == NULL) {\n    head = node;\n  } else {\n    tail->next = node;\n    node->prev = tail;\n\n    tail = node;\n  }\n}\n",
+    "java": "class Node {\npublic:\n  int data;\n  Node* next;\n  Node* prev;\n};\nclass Solution {\npublic:\n  Node* head;\n  Node* tail;\n  void add(int data);\n  int poll();\n};\n\nvoid Solution :: add(int data) {\n  // Add the data to the tail of the queue\n  Node* node = new Node();\n  node->data = data;\n  if (head == NULL) {\n    head = node;\n  } else {\n    tail->next = node;\n    node->prev = tail;\n\n    tail = node;\n  }\n}\n",
+    "python": "class Node:\n  def __init__(self, data):\n    self.data = data\n    self.next = None\n    self.prev = None\n\nclass Solution:\n  def __init__(self):\n    self.head = None\n    self.tail = None\n\n  def add(self, data):\n    # Add the data to the tail of the queue\n    node = Node(data)\n    if self.head == None:\n      self.head = node\n    else:\n      self.tail.next = node\n      node.prev = self.tail\n      self.tail = node\n\n",
+    "javascript": "class Node {\n  constructor(data) {\n    this.data = data;\n    this.next = null;\n    this.prev = null;\n  }\n}\n\nclass Solution {\n  constructor() {\n    this.head = null;\n    this.tail = null;\n  }\n\n  add(data) {\n    // Add the data to the tail of the queue\n    const node = new Node(data);\n    if (this.head == null) {\n      this.head = node;\n    } else {\n      this.tail.next = node;\n      node.prev = this.tail;\n      this.tail = node;\n    }\n  }\n\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "void Solution :: poll() {\n  if (head == NULL) {\n    cout  \"poll: queue is empty\"\n    return;\n  }\n  if (head->next == NULL) {\n    cout  \"poll: \"  head->data  endl;\n    Node* node = head;\n    head = head->next;\n    if (head == NULL) {\n      tail = head;\n    }\n    delete node;\n    return;\n  }\n\n  cout  \"poll: \"  tail->data  endl;\n  Node* node = tail;\n  tail = tail->prev;\n  if (tail == NULL) {\n    head = tail;\n  }\n  delete node;\n}\n",
+    "java": "void Solution :: poll() {\n  if (head == null) {\n    System.out.println(\"poll: queue is empty\");\n    return;\n  }\n  if (head.next == null) {\n    System.out.println(\"poll: \" + head.data);\n    Node node = head;\n    head = head.next;\n    if (head == null) {\n      tail = head;\n    }\n    node = null;\n    return;\n  }\n\n  System.out.println(\"poll: \" + tail.data);\n  Node node = tail;\n  tail = tail.prev;\n  if (tail == null) {\n    head = tail;\n  }\n  node = null;\n}\n",
+    "python": "def poll(self):\n  if self.head is None:\n    print(\"poll: queue is empty\")\n    return\n  if self.head.next is None:\n    print(\"poll: \" + str(self.head.data))\n    node = self.head\n    self.head = self.head.next\n    if self.head is None:\n      self.tail = self.head\n    self.head = None\n    del node\n    return\n\n  print(\"poll: \" + str(self.tail.data))\n  node = self.tail\n  self.tail = self.tail.prev\n  if self.tail is None:\n    self.head = self.tail\n  self.tail = None\n  del node\n",
+    "javascript": "poll() {\n  if (this.head == null) {\n    console.log(\"poll: queue is empty\");\n    return;\n  }\n  if (this.head.next == null) {\n    console.log(\"poll: \" + this.head.data);\n    let node = this.head;\n    this.head = this.head.next;\n    if (this.head == null) {\n      this.tail = this.head;\n    }\n    node = null;\n    return;\n  }\n\n  console.log(\"poll: \" + this.tail.data);\n  let node = this.tail;\n  this.tail = this.tail.prev;\n  if (this.tail == null) {\n    this.head = this.tail;\n  }\n  node = null;\n}"
+  },
+  "functionSignature": {
+    "cpp": "void Solution :: poll();",
+    "java": "void Solution :: poll();",
+    "python": "def poll(self):",
+    "javascript": "poll()"
+  },
+  "solutions": {
+    "cpp": "class Solution {\n  public:\n    struct Node {\n      int data;\n      Node* next;\n      Node* prev;\n    };\n\n    Node* head;\n    Node* tail;\n\n    void add(int data) {\n      // Add the data to the tail of the queue\n      Node* node = new Node();\n      node->data = data;\n      if (head == NULL) {\n        head = node;\n        tail = node;\n      } else {\n        tail->next = node;\n        node->prev = tail;\n\n        tail = node;\n      }\n    }\n\n    int poll() {\n      if (head == NULL) {\n        cout  \"poll: queue is empty\"\n        return -1;\n      }\n      if (head->next == NULL) {\n        int data = head->data;\n        Node* node = head;\n        head = head->next;\n        if (head == NULL) {\n          tail = head;\n        }\n        delete node;\n        return data;\n      }\n\n      int data = tail->data;\n      Node* node = tail;\n      tail = tail->prev;\n      if (tail == NULL) {\n        head = tail;\n      }\n      delete node;\n      return data;\n    }\n\n  public:\n    int main() {\n      Solution s;\n      int n,\n         x;\n      cin>>n;\n      while (n--)\n        cin>>x,\n           s.add(x);\n      while (s.head != NULL)\n        cout<<s.poll()<<' ',\n           s.poll();\n      cout<<endl;\n      return 0;\n    }\n};\n",
+    "java": "class Solution {\n  public:\n    static class Node {\n      int data;\n      Node next;\n      Node prev;\n    };\n\n    static Node head;\n    static Node tail;\n\n    public static void add(int data) {\n      // Add the data to the tail of the queue\n      Node node = new Node();\n      node.data = data;\n      if (head == null) {\n        head = node;\n        tail = node;\n      } else {\n        tail.next = node;\n        node.prev = tail;\n\n        tail = node;\n      }\n    }\n\n    public static int poll() {\n      if (head == null) {\n        System.out.println(\"poll: queue is empty\");\n        return -1;\n      }\n      if (head.next == null) {\n        int data = head.data;\n        Node node = head;\n        head = head.next;\n        if (head == null) {\n          tail = head;\n        }\n        node = null;\n        return data;\n      }\n\n      int data = tail.data;\n      Node node = tail;\n      tail = tail.prev;\n      if (tail == null) {\n        head = tail;\n      }\n      node = null;\n      return data;\n    }\n\n  public static void main(String[] args) {\n    Solution s = new Solution();\n    Scanner in = new Scanner(System.in);\n    int n = in.nextInt();\n    while (n-- > 0) {\n      int data = in.nextInt();\n      s.add(data);\n    }\n    while (s.head != null) {\n      System.out.print(s.poll() + \" \");\n      s.poll();\n    }\n    System.out.println();\n  }\n}",
+    "python": "class Solution:\n  def __init__(self):\n    self.head = None\n    self.tail = None\n\n  def add(self, data):\n    # Add the data to the tail of the queue\n    node = Node(data)\n    if self.head is None:\n      self.head = node\n      self.tail = node\n    else:\n      self.tail.next = node\n      node.prev = self.tail\n      self.tail = node\n\n  def poll(self):\n    if self.head is None:\n      print(\"poll: queue is empty\")\n      return -1\n    if self.head.next is None:\n      data = self.head.data\n      node = self.head\n      self.head = self.head.next\n      if self.head is None:\n        self.tail = self.head\n      self.head = None\n      del node\n      return data\n\n    data = self.tail.data\n    node = self.tail\n    self.tail = self.tail.prev\n    if self.tail is None:\n      self.head = self.tail\n    self.tail = None\n    del node\n    return data\n\nif __name__ == '__main__':\n  s = Solution()\n  n = int(input())\n  while n:\n    s.add(int(input()))\n    n -= 1\n  while s.head:\n    print(s.poll(), end=\" \")\n    s.poll()\n  print()",
+    "javascript": "class Solution {\n  constructor() {\n    this.head = null;\n    this.tail = null;\n  }\n\n  add(data) {\n    // Add the data to the tail of the queue\n    const node = new Node(data);\n    if (this.head == null) {\n      this.head = node;\n      this.tail = node;\n    } else {\n      this.tail.next = node;\n      node.prev = this.tail;\n      this.tail = node;\n    }\n  }\n\n  poll() {\n    if (this.head == null) {\n      console.log(\"poll: queue is empty\");\n      return -1;\n    }\n    if (this.head.next == null) {\n      const data = this.head.data;\n      const node = this.head;\n      this.head = this.head.next;\n      if (this.head == null) {\n        this.tail = this.head;\n      }\n      node = null;\n      return data;\n    }\n\n    const data = this.tail.data;\n    const node = this.tail;\n    this.tail = this.tail.prev;\n    if (this.tail == null) {\n      this.head = this.tail;\n    }\n    node = null;\n    return data;\n  }\n\n  static main() {\n    const s = new Solution();\n    const readline = require(\"readline\");\n    const rl = readline.createInterface({ input: process.stdin, output: process.stdout });\n    let n;\n    rl.question(\"\", (input) => {\n      n = parseInt(input);\n      let i = 0;\n      function readNext() {\n        if (i < n) {\n          s.add(parseInt(rl.question(\"\"),\n          (input) => {\n            i++;\n            readNext();\n          }\n          ));\n        } else {\n          rl.close();\n        }\n      }\n      readNext();\n    });\n    rl.on(\"close\", () => {\n      while (s.head) {\n        process.stdout.write(s.poll() + \" \");\n        s.poll();\n      }\n      console.log();\n    });\n  }\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2000,
+    "memoryLimit": 65536,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5 1 2 3 4 5",
+      "output": "1 2 3 4 5",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "10 1 2 3 4 5 6 7 8 9 10",
+      "output": "1 2 3 4 5 6 7 8 9 10",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

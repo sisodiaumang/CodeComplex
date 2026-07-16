@@ -1,0 +1,175 @@
+{
+  "_id": "bb23a2f735ac2ae588fab105",
+  "title": "Recover Max Heap After Element Removal",
+  "slug": "recover-max-heap-after-element-removal-bugfix-medium-heaps",
+  "difficulty": "Medium",
+  "category": "DSA",
+  "subCategory": "HEAP",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [
+      "bug-fix"
+    ],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "heap"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "A max heap is a complete binary tree where each node is greater than its children. Given an array representing a max heap and the index of an element to be removed, restore the max heap. The array is 0-indexed, assuming the index of the root node is 0.",
+    "inputFormat": "The first line contains an integer n representing the number of elements in the array. The next line contains n space-separated integers representing the elements in the array. The last input is the index of the element to be removed.",
+    "outputFormat": "The output contains the restored max heap, each element on a separate line.",
+    "notes": "When an element is removed, the max heap property must be maintained. You can use any algorithm to restore the heap.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      },
+      {
+        "variable": "removeIdx",
+        "type": "integer",
+        "min": 0,
+        "max": 10000,
+        "description": "Index of element to be removed"
+      }
+    ],
+    "examples": [
+      {
+        "input": "6\n10 4 5 8 6 11\n2",
+        "output": "10\n8\n11\n5\n6\n4",
+        "explanation": "Restore the max heap after removing the element at index 2 (5 in the array)."
+      },
+      {
+        "input": "3\n7 3 9\n0",
+        "output": "9\n7\n3",
+        "explanation": "Restore the max heap after removing the element at index 0 (7 in the array)."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text"
+    },
+    {
+      "order": 2,
+      "text": "Second hint text"
+    },
+    {
+      "order": 3,
+      "text": "Third hint text"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(n * log n)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\n\tpublic:\n\t\tvoid solve(vector<int>& nums, int removeIdx);\n};",
+    "java": "public class Solution {\n\tpublic:\n\t\tvoid solve(int[] nums, int removeIdx);\n};",
+    "python": "class Solution:\n\tpass\n\tdef solve(self, nums: list[int], removeIdx: int):\n\tpass;",
+    "javascript": "class Solution {\n\tpublic:\n\t\tvoid solve(vector<int>& nums, int removeIdx);\n};"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\n\tpublic:\n\t\tvoid solve(vector<int>& nums, int removeIdx) {\n\t\t\tsort(nums.begin(), nums.end());\n\t\t\tswap(nums[removeIdx], nums.back());\n\t\t\tint left = 0, right = removeIdx;\n\t\t\twhile (left < right) {\n\t\t\t\tint mid = left + (right - left) / 2;\n\t\t\t\tif (nums[mid] > nums[removeIdx])\n\t\t\t\t\tleft = mid + 1;\n\t\t\t\telse\n\t\t\t\ttright = mid;\n\t\t\t}\n\t\t\t\n\t\t\t// BUG INTRODUCED HERE\n\t\t\tint idx = -1;\n\t\t\tfor (int i = 0; i <= removeIdx; ++i)\n\t\t\t\tif (nums[i] < nums[removeIdx])\n\t\t\t\ttidx = i;\n\t\t\t\n\t\t\tif (idx != -1) {\n\t\t\t\tswap(nums[idx], nums[removeIdx]);\n\t\t\ttleft = left; right = removeIdx - 1;\n\t\t\twhile (left <= right) {\n\t\t\t\tint mid = left + (right - left) / 2;\n\t\t\t\tif (nums[mid] < nums[removeIdx])\n\t\t\t\ttleft = mid + 1;\n\t\t\t\telse\n\t\t\t\ttright = mid - 1;\n\t\t\t}\n\t\t\t}\n\t\t}\n};",
+    "java": "public class Solution {\n\tpublic:\n\t\tvoid solve(int[] nums, int removeIdx) {\n\t\t\tArrays.sort(nums);\n\t\t\tswap(nums[removeIdx], nums[nums.length - 1]);\n\t\t\tint left = 0, right = removeIdx;\n\t\t\twhile (left < right) {\n\t\t\t\tint mid = left + (right - left) / 2;\n\t\t\t\tif (nums[mid] > nums[removeIdx])\n\t\t\t\t\tleft = mid + 1;\n\t\t\t\telse\n\t\t\t\ttright = mid;\n\t\t\t}\n\t\tt\n\t\t\t// BUG INTRODUCED HERE\n\t\tint idx = -1;\n\t\tfor (int i = 0; i <= removeIdx; ++i)\n\t\ttif (nums[i] < nums[removeIdx])\n\t\ttidx = i;\n\t\t\n\t\tif (idx != -1) {\n\t\ttswap(nums[idx], nums[removeIdx]);\n\t\ttleft = left; right = removeIdx - 1;\n\t\twhile (left <= right) {\n\t\ttint mid = left + (right - left) / 2;\n\t\ttif (nums[mid] < nums[removeIdx])\n\t\ttleft = mid + 1;\n\t\ttteles\n\t\ttright = mid - 1;\n\t\t}\n\t\t}\n\t\t}\n};",
+    "python": "class Solution:\n\tpass\n\tdef solve(self, nums: list[int], removeIdx: int):\n\t\tnums.sort()\n\t\tnums[removeIdx], nums[-1] = nums[-1], nums[removeIdx]\n\t\tleft = 0\n\t\tright = removeIdx\n\t\tpass\n\t\t# BUG INTRODUCED HERE\n\t\tidx = -1\n\t\tfor i in range(removeIdx + 1):\n\t\ttif nums[i] < nums[removeIdx]:\n\t\ttidx = i\n\t\tpass\n\t\tif idx != -1:\n\t\ttswap(nums[idx], nums[removeIdx])\n\t\tleft = left\n\t\tright = removeIdx - 1\n\t\tfor i in range(left, right + 1):\n\t\ttif nums[i] < nums[removeIdx]:\n\t\ttleft = i + 1\n\t\tpass\n\t\t",
+    "javascript": "class Solution {\n\tpublic:\n\t\tvoid solve(vector<int>& nums, int removeIdx) {\n\t\t\tsort(nums.begin(), nums.end());\n\t\t\tswap(nums[removeIdx], nums.back());\n\t\t\tint left = 0, right = removeIdx;\n\t\t\twhile (left < right) {\n\t\t\t\tint mid = left + (right - left) / 2;\n\t\t\t\tif (nums[mid] > nums[removeIdx])\n\t\t\t\t\tleft = mid + 1;\n\t\t\t\telse\n\t\t\t\ttright = mid;\n\t\t\t}\n\t\tt\n\t\tt// BUG INTRODUCED HERE\n\t\tlet idx = -1;\n\t\tfor (let i = 0; i <= removeIdx; ++i)\n\t\ttif (nums[i] < nums[removeIdx])\n\t\ttidx = i;\n\t\t\n\t\tif (idx != -1) {\n\t\ttswap(nums[idx], nums[removeIdx]);\n\t\ttleft = left; right = removeIdx - 1;\n\t\twhile (left <= right) {\n\t\ttint mid = left + (right - left) / 2;\n\t\ttif (nums[mid] < nums[removeIdx])\n\t\ttleft = mid + 1;\n\t\ttteles\n\t\ttright = mid - 1;\n\t\t}\n\t\t}\n\t\t}\n};"
+  },
+  "functionSignature": {
+    "cpp": "void solve(vector<int>& nums, int removeIdx);",
+    "java": "void solve(int[] nums, int removeIdx);",
+    "python": "def solve(self, nums: list[int], removeIdx: int):",
+    "javascript": "void solve(vector<int>& nums, int removeIdx);"
+  },
+  "solutions": {
+    "python": "class Solution:\n\tdef __init__(self):\n\t\tpass\n\ndef solve(self, nums: list[int], removeIdx: int):\n\t\tnums.remove(nums[removeIdx])\n\t\tleft, right = 0, len(nums) - 1\n\t\tpass\n\t\t# HEAPIFY UP\n\t\tdef heapify_up(self, nums: list[int], n: int, i: int):\n\t\t\twhile i > 0:\n\t\t\ttif nums[(i - 1) // 2] < nums[i]:\n\t\t\ttswap(nums[(i - 1) // 2], nums[i])\n\t\tt\ti = (i - 1) // 2\n\t\t\t\n\t\t# HEAPIFY DOWN\n\t\tdef heapify_down(self, nums: list[int], n: int, i: int):\n\t\ttwhile 2 * i + 1 <= n - 1:\n\t\ttif 2 * i + 2 <= n - 1:\n\t\ttif nums[2 * i + 1] < nums[2 * i + 2]:\n\t\tt\ti = 2 * i + 1\n\t\tteles\n\t\ttelse:\n\t\tt\ti = 2 * i + 2\n\t\ttelse:\n\t\tt\ti = 2 * i + 1\n\t\tt\n\t\tself.heapify_up(nums, n, n - 1)\n\t\tself.heapify_down(nums, n, 0)\n\t\treturn nums\n\nif __name__ == '__main__':\n\tpass\n\t# Read input from STDIN\n\tfrom sys import stdin\n\tlines = stdin.read().split('\\n')\n\tremoveIdx = int(lines[-1])\n\tpass\n\t# Create a Solution instance\n\tsolution = Solution()\n\tpass\n\t# Solve the problem\n\tresult = solution.solve([int(x) for line in lines[:-1] for x in line.split(' ')], removeIdx)\n\tpass\n\t# Print result\n\tpass\n\tprint('\\n'.join(map(str, result)))",
+    "cpp": "// Problem: Recover Max Heap After Element Removal\n// Time: O(n * log n)\n// Space: O(1)\n#include <iostream>\n#include <vector>\n#include <algorithm>\n\nclass Solution {\npublic:\n\tvoid solve(std::vector<int>& nums, int removeIdx) {\n\t\t// HEAPIFY UP\n\t\tvoid heapify_up(std::vector<int>& nums, int n, int i) {\n\t\t\twhile (i > 0) {\n\t\t\ttif (nums[(i - 1) / 2] < nums[i]) {\n\t\t\ttswap(nums[(i - 1) / 2], nums[i]);\n\t\tt\ti = (i - 1) / 2;\n\t\t\t}\n\t\t\t}\n\t\t\n\t\t// HEAPIFY DOWN\n\t\tvoid heapify_down(std::vector<int>& nums, int n, int i) {\n\t\ttwhile (2 * i + 1 <= n - 1) {\n\t\ttif (2 * i + 2 <= n - 1) {\n\t\ttif (nums[2 * i + 1] < nums[2 * i + 2]) {\n\t\tt\ti = 2 * i + 1;\n\t\tteles\n\t\ttelse:\n\t\tt\ti = 2 * i + 2;\n\t\ttelse:\n\t\tt\ti = 2 * i + 1;\n\t\tt\t}\n\t\tt\n\t\t\n\t\tnums.erase(nums.begin() + removeIdx);\n\tt\tleft = 0;\n\tright = nums.size() - 1;\n\tpass\n\t\t// HEAPIFY UP\n\t\theapify_up(nums, nums.size(), nums.size() - 1);\n\tt\n\tt// HEAPIFY DOWN\n\ttheapify_down(nums, nums.size(), 0);\n\tt\n\ttreturn nums;\n\t}\n};\n\nint main() {\n\tstd::ios_base::sync_with_stdio(false);\n\tstd::cin.tie(nullptr);\n\tstd::cout.tie(nullptr);\n\tpass\n\t// Read input from STDIN\n\tstd::vector<int> nums;\n\tint n, removeIdx;\n\tstd::cin >> n >> removeIdx;\n\tpass\n\tfor (int i = 0; i < n; ++i) {\n\ttint x;\n\tstd::cin >> x;\n\tnums.push_back(x);\n\t}\n\t\n\tsolution.solve(nums, removeIdx);\n\t\n\tstd::cout << std::endl;\n\treturn 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2000,
+    "memoryLimit": 128,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "6\n10 4 5 8 6 11\n2",
+      "output": "10\n8\n11\n5\n6\n4",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "3\n5 3 9\n0",
+      "output": "9\n5\n3",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

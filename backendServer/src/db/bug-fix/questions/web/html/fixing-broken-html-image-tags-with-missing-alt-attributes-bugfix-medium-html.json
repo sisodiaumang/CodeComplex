@@ -1,0 +1,136 @@
+{
+  "title": "Fixing Broken HTML Image Tags with Missing 'alt' Attributes",
+  "subCategory": "HTML Image Tags",
+  "statement": {
+    "markdown": "Write a JavaScript function `fixHtmlImageTags` that takes a string of HTML content as input and returns the modified string with all image tags (`<img>`) having a valid `alt` attribute if it's missing. The `alt` attribute should be set to the image's `src` attribute. Assume that the input HTML string is well-formed and contains only one `img` tag per line. If an image tag has multiple `alt` attributes, remove all of them.",
+    "inputFormat": "string",
+    "outputFormat": "string",
+    "notes": "Preserve the original order and structure of the HTML content. Don't remove or add any tags other than `img`.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 1000,
+        "description": ""
+      }
+    ],
+    "examples": [
+      {
+        "input": "<img src='image.jpg'><img src='image2.png' alt='Image 2'>",
+        "output": "<img src='image.jpg' alt='image.jpg'><img src='image2.png' alt='Image 2'>",
+        "explanation": "The function adds the `alt` attribute to the first `img` tag."
+      },
+      {
+        "input": "<img src='image3.jpg'><img src='image4.png' alt='Image 4'>",
+        "output": "<img src='image3.jpg' alt='image3.jpg'><img src='image4.png' alt='Image 4'>",
+        "explanation": "The function adds the `alt` attribute to the first `img` tag."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "HTML"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "html"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use regular expressions to find and modify the image tags."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial: Fixing Broken HTML Image Tags with Missing 'alt' Attributes",
+    "intuition": "The function should iterate over each line in the HTML content and check if the `img` tag has an `alt` attribute.",
+    "bruteForce": "Use a brute-force approach to find and replace each `img` tag.",
+    "betterSolution": "Use regular expressions to find and modify the `img` tags in a single pass.",
+    "optimalSolution": "Regular expressions can efficiently find and replace the `img` tags in a single pass, reducing the time complexity.",
+    "proofOfCorrectness": "The modified HTML string will have all `img` tags with a valid `alt` attribute if it's missing.",
+    "dryRun": "Test the function with the provided examples to ensure correctness.",
+    "commonMistakes": [
+      "Missing `alt` attribute",
+      "Incorrect `alt` attribute value"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// Define the function fixHtmlImageTags",
+    "python": "class Solution:\n    def fixHtmlImageTags(self, s: str) -> str:"
+  },
+  "buggyStarterCode": {
+    "javascript": "function fixHtmlImageTags(s) {\n  let lines = s.split('\\n');\n  for (let i = 0; i < lines.length; i++) {\n    if (lines[i].includes('img')) {\n      let alt = lines[i].match(/alt=['\"](.*?)['\"]/);\n      if (alt) {\n        lines[i] = lines[i].replace(alt[0], '');\n      }\n    }\n  }\n  return lines.join('');\n}",
+    "python": "class Solution:\n    def fixHtmlImageTags(self, s: str) -> str:\n        lines = s.split('\\n');\n        for i in range(len(lines)):\n            if 'img' in lines[i]:\n                alt = re.search(r'alt=['\"](.*?)['\"]', lines[i]);\n                if alt:\n                    lines[i] = lines[i].replace(alt.group(0), '');\n        return '\\n'.join(lines);"
+  },
+  "functionSignature": {
+    "javascript": "var fixHtmlImageTags = function(s) { ... };",
+    "python": "def fixHtmlImageTags(self, s: str) -> str:"
+  },
+  "solutions": {
+    "javascript": "// Define the function fixHtmlImageTags\nfunction fixHtmlImageTags(s) {\n  let lines = s.split('\\n');\n  for (let i = 0; i < lines.length; i++) {\n    if (lines[i].includes('img')) {\n      let alt = lines[i].match(/alt=['\"](.*?)['\"]/);\n      if (alt) {\n        lines[i] = lines[i].replace(alt[0], '');\n      } else {\n        lines[i] = lines[i].replace(/src=['\"](.*?)['\"]/, ' src=\"\\$1\" alt=\"\\$1\"');\n      }\n    }\n  }\n  return lines.join('');\n}",
+    "python": "import re\nclass Solution:\n    def fixHtmlImageTags(self, s: str) -> str:\n        lines = s.split('\\n');\n        for i in range(len(lines)):\n            if 'img' in lines[i]:\n                alt = re.search(r'alt=['\"](.*?)['\"]', lines[i]);\n                if alt:\n                    lines[i] = lines[i].replace(alt.group(0), '');\n                else:\n                    lines[i] = lines[i].replace(r'src=['\"](.*?)['\"]', r'src=\"\\1\" alt=\"\\1\"');\n        return '\\n'.join(lines);"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "<img src='image.jpg'><img src='image2.png' alt='Image 2'>",
+      "output": "<img src='image.jpg' alt='image.jpg'><img src='image2.png' alt='Image 2'>",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "<img src='image3.jpg'><img src='image4.png' alt='Image 4'>",
+      "output": "<img src='image3.jpg' alt='image3.jpg'><img src='image4.png' alt='Image 4'>",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "_id": "78bdab6aa3c65435feedc095",
+  "slug": "fixing-broken-html-image-tags-with-missing-alt-attributes-bugfix-medium-html",
+  "mode": "bug_fix",
+  "category": "HTML",
+  "difficulty": "Medium"
+}

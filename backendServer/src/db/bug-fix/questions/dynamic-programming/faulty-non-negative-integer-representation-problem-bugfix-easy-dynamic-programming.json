@@ -1,0 +1,157 @@
+{
+  "_id": "14fb1bb0e7e75f700d37cb95",
+  "title": "Faulty Non-Negative Integer Representation Problem",
+  "slug": "faulty-non-negative-integer-representation-problem-bugfix-easy-dynamic-programming",
+  "difficulty": "Easy",
+  "category": "DSA",
+  "subCategory": "DP",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "dp"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given a non-negative integer k, write a function that represents it as a sum of 1 (1 <= i <= n) such that each i appears at most once in the sum. If there is a way to represent k as a sum, return true, else return false. For example, 12 = 11 + 0 + 1 = 2 + 2 + 2 + 6, so return true. 13 can be represented as 9 + 4 = 13, but 3 + 4 + 5 + 1 = 13 cannot be represented. Return false in this case.",
+    "inputFormat": "Input is a non-negative integer k",
+    "outputFormat": "Return true if k can be represented as a sum of 1..n, else return false",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "k",
+        "type": "integer",
+        "min": 0,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "k = 12",
+        "output": "true",
+        "explanation": ""
+      },
+      {
+        "input": "k = 13",
+        "output": "false",
+        "explanation": ""
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Consider using a dynamic programming approach to solve this problem"
+    }
+  ],
+  "editorial": {
+    "title": "Dynamic Programming for Sum of 1..n",
+    "intuition": "The problem can be solved by using dynamic programming to find the minimum number of elements required to represent the given number.",
+    "bruteForce": "The brute force approach is to try all possible combinations of numbers from 1 to n.",
+    "betterSolution": "The better solution is to use dynamic programming to find the minimum number of elements required to represent the given number.",
+    "optimalSolution": "The optimal solution is to use a boolean array dp where dp[i] is true if i can be represented as a sum of 1..n. The final answer is dp[k].",
+    "proofOfCorrectness": "The proof of correctness is based on the fact that if i can be represented as a sum of 1..n, then i can be represented as a sum of 1..n-1 and 1.",
+    "dryRun": "Consider the example k = 12. The dry run will be dp = [false, false, false, false, false, false, false, false, false, false, false, true].",
+    "commonMistakes": [
+      "Using a recursive approach instead of dynamic programming"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    bool canRepresent(int k) {\n        // TODO: implement\n    }\n};",
+    "java": "public class Solution {\npublic:\n    boolean canRepresent(int k) {\n        // TODO: implement\n    }\n}",
+    "python": "class Solution:\n    def canRepresent(self, k):\n        pass",
+    "javascript": "var Solution = function() {\n    return {\n        canRepresent: function(k) {\n            // TODO: implement\n        }\n    }\n};"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    bool canRepresent(int k) {\n        if (k < 1) return false;\n        for (int i = 1; i <= k; ++i) {\n            if (i == k) return true;\n        }\n        return false;\n    }\n};",
+    "java": "public class Solution {\npublic:\n    boolean canRepresent(int k) {\n        if (k < 1) return false;\n        for (int i = 1; i <= k; ++i) {\n            if (i == k) return true;\n        }\n        return false;\n    }\n}",
+    "python": "class Solution:\n    def canRepresent(self, k):\n        if k < 1:\n            return False\n        for i in range(1, k+1):\n            if i == k:\n                return True\n        return False",
+    "javascript": "var Solution = function() {\n    return {\n        canRepresent: function(k) {\n            if (k < 1) return false;\n            for (var i = 1; i <= k; ++i) {\n                if (i == k) return true;\n            }\n            return false;\n        }\n    }\n};"
+  },
+  "functionSignature": {
+    "cpp": "bool canRepresent(int k);",
+    "java": "boolean canRepresent(int k);",
+    "python": "def canRepresent(self, k: int) -> bool:",
+    "javascript": "var canRepresent = function(k);"
+  },
+  "solutions": {
+    "python": "import sys\n\nclass Solution:\n    def canRepresent(self, k):\n        dp = [False] * (k + 1)\n        dp[0] = True\n        for i in range(1, k + 1):\n            for j in range(1, i):\n                if dp[j] and j + (i - j) <= k:\n                    dp[i] = True\n                    break\n        return dp[k]\n\nif __name__ == '__main__':\n    for line in sys.stdin:\n        k = int(line)\n        s = Solution()\n        print(s.canRepresent(k))",
+    "cpp": "#include<iostream>\n#include<cstdio>\n\nusing namespace std;\n\nclass Solution {\npublic:\n    bool canRepresent(int k) {\n        bool dp[k + 1] = {false};\n        dp[0] = true;\n        for (int i = 1; i <= k; ++i) {\n            for (int j = 1; j < i; ++j) {\n                if (dp[j] && j + (i - j) <= k) {\n                    dp[i] = true;\n                    break;\n                }\n            }\n        }\n        return dp[k];\n    }\n};\n\nint main() {\n    int k;\n    while (cin >> k) {\n        Solution s;\n        printf(\"%d\\n\", s.canRepresent(k));\n    }\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2000,
+    "memoryLimit": 65536,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "k = 12\\n",
+      "output": "true\\n",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "k = 13\\n",
+      "output": "false\\n",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

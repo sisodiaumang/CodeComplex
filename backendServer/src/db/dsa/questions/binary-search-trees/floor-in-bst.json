@@ -1,0 +1,216 @@
+{
+  "_id": "floor-in-bst",
+  "title": "Floor in BST",
+  "slug": "floor-in-bst",
+  "difficulty": "Easy",
+  "category": "TREE",
+  "subCategory": "Practice Problems",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "BINARY SEARCH TREES"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "BINARY TREE",
+      "TREE",
+      "BINARY SEARCH TREE"
+    ],
+    "keywords": [
+      "FIND KTH SMALLEST ELEMENT",
+      "FIND KTH LARGEST ELEMENT"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "You are given a Binary Search Tree (BST) constructed by inserting a sequence of distinct integers one by one. For each query key, you must output the floor of the key in the BST. The floor of a key is defined as the greatest value in the BST that is less than or equal to the key. If no such value exists, output -1.\n\nThe BST follows the usual property: for any node, all values in its left subtree are smaller and all values in its right subtree are larger. The tree is built by inserting the given values in the order they appear in the input.\n\nYour task is to process all queries efficiently and print the floor for each query.\n\n",
+    "inputFormat": "The first line contains an integer n, the number of nodes to be inserted into the BST.\nThe second line contains n distinct integers a1 a2 ... an, the values to insert in the given order.\nThe third line contains an integer q, the number of queries.\nEach of the next q lines contains a single integer key, for which you must find the floor in the BST.\n",
+    "outputFormat": "For each query, output a single line containing the floor of the given key in the BST. If the floor does not exist, output -1.\n",
+    "notes": "All insertions are performed before any query is answered. The BST does not need to be balanced; you may use any method that respects the insertion order. The floor of a key that exactly matches a node value is the key itself.\n",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "int",
+        "min": 1,
+        "max": 100000,
+        "description": "Number of nodes in the BST"
+      },
+      {
+        "variable": "ai",
+        "type": "int",
+        "min": -1000000000,
+        "max": 1000000000,
+        "description": "Values to insert, all distinct"
+      },
+      {
+        "variable": "q",
+        "type": "int",
+        "min": 1,
+        "max": 100000,
+        "description": "Number of queries"
+      },
+      {
+        "variable": "key",
+        "type": "int",
+        "min": -1000000000,
+        "max": 1000000000,
+        "description": "Query key"
+      }
+    ],
+    "examples": [
+      {
+        "input": "5\n4 2 6 1 3\n3\n0\n2\n5\n",
+        "output": "-1\r\n2\r\n4",
+        "explanation": "The BST built from [4,2,6,1,3] has in-order sequence [1,2,3,4,6].\n- For key 0, no value ≤0 exists → -1.\n- For key 2, the floor is 2 itself.\n- For key 5, the greatest value ≤5 is 4."
+      },
+      {
+        "input": "7\n15 10 20 8 12 16 25\n4\n10\n13\n26\n5\n",
+        "output": "10\r\n12\r\n25\r\n-1",
+        "explanation": "BST in-order: [8,10,12,15,16,20,25].\n- Floor of 10 is 10.\n- Floor of 13 is 12.\n- Floor of 26 is 25.\n- Floor of 5 does not exist, so -1."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "To find the floor of a key in a BST, consider traversing the tree in a way that allows you to find the greatest value less than or equal to the key."
+    },
+    {
+      "order": 2,
+      "text": "Think about using a traversal technique that allows you to keep track of the greatest value seen so far, which will be the floor of the key."
+    },
+    {
+      "order": 3,
+      "text": "Consider using a modified in-order traversal to find the floor of each query key, as it allows you to visit nodes in ascending order."
+    },
+    {
+      "order": 4,
+      "text": "Remember that in a BST, for any node, all values in its left subtree are smaller and all values in its right subtree are larger, which can be used to efficiently find the floor of a key."
+    },
+    {
+      "order": 5,
+      "text": "The floor of a key can be found by traversing the BST to the node with the greatest value less than or equal to the key, which can be achieved using a combination of in-order traversal and a stack or recursive approach."
+    }
+  ],
+  "editorial": {
+    "title": "Finding the Floor in a Binary Search Tree",
+    "intuition": "In a BST every left child is smaller and every right child is larger than its parent. Thus the set of all node values is already sorted if we traverse the tree in-order. The task reduces to: given a sorted list of distinct numbers, find the greatest number that does not exceed a query key. This is a classic binary search problem.",
+    "bruteForce": "A straightforward approach would walk the BST for each query, keeping the best candidate seen so far. For each key we would visit every node in the worst case, leading to O(nq) time. With up to 10^5 nodes and 10^5 queries this is infeasible. Even a linear scan of the node values for each query would be O(nq).",
+    "betterSolution": "Instead of traversing the tree per query, we can preprocess the node values into a sorted array once. Then each query is answered by a single binary search (bisect_right) to locate the insertion point and step back one position. This yields O((n+q) log n) time and O(n) space.",
+    "optimalSolution": "Pre‑sort the input values into an array. For each query key, perform a binary search to find the first element greater than the key and return the element just before that position if it exists; otherwise return -1. This matches the known optimal complexity of O((n+q) log n) time and O(n) space.",
+    "proofOfCorrectness": "Because the BST property guarantees that an in-order traversal produces a strictly increasing sequence of all node values, the sorted array contains exactly the same values in ascending order. The floor of a key is defined as the largest value ≤ key. In a sorted array, the rightmost element ≤ key is precisely the element just before the first element > key, which is what bisect_right returns minus one. If that index is negative, no such element exists, so -1 is correct. Thus each query answer is correct.",
+    "dryRun": "Example: values=[5,2,8,1,3,7,9]; sorted=[1,2,3,5,7,8,9]. Query key=4: bisect_right gives index=3 (value 5), subtract one → index=2 (value 3). 3 is the largest ≤4. Query key=10: bisect_right gives index=7 (end), subtract one → index=6 (value 9). 9 is the floor. Query key=0: bisect_right gives index=0, subtract one → index=-1 → return -1.",
+    "commonMistakes": [
+      "Assuming the BST is balanced and using tree depth for complexity; the tree can be skewed. ",
+      "Using a linear scan for each query instead of binary search. ",
+      "Ignoring that all values are distinct, which simplifies the binary search logic. ",
+      "Returning the key itself when it is not present in the tree. ",
+      "Using an in-order traversal per query, leading to O(nq) time. ",
+      "Not handling the case where no floor exists and returning an incorrect sentinel."
+    ],
+    "timeComplexity": "O((n+q) log n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass TreeNode {\npublic:\n    int val;\n    TreeNode* left;\n    TreeNode* right;\n    TreeNode() : val(0), left(NULL), right(NULL) {}\n    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}\n};\n\nclass Solution {\npublic:\n    int floorInBST(TreeNode* root, int key) {\n        // TODO: implement\n        return -1;\n    }\n};",
+    "java": "import java.util.*;\n\nclass TreeNode {\n    int val;\n    TreeNode left;\n    TreeNode right;\n    TreeNode(int x) { val = x; }\n}\n\nclass Solution {\n    public int floorInBST(TreeNode root, int key) {\n        // TODO: implement\n        return -1;\n    }\n}",
+    "python": "from typing import Optional\n\nclass TreeNode:\n    def __init__(self, val: int):\n        self.val = val\n        self.left: Optional['TreeNode'] = None\n        self.right: Optional['TreeNode'] = None\n\nclass Solution:\n    def floorInBST(self, root: Optional[TreeNode], key: int) -> int:\n        # TODO: implement\n        pass",
+    "javascript": "/**\n * @param {TreeNode} root\n * @param {number} key\n * @return {number}\n */\nvar floorInBST = function(root, key) {\n    // TODO: implement\n    return -1;\n};\n\n/**\n * @param {number} val\n * @return {TreeNode}\n */\nfunction TreeNode(val) {\n    this.val = val;\n    this.left = null;\n    this.right = null;\n}"
+  },
+  "functionSignature": {
+    "cpp": "int floorInBST(TreeNode* root, int key);",
+    "java": "public int floorInBST(TreeNode root, int key);",
+    "python": "def floorInBST(self, root: Optional[TreeNode], key: int) -> int:",
+    "javascript": "var floorInBST = function(root, key);"
+  },
+  "solutions": {
+    "python": "import sys\nimport bisect\nfrom typing import Optional\n\nclass TreeNode:\n    def __init__(self, val: int, left: 'Optional[TreeNode]' = None, right: 'Optional[TreeNode]' = None):\n        self.val = val\n        self.left = left\n        self.right = right\n\nclass Solution:\n    def __init__(self):\n        self.sorted_vals = []\n\n    def floorInBST(self, root: Optional[TreeNode], key: int) -> int:\n        # root is unused because we pre‑process the values into a sorted list\n        idx = bisect.bisect_right(self.sorted_vals, key) - 1\n        if idx >= 0:\n            return self.sorted_vals[idx]\n        return -1\n\nif __name__ == '__main__':\n    data = sys.stdin.read().split()\n    if not data:\n        sys.exit(0)\n    it = iter(data)\n    n = int(next(it))\n    vals = [int(next(it)) for _ in range(n)]\n    q = int(next(it))\n    queries = [int(next(it)) for _ in range(q)]\n    sol = Solution()\n    sol.sorted_vals = sorted(vals)\n    # root is not needed for this solution; pass None\n    out_lines = []\n    for key in queries:\n        out_lines.append(str(sol.floorInBST(None, key)))\n    sys.stdout.write(\"\\n\".join(out_lines))\n",
+    "cpp": "#include <numeric>\n#include <bits/stdc++.h>\nusing namespace std;\n\nstruct TreeNode {\n    int val;\n    TreeNode *left, *right;\n    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}\n};\n\nclass Solution {\npublic:\n    vector<int> sortedVals;\n    int floorInBST(TreeNode* root, int key) {\n        // root is unused; we rely on sortedVals\n        auto it = upper_bound(sortedVals.begin(), sortedVals.end(), key);\n        if (it == sortedVals.begin()) return -1;\n        --it;\n        return *it;\n    }\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int n;\n    if (!(cin >> n)) return 0;\n    vector<int> vals(n);\n    for (int i = 0; i < n; ++i) cin >> vals[i];\n    int q; cin >> q;\n    vector<int> queries(q);\n    for (int i = 0; i < q; ++i) cin >> queries[i];\n    Solution sol;\n    sol.sortedVals = vals;\n    sort(sol.sortedVals.begin(), sol.sortedVals.end());\n    // root is not needed; pass nullptr\n    for (int i = 0; i < q; ++i) {\n        int ans = sol.floorInBST(nullptr, queries[i]);\n        cout << ans;\n        if (i + 1 < q) cout << '\\n';\n    }\n    return 0;\n}\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5\n4 2 6 1 3\n3\n0\n2\n5\n",
+      "output": "-1\r\n2\r\n4",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "7\n15 10 20 8 12 16 25\n4\n10\n13\n26\n5\n",
+      "output": "10\r\n12\r\n25\r\n-1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sorted_7",
+      "input": "5\n1 2 3 4 5\n3\n3\n4\n5\n5\n",
+      "output": "3\r\n4\r\n5",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sorted"
+    },
+    {
+      "id": "reverse_sorted_8",
+      "input": "5\n5 4 3 2 1\n3\n1\n2\n3\n5\n",
+      "output": "1\r\n2\r\n3",
+      "isVisible": false,
+      "weight": 1,
+      "category": "reverse_sorted"
+    },
+    {
+      "id": "repeated_9",
+      "input": "5\n1 2 2 3 3\n3\n2\n3\n3\n3\n",
+      "output": "2\r\n3\r\n3",
+      "isVisible": false,
+      "weight": 1,
+      "category": "repeated"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

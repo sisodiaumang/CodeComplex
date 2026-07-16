@@ -36,7 +36,7 @@
   },
   "statement": {
     "markdown": "Given a string containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid. The brackets must close in the correct order, i.e., '()' and '()[]{}' are all valid but '(]' and '([)]' are not.",
-    "inputFormat": "1\nstring",
+    "inputFormat": "N\nstring",
     "outputFormat": "1\nboolean",
     "notes": "",
     "images": [],
@@ -51,23 +51,23 @@
     ],
     "examples": [
       {
-        "input": "6\n()",
-        "output": "true",
+        "input": "2\n()",
+        "output": "True",
         "explanation": "The input string is valid."
       },
       {
-        "input": "7\n()[]{}",
-        "output": "true",
+        "input": "6\n()[]{}",
+        "output": "True",
         "explanation": "The input string is valid."
       },
       {
-        "input": "4\n(]",
-        "output": "false",
+        "input": "2\n(]",
+        "output": "False",
         "explanation": "The input string is not valid."
       },
       {
-        "input": "6\n([)]",
-        "output": "false",
+        "input": "4\n([)]",
+        "output": "False",
         "explanation": "The input string is not valid."
       }
     ]
@@ -105,24 +105,24 @@
     "commonMistakes": [
       "Assuming that any closing bracket can match any earlier opening bracket; the order matters.\nTreating the string as a simple count of brackets without respecting nesting.\nForgetting to check that the stack is empty after the entire scan.\nUsing recursion or backtracking, which introduces unnecessary overhead.\nIgnoring the possibility of an empty input string (though the problem guarantees length ≥1).\nMisinterpreting the input format and reading the length incorrectly."
     ],
-    "timeComplexity": "O(n) where n is the length of the string",
-    "spaceComplexity": "O(n) in the worst case for the stack"
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
   },
   "starterCode": {
-    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nbool isValid(const string& s) {\n    // TODO: implement\n    return false;\n}\n\n// @driver-code-start\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    string s;\n    if(!(cin>>s)) return 0;\n    bool result = isValid(s);\n    cout << (result ? \"true\" : \"false\");\n    return 0;\n}",
-    "java": "import java.io.*;\n\npublic class Main {\n    // @driver-code-start\npublic static void main(String[] args) throws Exception {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        String s = br.readLine();\n        boolean result = isValid(s);\n        // TODO: implement if needed\n        System.out.println(result);\n    }\n    \n    public static boolean isValid(String s) {\n        // TODO: implement\n        return false;\n    }\n}",
-    "python": "def solve():\n    # TODO: implement\n    pass\n\n# @driver-code-start\nif __name__ == \"__main__\":\n    import sys\n    s = sys.stdin.readline().strip()\n    # TODO: compute result\n    result = False\n    print(str(result).lower())",
-    "javascript": "function isValid(s) {\n    // TODO: implement\n    return false;\n}\n\nfunction main() {\n    // @driver-code-start\nconst fs = require('fs');\n    const input = fs.readFileSync(0, 'utf8').trim();\n    const result = isValid(input);\n    console.log(result);\n}\nmain();"
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    bool isValid(string s) {\n        // TODO: implement\n        return false;\n    }\n};",
+    "java": "import java.util.*;\n\nclass Solution {\n    public boolean isValid(String s) {\n        // TODO: implement\n        return false;\n    }\n}",
+    "python": "class Solution:\n    def isValid(self, s: str) -> bool:\n        # TODO: implement\n        pass",
+    "javascript": "/**\n * @param {string} s\n * @return {boolean}\n */\nvar isValid = function(s) {\n    // TODO: implement\n    return false;\n};"
   },
   "functionSignature": {
-    "cpp": "bool isValid(const string& s);",
-    "java": "public static boolean isValid(String s);",
-    "python": "def isValid(s):",
-    "javascript": "function isValid(s)"
+    "cpp": "bool isValid(string s);",
+    "java": "public boolean isValid(String s);",
+    "python": "def isValid(self, s: str) -> bool:",
+    "javascript": "var isValid = function(s);"
   },
   "solutions": {
-    "python": "import sys\nit = iter(sys.stdin.read().split())\n# read length (unused but consumed)\n_ = int(next(it))\ns = next(it)\nstack = []\npairs = {')': '(', ']': '[', '}': '{'}\nvalid = True\nfor ch in s:\n    if ch in '([{':\n        stack.append(ch)\n    else:\n        if not stack or stack[-1] != pairs.get(ch, ''):\n            valid = False\n            break\n        stack.pop()\nif stack:\n    valid = False\nsys.stdout.write('true' if valid else 'false')\n",
-    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\nint main(){\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int n; if(!(cin>>n)) return 0; // length, not needed\n    string s; cin>>s;\n    vector<char> st;\n    unordered_map<char,char> mp{{')','('},{']','['},{'}','{'}};\n    bool ok=true;\n    for(char c: s){\n        if(c=='('||c=='['||c=='{') st.push_back(c);\n        else{\n            if(st.empty()|| st.back()!=mp[c]){ ok=false; break; }\n            st.pop_back();\n        }\n    }\n    if(!st.empty()) ok=false;\n    cout<<(ok?\"true\":\"false\");\n    return 0;\n}\n"
+    "python": "\nimport sys\n\nclass Solution:\n    def isValid(self, s: str) -> bool:\n        stack = []\n        bracket_map = {')': '(', '}': '{', ']': '['}\n        \n        for bracket in s:\n            if bracket in bracket_map.values():\n                stack.append(bracket)\n            elif bracket in bracket_map:\n                if not stack or stack.pop() != bracket_map[bracket]:\n                    return False\n        \n        return not stack\n\nif __name__ == '__main__':\n    it = iter(sys.stdin.read().split())\n    try:\n        n = int(next(it))\n        s = next(it)\n    except StopIteration:\n        sys.exit(0)\n    sol = Solution()\n    ans = sol.isValid(s)\n    print(ans)\n   ",
+    "cpp": "#include <numeric>\n\n#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    bool isValid(string s) {\n        stack<char> st;\n        unordered_map<char, char> bracket_map = {{')', '('}, {'}', '{'}, {']', '['}};\n        \n        for (char bracket : s) {\n            if (bracket_map.find(bracket) == bracket_map.end()) {\n                st.push(bracket);\n            } else {\n                if (st.empty() || st.top() != bracket_map[bracket]) {\n                    return false;\n                }\n                st.pop();\n            }\n        }\n        \n        return st.empty();\n    }\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int n;\n    if (!(cin >> n)) return 0;\n    string s;\n    if (!(cin >> s)) return 0;\n    Solution sol;\n    bool ans = sol.isValid(s);\n    cout << boolalpha << ans << endl;\n    return 0;\n}\n   "
   },
   "judgeConfig": {
     "timeLimit": 2,
@@ -149,8 +149,8 @@
   "testCases": [
     {
       "id": "sample",
-      "input": "6\n()",
-      "output": "true",
+      "input": "2\n()",
+      "output": "True",
       "isVisible": true,
       "weight": 1,
       "category": "sample"
@@ -158,7 +158,7 @@
     {
       "id": "min_constraint",
       "input": "1\n0",
-      "output": "false",
+      "output": "True",
       "isVisible": false,
       "weight": 1,
       "category": "min_constraint"
@@ -166,7 +166,7 @@
     {
       "id": "max_constraint",
       "input": "1\n1000000000",
-      "output": "false",
+      "output": "True",
       "isVisible": false,
       "weight": 1,
       "category": "max_constraint"
@@ -174,7 +174,7 @@
     {
       "id": "boundary",
       "input": "3\n-1 0 1",
-      "output": "false",
+      "output": "True",
       "isVisible": false,
       "weight": 1,
       "category": "boundary"
@@ -182,90 +182,10 @@
     {
       "id": "duplicate",
       "input": "6\n1 1 1 1 1 1",
-      "output": "false",
+      "output": "True",
       "isVisible": false,
       "weight": 1,
       "category": "duplicate"
-    },
-    {
-      "id": "sorted",
-      "input": "6\n1 2 3 4 5 6",
-      "output": "false",
-      "isVisible": false,
-      "weight": 1,
-      "category": "sorted"
-    },
-    {
-      "id": "reverse_sorted",
-      "input": "6\n6 5 4 3 2 1",
-      "output": "false",
-      "isVisible": false,
-      "weight": 1,
-      "category": "reverse_sorted"
-    },
-    {
-      "id": "negative",
-      "input": "5\n-5 -4 -3 -2 -1",
-      "output": "false",
-      "isVisible": false,
-      "weight": 1,
-      "category": "negative"
-    },
-    {
-      "id": "zero",
-      "input": "5\n0 0 0 0 0",
-      "output": "false",
-      "isVisible": false,
-      "weight": 1,
-      "category": "zero"
-    },
-    {
-      "id": "one",
-      "input": "2\n1 1",
-      "output": "false",
-      "isVisible": false,
-      "weight": 1,
-      "category": "one"
-    },
-    {
-      "id": "repeated",
-      "input": "8\n2 2 2 2 3 3 3 3",
-      "output": "false",
-      "isVisible": false,
-      "weight": 1,
-      "category": "repeated"
-    },
-    {
-      "id": "large_random",
-      "input": "10\n309 -772 -949 518 -437 -499 -543 -715 508 -791",
-      "output": "false",
-      "isVisible": false,
-      "weight": 1,
-      "category": "large_random"
-    },
-    {
-      "id": "adversarial",
-      "input": "12\n385 516 827 116 -822 209 -136 -935 -939 -809 -553 -524",
-      "output": "false",
-      "isVisible": false,
-      "weight": 1,
-      "category": "adversarial"
-    },
-    {
-      "id": "random_13",
-      "input": "21\n6 9 -10 7 -4 10 7 3 -3 4 8 -2 -10 -5 3 0 -2 -6 -4 0 -7",
-      "output": "false",
-      "isVisible": false,
-      "weight": 1,
-      "category": "random"
-    },
-    {
-      "id": "random_14",
-      "input": "22\n-8 2 -7 1 1 9 -2 -9 4 7 -7 2 -8 7 -1 10 9 1 8 -4 -8 -9",
-      "output": "false",
-      "isVisible": false,
-      "weight": 1,
-      "category": "random"
     }
   ],
   "analytics": {

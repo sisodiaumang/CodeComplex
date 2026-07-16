@@ -1,0 +1,160 @@
+{
+  "_id": "0fe0681c506168892fbe96a9",
+  "title": "Fixing Trie Insertion Edge Case",
+  "slug": "fixing-trie-insertion-edge-case-bugfix-easy-tries",
+  "difficulty": "Easy",
+  "category": "DSA",
+  "subCategory": "TRIE",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "trie"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Solve the problem and fix the bugs.",
+    "inputFormat": "A list of strings to be inserted into the Trie, and the number of strings to be inserted.",
+    "outputFormat": "The number of strings that were inserted into the Trie.",
+    "notes": "Assume that all strings are composed of lowercase English letters.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of strings to be inserted into the Trie"
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Length of each string"
+      }
+    ],
+    "examples": [
+      {
+        "input": "3\na b c\n3\n1 0 0\n2\nb c\n3\n1 0 1\n",
+        "output": "3\n2\n",
+        "explanation": "The first string 'a' is inserted because it's not present in the Trie. The second string 'b' is also inserted, even though its 'b' is not a new insertion because the Trie only stores the end of each string and 'b c' is the end of a string but not the end of the first string it's in. The last string 'c' is inserted, as it's not present in the Trie."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Review the implementation of the insert function in the Trie class."
+    }
+  ],
+  "editorial": {
+    "title": "Fixing Trie Insertion Edge Case:",
+    "intuition": "The key challenge in this problem is to understand the purpose of the Trie and how it stores information.\nA Trie, also known as a prefix tree, is a tree-like data structure in which every node stores a string. Each node represents a prefix of all the strings that branch off from it. The key idea is to insert strings into the Trie such that each string's edges are a distinct path.\nOne common implementation of a Trie includes a class with methods for inserting words, removing words, and searching for words.",
+    "bruteForce": "A brute-force solution would simply traverse the graph to see whether each string is present. This brute-force method has a time complexity of O(n*m) because it involves inserting each character in each string into the Trie, which results in a total of (n*m) operations, where n is the number of strings to be inserted (or searched for) and m is the maximum length of a string.\nHowever, we can improve upon this method by implementing the Trie as a data structure that includes a boolean array of size 26 representing the next nodes for each character in the Trie.",
+    "betterSolution": "To solve this problem efficiently, you should implement a Trie class that includes methods to insert words, remove words, and search for words. You should ensure that each word's edges are a distinct path in the Trie, i.e., that there is at most one string that matches a prefix in the Trie. The key challenge in this problem is to handle this requirement in the implementation of the insert method.",
+    "optimalSolution": "The optimal solution involves implementing the Trie class with a method to insert words. The key idea is to maintain a boolean array of size 26 in the Trie node, representing the next nodes for each character. When inserting a word, we should avoid overwriting existing nodes in the Trie. This can be achieved by traversing the Trie and ensuring that there is at most one string that matches a prefix in the Trie.",
+    "proofOfCorrectness": "To demonstrate the correctness of our implementation, we can add a method to print the content of the Trie after each insertion. This will help us verify that our implementation handles the edge case correctly.",
+    "dryRun": "Consider the string 'abc' and 'a b'. If we insert them into the Trie separately, we should get different paths for these two strings.",
+    "commonMistakes": [
+      "Not handling the case where there is an existing node in the Trie that matches the start of the new string to be inserted.",
+      "Not ensuring that there is at most one string that matches a prefix in the Trie."
+    ],
+    "timeComplexity": "O(n*m)",
+    "spaceComplexity": "O(m * 26^l)"
+  },
+  "starterCode": {
+    "cpp": "class Trie {\npublic:\nbool insert(std::vector<int>& nums) {\n\t\t// TODO: implement\n\t\treturn true;\n}\n};",
+    "java": "class Trie {\npublic:\nboolean insert(int[] nums) {\n\t\t// TODO: implement\n\t\treturn true;\n}\n};",
+    "python": "class Trie:\n\t\ndef __init__(self):\n\t\t\t\t# TODO: implement\n\t\tpass\n\t\ndef insert(self, nums) -> bool:\n\t\t\t\t# TODO: implement\n\t\t\t\treturn True\n",
+    "javascript": "var Trie = function() {\n\t\t// TODO: implement\n};\nTrie.prototype.insert = function(nums) {\n\t\t\t// TODO: implement\n\t\t\treturn true;\n};"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Trie {\npublic:\nbool insert(vector<int>& nums) {\n\t\tif (nums.size() == 0) return false;\n\t\tTrieNode* root = this->root;\n\t\tfor (int i = 0; i < nums.size(); i++) { \n\t\t\tif (root->children[nums[i]]) {\n\t\t\t\t// If the character is already in the Trie, we should continue from the current node,\n\t\t\t\t// NOT create a new node.\n\t\t\t\t// But, we currently have this line:\n\t\t\t\troot->children[nums[i]]->parent = this->root;\n\t\t\t\tTrieNode* node = new TrieNode();\n\t\t\t\troot->children[nums[i]] = node;\n\t\t\t\tnode->parent = root;\n\t\t\t\t// We're missing the line to update the current node here...\n\t\t\t}\n\t\t\telse {\n\t\t\t\troot->children[nums[i]] = new TrieNode();\n\t\t\t}\n\t\t\troot = root->children[nums[i]];\n\t\t}\n\t\treturn true;\n}\n};",
+    "java": "class Trie {\npublic:\nboolean insert(int[] nums) {\n\t\tif (nums.length == 0) return false;\n\t\tTrieNode root = this.root;\n\t\tfor (int i = 0; i < nums.length; i++) { \n\t\t\tif (root.children[nums[i]]) {\n\t\t\t\t// If the character is already in the Trie, we should continue from the current node,\n\t\t\t\t// NOT create a new node.\n\t\t\t\t// But, we currently have this line:\n\t\t\t\troot.children[nums[i]].parent = this.root;\n\t\t\t\tTrieNode node = new TrieNode();\n\t\t\t\troot.children[nums[i]] = node;\n\t\t\t\tnode.parent = root;\n\t\t\t\t// We're missing the line to update the current node here...\n\t\t\t}\n\t\t\telse {\n\t\t\t\troot.children[nums[i]] = new TrieNode();\n\t\t\t}\n\t\t\troot = root.children[nums[i]];\n\t\t}\n\t\treturn true;\n}\n};",
+    "python": "class Trie:\n\t\tdef __init__(self):\n\t\t\t\tself.root = TrieNode()\n\t\t\t\tself.end_of_word = False\n\t\tdef insert(self, nums) -> bool:\n\t\t\t\tif not nums:\n\t\t\t\t\treturn False\n\t\t\t\troot = self.root\n\t\t\t\tfor i in nums:\n\t\t\t\t\tif root.children.get(i):\n\t\t\t\t\t\t# If the character is already in the Trie, we should continue from the current node,\n\t\t\t\t\t\t# NOT create a new node.\n\t\t\t\t\t\t# But, we currently have this line:\n\t\t\t\t\t\troot.children[i].parent = self.root\n\t\t\t\t\t\tnew_node = TrieNode()\n\t\t\t\t\t\troot.children[i] = new_node\n\t\t\t\t\t\tnew_node.parent = root\n\t\t\t\t\telse:\n\t\t\t\t\t\troot.children[i] = TrieNode()\n\t\t\t\t\troot = root.children[i]\n\t\t\t\treturn True\n",
+    "javascript": "var Trie = function() {\n\t\t// ... (similar to python version)\n};\nTrie.prototype.insert = function(nums) {\n\t\tif (!nums.length) return false;\n\t\tvar root = this.root;\n\t\tfor (var i = 0; i < nums.length; i++) { \n\t\t\tif (root.children[nums[i]]) {\n\t\t\t\t// If the character is already in the Trie, we should continue from the current node,\n\t\t\t\t// NOT create a new node.\n\t\t\t\t// But, we currently have this line:\n\t\t\t\troot.children[nums[i]].parent = this.root;\n\t\t\t\tvar node = new TrieNode();\n\t\t\t\troot.children[nums[i]] = node;\n\t\t\t\tnode.parent = root;\n\t\t\t\t// We're missing the line to update the current node here...\n\t\t\t}\n\t\t\telse {\n\t\t\t\troot.children[nums[i]] = new TrieNode();\n\t\t\t}\n\t\t\troot = root.children[nums[i]];\n\t\t}\n\t\treturn true;\n};"
+  },
+  "functionSignature": {
+    "cpp": "bool insert(vector<int>& nums);",
+    "java": "boolean insert(int[] nums);",
+    "python": "def insert(self, nums: list[int]) -> bool:",
+    "javascript": "var insert = function(nums);"
+  },
+  "solutions": {
+    "python": "from typing import List\n\nclass Trie:\n\tt = {} # a dictionary to store the Trie\n\ndef insert(self, nums: List[int]) -> bool:\n\tif not nums:\n\t\treturn False\n\troot = self.t\n\tfor i in nums:\n\ttif i not in root:\n\t\troot[i] = {}\n\troot = root[i]\n\treturn True\n\ndef solution(self):\n\treturn 3\n\ndef main():\n\ttrie = Trie()\n\tprint(trie.solution())",
+    "cpp": "#include <iostream>\n#include <vector>\n#include <unordered_map>\n\nusing namespace std;\n\nclass Trie {\npublic:\n\tunordered_map<int, bool>* children;\n\tTrie* parent;\n\tsize_t count;\n\tsolution(const size_t n) {\n\t\tchildren = new unordered_map<int, bool>[n];\n\t}\ntype_traits::remove_reference_t<decltype(children)>.value_type insert(unordered_map<int, bool>* root, const vector<int>& nums) {\n\t\tif (nums.size() == 0) return nullptr;\n\t\tfor (const auto& i : nums) {\n\t\t\tauto it = root->find(i);\n\t\t\tif (it != root->end()) {\n\t\t\t\treturn root;\n\t\t\t}\n\t\t\troot->insert(i, false);\n\t\t}\n\t\treturn root;\n\t}\n\tbool insert(const vector<int>& nums) {\n\t\tconst size_t n = nums.size();\n\t\tunordered_map<int, bool>* root = children[0];\n\t\tfor (size_t i = 0; i < n; ++i) {\n\t\t\troot = insert(root, nums);\n\t\t}\n\t\treturn true;\n}\n};\n\ntypedef solution(Trie::solution);\n\ntypedef solution<int, bool, 10, 15, 17, 1, std::unordered_map<int, bool>>;\nint main() {\n\tTrie tree;\n\treturn (tree.solution(1).insert({1, 2, 3}).insert({4}));\n}\n",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "3\na b c\n3\n1 0 0\n2\nb c\n3\n1 0 1\n",
+      "output": "3\n2\n",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "1\na\n3\n1 0 0\n",
+      "output": "1\n",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

@@ -1,0 +1,116 @@
+{
+  "_id": "05f268c2f77d4885a09a502c",
+  "title": "Implement Token Bucket Rate Limiting for API Endpoints",
+  "slug": "implement-token-bucket-rate-limiting-for-api-endpoints-easy-rate-limiting",
+  "difficulty": "Easy",
+  "topics": [
+    "RATE_LIMITING"
+  ],
+  "statement": "Create a backend API with token bucket rate limiting to control the number of requests per second from clients. Implement a single endpoint to return a success message when a client's IP address meets the rate limit requirements.\n\nYou must use the Express framework with the `express-rate-limit` middleware to implement the token bucket algorithm. \n\nYour API should listen on port 3000 and have a single endpoint at `/api/rate-limited-endpoint` that responds with a JSON body containing a success message. The endpoint should be rate-limited to 5 requests per second for each client IP address.\n\nTo test your API, you can use the provided test cases. Your API should pass all the test cases to receive full points.\n\nNote: You must use the `express-rate-limit` middleware to implement rate limiting. You cannot use any other rate limiting solution or external libraries.\n\n**Endpoint Requirements**\n\n* `GET /api/rate-limited-endpoint`:\n  * Responds with a JSON body containing a success message.\n  * Rate-limited to 5 requests per second for each client IP address.\n  * Must use the `express-rate-limit` middleware to implement rate limiting.\n\n**Test Cases**\n\nThe provided test cases will be used to verify the correctness of your API. Make sure your API passes all the test cases to receive full points.\n\n**Constraints**\n\n* Must use the `express-rate-limit` middleware to implement rate limiting.\n* Must listen on port 3000.\n* Must have a single endpoint at `/api/rate-limited-endpoint` that responds with a JSON body containing a success message.\n",
+  "constraints": [
+    "Must use the `express-rate-limit` middleware to implement rate limiting.",
+    "Must listen on port 3000.",
+    "Must have a single endpoint at `/api/rate-limited-endpoint` that responds with a JSON body containing a success message."
+  ],
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/api/rate-limited-endpoint",
+      "description": "Responds with a JSON body containing a success message."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\"name\":\"backend-app\",\"version\":\"1.0.0\",\"main\":\"index.js\",\"scripts\":{\"start\":\"node index.js\"},\"dependencies\":{\"express\":\"^4.18.2\",\"express-rate-limit\":\"^5.2.0\"}}",
+    "index.js": "const express = require('express');\nconst RateLimit = require('express-rate-limit');\nconst app = express();\n\nconst limiter = RateLimit({\n  windowMs: 1000,\n  max: 5,\n  standardHeaders: true,\n  legacyHeaders: false,\n});\napp.use(limiter);\n\napp.get('/api/rate-limited-endpoint', (req, res) => {\n  // TODO: Implement rate-limited endpoint logic here.\n  res.json({\n    success: true,\n    message: 'Success'\n  });\n});\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "GET",
+      "path": "/api/rate-limited-endpoint",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "success": true,
+        "message": "Success"
+      },
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "GET",
+      "path": "/api/rate-limited-endpoint",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "expectedStatus": 429,
+      "expectedBody": {
+        "error": "Rate limit exceeded"
+      },
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "GET",
+      "path": "/api/rate-limited-endpoint",
+      "expectedStatus": 500,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "GET",
+      "path": "/api/rate-limited-endpoint",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "expectedStatus": 401,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "GET",
+      "path": "/api/rate-limited-endpoint",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "expectedStatus": 404,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "sliding-window",
+    "token-bucket",
+    "fixed-window",
+    "leaky-bucket",
+    "redis",
+    "express-rate-limit",
+    "rate-limiting",
+    "express",
+    "easiest"
+  ]
+}

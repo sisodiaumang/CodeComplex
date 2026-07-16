@@ -1,0 +1,144 @@
+{
+  "title": "Fix SQL Query to Extract Unique Product Categories Correctly Sorted by Count",
+  "subCategory": "SQL Query Formatters",
+  "statement": {
+    "markdown": "Write a SQL query that retrieves unique product categories from the `products` table, along with their corresponding counts. The result should be sorted in descending order by count. However, the current implementation has a logical bug that results in incorrect sorting.",
+    "inputFormat": "The `products` table has the following schema: `id (int), category (string), name (string)`. The input will be a list of product `id`s.",
+    "outputFormat": "The output should be a list of tuples containing unique product categories and their corresponding counts, sorted in descending order.",
+    "notes": "The category counts should be accurate even if some products are missing from the input list.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of products in the input list"
+      }
+    ],
+    "examples": [
+      {
+        "input": "1 2 3 4 5",
+        "output": "[['Electronics', 3], ['Clothing', 2], ['Home Goods', 1]]",
+        "explanation": "The input list contains 5 products, so the output should contain 3 unique categories with their counts."
+      },
+      {
+        "input": "10 20 30 40 50",
+        "output": "[['Electronics', 2], ['Clothing', 2], ['Home Goods', 1]]",
+        "explanation": "The input list contains 5 products, so the output should contain 3 unique categories with their counts."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 100,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "SQL"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "sql"
+    ],
+    "interviewFrequency": 1,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the `GROUP BY` clause to group products by category."
+    },
+    {
+      "order": 2,
+      "text": "Use the `COUNT` aggregation function to count the number of products in each category."
+    },
+    {
+      "order": 3,
+      "text": "Use the `ORDER BY` clause with the `DESC` keyword to sort the result in descending order by count."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial: Fixing the SQL Query",
+    "intuition": "The correct approach is to use the `GROUP BY` clause to group products by category, and then use the `COUNT` aggregation function to count the number of products in each category.",
+    "bruteForce": "A brute force approach would involve using a `SELECT` statement to retrieve all products, a `GROUP BY` clause to group them by category, and then another `SELECT` statement to count the number of products in each category.",
+    "betterSolution": "A better solution would involve using a single `SELECT` statement with a `GROUP BY` clause and the `COUNT` aggregation function.",
+    "optimalSolution": "The optimal solution involves using a single `SELECT` statement with a `GROUP BY` clause, the `COUNT` aggregation function, and the `ORDER BY` clause with the `DESC` keyword.",
+    "proofOfCorrectness": "The correct solution can be proven by running it on a sample dataset and verifying that the output is correct.",
+    "dryRun": "A dry run can be performed by running the correct solution on a sample dataset and verifying that the output is correct.",
+    "commonMistakes": [
+      "Incorrect use of the `GROUP BY` clause",
+      "Incorrect use of the `ORDER BY` clause"
+    ],
+    "timeComplexity": "O(n log n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// Define the SQL query to extract unique product categories and their counts",
+    "python": "class Solution:\n    def solve(self, products):\n        # Define the SQL query to extract unique product categories and their counts"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Incorrect use of the ORDER BY clause; should use DESC instead of ASC",
+    "python": "class Solution:\n    def solve(self, products):\n        # Incorrect use of the ORDER BY clause; should use DESC instead of ASC\n        query = \"SELECT category, COUNT(*) as count FROM products GROUP BY category ORDER BY count ASC\""
+  },
+  "functionSignature": {
+    "javascript": "function solve(products) {\n    // Define the SQL query to extract unique product categories and their counts\n}",
+    "python": "def solve(self, products: list[int]) -> list[tuple[str, int]]:\n    # Define the SQL query to extract unique product categories and their counts"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction solve(products) {\n    // Define the SQL query to extract unique product categories and their counts\n    query = \"SELECT category, COUNT(*) as count FROM products GROUP BY category ORDER BY count DESC\";\n    return query;\n}",
+    "python": "class Solution:\n    def solve(self, products: list[int]) -> list[tuple[str, int]]:\n        # Define the SQL query to extract unique product categories and their counts\n        query = \"SELECT category, COUNT(*) as count FROM products GROUP BY category ORDER BY count DESC\";\n        # Execute the query and return the result\n        import sqlite3\n        conn = sqlite3.connect(':memory:')\n        c = conn.cursor()\n        c.execute(query)\n        result = c.fetchall()\n        return result;"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "1 2 3 4 5",
+      "output": "[['Electronics', 3], ['Clothing', 2], ['Home Goods', 1]]",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "10 20 30 40 50",
+      "output": "[['Electronics', 2], ['Clothing', 2], ['Home Goods', 1]]",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "43da3bf6b57bdccdc61320e5",
+  "slug": "fix-sql-query-to-extract-unique-product-categories-correctly-sorted-by-count-bugfix-hard-sql",
+  "mode": "bug_fix",
+  "category": "SQL",
+  "difficulty": "Hard"
+}

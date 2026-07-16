@@ -1,0 +1,159 @@
+{
+  "_id": "8f31b5b0cf68bcfa0c1006d7",
+  "title": "Implementing a Simple Bookstore API",
+  "slug": "implementing-a-simple-bookstore-api-medium-database",
+  "difficulty": "Medium",
+  "topics": [
+    "DATABASE"
+  ],
+  "statement": "Create a RESTful API using Express.js to manage a bookstore with books. The API should support basic operations like creating, reading, updating, and deleting books. You'll be using a mock book database for this challenge.\n\n**Database Schema**\n\nThe book database has the following collection:\n- id (string, primary key): Unique identifier for the book\n- title (string): Title of the book\n- author (string): Author of the book\n- publicationYear (number): Year the book was published\n\n**Endpoints**\n\n- **POST /api/books**: Create a new book in the database\n  * Request Body:\n    - title (string)\n    - author (string)\n    - publicationYear (number)\n  * Response:\n    - Created book object (200 OK)\n    - Error message (422 Unprocessable Entity)\n- **GET /api/books**: Retrieve all books in the database\n  * Response:\n    - Array of book objects (200 OK)\n    - Error message (500 Internal Server Error)\n- **GET /api/books/:id**: Retrieve a book by its ID\n  * Path Parameter:\n    - id (string): ID of the book to retrieve\n  * Response:\n    - Book object (200 OK)\n    - Error message (404 Not Found)\n- **PUT /api/books/:id**: Update a book by its ID\n  * Path Parameter:\n    - id (string): ID of the book to update\n  * Request Body:\n    - title (string)\n    - author (string)\n    - publicationYear (number)\n  * Response:\n    - Updated book object (200 OK)\n    - Error message (404 Not Found)\n- **DELETE /api/books/:id**: Delete a book by its ID\n  * Path Parameter:\n    - id (string): ID of the book to delete\n  * Response:\n    - Success message (200 OK)\n    - Error message (404 Not Found)\n\n**Constraints**\n\n- Use the mock book database provided in the starter code.\n- Implement validation for request bodies.\n- Handle errors and edge cases properly.\n\n**Mock Book Database**\n\nThe mock book database is an in-memory array of book objects. It's initialized in the starter code and should be used throughout your implementation.\n\n**Starter Code**\n\nYou can find the starter code in the `package.json` and `index.js` files. Make sure to run `npm install` before starting your challenge.\n\nNote: This is a simple bookstore API challenge. You may want to consider implementing more features like authentication, authorization, and pagination in a real-world application.",
+  "constraints": [
+    "Must use only the mock book database provided",
+    "Implement validation for request bodies"
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/books",
+      "description": "Create a new book in the database. Request Body: title (string), author (string), publicationYear (number). Response: Created book object (200 OK), Error message (422 Unprocessable Entity)"
+    },
+    {
+      "method": "GET",
+      "path": "/api/books",
+      "description": "Retrieve all books in the database. Response: Array of book objects (200 OK), Error message (500 Internal Server Error)"
+    },
+    {
+      "method": "GET",
+      "path": "/api/books/:id",
+      "description": "Retrieve a book by its ID. Path Parameter: id (string). Response: Book object (200 OK), Error message (404 Not Found)"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/books/:id",
+      "description": "Update a book by its ID. Path Parameter: id (string). Request Body: title (string), author (string), publicationYear (number). Response: Updated book object (200 OK), Error message (404 Not Found)"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/books/:id",
+      "description": "Delete a book by its ID. Path Parameter: id (string). Response: Success message (200 OK), Error message (404 Not Found)"
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\"name\":\"backend-app\",\"version\":\"1.0.0\",\"main\":\"index.js\",\"scripts\":{\"start\":\"node index.js\"},\"dependencies\":{\"express\":\"^4.18.2\",\"lodash\":\"^4.17.21\",\"mock-book-database\":\"^1.0.0\"}}",
+    "index.js": "const express = require('express');\nconst app = express();\nconst {mockBookDatabase} = require('mock-book-database');\napp.use(express.json());\n\n// TODO: Implement endpoints\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "POST",
+      "path": "/api/books",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "title": "Book Title",
+        "author": "John Doe",
+        "publicationYear": 2020
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "id": "book-1",
+        "title": "Book Title",
+        "author": "John Doe",
+        "publicationYear": 2020
+      },
+      "expectedBodySchema": null,
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "GET",
+      "path": "/api/books",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "expectedStatus": 200,
+      "expectedBody": [
+        {
+          "id": "book-1",
+          "title": "Book Title",
+          "author": "John Doe",
+          "publicationYear": 2020
+        }
+      ],
+      "expectedBodySchema": null,
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "GET",
+      "path": "/api/books/non-existent-id",
+      "expectedStatus": 404,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "PUT",
+      "path": "/api/books/non-existent-id",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "title": "Updated Book Title",
+        "author": "John Doe",
+        "publicationYear": 2020
+      },
+      "expectedStatus": 404,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "DELETE",
+      "path": "/api/books/non-existent-id",
+      "expectedStatus": 404,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "sql",
+    "nosql",
+    "transactions",
+    "indexing",
+    "aggregation",
+    "joins",
+    "relationships",
+    "normalization",
+    "denormalization",
+    "acid",
+    "cap-theorem",
+    "database",
+    "express",
+    "nodejs",
+    "api",
+    "books",
+    "json"
+  ]
+}

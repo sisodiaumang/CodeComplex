@@ -15,7 +15,7 @@ const userProfileSchema =
                 dsa:       { type: Number, default: 1200, min: 0 },
                 frontend:  { type: Number, default: 1200, min: 0 },
                 backend:   { type: Number, default: 1200, min: 0 },
-                fullstack: { type: Number, default: 1200, min: 0 },
+                projects:  { type: Number, default: 1200, min: 0 },
                 team:      { type: Number, default: 1200, min: 0 },
                 promptWar: { type: Number, default: 1200, min: 0 },
                 bugFix:    { type: Number, default: 1200, min: 0 }
@@ -30,7 +30,7 @@ const userProfileSchema =
                 dsa:       { type: Number, default: 1200, min: 0 },
                 frontend:  { type: Number, default: 1200, min: 0 },
                 backend:   { type: Number, default: 1200, min: 0 },
-                fullstack: { type: Number, default: 1200, min: 0 },
+                projects:  { type: Number, default: 1200, min: 0 },
                 team:      { type: Number, default: 1200, min: 0 },
                 promptWar: { type: Number, default: 1200, min: 0 },
                 bugFix:    { type: Number, default: 1200, min: 0 }
@@ -44,7 +44,7 @@ const userProfileSchema =
                 dsaSolved:          { type: Number, default: 0, min: 0 },
                 frontendCompleted:  { type: Number, default: 0, min: 0 },
                 backendCompleted:   { type: Number, default: 0, min: 0 },
-                fullstackCompleted: { type: Number, default: 0, min: 0 }
+                projectsCompleted:  { type: Number, default: 0, min: 0 }
             },
 
             streak: {
@@ -81,7 +81,7 @@ const userProfileSchema =
 userProfileSchema.index({ "ratings.dsa": -1 });
 userProfileSchema.index({ "ratings.frontend": -1 });
 userProfileSchema.index({ "ratings.backend": -1 });
-userProfileSchema.index({ "ratings.fullstack": -1 });
+userProfileSchema.index({ "ratings.projects": -1 });
 userProfileSchema.index({ "ratings.team": -1 });
 userProfileSchema.index({ "ratings.promptWar": -1 });
 userProfileSchema.index({ "ratings.bugFix": -1 });

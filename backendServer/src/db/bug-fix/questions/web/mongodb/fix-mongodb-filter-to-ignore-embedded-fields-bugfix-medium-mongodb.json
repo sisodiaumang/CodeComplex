@@ -1,0 +1,138 @@
+{
+  "title": "Fix MongoDB Filter to Ignore Embedded Fields",
+  "subCategory": "MongoDB Query",
+  "statement": {
+    "markdown": "You are given a MongoDB filter object and an array of embedded field names that should be ignored in the filter. Write a function to create a new filter object that ignores these embedded fields. The function should return the new filter object as a JavaScript object.",
+    "inputFormat": "filter: object, embeddedFields: array of strings",
+    "outputFormat": "newFilter: object",
+    "notes": "The function should not modify the original filter object.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of embedded fields"
+      },
+      {
+        "variable": "obj",
+        "type": "object",
+        "minProperties": 1,
+        "maxProperties": 100000,
+        "description": "Filter object"
+      }
+    ],
+    "examples": [
+      {
+        "input": "filter = { a: 1, b: { c: 2, d: 3 } }; embeddedFields = ['b'];",
+        "output": "{ a: 1 }",
+        "explanation": "The function should ignore the embedded field 'b' in the filter object"
+      },
+      {
+        "input": "filter = { a: 1, b: { c: 2, d: 3 }, e: { f: 4 } }; embeddedFields = ['b', 'e'];",
+        "output": "{ a: 1 }",
+        "explanation": "The function should ignore both embedded fields 'b' and 'e' in the filter object"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "MONGODB"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "mongodb"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "You can use the Object.keys() method to get an array of property names in the filter object"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial for Fix MongoDB Filter to Ignore Embedded Fields",
+    "intuition": "The function should recursively traverse the filter object and ignore the embedded fields",
+    "bruteForce": "You can use a loop to iterate over the embedded fields and use the Object.keys() method to get the property names",
+    "betterSolution": "You can use a recursive function to traverse the filter object and ignore the embedded fields",
+    "optimalSolution": "You can use a recursive function with a helper function to traverse the filter object and ignore the embedded fields",
+    "proofOfCorrectness": "The function should not modify the original filter object and should ignore the embedded fields",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Not using a recursive function",
+      "Not using a helper function"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "function createNewFilter(filter, embeddedFields) {\n  // Your code here\n}"
+  },
+  "buggyStarterCode": {
+    "javascript": "function createNewFilter(filter, embeddedFields) {\n  return Object.assign({}, filter);\n}"
+  },
+  "functionSignature": {
+    "javascript": "function createNewFilter(filter: object, embeddedFields: array of strings): object"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction createNewFilter(filter, embeddedFields) {\n  return embeddedFields.reduce((newFilter, field) => {\n    delete newFilter[field];\n    return newFilter;\n  }, {\n    ...filter\n  });\n}\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{ a: 1, b: { c: 2, d: 3 } } [b] \n",
+      "output": "{ a: 1 } \n",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{ a: 1, b: { c: 2, d: 3 }, e: { f: 4 } } [b, e] \n",
+      "output": "{ a: 1 } \n",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "1cab30e97c80fc800b753755",
+  "slug": "fix-mongodb-filter-to-ignore-embedded-fields-bugfix-medium-mongodb",
+  "mode": "bug_fix",
+  "category": "MONGODB",
+  "difficulty": "Medium"
+}

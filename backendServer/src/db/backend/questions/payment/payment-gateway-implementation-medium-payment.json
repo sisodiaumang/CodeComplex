@@ -1,0 +1,150 @@
+{
+  "_id": "43e808f476f31982d9a7fa93",
+  "title": "Payment Gateway Implementation",
+  "slug": "payment-gateway-implementation-medium-payment",
+  "difficulty": "Medium",
+  "topics": [
+    "PAYMENT"
+  ],
+  "statement": "Implement a payment gateway that accepts payments via POST requests to /api/payments. The request body should contain the payment amount, currency, and customer details. The server should generate a unique payment ID, perform a mock payment processing, and then return the payment status. Implement a GET endpoint to retrieve a payment status by payment ID.\n\nThe payment processing involves the following rules:\n\n* Payments below $10 are processed immediately with a success status.\n* Payments between $10 and $100 are processed with a 10% chance of failure.\n* Payments above $100 are always processed with failure.\n* For all payments, a 3% tax is added to the total amount.\n\nThe server should also handle cases where the payment amount or customer details are missing from the request body or the payment ID is invalid.\n\nAPI Endpoints:\n\n- **POST /api/payments**: Create a new payment.\n- **GET /api/payments/:id**: Retrieve the payment status by ID.\n\nVisible Test Cases:\n\n- **v_tc1**: Successful payment of $5 in USD with valid customer details.\n- **v_tc2**: Payment of $50 in USD with valid customer details but with a 10% chance of failure.\n\nHidden Test Cases:\n\n- **h_tc1**: Payment of $5 with missing customer details.\n- **h_tc2**: Payment of $150 with invalid payment ID.\n- **h_tc3**: Payment of $50 with missing payment amount.\n\nYour task is to implement the payment gateway API, complete with validation, payment processing rules, and error handling.\n\n**Constraints:** Use only the in-memory array or mock database provided.\n\n**Tags:** payment-gateway, express, node.js, backend, payment-processing, api-design\n",
+  "constraints": [
+    "Must use only the in-memory array or mock database provided"
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/payments",
+      "description": "Create a new payment. Request Body: paymentAmount, currency, customerDetails. Response: paymentStatus, paymentId."
+    },
+    {
+      "method": "GET",
+      "path": "/api/payments/:id",
+      "description": "Retrieve the payment status by ID. Response: paymentStatus"
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\n  \"name\": \"payment-gateway\",\n  \"version\": \"1.0.0\",\n  \"main\": \"index.js\",\n  \"scripts\": {\n    \"start\": \"node index.js\"\n  },\n  \"dependencies\": {\n    \"express\": \"^4.18.2\"\n  }\n}",
+    "index.js": "const express = require('express');\nconst app = express();\napp.use(express.json());\n\nconst payments = [];\nconst taxRate = 0.03;\n\n// TODO: Implement payment processing rules and endpoints\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));\n\napp.post('/api/payments', (req, res) => {\n  // TODO: Implement payment validation and processing\n  res.status(201).send({ success: true });\n});\n\napp.get('/api/payments/:id', (req, res) => {\n  // TODO: Implement payment retrieval by ID\n  res.status(200).send({ paymentStatus: 'success' });\n});"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "POST",
+      "path": "/api/payments",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "paymentAmount": 5,
+        "currency": "USD",
+        "customerDetails": {
+          "name": "John Doe",
+          "email": "johndoe@example.com"
+        }
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "success": true,
+        "paymentId": "[UUID]"
+      },
+      "expectedBodySchema": null,
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "POST",
+      "path": "/api/payments",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "paymentAmount": 50,
+        "currency": "USD",
+        "customerDetails": {
+          "name": "Jane Doe",
+          "email": "janedoe@example.com"
+        }
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "success": true,
+        "paymentId": "[UUID]"
+      },
+      "expectedBodySchema": null,
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "POST",
+      "path": "/api/payments",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "paymentAmount": 5
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "GET",
+      "path": "/api/payments/invalid-id",
+      "expectedStatus": 404,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "POST",
+      "path": "/api/payments",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "currency": "USD",
+        "customerDetails": {
+          "name": "John Doe",
+          "email": "johndoe@example.com"
+        }
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "stripe",
+    "razorpay",
+    "webhooks",
+    "checkout",
+    "refunds",
+    "subscriptions",
+    "payment-gateway",
+    "express",
+    "node.js",
+    "api-design",
+    "payment-processing"
+  ]
+}

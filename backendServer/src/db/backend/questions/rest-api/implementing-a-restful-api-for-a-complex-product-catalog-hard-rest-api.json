@@ -1,0 +1,218 @@
+{
+  "_id": "bf956dcffc4a1602957e4aa5",
+  "title": "Implementing a RESTful API for a Complex Product Catalog",
+  "slug": "implementing-a-restful-api-for-a-complex-product-catalog-hard-rest-api",
+  "difficulty": "Hard",
+  "topics": [
+    "REST_API"
+  ],
+  "statement": "Design, implement, and deploy a RESTful API using Express.js to manage a complex product catalog. The catalog consists of products, categories, and reviews. Your API should support CRUD operations for products, categories, and reviews, as well as filtering, sorting, and pagination for products. Additionally, implement API key-based rate limiting and authentication for reviews.",
+  "constraints": [
+    "Must use only the in-memory array provided for storage",
+    "Must implement API key-based rate limiting with a limit of 100 requests per minute",
+    "Must implement authentication for reviews using a secret key"
+  ],
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/api/products",
+      "description": "Retrieves a list of products with filtering, sorting, and pagination support. Query parameters: limit, offset, category, name"
+    },
+    {
+      "method": "GET",
+      "path": "/api/products/:id",
+      "description": "Retrieves a single product by ID"
+    },
+    {
+      "method": "POST",
+      "path": "/api/products",
+      "description": "Creates a new product. Request body: {name, description, price, categoryID}"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/products/:id",
+      "description": "Updates an existing product. Request body: {name, description, price, categoryID}"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/products/:id",
+      "description": "Deletes a product"
+    },
+    {
+      "method": "GET",
+      "path": "/api/categories",
+      "description": "Retrieves a list of categories"
+    },
+    {
+      "method": "GET",
+      "path": "/api/reviews",
+      "description": "Retrieves a list of reviews for a product. Request query parameter: productID. Authentication required using a secret key in the 'Authorization' header"
+    },
+    {
+      "method": "POST",
+      "path": "/api/reviews",
+      "description": "Creates a new review. Request body: {productID, rating, comment}. Authentication required using a secret key in the 'Authorization' header. Rate limiting applies"
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\"name\": \"product-catalog-api\",\"version\": \"1.0.0\",\"main\": \"index.js\",\"scripts\": {\"start\": \"node index.js\"},\"dependencies\": {\"express\": \"^4.18.2\",\"body-parser\": \"^1.19.0\",\"jsonschema\": \"^1.2.2\"}}",
+    "index.js": "const express = require('express');const app = express();const bodyParser = require('body-parser');const jsonschema = require('jsonschema');app.use(bodyParser.json());const products = [{}];const categories = [{}];const reviews = [{}];const apiKeys = ['your-secret-key'];let rateLimit = 0;let lastReset = Date.now();const resetRateLimit = () => {rateLimit = 0;lastReset = Date.now();};const checkRateLimit = () => {const now = Date.now();const elapsed = now - lastReset;if (elapsed >= 1000 * 60) {resetRateLimit();} else if (rateLimit >= 100) {throw new Error('Rate limit exceeded');} rateLimit++;};app.get('/api/products', (req, res) => {const limit = req.query.limit;const offset = req.query.offset;const category = req.query.category;const name = req.query.name;const filteredProducts = products.filter(product => {if (category && product.categoryID !== category) return false;if (name && product.name !== name) return false;return true;});res.json(filteredProducts);\n});\n\napp.get('/api/products/:id', (req, res) => {const id = req.params.id;const product = products.find(product => product.id === id);\n});\n\napp.post('/api/products', (req, res) => {const product = req.body;\n});\n\napp.put('/api/products/:id', (req, res) => {\n});\n\napp.delete('/api/products/:id', (req, res) => {\n});\n\napp.get('/api/categories', (req, res) => {\n});\n\napp.get('/api/reviews', (req, res) => {const productID = req.query.productID;const review = reviews.find(review => review.productID === productID);\n});\n\napp.post('/api/reviews', (req, res) => {const review = req.body;\n});\n\napp.listen(3000, () => console.log('Server running on port 3000'));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "GET",
+      "path": "/api/products",
+      "headers": {},
+      "body": {},
+      "query": {
+        "limit": 10,
+        "offset": 0,
+        "category": "electronics"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "products": [],
+        "total": 0
+      },
+      "expectedBodySchema": null,
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "POST",
+      "path": "/api/products",
+      "headers": {},
+      "body": {
+        "name": "Test Product",
+        "description": "Test product description",
+        "price": 10.99,
+        "categoryID": 1
+      },
+      "expectedStatus": 201,
+      "expectedBody": {},
+      "expectedBodySchema": null,
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "GET",
+      "path": "/api/products/1",
+      "expectedStatus": 200,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "GET",
+      "path": "/api/categories",
+      "expectedStatus": 200,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "POST",
+      "path": "/api/reviews",
+      "headers": {
+        "Authorization": "your-secret-key"
+      },
+      "body": {
+        "productID": 1,
+        "rating": 5,
+        "comment": "Test review comment"
+      },
+      "expectedStatus": 201,
+      "expectedBody": {},
+      "expectedBodySchema": null,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc4",
+      "method": "GET",
+      "path": "/api/reviews",
+      "headers": {
+        "Authorization": "your-secret-key"
+      },
+      "query": {
+        "productID": 1
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "reviews": [],
+        "total": 0
+      },
+      "expectedBodySchema": null,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc5",
+      "method": "POST",
+      "path": "/api/reviews",
+      "headers": {
+        "Authorization": "invalid-key"
+      },
+      "body": {
+        "productID": 1,
+        "rating": 5,
+        "comment": "Test review comment"
+      },
+      "expectedStatus": 403,
+      "expectedBody": {},
+      "expectedBodySchema": null,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc6",
+      "method": "POST",
+      "path": "/api/reviews",
+      "headers": {},
+      "body": {
+        "productID": 1,
+        "rating": " invalid rating"
+      },
+      "expectedStatus": 400,
+      "expectedBody": {},
+      "expectedBodySchema": null,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "crud",
+    "rest-principles",
+    "http-methods",
+    "status-codes",
+    "headers",
+    "query-parameters",
+    "pagination",
+    "filtering",
+    "sorting",
+    "versioning",
+    "api-design",
+    "idempotency",
+    "rest-api",
+    "rate-limiting",
+    "authentication"
+  ]
+}

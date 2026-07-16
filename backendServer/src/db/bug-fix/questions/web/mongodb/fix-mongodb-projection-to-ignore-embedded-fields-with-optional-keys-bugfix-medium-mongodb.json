@@ -1,0 +1,143 @@
+{
+  "title": "Fix MongoDB Projection to Ignore Embedded Fields with Optional Keys",
+  "subCategory": "MongoDB Projection",
+  "statement": {
+    "markdown": "In this task, you will fix a MongoDB projection function to ignore embedded fields when their parent keys are optional. The function should return a projection that only includes the specified fields from the input document, ignoring any unnecessary fields, including those embedded in optional key fields.",
+    "inputFormat": "Input document is an object with nested properties. Each property may have an optional 'key' property that denotes its embedded status.",
+    "outputFormat": "A MongoDB projection object that only includes the specified fields from the input document.",
+    "notes": "You can assume the input document is a valid JSON object. The function should handle cases where the input document has optional keys with embedded fields.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "maxDepth",
+        "type": "integer",
+        "min": 1,
+        "max": 10,
+        "description": "Maximum depth of nested fields in the input document"
+      },
+      {
+        "variable": "maxFields",
+        "type": "integer",
+        "min": 1,
+        "max": 100,
+        "description": "Maximum number of fields in the output projection"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{ a: 1, b: { c: 2, d: { e: 3, f: 4, g: { h: 5 } } } }",
+        "output": "{ a: 1, b: { c: 2, d: { e: 3 } } }",
+        "explanation": "The function should ignore the field 'f' and its nested field 'g:h' since their parent keys are optional"
+      },
+      {
+        "input": "{ x: 1, y: { z: 2, w: { v: 3, u: 4 } } }",
+        "output": "{ x: 1, y: { z: 2 } }",
+        "explanation": "The function should ignore the field 'w' and its nested field 'u' since their parent keys are optional"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 60,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "MONGODB"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "mongodb"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text: Handle optional keys by checking if the parent key exists in the document"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach: Use recursion to traverse the document and handle optional keys",
+    "bruteForce": "Brute force approach summary: Iterate through each field in the document and check if it's a parent key",
+    "betterSolution": "Better solution explanation: Use a recursive function to handle nested fields and optional keys",
+    "optimalSolution": "Optimal solution details: Implement a recursive function that checks for optional keys and ignores unnecessary fields",
+    "proofOfCorrectness": "Correctness proof: The function should return the correct projection by ignoring embedded fields with optional keys",
+    "dryRun": "Step-by-step example run: Traverse the input document, handle optional keys, and construct the output projection",
+    "commonMistakes": [
+      "Mistake 1: Not handling optional keys properly",
+      "Mistake 2: Incorrectly ignoring necessary fields"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "var projectDocument = function(nums) {\n    // TODO: implement\n    return false;\n};",
+    "python": "class Solution:\n    def projectDocument(self, nums: list[int]) -> bool:\n        # TODO: implement\n        pass"
+  },
+  "buggyStarterCode": {
+    "javascript": "function projectDocument(doc) { \n  let projection = {}; \n  for (let key in doc) { \n    if (!key.startsWith('_')) { \n      if (typeof doc[key] === 'object') { \n        projection[key] = projectDocument(doc[key]); \n      } else { \n        projection[key] = doc[key]; \n      } \n    } \n  } \n  return projection; \n}",
+    "python": "class Solution: \n  def projectDocument(self, doc): \n    projection = {} \n    for key in doc: \n      if key != '_': \n        if isinstance(doc[key], dict): \n          projection[key] = self.projectDocument(doc[key]) \n        else: \n          projection[key] = doc[key] \n    return projection"
+  },
+  "functionSignature": {
+    "javascript": "function projectDocument(doc: Object): Object",
+    "python": "def projectDocument(self, doc: dict) -> dict"
+  },
+  "solutions": {
+    "javascript": "// Solution",
+    "python": "class Solution:\n  def projectDocument(self, doc: dict) -> dict:\n    def recursiveProject(doc, projection, maxDepth):\n      if maxDepth == 0:\n        return projection\n      for key, value in doc.items():\n        if key.startswith('_'):\n          continue\n        if isinstance(value, dict):\n          projection[key] = recursiveProject(value, {}, maxDepth - 1)\n        else:\n          projection[key] = value\n      return projection\n    return recursiveProject(doc, {}, doc['maxDepth'])"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{ a: 1, b: { c: 2, d: { e: 3, f: 4, g: { h: 5 } } } }",
+      "output": "{ a: 1, b: { c: 2, d: { e: 3 } } }",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{ x: 1, y: { z: 2, w: { v: 3, u: 4 } } }",
+      "output": "{ x: 1, y: { z: 2 } }",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "_id": "54ee38646c1302bad824e66c",
+  "slug": "fix-mongodb-projection-to-ignore-embedded-fields-with-optional-keys-bugfix-medium-mongodb",
+  "mode": "bug_fix",
+  "category": "MONGODB",
+  "difficulty": "Medium"
+}

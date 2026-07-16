@@ -1,0 +1,139 @@
+{
+  "title": "Optimizing a Memoized React Component Re-renders Due to Changing Array References",
+  "subCategory": "Memoization and Caching in React",
+  "statement": {
+    "markdown": "You have a memoized React function component called `useCachedItems` that fetches and caches a list of items from a server. However, due to an incorrect implementation of the dependency array, the component re-renders unnecessarily when the array references change. Your task is to fix the bug by correctly implementing the dependency array and memoization.",
+    "inputFormat": "The input will be an array of item IDs.",
+    "outputFormat": "The output will be a memoized list of items.",
+    "notes": "You should use the `useCallback` and `useMemo` hooks to memoize the list of items and the function that fetches the items.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of item IDs in the input array."
+      }
+    ],
+    "examples": [
+      {
+        "input": "[1, 2, 3, 4, 5]",
+        "output": "[{id: 1, name: 'Item 1'}, {id: 2, name: 'Item 2'}, {id: 3, name: 'Item 3'}, {id: 4, name: 'Item 4'}, {id: 5, name: 'Item 5'}]",
+        "explanation": "This example demonstrates the correct output when the input array of item IDs is unchanged."
+      },
+      {
+        "input": "[1, 2, 3, 4, 6]",
+        "output": "[{id: 1, name: 'Item 1'}, {id: 2, name: 'Item 2'}, {id: 3, name: 'Item 3'}, {id: 4, name: 'Item 4'}, {id: 6, name: 'Item 6'}]",
+        "explanation": "This example demonstrates the correct output when the input array of item IDs changes."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 75,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "REACT"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "react"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Review the implementation of the `useCallback` hook for the `fetchItems` function."
+    },
+    {
+      "order": 2,
+      "text": "Check if the dependency array in `useMemo` for the `cachedItems` state includes the correct dependencies."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial Title",
+    "intuition": "The `useCachedItems` function should only re-render when the item IDs in the input array change. To achieve this, we need to correctly implement the dependency array in `useMemo` for the `cachedItems` state.",
+    "bruteForce": "One possible brute-force solution is to remove the memoization and re-fetch the items from the server on every render. However, this would defeat the purpose of memoization and lead to unnecessary re-renders.",
+    "betterSolution": "We can fix the bug by correctly implementing the dependency array in `useMemo` for the `cachedItems` state. We should include the `itemIds` array as a dependency.",
+    "optimalSolution": "The optimal solution is to use the `useCallback` hook to memoize the `fetchItems` function and include the `itemIds` array as a dependency. This way, the function will only re-run when the item IDs change.",
+    "proofOfCorrectness": "The proof of correctness lies in the fact that the dependency array in `useMemo` for the `cachedItems` state includes the `itemIds` array. This ensures that the `cachedItems` state will only update when the item IDs change.",
+    "dryRun": "To perform a dry run, you can remove the memoization and re-fetch the items from the server on every render. This will help you understand how the component behaves without memoization.",
+    "commonMistakes": [
+      "Not including the correct dependencies in the dependency array in `useMemo`.",
+      "Not using the `useCallback` hook to memoize the `fetchItems` function."
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "import React, { useState, useCallback, useMemo } from 'react';\n\nconst useCachedItems = (itemIds) => {\n  const [cachedItems, setCachedItems] = useState([]);\n  const fetchItems = useCallback(() => {\n    // Fetch items from server\n  }, []);\n  const cachedItems = useMemo(() => {\n    // Return cached items\n  }, []);\n  return { cachedItems, setCachedItems };\n};\n\nexport default useCachedItems;\n",
+    "python": ""
+  },
+  "buggyStarterCode": {
+    "javascript": "import React, { useState, useCallback, useMemo } from 'react';\n\nconst useCachedItems = (itemIds) => {\n  const [cachedItems, setCachedItems] = useState([]);\n  const fetchItems = useCallback(() => {\n    // Fetch items from server\n  }, []);\n  const cachedItems = useMemo(() => {\n    // Return cached items\n    return [...itemIds].map((id) => ({ id, name: `Item ${id}` }));\n  }, []);\n  return { cachedItems, setCachedItems };\n};\n\nexport default useCachedItems;\n",
+    "python": ""
+  },
+  "functionSignature": {
+    "javascript": "function useCachedItems(itemIds: number[]): { cachedItems: Item[], setCachedItems: (items: Item[]) => void }",
+    "python": ""
+  },
+  "solutions": {
+    "javascript": "// Solution\nimport React, { useState, useCallback, useMemo } from 'react';\n\nconst useCachedItems = (itemIds) => {\n  const [cachedItems, setCachedItems] = useState([]);\n  const fetchItems = useCallback(() => {\n    // Fetch items from server\n    return itemIds.map((id) => ({ id, name: `Item ${id}` }));\n  }, [itemIds]);\n  const cachedItems = useMemo(() => {\n    // Return cached items\n    return fetchItems();\n  }, [fetchItems]);\n  return { cachedItems, setCachedItems };\n};\n\nexport default useCachedItems;\n",
+    "python": ""
+  },
+  "judgeConfig": {
+    "timeLimit": 2000,
+    "memoryLimit": 65536,
+    "supportedLanguages": [
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "[1, 2, 3, 4, 5]",
+      "output": "[{id: 1, name: 'Item 1'}, {id: 2, name: 'Item 2'}, {id: 3, name: 'Item 3'}, {id: 4, name: 'Item 4'}, {id: 5, name: 'Item 5'}]",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "[1, 2, 3, 4, 6]",
+      "output": "[{id: 1, name: 'Item 1'}, {id: 2, name: 'Item 2'}, {id: 3, name: 'Item 3'}, {id: 4, name: 'Item 4'}, {id: 6, name: 'Item 6'}]",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "07af2d7c0a148bc2da46a076",
+  "slug": "optimizing-a-memoized-react-component-re-renders-due-to-changing-array-references-bugfix-hard-react",
+  "mode": "bug_fix",
+  "category": "REACT",
+  "difficulty": "Hard"
+}

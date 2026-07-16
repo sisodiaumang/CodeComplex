@@ -1,0 +1,126 @@
+{
+  "title": "Optimize SQL Query to Extract Unique Product Categories with Correct Sorting and Handling for Empty Strings",
+  "subCategory": "SQL Query Optimization",
+  "statement": {
+    "markdown": "Given a table `products` with columns `category` and `name`, write a SQL query to extract unique product categories and sort them in ascending order. Handle empty strings in the `category` column by replacing them with a placeholder string. The query should return a list of unique categories in the correct order.",
+    "inputFormat": "Table schema: `products (category, name)`",
+    "outputFormat": "List of unique categories",
+    "notes": "Assume the input table has at least one row. The `category` column may contain empty strings.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of rows in the input table"
+      }
+    ],
+    "examples": [
+      {
+        "input": "Table `products`: \n| category | name |\n| --- | --- |\n| Shoes | Nike |\n| Shoes | Adidas |\n| Electronics | Laptop |\n| Clothing | T-Shirt |\n| | Apple Watch |\n| Electronics | Smartphone |\n| | iPhone |\n| Electronics | Tablet |\n",
+        "output": "['Clothing', 'Electronics', 'Shoes']",
+        "explanation": "The query should return the unique categories in ascending order, ignoring empty strings in the `category` column."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 75,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "SQL"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "sql"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the `IFNULL` or `COALESCE` function to handle empty strings in the `category` column."
+    }
+  ],
+  "editorial": {
+    "title": "Optimal Solution",
+    "intuition": "The query should use a combination of aggregation and sorting functions to extract unique categories.",
+    "bruteForce": "The brute force approach would involve using a subquery to extract unique categories and then sorting the result.",
+    "betterSolution": "The better solution involves using a single query with aggregation and sorting functions.",
+    "optimalSolution": "The optimal solution uses a single query with `IFNULL` or `COALESCE` to handle empty strings, `GROUP BY` to extract unique categories, and `ORDER BY` to sort the result.",
+    "proofOfCorrectness": "The query should return a list of unique categories in the correct order, ignoring empty strings in the `category` column.",
+    "dryRun": "Table `products`: \n| category | name |\n| --- | --- |\n| Shoes | Nike |\n| Shoes | Adidas |\n| Electronics | Laptop |\n| Clothing | T-Shirt |\n| | Apple Watch |\n| Electronics | Smartphone |\n| | iPhone |\n| Electronics | Tablet |\n|\nSELECT IFNULL(category, 'Unknown') AS category, COUNT(*) AS count\nFROM products\nGROUP BY IFNULL(category, 'Unknown')\nORDER BY category ASC",
+    "commonMistakes": [
+      "Not handling empty strings in the `category` column",
+      "Not using a single query with aggregation and sorting functions"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// Skeleton function/class declaration with a comment. No driver code."
+  },
+  "buggyStarterCode": {
+    "javascript": "function solve(products) {\n  const categories = []; // Initialize an array to store unique categories\n  for (const product of products) {\n    if (product.category !== '') {\n      categories.push(product.category); // Only add non-empty categories to the array\n    }\n  }\n  return categories.sort(); // Sort the array of categories in ascending order\n}\n"
+  },
+  "functionSignature": {
+    "javascript": "var solve = function(products);"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction solve(products) {\n  return products.map(product => product.category).filter(category => category !== '').sort(); // Use `map` to extract categories, `filter` to ignore empty strings, and `sort` to sort the result in ascending order\n}\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "Table `products`: \n| category | name |\n| --- | --- |\n| Shoes | Nike |\n| Shoes | Adidas |\n| Electronics | Laptop |\n| Clothing | T-Shirt |\n| | Apple Watch |\n| Electronics | Smartphone |\n| | iPhone |\n| Electronics | Tablet |\n",
+      "output": "['Clothing', 'Electronics', 'Shoes']",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_hidden_generated",
+      "input": "Table `products`: \n| category | name |\n| --- | --- |\n| Shoes | Nike |\n| Shoes | Adidas |\n| Electronics | Laptop |\n| Clothing | T-Shirt |\n| | Apple Watch |\n| Electronics | Smartphone |\n| | iPhone |\n| Electronics | Tablet |\n",
+      "output": "['Clothing', 'Electronics', 'Shoes']",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "38f8591073f15a09190267d9",
+  "slug": "optimize-sql-query-to-extract-unique-product-categories-with-correct-sorting-and-handling-for-empty-strings-bugfix-hard-sql",
+  "mode": "bug_fix",
+  "category": "SQL",
+  "difficulty": "Hard"
+}

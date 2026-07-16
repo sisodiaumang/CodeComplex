@@ -1,0 +1,204 @@
+{
+  "_id": "detect-cycle-undirected-dfs",
+  "title": "Detect Cycle Undirected (DFS)",
+  "slug": "detect-cycle-undirected-dfs",
+  "difficulty": "Hard",
+  "category": "GRAPH",
+  "subCategory": "BFS / DFS Problems",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 45,
+    "points": 500,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "Graphs",
+      "BFS / DFS Problems",
+      "Graph Algorithms"
+    ],
+    "patterns": [
+      "detect cycle",
+      "cycle detection",
+      "dfs traversal"
+    ],
+    "prerequisites": [
+      "BFS/DFS traversal",
+      "Graph representation"
+    ],
+    "variants": [],
+    "tags": [
+      "cycle detection",
+      "undirected graph",
+      "dfs traversal"
+    ],
+    "keywords": [
+      "tarjan's algorithm",
+      "strongly connected component",
+      "graph cycle"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "Given an undirected graph with V vertices and E edges, detect if the graph contains a cycle using Depth-First Search (DFS). The vertices are 0-indexed.",
+    "inputFormat": "The first line contains two integers V and E, representing the number of vertices and edges in the graph respectively.\nEach of the next E lines contains two integers u and v, representing an undirected edge between vertices u and v.",
+    "outputFormat": "Print 'True' if the graph contains a cycle, and 'False' otherwise.",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "V",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of vertices"
+      },
+      {
+        "variable": "E",
+        "type": "integer",
+        "min": 0,
+        "max": 10000,
+        "description": "Number of edges"
+      }
+    ],
+    "examples": [
+      {
+        "input": "5 5\n0 1\n1 2\n2 0\n1 3\n3 4",
+        "output": "True",
+        "explanation": "The graph contains a cycle 0 -> 1 -> 2 -> 0."
+      },
+      {
+        "input": "4 3\n0 1\n1 2\n2 3",
+        "output": "False",
+        "explanation": "The graph does not contain a cycle."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "To detect a cycle in an undirected graph, consider how a graph traversal algorithm like Depth-First Search (DFS) can be utilized, especially focusing on the properties of undirected graphs and what constitutes a cycle."
+    },
+    {
+      "order": 2,
+      "text": "In an undirected graph, a cycle can be detected by keeping track of the parent of each node during the DFS traversal. If you encounter a node that is already visited and it's not the parent of the current node, then a cycle is present."
+    },
+    {
+      "order": 3,
+      "text": "The key to solving this problem lies in properly handling the visited nodes and their parents. Consider using a recursive DFS approach and maintaining a set of visited nodes and a way to track the parent of each node."
+    }
+  ],
+  "editorial": {
+    "title": "Detecting Cycles in Undirected Graphs with DFS",
+    "intuition": "The problem can be solved by traversing the graph and checking for back edges. A back edge in an undirected graph indicates the presence of a cycle.",
+    "bruteForce": "A brute force approach would involve checking all possible paths in the graph, which would result in an exponential time complexity. This is impractical for large graphs.",
+    "betterSolution": "Using Depth-First Search (DFS) with a visited array and a parent node allows us to detect cycles in the graph efficiently.",
+    "optimalSolution": "The optimal solution uses DFS with a time complexity of O(V + E) and a space complexity of O(V + E), where V is the number of vertices and E is the number of edges.",
+    "proofOfCorrectness": "The correctness of the solution can be proven by observing that a cycle in an undirected graph must contain a back edge. The DFS traversal with a parent node allows us to detect back edges, which in turn allows us to detect cycles.",
+    "dryRun": "A dry run of the algorithm on a sample graph can help verify its correctness. For example, on a graph with vertices {0, 1, 2} and edges {(0, 1), (1, 2), (2, 0)}, the algorithm should correctly detect a cycle.",
+    "commonMistakes": [
+      "Not marking visited nodes correctly",
+      "Not handling the parent node correctly",
+      "Not checking for back edges correctly",
+      "Using the wrong data structure for the graph",
+      "Not handling disconnected graphs correctly",
+      "Not setting the recursion limit correctly for large graphs"
+    ],
+    "timeComplexity": "O(V + E)",
+    "spaceComplexity": "O(V)"
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\nclass Solution {\npublic:\n    bool isCyclic(vector<vector<int>>& graph) {\n        // TODO: implement\n        return false;\n    }\n};",
+    "java": "import java.util.*;\nclass Solution {\n    public boolean isCyclic(int[][] graph) {\n        // TODO: implement\n        return false;\n    }\n}",
+    "python": "class Solution:\n    def isCyclic(self, graph: list[list[int]]) -> bool:\n        # TODO: implement\n        pass",
+    "javascript": "/**\n * @param {number[][]} graph\n * @return {boolean}\n */\nvar isCyclic = function(graph) {\n    // TODO: implement\n    return false;\n};"
+  },
+  "functionSignature": {
+    "cpp": "bool isCyclic(vector<vector<int>>& graph);",
+    "java": "public boolean isCyclic(int[][] graph);",
+    "python": "def isCyclic(self, graph: list[list[int]]) -> bool:",
+    "javascript": "var isCyclic = function(graph);"
+  },
+  "solutions": {
+    "python": "import sys\n\nclass Solution:\n    def isCyclic(self, graph: list[list[int]]) -> bool:\n        def dfs(node, parent, visited, graph):\n            visited[node] = True\n            for neighbor in graph[node]:\n                if not visited[neighbor]:\n                    if dfs(neighbor, node, visited, graph):\n                        return True\n                elif neighbor != parent:\n                    return True\n            return False\n\n        num_vertices = len(graph)\n        visited = [False] * num_vertices\n        for node in range(num_vertices):\n            if not visited[node]:\n                if dfs(node, -1, visited, graph):\n                    return True\n        return False\n\nif __name__ == '__main__':\n    it = iter(sys.stdin.read().split())\n    try:\n        v = int(next(it))\n        e = int(next(it))\n        graph = [[] for _ in range(v)]\n        for _ in range(e):\n            u = int(next(it))\n            w = int(next(it))\n            graph[u].append(w)\n            graph[w].append(u)\n    except StopIteration:\n        sys.exit(0)\n    sol = Solution()\n    ans = sol.isCyclic(graph)\n    print(\"True\" if ans else \"False\")",
+    "cpp": "#include <numeric>\n#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    bool isCyclic(vector<vector<int>>& graph) {\n        int numVertices = graph.size();\n        vector<bool> visited(numVertices, false);\n        for (int node = 0; node < numVertices; node++) {\n            if (!visited[node]) {\n                if (dfs(node, -1, visited, graph)) {\n                    return true;\n                }\n            }\n        }\n        return false;\n    }\nprivate:\n    bool dfs(int node, int parent, vector<bool>& visited, vector<vector<int>>& graph) {\n        visited[node] = true;\n        for (int neighbor : graph[node]) {\n            if (!visited[neighbor]) {\n                if (dfs(neighbor, node, visited, graph)) {\n                    return true;\n                }\n            } else if (neighbor != parent) {\n                return true;\n            }\n        }\n        return false;\n    }\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int v, e;\n    if (!(cin >> v >> e)) return 0;\n    vector<vector<int>> graph(v);\n    for (int i = 0; i < e; i++) {\n        int u, w;\n        if (!(cin >> u >> w)) return 0;\n        graph[u].push_back(w);\n        graph[w].push_back(u);\n    }\n    Solution sol;\n    bool ans = sol.isCyclic(graph);\n    cout << (ans ? \"True\" : \"False\") << \"\\n\";\n    return 0;\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.5
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5 5\n0 1\n1 2\n2 0\n1 3\n3 4",
+      "output": "True",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "4 3\n0 1\n1 2\n2 3",
+      "output": "False",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sorted_8",
+      "input": "5 4\n0 1\n1 2\n2 3\n3 4",
+      "output": "False",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sorted"
+    },
+    {
+      "id": "reverse_sorted_9",
+      "input": "5 4\n4 3\n3 2\n2 1\n1 0",
+      "output": "False",
+      "isVisible": false,
+      "weight": 1,
+      "category": "reverse_sorted"
+    },
+    {
+      "id": "repeated_10",
+      "input": "4 4\n0 1\n1 2\n2 3\n0 1",
+      "output": "True",
+      "isVisible": false,
+      "weight": 1,
+      "category": "repeated"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

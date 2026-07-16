@@ -1,0 +1,160 @@
+{
+  "title": "Fixing a Node.js Express Middleware Route for Incorrect Route Parameter Validation",
+  "subCategory": "Express Middleware",
+  "statement": {
+    "markdown": "A Node.js Express application is using a middleware function named `validateRoute` to validate the route parameters. However, the validation logic is incorrect, resulting in incorrect validation and potential security vulnerabilities. Your task is to fix the `validateRoute` middleware function to correctly validate the route parameters.",
+    "inputFormat": "The input will be a JSON object with route parameters, e.g. `{ id: 123, name: 'John' }`.",
+    "outputFormat": "The middleware function should return `true` if the route parameters are valid, and `false` otherwise.",
+    "notes": "The validation should check if the `id` is a positive integer, and the `name` is a string with a maximum length of 50 characters.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "id",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Route parameter id"
+      },
+      {
+        "variable": "name",
+        "type": "string",
+        "min": 1,
+        "max": 50,
+        "description": "Route parameter name"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"id\": 123, \"name\": \"John\"}",
+        "output": "true",
+        "explanation": "Valid id and name"
+      },
+      {
+        "input": "{\"id\": -1, \"name\": \"John\"}",
+        "output": "false",
+        "explanation": "Invalid id"
+      },
+      {
+        "input": "{\"id\": 123, \"name\": \"John Doe\"}",
+        "output": "false",
+        "explanation": "Name is too long"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "NODE_JS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "node_js"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the `isNaN` function to check if the `id` is a positive integer."
+    },
+    {
+      "order": 2,
+      "text": "Use the `String.prototype.length` property to check the length of the `name` string."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial: Fixing the Route Parameter Validation",
+    "intuition": "The validation logic should check if the `id` is a positive integer and the `name` is a string with a maximum length of 50 characters.",
+    "bruteForce": "You can use the `isNaN` function and `String.prototype.length` property to check the `id` and `name` respectively.",
+    "betterSolution": "Use a regular expression to check the `id` and `name` in one step.",
+    "optimalSolution": "Use a single regular expression to check both the `id` and `name` properties.",
+    "proofOfCorrectness": "The middleware function should return `true` if the route parameters are valid, and `false` otherwise.",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Forgetting to check the `id` is a positive integer",
+      "Forgetting to check the `name` is a string with a maximum length of 50 characters"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "function validateRoute(req, res, next) {\n  // TO DO: implement route parameter validation\n  next();\n}\nmodule.exports = validateRoute;",
+    "python": "class Solution:\n  def validateRoute(self, req, res):\n    # TO DO: implement route parameter validation\n    pass\n  def main(self):\n    pass"
+  },
+  "buggyStarterCode": {
+    "javascript": "function validateRoute(req, res, next) {\n  if (isNaN(req.params.id) || req.params.id < 0) {\n    next();\n  } else {\n    if (req.params.name.length > 50) {\n      next();\n    } else {\n      next();\n    }\n  }\n}\nmodule.exports = validateRoute;",
+    "python": "class Solution:\n  def validateRoute(self, req, res):\n    if not isinstance(req.params['id'], int) or req.params['id'] < 0:\n      pass\n    else:\n      if len(req.params['name']) > 50:\n        pass\n      else:\n        pass\n  def main(self):\n    pass"
+  },
+  "functionSignature": {
+    "javascript": "function validateRoute(req, res, next) {}",
+    "python": "def validateRoute(self, req, res):"
+  },
+  "solutions": {
+    "javascript": "// Solution:\nfunction validateRoute(req, res, next) {\n  if (isNaN(req.params.id) || req.params.id < 1 || req.params.name.length > 50) {\n    return res.status(400).send('Invalid route parameters');\n  }\n  next();\n}\nmodule.exports = validateRoute;",
+    "python": "class Solution:\n  def validateRoute(self, req, res):\n    if not isinstance(req.params['id'], int) or req.params['id'] < 1 or len(req.params['name']) > 50:\n      return res.status(400).send('Invalid route parameters')\n    else:\n      next()\n  def main(self):\n    pass"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"id\": 123, \"name\": \"John\"}",
+      "output": "true",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"id\": -1, \"name\": \"John\"}",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    },
+    {
+      "id": "tc_3",
+      "input": "{\"id\": 123, \"name\": \"John Doe\"}",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "0e49db727e15108f5a5e0d92",
+  "slug": "fixing-a-nodejs-express-middleware-route-for-incorrect-route-parameter-validation-bugfix-medium-node_js",
+  "mode": "bug_fix",
+  "category": "NODE_JS",
+  "difficulty": "Medium"
+}

@@ -1,0 +1,233 @@
+{
+  "_id": "disjoint-set-union-find",
+  "title": "Disjoint Set (Union-Find)",
+  "slug": "disjoint-set-union-find",
+  "difficulty": "Hard",
+  "category": "TREE",
+  "subCategory": "MST / Disjoint Set",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 40,
+    "points": 500,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "Graphs",
+      "MST / Disjoint Set"
+    ],
+    "patterns": [
+      "union-find",
+      "disjoint-set"
+    ],
+    "prerequisites": [
+      "Graph Traversal",
+      "Basic Data Structures"
+    ],
+    "variants": [],
+    "tags": [
+      "Graph Theory",
+      "MST",
+      "Disjoint Set"
+    ],
+    "keywords": [
+      "union",
+      "find",
+      "parent",
+      "rank",
+      "path compression"
+    ],
+    "interviewFrequency": 4,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "Given an undirected weighted graph with N vertices numbered from 1 to N and M edges, determine the total weight of its Minimum Spanning Tree (MST). If the graph is disconnected and an MST cannot be formed, output -1. Use a Disjoint Set Union (Union‑Find) data structure to efficiently process the edges. The input size can be large, so an O(M log M) solution with path compression and union by rank is required.",
+    "inputFormat": "The first line contains two integers N and M, the number of vertices and edges respectively.\nThe next M lines each contain three integers u, v, w describing an undirected edge between vertices u and v with weight w.\n",
+    "outputFormat": "A single integer: the total weight of the MST, or -1 if the graph is disconnected.\n",
+    "notes": "All edges are undirected. Multiple edges between the same pair of vertices may exist; treat each as a separate edge. Vertices are 1-indexed.\n",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "N",
+        "type": "integer",
+        "min": 1,
+        "max": 100000,
+        "description": "Number of vertices"
+      },
+      {
+        "variable": "M",
+        "type": "integer",
+        "min": 0,
+        "max": 200000,
+        "description": "Number of edges"
+      },
+      {
+        "variable": "u",
+        "type": "integer",
+        "min": 1,
+        "max": "N",
+        "description": "Endpoint of an edge"
+      },
+      {
+        "variable": "v",
+        "type": "integer",
+        "min": 1,
+        "max": "N",
+        "description": "Endpoint of an edge"
+      },
+      {
+        "variable": "w",
+        "type": "integer",
+        "min": 0,
+        "max": 1000000,
+        "description": "Weight of an edge"
+      }
+    ],
+    "examples": [
+      {
+        "input": "4 5\n1 2 3\n2 3 4\n3 4 5\n4 1 6\n1 3 2\n",
+        "output": "10",
+        "explanation": "The MST consists of edges (1,3,2), (1,2,3) and (2,3,4) with total weight 9."
+      },
+      {
+        "input": "3 1\n1 2 10\n",
+        "output": "-1",
+        "explanation": "The graph is disconnected; vertex 3 is isolated, so no MST exists."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "To solve this problem, you need to first sort the edges by their weights in non-decreasing order. This will allow you to efficiently select the minimum-weight edges to include in the Minimum Spanning Tree."
+    },
+    {
+      "order": 2,
+      "text": "After sorting the edges, you can use a Disjoint Set Union data structure to efficiently process the edges. The Disjoint Set Union data structure will help you to efficiently check if two vertices are already connected, and if not, merge them together."
+    },
+    {
+      "order": 3,
+      "text": "When merging two sets of vertices together, you need to make sure that the rank of the parent set is updated correctly. This will help to ensure that the Disjoint Set Union operations are performed efficiently."
+    },
+    {
+      "order": 4,
+      "text": "To achieve an O(M log M) time complexity, you should use path compression and union by rank techniques during the Disjoint Set Union operations. Path compression helps to reduce the time complexity of the find operation, while union by rank helps to reduce the number of operations required to merge two sets together."
+    },
+    {
+      "order": 5,
+      "text": "If the graph is disconnected and an MST cannot be formed, you should return -1 as the result. This can be determined by checking if the number of connected components in the graph is greater than 1."
+    }
+  ],
+  "editorial": {
+    "title": "Building Minimum Spanning Trees with Union‑Find",
+    "intuition": "When you try to connect all vertices with the lightest possible total weight, you are essentially looking for a tree that spans the graph and has minimum weight. The classic greedy strategy is to consider edges from lightest to heaviest and add an edge only if it does not create a cycle. The key observation is that a cycle can be detected by checking whether the two endpoints already belong to the same connected component. The disjoint‑set data structure (Union‑Find) gives exactly this capability in almost constant time, making the greedy algorithm efficient.",
+    "bruteForce": "A brute‑force approach would enumerate all subsets of edges, check if they form a spanning tree, and compute their total weight. For a graph with M edges this would be O(2^M) time, which is infeasible even for small M. Another naive strategy is to try every possible edge ordering and run a depth‑first search to build a tree, still exponential. These methods are correct in that they eventually find the optimal tree, but they cannot finish within reasonable time limits for the given constraints.",
+    "betterSolution": "The optimal solution is Kruskal’s algorithm: sort all edges by weight, then iterate through them, adding an edge only if it connects two previously disconnected components. The Union‑Find structure maintains the components and supports the required connectivity test and merge operations in near‑constant amortized time. This reduces the overall complexity to O(M log M) for sorting, with the DSU operations adding only a small constant factor.",
+    "optimalSolution": "Kruskal’s algorithm with Union‑Find runs in O(M log M) time and O(N+M) space, which meets the problem’s constraints. It guarantees that the resulting set of edges is a minimum spanning tree if the graph is connected, otherwise it reports impossibility.",
+    "proofOfCorrectness": "Kruskal’s greedy choice is optimal because at each step it selects the lightest edge that does not form a cycle. If an optimal spanning tree omitted this edge, replacing its heaviest edge in the cycle with the selected edge would not increase total weight, contradicting optimality. Repeating this argument for all edges shows that the algorithm produces a minimum‑weight spanning tree. If the algorithm stops before adding N−1 edges, the graph is disconnected and no spanning tree exists.",
+    "dryRun": "Consider a graph with vertices 1–4 and edges (1,2,3), (2,3,1), (3,4,4), (1,4,2). Sorted edges: (2,3,1), (1,4,2), (1,2,3), (3,4,4). The algorithm adds (2,3,1) – components {2,3}. Adds (1,4,2) – components {1,4}. Adds (1,2,3) – connects the two components into {1,2,3,4}. Total weight 6. The remaining edge would form a cycle, so it is skipped. The resulting tree is indeed minimum.",
+    "commonMistakes": [
+      "Assuming the graph is always connected and returning 0 instead of -1 when it isn’t",
+      "Sorting edges incorrectly (e.g., by endpoints instead of weight)",
+      "Using a naive DSU without path compression or union by rank, leading to TLE",
+      "Forgetting to break the loop after N‑1 edges, causing unnecessary work",
+      "Misinterpreting the input format and reading wrong number of values",
+      "Returning the sum of all edges instead of only the selected ones"
+    ],
+    "timeComplexity": "O(M log M) due to sorting edges, with near‑constant amortized cost for DSU operations.",
+    "spaceComplexity": "O(N+M) for storing the DSU arrays and the edge list."
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    int solve(int n, vector<array<int,3>>& edges) {\n        // TODO: implement\n        return 0;\n    }\n};",
+    "java": "import java.util.*;\n\nclass Solution {\n    public int solve(int n, List<int[]> edges) {\n        // TODO: implement\n        return 0;\n    }\n}",
+    "python": "class Solution:\n    def solve(self, n: int, edges: list[tuple[int, int, int]]) -> int:\n        # TODO: implement\n        pass",
+    "javascript": "/**\n * @param {number} n\n * @param {number[][]} edges\n * @return {number}\n */\nvar solve = function(n, edges) {\n    // TODO: implement\n    return 0;\n};"
+  },
+  "functionSignature": {
+    "cpp": "int solve(int n, vector<array<int,3>>& edges);",
+    "java": "public int solve(int n, List<int[]> edges);",
+    "python": "def solve(self, n: int, edges: list[tuple[int, int, int]]) -> int:",
+    "javascript": "var solve = function(n, edges);"
+  },
+  "solutions": {
+    "python": "import sys\n\nclass Solution:\n    def solve(self, n: int, edges: list[tuple[int, int, int]]) -> int:\n        parent = list(range(n + 1))\n        rank = [0] * (n + 1)\n\n        def find(x: int) -> int:\n            while parent[x] != x:\n                parent[x] = parent[parent[x]]\n                x = parent[x]\n            return x\n\n        def union(x: int, y: int) -> bool:\n            rx, ry = find(x), find(y)\n            if rx == ry:\n                return False\n            if rank[rx] < rank[ry]:\n                parent[rx] = ry\n            elif rank[rx] > rank[ry]:\n                parent[ry] = rx\n            else:\n                parent[ry] = rx\n                rank[rx] += 1\n            return True\n\n        edges_sorted = sorted(edges, key=lambda e: e[2])\n        total = 0\n        used = 0\n        for u, v, w in edges_sorted:\n            if union(u, v):\n                total += w\n                used += 1\n                if used == n - 1:\n                    break\n        return total if used == n - 1 else -1\n\nif __name__ == '__main__':\n    data = sys.stdin.read().split()\n    if not data:\n        sys.exit(0)\n    it = iter(data)\n    n = int(next(it))\n    m = int(next(it))\n    edges = []\n    for _ in range(m):\n        u = int(next(it)); v = int(next(it)); w = int(next(it))\n        edges.append((u, v, w))\n    sol = Solution()\n    ans = sol.solve(n, edges)\n    print(ans)",
+    "cpp": "#include <numeric>\n#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    int solve(int n, vector<array<int,3>>& edges) {\n        vector<int> parent(n+1), rankv(n+1,0);\n        iota(parent.begin(), parent.end(), 0);\n        function<int(int)> find = [&](int x){\n            while(parent[x]!=x){\n                parent[x]=parent[parent[x]];\n                x=parent[x];\n            }\n            return x;\n        };\n        auto unite = [&](int a,int b){\n            int ra=find(a), rb=find(b);\n            if(ra==rb) return false;\n            if(rankv[ra]<rankv[rb]) swap(ra,rb);\n            parent[rb]=ra;\n            if(rankv[ra]==rankv[rb]) rankv[ra]++;\n            return true;\n        };\n        sort(edges.begin(), edges.end(), [](const array<int,3>& a, const array<int,3>& b){return a[2]<b[2];});\n        long long total=0; int used=0;\n        for(auto &e: edges){\n            if(unite(e[0], e[1])){\n                total+=e[2];\n                if(++used==n-1) break;\n            }\n        }\n        return (used==n-1)? (int)total : -1;\n    }\n};\n\nint main(){\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int n,m;\n    if(!(cin>>n>>m)) return 0;\n    vector<array<int,3>> edges;\n    edges.reserve(m);\n    for(int i=0;i<m;++i){\n        int u,v,w;cin>>u>>v>>w;edges.push_back({u,v,w});\n    }\n    Solution sol;\n    int ans=sol.solve(n, edges);\n    cout<<ans<<\"\\n\";\n    return 0;\n}\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.5
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "4 5\n1 2 3\n2 3 4\n3 4 5\n4 1 6\n1 3 2\n",
+      "output": "10",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "3 1\n1 2 10\n",
+      "output": "-1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint_3",
+      "input": "2 1\n1 2 1",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "duplicate_5",
+      "input": "2 2\n1 2 1\n2 1 1",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "duplicate"
+    },
+    {
+      "id": "sorted_7",
+      "input": "5 4\n1 2 10\n1 3 20\n2 3 30\n2 4 40\n1 4 50",
+      "output": "-1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sorted"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

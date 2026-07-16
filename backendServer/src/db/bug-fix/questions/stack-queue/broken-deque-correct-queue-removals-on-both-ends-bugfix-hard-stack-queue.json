@@ -1,0 +1,162 @@
+{
+  "_id": "b9492123fcf2e2678fc73420",
+  "title": "Broken Deque: Correct Queue Removals on Both Ends",
+  "slug": "broken-deque-correct-queue-removals-on-both-ends-bugfix-hard-stack-queue",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "QUEUE",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "queue"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Solve the problem and fix the bugs.",
+    "inputFormat": "Input is a list of integers, a number, representing the total number of operations, and another number, denoting the type of operation (1 for enqueue, 2 for dequeue from front, 3 for dequeue from back and 4 for print queue). \n\n Each operation (except print) is followed by an integer or a value to be enqueued/dequeued.\n\nExample: \n1 5 12 3 7\n2 5 3\n4 5",
+    "outputFormat": "The final state of the queue.\n\nExample: \n7 12 3",
+    "notes": "A double-ended queue has the following operations implemented: enqueue, dequeueFromFront, dequeueFromBack, printQueue.\n\nNote that there are no checks for the queue being empty.\n\nThe queue is initially empty.\nTime complexity must be O(1) for enqueue and O(n) for dequeue operations.\nSpace complexity must be O(n) where n is the total number of elements in the queue.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 100000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "1 5 12\n2 5 3\n4 5",
+        "output": "7 12 3",
+        "explanation": ""
+      },
+      {
+        "input": "4 5\n1 7\n3 5\n2 5\n4 5",
+        "output": "7 5",
+        "explanation": ""
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Review time complexity requirements and check if all operations follow the rules."
+    },
+    {
+      "order": 2,
+      "text": "Consider edge cases like empty queue when dealing with dequeue operations."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial",
+    "intuition": "The provided code seems correct, however there are some logical issues with the implementation of certain functions.",
+    "bruteForce": "Brute force approach summary: A naive solution would be to always remove the first or last element when dequeueFromFront or dequeueFromBack is called.",
+    "betterSolution": "A more efficient solution is to use two pointers to keep track of the front and back of the queue when implementing dequeue operations.",
+    "optimalSolution": "The solution should handle the case when the queue is empty, and implement the dequeue operations in O(n) time complexity.",
+    "proofOfCorrectness": "To prove that the solution is correct, we need to show that the queue operations are performed in the correct order and that the time complexity is O(1) for enqueue and O(n) for dequeue operations.",
+    "dryRun": "Step-by-step example run: Dequeue from front should remove the first element, while dequeue from back should remove the last element.",
+    "commonMistakes": [
+      "Incorrect implementation of dequeue operations",
+      "Forgetting edge cases like empty queue"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "// TODO: implement queue operations",
+    "java": "// TODO: implement queue operations",
+    "python": "class Solution:\n    def __init__(self):\n        self.queue = []",
+    "javascript": "function Solution() {\n    this.queue = [];"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    void enqueue(int val) {\n        this->queue.push_back(val);\n    }\n\n    void dequeueFromFront() {\n        if (this->queue.size() > 0) {\n            this->queue.pop_front();\n        }\n        if (this->queue.size() > 0) {\n            this->queue.pop_back();\n        }\n    }\n\n    void dequeueFromBack() {\n        if (this->queue.size() > 0) {\n            this->queue.pop_front();\n        }\n        if (this->queue.size() > 0) {\n            this->queue.pop_back();\n        }\n    }\n\n    void printQueue() {\n        for (auto& elem : this->queue) {\n            cout << elem << ' ';    \n        }    \n        cout << endl;\n    }\n\n    void solve(vector<int>& nums) {\n        int n = nums[0];\n        for (int i = 1; i <= n; i++) {\n            if (nums[i*2] == 1) {\n                enqueue(nums[i*2+1]);\n            } else if (nums[i*2] == 2) {\n                dequeueFromFront();\n            } else if (nums[i*2] == 3) {\n                dequeueFromBack();\n            } else if (nums[i*2] == 4) {\n                printQueue();\n            }\n        }\n    }\n};",
+    "java": "class Solution {\npublic:\n    void enqueue(int val) {\n        this.queue.add(val);\n    }\n\n    void dequeueFromFront() {\n        if (this.queue.size() > 0) {\n            this.queue.remove(0);\n        }\n        if (this.queue.size() > 0) {\n            this.queue.remove(this.queue.size() - 1);\n        }\n    }\n\n    void dequeueFromBack() {\n        if (this.queue.size() > 0) {\n            this.queue.remove(0);\n        }\n        if (this.queue.size() > 0) {\n            this.queue.remove(this.queue.size() - 1);\n        }\n    }\n\n    void printQueue() {\n        for (Object& elem : this.queue) {\n            System.out.print(elem + ' ');    \n        }    \n        System.out.println();\n    }\n\n    void solve(int[] nums) {\n        int n = nums[0];\n        for (int i = 1; i <= n; i++) {\n            if (nums[i*2] == 1) {\n                enqueue(nums[i*2+1]);\n            } else if (nums[i*2] == 2) {\n                dequeueFromFront();\n            } else if (nums[i*2] == 3) {\n                dequeueFromBack();\n            } else if (nums[i*2] == 4) {\n                printQueue();\n            }\n        }\n    }\n};",
+    "python": "class Solution:\n    def __init__(self):\n        self.queue = []\n\n    def enqueue(self, val):\n        self.queue.append(val)\n\n    def dequeueFromFront(self):\n        if (self.queue):\n            self.queue.pop(0)\n        if (self.queue):\n            self.queue.pop()\n\n    def dequeueFromBack(self):\n        if (self.queue):\n            self.queue.pop(0)\n        if (self.queue):\n            self.queue.pop()\n\n    def printQueue(self):\n        for elem in self.queue:\n            print(elem, end=' ')\n        print()\n\n    def solve(self, nums):\n        n = nums[0]\n        for i in range(1, n+1):\n            if nums[i*2] == 1:\n                self.enqueue(nums[i*2+1])\n            elif nums[i*2] == 2:\n                self.dequeueFromFront()\n            elif nums[i*2] == 3:\n                self.dequeueFromBack()\n            elif nums[i*2] == 4:\n                self.printQueue()\n\ns = Solution()\ns.solve([5, 1, 12, 3, 7, 2, 5, 3, 4, 5])",
+    "javascript": "function Solution() {\n    this.queue = [];\n\n    this.enqueue = function(val) {\n        this.queue.push(val);\n    }\n\n    this.dequeueFromFront = function() {\n        if (this.queue.length > 0) {\n            this.queue.shift();\n        }\n        if (this.queue.length > 0) {\n            this.queue.pop();\n        }\n    }\n\n    this.dequeueFromBack = function() {\n        if (this.queue.length > 0) {\n            this.queue.shift();\n        }\n        if (this.queue.length > 0) {\n            this.queue.pop();\n        }\n    }\n\n    this.printQueue = function() {\n        for (var i = 0; i < this.queue.length; i++) {\n            process.stdout.write(this.queue[i] + ' ');    \n        }\n        console.log();\n    }\n\n    this.solve = function(nums) {\n        var n = nums[0];\n        for (var i = 1; i <= n; i++) {\n            if (nums[i*2] == 1) {\n                this.enqueue(nums[i*2+1]);\n            } else if (nums[i*2] == 2) {\n                this.dequeueFromFront();\n            } else if (nums[i*2] == 3) {\n                this.dequeueFromBack();\n            } else if (nums[i*2] == 4) {\n                this.printQueue();\n            }\n        }\n    }\n}\nvar s = new Solution();s.solve([5, 1, 12, 3, 7, 2, 5, 3, 4, 5]);"
+  },
+  "functionSignature": {
+    "cpp": "int solve(vector<int>& nums);",
+    "java": "void solve(int[] nums);",
+    "python": "def solve(self, nums: list[int]):",
+    "javascript": "Solution.prototype.solve = function(nums);"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def __init__(self):\n        self.queue = []\n\n    def enqueue(self, val):\n        self.queue.append(val)\n\n    def dequeueFromFront(self):\n        if (self.queue):\n            self.queue.pop(0)\n\n    def dequeueFromBack(self):\n        if (self.queue):\n            self.queue.pop()\n\n    def printQueue(self):\n        print(' '.join(map(str, self.queue)))\n\n    def solve(self, nums):\n        n = nums[0]\n        i = 1\n        while i <= n:\n            if nums[i*2] == 1:\n                self.enqueue(nums[i*2+1])\n            elif nums[i*2] == 2:\n                self.dequeueFromFront()\n            elif nums[i*2] == 3:\n                self.dequeueFromBack()\n            elif nums[i*2] == 4:\n                self.printQueue()\n            i += 1\n\ns = Solution()\ns.solve([5, 1, 12, 3, 7, 2, 5, 3, 4, 5])",
+    "cpp": "class Solution {\npublic:\n    void enqueue(int val) {\n        this->queue.push_back(val);\n    }\n\n    void dequeueFromFront() {\n        if (this->queue.size() > 0) {\n            this->queue.erase(this->queue.begin());\n        }\n    }\n\n    void dequeueFromBack() {\n        if (this->queue.size() > 0) {\n            this->queue.pop_back();\n        }\n    }\n\n    void printQueue() {\n        for (auto& elem : this->queue) {\n            std::cout << elem << ' ';    \n        }    \n        std::cout << std::endl;\n    }\n\n    void solve(vector<int>& nums) {\n        int n = nums[0];\n        for (int i = 1; i <= n; i++) {\n            if (nums[i*2] == 1) {\n                enqueue(nums[i*2+1]);\n            } else if (nums[i*2] == 2) {\n                dequeueFromFront();\n            } else if (nums[i*2] == 3) {\n                dequeueFromBack();\n            } else if (nums[i*2] == 4) {\n                printQueue();\n            }\n        }\n    }\n};\n\nint main() {\n    int t;\n    cin >> t;\n    while (t--) {\n        int n;\n        cin >> n;\n        int q[n];\n        for (int i = 0; i < n; ++i) {\n            cin >> q[i];\n        }\n        Solution s;\n        s.solve(q);\n    }\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5\n1 12\n2 5 3\n4 5",
+      "output": "7 12 3",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "4 5\n1 7\n3 5\n2 5\n4 5",
+      "output": "7 5",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

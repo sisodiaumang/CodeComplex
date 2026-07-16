@@ -1,0 +1,136 @@
+{
+  "title": "Fixing React Memoized Component Re-renders on State Change",
+  "subCategory": "State Management",
+  "statement": {
+    "markdown": "You are given a React functional component, `Counter`, that displays the current count and has an increment button. The component is memoized using the `useMemo` hook. However, the component re-renders unnecessarily when the count changes. Your task is to fix the bug by correctly updating the memoized value.",
+    "inputFormat": "The input is an object with a single property, `count`, which represents the current count.",
+    "outputFormat": "The output is the string representation of the updated count.",
+    "notes": "The component should re-render when the count changes.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "count",
+        "type": "integer",
+        "min": 0,
+        "max": 10000,
+        "description": "The current count."
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"count\": 5}",
+        "output": "Count: 5",
+        "explanation": "The initial count is 5."
+      },
+      {
+        "input": "{\"count\": 10}",
+        "output": "Count: 10",
+        "explanation": "The count changes to 10."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "REACT"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "react"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Check the dependency array of the `useMemo` hook."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial",
+    "intuition": "The `useMemo` hook is used to memoize the count. However, the dependency array is not correctly set, causing the component to re-render unnecessarily.",
+    "bruteForce": "Try using the `useState` hook to update the count directly.",
+    "betterSolution": "Use the `useCallback` hook to memoize the increment function.",
+    "optimalSolution": "Use the `useMemo` hook with the correct dependency array to memoize the count.",
+    "proofOfCorrectness": "The component should re-render only when the count changes.",
+    "dryRun": "Step-by-step example run: 1. Initialize the count to 0. 2. Render the component with the initial count. 3. Update the count to 10. 4. Render the component with the updated count.",
+    "commonMistakes": [
+      "Not using the `useMemo` hook",
+      "Incorrect dependency array"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "// Import the necessary hooks\nimport { useMemo, useState } from 'react';\n\nfunction Counter() {\n    // Declare the count state\n    const [count, setCount] = useState(0);\n\n    // Memoize the count\n    const memoizedCount = useMemo(() => {\n        // Return the count\n        return count;\n    }, []);\n\n    // Increment the count\n    const increment = () => {\n        setCount(count + 1);\n    };\n\n    // Render the component\n    return (\n        <div>\n            <p>Count: {memoizedCount}</p>\n            <button onClick={increment}>Increment</button>\n        </div>\n    );\n}\nexport default Counter;",
+    "python": "// Import the necessary libraries\nimport sys\nfrom react import useState, useMemo\n\nclass Counter:\n    def __init__(self):\n        # Declare the count state\n        self.count = 0\n\n    # Memoize the count\n    @memoized\n    def memoized_count(self):\n        # Return the count\n        return self.count\n\n    # Increment the count\n    def increment(self):\n        # Update the count\n        self.count += 1\n\n    # Render the component\n    def render(self):\n        # Print the count\n        print(f'Count: {self.memoized_count()}')\n        # Print the increment button\n        print('<button>Increment</button>')\n\n# Driver code\nif __name__ == '__main__':\n    # Create an instance of the Counter class\n    counter = Counter()\n    # Increment the count\n    counter.increment()\n    # Render the component\n    counter.render()"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Import the necessary hooks\nimport { useMemo, useState } from 'react';\n\nfunction Counter() {\n    // Declare the count state\n    const [count, setCount] = useState(0);\n\n    // Memoize the count\n    const memoizedCount = useMemo(() => {\n        // Return the count\n        return count;\n    }, []);\n\n    // Increment the count\n    const increment = () => {\n        // Update the count\n        setCount(count + 1);\n        // Note the bug: the memoizedCount is not updated\n    };\n\n    // Render the component\n    return (\n        <div>\n            <p>Count: {memoizedCount}</p>\n            <button onClick={increment}>Increment</button>\n        </div>\n    );\n}\nexport default Counter;",
+    "python": "// Import the necessary libraries\nimport sys\nfrom react import useState, useMemo\n\nclass Counter:\n    def __init__(self):\n        # Declare the count state\n        self.count = 0\n\n    # Memoize the count\n    @memoized\n    def memoized_count(self):\n        # Return the count\n        return self.count\n\n    # Increment the count\n    def increment(self):\n        # Update the count\n        self.count += 1\n        # Note the bug: the memoized_count is not updated\n    \n    # Render the component\n    def render(self):\n        # Print the count\n        print(f'Count: {self.memoized_count()}')\n        # Print the increment button\n        print('<button>Increment</button>')\n\n# Driver code\nif __name__ == '__main__':\n    # Create an instance of the Counter class\n    counter = Counter()\n    # Increment the count\n    counter.increment()\n    # Render the component\n    counter.render()"
+  },
+  "functionSignature": {
+    "javascript": "function Counter() {",
+    "python": "class Counter:"
+  },
+  "solutions": {
+    "javascript": "// Import the necessary hooks\nimport { useMemo, useState } from 'react';\n\nfunction Counter() {\n    // Declare the count state\n    const [count, setCount] = useState(0);\n\n    // Memoize the count\n    const memoizedCount = useMemo(() => {\n        // Return the count\n        return count;\n    }, [count]);\n\n    // Increment the count\n    const increment = () => {\n        setCount(count + 1);\n    };\n\n    // Render the component\n    return (\n        <div>\n            <p>Count: {memoizedCount}</p>\n            <button onClick={increment}>Increment</button>\n        </div>\n    );\n}",
+    "python": "// Import the necessary libraries\nimport sys\nfrom react import useState, useMemo\n\nclass Counter:\n    def __init__(self):\n        # Declare the count state\n        self.count = 0\n\n    # Memoize the count\n    @memoized\n    def memoized_count(self):\n        # Return the count\n        return self.count\n\n    # Increment the count\n    def increment(self):\n        # Update the count\n        self.count += 1\n\n    # Render the component\n    def render(self):\n        # Print the count\n        print(f'Count: {self.memoized_count()}')\n        # Print the increment button\n        print('<button>Increment</button>')\n\n# Driver code\nif __name__ == '__main__':\n    # Create an instance of the Counter class\n    counter = Counter()\n    # Increment the count\n    counter.increment()\n    # Render the component\n    counter.render()"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"count\": 5}",
+      "output": "Count: 5\n<button>Increment</button>",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"count\": 10}",
+      "output": "Count: 10\n<button>Increment</button>",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "2d0a0003e962969c6da51c52",
+  "slug": "fixing-react-memoized-component-re-renders-on-state-change-bugfix-medium-react",
+  "mode": "bug_fix",
+  "category": "REACT",
+  "difficulty": "Medium"
+}

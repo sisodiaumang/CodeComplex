@@ -1,0 +1,204 @@
+{
+  "_id": "alien-dictionary",
+  "title": "Alien Dictionary",
+  "slug": "alien-dictionary",
+  "difficulty": "Hard",
+  "category": "GRAPH",
+  "subCategory": "Topological Sort",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 45,
+    "points": 600,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "Graphs",
+      "Topological Sort"
+    ],
+    "patterns": [
+      "topological sort",
+      "alien dictionary"
+    ],
+    "prerequisites": [
+      "Topological Sort"
+    ],
+    "variants": [],
+    "tags": [
+      "Graph Traversal",
+      "Directed Graph",
+      "Topological Sort"
+    ],
+    "keywords": [
+      "graph",
+      "topological sort",
+      "alien dictionary"
+    ],
+    "interviewFrequency": 4,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "You are given a list of words from an alien language sorted lexicographically according to the alien alphabet. The alphabet consists of exactly K distinct lowercase English letters ('a' to 'z'), but the order of these letters is unknown. Your task is to deduce a possible ordering of the K letters that is consistent with the given sorted list. If multiple valid orderings exist, output any one of them. If no ordering can satisfy the given list (i.e., the input is contradictory), output \"IMPOSSIBLE\".\n\n**Input Format**\n- The first line contains an integer K, the number of distinct letters in the alien alphabet (1 ≤ K ≤ 26).\n- The second line contains an integer N, the number of words in the dictionary (1 ≤ N ≤ 1000).\n- The next N lines each contain a non‑empty word consisting only of the K distinct letters. The words are given in lexicographic order according to the alien alphabet.\n\n**Output Format**\n- If a valid ordering exists, output a single line containing a string of length K that lists the letters in one possible alien order.\n- If no ordering can satisfy the given dictionary, output a single line with the word `IMPOSSIBLE`.\n\n**Notes**\n- The alien alphabet may not use all 26 English letters; only the first K letters (not necessarily contiguous) appear in the words.\n- The relative order of letters that cannot be deduced from the dictionary can be arbitrary in the output.\n- The input is guaranteed to contain only lowercase English letters and each word length does not exceed 1000.\n\n**Constraints**\n- 1 ≤ K ≤ 26\n- 1 ≤ N ≤ 1000\n- 1 ≤ length of each word ≤ 1000\n- Total number of characters across all words ≤ 100000\n\n**Examples**\n\n**Example 1**\nInput:\n5\n4\nbaa\nabcd\nabca\ncab\nOutput:\nbdac\nExplanation:\nFrom the given order we can infer the following precedence relations: b → d, d → a, a → c. One possible ordering that satisfies all constraints is \"bdac\" (the remaining letter 'e' is not part of the K=5 alphabet, so only the five used letters appear).\n\n**Example 2**\nInput:\n3\n3\ncaa\naaa\naab\nOutput:\nIMPOSSIBLE\nExplanation:\nThe first word \"caa\" should come before \"aaa\" in a valid alien dictionary, which implies 'c' < 'a'. However, the second pair \"aaa\" and \"aab\" implies 'a' < 'b'. Combining these with the third pair would create a cycle, making it impossible to find a consistent ordering.",
+    "inputFormat": "K\nN\nword_1\nword_2\n...\nword_N",
+    "outputFormat": "order_string_or_IMPOSSIBLE",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "K",
+        "type": "int",
+        "min": 1,
+        "max": 26
+      },
+      {
+        "variable": "N",
+        "type": "int",
+        "min": 1,
+        "max": 1000
+      },
+      {
+        "variable": "word length",
+        "type": "int",
+        "min": 1,
+        "max": 1000
+      }
+    ],
+    "examples": [
+      {
+        "input": "5\n4\nbaa\nabcd\nabca\ncab",
+        "output": "bdac",
+        "explanation": "Derived precedence relations lead to a possible ordering bdac."
+      },
+      {
+        "input": "3\n3\ncaa\naaa\naab",
+        "output": "cab",
+        "explanation": "Constraints create a cycle, so no ordering exists."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "The problem involves finding a possible ordering of the K distinct letters in the alien alphabet that is consistent with the given sorted list of words. Start by analyzing the relationships between consecutive words in the list."
+    },
+    {
+      "order": 2,
+      "text": "To deduce the ordering, compare each pair of consecutive words from left to right. The first differing character in a pair of words indicates a direct ordering relationship between the two letters. For example, if two consecutive words are 'baa' and 'abcd', we can infer that 'b' < 'a' is not possible because 'baa' comes before 'abcd', so we look at the first differing character which would indicate 'b' and 'a' relationship but since 'b' is before 'a' in the first word and 'a' is before 'b' in terms of position in second word we get b -> a is not correct but we have to find correct relationship."
+    },
+    {
+      "order": 3,
+      "text": "The problem can be solved using a topological sorting algorithm. Construct a directed graph where each node represents a letter in the alien alphabet, and a directed edge from node A to node B means that letter A comes before letter B in the alien ordering. After constructing the graph, perform a topological sort to find a valid ordering of the letters. If a valid ordering does not exist (i.e., the graph contains a cycle), output 'IMPOSSIBLE'."
+    }
+  ],
+  "editorial": {
+    "title": "Alien Dictionary: A Topological Sorting Problem",
+    "intuition": "The problem can be viewed as a variant of the topological sorting problem, where we need to find a valid ordering of characters in an alien dictionary. The given constraints and word list provide a directed graph that we can use to determine this ordering.",
+    "bruteForce": "A brute force approach would involve generating all permutations of the K characters and checking if each permutation satisfies the given constraints. However, this approach is impractical due to its factorial time complexity of O(K!), which is extremely slow for even moderate values of K.",
+    "betterSolution": "The key observation that unlocks the optimal approach is that we can construct a directed graph from the given word list, where each character is a node, and a directed edge from node A to node B means that character A comes before character B in the alien dictionary. We can then use a topological sorting algorithm to find a valid ordering of the characters.",
+    "optimalSolution": "The optimal solution uses a graph-based approach with topological sorting, which has a known time complexity of O(K + N * M) and space complexity of O(K + N * M), where K is the number of characters, N is the number of words, and M is the maximum length of a word.",
+    "proofOfCorrectness": "The correctness of the optimal solution can be proved by showing that the constructed graph is a directed acyclic graph (DAG) if and only if a valid ordering exists. The topological sorting algorithm then finds a valid ordering of the nodes in the DAG, which corresponds to a valid ordering of the characters in the alien dictionary. If a cycle is detected in the graph, it means that no valid ordering exists, and we output 'IMPOSSIBLE'.",
+    "dryRun": "A dry run of the optimal solution on a sample test case can help verify its correctness. For example, given the input K = 3, N = 3, and words = ['abc', 'bcd', 'cde'], the solution constructs a graph with edges (a, b), (b, c), and (c, d), and then finds a valid ordering 'abcde'.",
+    "commonMistakes": [
+      "Not handling the case where a word is a prefix of another word.",
+      "Not checking for cycles in the graph.",
+      "Not verifying that the length of the ordering is equal to K.",
+      "Not handling the case where the input graph is not a DAG.",
+      "Not outputting 'IMPOSSIBLE' when no valid ordering exists.",
+      "Not using a efficient topological sorting algorithm."
+    ],
+    "timeComplexity": "O(N + M)",
+    "spaceComplexity": "O(N + M)"
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    string alienOrder(vector<string>& words) {\n        // TODO: implement\n        return \"\";\n    }\n};",
+    "java": "import java.util.*;\n\nclass Solution {\n    public String alienOrder(String[] words) {\n        // TODO: implement\n        return \"\";\n    }\n}",
+    "python": "from typing import List\n\nclass Solution:\n    def alienOrder(self, words: List[str]) -> str:\n        # TODO: implement\n        pass",
+    "javascript": "/**\n * @param {string[]} words\n * @return {string}\n */\nvar alienOrder = function(words) {\n    // TODO: implement\n    return \"\";\n};"
+  },
+  "functionSignature": {
+    "cpp": "string alienOrder(vector<string>& words);",
+    "java": "public String alienOrder(String[] words);",
+    "python": "def alienOrder(self, words: List[str]) -> str:",
+    "javascript": "var alienOrder = function(words);"
+  },
+  "solutions": {
+    "python": "import sys\nfrom collections import defaultdict, deque\nfrom typing import List\n\nclass Solution:\n    def alienOrder(self, words: List[str]) -> str:\n        if not words:\n            return \"\"\n\n        k = len(set([c for word in words for c in word]))\n        graph = defaultdict(list)\n        indegree = {c: 0 for word in words for c in word}\n        indegree = {c: indegree[c] for c in indegree}\n\n        for i in range(len(words) - 1):\n            w1, w2 = words[i], words[i + 1]\n            for c1, c2 in zip(w1, w2):\n                if c1 != c2:\n                    if c2 not in graph[c1]:\n                        graph[c1].append(c2)\n                        indegree[c2] += 1\n                    break\n            else:\n                if len(w1) > len(w2):\n                    return \"IMPOSSIBLE\"\n\n        queue = deque([c for c in indegree if indegree[c] == 0])\n        res = []\n\n        while queue:\n            c = queue.popleft()\n            res.append(c)\n            for neighbor in graph[c]:\n                indegree[neighbor] -= 1\n                if indegree[neighbor] == 0:\n                    queue.append(neighbor)\n\n        if len(res) != k:\n            return \"IMPOSSIBLE\"\n        return ''.join(res)\n\nif __name__ == '__main__':\n    it = iter(sys.stdin.read().split())\n    try:\n        k = int(next(it))\n        n = int(next(it))\n        words = [next(it) for _ in range(n)]\n    except StopIteration:\n        sys.exit(0)\n    sol = Solution()\n    ans = sol.alienOrder(words)\n    print(ans)",
+    "cpp": "#include <numeric>\n#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    string alienOrder(vector<string>& words) {\n        if (words.empty()) return \"\";\n        int k = 0;\n        unordered_set<char> set;\n        for (const auto& word : words) {\n            for (char c : word) {\n                set.insert(c);\n            }\n        }\n        k = set.size();\n        unordered_map<char, vector<char>> graph;\n        unordered_map<char, int> indegree;\n        for (char c : set) {\n            indegree[c] = 0;\n        }\n        for (int i = 0; i < words.size() - 1; ++i) {\n            const string& w1 = words[i];\n            const string& w2 = words[i + 1];\n            int j = 0;\n            while (j < w1.size() && j < w2.size() && w1[j] == w2[j]) {\n                ++j;\n            }\n            if (j < w1.size() && j == w2.size()) {\n                return \"IMPOSSIBLE\";\n            }\n            if (j == w1.size() && j == w2.size()) {\n                continue;\n            }\n            if (graph.find(w1[j]) == graph.end()) {\n                graph[w1[j]] = {};\n            }\n            if (find(graph[w1[j]].begin(), graph[w1[j]].end(), w2[j]) == graph[w1[j]].end()) {\n                graph[w1[j]].push_back(w2[j]);\n                ++indegree[w2[j]];\n            }\n        }\n        queue<char> q;\n        for (const auto& pair : indegree) {\n            if (pair.second == 0) {\n                q.push(pair.first);\n            }\n        }\n        string res;\n        while (!q.empty()) {\n            char c = q.front();\n            q.pop();\n            res += c;\n            if (graph.find(c) != graph.end()) {\n                for (char neighbor : graph[c]) {\n                    --indegree[neighbor];\n                    if (indegree[neighbor] == 0) {\n                        q.push(neighbor);\n                    }\n                }\n            }\n        }\n        if (res.size() != k) {\n            return \"IMPOSSIBLE\";\n        }\n        return res;\n    }\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int k;\n    cin >> k;\n    int n;\n    cin >> n;\n    vector<string> words(n);\n    for (int i = 0; i < n; ++i) {\n        cin >> words[i];\n    }\n    Solution sol;\n    string ans = sol.alienOrder(words);\n    cout << ans << '\\n';\n    return 0;\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.5
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5\n4\nbaa\nabcd\nabca\ncab",
+      "output": "bdac",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "3\n3\ncaa\naaa\naab",
+      "output": "cab",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint_3",
+      "input": "2\n2\nab\nba",
+      "output": "ab",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "duplicate_5",
+      "input": "3\n3\nabc\nabc\ndef",
+      "output": "abcefd",
+      "isVisible": false,
+      "weight": 1,
+      "category": "duplicate"
+    },
+    {
+      "id": "random_medium_6",
+      "input": "5\n4\nabcd\nefgh\nijkl\nmnop",
+      "output": "abcdfghjklnopeim",
+      "isVisible": false,
+      "weight": 1,
+      "category": "random_medium"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

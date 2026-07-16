@@ -1,0 +1,128 @@
+{
+  "_id": "2790bfddeb57bfe1070413c5",
+  "title": "Resilient File Storage System",
+  "slug": "resilient-file-storage-system-hard-file-upload-1",
+  "difficulty": "Hard",
+  "topics": [
+    "FILE_UPLOAD"
+  ],
+  "statement": "Implement a file upload API that utilizes AWS S3 for secure, scalable, and resilient file storage. Your API should support uploading files of various types, including images, videos, and documents. Implement validation for file size, content type, and other constraints. Your API should also handle errors and exceptions, including file upload failures, duplicate file uploads, and incorrect file types. Ensure the API is secure by implementing proper authentication and rate limiting. Consider implementing a caching layer to improve performance.\n\n### API Endpoints\n\n- `POST /api/upload`: Upload a file to S3, validate file size and content type, and return the uploaded file's metadata.\n- `GET /api/files`: Retrieve a list of uploaded files, including their metadata and URLs.\n\n### Constraints\n\n- Must use AWS S3 for file storage.\n- Must implement validation for file size, content type, and other constraints.\n- Must handle errors and exceptions, including file upload failures, duplicate file uploads, and incorrect file types.\n- Must implement proper authentication using JSON Web Tokens (JWT).\n- Must implement rate limiting to prevent abuse.\n- Must use a caching layer to improve performance.\n\n### Starter Code\n\n```javascript\n// package.json\n{\n   \"name\": \"file-upload-api\",\n   \"version\": \"1.0.0\",\n   \"main\": \"index.js\",\n   \"scripts\": {\n      \"start\": \"node index.js\"\n   },\n   \"dependencies\": {\n      \"aws-sdk\": \"^2.7.24\",\n      \"express\": \"^4.18.2\",\n      \"jsonwebtoken\": \"^8.5.1\",\n      \"rate-limiter-flexible\": \"^2.4.1\",\n      \"redis\": \"^3.0.2\"\n   }\n}\n\n// index.js\nconst express = require('express');\nconst app = express();\napp.use(express.json());\nconst AWS = require('aws-sdk');\nconst { rateLimiterMiddleware } = require('rate-limiter-flexible');\nconst Redis = require('redis');\n\nconst s3 = new AWS.S3({\n   region: 'your-region',\n   accessKeyId: 'your-access-key-id',\n   secretAccessKey: 'your-secret-access-key'\n});\n\nconst redisClient = Redis.createClient({\n   host: 'localhost',\n   port: 6379\n});\n\nconst rateLimiterOptions = {\n   points: 5, // 5 requests per minute\n   duration: 60 // per minute\n};\n\nconst rateLimiterMiddlewareInstance = rateLimiterMiddleware({\n   storeClient: redisClient,\n   key: 'rate-limiter-key',\n   options: rateLimiterOptions\n});\n\nconst authenticate = (req, res, next) => {\n   const token = req.header('Authorization');\n   if (!token) {\n      return res.status(401).json({ error: 'Unauthorized' });\n   }\n   const verified = jwt.verify(token, process.env.SECRET_KEY);\n   req.user = verified;\n   next();\n};\n\napp.post('/api/upload', authenticate, rateLimiterMiddlewareInstance, (req, res) => {\n   // TODO: Implement file upload logic\n});\n\napp.get('/api/files', authenticate, (req, res) => {\n   // TODO: Implement file list logic\n});\n\n// TODO: Implement caching layer\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));\n```\n",
+  "constraints": [
+    "Must use AWS S3 for file storage.",
+    "Must implement validation for file size, content type, and other constraints.",
+    "Must handle errors and exceptions, including file upload failures, duplicate file uploads, and incorrect file types.",
+    "Must implement proper authentication using JSON Web Tokens (JWT).",
+    "Must implement rate limiting to prevent abuse.",
+    "Must use a caching layer to improve performance."
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/upload",
+      "description": "Upload a file to S3, validate file size and content type, and return the uploaded file's metadata."
+    },
+    {
+      "method": "GET",
+      "path": "/api/files",
+      "description": "Retrieve a list of uploaded files, including their metadata and URLs."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\"name\": \"file-upload-api\",\"version\": \"1.0.0\",\"main\": \"index.js\",\"scripts\": {\"start\": \"node index.js\"},\"dependencies\": {\"aws-sdk\": \"^2.7.24\",\"express\": \"^4.18.2\",\"jsonwebtoken\": \"^8.5.1\",\"rate-limiter-flexible\": \"^2.4.1\",\"redis\": \"^3.0.2\"}}",
+    "index.js": "const express = require('express');\nconst app = express();\napp.use(express.json());\nconst AWS = require('aws-sdk');\nconst { rateLimiterMiddleware } = require('rate-limiter-flexible');\nconst Redis = require('redis');\n\nconst s3 = new AWS.S3({\\n    region: 'your-region',\\n    accessKeyId: 'your-access-key-id',\\n    secretAccessKey: 'your-secret-access-key'\\n});\n\nconst redisClient = Redis.createClient({\\n    host: 'localhost',\\n    port: 6379\\n});\\n\\nconst rateLimiterOptions = {\\n    points: 5, // 5 requests per minute\\n    duration: 60 // per minute\\n};\\n\\nconst rateLimiterMiddlewareInstance = rateLimiterMiddleware({\\n    storeClient: redisClient,\\n    key: 'rate-limiter-key',\\n    options: rateLimiterOptions\\n});\\n\\nconst authenticate = (req, res, next) => {\\n    const token = req.header('Authorization');\\n    if (!token) {\\n        return res.status(401).json({ error: 'Unauthorized' });\\n    }\\n    const verified = jwt.verify(token, process.env.SECRET_KEY);\\n    req.user = verified;\\n    next();\\n};\\n\\napp.post('/api/upload', authenticate, rateLimiterMiddlewareInstance, (req, res) => {\\n    // TODO: Implement file upload logic\\n});\\n\\napp.get('/api/files', authenticate, (req, res) => {\\n    // TODO: Implement file list logic\\n});\\n\\n// TODO: Implement caching layer\\n\\nconst PORT = process.env.PORT || 3000;\\napp.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "tc1",
+      "method": "POST",
+      "path": "/api/upload",
+      "headers": {
+        "Authorization": "Bearer valid-jwt-token",
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "file": "data:application/octet-stream;base64,SGVsbG8gd29ybGQ="
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "fileId": "uploaded-file-id",
+        "fileUrl": "https://your-s3-bucket.s3-region.amazonaws.com/uploaded-file-name"
+      },
+      "isVisible": true
+    },
+    {
+      "id": "tc2",
+      "method": "POST",
+      "path": "/api/upload",
+      "headers": {
+        "Authorization": "Bearer invalid-jwt-token",
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "file": "data:application/octet-stream;base64,SGVsbG8gd29ybGQ="
+      },
+      "expectedStatus": 401,
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "hc1",
+      "method": "POST",
+      "path": "/api/upload",
+      "body": {
+        "file": "data:application/octet-stream;base64,SGVsbG8gd29ybGQ="
+      },
+      "expectedStatus": 413,
+      "isVisible": false
+    },
+    {
+      "id": "hc2",
+      "method": "POST",
+      "path": "/api/upload",
+      "body": {
+        "file": "data:application/octet-stream;base64,SGVsbG8gd29ybGQ="
+      },
+      "expectedStatus": 500,
+      "isVisible": false
+    },
+    {
+      "id": "hc3",
+      "method": "GET",
+      "path": "/api/files",
+      "expectedStatus": 200,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "multer",
+    "cloudinary",
+    "aws-s3",
+    "validation",
+    "image-processing",
+    "file-storage",
+    "file-upload",
+    "rate-limiting"
+  ]
+}

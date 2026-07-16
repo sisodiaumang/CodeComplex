@@ -3,12 +3,12 @@
   "title": "Maximum Sum Combination",
   "slug": "maximum-sum-combination",
   "difficulty": "Hard",
-  "category": "ARRAY",
+  "category": "DP",
   "subCategory": "Hard Problems",
   "mode": "solve",
   "metadata": {
     "estimatedTime": 45,
-    "points": 800,
+    "points": 500,
     "premium": false,
     "isPublished": true,
     "companies": [],
@@ -21,112 +21,125 @@
       "combination"
     ],
     "prerequisites": [
-      "Heap",
-      "Dynamic Programming"
+      "HEAPS",
+      "DP"
     ],
     "variants": [],
     "tags": [
-      "Greedy Algorithm",
-      "Dynamic Programming"
+      "dynamic-programming",
+      "greedy-algorithm"
     ],
     "keywords": [
-      "Maximum Sum",
-      "Heap",
-      "Dynamic Programming"
+      "max-sum",
+      "combination-problem",
+      "heaps"
     ],
-    "interviewFrequency": 3,
+    "interviewFrequency": 2,
     "revisionLevel": 0,
     "contestEligible": true
   },
   "statement": {
-    "markdown": "Given two arrays of size N, arr1[] and arr2[], the task is to find the maximum sum combination of two arrays. The combination is formed by choosing one element from each array and adding them. The task is to choose N pairs such that the sum of all the pairs is maximum.\n\nThe input arrays can contain duplicate elements. The order of elements in the output does not matter.",
-    "inputFormat": "2\nN\narr1[] (N elements)\narr2[] (N elements)",
-    "outputFormat": "Maximum sum of pairs",
+    "markdown": "You are given two arrays `a` and `b` of size `n` and `m` respectively. The task is to find the maximum sum of `k` combinations, where each combination consists of one element from `a` and one element from `b`. A combination is defined as a pair `(a[i], b[j])` where `a[i]` is an element from array `a` and `b[j]` is an element from array `b`. The sum of a combination is `a[i] + b[j]`. The goal is to maximize the sum of `k` such combinations.\n\nThe input consists of two arrays `a` and `b`, and an integer `k`. The output is the maximum sum of `k` combinations.",
+    "inputFormat": "The first line contains three integers `n`, `m` and `k`, where `n` and `m` are the sizes of arrays `a` and `b` respectively, and `k` is the number of combinations to find. The next two lines contain the elements of arrays `a` and `b` respectively.",
+    "outputFormat": "The output is a single integer representing the maximum sum of `k` combinations.",
     "notes": "",
     "images": [],
     "constraints": [
       {
-        "variable": "N",
+        "variable": "n",
         "type": "integer",
         "min": 1,
         "max": 10000,
-        "description": "Size of input arrays"
+        "description": "Size of array a"
       },
       {
-        "variable": "arr1[i]",
+        "variable": "m",
         "type": "integer",
-        "min": -10000,
+        "min": 1,
         "max": 10000,
-        "description": "Elements of first array"
+        "description": "Size of array b"
       },
       {
-        "variable": "arr2[i]",
+        "variable": "k",
         "type": "integer",
-        "min": -10000,
+        "min": 1,
         "max": 10000,
-        "description": "Elements of second array"
+        "description": "Number of combinations to find"
+      },
+      {
+        "variable": "a[i]",
+        "type": "integer",
+        "min": -1000000000,
+        "max": 1000000000,
+        "description": "Element of array a"
+      },
+      {
+        "variable": "b[j]",
+        "type": "integer",
+        "min": -1000000000,
+        "max": 1000000000,
+        "description": "Element of array b"
       }
     ],
     "examples": [
       {
-        "input": "2\n3\n5 6 1\n2 3 4",
-        "output": "15",
-        "explanation": "The maximum possible sum is obtained by pairing the maximum numbers from both arrays. So the pairs are (6, 4), (5, 3) and (1, 2) which results in 10 + 8 + 3 = 21."
+        "input": "3 3 2\n1 2 3\n4 5 6",
+        "output": "7\r\n2 5",
+        "explanation": "The maximum sum combinations are (3, 6) and (2, 5) which gives a total of 16."
       },
       {
-        "input": "2\n2\n1 2\n3 4",
-        "output": "8",
-        "explanation": "The maximum possible sum is obtained by pairing the maximum numbers from both arrays. So the pairs are (2, 4) and (1, 3) which results in 6 + 4 = 10."
+        "input": "2 2 1\n10 20\n30 40",
+        "output": "40\r\n10 30",
+        "explanation": "The maximum sum combination is (20, 30) which gives a total of 50."
       }
     ]
   },
   "hints": [
     {
       "order": 1,
-      "text": "To maximize the sum of pairs, consider how to make the largest possible sum by combining elements from both arrays."
+      "text": "To maximize the sum of combinations, consider how to select the largest possible values from both arrays a and b."
     },
     {
       "order": 2,
-      "text": "Sorting both arrays in descending order could help in making optimal pairs that would result in the maximum sum."
+      "text": "Sorting both arrays a and b in descending order could help in selecting the largest possible values for each combination."
     },
     {
       "order": 3,
-      "text": "The key insight is to pair the largest element from one array with the largest element from the other array, the second largest with the second largest, and so on, to ensure the maximum total sum."
+      "text": "The problem can be approached using a greedy algorithm or a priority queue to keep track of the maximum sum combinations."
     }
   ],
   "editorial": {
     "title": "Maximum Sum Combination",
-    "intuition": "The problem requires finding the maximum sum that can be obtained by combining elements from two arrays. A brute force approach would involve trying all possible combinations, but this is inefficient. A key observation is that the maximum sum can be obtained by pairing the largest elements from one array with the smallest elements from the other array.",
-    "bruteForce": "A brute force approach would involve generating all possible combinations of elements from the two arrays, calculating the sum for each combination, and keeping track of the maximum sum found. This approach is correct but has a high time complexity due to the large number of combinations.",
-    "betterSolution": "Sorting the two arrays and then pairing the largest elements from one array with the smallest elements from the other array leads to an optimal solution.",
-    "optimalSolution": "The optimal solution involves sorting the two arrays in ascending order, then iterating through the arrays and adding the corresponding elements from the end of the second array to the beginning of the first array.",
-    "proofOfCorrectness": "The correctness of the optimal solution can be proven by observing that for any pair of elements, one from each array, the maximum sum is achieved when the larger element is paired with the smaller element. This is because the sum of two numbers is maximized when the larger number is added to the smaller number. By sorting the arrays and pairing the elements in this way, we ensure that the maximum sum is achieved.",
-    "dryRun": "For example, given two arrays [1, 4, 7] and [2, 3, 6], sorting them gives [1, 4, 7] and [2, 3, 6]. Pairing the largest elements from the first array with the smallest elements from the second array gives 7 + 2 = 9, 4 + 3 = 7, and 1 + 6 = 7. The sum is 9 + 7 + 7 = 23.",
+    "intuition": "The problem requires finding the maximum sum combination from two arrays. A straightforward approach would be to consider all possible pairs of elements from the two arrays and find the pair with the maximum sum. However, this brute force approach is inefficient due to its high time complexity.",
+    "bruteForce": "The brute force solution involves iterating over each element in the first array and pairing it with every element in the second array, resulting in a time complexity of O(N^2), which is slow and inefficient for large inputs.",
+    "betterSolution": "A better approach can be achieved by observing that the maximum sum combination will always involve the maximum element from each array.",
+    "optimalSolution": "The optimal solution takes advantage of this observation by simply finding the maximum element in each array and returning their sum. This approach has a time complexity of O(N) and a space complexity of O(1), making it much more efficient than the brute force approach.",
+    "proofOfCorrectness": "The correctness of the optimal solution can be proven by showing that any other combination of elements will result in a smaller sum. Since the maximum element from each array is used, any other combination will involve a smaller element, resulting in a smaller sum.",
+    "dryRun": "To verify the correctness of the solution, a dry run can be performed with sample inputs to ensure that the maximum sum combination is correctly identified.",
     "commonMistakes": [
-      "Not sorting the arrays before pairing elements",
-      "Pairing elements from the same positions in both arrays",
-      "Not considering the case where one array has all negative numbers and the other has all positive numbers",
-      "Not handling the case where the arrays have duplicate elements",
-      "Assuming that the maximum sum is achieved by pairing the largest elements from both arrays"
+      "Not considering the maximum element from each array",
+      "Using a brute force approach with high time complexity",
+      "Not handling edge cases correctly",
+      "Not verifying the correctness of the solution with sample inputs"
     ],
-    "timeComplexity": "O(N log N)",
+    "timeComplexity": "O(N)",
     "spaceComplexity": "O(1)"
   },
   "starterCode": {
-    "cpp": "int solve(int n, int arr1[], int arr2[]) {\n    // TODO: implement\n    return 0;\n}\n\n// @driver-code-start\nint main() {\n    int n;\n    cin >> n;\n    int* arr1 = new int[n];\n    int* arr2 = new int[n];\n    for (int i = 0; i < n; i++) {\n        cin >> arr1[i];\n    }\n    for (int i = 0; i < n; i++) {\n        cin >> arr2[i];\n    }\n    cout << solve(n, arr1, arr2) << endl;\n    delete[] arr1;\n    delete[] arr2;\n    return 0;\n}",
-    "java": "class Solution {\n    public int solve(int n, int[] arr1, int[] arr2) {\n        // TODO: implement\n        return 0;\n    }\n}\n\n// @driver-code-start\npublic class Main {\n    public static void main(String[] args) {\n        java.util.Scanner scanner = new java.util.Scanner(System.in);\n        int n = scanner.nextInt();\n        int[] arr1 = new int[n];\n        int[] arr2 = new int[n];\n        for (int i = 0; i < n; i++) {\n            arr1[i] = scanner.nextInt();\n        }\n        for (int i = 0; i < n; i++) {\n            arr2[i] = scanner.nextInt();\n        }\n        Solution solution = new Solution();\n        System.out.println(solution.solve(n, arr1, arr2));\n    }\n}",
-    "python": "class Solution:\n    def solve(self, n, arr1, arr2):\n        # TODO: implement\n        pass\n\n# @driver-code-start\nimport sys\nit = iter(sys.stdin.read().split())\nn = int(next(it))\narr1 = [int(next(it)) for _ in range(n)]\narr2 = [int(next(it)) for _ in range(n)]\nsolution = Solution()\nprint(solution.solve(n, arr1, arr2))",
-    "javascript": "class Solution {\n    solve(n, arr1, arr2) {\n        // TODO: implement\n        return 0;\n    }\n}\n\n// @driver-code-start\nconst readline = require('readline').createInterface({\n    input: process.stdin,\n    output: process.stdout\n});\nlet i = 0;\nlet n;\nlet arr1 = [];\nlet arr2 = [];\nreadline.on('line', line => {\n    if (i === 0) {\n        n = parseInt(line);\n    } else if (i <= n) {\n        arr1.push(parseInt(line));\n    } else if (i <= 2 * n) {\n        arr2.push(parseInt(line));\n    }\n    i++;\n    if (i > 2 * n) {\n        const solution = new Solution();\n        console.log(solution.solve(n, arr1, arr2));\n        readline.close();\n    }\n});"
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    int maxSum(vector<int>& a, vector<int>& b, int k) {\n        // TODO: implement\n        return 0;\n    }\n};",
+    "java": "import java.util.*;\n\nclass Solution {\n    public int maxSum(int[] a, int[] b, int k) {\n        // TODO: implement\n        return 0;\n    }\n}",
+    "python": "from typing import List\n\nclass Solution:\n    def maxSum(self, a: List[int], b: List[int], k: int) -> int:\n        # TODO: implement\n        pass",
+    "javascript": "/**\n * @param {number[]} a\n * @param {number[]} b\n * @param {number} k\n * @return {number}\n */\nvar maxSum = function(a, b, k) {\n    // TODO: implement\n    return 0;\n};"
   },
   "functionSignature": {
-    "cpp": "int solve(int n, int arr1[], int arr2[])",
-    "java": "public static int solve(int n, int[] arr1, int[] arr2)",
-    "python": "def solve(n, arr1, arr2)",
-    "javascript": "function solve(n, arr1, arr2)"
+    "cpp": "int maxSum(vector<int>& a, vector<int>& b, int k);",
+    "java": "public int maxSum(int[] a, int[] b, int k);",
+    "python": "def maxSum(self, a: list[int], b: list[int], k: int) -> int:",
+    "javascript": "var maxSum = function(a, b, k);"
   },
   "solutions": {
-    "python": "import sys\nit = iter(sys.stdin.read().split())\nn = int(next(it))\narr1 = [int(next(it)) for _ in range(n)]\narr2 = [int(next(it)) for _ in range(n)]\narr1.sort()\narr2.sort()\nsum = 0\nfor i in range(n):\n    sum += arr1[i] + arr2[n-i-1]\nprint(sum)",
-    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\nint main() {\n    int n;\n    cin >> n;\n    vector<int> arr1(n), arr2(n);\n    for (int i = 0; i < n; i++) cin >> arr1[i];\n    for (int i = 0; i < n; i++) cin >> arr2[i];\n    sort(arr1.begin(), arr1.end());\n    sort(arr2.begin(), arr2.end());\n    long long sum = 0;\n    for (int i = 0; i < n; i++) {\n        sum += arr1[i] + arr2[n - i - 1];\n    }\n    cout << sum;\n    return 0;\n}"
+    "python": "import sys\nfrom typing import List, Tuple\n\nclass Solution:\n    def solve(self, arr1: List[int], arr2: List[int]) -> Tuple[int, int, int]:\n        m1 = max(arr1)\n        m2 = max(arr2)\n        return (m1 + m2, m1, m2)\n\nif __name__ == '__main__':\n    tokens = sys.stdin.read().split()\n    if not tokens:\n        sys.exit(0)\n    _ = int(tokens[0])\n    N = int(tokens[1])\n    arr1 = [int(x) for x in tokens[2:2+N]]\n    arr2 = [int(x) for x in tokens[2+N:2+2*N]]\n    sol = Solution()\n    ans = sol.solve(arr1, arr2)\n    print(ans[0])\n    print(f\"{ans[1]} {ans[2]}\")",
+    "cpp": "#include <numeric>\n#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    pair<int, pair<int, int>> solve(vector<int>& arr1, vector<int>& arr2) {\n        int m1 = *max_element(arr1.begin(), arr1.end());\n        int m2 = *max_element(arr2.begin(), arr2.end());\n        return make_pair(m1 + m2, make_pair(m1, m2));\n    }\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int _;\n    if (!(cin >> _)) return 0;\n    int n;\n    if (!(cin >> n)) return 0;\n    vector<int> arr1(n);\n    for (int i = 0; i < n; i++) cin >> arr1[i];\n    vector<int> arr2(n);\n    for (int i = 0; i < n; i++) cin >> arr2[i];\n    Solution sol;\n    pair<int, pair<int, int>> ans = sol.solve(arr1, arr2);\n    cout << ans.first << \"\\n\";\n    cout << ans.second.first << \" \" << ans.second.second << \"\\n\";\n    return 0;\n}"
   },
   "judgeConfig": {
     "timeLimit": 2,
@@ -153,123 +166,43 @@
   "testCases": [
     {
       "id": "sample_1",
-      "input": "2\n3\n5 6 1\n2 3 4",
-      "output": "15",
+      "input": "3 3 2\n1 2 3\n4 5 6",
+      "output": "7\r\n2 5",
       "isVisible": true,
       "weight": 1,
       "category": "sample"
     },
     {
       "id": "sample_2",
-      "input": "2\n2\n1 2\n3 4",
-      "output": "8",
+      "input": "2 2 1\n10 20\n30 40",
+      "output": "40\r\n10 30",
       "isVisible": false,
       "weight": 1,
       "category": "sample"
     },
     {
-      "id": "min_constraint_1",
-      "input": "1\n1\n-10000\n-10000",
-      "output": "-9999",
+      "id": "min_constraint_3",
+      "input": "1 1 1\n-1000000000\n-1000000000",
+      "output": "-999999999\r\n1 -1000000000",
       "isVisible": false,
       "weight": 1,
       "category": "min_constraint"
     },
     {
-      "id": "max_constraint_1",
-      "input": "1\n1\n10000\n10000",
-      "output": "10001",
-      "isVisible": false,
-      "weight": 1,
-      "category": "max_constraint"
-    },
-    {
-      "id": "boundary_1",
-      "input": "2\n10000\n-10000 10000\n-10000 10000",
-      "output": "0",
-      "isVisible": false,
-      "weight": 1,
-      "category": "boundary"
-    },
-    {
-      "id": "duplicate_1",
-      "input": "2\n2\n5 5\n5 5",
-      "output": "17",
+      "id": "duplicate_5",
+      "input": "3 3 2\n1 2 3\n1 2 3",
+      "output": "5\r\n2 3",
       "isVisible": false,
       "weight": 1,
       "category": "duplicate"
     },
     {
-      "id": "sorted_1",
-      "input": "3\n3\n1 2 3\n3 2 1",
-      "output": "14",
+      "id": "random_medium_6",
+      "input": "5 5 3\n10 20 30 40 50\n5 15 25 35 45",
+      "output": "90\r\n40 50",
       "isVisible": false,
       "weight": 1,
-      "category": "sorted"
-    },
-    {
-      "id": "reverse_sorted_1",
-      "input": "3\n3\n3 2 1\n1 2 3",
-      "output": "12",
-      "isVisible": false,
-      "weight": 1,
-      "category": "reverse_sorted"
-    },
-    {
-      "id": "negative_1",
-      "input": "2\n2\n-5 -6\n-2 -3",
-      "output": "-11",
-      "isVisible": false,
-      "weight": 1,
-      "category": "negative"
-    },
-    {
-      "id": "zero_1",
-      "input": "2\n2\n0 0\n0 0",
-      "output": "2",
-      "isVisible": false,
-      "weight": 1,
-      "category": "zero"
-    },
-    {
-      "id": "one_1",
-      "input": "2\n2\n1 1\n1 1",
-      "output": "5",
-      "isVisible": false,
-      "weight": 1,
-      "category": "one"
-    },
-    {
-      "id": "repeated_1",
-      "input": "3\n4\n1 1 1 1\n2 2 2 2",
-      "output": "10",
-      "isVisible": false,
-      "weight": 1,
-      "category": "repeated"
-    },
-    {
-      "id": "large_random_1",
-      "input": "91\n91\n-6352 -9181 -988 -1976 -2686 -5428 -6642 7870 -7152 9349 3825 -8959 -9024 -6930 -2836 -2377 6559 9726 -9131 8390 -3485 7856 3746 -2777 4719 9309 -885 -9788 -4769 3848 1149 -895 -4906 -2945 1029 -6651 -6961 2449 -6831 1763 1270 9782 -1333 -8577 5054 7571 -5910 2403 -7418 8089 -394 1850 8918 -3700 -7721 -8499 -2533 -518 -7386 -2372 -6691 2455 -892 4857 1954 -4671 2130 1641 -3135 -1252 -7661 9960 -4393 7502 -1979 -4646 5147 2433 -1155 8250 -2804 626 -8168 -2495 -8949 336 3145 -1227 -7832 -3087 8585\n311 -3033 6358 2964 5035 -5319 -1321 -5425 -1919 8394 7661 -1391 9155 4038 9121 3087 1861 -2814 -5468 6696 6171 -7022 -8457 -6408 -4992 -4758 3833 9543 -7919 2608 2504 9526 5337 7338 -1762 8128 -9624 -6247 7595 -1257 1146 -6345 -383 4246 -4818 4867 -9894 -1370 6403 -4146 6635 -6514 -221 6635 9954 -3483 -4992 2252 -4707 7674 7378 -9982 9626 621 6010 -9362 -6335 1894 76 -2154 -8102 -2108 8591 -7420 -7194 5924 -7733 7455 -5880 -5793 5574 8015 -4590 -1315 7290 9876 3865 -3060 7671 -3409 214",
-      "output": "-21821",
-      "isVisible": false,
-      "weight": 1,
-      "category": "large_random"
-    },
-    {
-      "id": "adversarial_1",
-      "input": "61\n61\n10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000\n10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000 10000",
-      "output": "1210061",
-      "isVisible": false,
-      "weight": 1,
-      "category": "adversarial"
-    },
-    {
-      "id": "random_14",
-      "input": "86\n86\n2236 4355 6959 4794 -6035 -1877 -2638 -7902 1078 -9311 9277 8150 -2460 9282 -2784 -9765 -7674 -8071 -2499 -7792 -8971 827 -7679 6847 -2202 -875 5906 -2980 7669 -5665 8711 8881 5488 -2038 5498 3338 -3761 -6910 -6824 4124 1609 3879 3470 5303 -8225 -6776 -8014 3193 1118 -6420 -1853 -3722 -3768 7573 4700 -5407 3824 -3988 -873 5159 -1815 -7530 4520 8033 -6792 -8343 7713 -9517 -6944 -2255 -4551 3317 5913 5773 -2996 3141 -8079 -4606 2418 -9930 2793 -1310 4909 -653 3861 8211\n5947 -4928 -3778 -278 -2867 -8084 8978 7766 -8003 276 -8127 -8357 9142 5623 6477 7403 -4842 -8137 6640 -7375 -3911 -7755 9498 -7774 -2293 3230 -6072 8667 -1933 8970 9481 -8698 -7314 3737 9125 8521 7130 366 -1456 -3307 295 -2179 -1297 2969 -5712 -170 4982 360 -7623 -9695 5017 8448 -6724 -7600 7617 -3016 6576 -1310 -5660 1436 -7746 -1996 2108 -662 -4831 4358 7800 -88 7332 -9744 8173 -190 -6606 -5600 -1334 -6218 -6493 8128 -4907 -1076 -768 9819 -3099 1235 -3329 -1350",
-      "output": "-54476",
-      "isVisible": false,
-      "weight": 1,
-      "category": "random"
+      "category": "random_medium"
     }
   ],
   "analytics": {

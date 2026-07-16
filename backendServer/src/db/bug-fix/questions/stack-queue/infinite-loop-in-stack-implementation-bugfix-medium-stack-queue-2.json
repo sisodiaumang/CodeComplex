@@ -1,0 +1,158 @@
+{
+  "_id": "94e7ccc3eb4717b4a9b2b82a",
+  "title": "Infinite Loop in Stack Implementation",
+  "slug": "infinite-loop-in-stack-implementation-bugfix-medium-stack-queue-2",
+  "difficulty": "Medium",
+  "category": "DSA",
+  "subCategory": "STACK",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "stack"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given an array of integers, implement a function to push and pop elements from a stack in any order. The function should return true if and only if the elements in the array are popped out in the same order they are pushed.",
+    "inputFormat": "Array of integers representing elements to be pushed onto the stack",
+    "outputFormat": "True if elements are popped in same order as pushed, False otherwise",
+    "notes": "Use a stack data structure to solve this problem",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "push and pop from an empty stack",
+        "output": "return true",
+        "explanation": "Push and pop from an empty stack"
+      },
+      {
+        "input": "push and pop from a stack with 1 element",
+        "output": "return true",
+        "explanation": "Push and pop from a stack with 1 element"
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "The problem can be solved using a stack data structure."
+    }
+  ],
+  "editorial": {
+    "title": "Infinite Loop in Stack Implementation",
+    "intuition": "The main idea is to push all elements onto the stack, then pop elements from the stack and compare with the original array. If elements are popped in the same order as pushed, return true; otherwise, return false.",
+    "bruteForce": "Brute force solution involves pushing and popping elements from the stack in a loop, which can lead to an infinite loop if not properly checked.",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution involves using a stack data structure and iterating over the given array to push and pop elements in a loop.",
+    "proofOfCorrectness": "The solution is correct because it checks whether elements are popped in the same order as pushed, which is the core requirement of the problem.",
+    "dryRun": "Example run: push all elements onto the stack, then pop elements from the stack and compare with the original array.",
+    "commonMistakes": [
+      "Infinite loop due to improper checking",
+      "Incorrect implementation of stack"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "class Solution { public: bool validateStackSequences(vector<int>& pushed, vector<int>& popped); };",
+    "java": "public class Solution { public boolean validateStackSequences(int[] pushed, int[] popped); }",
+    "python": "class Solution: def validateStackSequences(self, pushed: List[int], popped: List[int]) -> bool: pass",
+    "javascript": "function validateStackSequences(pushed, popped) { /* your code here */ }"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution { public: bool validateStackSequences(vector<int>& pushed, vector<int>& popped) { stack<int> s; int p = 0; for (int x : pushed) s.push(x); while (p < popped.size()) { if (popped[p] == s.top()) s.pop(); else s.push(pushed[p]); p++; } return true; } };",
+    "java": "public class Solution { public boolean validateStackSequences(int[] pushed, int[] popped) { Stack<Integer> s = new Stack<>(); int p = 0; for (int x : pushed) s.push(x); while (p < popped.length) { if (popped[p] == s.peek()) s.pop(); else s.push(pushed[p]); p++; } return true; } }",
+    "python": "class Solution: def validateStackSequences(self, pushed: List[int], popped: List[int]) -> bool: s = [] p = 0; for x in pushed: s.append(x); while p < len(popped): if popped[p] == s[-1]: s.pop(); else s.append(pushed[p]); p++; return True;",
+    "javascript": "function validateStackSequences(pushed, popped) { var s = []; var p = 0; for (var x of pushed) s.push(x); while (p < popped.length) { if (popped[p] == s[s.length - 1]) s.pop(); else s.push(pushed[p]); p++; } return true; }"
+  },
+  "functionSignature": {
+    "cpp": "bool validateStackSequences(vector<int>& pushed, vector<int>& popped);",
+    "java": "boolean validateStackSequences(int[] pushed, int[] popped);",
+    "python": "def validateStackSequences(self, pushed: List[int], popped: List[int]) -> bool:",
+    "javascript": "function validateStackSequences(pushed, popped): boolean"
+  },
+  "solutions": {
+    "python": "class Solution: def validateStackSequences(self, pushed: List[int], popped: List[int]) -> bool: s = []; for x in pushed: s.append(x); stack = []; p = 0; while p < len(popped): while s and s[-1] != popped[p]: stack.append(s.pop()); if s and s[-1] == popped[p]: s.pop(); else: return False; p++; return True;\n# test case\npushed = [1, 2, 3]; popped = [1, 2, 3]; print(Solution().validateStackSequences(pushed, popped));",
+    "cpp": "// test case\n#include <iostream>\n#include <stack>\n#include <vector>\nusing namespace std;\nclass Solution {\npublic:\nbool validateStackSequences(vector<int>& pushed, vector<int>& popped) {\nstack<int> s;\nfor (int x : pushed) s.push(x);\nint p = 0;\nwhile (p < popped.size()) {\nwhile (!s.empty() && s.top() != popped[p])\nstack<int> temp;\nwhile (!s.empty() && s.top() != popped[p])\n{ temp.push(s.top()); s.pop(); }\nif (s.top() == popped[p]) s.pop();\nelse return false;\np++;\n}\nreturn true;\n}\n};\nint main() {\nSolution s;\nvector<int> pushed = {1, 2, 3};\nvector<int> popped = {1, 2, 3};\ncout << boolalpha << s.validateStackSequences(pushed, popped);\ncin.get();\ncin.get();\nreturn 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2000,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "First line count, second line elements (stdin match)",
+      "output": "Expected output string",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "Example 2 input",
+      "output": "Example 2 output",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

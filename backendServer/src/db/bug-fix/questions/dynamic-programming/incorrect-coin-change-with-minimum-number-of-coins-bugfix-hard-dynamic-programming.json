@@ -1,0 +1,178 @@
+{
+  "_id": "0af8d4f0fb932193be2ce2b9",
+  "title": "Incorrect Coin Change with Minimum Number of Coins",
+  "slug": "incorrect-coin-change-with-minimum-number-of-coins-bugfix-hard-dynamic-programming",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "Coin Change",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 45,
+    "points": 60,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "dp"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given an array of coin denominations and a target sum, implement a function to find the minimum number of coins required to make change for the target sum. The function should return **-1** if it is impossible to make change. The function should also handle the case where the target sum is **0**, in which case the function should return **0**. ",
+    "inputFormat": "Input will contain an array of coin denominations and a target sum.",
+    "outputFormat": "Output will be the minimum number of coins required to make change for the target sum, or **-1** if it is impossible to make change.",
+    "notes": "This is a hard problem because we need to handle the case where the target sum is not a multiple of the largest coin denominator.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of coin denominations array"
+      },
+      {
+        "variable": "target",
+        "type": "integer",
+        "min": 0,
+        "max": 10000,
+        "description": "Target sum"
+      }
+    ],
+    "examples": [
+      {
+        "input": "coin_denoms = [1, 2, 5], target = 11\n",
+        "output": "3\n",
+        "explanation": "The minimum number of coins required to make change for 11 is 3 (5 + 5 + 1)."
+      },
+      {
+        "input": "coin_denoms = [1, 2, 5], target = 0\n",
+        "output": "0\n",
+        "explanation": "We do not need any coins to make change for 0."
+      },
+      {
+        "input": "coin_denoms = [1, 2, 5], target = 7\n",
+        "output": "-1\n",
+        "explanation": "It is impossible to make change for 7 with the given coin denominations."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text: Use a dynamic programming approach to solve this problem. Initialize a 2D array dp where dp[i][j] represents the minimum number of coins required to make change for i with denominations up to j."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach: We use dynamic programming to solve this problem. We initialize a 2D array dp where dp[i][j] represents the minimum number of coins required to make change for i with denominations up to j.",
+    "bruteForce": "Brute force approach summary: We can use a brute force approach to solve this problem. For each coin denomination, we check if we can make change for the target sum by recursively calling the function with the remaining target sum.",
+    "betterSolution": "Better solution details: We can use dynamic programming to solve this problem more efficiently than the brute force approach.",
+    "optimalSolution": "Optimal solution details: The optimal solution is to use dynamic programming to solve this problem in O(n*m) time, where n is the size of the coin denominations array and m is the target sum.",
+    "proofOfCorrectness": "Correctness proof: The correctness of the solution can be proven by induction.",
+    "dryRun": "Step-by-step example run: We initialize a 2D array dp where dp[i][j] represents the minimum number of coins required to make change for i with denominations up to j. We then fill up the dp array by checking for each coin denomination if we can make change for i with denominations up to j.",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(n*m)",
+    "spaceComplexity": "O(n*m)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {public: int coinChange(vector<int>& coin_denoms, int target);}; // TODO: implement",
+    "java": "public class Solution {public int coinChange(int[] coin_denoms, int target); // TODO: implement}",
+    "python": "class Solution: def coinChange(self, coin_denoms: list[int], target: int) -> int: # TODO: implement",
+    "javascript": "function coinChange(coin_denoms, target) { // TODO: implement"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {public: int coinChange(vector<int>& coin_denoms, int target) { int dp[target+1][len(coin_denoms)+1]; for (int i=0; i<=target; i++) {for (int j=0; j<=len(coin_denoms); j++) {if (i==0 && j==0) dp[i][j]=0; else if (j==0) dp[i][j]=-1; else if (i<0) dp[i][j]=-1; else if (j>0 && i==0) dp[i][j]=0; else {if (coin_denoms[j-1]<=i) dp[i][j]=min(dp[i][j-1],1+dp[i-coin_denoms[j-1]][j]); else dp[i][j]=dp[i][j-1];} }}return dp[target][len(coin_denoms)]; }};",
+    "java": "public class Solution {public int coinChange(int[] coin_denoms, int target) {int[][] dp=new int[target+1][coin_denoms.length+1]; for (int i=0; i<=target; i++) {for (int j=0; j<=coin_denoms.length; j++) {if (i==0 && j==0) dp[i][j]=0; else if (j==0) dp[i][j]=-1; else if (i<0) dp[i][j]=-1; else if (j>0 && i==0) dp[i][j]=0; else {if (coin_denoms[j-1]<=i) dp[i][j]=Math.min(dp[i][j-1],1+dp[i-coin_denoms[j-1]][j]); else dp[i][j]=dp[i][j-1];} }}return dp[target][coin_denoms.length];}};",
+    "python": "class Solution: def coinChange(self, coin_denoms: list[int], target: int) -> int:\n\t'''Initializes a dp 2D list and fills it up with values based on whether a coin can be used for the current amount or not.\n\t'''\n\tdp=[[0]*len(coin_denoms) for _ in range(target+1)]\n\tfor i in range(target+1):\n\t\tfor j in range(len(coin_denoms)+1):\n\t\t\tif i==0 and j==0:\n\t\t\t\tdp[i][j]=0\n\t\telif j==0:\n\t\t\t\tdp[i][j]=-1\n\t\telif i<0:\n\t\t\t\tdp[i][j]=-1\n\t\telif j>0 and i==0:\n\t\t\t\tdp[i][j]=0\n\t\t\telse:\n\t\t\t\tif coin_denoms[j-1]<=i:\n\t\t\t\t\t\t\tdp[i][j]=min(dp[i][j-1],1+dp[i-coin_denoms[j-1]][j])\n\t\t\t\telse:\n\t\t\t\t\t\tdp[i][j]=dp[i][j-1]\n\treturn dp[target][len(coin_denoms)]",
+    "javascript": "function coinChange(coin_denoms, target) {\n\t// Initialize a dp array and fill it up with values based on whether a coin can be used for the current amount or not.\n\tlet dp = Array(target+1).fill(0).map(_ => Array(coin_denoms.length+1).fill(-1));\n\tfor (let i = 0; i <= target; i++) {\n\t\tfor (let j = 0; j <= coin_denoms.length; j++) {\n\t\t\tif (i == 0 && j == 0)\n\t\t\t\tcontinue; // skip this case\n\t\t\telse if (j == 0)\n\t\t\ttdp[i][j]=-1\n\t\t\t\tcontinue; // skip this case\n\t\t\telse if (i < 0)\n\t\t\ttdp[i][j]=-1\n\t\t\t\tcontinue; // skip this case\n\t\t\telse if (j > 0 && i == 0)\n\t\t\ttdp[i][j]=0\n\t\t\t\tcontinue; // skip this case\n\t\t\telse {\n\t\t\t\tif (coin_denoms[j-1] <= i)\n\t\t\t\ttdp[i][j]=Math.min(tdp[i][j-1],1+tdp[i-coin_denoms[j-1]][j])\n\t\t\t\tcontinue; // skip this case\n\t\t\t\t}\n\t\t\ttdp[i][j]=tdp[i][j-1]\n\t\t}\n\t}\n\treturn tdp[target][coin_denoms.length]"
+  },
+  "functionSignature": {
+    "cpp": "int coinChange(vector<int>& coin_denoms, int target);",
+    "java": "int coinChange(int[] coin_denoms, int target);",
+    "python": "def coinChange(self, coin_denoms: list[int], target: int) -> int:",
+    "javascript": "function coinChange(coin_denoms, target) : int "
+  },
+  "solutions": {
+    "python": "class Solution:\n\tdef coinChange(self, coin_denoms: list[int], target: int) -> int:\n\t\t'''Initializes a dp 2D list and fills it up with values based on whether a coin can be used for the current amount or not.\n\t\t'''\n\t\tdp=[[0]*len(coin_denoms) for _ in range(target+1)]\n\t\tfor i in range(1, target+1):\n\t\t\tfor j in range(1, len(coin_denoms)+1):\n\t\t\t\tif coin_denoms[j-1]<=i:\n\t\t\t\t\t\tdp[i][j]=min(dp[i][j-1],1+dp[i-coin_denoms[j-1]][j])\n\t\t\t\telse:\n\t\t\t\t\t\tdp[i][j]=dp[i][j-1]\n\t\treturn dp[target][len(coin_denoms)]",
+    "cpp": "// -*- coding: utf-8-*\n#include <bits/stdc++.h>\n\nusing namespace std;\n\nclass Solution {\npublic:\n\tint coinChange(vector<int>& coin_denoms, int target) {\n\t\tvector<vector<int>> dp(target+1, vector<int>(coin_denoms.size()+1, -1));\n\t\tfor (int i = target; i >= 0; --i) {\n\t\t\tfor (int j = coin_denoms.size() - 1; j >= 0; --j) {\n\t\t\t\tif (coin_denoms[j] <= i) {\n\t\t\t\t\tdp[i][j] = min(dp[i][j + 1], dp[i - coin_denoms[j]][j] + 1);\n\t\t\t\t} else {\n\t\t\t\t\tdp[i][j] = dp[i][j + 1];\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t\treturn dp[target][coin_denoms.size()];\n\t}\n};\n\nint main() {\n\tios_base::sync_with_stdio(false); cin.tie(nullptr);\n\tint target, n;\n\tcin >> target >> n;\n\tvector<int> coin_denoms(n);\n\tfor (int i = 0; i < n; ++i) {\n\t\tcin >> coin_denoms[i];\n\t}\n\tSolution sol;\n\tcout << sol.coinChange(coin_denoms, target) << endl;\n\treturn 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "7\n1 2 5\n",
+      "output": "2\n",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "0\n1 2\n",
+      "output": "0\n",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    },
+    {
+      "id": "tc_3",
+      "input": "7\n1 2 5\n",
+      "output": "-1\n",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

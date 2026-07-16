@@ -1,0 +1,155 @@
+{
+  "_id": "3db0dd37184d4344ba8fa3c9",
+  "title": "Implement a Distributed Cache with Invalidation and TTL",
+  "slug": "implement-a-distributed-cache-with-invalidation-and-ttl-hard-caching",
+  "difficulty": "Hard",
+  "topics": [
+    "CACHING"
+  ],
+  "statement": "Design a RESTful API with endpoints for storing, retrieving, and invalidating cache entries in a distributed cache system. The cache should have a Time-To-Live (TTL) for each entry, and cache invalidation should be triggered when an entry is updated or deleted in the underlying resource. Your implementation should use Redis as the cache store and handle scenarios like cache expiration, cache invalidation, and cache conflict resolution.\n\n### Endpoints\n\n### Store an entry in the cache\n\n* `POST /cache`:\n\n\t* `key`: The cache key\n\t* `value`: The cache value\n\t* `ttl`: The time-to-live (in seconds) for the cache entry\n\t* `resourceId`: The ID of the underlying resource associated with the cache entry\n\n### Retrieve an entry from the cache\n\n* `GET /cache/{key}`:\n\n\t* `key`: The cache key\n\n### Invalidate an entry in the cache\n\n* `DELETE /cache/{key}`:\n\n\t* `key`: The cache key\n\t* `resourceId`: The ID of the underlying resource associated with the cache entry\n\n### List all cached entries associated with a resource\n\n* `GET /cache/resource/{resourceId}`:\n\n\t* `resourceId`: The ID of the underlying resource",
+  "constraints": [
+    "Must use Redis as the cache store",
+    "Cache entries should have a Time-To-Live (TTL)",
+    "Cache invalidation should be triggered when an entry is updated or deleted in the underlying resource",
+    "Implement cache conflict resolution using a Last-Winner approach",
+    "Implement Redis connection pooling to handle high concurrency",
+    "Use the Redis `EXPIRE` command to set the TTL for cache entries"
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/cache",
+      "description": "Store an entry in the cache\n\n* `key`: The cache key\n* `value`: The cache value\n* `ttl`: The time-to-live (in seconds) for the cache entry\n* `resourceId`: The ID of the underlying resource associated with the cache entry"
+    },
+    {
+      "method": "GET",
+      "path": "/cache/{key}",
+      "description": "Retrieve an entry from the cache\n\n* `key`: The cache key"
+    },
+    {
+      "method": "DELETE",
+      "path": "/cache/{key}",
+      "description": "Invalidate an entry in the cache\n\n* `key`: The cache key\n* `resourceId`: The ID of the underlying resource associated with the cache entry"
+    },
+    {
+      "method": "GET",
+      "path": "/cache/resource/{resourceId}",
+      "description": "List all cached entries associated with a resource\n\n* `resourceId`: The ID of the underlying resource"
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\"name\":\"cache-api\",\"version\":\"1.0.0\",\"main\":\"index.js\",\"scripts\":{\"start\":\"node index.js\"},\"dependencies\":{\"express\":\"^4.18.2\",\"redis\":\"^4.3.0\"}}",
+    "index.js": "const express = require('express');\nconst Redis = require('redis');\n\nconst app = express();\napp.use(express.json());\n\nconst redisClient = Redis.createClient({\n    host: 'localhost',\n    port: 6379\n});\n\n// Redis connection pooling\nconst redisPool = new Redis.Cluster([{\n    host: 'localhost',\n    port: 6379\n}]);\n\n// TODO: Implement endpoints\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "POST",
+      "path": "/cache",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "key": "my_key",
+        "value": "Hello, world!",
+        "ttl": 60,
+        "resourceId": "resource123"
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "message": "Cache entry created successfully"
+      },
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "GET",
+      "path": "/cache/my_key",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "key": "my_key",
+        "value": "Hello, world!",
+        "ttl": 60
+      },
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "POST",
+      "path": "/cache",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "key": "my_key",
+        "value": "Hello, world!",
+        "ttl": 60,
+        "resourceId": "resource123"
+      },
+      "expectedStatus": 409,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "DELETE",
+      "path": "/cache/my_key",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "expectedStatus": 204,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "GET",
+      "path": "/cache/resource/resource123",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "entries": [
+          {
+            "key": "my_key",
+            "value": "Hello, world!",
+            "ttl": 60
+          }
+        ]
+      },
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "redis",
+    "cache-aside",
+    "write-through",
+    "ttl",
+    "invalidation",
+    "memory-cache",
+    "caching",
+    "distributed-cache"
+  ]
+}

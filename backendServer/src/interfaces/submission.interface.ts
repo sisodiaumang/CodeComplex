@@ -13,7 +13,10 @@ export type ProgrammingLanguage =
     | "JAVA"
     | "PYTHON"
     | "JAVASCRIPT"
-    | "TYPESCRIPT";
+    | "TYPESCRIPT"
+    | "HTML"
+    | "CSS"
+    | "REACT";
 
 export type JudgeResult = 
     |"ACCEPTED"

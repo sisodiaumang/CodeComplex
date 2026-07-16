@@ -1,0 +1,163 @@
+{
+  "_id": "fd6c7d84aa8b7425069e108d",
+  "title": "Inconsistent Staircase Climbing",
+  "slug": "inconsistent-staircase-climbing-bugfix-hard-dynamic-programming",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "DP",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "dp"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "You are the manager of a staircase building project. The building has `n` floors, and each floor can be either `1`, `2`, or `3` steps high. The cost of climbing `i` steps is `ci` dollars, where `ci` is a given integer. Your goal is to find the minimum cost to reach the `n`-th floor from the ground floor. You can climb any number of flights of stairs (except the last one) but must end at the top (i.e., the `n`-th floor).\n\nImplement the `climbStairs` function to calculate the minimum cost to reach the top. The function should take an array of `costs` where each `costs[i]` is the cost of climbing the `i`-th step.\n\nYou should consider the case where the input array `costs` has a length of `n` (i.e., `n` floors).\n\nNote that the cost of climbing more flights of stairs before the final flight does not contribute to the total cost.",
+    "inputFormat": "Input format: The function takes two parameters: `n` and `costs`, where `n` is an integer representing the number of floors and `costs` is an array of integers representing the cost of climbing each step.",
+    "outputFormat": "Output format: The function should return an integer representing the minimum cost to reach the top floor from the ground floor.",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of floors"
+      },
+      {
+        "variable": "costs",
+        "type": "array",
+        "description": "Costs of climbing each step"
+      }
+    ],
+    "examples": [
+      {
+        "input": "3\n[10,15,20]",
+        "output": "15",
+        "explanation": "The minimum cost to reach the third floor is 15, which is achieved by taking two 3-step flights of stairs and skipping the first flight."
+      },
+      {
+        "input": "4\n[1,100,1,1,1,100,1,1,100,1]",
+        "output": "6",
+        "explanation": "The minimum cost to reach the fourth floor is 6, which is achieved by taking three 1-step flights of stairs."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Start by examining the recurrence relation for this problem."
+    }
+  ],
+  "editorial": {
+    "title": "Optimal Solution for Inconsistent Staircase Climbing",
+    "intuition": "The optimal solution can be achieved using dynamic programming.\n\nTo solve this problem, we can use a bottom-up approach by initializing an array `dp` of size `n` and setting `dp[0]` to `0`, representing the minimum cost to reach the ground floor. Then, for each floor `i` from `1` to `n-1`, we calculate the minimum cost to reach floor `i` by taking the minimum cost of the previous floors, `dp[i-1]`, `dp[i-2]`, and `dp[i-3]`, and adding the cost of the current floor `costs[i-1]`.",
+    "bruteForce": "The brute force approach involves trying all possible combinations of flights of stairs to reach the top floor. This approach has a high time complexity of O(3^n) and is not efficient for large inputs.",
+    "betterSolution": "We can improve the brute force approach by using a bottom-up dynamic programming approach.",
+    "optimalSolution": "The optimal solution has a time complexity of O(n) and a space complexity of O(n), making it efficient for large inputs.",
+    "proofOfCorrectness": "The correctness of the optimal solution can be proven by induction.",
+    "dryRun": "Let's consider an example input of n = 3 and costs = [10,15,20]. We can calculate the minimum cost to reach the top floor as follows: dp[0] = 0, dp[1] = 10, dp[2] = min(dp[1] + 15, dp[0] + 20) = 25. Therefore, the minimum cost to reach the top floor is 25.",
+    "commonMistakes": [
+      "Not considering the case where n is 0 or 1",
+      "Not handling edge cases correctly"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    int climbStairs(int n, vector<int>& costs);\n};",
+    "java": "public class Solution {\n    public int climbStairs(int n, int[] costs);\n}",
+    "python": "class Solution:\n    def climbStairs(self, n: int, costs: List[int]) -> int:",
+    "javascript": "function climbStairs(n, costs) { "
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    int climbStairs(int n, vector<int>& costs) {\n        if (n == 0) return 0;\n        int dp[n];\n        dp[0] = 0;\n        for (int i = 1; i < n; i++) {\n            dp[i] = costs[i] + min(dp[i-1], dp[i-2], dp[i-3]);\n        }\n        return dp[n-1];\n    }\n};",
+    "java": "public class Solution {\n    public int climbStairs(int n, int[] costs) {\n        if (n == 0) return 0;\n        int[] dp = new int[n];\n        dp[0] = 0;\n        for (int i = 1; i < n; i++) {\n            dp[i] = costs[i] + Math.min(dp[i-1], dp[i-2], dp[i-3]);\n        }\n        return dp[n-1];\n    }\n}",
+    "python": "class Solution:\n    def climbStairs(self, n: int, costs: List[int]) -> int:\n        if n == 0:\n            return 0\n        dp = [0] * n\n        dp[0] = 0\n        for i in range(1, n):\n            dp[i] = costs[i] + min(dp[i-1], dp[i-2], dp[i-3])\n        return dp[n-1]",
+    "javascript": "function climbStairs(n, costs) {\n    if (n == 0) return 0;\n    let dp = new Array(n);\n    dp[0] = 0;\n    for (let i = 1; i < n; i++) {\n        dp[i] = costs[i] + Math.min(dp[i-1], dp[i-2], dp[i-3]);\n    }\n    return dp[n-1];\n}"
+  },
+  "functionSignature": {
+    "cpp": "int climbStairs(int n, vector<int>& costs);",
+    "java": "int climbStairs(int n, int[] costs);",
+    "python": "int climbStairs(self, n: int, costs: List[int]) -> int:",
+    "javascript": "int climbStairs(n, costs)"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def climbStairs(self, n: int, costs: List[int]) -> int:\n        if n == 0:\n            return 0\n        dp = [0] * n\n        dp[0] = costs[0]\n        for i in range(1, n):\n            for j in range(1, min(i+1, 3)):\n                dp[i] = min(dp[i], dp[i-j] + costs[i])\n        return dp[n-1]\n\nif __name__ == '__main__':\n    solver = Solution()\n    n, costs = map(int, input().split())\n    print(solver.climbStairs(n, costs))",
+    "cpp": "class Solution {\npublic:\n    int climbStairs(int n, vector<int>& costs) {\n        if (n == 0) return 0;\n        int dp[n];\n        dp[0] = costs[0];\n        for (int i = 1; i < n; i++) {\n            for (int j = 1; j <= min(i+1, 3); j++) {\n                dp[i] = min(dp[i], dp[i-j] + costs[i]);\n            }\n        }\n        return dp[n-1];\n    }\n};\n\nint main() {\n    Solution solver;\n    int n; cin >> n;\n    vector<int> costs(n);\n    for (int i = 0; i < n; i++) cin >> costs[i];\n    cout << solver.climbStairs(n, costs) << endl;\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "3\n10 15 20",
+      "output": "15",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "4\n1 100 1 1 1 100 1 1 100 1",
+      "output": "6",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

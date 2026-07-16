@@ -1,0 +1,136 @@
+{
+  "title": "Fix MongoDB Query Projection to Handle Missing Fields",
+  "subCategory": "Query Projection",
+  "statement": {
+    "markdown": "Write a function to implement a MongoDB query projection for a given document. The function should project only the fields that exist in the document and ignore missing fields. If a field has a nested sub-document, the function should project only the fields within the nested sub-document if they exist.",
+    "inputFormat": "A JSON object representing a MongoDB document",
+    "outputFormat": "A JSON object representing the projected document",
+    "notes": "The function should handle documents with arbitrary nesting and missing fields.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of fields in the document"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"name\":\"John\",\"age\":30,\"address\":{\"street\":\"123 Main St\",\"city\":\"Anytown\",\"state\":\"CA\"}}",
+        "output": "{\"name\":\"John\",\"age\":30,\"address\":{\"street\":\"123 Main St\",\"city\":\"Anytown\"}}",
+        "explanation": "The function projects only the fields that exist in the document, ignoring the missing field \"state\" within the nested \"address\" sub-document."
+      },
+      {
+        "input": "{\"name\":\"Jane\",\"age\":25,\"address\":{\"street\":\"456 Elm St\",\"city\":\"Othertown\",\"state\":\"NY\"}}",
+        "output": "{\"name\":\"Jane\",\"age\":25,\"address\":{\"street\":\"456 Elm St\",\"city\":\"Othertown\",\"state\":\"NY\"}}",
+        "explanation": "The function projects all fields in the document, including the nested fields within the \"address\" sub-document."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "MONGODB"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "mongodb"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "You can use a recursive function to handle nested sub-documents."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial: Handling Missing Fields in MongoDB Query Projection",
+    "intuition": "To project missing fields, you can use a recursive function to traverse the document and check for existing fields.",
+    "bruteForce": "A brute-force approach would involve iterating over each field in the document and checking for its existence.",
+    "betterSolution": "You can use a recursive function to handle nested sub-documents.",
+    "optimalSolution": "The optimal solution involves using a recursive function to traverse the document and project only existing fields.",
+    "proofOfCorrectness": "The proof of correctness involves showing that the recursive function correctly handles nested sub-documents and missing fields.",
+    "dryRun": "A dry run would involve testing the function with various inputs to ensure it correctly projects missing fields.",
+    "commonMistakes": [
+      "Not handling nested sub-documents",
+      "Not ignoring missing fields"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "// Define a function to project missing fields from a MongoDB document",
+    "python": "class Solution:\n    def projectMissingFields(self, document):\n        pass\n"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Define a function to project missing fields from a MongoDB document\nfunction projectMissingFields(document) {\n    let projectedDocument = {};\n    for (let field in document) {\n        if (document[field] !== undefined) {\n            projectedDocument[field] = document[field];\n        }\n    }\n    return projectedDocument;\n}\n",
+    "python": "class Solution:\n    def projectMissingFields(self, document):\n        projected_document = {}\n        for field in document:\n            if document[field] is not None:\n                projected_document[field] = document[field]\n        return projected_document\n"
+  },
+  "functionSignature": {
+    "javascript": "function projectMissingFields(document);",
+    "python": "def projectMissingFields(self, document: dict) -> dict:"
+  },
+  "solutions": {
+    "javascript": "// Solution",
+    "python": "class Solution:\n    def projectMissingFields(self, document: dict) -> dict:\n        def recursiveProject(document):\n            projected_document = {}\n            for field, value in document.items():\n                if isinstance(value, dict):\n                    projected_document[field] = recursiveProject(value)\n                elif value is not None:\n                    projected_document[field] = value\n            return projected_document\n        return recursiveProject(document)\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"name\":\"John\",\"age\":30,\"address\":{\"street\":\"123 Main St\",\"city\":\"Anytown\",\"state\":\"CA\"}}",
+      "output": "{\"name\":\"John\",\"age\":30,\"address\":{\"street\":\"123 Main St\",\"city\":\"Anytown\"}}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"name\":\"Jane\",\"age\":25,\"address\":{\"street\":\"456 Elm St\",\"city\":\"Othertown\",\"state\":\"NY\"}}",
+      "output": "{\"name\":\"Jane\",\"age\":25,\"address\":{\"street\":\"456 Elm St\",\"city\":\"Othertown\",\"state\":\"NY\"}}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "d96993c008e918e431a3e5e8",
+  "slug": "fix-mongodb-query-projection-to-handle-missing-fields-bugfix-medium-mongodb",
+  "mode": "bug_fix",
+  "category": "MONGODB",
+  "difficulty": "Medium"
+}

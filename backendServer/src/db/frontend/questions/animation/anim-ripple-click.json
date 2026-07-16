@@ -1,0 +1,52 @@
+{
+  "_id": "512fae40d68838c6fd5ea03f",
+  "title": "Ripple Click Animation",
+  "slug": "anim-ripple-click",
+  "difficulty": "Hard",
+  "topics": [
+    "ANIMATION"
+  ],
+  "statement": {
+    "markdown": "## Interactive Ripple Click Effect\n\nBuild an interactive click handler creating water ripple animations centered on click coordinates.\n\n### Requirements:\n1. **Dynamic positioning**: Button clicks read client relative coordinates, centering ripple spans at mouse positions.\n2. **Fade Scale transformations**: Ripples scale up and fade out to `opacity: 0` in dynamic cycles.\n3. **DOM Cleaning**: Automatically clean up and delete ripple span nodes after animations finish (e.g. 600ms)."
+  },
+  "constraints": [
+    "Must programmatically calculate mouse click locations (offsetX, offsetY) or client bounds",
+    "Do not leave residual ripple element spans in the DOM"
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "html": "<div class=\"p-6 text-center text-white font-sans\">\n  <button id=\"ripple-btn\" class=\"relative overflow-hidden bg-indigo-600 px-6 py-3 rounded-lg font-bold hover:bg-indigo-500 focus:outline-none transition-colors select-none text-lg\">Click Me</button>\n</div>",
+    "css": ".ripple {\n  position: absolute;\n  background: rgba(255, 255, 255, 0.4);\n  border-radius: 50%;\n  pointer-events: none;\n  transform: scale(0);\n  /* Add ripple fade transitions keyframes here */\n}\n",
+    "javascript": "const btn = document.getElementById('ripple-btn');\n\n// Implement click handler spawning ripples and cleanup timeouts here\n"
+  },
+  "gradingCriteria": [
+    {
+      "id": "ripple_centers",
+      "description": "Verify ripple coordinates center correctly on click positions.",
+      "weight": 50
+    },
+    {
+      "id": "nodes_cleanup",
+      "description": "Verify ripple tags fade, scale, and clear from the DOM after 600ms.",
+      "weight": 50
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "html",
+      "css",
+      "javascript"
+    ],
+    "referenceSolution": "const btn = document.getElementById('ripple-btn');\n\nbtn.addEventListener('click', (e) => {\n  const rect = btn.getBoundingClientRect();\n  const x = e.clientX - rect.left;\n  const y = e.clientY - rect.top;\n\n  const ripple = document.createElement('span');\n  ripple.className = 'ripple';\n  ripple.style.left = `${x}px`;\n  ripple.style.top = `${y}px`;\n\n  const size = Math.max(rect.width, rect.height);\n  ripple.style.width = `${size}px`;\n  ripple.style.height = `${size}px`;\n  ripple.style.marginLeft = `${-size / 2}px`;\n  ripple.style.marginTop = `${-size / 2}px`;\n\n  btn.appendChild(ripple);\n\n  // Trigger scale anim\n  requestAnimationFrame(() => {\n    ripple.style.transform = 'scale(2)';\n    ripple.style.opacity = '0';\n    ripple.style.transition = 'transform 0.6s ease-out, opacity 0.6s ease-out';\n  });\n\n  setTimeout(() => {\n    ripple.remove();\n  }, 600);\n});"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

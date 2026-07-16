@@ -1,0 +1,68 @@
+{
+  "_id": "15cb3069c3709ed0a24e07e9",
+  "title": "E-commerce Product Pricing Matrix with Advanced Filtering",
+  "slug": "e-commerce-product-pricing-matrix-with-advanced-filtering-hard-ecommerce",
+  "difficulty": "Hard",
+  "topics": [
+    "ECOMMERCE"
+  ],
+  "statement": {
+    "markdown": "## Projects Challenge: E-commerce Product Pricing Matrix with Advanced Filtering\n\nYour objective is to build a fully functional, highly interactive React component representing the target design mockup.\n\n### 🎨 Color Palette\n* `#B7D7CD`\n* `#C06C88`\n* `#411C56`\n* `#090a0f`\n\n### 📐 Target Design Mockup\nUse the visual mockup shown in the panel to guide your coordinate alignment, container proportions, and spacing.\n\n### 📌 Target Design SVG Source\nThe target geometry is defined by the following SVG vector graphic (viewable by the LLM judge):\n```xml\n<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300'><rect x='10' y='10' width='380' height='280' rx='10' fill='#090a0f'/><rect x='20' y='20' width='360' height='260' rx='10' fill='#B7D7CD'/><rect x='30' y='30' width='340' height='240' rx='10' fill='#C06C88'/><g transform='translate(50, 50)'><rect x='0' y='0' width='150' height='30' rx='5' fill='#411C56'/><text x='10' y='20' font-size='18' fill='#FFFFFF' text-anchor='start'>Search:</text><rect x='100' y='0' width='200' height='30' rx='5' fill='#090a0f'/><text x='120' y='20' font-size='18' fill='#FFFFFF' text-anchor='start'>Filter:</text></g><g transform='translate(50, 100)'><rect x='0' y='0' width='150' height='30' rx='5' fill='#411C56'/><text x='10' y='20' font-size='18' fill='#FFFFFF' text-anchor='start'>Product Name:</text><rect x='100' y='0' width='200' height='30' rx='5' fill='#090a0f'/><text x='120' y='20' font-size='18' fill='#FFFFFF' text-anchor='start'>Price:</text></g><g transform='translate(50, 200)'><rect x='0' y='0' width='150' height='30' rx='5' fill='#411C56'/><text x='10' y='20' font-size='18' fill='#FFFFFF' text-anchor='start'>Total:</text></g>\n```\n\n### ⚙️ Requirements\n1. Match the visual presentation (layout, alignment, borders, colors) of the mockup.\n2. Implement all necessary React state variables, event handlers, and input bindings to make the page interactive.\n3. Make sure all interactive controls (buttons, forms, checkboxes, sliders) update the view correctly.\n"
+  },
+  "constraints": [
+    "Must use only specified colors",
+    "Must implement multiple states (product selection, filter selection, total calculation)",
+    "Must use a table for product display"
+  ],
+  "referenceAssets": [
+    {
+      "url": "http://localhost:8000/public/mockups/e-commerce-product-pricing-matrix-with-advanced-filtering-hard-ecommerce.svg",
+      "caption": "Recreate target design: E-commerce Product Pricing Matrix with Advanced Filtering"
+    }
+  ],
+  "starterCode": {
+    "react": "import React, { useState } from 'react';\n\nconst App = () => {\n  const [products, setProducts] = useState([\n    { name: 'Product A', price: 10.99 },\n    { name: 'Product B', price: 5.99 },\n    { name: 'Product C', price: 7.99 }\n  ]);\n  const [selectedProducts, setSelectedProducts] = useState([]);\n  const [filter, setFilter] = useState('');\n  const [total, setTotal] = useState(0);\n\n  const handleSelectProduct = (product) => {\n    if (selectedProducts.includes(product)) {\n      setSelectedProducts(selectedProducts.filter((p) => p !== product));\n    } else {\n      setSelectedProducts([...selectedProducts, product]);\n    }\n    calculateTotal();\n  };\n\n  const calculateTotal = () => {\n    const selectedProductPrices = selectedProducts.map((product) => product.price);\n    setTotal(selectedProductPrices.reduce((a, b) => a + b, 0));\n  };\n\n  const handleFilterChange = (event) => {\n    setFilter(event.target.value);\n  };\n\n  return (\n    <div className=\"min-h-screen bg-[#090a0f] text-white p-4 flex items-center justify-center\">\n      <div className=\"bg-white p-4 w-1/2\">\n        <div className=\"flex justify-between mb-4\">\n          <input type=\"search\" placeholder=\"Search\" className=\"p-2 w-1/2\" onChange={handleFilterChange} />\n          <select className=\"p-2 w-1/2\" value={filter} onChange={handleFilterChange}>\n            <option value=\"\">All</option>\n            <option value=\"Product A\">Product A</option>\n            <option value=\"Product B\">Product B</option>\n            <option value=\"Product C\">Product C</option>\n          </select>\n        </div>\n        <table className=\"w-full border-collapse\">\n          <thead>\n            <tr>\n              <th className=\"text-left p-2\">Product Name</th>\n              <th className=\"text-left p-2\">Price</th>\n            </tr>\n          </thead>\n          <tbody>\n            {products.map((product) => (\n              <tr key={product.name} className={`bg-${filter === '' ? 'white' : 'gray-200'} hover:bg-gray-200`}> \n                <td className=\"p-2 text-left\">{product.name}</td>\n                <td className=\"p-2 text-left\">$ {product.price}</td>\n                <td className=\"p-2 text-left\">\n                  <input\n                    type=\"checkbox\"\n                    checked={selectedProducts.includes(product)}\n                    onChange={() => handleSelectProduct(product)}\n                  />\n                </td>\n              </tr>\n            ))}\n          </tbody>\n        </table>\n        <div className=\"flex justify-between items-center mb-4 mt-4\">\n          <h1 className=\"text-2xl\">Total: $ {total}</h1>\n          <button className=\"bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded\">\n            Checkout\n          </button>\n        </div>\n      </div>\n    </div>\n  );\n};\n\nexport default App;"
+  },
+  "gradingCriteria": [
+    {
+      "id": "visual_fidelity",
+      "description": "Evaluate how closely the layout, colors, and positioning match the target visual mockup.",
+      "weight": 35
+    },
+    {
+      "id": "interactive_features",
+      "description": "Verify interactive state updates, filter logic, product selection, and handlers.",
+      "weight": 40
+    },
+    {
+      "id": "code_quality",
+      "description": "Review code cleanliness, proper semantic elements, and efficient state use.",
+      "weight": 25
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "react"
+    ]
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "tags": [
+    "frontend",
+    "react",
+    "projects",
+    "ecommerce",
+    "color:#B7D7CD",
+    "color:#C06C88",
+    "color:#411C56",
+    "color:#090A0F"
+  ]
+}

@@ -1,0 +1,134 @@
+{
+  "title": "Fixing the Node.js Express Middleware for Dynamic Route Resolution",
+  "subCategory": "Dynamic Route Resolution",
+  "statement": {
+    "markdown": "You are given a Node.js Express application that uses a custom route resolver to dynamically resolve routes. The resolver function `resolveRoute` takes a route string as input and returns a function that can handle the route. However, there is a logical bug in the resolver function that causes it to incorrectly resolve routes with parameters. Your task is to fix the bug and ensure that the resolver function correctly handles routes with parameters.",
+    "inputFormat": "The input is a string representing a route, which may or may not contain parameters.",
+    "outputFormat": "The output is a function that can handle the route.",
+    "notes": "The resolver function should correctly handle routes with parameters and return a function that can handle the route.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 100,
+        "description": "Number of routes to test"
+      }
+    ],
+    "examples": [
+      {
+        "input": "/users/:id",
+        "output": "function(req, res) { ... }",
+        "explanation": "The resolver function should return a function that can handle the route /users/:id"
+      },
+      {
+        "input": "/products",
+        "output": "function(req, res) { ... }",
+        "explanation": "The resolver function should return a function that can handle the route /products"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "NODE_JS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "node_js"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Review the resolver function and identify the logical bug."
+    },
+    {
+      "order": 2,
+      "text": "Use the `req.params` object to access route parameters."
+    }
+  ],
+  "editorial": {
+    "title": "Fixing the Node.js Express Middleware for Dynamic Route Resolution",
+    "intuition": "The resolver function should correctly handle routes with parameters by using the `req.params` object.",
+    "bruteForce": "The resolver function can be brute-forced by using a simple string matching approach.",
+    "betterSolution": "",
+    "optimalSolution": "The optimal solution is to use a regular expression to match the route and access route parameters using the `req.params` object.",
+    "proofOfCorrectness": "The resolver function should return a function that can handle the route correctly.",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Incorrectly handling route parameters"
+    ],
+    "timeComplexity": "O(1) ",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "function resolveRoute(route) {\n  return function(req, res) {\n    // TO DO: Fix the bug and return a function that can handle the route\n  }\n}"
+  },
+  "buggyStarterCode": {
+    "javascript": "function resolveRoute(route) {\n  return function(req, res) {\n    if (route.includes(':')) {\n      res.send('Route parameter not found');\n    } else {\n      res.send('Route found');\n    }\n  }\n}"
+  },
+  "functionSignature": {
+    "javascript": "function resolveRoute(route) {\n  return function(req, res) {\n    ...\n  }\n}"
+  },
+  "solutions": {
+    "javascript": "// Fix the bug by using a regular expression to match the route and access route parameters using req.params\n// Solution\nfunction resolveRoute(route) {\n  const regex = /^/(\\w+)\\/(\\w+)?$/;\n  const match = route.match(regex);\n  if (match) {\n    const params = { id: match[2] || '' };\n    return function(req, res) {\n      res.send(`Route found with parameter: ${params.id}`);\n    }\n  } else {\n    return function(req, res) {\n      res.send('Route not found');\n    }\n  }\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "/users/:id",
+      "output": "function(req, res) { res.send('Route found with parameter: id') }",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "/products",
+      "output": "function(req, res) { res.send('Route found') }",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "_id": "0f71ad1ccfdc6fe9d4eaa4d6",
+  "slug": "fixing-the-nodejs-express-middleware-for-dynamic-route-resolution-bugfix-medium-node_js",
+  "mode": "bug_fix",
+  "category": "NODE_JS",
+  "difficulty": "Medium"
+}

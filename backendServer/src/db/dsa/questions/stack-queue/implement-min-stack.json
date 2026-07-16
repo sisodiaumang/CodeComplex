@@ -1,0 +1,213 @@
+{
+  "_id": "implement-min-stack",
+  "title": "Implement Min Stack",
+  "slug": "implement-min-stack",
+  "difficulty": "Hard",
+  "category": "ARRAY",
+  "subCategory": "Learning",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 45,
+    "points": 500,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "Stack & Queue",
+      "Data Structures"
+    ],
+    "patterns": [
+      "min stack",
+      "stack implementation"
+    ],
+    "prerequisites": [
+      "Stack",
+      "Queue"
+    ],
+    "variants": [],
+    "tags": [
+      "data structures",
+      "stack",
+      "queue",
+      "min stack"
+    ],
+    "keywords": [
+      "min stack",
+      "stack implementation",
+      "data structures",
+      "queue",
+      "stack"
+    ],
+    "interviewFrequency": 4,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "Design a stack that supports push, pop, top, and retrieving the minimum element in constant time.\n\nImplement the MinStack class:\n\n- `MinStack()` Initializes the MinStack object.\n- `void push(int val)` Pushes the element `val` onto the stack.\n- `int pop()` Removes the element on top of the stack and returns it.\n- `int top()` Gets the top element of the stack.\n- `int getMin()` Retrieves the minimum element in the stack.\n\nYou must implement a solution with `O(1)` time complexity for each function.",
+    "inputFormat": "The first line contains an integer `n`, the number of operations to perform.\nThe next `n` lines contain the operation type and value (if applicable), separated by a space.\nThe operation types are:\n- 'push x' to push the value `x` onto the stack.\n- 'pop' to remove the top element from the stack.\n- 'top' to get the top element of the stack.\n- 'getMin' to retrieve the minimum element in the stack.",
+    "outputFormat": "For each 'top' and 'getMin' operation, print the result on a new line.",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "val",
+        "type": "integer",
+        "min": "-10**4",
+        "max": "10**4",
+        "description": "The values pushed onto the stack."
+      },
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": "10**4",
+        "description": "The number of operations to perform."
+      }
+    ],
+    "examples": [
+      {
+        "input": "7\npush -2\npush 0\npush -3\ngetMin\npop\ntop\ngetMin",
+        "output": "-3\r\n0\r\n-2",
+        "explanation": "After pushing -2, 0, and -3, the stack is [-3, 0, -2].\nThe minimum element is -3.\nAfter popping, the stack is [-3, 0].\nThe top element is 0.\nThe minimum element is -3."
+      },
+      {
+        "input": "4\npush 0\npush 1\npush 0\ngetMin",
+        "output": "0",
+        "explanation": "The stack is [0, 1, 0].\nThe minimum element is 0."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Consider using two stacks to keep track of the minimum element at each step."
+    },
+    {
+      "order": 2,
+      "text": "One stack can be used to store the actual elements, while the other stack stores the minimum elements seen so far."
+    },
+    {
+      "order": 3,
+      "text": "When pushing a new element, you need to update the minimum stack accordingly. Think about the different cases that can occur."
+    },
+    {
+      "order": 4,
+      "text": "When popping an element, you need to update the minimum stack to reflect the new minimum element. Consider the case where the top element on both stacks is the same."
+    },
+    {
+      "order": 5,
+      "text": "The key to achieving O(1) time complexity is to update the minimum stack in constant time whenever an element is pushed or popped."
+    }
+  ],
+  "editorial": {
+    "title": "Implement Min Stack – From Brute Force to Constant‑Time Operations",
+    "intuition": "The key insight is that the minimum of a stack can be tracked alongside the elements themselves. Whenever a new value is pushed, we compare it to the current minimum; if it is smaller (or equal), it becomes the new minimum and we remember it. When popping, we only discard the stored minimum if the popped element was the current minimum. This simple bookkeeping turns an otherwise linear‑time getMin into O(1).",
+    "bruteForce": "A naive approach would scan the entire stack each time getMin is called, leading to O(n) per query and O(n²) overall. While correct, this is far too slow for the 10⁴ operation limit and would time out on larger inputs.",
+    "betterSolution": "Maintain a second stack that mirrors the main stack but stores the minimum value seen so far at each depth. Push and pop operations on this auxiliary stack are performed in tandem with the main stack, ensuring that getMin always returns the top of the min stack in constant time.",
+    "optimalSolution": "The optimal solution uses two stacks: one for all pushed values and one for the running minimums. Push: append the value to the main stack; if it is ≤ current min, also push it onto the min stack. Pop: remove the top of the main stack; if that value equals the top of the min stack, pop it from the min stack as well. Top and getMin simply read the last elements of their respective stacks. All operations are O(1) time and O(n) space.",
+    "proofOfCorrectness": "At any moment, the min stack’s top equals the smallest element in the main stack. Induction on the number of operations: base case – both stacks empty, property holds. Inductive step – for push, if the new value is smaller than or equal to the current minimum, it becomes the new minimum and is pushed onto the min stack, preserving the property. If it is larger, the min stack remains unchanged, and the previous minimum still dominates. For pop, if the popped value is not the current minimum, the min stack stays unchanged and still reflects the minimum of the remaining elements. If it is the current minimum, removing it from both stacks restores the previous minimum, which by induction was correctly stored. Thus, getMin always returns the true minimum.",
+    "dryRun": "Example: push 5 → main=[5], min=[5]; push 3 → main=[5,3], min=[5,3]; getMin → 3; pop → main=[5], min=[5]; getMin → 5; top → 5.",
+    "commonMistakes": [
+      "Assuming a single auxiliary variable suffices; it fails when duplicate minima are popped.",
+      "Neglecting to handle empty stack cases, leading to index errors.",
+      "Using a list for min stack and performing linear scans instead of push/pop.",
+      "Overlooking that push must compare with the current min before deciding to push onto min stack.",
+      "Implementing getMin to return a sentinel value instead of the actual minimum when the stack is empty.",
+      "Using recursion or excessive memory for large n, causing stack overflow."
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass MinStack {\npublic:\n    MinStack() {}\n    void push(int val) {\n        // TODO: implement\n    }\n    int pop() {\n        // TODO: implement\n        return 0;\n    }\n    int top() {\n        // TODO: implement\n        return 0;\n    }\n    int getMin() {\n        // TODO: implement\n        return 0;\n    }\n};",
+    "java": "import java.util.*;\n\nclass MinStack {\n    public MinStack() {}\n    public void push(int val) {\n        // TODO: implement\n    }\n    public int pop() {\n        // TODO: implement\n        return 0;\n    }\n    public int top() {\n        // TODO: implement\n        return 0;\n    }\n    public int getMin() {\n        // TODO: implement\n        return 0;\n    }\n}",
+    "python": "class MinStack:\n    def __init__(self):\n        pass\n    def push(self, val: int) -> None:\n        # TODO: implement\n        pass\n    def pop(self) -> int:\n        # TODO: implement\n        pass\n    def top(self) -> int:\n        # TODO: implement\n        pass\n    def getMin(self) -> int:\n        # TODO: implement\n        pass",
+    "javascript": "/**\n * @class MinStack\n */\nvar MinStack = function() {\n    // TODO: implement\n};\nMinStack.prototype.push = function(val) {\n    // TODO: implement\n};\nMinStack.prototype.pop = function() {\n    // TODO: implement\n};\nMinStack.prototype.top = function() {\n    // TODO: implement\n};\nMinStack.prototype.getMin = function() {\n    // TODO: implement\n};"
+  },
+  "functionSignature": {
+    "cpp": "void push(int val); int pop(); int top(); int getMin();",
+    "java": "public void push(int val); public int pop(); public int top(); public int getMin();",
+    "python": "def push(self, val: int) -> None; def pop(self) -> int; def top(self) -> int; def getMin(self) -> int;",
+    "javascript": "var push = function(val); var pop = function(); var top = function(); var getMin = function();"
+  },
+  "solutions": {
+    "python": "\nimport sys\n\nclass MinStack:\n    def __init__(self):\n        self.stack = []\n        self.min_stack = []\n\n    def push(self, val: int) -> None:\n        self.stack.append(val)\n        if not self.min_stack or val <= self.min_stack[-1]:\n            self.min_stack.append(val)\n\n    def pop(self) -> int:\n        if self.stack:\n            if self.stack[-1] == self.min_stack[-1]:\n                self.min_stack.pop()\n            return self.stack.pop()\n\n    def top(self) -> int:\n        if self.stack:\n            return self.stack[-1]\n\n    def getMin(self) -> int:\n        if self.min_stack:\n            return self.min_stack[-1]\n\nif __name__ == '__main__':\n    it = iter(sys.stdin.read().split())\n    try:\n        n = int(next(it))\n    except StopIteration:\n        sys.exit(0)\n    sol = MinStack()\n    output = []\n    for _ in range(n):\n        op = next(it)\n        if op == 'push':\n            val = int(next(it))\n            sol.push(val)\n        elif op == 'pop':\n            sol.pop()\n        elif op == 'top':\n            output.append(str(sol.top()))\n        elif op == 'getMin':\n            output.append(str(sol.getMin()))\n    print('\\n'.join(output))\n",
+    "cpp": "#include <numeric>\n\n#include <bits/stdc++.h>\nusing namespace std;\n\nclass MinStack {\npublic:\n    stack<int> s;\n    stack<int> min_s;\n\n    void push(int val) {\n        s.push(val);\n        if (min_s.empty() || val <= min_s.top()) {\n            min_s.push(val);\n        }\n    }\n\n    int pop() {\n        if (s.empty()) return -1;\n        int val = s.top();\n        s.pop();\n        if (val == min_s.top()) {\n            min_s.pop();\n        }\n        return val;\n    }\n\n    int top() {\n        if (s.empty()) return -1;\n        return s.top();\n    }\n\n    int getMin() {\n        if (min_s.empty()) return -1;\n        return min_s.top();\n    }\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int n;\n    if (!(cin >> n)) return 0;\n    MinStack sol;\n    vector<string> output;\n    for (int i = 0; i < n; i++) {\n        string op;\n        if (!(cin >> op)) return 0;\n        if (op == \"push\") {\n            int val;\n            if (!(cin >> val)) return 0;\n            sol.push(val);\n        } else if (op == \"pop\") {\n            sol.pop();\n        } else if (op == \"top\") {\n            output.push_back(to_string(sol.top()));\n        } else if (op == \"getMin\") {\n            output.push_back(to_string(sol.getMin()));\n        }\n    }\n    for (int i = 0; i < output.size(); i++) {\n        cout << output[i] << (i == output.size() - 1 ? \"\" : \"\\n\");\n    }\n    cout << endl;\n    return 0;\n}\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.5
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "7\npush -2\npush 0\npush -3\ngetMin\npop\ntop\ngetMin",
+      "output": "-3\r\n0\r\n-2",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "4\npush 0\npush 1\npush 0\ngetMin",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint_3",
+      "input": "5\npush -10000\npush -10000\ngetMin\ngetMin\ngetMin",
+      "output": "-10000\r\n-10000\r\n-10000",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "duplicate_5",
+      "input": "3\npush 5\npush 5\ngetMin",
+      "output": "5",
+      "isVisible": false,
+      "weight": 1,
+      "category": "duplicate"
+    },
+    {
+      "id": "random_medium_6",
+      "input": "10\npush 100\npush 200\npush 300\npush 400\npush 500\npush 600\npush 700\npush 800\npush 900\ngetMin",
+      "output": "100",
+      "isVisible": false,
+      "weight": 1,
+      "category": "random_medium"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

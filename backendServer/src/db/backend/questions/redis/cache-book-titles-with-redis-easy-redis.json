@@ -1,0 +1,130 @@
+{
+  "_id": "9357994f4fdd749f574091de",
+  "title": "Cache Book Titles with Redis",
+  "slug": "cache-book-titles-with-redis-easy-redis",
+  "difficulty": "Easy",
+  "topics": [
+    "REDIS"
+  ],
+  "statement": "Implement a simple REST API to cache book titles in Redis. The API should accept a JSON payload with a book ID and title. On GET, it should return the cached title for the given ID. If the title is not cached, it should be fetched from a static JSON file and cached before being returned. If the GET request is made with a specific query parameter, it should clear the cache for that book ID. You should use Express.js for your API and Redis as the cache store. Note: You will need to install the 'redis' package and import it in your code. You can assume that Redis is running on the default port at `localhost:6379`.",
+  "constraints": [
+    "Must use the 'redis' package to interact with Redis.",
+    "Must fetch titles from a static JSON file if not cached."
+  ],
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/api/books/:id",
+      "description": "Get the cached title for a book ID. If the title is not cached, it will be fetched from the static JSON file and cached."
+    },
+    {
+      "method": "GET",
+      "path": "/api/books/:id?clear=true",
+      "description": "Get the cached title for a book ID and clear the cache for that ID. If the title is not cached, it will be fetched from the static JSON file, cached, and then cleared."
+    },
+    {
+      "method": "POST",
+      "path": "/api/books",
+      "description": "Cache a new book title. The request body should contain the book ID and title."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\n  \"name\": \"cache-api\",\n  \"version\": \"1.0.0\",\n  \"main\": \"index.js\",\n  \"scripts\": {\n    \"start\": \"node index.js\"\n  },\n  \"dependencies\": {\n    \"express\": \"^4.18.2\",\n    \"redis\": \"^4.0.0\"\n  }\n}",
+    "index.js": "const express = require('express');\nconst Redis = require('redis');\nconst app = express();\napp.use(express.json());\n\nconst redisClient = Redis.createClient({ host: 'localhost', port: 6379 });\n\n// TODO: Implement endpoints\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/api/health",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "GET",
+      "path": "/api/books/1",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "title": "Book 1"
+      },
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "POST",
+      "path": "/api/books",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "id": 2,
+        "title": "Book 2"
+      },
+      "expectedStatus": 201,
+      "isVisible": true
+    },
+    {
+      "id": "v_tc3",
+      "method": "GET",
+      "path": "/api/books/2?clear=true",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "title": "Book 2"
+      },
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "GET",
+      "path": "/api/books/1?clear=true",
+      "expectedStatus": 200,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "POST",
+      "path": "/api/books",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": null,
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "GET",
+      "path": "/api/books/999",
+      "expectedStatus": 404,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "pub/sub",
+    "cache",
+    "sessions",
+    "rate-limiting",
+    "leaderboard",
+    "streams",
+    "redis",
+    "nodejs",
+    "express"
+  ]
+}

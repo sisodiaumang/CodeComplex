@@ -1,0 +1,141 @@
+{
+  "title": "Optimizing Binary Tree Traversal with Incorrect Preorder Node Ordering",
+  "subCategory": "Binary Tree Traversal",
+  "statement": {
+    "markdown": "Given a binary tree represented by its preorder traversal, find the inorder traversal of the tree. The preorder traversal is a list of node values where each node's value is followed by its left and right children. The inorder traversal should be a list of node values in ascending order.",
+    "inputFormat": "A list of integers representing the preorder traversal of the binary tree.",
+    "outputFormat": "A list of integers representing the inorder traversal of the binary tree.",
+    "notes": "The binary tree is constructed from the preorder traversal list.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of nodes in the binary tree"
+      }
+    ],
+    "examples": [
+      {
+        "input": "[3, 9, 20, 15, 7]",
+        "output": "[9, 3, 15, 20, 7]",
+        "explanation": "The preorder traversal is [3, 9, 20, 15, 7]. The inorder traversal is [9, 3, 15, 20, 7]."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 60,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "ALGORITHMS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "algorithms"
+    ],
+    "interviewFrequency": 1,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text: Identify the relationship between preorder and inorder traversals."
+    }
+  ],
+  "editorial": {
+    "title": "Optimizing Binary Tree Traversal",
+    "intuition": "The key to solving this problem is to recognize that the preorder traversal contains the root of each subtree, followed by the preorder traversal of the left subtree, and finally the preorder traversal of the right subtree.",
+    "bruteForce": "A brute-force approach would involve reconstructing the binary tree from the preorder traversal and then performing an inorder traversal.",
+    "betterSolution": "A more efficient solution involves using a stack to parse the preorder traversal and construct the inorder traversal.",
+    "optimalSolution": "The optimal solution involves recognizing that the preorder traversal contains the root of each subtree, followed by the preorder traversal of the left subtree, and finally the preorder traversal of the right subtree.",
+    "proofOfCorrectness": "The proof of correctness involves showing that the proposed solution produces the correct inorder traversal for any given preorder traversal.",
+    "dryRun": "An example dry run of the solution would involve taking the preorder traversal [3, 9, 20, 15, 7] and producing the inorder traversal [9, 3, 15, 20, 7].",
+    "commonMistakes": [
+      "Mistake 1: Failing to recognize the relationship between preorder and inorder traversals.",
+      "Mistake 2: Incorrectly parsing the preorder traversal."
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "class Solution { public: vector<int> getInorderTraversal(vector<int>& preorder); };",
+    "java": "public class Solution { public List<Integer> getInorderTraversal(int[] preorder); }",
+    "python": "class Solution: def get_inorder_traversal(self, preorder): pass",
+    "javascript": "function getInorderTraversal(preorder) { /* TODO: implement */ }"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution { public: vector<int> getInorderTraversal(vector<int>& preorder) { vector<int> inorder; for (int i = 0; i < preorder.size(); i++) { if (preorder[i] > preorder[0]) inorder.push_back(preorder[i]); } return inorder; } };",
+    "java": "public class Solution { public List<Integer> getInorderTraversal(int[] preorder) { List<Integer> inorder = new ArrayList<>(); for (int i = 0; i < preorder.length; i++) { if (preorder[i] > preorder[0]) inorder.add(preorder[i]); } return inorder; } }",
+    "python": "class Solution: def get_inorder_traversal(self, preorder): inorder = [] for num in preorder: if num > preorder[0]: inorder.append(num) return inorder",
+    "javascript": "function getInorderTraversal(preorder) { var inorder = []; for (var i = 0; i < preorder.length; i++) { if (preorder[i] > preorder[0]) inorder.push(preorder[i]); } return inorder; }"
+  },
+  "functionSignature": {
+    "cpp": "vector<int> getInorderTraversal(vector<int>& preorder);",
+    "java": "List<Integer> getInorderTraversal(int[] preorder);",
+    "python": "def get_inorder_traversal(self, preorder): return ...",
+    "javascript": "function getInorderTraversal(preorder): return ..."
+  },
+  "solutions": {
+    "cpp": "// Solution\nclass Solution {\n public:\n  vector<int> getInorderTraversal(vector<int>& preorder) {\n   stack<int> st;\n   st.push(preorder[0]);\n   for (int i = 1; i < preorder.size(); i++) {\n    if (preorder[i] < preorder[0])\n     st.push(preorder[i]);\n    else {\n     while (!st.empty() && preorder[i] > st.top())\n      st.pop();\n     st.push(preorder[i]);\n    }\n   }\n   vector<int> inorder;\n   while (!st.empty()) {\n    inorder.push_back(st.top());\n    st.pop();\n   }\n   return inorder;\n  }\n};",
+    "java": "// Solution\npublic class Solution {\n public List<Integer> getInorderTraversal(int[] preorder) {\n  Stack<Integer> stack = new Stack<>();\n  stack.push(preorder[0]);\n  for (int i = 1; i < preorder.length; i++) {\n   if (preorder[i] < preorder[0])\n    stack.push(preorder[i]);\n   else {\n    while (!stack.isEmpty() && preorder[i] > stack.peek())\n     stack.pop();\n    stack.push(preorder[i]);\n   }\n  }\n  List<Integer> inorder = new ArrayList<>();\n  while (!stack.isEmpty()) {\n   inorder.add(stack.pop());\n  }\n  return inorder;\n }",
+    "python": "// Solution\nclass Solution:\n def get_inorder_traversal(self, preorder):\n  stack = [preorder[0]]\n  inorder = []\n  for num in preorder[1:]:\n   if num < preorder[0]:\n    stack.append(num)\n   else:\n    while stack and num > stack[-1]:\n     inorder.append(stack.pop())\n    stack.append(num)\n  while stack:\n   inorder.append(stack.pop())\n  return inorder",
+    "javascript": "// Solution\nfunction getInorderTraversal(preorder) {\n var stack = [preorder[0]];\n var inorder = [];\n for (var i = 1; i < preorder.length; i++) {\n  if (preorder[i] < preorder[0])\n   stack.push(preorder[i]);\n  else {\n   while (stack.length && preorder[i] > stack[stack.length - 1])\n    inorder.push(stack.pop());\n   stack.push(preorder[i]);\n  }\n }\n while (stack.length)\n  inorder.push(stack.pop());\n return inorder;\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "[3, 9, 20, 15, 7]",
+      "output": "[9, 3, 15, 20, 7]",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "[1, 2, 3, 4, 5]",
+      "output": "[2, 1, 4, 3, 5]",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "2bbe60de2f7d5bdb078c8985",
+  "slug": "optimizing-binary-tree-traversal-with-incorrect-preorder-node-ordering-bugfix-hard-algorithms",
+  "mode": "bug_fix",
+  "category": "ALGORITHMS",
+  "difficulty": "Hard"
+}

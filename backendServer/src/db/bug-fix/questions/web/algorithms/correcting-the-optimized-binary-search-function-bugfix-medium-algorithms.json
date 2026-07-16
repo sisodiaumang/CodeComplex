@@ -1,0 +1,173 @@
+{
+  "title": "Correcting the Optimized Binary Search Function",
+  "subCategory": "Algorithms",
+  "statement": {
+    "markdown": "Given an array of integers and a target integer, implement an optimized binary search function. The function should return the index of the target integer if it exists; otherwise, it should return -1. The function should have a time complexity of O(log(n)) and should handle duplicate elements correctly. However, the given implementation contains a subtle logical bug that prevents it from working correctly for all inputs.",
+    "inputFormat": "The function takes three inputs: an array of integers `arr`, a target integer `target`, and an optional boolean flag `find_first_occurrence`.",
+    "outputFormat": "The function returns the index of the target integer if it exists; otherwise, it returns -1.",
+    "notes": "The function should have a time complexity of O(log(n)) and should handle duplicate elements correctly.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of elements in the input array"
+      },
+      {
+        "variable": "target",
+        "type": "integer",
+        "min": -100000,
+        "max": 100000,
+        "description": "The target integer to search for"
+      }
+    ],
+    "examples": [
+      {
+        "input": "arr = [4, 2, 9, 6, 23, 12, 34, 0, 1], target = 9, find_first_occurrence = False\n",
+        "output": "3\n",
+        "explanation": "The function should return the index of the first occurrence of the target integer 9, which is 3."
+      },
+      {
+        "input": "arr = [4, 2, 9, 6, 23, 12, 34, 0, 1], target = 2, find_first_occurrence = True\n",
+        "output": "1\n",
+        "explanation": "The function should return the index of the first occurrence of the target integer 2, which is 1."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "ALGORITHMS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "algorithms"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "The given implementation contains a subtle logical bug that prevents it from working correctly for all inputs."
+    },
+    {
+      "order": 2,
+      "text": "The time complexity of the function should be O(log(n)) to ensure efficient search."
+    }
+  ],
+  "editorial": {
+    "title": "Correcting the Optimized Binary Search Function",
+    "intuition": "To correct the implementation, we need to handle the edge cases correctly and ensure that the function returns the index of the first occurrence of the target integer.",
+    "bruteForce": "The brute force approach would involve iterating through the array in linear time, which would result in a time complexity of O(n).",
+    "betterSolution": "We can use a modified binary search algorithm to search for the target integer in O(log(n)) time.",
+    "optimalSolution": "The optimal solution involves using a recursive binary search function to find the target integer.",
+    "proofOfCorrectness": "The proof of correctness involves showing that the function returns the correct index of the target integer for all possible inputs.",
+    "dryRun": "A dry run of the function would involve testing it with different inputs to ensure that it works correctly.",
+    "commonMistakes": [
+      "Not handling edge cases correctly",
+      "Not ensuring a time complexity of O(log(n))"
+    ],
+    "timeComplexity": "O(log(n))",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\nint binarySearch(vector<int>& arr, int target, bool find_first_occurrence);\n};\n\nint Solution::binarySearch(vector<int>& arr, int target, bool find_first_occurrence) {\n    // TODO: implement\n}\n",
+    "java": "public class Solution {\npublic int binarySearch(int[] arr, int target, boolean find_first_occurrence) {\n    // TODO: implement\n}\n}",
+    "python": "class Solution:\n    def binarySearch(self, arr, target, find_first_occurrence):\n        # TODO: implement\n        pass\n",
+    "javascript": "function binarySearch(arr, target, find_first_occurrence) {\n    // TODO: implement\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\nint binarySearch(vector<int>& arr, int target, bool find_first_occurrence) {\n    int low = 0, high = arr.size() - 1;\n    while (low <= high) {\n        int mid = low + (high - low) / 2;\n        if (arr[mid] == target) {\n            if (find_first_occurrence) {\n                while (mid > 0 && arr[mid - 1] == target) {\n                    mid--;\n                }\n                return mid;\n            } else {\n                while (mid < arr.size() - 1 && arr[mid + 1] == target) {\n                    mid++;\n                }\n                return mid;\n            }\n        } else if (arr[mid] < target) {\n            low = mid + 1;\n        } else {\n            high = mid - 1;\n        }\n    }\n    return -1;\n}\n};\n",
+    "java": "public class Solution {\npublic int binarySearch(int[] arr, int target, boolean find_first_occurrence) {\n    int low = 0, high = arr.length - 1;\n    while (low <= high) {\n        int mid = low + (high - low) / 2;\n        if (arr[mid] == target) {\n            if (find_first_occurrence) {\n                while (mid > 0 && arr[mid - 1] == target) {\n                    mid--;\n                }\n                return mid;\n            } else {\n                while (mid < arr.length - 1 && arr[mid + 1] == target) {\n                    mid++;\n                }\n                return mid;\n            }\n        } else if (arr[mid] < target) {\n            low = mid + 1;\n        } else {\n            high = mid - 1;\n        }\n    }\n    return -1;\n}",
+    "python": "class Solution:\n    def binarySearch(self, arr, target, find_first_occurrence):\n        low = 0\n        high = len(arr) - 1\n        while low <= high:\n            mid = low + (high - low) // 2\n            if arr[mid] == target:\n                if find_first_occurrence:\n                    while mid > 0 and arr[mid - 1] == target:\n                        mid -= 1\n                    return mid\n                else:\n                    while mid < len(arr) - 1 and arr[mid + 1] == target:\n                        mid += 1\n                    return mid\n            elif arr[mid] < target:\n                low = mid + 1\n            else:\n                high = mid - 1\n        return -1\n",
+    "javascript": "function binarySearch(arr, target, find_first_occurrence) {\n    let low = 0\n    let high = arr.length - 1\n    while (low <= high) {\n        let mid = low + (high - low) / 2\n        if (arr[mid] == target) {\n            if (find_first_occurrence) {\n                while (mid > 0 && arr[mid - 1] == target) {\n                    mid--;\n                }\n                return mid;\n            } else {\n                while (mid < arr.length - 1 && arr[mid + 1] == target) {\n                    mid++;\n                }\n                return mid;\n            }\n        } else if (arr[mid] < target) {\n            low = mid + 1;\n        } else {\n            high = mid - 1;\n        }\n    }\n    return -1;\n}"
+  },
+  "functionSignature": {
+    "cpp": "int binarySearch(vector<int>& arr, int target, bool find_first_occurrence);",
+    "java": "int binarySearch(int[] arr, int target, boolean find_first_occurrence);",
+    "python": "def binarySearch(self, arr, target, find_first_occurrence):",
+    "javascript": "function binarySearch(arr, target, find_first_occurrence)"
+  },
+  "solutions": {
+    "cpp": "#include <iostream>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n    int n;\n    cin >> n;\n    vector<int> arr(n);\n    for (int i = 0; i < n; i++) {\n        cin >> arr[i];\n    }\n    int target;\n    cin >> target;\n    bool find_first_occurrence;\n    cin >> find_first_occurrence;\n    Solution solution;\n    int result = solution.binarySearch(arr, target, find_first_occurrence);\n    cout << result << endl;\n    return 0;\n}",
+    "java": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int[] arr = new int[n];\n        for (int i = 0; i < n; i++) {\n            arr[i] = scanner.nextInt();\n        }\n        int target = scanner.nextInt();\n        boolean find_first_occurrence = scanner.nextBoolean();\n        Solution solution = new Solution();\n        int result = solution.binarySearch(arr, target, find_first_occurrence);\n        System.out.println(result);\n    }\n}",
+    "python": "import sys\n\nclass Solution:\n    def binarySearch(self, arr, target, find_first_occurrence):\n        low = 0\n        high = len(arr) - 1\n        while low <= high:\n            mid = low + (high - low) // 2\n            if arr[mid] == target:\n                if find_first_occurrence:\n                    while mid > 0 and arr[mid - 1] == target:\n                        mid -= 1\n                    return mid\n                else:\n                    while mid < len(arr) - 1 and arr[mid + 1] == target:\n                        mid += 1\n                    return mid\n            elif arr[mid] < target:\n                low = mid + 1\n            else:\n                high = mid - 1\n        return -1\n\nif __name__ == '__main__':\n    n = int(input())\n    arr = list(map(int, input().split()))\n    target = int(input())\n    find_first_occurrence = input() == 'True'\n    solution = Solution()\n    result = solution.binarySearch(arr, target, find_first_occurrence)\n    print(result)",
+    "javascript": "var readline = require('readline');\nvar rl = readline.createInterface(process.stdin, process.stdout);\nvar lines = [];\nrl.on('line', function(input) {\n    lines.push(input);\n}).on('close', function() {\n    var n = parseInt(lines[0]);\n    var arr = lines[1].split(' ').map(function(x) {\n        return parseInt(x);\n    });\n    var target = parseInt(lines[2]);\n    var find_first_occurrence = lines[3] === 'True';\n    var solution = new Solution();\n    var result = solution.binarySearch(arr, target, find_first_occurrence);\n    console.log(result);\n})"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "9\n4 2 9 6 23 12 34 0 1\n9\nFalse\n",
+      "output": "3\n",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "9\n4 2 9 6 23 12 34 0 1\n2\nTrue\n",
+      "output": "1\n",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_3",
+      "input": "5\n1 2 3 4 5\n3\nFalse\n",
+      "output": "2\n",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_4",
+      "input": "5\n1 2 3 4 5\n3\nTrue\n",
+      "output": "2\n",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "_id": "ceeebeec66d7d5e857296c71",
+  "slug": "correcting-the-optimized-binary-search-function-bugfix-medium-algorithms",
+  "mode": "bug_fix",
+  "category": "ALGORITHMS",
+  "difficulty": "Medium"
+}

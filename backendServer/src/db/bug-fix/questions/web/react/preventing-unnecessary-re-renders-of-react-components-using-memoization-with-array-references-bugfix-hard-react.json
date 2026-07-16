@@ -1,0 +1,142 @@
+{
+  "title": "Preventing Unnecessary Re-renders of React Components using Memoization with Array References",
+  "subCategory": "Memoization",
+  "statement": {
+    "markdown": "Write a React memoized component that uses the `useMemo` hook to store and re-use the result of an expensive function call, but with a twist: when the input array changes, the memoized component should re-render. However, the array reference is changing due to shallow equality checks, causing the memoized component to re-render unnecessarily. Fix the memoization to prevent unnecessary re-renders.",
+    "inputFormat": "The component will receive an array of objects as props.",
+    "outputFormat": "The memoized component should re-render when the input array reference changes.",
+    "notes": "Use the `useMemo` hook with the `deps` array to memoize the result of the expensive function call. Ensure that the memoized component re-renders when the input array reference changes.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of objects in the input array"
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 0,
+        "max": 100,
+        "description": "The number of properties in each object"
+      }
+    ],
+    "examples": [
+      {
+        "input": "const objects = [{ id: 1, name: 'John' }, { id: 2, name: 'Jane' }];",
+        "output": "<MemoizedComponent objects={[{ id: 1, name: 'John' }, { id: 2, name: 'Jane' }]} />",
+        "explanation": "The memoized component should re-render when the input array reference changes."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 75,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "REACT"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "react"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 1,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the `useMemo` hook with the `deps` array to memoize the result of the expensive function call."
+    },
+    {
+      "order": 2,
+      "text": "Ensure that the memoized component re-renders when the input array reference changes."
+    }
+  ],
+  "editorial": {
+    "title": "Preventing Unnecessary Re-renders of React Components",
+    "intuition": "The `useMemo` hook allows you to memoize the result of an expensive function call, but it relies on shallow equality checks to determine whether the memoized value has changed. In this case, the input array reference is changing due to shallow equality checks, causing the memoized component to re-render unnecessarily.",
+    "bruteForce": "One possible solution is to use the `JSON.stringify` method to convert the input array to a string, which can be compared for deep equality.",
+    "betterSolution": "A better solution is to use the `useCallback` hook to memoize the function that generates the memoized value, and then use the `useMemo` hook to memoize the result of that function.",
+    "optimalSolution": "The optimal solution is to use the `useMemo` hook with the `deps` array to memoize the result of the expensive function call, and then use the `useCallback` hook to memoize the function that generates the memoized value.",
+    "proofOfCorrectness": "The correct solution ensures that the memoized component re-renders when the input array reference changes, while also preventing unnecessary re-renders due to shallow equality checks.",
+    "dryRun": "Example dry run:",
+    "commonMistakes": [
+      "Using the `useMemo` hook without the `deps` array",
+      "Not using the `useCallback` hook to memoize the function that generates the memoized value"
+    ],
+    "timeComplexity": "O(n*m)",
+    "spaceComplexity": "O(n*m)"
+  },
+  "starterCode": {
+    "javascript": "// import React from 'react';\n\n// const MemoizedComponent = ({ objects }) => {\n//   // const memoizedValue = useMemo(() => {\n//   // }, [objects]);\n//   // return <div>{memoizedValue}</div);\n// };\n\nexport default MemoizedComponent;",
+    "python": "// import React from 'react';\n\n// class MemoizedComponent extends React.Component {\n//   constructor(props) {\n//     super(props);\n//     // this.memoizedValue = useMemo(() => {\n//     // }, [this.props.objects]);\n//   }\n//   render() {\n//     return <div>{this.memoizedValue}</div>;\n//   }\n// }\n\nexport default MemoizedComponent;"
+  },
+  "buggyStarterCode": {
+    "javascript": "import React, { useMemo } from 'react';\n\nconst MemoizedComponent = ({ objects }) => {\n  const memoizedValue = useMemo(() => {\n    const result = objects.map((object, index) => {\n      return object.name;\n    });\n    return result.join(', ');\n  }, [\n    'objects',\n  ]);\n  return <div>{memoizedValue}</div>;\n};\n\nexport default MemoizedComponent;",
+    "python": "import React from 'react';\n\nclass MemoizedComponent(React.Component) {\n  constructor(props) {\n    super(props);\n    this.memoizedValue = React.useMemo(() => {\n      const result = props.objects.map((object, index) => {\n        return object.name;\n      });\n      return ','.join(result);\n    }, [\n      'props.objects',\n    ]);\n  }\n  render() {\n    return React.createElement('div', null, this.memoizedValue);\n  }\n}\n\nexport default MemoizedComponent;"
+  },
+  "functionSignature": {
+    "javascript": "var MemoizedComponent = function({ objects }) {\n  // ...;\n}\n;\n",
+    "python": "class MemoizedComponent(React.Component):\n  def __init__(self, props) -> None:\n    # ...;\n"
+  },
+  "solutions": {
+    "javascript": "// import React from 'react';\n\n// const MemoizedComponent = ({ objects }) => {\n//   const memoizedValue = React.useMemo(() => {\n//     const result = objects.map((object, index) => {\n//       return object.name;\n//     });\n//     return result.join(', ');\n//   }, [\n//     objects,\n//   ]);\n//   return <div>{memoizedValue}</div>;\n// };\n\n// export default MemoizedComponent;",
+    "python": "// import React from 'react';\n\n// class MemoizedComponent(React.Component) {\n//   constructor(props) {\n//     super(props);\n//     this.memoizedValue = React.useMemo(() => {\n//       const result = props.objects.map((object, index) => {\n//         return object.name;\n//       });\n//       return ','.join(result);\n//     }, [\n//       props.objects,\n//     ]);\n//   }\n//   render() {\n//     return React.createElement('div', null, this.memoizedValue);\n//   }\n// }\n// \n// export default MemoizedComponent;"
+  },
+  "judgeConfig": {
+    "timeLimit": 1000,
+    "memoryLimit": 65536,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "const objects = [{ id: 1, name: 'John' }, { id: 2, name: 'Jane' }];",
+      "output": "<MemoizedComponent objects={[{ id: 1, name: 'John' }, { id: 2, name: 'Jane' }]} />",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "const objects = [{ id: 1, name: 'John' }, { id: 2, name: 'Jane' }];",
+      "output": "<MemoizedComponent objects={[{ id: 1, name: 'John' }, { id: 2, name: 'Jane' }]} />",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "0e8a1289b35098079ea1f05b",
+  "slug": "preventing-unnecessary-re-renders-of-react-components-using-memoization-with-array-references-bugfix-hard-react",
+  "mode": "bug_fix",
+  "category": "REACT",
+  "difficulty": "Hard"
+}

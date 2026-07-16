@@ -1,0 +1,198 @@
+{
+  "_id": "cycle-detection-directed-dfs",
+  "title": "Cycle Detection Directed (DFS)",
+  "slug": "cycle-detection-directed-dfs",
+  "difficulty": "Hard",
+  "category": "GRAPH",
+  "subCategory": "BFS / DFS Problems",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 500,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "Graphs",
+      "BFS / DFS Problems"
+    ],
+    "patterns": [],
+    "prerequisites": [
+      "Detecting Cycles in a Graph"
+    ],
+    "variants": [],
+    "tags": [
+      "Graph Traversal",
+      "Cycle Detection",
+      "DFS"
+    ],
+    "keywords": [
+      "cycle detection",
+      "directed graph",
+      "depth-first search"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "Given a directed graph with V vertices and E edges, detect if there is a cycle in the graph. The vertices are 0-indexed.",
+    "inputFormat": "The first line contains two integers V and E, representing the number of vertices and edges in the graph respectively.\nEach of the next E lines contains two integers u and v, representing a directed edge from u to v.",
+    "outputFormat": "Print 'True' if a cycle is detected in the graph, and 'False' otherwise.",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "V",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of vertices"
+      },
+      {
+        "variable": "E",
+        "type": "integer",
+        "min": 0,
+        "max": 10000,
+        "description": "Number of edges"
+      }
+    ],
+    "examples": [
+      {
+        "input": "4 4\n0 1\n1 2\n2 3\n3 1",
+        "output": "true",
+        "explanation": "The graph contains a cycle 1 -> 2 -> 3 -> 1."
+      },
+      {
+        "input": "4 3\n0 1\n1 2\n2 3",
+        "output": "false",
+        "explanation": "The graph does not contain any cycles."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "To detect a cycle in a directed graph, you should consider traversing the graph and tracking the vertices you visit. A cycle exists if you encounter a vertex that's already being visited in the current traversal path."
+    },
+    {
+      "order": 2,
+      "text": "A suitable approach for this problem is to use a depth-first search (DFS) traversal. You'll need to maintain a way to track visited vertices and possibly the current path being explored."
+    },
+    {
+      "order": 3,
+      "text": "In the DFS traversal, for each vertex, you'll have three possible states: not visited, visiting (or in the current path), and fully visited. A cycle is detected if you try to visit a vertex that's already in the current path."
+    }
+  ],
+  "editorial": {
+    "title": "Optimizing Cycle Detection in Directed Graphs with DFS",
+    "intuition": "The problem can be solved by detecting cycles in a directed graph using Depth-First Search (DFS). A key observation is that a cycle exists if and only if there is a back edge in the DFS tree, which can be identified by checking if a visited neighbor is in the current recursion stack.",
+    "bruteForce": "A brute force approach would involve checking all possible paths in the graph, which would result in an exponential time complexity. This is impractical for large graphs with many vertices and edges.",
+    "betterSolution": "The optimal solution uses DFS to traverse the graph and detect cycles. By keeping track of visited nodes and their recursion stack status, we can identify back edges that indicate the presence of a cycle.",
+    "optimalSolution": "The optimal solution has a time complexity of O(V + E) and a space complexity of O(V + E), making it efficient for large graphs.",
+    "proofOfCorrectness": "The correctness of the optimal solution can be proven by showing that it correctly identifies back edges in the DFS tree. If a visited neighbor is in the recursion stack (i.e., its visited status is 1), it means that there is a back edge, and hence a cycle exists. If a visited neighbor is not in the recursion stack (i.e., its visited status is 2), it means that the neighbor has been fully explored, and there is no cycle through that neighbor.",
+    "dryRun": "A dry run of the optimal solution on a sample graph can help verify its correctness. For example, consider a graph with vertices {0, 1, 2} and edges {(0, 1), (1, 2), (2, 0)}. The solution should correctly identify the cycle 0 -> 1 -> 2 -> 0.",
+    "commonMistakes": [
+      "Not keeping track of visited nodes and their recursion stack status",
+      "Not checking for back edges in the DFS tree",
+      "Using an incorrect data structure to represent the graph",
+      "Not handling the case where a node has multiple neighbors",
+      "Not considering the time and space complexity of the solution",
+      "Not verifying the correctness of the solution on sample graphs"
+    ],
+    "timeComplexity": "O(V + E)",
+    "spaceComplexity": "O(V)"
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\nclass Solution {\npublic:\n    bool solve(vector<vector<int>>& edges, int V) {\n        // TODO: implement\n        return false;\n    }\n};",
+    "java": "import java.util.*;\nclass Solution {\n    public boolean solve(int[][] edges, int V) {\n        // TODO: implement\n        return false;\n    }\n}",
+    "python": "class Solution:\n    def solve(self, edges: list[list[int]], V: int) -> bool:\n        # TODO: implement\n        pass",
+    "javascript": "/**\n * @param {number[][]} edges\n * @param {number} V\n * @return {boolean}\n */\nvar solve = function(edges, V) {\n    // TODO: implement\n    return false;\n};"
+  },
+  "functionSignature": {
+    "cpp": "bool solve(vector<vector<int>>& edges, int V);",
+    "java": "public boolean solve(int[][] edges, int V);",
+    "python": "def solve(self, edges: list[list[int]], V: int) -> bool:",
+    "javascript": "var solve = function(edges, V);"
+  },
+  "solutions": {
+    "python": "import sys\n\nclass Solution:\n    def solve(self, edges: list[list[int]], V: int) -> bool:\n        graph = [[] for _ in range(V)]\n        for u, v in edges:\n            graph[u].append(v)\n\n        visited = [0] * V\n\n        def dfs(node: int) -> bool:\n            if visited[node] == 1:  # currently in recursion stack\n                return True\n            if visited[node] == 2:  # already processed and no cycle found\n                return False\n            visited[node] = 1\n            for neighbor in graph[node]:\n                if dfs(neighbor):\n                    return True\n            visited[node] = 2\n            return False\n\n        for node in range(V):\n            if visited[node] == 0 and dfs(node):\n                return True\n        return False\n\nif __name__ == '__main__':\n    it = iter(sys.stdin.read().split())\n    try:\n        V, E = int(next(it)), int(next(it))\n        edges = [[int(next(it)), int(next(it))] for _ in range(E)]\n    except StopIteration:\n        sys.exit(0)\n    sol = Solution()\n    ans = sol.solve(edges, V)\n    print(str(ans).lower())",
+    "cpp": "#include <numeric>\n#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    bool solve(vector<vector<int>>& edges, int V) {\n        vector<vector<int>> graph(V);\n        for (const auto& edge : edges) {\n            graph[edge[0]].push_back(edge[1]);\n        }\n\n        vector<int> visited(V, 0);\n\n        function<bool(int)> dfs = [&](int node) {\n            if (visited[node] == 1) return true; // currently in recursion stack\n            if (visited[node] == 2) return false; // already processed and no cycle found\n            visited[node] = 1;\n            for (int neighbor : graph[node]) {\n                if (dfs(neighbor)) return true;\n            }\n            visited[node] = 2;\n            return false;\n        };\n\n        for (int node = 0; node < V; ++node) {\n            if (visited[node] == 0 && dfs(node)) return true;\n        }\n        return false;\n    }\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int V, E;\n    if (!(cin >> V >> E)) return 0;\n    vector<vector<int>> edges(E, vector<int>(2));\n    for (auto& edge : edges) {\n        cin >> edge[0] >> edge[1];\n    }\n    Solution sol;\n    bool ans = sol.solve(edges, V);\n    cout << (ans ? \"true\" : \"false\") << \"\\n\";\n    return 0;\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.5
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "4 4\n0 1\n1 2\n2 3\n3 1",
+      "output": "true",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "4 3\n0 1\n1 2\n2 3",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint_3",
+      "input": "1 0",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "repeated_9",
+      "input": "4 4\n1 2\n2 2\n2 3\n3 4",
+      "output": "true",
+      "isVisible": false,
+      "weight": 1,
+      "category": "repeated"
+    },
+    {
+      "id": "random_medium_10",
+      "input": "7 5\n3 5\n2 6\n5 1\n6 4\n4 2",
+      "output": "true",
+      "isVisible": false,
+      "weight": 1,
+      "category": "random_medium"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

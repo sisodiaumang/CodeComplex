@@ -1,0 +1,131 @@
+{
+  "title": "Fixing the Node.js Express Middleware Route",
+  "subCategory": "Express Middleware",
+  "statement": {
+    "markdown": "Given a simple Express.js application, fix the bug in the custom middleware function that handles incoming requests. The current implementation incorrectly handles multiple request parameters. You should ensure the middleware function correctly handles multiple parameters and returns the expected response.",
+    "inputFormat": "The input will be a JSON object containing a `method` property (e.g., 'GET', 'POST', etc.) and a `path` property (e.g., '/users', '/products', etc.).",
+    "outputFormat": "The output should be a JSON object containing a `response` property with a success message.",
+    "notes": "The custom middleware function should be able to handle multiple request parameters and return the expected response.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of request parameters"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"method\": \"GET\", \"path\": \"/users/123\"}",
+        "output": "{\"response\": \"User with ID 123 found.\"}",
+        "explanation": "This example demonstrates a single request parameter"
+      },
+      {
+        "input": "{\"method\": \"POST\", \"path\": \"/products\", \"body\": \"{\\\"name\\\": \\\"Product 1\\\", \\\"price\\\": 19.99}\"}",
+        "output": "{\"response\": \"Product added successfully.\"}",
+        "explanation": "This example demonstrates multiple request parameters, including a JSON body"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "NODE_JS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "node_js"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Review the Express.js documentation for middleware functions."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial: Fixing the Node.js Express Middleware Route",
+    "intuition": "The middleware function should be able to handle multiple request parameters and return the expected response.",
+    "bruteForce": "You can start by logging the request parameters to the console to understand the input.",
+    "betterSolution": "",
+    "optimalSolution": "Use the `req.query` and `req.body` properties to access the request parameters.",
+    "proofOfCorrectness": "Test the middleware function with different request parameters to ensure it returns the expected response.",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Incorrectly handling multiple request parameters",
+      "Not accessing the correct request properties"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// Define the custom middleware function\napp.use('/users', (req, res) => {\n    // Handle the request here\n    res.json({ response: 'User found' });\n});\n\n// Define the app\nconst express = require('express');\nconst app = express();\napp.use(express.json());\napp.listen(3000, () => {\n    console.log('Server listening on port 3000');\n});"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Define the custom middleware function\napp.use('/users', (req, res) => {\n    // Handle the request here\n    const userId = req.params.id || req.query.id;\n    if (userId) {\n        res.json({ response: `User with ID ${userId} found.` });\n    } else {\n        res.json({ response: 'User not found.' });\n    }\n});\n\n// Define the app\nconst express = require('express');\nconst app = express();\napp.use(express.json());\napp.listen(3000, () => {\n    console.log('Server listening on port 3000');\n});"
+  },
+  "functionSignature": {
+    "javascript": "app.use('/users', (req, res) => {\n    console.log(req.query);\n    console.log(req.body);\n    res.json({ response: '' });\n})"
+  },
+  "solutions": {
+    "javascript": "// Solution\napp.use('/users', (req, res) => {\n    const userId = req.params.id || req.query.id;\n    const productName = req.query.name || req.body.name;\n    // Handle the request here\n    if (userId && productName) {\n        res.json({ response: `User with ID ${userId} and product name ${productName} found.` });\n    } else if (userId) {\n        res.json({ response: `User with ID ${userId} found.` });\n    } else if (productName) {\n        res.json({ response: `Product with name ${productName} found.` });\n    } else {\n        res.json({ response: 'User or product not found.' });\n    }\n});\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"method\": \"GET\", \"path\": \"/users/123\"}",
+      "output": "{\"response\": \"User with ID 123 found.\"}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"method\": \"POST\", \"path\": \"/products\", \"body\": \"{\\\"name\\\": \\\"Product 1\\\", \\\"price\\\": 19.99}\"}",
+      "output": "{\"response\": \"Product added successfully.\"}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "594830f3391902c10241e30b",
+  "slug": "fixing-the-nodejs-express-middleware-route-bugfix-easy-node_js",
+  "mode": "bug_fix",
+  "category": "NODE_JS",
+  "difficulty": "Easy"
+}

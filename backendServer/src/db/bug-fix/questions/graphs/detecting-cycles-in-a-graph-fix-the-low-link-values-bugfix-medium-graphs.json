@@ -1,0 +1,176 @@
+{
+  "_id": "63baef03e9703746493bff90",
+  "title": "Detecting Cycles in a Graph: Fix the Low Link Values",
+  "slug": "detecting-cycles-in-a-graph-fix-the-low-link-values-bugfix-medium-graphs",
+  "difficulty": "Medium",
+  "category": "DSA",
+  "subCategory": "Cycle Detection in Graphs",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "graph"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given an unweighted graph represented as an adjacency list, detect if it contains any cycles using a low link value approach. The graph may be disconnected.",
+    "inputFormat": "The first line of the input contains two space-separated integers: n (the number of vertices) and m (the number of edges). The following m lines contain three space-separated integers: u, v, and w. Each edge is represented by a triplet (u, v, w), where u and v are the endpoints of the edge, and w is a dummy value (not used in this problem).",
+    "outputFormat": "The output should be a boolean value indicating whether the graph contains any cycles.",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 1,
+        "max": 100000,
+        "description": "Number of edges"
+      },
+      {
+        "variable": "timeLimit",
+        "type": "integer",
+        "min": 1,
+        "max": 1000,
+        "description": "Time limit in milliseconds"
+      }
+    ],
+    "examples": [
+      {
+        "input": "5 5\n1 2 0\n2 3 0\n4 5 0\n5 1 0\n2 4 0",
+        "output": "false",
+        "explanation": "The given graph is acyclic."
+      },
+      {
+        "input": "4 4\n1 2 0\n2 3 0\n3 4 0\n4 1 0",
+        "output": "true",
+        "explanation": "The given graph contains a cycle."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "A cycle in a graph can be detected using a low link value approach."
+    },
+    {
+      "order": 2,
+      "text": "Update the low link value for each vertex when its discovery time is set or when exploring its neighbors."
+    }
+  ],
+  "editorial": {
+    "title": "Detecting Cycles in a Graph",
+    "intuition": "The low link value approach is used to detect cycles in a graph.",
+    "bruteForce": "The brute force approach involves checking every possible cycle in the graph.",
+    "betterSolution": "A more efficient approach involves using the low link value approach.",
+    "optimalSolution": "The optimal solution uses a depth-first search (DFS) with a low link value approach to detect cycles in the graph.",
+    "proofOfCorrectness": "The correctness of the low link value approach can be proven using a formal proof.",
+    "dryRun": "A step-by-step example of the low link value approach can be used to understand the algorithm.",
+    "commonMistakes": [
+      "Inaccurate updating of low link values",
+      "Incorrect identification of cycles"
+    ],
+    "timeComplexity": "O(n + m)",
+    "spaceComplexity": "O(n + m)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    bool dfs(int u, int p, vector<int>& disc, vector<int>& low, int& t, vector<int>& visited, vector<vector<int>>& adj);\n    bool solve(vector<vector<int>>& adj);\n\n};",
+    "java": "public class Solution {\npublic:\n    boolean dfs(int u, int p, int[] disc, int[] low, int t, boolean[] visited, List<List<Integer>> adj);\n    boolean solve(List<List<Integer>> adj);\n\n};",
+    "python": "class Solution:\n    def dfs(self, u, p, disc, low, t, visited, adj):\n        pass\n    def solve(self, adj):\n        pass\n",
+    "javascript": "function solve(adj) {\n    return dfs(u, p, disc, low, t, visited, adj);\n}\nfunction dfs(u, p, disc, low, t, visited, adj) {\n    return true;\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    bool solve(vector<vector<int>>& adj) {\n        int n = adj.size();\n        vector<int> disc(n, -1), low(n, -1);\n        int t = 0;\n        vector<int> visited(n, false);\n\n        for (int i = 0; i < n; i++) {\n            if (!visited[i]) {\n                dfs(i, -1, disc, low, t, visited, adj);\n            }\n        }\n\n        // The graph contains a cycle if there is any vertex with low link value different from its discovery time.\n        for (int i = 0; i < n; i++) {\n            // BUGGY CODE - Inaccurate updating of low link values.\n            if (disc[i] != low[i]) {\n                return true;\n            }\n        }\n\n        return false;\n    }\n\n    void dfs(int u, int p, vector<int>& disc, vector<int>& low, int& t, vector<int>& visited, vector<vector<int>>& adj) {\n        // BUGGY CODE - Incorrect identification of cycles.\n        if (disc[u] == -1) {\n            disc[u] = t;\n            low[u] = t;\n            t++;\n        }\n\n        visited[u] = true;\n        for (int v : adj[u]) {\n            if (!visited[v]) {\n                dfs(v, u, disc, low, t, visited, adj);\n                // BUGGY CODE - Inaccurate updating of low link values.\n                low[u] = low[u] > low[v] ? low[u] : low[v];\n                if (low[v] > disc[u]) {\n                    return true;\n                }\n            } else if (v != p) {\n                // BUGGY CODE - Incorrect identification of cycles.\n                if (low[v] > disc[u]) {\n                    return true;\n                }\n            }\n        }\n    }\n};",
+    "java": "public class Solution {\npublic:\n    boolean solve(List<List<Integer>> adj) {\n        int n = adj.size();\n        int[] disc = new int[n], low = new int[n];\n        int t = 0;\n        boolean[] visited = new boolean[n];\n\n        for (int i = 0; i < n; i++) {\n            if (!visited[i]) {\n                dfs(i, -1, disc, low, t, visited, adj);\n            }\n        }\n\n        // The graph contains a cycle if there is any vertex with low link value different from its discovery time.\n        for (int i = 0; i < n; i++) {\n            // BUGGY CODE - Inaccurate updating of low link values.\n            if (disc[i] != low[i]) {\n                return true;\n            }\n        }\n\n        return false;\n    }\n\n    void dfs(int u, int p, int[] disc, int[] low, int t, boolean[] visited, List<List<Integer>> adj) {\n        // BUGGY CODE - Incorrect identification of cycles.\n        if (disc[u] == -1) {\n            disc[u] = t;\n            low[u] = t;\n            t++;\n        }\n\n        visited[u] = true;\n        for (int v : adj.get(u)) {\n            if (!visited[v]) {\n                dfs(v, u, disc, low, t, visited, adj);\n                // BUGGY CODE - Inaccurate updating of low link values.\n                low[u] = low[u] > low[v] ? low[u] : low[v];\n                if (low[v] > disc[u]) {\n                    return true;\n                }\n            } else if (v != p) {\n                // BUGGY CODE - Incorrect identification of cycles.\n                if (low[v] > disc[u]) {\n                    return true;\n                }\n            }\n        }\n    }\n}",
+    "python": "class Solution:\n    def dfs(self, u, p, disc, low, t, visited, adj):\n        if disc[u] == -1:\n            disc[u] = t\n            low[u] = t\n            t += 1\n\n        visited[u] = True\n        for v in adj[u]:\n            if not visited[v]:\n                self.dfs(v, u, disc, low, t, visited, adj)\n                low[u] = min(low[u], low[v])\n                if low[v] > disc[u]:\n                    return True\n            elif v != p:\n                if low[v] > disc[u]:\n                    return True\n\n    def solve(self, adj):\n        n = len(adj)\n        disc = [-1] * n\n        low = [-1] * n\n        t = 0\n        visited = [False] * n\n\n        for i in range(n):\n            if not visited[i]:\n                self.dfs(i, -1, disc, low, t, visited, adj)\n\n        # The graph contains a cycle if there is any vertex with low link value different from its discovery time.\n        for i in range(n):\n            # BUGGY CODE - Inaccurate updating of low link values.\n            if disc[i] != low[i]:\n                return True\n\n        return False\n",
+    "javascript": "function solve(adj) {\n    let n = adj.length;\n    let disc = new Array(n).fill(-1);\n    let low = new Array(n).fill(-1);\n    let t = 0;\n    let visited = new Array(n).fill(false);\n\n    for (let i = 0; i < n; i++) {\n        if (!visited[i]) {\n            dfs(i, -1, disc, low, t, visited, adj);\n        }\n    }\n\n    // The graph contains a cycle if there is any vertex with low link value different from its discovery time.\n    for (let i = 0; i < n; i++) {\n        // BUGGY CODE - Inaccurate updating of low link values.\n        if (disc[i] != low[i]) {\n            return true;\n        }\n    }\n\n    return false;\n\n    function dfs(u, p, disc, low, t, visited, adj) {\n        // BUGGY CODE - Incorrect identification of cycles.\n        if (disc[u] == -1) {\n            disc[u] = t;\n            low[u] = t;\n            t++;\n        }\n\n        visited[u] = true;\n        for (let v of adj[u]) {\n            if (!visited[v]) {\n                dfs(v, u, disc, low, t, visited, adj);\n                // BUGGY CODE - Inaccurate updating of low link values.\n                low[u] = Math.min(low[u], low[v]);\n                if (low[v] > disc[u]) {\n                    return true;\n                }\n            } else if (v != p) {\n                // BUGGY CODE - Incorrect identification of cycles.\n                if (low[v] > disc[u]) {\n                    return true;\n                }\n            }\n        }\n    }\n}"
+  },
+  "functionSignature": {
+    "cpp": "bool solve(vector<vector<int>> adj);",
+    "java": "boolean solve(List<List<Integer>> adj);",
+    "python": "def solve(self, adj: list[list[int]]) -> bool;",
+    "javascript": "function solve(adj: list[list[int]>): boolean;"
+  },
+  "solutions": {
+    "cpp": "// Solution",
+    "java": "// Solution",
+    "python": "# Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "1\n",
+      "output": "1\n",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "2\n",
+      "output": "2\n",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

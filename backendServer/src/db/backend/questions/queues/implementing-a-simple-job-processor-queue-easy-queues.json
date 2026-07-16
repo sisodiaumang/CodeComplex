@@ -1,0 +1,125 @@
+{
+  "_id": "4b8272b8034eb2bb4ef3fd99",
+  "title": "Implementing a Simple Job Processor Queue",
+  "slug": "implementing-a-simple-job-processor-queue-easy-queues",
+  "difficulty": "Easy",
+  "topics": [
+    "QUEUES"
+  ],
+  "statement": "Create a backend server that accepts POST requests to add tasks to a queue and GET requests to retrieve and process the next available task from the queue. Tasks should be stored in memory using a mock database provided in the starter code. When a task is processed, it should be removed from the queue. If no tasks are available, the server should return a 204 status code indicating no content. \n\nUse the Express framework to build your server and ensure that incoming requests are parsed as JSON. Handle errors and edge cases according to the requirements of the test cases.\n\n**Endpoints**\n\n* **POST /api/tasks**: Create a new task and add it to the queue. The task should be stored in memory with a unique ID.\n* **GET /api/tasks/next**: Retrieve and process the next available task from the queue. Return the task as JSON if it exists. If no tasks are available, return a 204 status code.\n\n**Mock Database**\n\nTask IDs will be generated automatically and stored in an object with the format `{ id: taskId, data: taskData }`. You can use this object to store tasks in memory for the purpose of this exercise.",
+  "constraints": [
+    "Must use only the provided mock database to store tasks in memory"
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/tasks",
+      "description": "Create a new task and add it to the queue. Request body should contain the task data as a JSON object."
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/next",
+      "description": "Retrieve and process the next available task from the queue."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\"name\": \"job-processor\",\n  \"version\": \"1.0.0\",\n  \"main\": \"index.js\",\n  \"scripts\": {\n    \"start\": \"node index.js\"\n  },\n  \"dependencies\": {\n    \"express\": \"^4.18.2\"\n  }\n}",
+    "index.js": "const express = require('express');\nconst app = express();\napp.use(express.json());\nconst tasks = {};\nconst idCounter = 1;\n\n// TODO: Implement endpoints\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));\n"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "POST",
+      "path": "/api/tasks",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "data": "task1"
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "success": true
+      },
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "GET",
+      "path": "/api/tasks/next",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "id": 1,
+        "data": "task1"
+      },
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "POST",
+      "path": "/api/tasks",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "data": ""
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "GET",
+      "path": "/api/tasks/next",
+      "expectedStatus": 204,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "POST",
+      "path": "/api/tasks",
+      "headers": {
+        "Content-Type": "text/plain"
+      },
+      "body": {
+        "data": "task1"
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "bullmq",
+    "rabbitmq",
+    "kafka",
+    "background-jobs",
+    "workers",
+    "retry",
+    "delayed-jobs",
+    "queues",
+    "jobs"
+  ]
+}

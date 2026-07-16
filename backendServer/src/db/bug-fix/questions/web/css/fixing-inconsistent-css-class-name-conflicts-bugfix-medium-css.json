@@ -1,0 +1,130 @@
+{
+  "title": "Fixing Inconsistent CSS Class Name Conflicts",
+  "subCategory": "CSS Class Name Resolvers",
+  "statement": {
+    "markdown": "You are given a string of CSS styles with multiple classes and their corresponding properties. The classes are defined with a prefix followed by a unique identifier. However, the prefix is not properly handled, leading to inconsistent class name conflicts. Your task is to correct the class name conflicts by properly handling the prefix and resolving the class names.",
+    "inputFormat": "A string of CSS styles with multiple classes and their corresponding properties",
+    "outputFormat": "A string of corrected CSS styles with consistent class name conflicts",
+    "notes": "Assume that the input string is well-formed and does not contain any syntax errors",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 100
+      }
+    ],
+    "examples": [
+      {
+        "input": ".class1 { color: red; }\n.class2 { font-size: 12px; }\n.class1 { background-color: blue; }",
+        "output": ".class1 { color: red; background-color: blue; }\n.class2 { font-size: 12px; }",
+        "explanation": "The class name conflict is resolved by applying the latest property to the class"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "CSS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "css"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use a hash map to store the properties of each class"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// Function to correct class name conflicts\nfunction resolveClassConflicts(cssString) {\n  // Your code here\n}\n",
+    "python": "class Solution:\n  def __init__(self):\n    pass\n  def resolveClassConflicts(self, cssString):\n    # Your code here\n"
+  },
+  "buggyStarterCode": {
+    "javascript": "function resolveClassConflicts(cssString) {\n  var classes = cssString.split('\\n');\n  var properties = {};\n  for (var i = 0; i < classes.length; i++) {\n    var classDecl = classes[i].trim();\n    if (classDecl.indexOf('{') !== -1) {\n      var className = classDecl.substring(0, classDecl.indexOf('{')).trim();\n      properties[className] = properties[className] || {};\n      var props = classDecl.substring(classDecl.indexOf('{') + 1, classDecl.indexOf('}')).trim();\n      var propDecl = props.split(';');\n      for (var j = 0; j < propDecl.length; j++) {\n        var prop = propDecl[j].trim();\n        if (prop.indexOf(':') !== -1) {\n          var propName = prop.substring(0, prop.indexOf(':')).trim();\n          var propValue = prop.substring(prop.indexOf(':') + 1).trim();\n          properties[className][propName] = propValue;\n        }\n      }\n    }\n  }\n  return cssString;\n}",
+    "python": "class Solution:\n  def __init__(self):\n    pass\n  def resolveClassConflicts(self, cssString):\n    classes = cssString.split('\\n')\n    properties = {}\n    for classDecl in classes:\n      classDecl = classDecl.strip()\n      if '{' in classDecl:\n        className = classDecl.split('{')[0].strip()\n        properties[className] = properties.get(className, {})\n        props = classDecl.split('{')[1].split('}')[0].strip()\n        propDeclarations = props.split(';')\n        for prop in propDeclarations:\n          prop = prop.strip()\n          if ':' in prop:\n            propName = prop.split(':')[0].strip()\n            propValue = prop.split(':')[1].strip()\n            properties[className][propName] = propValue\n    return cssString"
+  },
+  "functionSignature": {
+    "javascript": "var resolveClassConflicts = function(cssString) {}",
+    "python": "def resolveClassConflicts(self, cssString: str) -> str:"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction resolveClassConflicts(cssString) {\n  var classes = cssString.split('\\n');\n  var properties = {};\n  for (var i = 0; i < classes.length; i++) {\n    var classDecl = classes[i].trim();\n    if (classDecl.indexOf('{') !== -1) {\n      var className = classDecl.substring(0, classDecl.indexOf('{')).trim();\n      properties[className] = properties[className] || {};\n      var props = classDecl.substring(classDecl.indexOf('{') + 1, classDecl.indexOf('}')).trim();\n      var propDecl = props.split(';');\n      for (var j = 0; j < propDecl.length; j++) {\n        var prop = propDecl[j].trim();\n        if (prop.indexOf(':') !== -1) {\n          var propName = prop.substring(0, prop.indexOf(':')).trim();\n          var propValue = prop.substring(prop.indexOf(':') + 1).trim();\n          if (className in properties) {\n            properties[className][propName] = propValue;\n          } else {\n            properties[className] = {[propName]: propValue};\n          }\n        }\n      }\n    }\n  }\n  var correctedCssString = '';\n  for (var i = 0; i < classes.length; i++) {\n    var classDecl = classes[i].trim();\n    if (classDecl.indexOf('{') !== -1) {\n      var className = classDecl.substring(0, classDecl.indexOf('{')).trim();\n      var correctedClassDecl = '.' + className + ' {\n';\n      for (var prop in properties[className]) {\n        correctedClassDecl += '  ' + prop + ': ' + properties[className][prop] + ';\n';\n      }\n      correctedClassDecl += '}\n';\n      correctedCssString += correctedClassDecl + '\\n';\n    }\n  }\n  return correctedCssString;\n}",
+    "python": "class Solution:\n  def __init__(self):\n    pass\n  def resolveClassConflicts(self, cssString):\n    classes = cssString.split('\\n')\n    properties = {}\n    for classDecl in classes:\n      classDecl = classDecl.strip()\n      if '{' in classDecl:\n        className = classDecl.split('{')[0].strip()\n        properties[className] = properties.get(className, {})\n        props = classDecl.split('{')[1].split('}')[0].strip()\n        propDeclarations = props.split(';')\n        for prop in propDeclarations:\n          prop = prop.strip()\n          if ':' in prop:\n            propName = prop.split(':')[0].strip()\n            propValue = prop.split(':')[1].strip()\n            if className in properties:\n              properties[className][propName] = propValue\n            else:\n              properties[className] = {[propName]: propValue}\n    correctedCssString = ''\n    for classDecl in classes:\n      classDecl = classDecl.strip()\n      if '{' in classDecl:\n        className = classDecl.split('{')[0].strip()\n        correctedClassDecl = '.' + className + ' {\n'\n        for prop in properties[className]:\n          correctedClassDecl += '  ' + prop + ': ' + properties[className][prop] + ';\n'\n        correctedClassDecl += '}\n'\n        correctedCssString += correctedClassDecl + '\\n'\n    return correctedCssString"
+  },
+  "judgeConfig": {
+    "timeLimit": 1000,
+    "memoryLimit": 64,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": ".class1 { color: red; }\n.class2 { font-size: 12px; }\n.class1 { background-color: blue; }",
+      "output": ".class1 { color: red; background-color: blue; }\n.class2 { font-size: 12px; }",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": ".classA { color: red; }\n.classA { background-color: blue; }",
+      "output": ".classA { color: red; background-color: blue; }",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "4a4968c95e3cb6e11ba9b5b0",
+  "slug": "fixing-inconsistent-css-class-name-conflicts-bugfix-medium-css",
+  "mode": "bug_fix",
+  "category": "CSS",
+  "difficulty": "Medium"
+}

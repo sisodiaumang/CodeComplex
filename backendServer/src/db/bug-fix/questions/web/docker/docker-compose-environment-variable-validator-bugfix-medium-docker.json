@@ -1,0 +1,135 @@
+{
+  "title": "Docker Compose Environment Variable Validator",
+  "subCategory": "Docker Environment Variables",
+  "statement": {
+    "markdown": "You are given a Docker Compose YAML file in string format. The file contains environment variables for a service. Your task is to validate if the environment variables are correctly formatted and if the port mappings are exposed correctly. The file will always contain a `service` section with a `ports` key and an `environment` key. The `ports` key will contain a list of port mappings and the `environment` key will contain a list of environment variables. The port mappings are correctly formatted if they are in the format of `<host_port>:<container_port>`. The environment variables are correctly formatted if they are in the format of `VARIABLE_NAME=value`.",
+    "inputFormat": "A string representing the Docker Compose YAML file",
+    "outputFormat": "A boolean value indicating whether the environment variables and port mappings are correctly formatted",
+    "notes": "Note that the input string may contain comments and indentation. You should ignore these when parsing the input.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 100
+      }
+    ],
+    "examples": [
+      {
+        "input": "version: '3'\nservice:\n  ports:\n    - 8080:80\n  environment:\n    - FOO=bar\n    - BAZ=qux",
+        "output": "true",
+        "explanation": "The environment variables and port mappings are correctly formatted"
+      },
+      {
+        "input": "version: '3'\nservice:\n  ports:\n    - 8080:80\n  environment:\n    - FOO=bar\n    - BAZ=qux:foo",
+        "output": "false",
+        "explanation": "The port mapping is not correctly formatted"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DOCKER"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "docker"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text: The service section in the Docker Compose YAML file contains a ports key and an environment key. The ports key contains a list of port mappings and the environment key contains a list of environment variables."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// function to validate environment variables and port mappings",
+    "python": "class Solution:\n    def validate(self, compose_file: str) -> bool:"
+  },
+  "buggyStarterCode": {
+    "javascript": "// function to validate environment variables and port mappings\nfunction validate(compose_file) {\n  const lines = compose_file.split('\\n');\n  const serviceSection = lines.find(line => line.trim().startsWith('service:'));",
+    "python": "class Solution:\n    def validate(self, compose_file: str) -> bool:\n        lines = compose_file.split('\\n')\n        service_section = lines.find(line => line.strip().startswith('service:'))"
+  },
+  "functionSignature": {
+    "javascript": "function validate(compose_file: string): boolean",
+    "python": "def validate(self, compose_file: str) -> bool:"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction validate(compose_file) {\n  const lines = compose_file.split('\\n');\n  const serviceSection = lines.find(line => line.trim().startsWith('service:'));\n  if (serviceSection === undefined) return false;\n  const serviceData = serviceSection.trim().split('\\n').slice(1).join('\\n');\n  const [_, ports, environment] = serviceData.trim().split('\\n');\n  const portMappings = ports.trim().split('  ').map(port => port.trim().split(':')[0]);\n  const envVars = environment.trim().split('  ').map(env => env.trim().split('=')[0]);\n  return portMappings.every(port => port.includes(':')) && envVars.every(env => env.includes('=));\n}",
+    "python": "class Solution:\n    def validate(self, compose_file: str) -> bool:\n        lines = compose_file.split('\\n')\n        service_section = lines.find(line => line.strip().startswith('service:'))\n        if service_section is None:\n            return False\n        service_data = service_section.strip().split('\\n').slice(1).join('\\n')\n        _, ports, environment = service_data.strip().split('\\n')\n        port_mappings = ports.strip().split('  ').map(lambda x: x.strip().split(':')[0])\n        env_vars = environment.strip().split('  ').map(lambda x: x.strip().split('=')[0])\n        return all(port in port_mappings for port in env_vars) and all(':' in port for port in port_mappings)"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "version: '3'\nservice:\n  ports:\n    - 8080:80\n  environment:\n    - FOO=bar\n    - BAZ=qux",
+      "output": "true",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "version: '3'\nservice:\n  ports:\n    - 8080:80\n  environment:\n    - FOO=bar\n    - BAZ=qux:foo",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "f089b05570cd17ca448a785a",
+  "slug": "docker-compose-environment-variable-validator-bugfix-medium-docker",
+  "mode": "bug_fix",
+  "category": "DOCKER",
+  "difficulty": "Medium"
+}

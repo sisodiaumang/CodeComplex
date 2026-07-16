@@ -48,6 +48,7 @@ export interface IFrontendGradingCriterion {
 export interface IFrontendJudgeConfig {
     judgeModel: string; // e.g. process.env.FRONTEND_JUDGE_MODEL
     stack: FrontendStackKey[];
+    referenceSolution?: string;
 }
 
 export interface IFrontendScoring {
@@ -68,7 +69,9 @@ export interface IFrontendQuestion extends Document<string> {
     slug: string;
     difficulty: FrontendQuestionDifficulty;
     topics: string[];
-    statement: string;
+    statement: {
+        markdown: string;
+    };
     constraints: string[];
     referenceAssets: IFrontendReferenceAsset[];
 

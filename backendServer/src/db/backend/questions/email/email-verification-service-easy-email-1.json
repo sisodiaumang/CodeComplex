@@ -1,0 +1,150 @@
+{
+  "_id": "b4198c2a0ab2a939e072ef60",
+  "title": "Email Verification Service",
+  "slug": "email-verification-service-easy-email-1",
+  "difficulty": "Easy",
+  "topics": [
+    "EMAIL"
+  ],
+  "statement": "Implement an Email Verification Service that allows users to send verification emails to new email addresses. The service should have the following endpoints:\n\n### GET /api/email/:email - Verify if an email address is valid and not already registered\n\nVerify if the provided email address is valid and not already registered in the system. The response body should contain a boolean value indicating success and a message.\n\n### POST /api/email - Send a verification email to a new email address\n\nSend a verification email to the provided email address. The request body should contain the email address to send the email to. If the email address is already registered, return an error message. If the email cannot be sent, return an error message.\n\n### GET /api/email/verify/:token - Verify a verification token and mark the email as verified\n\nVerify a verification token and mark the email as verified if it is valid. The response body should contain a boolean value indicating success and a message.\n\nYou should use the Nodemailer library to send emails. You can assume that all necessary Nodemailer configurations are already set up.\n\n### Constraints\n\n*   You must use the Nodemailer library to send emails.\n*   You must store the verification tokens in a temporary storage (e.g., an in-memory array).\n*   You must implement the /api/email/verify/:token endpoint to verify a verification token and mark the email as verified.\n*   You must handle email address validation, token generation, and verification.\n*   You must handle email sending and verification failures.\n\n### Starter Code\n\nThe following is a basic Express server with a route to send a simple email:\n\n```json\n{\\n  \\\"name\\\": \\\"backend-app\\\",\\n  \\\"version\\\": \\\"1.0.0\\\",\\n  \\\"main\\\": \\\"index.js\\\",\\n  \\\"scripts\\\": {\\n    \\\"start\\\": \\\"node index.js\\\"\\n  },\\n  \\\"dependencies\\\": {\\n    \\\"express\\\": ^4.18.2,\\n    \\\"nodemailer\\\": ^6.6.3\\n  }\\n}\n```\n\n```javascript\nconst express = require('express');\\nconst app = express();\\nconst nodemailer = require('nodemailer');\\napp.use(express.json());\\n\\nconst transporter = nodemailer.createTransport({\\n  // Nodemailer configuration here\\n});\\n\\napp.get('/api/email', (req, res) => {\\n  res.json({ message: 'Hello World!' });\\n});\\n\\nconst PORT = process.env.PORT || 3000;\\napp.listen(PORT, () => console.log('Server running on port ' + PORT));\\n```\n\n### Test Cases\n\nYou can test your implementation using the following visible test cases:\n\n```json\n{\\n  \\\"id\\\": \\\"v_tc1\\\",\\n  \\\"method\\\": \\\"GET\\\",\\n  \\\"path\\\": \\/api/email/test@example.com,\\n  \\\"expectedStatus\\\": 200,\\n  \\\"expectedBody\\\": {\\n    \\\"success\\\": true,\\n    \\\"message\\\": \\\"Email is valid and not registered\\\"\\n  },\\n  \\\"isVisible\\\": true\\n}\\n\\n{\\n  \\\"id\\\": \\\"v_tc2\\\",\\n  \\\"method\\\": \\\"POST\\\",\\n  \\\"path\\\": \\/api/email,\\n  \\\"headers\\\": {\\n    \\\"Content-Type\\\": \\\"application\\/json\\\"\\n  },\\n  \\\"body\\\": {\\n    \\\"email\\\": \\\"test@example.com\\\"\\n  },\\n  \\\"expectedStatus\\\": 201,\\n  \\\"expectedBody\\\": {\\n    \\\"success\\\": true,\\n    \\\"message\\\": \\\"Email sent successfully\\\"\\n  },\\n  \\\"isVisible\\\": true\\n}\\n\\n{\\n  \\\"id\\\": \\\"v_tc3\\\",\\n  \\\"method\\\": \\\"GET\\\",\\n  \\\"path\\\": \\/api/email/verify\\/token123,\\n  \\\"expectedStatus\\\": 200,\\n  \\\"expectedBody\\\": {\\n    \\\"success\\\": true,\\n    \\\"message\\\": \\\"Email verified successfully\\\"\\n  },\\n  \\\"isVisible\\\": true\\n}\\n\\n### Hidden Test Cases\n\n#### Test Case 1: Verify if an email address is already registered\n\n```json\n{\\n  \\\"id\\\": \\\"h_tc1\\\",\\n  \\\"method\\\": \\\"GET\\\",\\n  \\\"path\\\": \\/api/email\\/test@example.com,\\n  \\\"expectedStatus\\\": 400,\\n  \\\"expectedBody\\\": {\\n    \\\"success\\\": false,\\n    \\\"message\\\": \\\"Email is already registered\\\"\\n  },\\n  \\\"isVisible\\\": false\\n}\\n\\n#### Test Case 2: Verify a verification token and mark the email as verified (already verified)\n\n```json\n{\\n  \\\"id\\\": \\\"h_tc2\\\",\\n  \\\"method\\\": \\\"GET\\\",\\n  \\\"path\\\": \\/api/email/verify\\/token123,\\n  \\\"expectedStatus\\\": 400,\\n  \\\"expectedBody\\\": {\\n    \\\"success\\\": false,\\n    \\\"message\\\": \\\"Email is already verified\\\"\\n  },\\n  \\\"isVisible\\\": false\\n}\\n\\n#### Test Case 3: Send a verification email to an email address that does not exist\n\n```json\n{\\n  \\\"id\\\": \\\"h_tc3\\\",\\n  \\\"method\\\": \\\"POST\\\",\\n  \\\"path\\\": \\/api/email,\\n  \\\"headers\\\": {\\n    \\\"Content-Type\\\": \\\"application\\/json\\\"\\n  },\\n  \\\"body\\\": {\\n    \\\"email\\\": \\\"non-existent-email@example.com\\\"\\n  },\\n  \\\"expectedStatus\\\": 500,\\n  \\\"expectedBody\\\": {\\n    \\\"success\\\": false,\\n    \\\"message\\\": \\\"Email cannot be sent\\\"\\n  },\\n  \\\"isVisible\\\": false\\n}",
+  "constraints": [
+    "You must use the Nodemailer library to send emails.",
+    "You must store the verification tokens in a temporary storage (e.g., an in-memory array).",
+    "You must handle email address validation, token generation, and verification.",
+    "You must handle email sending and verification failures."
+  ],
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/api/email/:email",
+      "description": "Verify if an email address is valid and not already registered"
+    },
+    {
+      "method": "POST",
+      "path": "/api/email",
+      "description": "Send a verification email to a new email address"
+    },
+    {
+      "method": "GET",
+      "path": "/api/email/verify/:token",
+      "description": "Verify a verification token and mark the email as verified"
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\"name\": \"backend-app\",\"version\": \"1.0.0\",\"main\": \"index.js\",\"scripts\": {\"start\": \"node index.js\"},\"dependencies\": {\"express\": \"^4.18.2\",\"nodemailer\": \"^6.6.3\"}}",
+    "index.js": "const express = require('express');\nconst app = express();\nconst nodemailer = require('nodemailer');\napp.use(express.json());\n\nconst transporter = nodemailer.createTransport({\n  // Nodemailer configuration here\n});\n\napp.get('/api/email/:email', (req, res) => {\n  // TODO: Implement email verification\n});\n\napp.post('/api/email', (req, res) => {\n  // TODO: Implement sending a verification email\n});\n\napp.get('/api/email/verify/:token', (req, res) => {\n  // TODO: Implement verification token verification\n});\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "GET",
+      "path": "/api/email/test@example.com",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "success": true,
+        "message": "Email is valid and not registered"
+      },
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "POST",
+      "path": "/api/email",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "email": "test@example.com"
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "success": true,
+        "message": "Email sent successfully"
+      },
+      "isVisible": true
+    },
+    {
+      "id": "v_tc3",
+      "method": "GET",
+      "path": "/api/email/verify/token123",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "success": true,
+        "message": "Email verified successfully"
+      },
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "GET",
+      "path": "/api/email/test@example.com",
+      "expectedStatus": 400,
+      "expectedBody": {
+        "success": false,
+        "message": "Email is already registered"
+      },
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "GET",
+      "path": "/api/email/verify/token123",
+      "expectedStatus": 400,
+      "expectedBody": {
+        "success": false,
+        "message": "Email is already verified"
+      },
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "POST",
+      "path": "/api/email",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "email": "non-existent-email@example.com"
+      },
+      "expectedStatus": 500,
+      "expectedBody": {
+        "success": false,
+        "message": "Email cannot be sent"
+      },
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "nodemailer",
+    "resend",
+    "smtp",
+    "templates",
+    "otp",
+    "verification",
+    "password-reset",
+    "email"
+  ]
+}

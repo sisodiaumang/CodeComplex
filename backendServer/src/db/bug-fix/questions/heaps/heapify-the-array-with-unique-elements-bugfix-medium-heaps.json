@@ -1,0 +1,145 @@
+{
+  "_id": "3be566add0d3906c18f994f3",
+  "title": "Heapify the Array with Unique Elements",
+  "slug": "heapify-the-array-with-unique-elements-bugfix-medium-heaps",
+  "difficulty": "Medium",
+  "category": "DSA",
+  "subCategory": "HEAP",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "heap"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Implement a method to heapify a given array. Note that heap must contain unique elements at all times, i.e., duplicates should be removed from the array before heapifying.",
+    "inputFormat": "First line contains the array size, second line contains the array elements.",
+    "outputFormat": "The heapified array elements (one element per line)",
+    "notes": "Preserve the relative order of elements if they are equal.",
+    "images": [],
+    "constraints": [],
+    "examples": [
+      {
+        "input": "5\n3 2 1 3 2",
+        "output": "3\n1\n2\n-1\n-1",
+        "explanation": "The given array [3, 2, 1, 3, 2] contains duplicates. The unique elements are [1, 2, 3]. Heapifying this array results in [3, 2, 1] as -1 is used to replace removed element."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Handle duplicates at the beginning by removing them before heapifying"
+    }
+  ],
+  "editorial": {
+    "title": "Heapify with Unique Elements",
+    "intuition": "Use a set to remove duplicates before heapifying.",
+    "bruteForce": "Heapify the array with duplicates and then remove duplicates. However, this approach is inefficient (O(n log n)).",
+    "betterSolution": "Remove duplicates from the array at the beginning, then heapify.",
+    "optimalSolution": "Use a set to store unique elements in O(n) time, then convert set to array and heapify.",
+    "proofOfCorrectness": "The final heap satisfies the heap property and all elements are unique.",
+    "dryRun": "Example run with array [1, 2, 1, 3, 2] and set {1, 2, 3}. Heapify [3, 2, 1].",
+    "commonMistakes": [
+      "Inefficient duplicate removal",
+      "Incorrect heap implementation"
+    ],
+    "timeComplexity": "O(n log n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    vector<int> solve(vector<int>& nums);\n};",
+    "java": "public class Solution {\npublic int[] solve(int[] nums);\n}",
+    "python": "class Solution:\n    def solve(self, nums: list[int]) -> list[int]:\n        pass",
+    "javascript": "function solve(nums) {\n    // TODO: implement\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    vector<int> solve(vector<int>& nums)\n    {\n        sort(nums.begin(), nums.end());\n        int n = nums.size();\n        for (int i = 0; i < n; i++ ){\n            for (int j = i+1; j < n; j++ ){\n                if (nums[i] == nums[j] )\n                    nums.erase(nums.begin() + j);\n            }\n        }\n        make_heap(nums.begin(), nums.end());\n        return nums;\n    }\n};",
+    "java": "public class Solution {\npublic int[] solve(int[] nums)\n{\n    Arrays.sort(nums);\n    int n = nums.length;\n    for (int i = 0; i < n; i++ ){\n        for (int j = i+1; j < n; j++ ){\n            if (nums[i] == nums[j] )\n                nums = remove(nums, j);\n        }\n    }\n    Arrays.sort(nums);\n    return nums;\n}\n}",
+    "python": "class Solution:\n    def solve(self, nums: list[int]) -> list[int]:\n        sorted_nums = sorted(nums)\n        n = len(sorted_nums)\n        for i in range(n):\n            for j in range(i+1, n):\n                if sorted_nums[i] == sorted_nums[j]:\n                    del sorted_nums[j]\n        sorted_nums.sort(reverse=True)\n        return sorted_nums",
+    "javascript": "function solve(nums) {\n    nums.sort((a, b) => a - b);\n    let n = nums.length;\n    for (let i = 0; i < n; i++ ){\n        for (let j = i+1; j < n; j++ ){\n            if (nums[i] == nums[j] )\n                nums.splice(j, 1);\n        }\n    }\n    nums.sort((a, b) => b - a);\n    return nums;\n}"
+  },
+  "functionSignature": {
+    "cpp": "vector<int> solve(vector<int>& nums);",
+    "java": "int[] solve(int[] nums);",
+    "python": "def solve(self, nums: list[int]) -> list[int]:",
+    "javascript": "function solve(nums) {"
+  },
+  "solutions": {
+    "cpp": "class Solution {\npublic:\n    vector<int> solve(vector<int>& nums)\n    {\n        set<int> unique_nums(nums.begin(), nums.end());\n        vector<int> res(unique_nums.begin(), unique_nums.end());\n        make_heap(res.begin(), res.end());\n        return res;\n    }\n};\n\nint main() {\n    vector<int> nums = {3, 2, 1, 3, 2};\n    Solution sol;\n    vector<int> res = sol.solve(nums);\n    for (auto &x : res)\n        cout << x << endl;\n    return 0;\n}",
+    "python": "class Solution:\n    def solve(self, nums: list[int]) -> list[int]:\n        unique_nums = set(nums)\n        return sorted(list(unique_nums), reverse=True)",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5\n3 2 1 3 2",
+      "output": "3\n1\n2\n-1\n-1",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_hidden_generated",
+      "input": "5\n3 2 1 3 2",
+      "output": "3\n1\n2\n-1\n-1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

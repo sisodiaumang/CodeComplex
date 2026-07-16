@@ -1,0 +1,205 @@
+{
+  "_id": "print-root-to-leaf-path",
+  "title": "Print Root to Leaf Path",
+  "slug": "print-root-to-leaf-path",
+  "difficulty": "Medium",
+  "category": "TREE",
+  "subCategory": "Hard Problems",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 500,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "BINARY TREES",
+      "TREE"
+    ],
+    "patterns": [
+      "root to leaf path",
+      "binary tree traversal"
+    ],
+    "prerequisites": [
+      "BINARY TREE TRAVERSAL",
+      "BINARY TREE PROPERTIES"
+    ],
+    "variants": [],
+    "tags": [
+      "BINARY TREE",
+      "TREE TRAVERSAL",
+      "DEPTH FIRST SEARCH"
+    ],
+    "keywords": [
+      "root to leaf path",
+      "binary tree traversal",
+      "depth first search",
+      "preorder traversal",
+      "inorder traversal",
+      "postorder traversal"
+    ],
+    "interviewFrequency": 4,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "Given a binary tree, print all root to leaf paths. A root to leaf path is a path from the root node to a leaf node. For example, in the following tree, there are 3 root to leaf paths: 1->2->4, 1->2->5, 1->3.\n\n     1\n    / \\\n   2   3\n  / \\\n /   \\\n4     5",
+    "inputFormat": "The first line contains an integer representing the number of nodes in the tree. The next lines contain the node values, with the root node first, followed by the left and right children of each node. The number of nodes and their values are space-separated.",
+    "outputFormat": "The output consists of all root to leaf paths, one per line. Each path is represented as a space-separated sequence of node values.",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "Number of nodes",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of nodes in the tree"
+      },
+      {
+        "variable": "Node values",
+        "type": "integer",
+        "min": -10000,
+        "max": 10000,
+        "description": "The values of the nodes in the tree"
+      }
+    ],
+    "examples": [
+      {
+        "input": "5\n1\n2\n3\n4\n5",
+        "output": "1 2 4\r\n1 2 5\r\n1 3",
+        "explanation": "The root to leaf paths in the example tree"
+      },
+      {
+        "input": "3\n1\n2\n3",
+        "output": "1 2\r\n1 3",
+        "explanation": "The root to leaf paths in a simple tree"
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Think about how you would traverse a binary tree. What are the common traversal techniques?"
+    },
+    {
+      "order": 2,
+      "text": "The problem requires printing all root to leaf paths. A leaf node is a node with no children. Consider how you can modify a traversal to keep track of the current path from the root to the current node."
+    },
+    {
+      "order": 3,
+      "text": "A depth-first search (DFS) approach seems suitable for this problem. Consider using a recursive DFS function to explore each path from the root to a leaf node, and append the current node's value to the path as you traverse down the tree."
+    }
+  ],
+  "editorial": {
+    "title": "Printing All Root‑to‑Leaf Paths in a Binary Tree",
+    "intuition": "The task is to enumerate every path that starts at the root and ends at a leaf, outputting the node values along the way. A naïve approach might try to generate all possible sequences of nodes and then filter the valid ones, but that would be astronomically expensive. Instead, we observe that a valid path is simply a traversal that stops when we hit a leaf. This allows a depth‑first search that carries the current path as it descends, printing it immediately when a leaf is reached.",
+    "bruteForce": "A brute‑force solution could, for example, enumerate all subsets of nodes or all permutations of node indices and then check which of those happen to form a root‑to‑leaf path. Such an approach would have exponential time complexity, far exceeding the limits for up to 10,000 nodes. Even a simple recursive traversal that copies the entire path list at every recursive call (as in the reference code) incurs linear overhead per node, leading to O(N^2) time in the worst case and unnecessary memory churn.",
+    "betterSolution": "The optimal strategy is a classic depth‑first search (DFS). Starting from the root, we push the current node’s value onto a path stack. If the node is a leaf, we output the stack’s contents. Otherwise, we recursively visit the left child, then the right child, each time passing a copy of the current stack (or using backtracking to pop after the recursive call). This guarantees that each node is processed once and each path is printed exactly once.",
+    "optimalSolution": "The reference implementation already follows this optimal DFS pattern: it appends the current node’s value, checks for leaf status, prints the path, and then recurses on left and right children with a sliced copy of the path. The slicing ensures that each recursive branch works with its own path copy, avoiding interference between siblings. The algorithm runs in O(N) time because every node is visited once, and uses O(H) auxiliary space for the recursion stack and the path list, where H is the tree height.",
+    "proofOfCorrectness": "The DFS visits every node exactly once. For any node, the algorithm records the sequence of values from the root to that node in the path list. When a leaf is encountered, the path list contains precisely the values along the unique root‑to‑leaf path ending at that leaf, because the algorithm never backtracks until after the leaf’s output. Thus, every root‑to‑leaf path is printed once, and no non‑leaf node is printed as a path. Since the traversal explores both children of every internal node, all leaves are reached, ensuring completeness.",
+    "dryRun": "Consider a tree with root 1, left child 2, right child 3, and 2’s left child 4. The DFS starts with path=[1]. It recurses left: path=[1,2]; recurses left again: path=[1,2,4]; 4 is a leaf, so it prints \"1 2 4\". Returning, it recurses right of 2 (none). Back at 1, it recurses right: path=[1,3]; 3 is a leaf, so it prints \"1 3\". All paths are printed in the correct order.",
+    "commonMistakes": [
+      "Using a single global path list without backtracking, causing sibling paths to share and corrupt each other;",
+      "Recursively copying the entire path list at each call, which is correct but incurs O(N^2) time for deep trees;",
+      "Printing the path before adding the current node’s value, leading to missing the root value;",
+      "Treating the tree as a binary heap and assuming children indices, which fails for arbitrary binary trees;",
+      "Not handling the case where the root itself is a leaf, thus never printing a single‑node path;",
+      "Using iterative traversal without a stack to store the current path, resulting in lost context when backtracking."
+    ],
+    "timeComplexity": "O(N) where N is the number of nodes, as each node is visited once during DFS.",
+    "spaceComplexity": "O(H) recursion stack plus path storage, where H is the height of the tree (worst‑case O(N))."
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass TreeNode {\npublic:\n    int val;\n    TreeNode *left;\n    TreeNode *right;\n    TreeNode() : val(0), left(NULL), right(NULL) {}\n    TreeNode(int x) : val(x), left(NULL), right(NULL) {}\n};\n\nclass Solution {\npublic:\n    void printPaths(TreeNode* root, vector<int>& path) {\n        // TODO: implement\n    }\n};",
+    "java": "import java.util.*;\n\nclass TreeNode {\n    int val;\n    TreeNode left;\n    TreeNode right;\n    TreeNode(int x) { val = x; }\n}\n\nclass Solution {\n    public void printPaths(TreeNode root, List<Integer> path) {\n        // TODO: implement\n    }\n}",
+    "python": "class TreeNode:\n    def __init__(self, x):\n        self.val = x\n        self.left = None\n        self.right = None\n\nclass Solution:\n    def printPaths(self, root: TreeNode, path: list[int]) -> None:\n        # TODO: implement\n        pass",
+    "javascript": "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n\nvar printPaths = function(root, path) {\n    // TODO: implement\n};"
+  },
+  "functionSignature": {
+    "cpp": "void printPaths(TreeNode* root, vector<int>& path);",
+    "java": "public void printPaths(TreeNode root, List<Integer> path);",
+    "python": "def printPaths(self, root: TreeNode, path: list[int]) -> None:",
+    "javascript": "var printPaths = function(root, path);"
+  },
+  "solutions": {
+    "python": "import sys\n\nclass TreeNode:\n    def __init__(self, val: int):\n        self.val = val\n        self.left = None\n        self.right = None\n\nclass Solution:\n    def printPaths(self, root: TreeNode, path: list[int]) -> None:\n        if root is None:\n            return\n        path.append(root.val)\n        if root.left is None and root.right is None:\n            print(' '.join(map(str, path)))\n        else:\n            self.printPaths(root.left, path)\n            self.printPaths(root.right, path)\n        path.pop()\n\nif __name__ == '__main__':\n    data = sys.stdin.read().split()\n    if not data:\n        sys.exit(0)\n    it = iter(data)\n    n = int(next(it))\n    vals = []\n    for _ in range(n):\n        try:\n            vals.append(int(next(it)))\n        except StopIteration:\n            break\n    # build tree in level order assuming complete binary tree layout\n    nodes = [TreeNode(v) for v in vals]\n    for i in range(n):\n        left_idx = 2 * i + 1\n        right_idx = 2 * i + 2\n        if left_idx < n:\n            nodes[i].left = nodes[left_idx]\n        if right_idx < n:\n            nodes[i].right = nodes[right_idx]\n    root = nodes[0] if nodes else None\n    sol = Solution()\n    sol.printPaths(root, [])\n",
+    "cpp": "#include <numeric>\n#include <bits/stdc++.h>\nusing namespace std;\n\nstruct TreeNode {\n    int val;\n    TreeNode *left;\n    TreeNode *right;\n    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}\n};\n\nclass Solution {\npublic:\n    void printPaths(TreeNode* root, vector<int>& path) {\n        if (!root) return;\n        path.push_back(root->val);\n        if (!root->left && !root->right) {\n            for (size_t i = 0; i < path.size(); ++i) {\n                if (i) cout << ' ';\n                cout << path[i];\n            }\n            cout << \"\\n\";\n        } else {\n            printPaths(root->left, path);\n            printPaths(root->right, path);\n        }\n        path.pop_back();\n    }\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int n;\n    if (!(cin >> n)) return 0;\n    vector<int> vals(n);\n    for (int i = 0; i < n; ++i) cin >> vals[i];\n    vector<TreeNode*> nodes;\n    nodes.reserve(n);\n    for (int v : vals) nodes.push_back(new TreeNode(v));\n    for (int i = 0; i < n; ++i) {\n        int left = 2 * i + 1;\n        int right = 2 * i + 2;\n        if (left < n) nodes[i]->left = nodes[left];\n        if (right < n) nodes[i]->right = nodes[right];\n    }\n    TreeNode* root = n ? nodes[0] : nullptr;\n    Solution sol;\n    vector<int> path;\n    sol.printPaths(root, path);\n    return 0;\n}\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.2
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5\n1\n2\n3\n4\n5",
+      "output": "1 2 4\r\n1 2 5\r\n1 3",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "3\n1\n2\n3",
+      "output": "1 2\r\n1 3",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint_3",
+      "input": "2\n1 0\n0 1",
+      "output": "1 0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "boundary_4",
+      "input": "1\n1",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    },
+    {
+      "id": "duplicate_5",
+      "input": "3\n1 2 3\n2 2 3\n2 2 3",
+      "output": "1 2\r\n1 3",
+      "isVisible": false,
+      "weight": 1,
+      "category": "duplicate"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

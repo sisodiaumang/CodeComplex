@@ -1,0 +1,130 @@
+{
+  "title": "DOCKER Volume Mount Validation with Complex Patterns",
+  "subCategory": "DOCKER Volume Mount Configuration Validation",
+  "statement": {
+    "markdown": "Given a list of Docker volume mount configurations represented as strings, validate each configuration to ensure it adheres to the specified format. A valid configuration must be in the format 'host_path:container_path:permissions'. If a configuration does not match this format, it is considered invalid. Additionally, if the permissions part of a valid configuration is not one of 'ro' or 'rw', it is also considered invalid. Implement a function to filter out invalid configurations and return a list of valid ones.",
+    "inputFormat": "A list of Docker volume mount configurations as strings.",
+    "outputFormat": "A list of valid Docker volume mount configurations as strings.",
+    "notes": "The function should be case-insensitive when checking the permissions part of a valid configuration.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of configurations to validate"
+      }
+    ],
+    "examples": [
+      {
+        "input": "['/host/path:/container/path:ro', '/another/host/path:/another/container/path:rwr', '/invalid/host/path:/invalid/container/path:invalid']",
+        "output": "['/host/path:/container/path:ro', '/another/host/path:/another/container/path:rw']",
+        "explanation": "The first configuration is valid, while the second configuration is invalid because 'rwr' is not a valid permission. The third configuration is invalid because it does not match the specified format."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 70,
+    "premium": true,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DOCKER"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "docker"
+    ],
+    "interviewFrequency": 1,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Start by splitting each configuration into its three parts using a regular expression."
+    },
+    {
+      "order": 2,
+      "text": "Next, check if the permissions part of a valid configuration is 'ro' or 'rw' (case-insensitive)."
+    }
+  ],
+  "editorial": {
+    "title": "Validating Docker Volume Mount Configurations",
+    "intuition": "The key to solving this problem is to break down each configuration into its three parts and then check each part individually.",
+    "bruteForce": "You can use a brute force approach by checking each configuration manually, but this will be inefficient for large inputs.",
+    "betterSolution": "",
+    "optimalSolution": "Use a regular expression to split each configuration into its three parts, and then use a simple if-else statement to check the permissions part.",
+    "proofOfCorrectness": "The function will correctly filter out invalid configurations and return a list of valid ones.",
+    "dryRun": "Example usage: `console.log(filterValidConfigurations(['/host/path:/container/path:ro', '/another/host/path:/another/container/path:rwr', '/invalid/host/path:/invalid/container/path:invalid']));`",
+    "commonMistakes": [
+      "Forgetting to handle edge cases like invalid configurations.",
+      "Not using a regular expression to split the configuration into its three parts."
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "function filterValidConfigurations(configs) {\n  // Implement a function to filter out invalid configurations and return a list of valid ones.\n  return configs.filter(config => {\n    // Check if the configuration is valid.\n  });\n}"
+  },
+  "buggyStarterCode": {
+    "javascript": "function filterValidConfigurations(configs) {\n  return configs.filter(config => config.includes(':'));\n}"
+  },
+  "functionSignature": {
+    "javascript": "function filterValidConfigurations(configs) {\n  // configs: an array of Docker volume mount configurations as strings.\n  // Return: a list of valid Docker volume mount configurations as strings.\n}"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction filterValidConfigurations(configs) {\n  const pattern = /^([^:]+):([^:]+):([^:]+)$/;\n  return configs.filter(config => {\n    const match = config.match(pattern);\n    if (!match) return false;\n    const [_, hostPath, containerPath, permissions] = match;\n    return ['ro', 'rw'].includes(permissions.toLowerCase());\n  });\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2.5,
+    "memoryLimit": 128,
+    "supportedLanguages": [
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "['/host/path:/container/path:ro', '/another/host/path:/another/container/path:rwr', '/invalid/host/path:/invalid/container/path:invalid']",
+      "output": "['/host/path:/container/path:ro', '/another/host/path:/another/container/path:rw']",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "['/host/path:/container/path:invalid', '/another/host/path:/another/container/path:ro', '/invalid/host/path:/invalid/container/path:ro']",
+      "output": "['/another/host/path:/another/container/path:ro']",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "2f5ebb71ea71b87d4b345c5e",
+  "slug": "docker-volume-mount-validation-with-complex-patterns-bugfix-hard-docker",
+  "mode": "bug_fix",
+  "category": "DOCKER",
+  "difficulty": "Hard"
+}

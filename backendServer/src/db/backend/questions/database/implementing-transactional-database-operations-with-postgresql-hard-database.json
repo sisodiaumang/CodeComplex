@@ -1,0 +1,164 @@
+{
+  "_id": "853d634218a68e860241e461",
+  "title": "Implementing Transactional Database Operations with PostgreSQL",
+  "slug": "implementing-transactional-database-operations-with-postgresql-hard-database",
+  "difficulty": "Hard",
+  "topics": [
+    "DATABASE"
+  ],
+  "statement": "Implement a RESTful API to manage a simple bank account system using a PostgreSQL database. The API should support the creation, retrieval, and update of account balances, as well as support for transactional operations (e.g., deposit, withdraw, transfer). The API should also support locking mechanisms to prevent concurrent modifications to the account balance.\n\nThe API should have the following endpoints:\n\n* POST /api/accounts: Create a new account with an initial balance of 0.\n* GET /api/accounts/{id}: Retrieve the balance of an account by its ID.\n* PATCH /api/accounts/{id}: Update the balance of an account by its ID.\n* POST /api/transactions: Deposit, withdraw, or transfer funds between accounts. The transaction should be atomic, meaning it should either succeed or fail as a whole.\n\nTo implement this API, you will need to use a PostgreSQL database and the pg module in Node.js. You will also need to use the Express framework to handle HTTP requests.\n\nYou should use a locking mechanism to prevent concurrent modifications to the account balance. You can use a row-level lock (RLS) or a advisory lock to achieve this.\n\nThe API should handle the following edge cases:\n\n* A user attempts to deposit or withdraw more funds than they have in their account.\n* A user attempts to transfer funds from an account that does not exist.\n* A user attempts to deposit or withdraw funds with an invalid amount.\n* A transaction times out due to concurrent modifications.\n\nYou should use PostgreSQL's built-in functions and features to implement the locking mechanism and transactional operations.\n\nYou will be tested with a series of API calls to verify that your implementation is correct. Please see the visible API test cases below for details.\n\nConstraints:\n\n* You must use a PostgreSQL database and the pg module in Node.js.\n* You must use the Express framework to handle HTTP requests.\n* You must use a locking mechanism to prevent concurrent modifications to the account balance.\n* You must handle the edge cases listed above.\n",
+  "constraints": [
+    "Must use a PostgreSQL database and the pg module in Node.js.",
+    "Must use the Express framework to handle HTTP requests.",
+    "Must use a locking mechanism to prevent concurrent modifications to the account balance."
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/accounts",
+      "description": "Create a new account with an initial balance of 0."
+    },
+    {
+      "method": "GET",
+      "path": "/api/accounts/{id}",
+      "description": "Retrieve the balance of an account by its ID."
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/accounts/{id}",
+      "description": "Update the balance of an account by its ID."
+    },
+    {
+      "method": "POST",
+      "path": "/api/transactions",
+      "description": "Deposit, withdraw, or transfer funds between accounts."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": {
+      "name": "bank-api",
+      "version": "1.0.0",
+      "main": "index.js",
+      "scripts": {
+        "start": "node index.js"
+      },
+      "dependencies": {
+        "express": "^4.18.2",
+        "pg": "^8.7.3"
+      }
+    },
+    "index.js": "const express = require('express');\nconst app = express();\nconst { Pool } = require('pg');\n\napp.use(express.json());\n\nconst pool = new Pool({\n    user: 'username',\n    host: 'localhost',\n    database: 'bank',\n    password: 'password',\n    port: 5432,\n});\n\n// TODO: Implement endpoints\napp.listen(3000, () => console.log('Server running on port 3000'))"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "POST",
+      "path": "/api/accounts",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "name": "John Doe",
+        "balance": 0
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "id": 1,
+        "name": "John Doe",
+        "balance": 0
+      },
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "POST",
+      "path": "/api/transactions",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "fromId": 1,
+        "toId": 2,
+        "amount": 10.99
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "id": 1,
+        "fromId": 1,
+        "toId": 2,
+        "amount": 10.99,
+        "createdAt": "2023-03-16T14:30:00.000Z"
+      },
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "GET",
+      "path": "/api/accounts/1",
+      "expectedStatus": 200,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "POST",
+      "path": "/api/transactions",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "fromId": 1,
+        "toId": 2,
+        "amount": 10.99
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "GET",
+      "path": "/api/accounts/999",
+      "expectedStatus": 404,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "sql",
+    "nosql",
+    "transactions",
+    "indexing",
+    "aggregation",
+    "joins",
+    "relationships",
+    "normalization",
+    "denormalization",
+    "acid",
+    "cap-theorem",
+    "database",
+    "postgresql",
+    "locking",
+    "concurrency"
+  ]
+}

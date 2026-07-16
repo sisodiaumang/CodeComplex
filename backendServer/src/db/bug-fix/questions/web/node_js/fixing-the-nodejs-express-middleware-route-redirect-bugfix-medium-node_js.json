@@ -1,0 +1,144 @@
+{
+  "title": "Fixing the Node.js Express Middleware Route Redirect",
+  "subCategory": "Express.js Routing",
+  "statement": {
+    "markdown": "Write a Node.js Express middleware function that handles HTTP GET requests to the root URL and redirects the client to a different URL. However, the implementation contains a subtle bug that will cause unexpected behavior. Fix the bug to ensure the redirect works correctly.",
+    "inputFormat": "The input is a JSON object containing the redirect URL.",
+    "outputFormat": "The output should be a HTTP 302 redirect response.",
+    "notes": "The redirect should only happen on HTTP GET requests.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of redirect requests is capped at 10000"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"redirectUrl\": \"https://example.com\"}",
+        "output": "HTTP/1.1 302 Found Redirecting to https://example.com",
+        "explanation": "This example demonstrates a successful redirect on HTTP GET request."
+      },
+      {
+        "input": "{\"redirectUrl\": \"invalid-url\"}",
+        "output": "HTTP/1.1 400 Bad Request Invalid redirect URL",
+        "explanation": "This example demonstrates an error handling case where the redirect URL is invalid."
+      },
+      {
+        "input": "{\"redirectUrl\": \"https://example.com\"}",
+        "output": "HTTP/1.1 302 Found Redirecting to https://example.com",
+        "explanation": "This example demonstrates a successful redirect on HTTP GET request."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "NODE_JS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "node_js"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Check the HTTP request method before redirecting"
+    },
+    {
+      "order": 2,
+      "text": "Verify the redirect URL is valid before proceeding"
+    }
+  ],
+  "editorial": {
+    "title": "Fixing the Node.js Express Middleware Route Redirect",
+    "intuition": "The correct approach involves checking the HTTP request method and verifying the redirect URL before redirecting the client.",
+    "bruteForce": "One possible brute force approach is to use a try-catch block to catch any exceptions that occur during the redirect process.",
+    "betterSolution": "A better solution involves using a more elegant approach to handle the HTTP request method and redirect URL validation.",
+    "optimalSolution": "The optimal solution utilizes a middleware function to check the HTTP request method and redirect URL before redirecting the client. It also includes error handling for invalid redirect URLs.",
+    "proofOfCorrectness": "The solution is correct because it checks the HTTP request method and verifies the redirect URL before redirecting the client. It also includes error handling for invalid redirect URLs.",
+    "dryRun": "Step-by-step example run: 1. Check the HTTP request method. 2. Verify the redirect URL is valid. 3. Redirect the client if the HTTP request method is GET and the redirect URL is valid.",
+    "commonMistakes": [
+      "Failing to check the HTTP request method",
+      "Not verifying the redirect URL"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "function redirectMiddleware(request, response, next) {\n    const redirectUrl = JSON.parse(request.body).redirectUrl;\n    // TO DO: implement the redirect logic here\n    next();\n}\n\napp.get('/', redirectMiddleware);\n",
+    "python": ""
+  },
+  "buggyStarterCode": {
+    "javascript": "function redirectMiddleware(request, response, next) {\n    const redirectUrl = JSON.parse(request.body).redirectUrl;\n    if (redirectUrl) {\n        response.redirect(redirectUrl);\n    } else {\n        next();\n    }\n}\n\napp.get('/', redirectMiddleware);\n",
+    "python": ""
+  },
+  "functionSignature": {
+    "javascript": "function redirectMiddleware(request, response, next) {\n    // TO DO: implement the redirect logic here\n    next();\n}",
+    "python": ""
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction redirectMiddleware(request, response, next) {\n    const redirectUrl = JSON.parse(request.body).redirectUrl;\n    if (request.method === 'GET' && redirectUrl) {\n        response.redirect(redirectUrl);\n    } else {\n        next();\n    }\n}\n\napp.get('/', redirectMiddleware);\n",
+    "python": ""
+  },
+  "judgeConfig": {
+    "timeLimit": 1000,
+    "memoryLimit": 64,
+    "supportedLanguages": [
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"redirectUrl\": \"https://example.com\"}",
+      "output": "HTTP/1.1 302 Found Redirecting to https://example.com",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"redirectUrl\": \"invalid-url\"}",
+      "output": "HTTP/1.1 400 Bad Request Invalid redirect URL",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "720b77921b5e1b5c5f0e7e46",
+  "slug": "fixing-the-nodejs-express-middleware-route-redirect-bugfix-medium-node_js",
+  "mode": "bug_fix",
+  "category": "NODE_JS",
+  "difficulty": "Medium"
+}

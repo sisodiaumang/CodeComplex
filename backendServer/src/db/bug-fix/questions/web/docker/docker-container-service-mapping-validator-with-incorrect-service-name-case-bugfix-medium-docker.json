@@ -1,0 +1,136 @@
+{
+  "title": "DOCKER Container Service Mapping Validator with Incorrect Service Name Case",
+  "subCategory": "Docker Service Port Mapping",
+  "statement": {
+    "markdown": "Given a Docker Compose configuration file in the YAML format, you need to write a function that validates the service ports mapping. The function should check if all service names in the ports mapping match the case of the actual service name in the configuration file. If a mismatch is found, the function should return `false`. Otherwise, it should return `true`.",
+    "inputFormat": "A string representing the Docker Compose configuration file in YAML format.",
+    "outputFormat": "A boolean indicating whether the service ports mapping is valid.",
+    "notes": "You can assume that the input string is a valid YAML configuration file.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of services in the configuration file"
+      }
+    ],
+    "examples": [
+      {
+        "input": "version: '3'\nservices:\n  web: \n    ports:\n      - 8080:8080\n  api: \n    ports:\n      - 8081:8081",
+        "output": "true",
+        "explanation": "The service names `web` and `api` match the case of the actual service names."
+      },
+      {
+        "input": "version: '3'\nservices:\n  web: \n    ports:\n      - 8080:8081\n  api: \n    ports:\n      - 8081:8080",
+        "output": "false",
+        "explanation": "The service name `web` does not match the case of the actual service name."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DOCKER"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "docker"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text: Check the case of the service names in the ports mapping."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// Function to validate the service ports mapping\nfunction validatePortsMapping(yamlConfig) {\n  // Your implementation here\n}",
+    "python": "class Solution:\n  def validate_ports_mapping(self, yaml_config) -> bool:\n    pass"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Function to validate the service ports mapping\nfunction validatePortsMapping(yamlConfig) {\n  const services = yamlConfig.services;\n  for (const service in services) {\n    if (services[service].ports) {\n      for (const port in services[service].ports) {\n        const [containerPort, hostPort] = services[service].ports[port].split(':');\n        if (containerPort !== hostPort) {\n          return false;\n        }\n      }\n    }\n  }\n  return true;\n}",
+    "python": "class Solution:\n  def validate_ports_mapping(self, yaml_config) -> bool:\n    services = yaml_config.services\n    for service in services:\n      if services[service].ports:\n        for port in services[service].ports:\n          container_port, host_port = services[service].ports[port].split(':')\n          if container_port != host_port:\n            return False\n    return True"
+  },
+  "functionSignature": {
+    "javascript": "function validatePortsMapping(yamlConfig) {\n  // Your implementation here\n}",
+    "python": "def validate_ports_mapping(self, yaml_config: str) -> bool:"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction validatePortsMapping(yamlConfig) {\n  const services = yamlConfig.services;\n  for (const service in services) {\n    if (services[service].ports) {\n      for (const port in services[service].ports) {\n        const containerPort = services[service].ports[port].split(':')[0];\n        const hostPort = services[service].ports[port].split(':')[1];\n        if (service.toLowerCase() !== service || containerPort.toLowerCase() !== hostPort.toLowerCase()) {\n          return false;\n        }\n      }\n    }\n  }\n  return true;\n}",
+    "python": "class Solution:\n  def validate_ports_mapping(self, yaml_config: str) -> bool:\n    import yaml\n    yaml_config = yaml.safe_load(yaml_config)\n    services = yaml_config['services']\n    for service in services:\n      if services[service].ports:\n        for port in services[service].ports:\n          container_port, host_port = services[service].ports[port].split(':')\n          service_name = service.lower()\n          container_port = container_port.lower()\n          host_port = host_port.lower()\n          if service_name !== container_port or service_name !== host_port:\n            return False\n    return True"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "version: '3'\nservices:\n  web: \n    ports:\n      - 8080:8080\n  api: \n    ports:\n      - 8081:8081",
+      "output": "true",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "version: '3'\nservices:\n  web: \n    ports:\n      - 8080:8081\n  api: \n    ports:\n      - 8081:8080",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "6d09adc5bee94f450379b241",
+  "slug": "docker-container-service-mapping-validator-with-incorrect-service-name-case-bugfix-medium-docker",
+  "mode": "bug_fix",
+  "category": "DOCKER",
+  "difficulty": "Medium"
+}

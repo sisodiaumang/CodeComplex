@@ -1,0 +1,171 @@
+{
+  "_id": "237ae4c52d6fac982cede683",
+  "title": "Faulty Trie Deletion with Auto Completion",
+  "slug": "faulty-trie-deletion-with-auto-completion-bugfix-hard-tries-1",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "TRIE",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 75,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "trie"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given a Trie and a sequence of insertions and deletions, complete the implementation to handle the deletion operation with auto completion.\n\nIn this problem, you'll be given a Trie where each node has a character and two children (one for 'left' and one for 'right'). The delete operation should remove the word from the Trie if it exists, and update the Trie to prevent future auto completions of the deleted word. \n\nYou can assume the input will only contain lowercase English letters.",
+    "inputFormat": "You'll be given a sequence of operations (insertions and deletions) as input, where each operation is described as a string. The string will either start with \"INSERT\" (followed by the word to be inserted) or \"DELETE\" (followed by the word to be deleted).",
+    "outputFormat": "After processing all operations, print the number of words remaining in the Trie.",
+    "notes": "You should maintain the Trie structure for efficient operations.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of operations"
+      },
+      {
+        "variable": "max_len_word",
+        "type": "integer",
+        "min": 1,
+        "max": 10,
+        "description": "Maximum length of a word"
+      }
+    ],
+    "examples": [
+      {
+        "input": "INSERT cat\nINSERT dog\nDELETE cat\n",
+        "output": "1",
+        "explanation": "After processing the operations, there's only one word left in the Trie, which is 'dog'."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Review the implementation of the delete operation to ensure it correctly removes the word from the Trie."
+    },
+    {
+      "order": 2,
+      "text": "Verify that the Trie structure is properly updated to prevent future auto completions of the deleted word."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial for Faulty Trie Deletion with Auto Completion",
+    "intuition": "When deleting a word from the Trie, we should recursively traverse the Trie and remove all nodes that belong to the word. We should also update the children of the parent nodes to point to the new nodes if they exist.",
+    "bruteForce": "A naive approach would involve traversing the Trie for each operation and delete the word if it exists. However, this approach is inefficient and can lead to incorrect results.",
+    "betterSolution": "",
+    "optimalSolution": "We should implement a recursive delete operation that updates the Trie structure accordingly. This approach ensures that the Trie remains valid and prevents future auto completions of the deleted word.",
+    "proofOfCorrectness": "We can prove the correctness of our approach by showing that it satisfies the requirements of the delete operation. Specifically, it removes the word from the Trie and updates the Trie structure to prevent future auto completions.",
+    "dryRun": "To dry run our approach, let's consider a simple example where we insert the words 'cat' and 'catdog' into the Trie, and then delete 'cat'. After deleting 'cat', we should have a Trie with only one node, which is 'dog'.",
+    "commonMistakes": [
+      "forgetting to update the children of the parent nodes",
+      "not handling the edge case where the word is not in the Trie"
+    ],
+    "timeComplexity": "O(m * n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\nvoid insert(TrieNode* root, const string& word);\nvoid deleteWord(TrieNode* root, const string& word);\nvoid autoComplete(TrieNode* root, const string& word, int index);\n\nint countWords(TrieNode* root);\n};\n\nstruct TrieNode {\nchar c;\nTrieNode* left;\nTrieNode* right;\n};",
+    "java": "public class Solution {\npublic:\nvoid insert(TrieNode root, String word);\nvoid deleteWord(TrieNode root, String word);\nvoid autoComplete(TrieNode root, String word, int index);\n\nint countWords(TrieNode root);\n}\nclass TrieNode {\nchar c;\nTrieNode left;\nTrieNode right;\n};",
+    "python": "class Solution:\n\ndef insert(self, root, word):\n\tpass\n\ndef deleteWord(self, root, word):\n\tpass\n\ndef autoComplete(self, root, word, index):\n\tpass\n\ndef countWords(self, root):\n\tpass\n\nclass TrieNode:\n\tpass",
+    "javascript": "class Solution {\nautocomplete(root, word, index) {}\ninsert(root, word) {}\ndeleteWord(root, word) {}\ncountWords(root) {}\n}\nclass TrieNode {\nconstructor() {}\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "void Solution::deleteWord(TrieNode* root, const string& word) {\nif (root == nullptr) return;\nif (word.empty()) return;\n\n// Incorrectly deleting the word by not updating the children of the parent nodes\nif (root->c == word[0]) {\ndeleteWord(root, word.substr(1));\n}\nelse if (root->c > word[0]) {\ndeleteWord(root->left, word);\n}\nelse {\ndeleteWord(root->right, word);\n}\n}\n\nint Solution::countWords(TrieNode* root) {\nif (root == nullptr) return 0;\n\n// Incorrectly counting the children of the root node as words\nreturn root->left != nullptr ? 1 : 0;\n}\n",
+    "java": "public void deleteWord(TrieNode root, String word) {\nif (root == null) return;\nif (word.isEmpty()) return;\n\n// Incorrectly deleting the word by not updating the children of the parent nodes\nif (root.c == word.charAt(0)) {\ndeleteWord(root, word.substring(1));\n}\nelse if (root.c > word.charAt(0)) {\ndeleteWord(root.left, word);\n}\nelse {\ndeleteWord(root.right, word);\n}\n}\n\npublic int countWords(TrieNode root) {\nif (root == null) return 0;\n\n// Incorrectly counting the children of the root node as words\nreturn root.left != null ? 1 : 0;\n}\n",
+    "python": "def deleteWord(self, root, word):\n    if root is None:\n        return\n    if not word:\n        return\n\n    # Incorrectly deleting the word by not updating the children of the parent nodes\n    if root.c == word[0):\n        deleteWord(root, word[1:]\n    elif root.c > word[0):\n        deleteWord(root.left, word)\n    else:\n        deleteWord(root.right, word)\n\n    return root\n\ndef countWords(self, root):\n    if root is None:\n        return 0\n\n    # Incorrectly counting the children of the root node as words\n    return root.left != None ? 1 : 0\n",
+    "javascript": "deleteWord(root, word) {\nif (root === null) return;\nif (word === '') return;\n\n// Incorrectly deleting the word by not updating the children of the parent nodes\nif (root.c === word[0]) {\ndeleteWord(root, word.substring(1));\n}\nelse if (root.c > word[0]) {\ndeleteWord(root.left, word);\n}\nelse {\ndeleteWord(root.right, word);\n}\n}\n\ncountWords(root) {\nif (root === null) return 0;\n\n// Incorrectly counting the children of the root node as words\nreturn root.left !== null ? 1 : 0;\n}"
+  },
+  "functionSignature": {
+    "cpp": "void deleteWord(TrieNode* root, const string& word);\nint countWords(TrieNode* root);",
+    "java": "public void deleteWord(TrieNode root, String word);\npublic int countWords(TrieNode root);",
+    "python": "def deleteWord(self, root, word):\ndef countWords(self, root):",
+    "javascript": "deleteWord(root, word);\ncountWords(root);"
+  },
+  "solutions": {
+    "python": "from sys import stdin\n\nclass Solution:\n\ndef insert(self, root, word):\n\tfor i in range(len(word)):\n\t\tif root.left is None:\n\t\t\troot.left = TrieNode(word[i])\n\t\troot = root.left\n\t\telse:\n\t\t\troot = root.left\n\n\tfor i in range(len(word)):\n\t\tif root.right is None:\n\t\t\troot.right = TrieNode(word[i])\n\t\troot = root.right\n\t\telse:\n\t\t\troot = root.right\n\n\ndef deleteWord(self, root, word):\n\tdef _deleteWord(root, word, index):\n\t\tif index == len(word):\n\t\t\tif root.left is None:\n\t\t\t\treturn\n\t\t\troot.left = None\n\t\t\treturn\n\n\t\telse:\n\t\t\tif root.left is not None and root.left.c == word[index]:\n\t\t\t\t_deleteWord(root.left, word, index + 1)\n\t\t\telif root.right is not None and root.right.c == word[index]:\n\t\t\t\t_deleteWord(root.right, word, index + 1)\n\t\t\telse:\n\t\t\t\troot.left = None\n\t\t\t\troot.right = None\n\t\t\treturn\n\n\t\t\t_deleteWord(root, word, index + 1)\n\n\tdef deleteWordHelper(root, word):\n\t\troot.left, root.right = _deleteWord(root.left, word, 0), _deleteWord(root.right, word, 0)\n\t\treturn root\n\n\treturn deleteWordHelper(root, word)\n\n\ndef countWords(self, root):\n\tdef _countWords(root):\n\t\tif root is None:\n\t\t\treturn 0\n\n\t\telse:\n\t\t\treturn 1 + _countWords(root.left) + _countWords(root.right)\n\n\treturn _countWords(root)\n\nroot = None\nnum_operations = int(stdin.readline())\nfor _ in range(num_operations):\n\toperation = stdin.readline().split()\n\tif operation[0] == 'INSERT':\n\t\tword = operation[1]\n\t\troot = Solution().insert(root, word)\n\telif operation[0] == 'DELETE':\n\t\tword = operation[1]\n\t\troot = Solution().deleteWord(root, word)\n\n\nprint(Solution().countWords(root))",
+    "cpp": "// C++ solution file\n#include <iostream>\n#include <sstream>\n#include <string>\n#include <vector>\n\nusing namespace std;\n\nconst int BUFFER_SIZE = 1024;\n\nclass Solution {\npublic:\nvoid insert(TrieNode* root, const string& word);\nvoid deleteWord(TrieNode* root, const string& word);\nvoid autoComplete(TrieNode* root, const string& word, int index);\n\nint countWords(TrieNode* root);\n};\n\nstruct TrieNode {\nchar c;\nTrieNode* left;\nTrieNode* right;\n};\n\nvoid Solution::insert(TrieNode* root, const string& word) {\nfor (int i = 0; i < word.length(); ++i) {\nif (root->left == nullptr) {\nroot->left = new TrieNode();\nroot->left->c = word[i];\n}\nroot = root->left;\n}\nfor (int i = 0; i < word.length(); ++i) {\nif (root->right == nullptr) {\nroot->right = new TrieNode();\nroot->right->c = word[i];\n}\nroot = root->right;\n}\n}\n\nvoid Solution::deleteWord(TrieNode* root, const string& word) {\ndefine _deleteWord(TrieNode* root, const string& word, int index) {\nif (index == word.length()) {\nif (root->left == nullptr) {\nreturn;\n}\nroot->left = nullptr;\nreturn;\n}\n\nelse {\nif (root->left != nullptr && root->left->c == word[index]) {\n_deleteWord(root->left, word, index + 1);\n}\nelse if (root->right != nullptr && root->right->c == word[index]) {\n_deleteWord(root->right, word, index + 1);\n}\nelse {\nroot->left = nullptr;\nroot->right = nullptr;\nreturn;\n}\n}\n}\n\ndefine deleteWordHelper(TrieNode* root, const string& word) {\nroot->left = _deleteWord(root->left, word, 0);\nroot->right = _deleteWord(root->right, word, 0);\nreturn root;\n}\n\nreturn deleteWordHelper(root, word);\n}\n\nint Solution::countWords(TrieNode* root) {\ndefine _countWords(TrieNode* root) {\nif (root == nullptr) {\nreturn 0;\n}\n\nelse {\nreturn 1 + _countWords(root->left) + _countWords(root->right);\n}\n}\n\nreturn _countWords(root);\n}\n\nint main() {\nTrieNode* root = nullptr;\nint num_operations;\nscanf(\"%d\", &num_operations);\nfor (int i = 0; i < num_operations; ++i) {\nchar operation[BUFFER_SIZE];\nscanf(\"%s\", operation);\nif (strcmp(operation, \"INSERT\") == 0) {\nchar word[BUFFER_SIZE];\nscanf(\"%s\", word);\nroot = Solution().insert(root, word);\n}\nelse if (strcmp(operation, \"DELETE\") == 0) {\nchar word[BUFFER_SIZE];\nscanf(\"%s\", word);\nroot = Solution().deleteWord(root, word);\n}\n}\n\nprintf(\"%d\", Solution().countWords(root));\nreturn 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "INSERT cat\nINSERT dog\nDELETE cat\n",
+      "output": "1",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "INSERT cat dog\nDELETE cat\n",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

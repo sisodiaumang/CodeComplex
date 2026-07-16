@@ -20,7 +20,8 @@ import {
     updateCountry,
     updateFullName,
     updateSocials,
-    updateMascot
+    updateMascot,
+    updateBanner
 } from "../controllers/user.controllers.js";
 import { createReport } from "../controllers/admin.controller.js";
 
@@ -42,6 +43,7 @@ import {
     updateFullNameSchema,
     updateSocialsSchema,
     updateMascotSchema,
+    updateBannerSchema,
 } from "../validators/auth.validator.js";
 
 const userRouter = Router();
@@ -75,6 +77,7 @@ userRouter.route("/country").patch(verifyJWT, validateRequest(updateCountrySchem
 userRouter.route("/fullname").patch(verifyJWT, validateRequest(updateFullNameSchema), updateFullName);
 userRouter.route("/socials").patch(verifyJWT, validateRequest(updateSocialsSchema), updateSocials);
 userRouter.route("/mascot").patch(verifyJWT, validateRequest(updateMascotSchema), updateMascot);
+userRouter.route("/banner").patch(verifyJWT, validateRequest(updateBannerSchema), updateBanner);
 userRouter.route("/report").post(verifyJWT, createReport);
 
 // ─── Public profile lookup — keep LAST among GET routes ───────────────

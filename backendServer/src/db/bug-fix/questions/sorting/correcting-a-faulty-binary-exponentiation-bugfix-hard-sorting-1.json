@@ -1,0 +1,188 @@
+{
+  "_id": "e8c64c1d68ebb8d36660ccd0",
+  "title": "Correcting a Faulty Binary Exponentiation",
+  "slug": "correcting-a-faulty-binary-exponentiation-bugfix-hard-sorting-1",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "Number Theory",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 40,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "math",
+      "number theory"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "You are given a function `binary_exponentiation` that is meant to compute `a` raised to the power of `b` modulo `m`. However, it contains a logical bug. Your task is to identify and fix the bug to ensure that the function works correctly for all valid inputs.\n\n**Function Signature:** `void binary_exponentiation(int a, int b, int m);`\n\n**Constraints:**\n\n*   `-1 < a < 1e9`\n*   `0 <= b < 1e9`\n*   `2 <= m <= 1e9`\n\n**Example Cases:**\n\n*   `a = 2, b = 10, m = 7`: `binary_exponentiation(2, 10, 7)` should output `1024`\n*   `a = 3, b = 5, m = 11`: `binary_exponentiation(3, 5, 11)` should output `1`\n*   `a = 123456789, b = 987654321, m = 1000000007`: `binary_exponentiation(123456789, 987654321, 1000000007)` should output `123456789`\n",
+    "inputFormat": "Three integers `a`, `b`, and `m` representing the base, exponent, and modulus respectively.",
+    "outputFormat": "The result of `a` raised to the power of `b` modulo `m`.",
+    "notes": "Your task is to identify and fix the bug in the given function `binary_exponentiation`. The function should work for all valid inputs.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "a",
+        "type": "integer",
+        "min": "-1",
+        "max": "1e9",
+        "description": "Base"
+      },
+      {
+        "variable": "b",
+        "type": "integer",
+        "min": "0",
+        "max": "1e9",
+        "description": "Exponent"
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": "2",
+        "max": "1e9",
+        "description": "Modulus"
+      }
+    ],
+    "examples": [
+      {
+        "input": "2 10 7",
+        "output": "1024",
+        "explanation": ""
+      },
+      {
+        "input": "3 5 11",
+        "output": "1",
+        "explanation": ""
+      },
+      {
+        "input": "123456789 987654321 1000000007",
+        "output": "123456789",
+        "explanation": ""
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Firstly, you should identify the bug in the given function `binary_exponentiation`. Think about how modular exponentiation works."
+    }
+  ],
+  "editorial": {
+    "title": "Correct Approach and Bug Fix",
+    "intuition": "Modular exponentiation is a technique used to efficiently compute `a` raised to the power of `b` modulo `m`. It is based on the property that `(a*b) mod m = ((a mod m) * (b mod m)) mod m`.\n\nThe correct approach to implementing `binary_exponentiation` is to use this property to reduce the exponent `b` to a smaller value and then apply the exponentiation by squaring technique to calculate the final result.\n\nHowever, you should consider that the function `binary_exponentiation` should be able to handle both positive and negative bases. For a negative base, you can use the property that `a^(-b) mod m = (a^(m-1))^b mod m`.",
+    "bruteForce": "A brute force approach to `binary_exponentiation` would involve computing `a^b` directly and then applying the modulo operator `m`. However, this approach has a time complexity of O(b) because it involves repeated multiplication.",
+    "betterSolution": "A better solution would involve using the exponentiation by squaring technique, which has a time complexity of O(log b) because it involves dividing the exponent `b` by 2 in each iteration.",
+    "optimalSolution": "The optimal solution involves using the optimal exponentiation by squaring technique, which has a time complexity of O(log b). This approach reduces the exponent `b` to a smaller value by using the property that `(a*b) mod m = ((a mod m) * (b mod m)) mod m`.\n\nHere is the optimal solution in Python:\ndef binary_exponentiation(a, b, m):\n    if a < 0:\n        return pow(-a, b, m)\n    if b == 0:\n        return 1\n    if b % 2 == 0:\n        half_power = binary_exponentiation(a, b // 2, m)\n        return (half_power * half_power) % m\n    else:\n        return (a * binary_exponentiation(a, b - 1, m)) % m\n",
+    "proofOfCorrectness": "The correctness of the optimal solution can be proved by mathematical induction on the exponent `b`. The base case is when `b` is 0, in which case the function `binary_exponentiation` returns 1. For the inductive step, we can assume that the function `binary_exponentiation` works for the exponent `b-1` and show that it also works for the exponent `b`. This is because if `b` is even, we can divide the exponent by 2 and use the property that `(a*b) mod m = ((a mod m) * (b mod m)) mod m` to calculate the final result. If `b` is odd, we can use the property that `a^(-b) mod m = (a^(m-1))^b mod m` to calculate the final result.",
+    "dryRun": "To test the function `binary_exponentiation`, we can use the following inputs: `a = 2`, `b = 10`, and `m = 7`. We can plug these values into the function and verify that the output is `1024`, which is the correct result.",
+    "commonMistakes": [
+      "Using a brute force approach to compute `a^b` directly.",
+      "Not handling negative bases correctly."
+    ],
+    "timeComplexity": "O(log b)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\n    public:\n        void binary_exponentiation(int a, int b, int m) {\n            // TODO: implement\n        }\n    };\n",
+    "java": "public class Solution {\n    public:\n        void binary_exponentiation(int a, int b, int m) {\n            // TODO: implement\n        }\n    }\n",
+    "python": "class Solution(\n    def binary_exponentiation(self, a, b, m):\n        # TODO: implement\n        pass\n",
+    "javascript": "var Solution = function() {\n    return {\n        binaryExponentiation: function(a, b, m) {\n            // TODO: implement\n        }\n    };\n};\n"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\n    public:\n        void binary_exponentiation(int a, int b, int m) {\n            if (a == 0) {\n                cout << 0;\n                return;\n            }\n            int power = 1;\n            while (b > 0) {\n                if (b % 2 == 1) {\n                    power = (power * a) % m;\n                }\n                a = (a * a) % m;\n                b = b / 2;\n            }\n            cout << power;\n        }\n    };\n",
+    "java": "public class Solution {\n    public:\n        void binary_exponentiation(int a, int b, int m) {\n            if (a == 0) {\n                System.out.println(0);\n                return;\n            }\n            int power = 1;\n            while (b > 0) {\n                if (b % 2 == 1) {\n                    power = (power * a) % m;\n                }\n                a = (a * a) % m;\n                b = b / 2;\n            }\n            System.out.println(power);\n        }\n    }\n",
+    "python": "class Solution:\n    def binary_exponentiation(self, a, b, m):\n        if a == 0:\n            return 0\n        power = 1\n        while b > 0:\n            if b % 2 == 1:\n                power = (power * a) % m\n            a = (a * a) % m\n            b = b / 2\n        return power\n",
+    "javascript": "var Solution = function() {\n    return {\n        binaryExponentiation: function(a, b, m) {\n            if (a == 0) {\n                console.log(0);\n                return;\n            }\n            var power = 1;\n            while (b > 0) {\n                if (b % 2 == 1) {\n                    power = (power * a) % m;\n                }\n                a = (a * a) % m;\n                b = b / 2;\n            }\n            console.log(power);\n        }\n    };\n};\n"
+  },
+  "functionSignature": {
+    "cpp": "void binary_exponentiation(int a, int b, int m);",
+    "java": "void binary_exponentiation(int a, int b, int m);",
+    "python": "def binary_exponentiation(self, a, b, m):",
+    "javascript": "var binaryExponentiation = function(a, b, m)"
+  },
+  "solutions": {
+    "cpp": "class Solution {\n    public:\n        void binary_exponentiation(int a, int b, int m) {\n            if (a < 0) {\n                a = (m - 1) % m;\n            }\n            int power = 1;\n            while (b > 0) {\n                if (b % 2 == 1) {\n                    power = (power * a) % m;\n                }\n                a = (a * a) % m;\n                b = b / 2;\n            }\n            cout << power;\n        }\n    };\n",
+    "java": "public class Solution {\n    public:\n        void binary_exponentiation(int a, int b, int m) {\n            if (a < 0) {\n                a = (m - 1) % m;\n            }\n            int power = 1;\n            while (b > 0) {\n                if (b % 2 == 1) {\n                    power = (power * a) % m;\n                }\n                a = (a * a) % m;\n                b = b / 2;\n            }\n            System.out.println(power);\n        }\n    }\n",
+    "python": "class Solution:\n    def binary_exponentiation(self, a, b, m):\n        if a < 0:\n            a = (m - 1) % m\n        power = 1\n        while b > 0:\n            if b % 2 == 1:\n                power = (power * a) % m\n            a = (a * a) % m\n            b = b / 2\n        return power\n",
+    "javascript": "var Solution = function() {\n    return {\n        binaryExponentiation: function(a, b, m) {\n            if (a < 0) {\n                a = (m - 1) % m;\n            }\n            var power = 1;\n            while (b > 0) {\n                if (b % 2 == 1) {\n                    power = (power * a) % m;\n                }\n                a = (a * a) % m;\n                b = b / 2;\n            }\n            console.log(power);\n        }\n    };\n};\n",
+    "python-executable": "import sys\n\nclass Solution:\n    def binary_exponentiation(self):\n        a = int(input().split()[0])\n        b = int(input().split()[0])\n        m = int(input().split()[0])\n        if a < 0:\n            a = (m - 1) % m\n        power = 1\n        while b > 0:\n            if b % 2 == 1:\n                power = (power * a) % m\n            a = (a * a) % m\n            b = b / 2\n        print(power)\n\n    def main(self):\n        self.binary_exponentiation()\n        return\n\nif __name__ == '__main__':\n    solution = Solution()\n    solution.main()\n",
+    "cpp-executable": "#include <iostream>\n\nusing namespace std;\n\nclass Solution {\n    public:\n        void binary_exponentiation(int a, int b, int m) {\n            if (a < 0) {\n                a = (m - 1) % m;\n            }\n            int power = 1;\n            while (b > 0) {\n                if (b % 2 == 1) {\n                    power = (power * a) % m;\n                }\n                a = (a * a) % m;\n                b = b / 2;\n            }\n            cout << power;\n        }\n    };\n\nint main() {\n    int a, b, m;\n    cin >> a >> b >> m;\n    Solution solution;\n    solution.binary_exponentiation(a, b, m);\n    return 0;\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "2 10 7",
+      "output": "1024",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "3 5 11",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    },
+    {
+      "id": "tc_3",
+      "input": "123456789 987654321 1000000007",
+      "output": "123456789",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

@@ -1,0 +1,216 @@
+{
+  "_id": "symmetric-binary-tree",
+  "title": "Symmetric Binary Tree",
+  "slug": "symmetric-binary-tree",
+  "difficulty": "Medium",
+  "category": "TREE",
+  "subCategory": "Medium Problems",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 500,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "Binary Trees",
+      "Tree Traversal",
+      "Recursion"
+    ],
+    "patterns": [
+      "isSymmetric",
+      "checkSymmetry",
+      "symmetricTree"
+    ],
+    "prerequisites": [
+      "Binary Tree Basics",
+      "Recursion Basics"
+    ],
+    "variants": [],
+    "tags": [
+      "Tree",
+      "Recursion",
+      "Symmetry",
+      "Binary Tree"
+    ],
+    "keywords": [
+      "left subtree",
+      "right subtree",
+      "isomorphic",
+      "mirror"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "Given the root of a binary tree, check whether it is a mirror of itself (i.e., symmetric around its center).\n\n**Definition:**\n\nA binary tree is symmetric if:\n\n- The left subtree is a mirror reflection of the right subtree.\n\n**Example 1:**\n\n        1\n       / \\\n      2   2\n     /  / \\\n    3  4 4  3\n\n**Example 2:**\n\n        1\n       / \\\n      2   2\n       \\   \\\n        3     3\n\n**Example 3:**\n\n        1\n       / \\\n      2   2\n     / \\\n    3   4\n\n**Follow-up:**\n\nBonus points if you could solve this problem without using recursion.",
+    "inputFormat": "The number of nodes in the tree\nThe root node value\nThe left child value of the root node\nThe right child value of the root node\n... (Recursively for each node, -1 for null)",
+    "outputFormat": "1 if the tree is symmetric, 0 otherwise",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "Number of nodes in the tree",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of nodes in the tree"
+      },
+      {
+        "variable": "Node values",
+        "type": "integer",
+        "min": -10000,
+        "max": 10000,
+        "description": "The values of the nodes in the tree"
+      }
+    ],
+    "examples": [
+      {
+        "input": "8\n1\n2\n3\n4\n-1\n-1\n5\n6\n-1\n-1\n-1\n-1",
+        "output": "0",
+        "explanation": "The tree is symmetric"
+      },
+      {
+        "input": "5\n1\n2\n3\n-1\n-1\n-1\n-1",
+        "output": "0",
+        "explanation": "The tree is not symmetric"
+      },
+      {
+        "input": "3\n1\n2\n2\n3\n4\n4\n3",
+        "output": "1",
+        "explanation": "The tree is symmetric"
+      },
+      {
+        "input": "4\n1\n2\n2\n-1\n3\n-1\n-1",
+        "output": "1",
+        "explanation": "The tree is not symmetric"
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "To determine if a binary tree is symmetric, consider the properties of a mirror reflection. Think about how the left and right subtrees relate to each other in a symmetric tree."
+    },
+    {
+      "order": 2,
+      "text": "A symmetric binary tree can be checked by comparing the left subtree with the right subtree, but with a twist. Consider how you can modify the tree traversal to account for the mirror reflection. Think about using a queue to store nodes for comparison."
+    },
+    {
+      "order": 3,
+      "text": "When comparing nodes from the left and right subtrees, consider the following: if the values of the nodes are equal, then check their children. For a node from the left subtree, its left child should be compared with the right child of the node from the right subtree, and vice versa. Think about how to implement this comparison iteratively."
+    }
+  ],
+  "editorial": {
+    "title": "Symmetric Binary Tree Verification",
+    "intuition": "The problem requires determining if a given binary tree is symmetric around its root. A key observation is that a tree is symmetric if its left and right subtrees are mirror images of each other.",
+    "bruteForce": "A brute force approach would involve traversing the tree and storing its nodes in a data structure. Then, for each node, it would check if the corresponding mirrored node exists and has the same value. This approach is correct but slow because it involves a lot of repeated work and potentially a lot of memory to store the tree structure.",
+    "betterSolution": "The optimal approach is to use a recursive function to check if two trees are mirror images of each other. This approach takes advantage of the tree structure and avoids the need to store the entire tree in memory.",
+    "optimalSolution": "The optimal solution uses a recursive approach with a time complexity of O(n) and a space complexity of O(n), where n is the number of nodes in the tree. This approach checks if the left and right subtrees of the root are mirror images of each other.",
+    "proofOfCorrectness": "The correctness of the optimal solution can be proven by showing that it correctly checks if two trees are mirror images of each other. The base case is when both trees are empty, in which case they are mirror images. The recursive case checks if the values of the nodes are equal and if the left subtree of one tree is a mirror image of the right subtree of the other tree, and vice versa.",
+    "dryRun": "A dry run of the optimal solution with a sample input can help verify its correctness. For example, with the input values [1, 2, 2, 3, -1, 3, -1], the solution should return 1, indicating that the tree is symmetric.",
+    "commonMistakes": [
+      "Not handling the case where the input tree is empty",
+      "Not checking if the values of the nodes are equal",
+      "Not recursively checking if the subtrees are mirror images",
+      "Using an iterative approach instead of a recursive one",
+      "Not considering the space complexity of the solution",
+      "Not verifying the correctness of the solution with a dry run"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass TreeNode {\npublic:\n    int val;\n    TreeNode *left;\n    TreeNode *right;\n    TreeNode() : val(0), left(NULL), right(NULL) {}\n    TreeNode(int x) : val(x), left(NULL), right(NULL) {}\n};\n\nclass Solution {\npublic:\n    bool isSymmetric(TreeNode* root) {\n        // TODO: implement\n        return true;\n    }\n};",
+    "java": "import java.util.*;\n\nclass TreeNode {\n    int val;\n    TreeNode left;\n    TreeNode right;\n    TreeNode(int x) { val = x; }\n}\n\nclass Solution {\n    public boolean isSymmetric(TreeNode root) {\n        // TODO: implement\n        return true;\n    }\n}",
+    "python": "class TreeNode:\n    def __init__(self, val=0, left=None, right=None):\n        self.val = val\n        self.left = left\n        self.right = right\n\nclass Solution:\n    def isSymmetric(self, root: TreeNode) -> bool:\n        # TODO: implement\n        pass",
+    "javascript": "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n\n/**\n * @param {TreeNode} root\n * @return {boolean}\n */\nvar isSymmetric = function(root) {\n    // TODO: implement\n    return true;\n};"
+  },
+  "functionSignature": {
+    "cpp": "bool isSymmetric(TreeNode* root);",
+    "java": "public boolean isSymmetric(TreeNode root);",
+    "python": "def isSymmetric(self, root: TreeNode) -> bool:",
+    "javascript": "var isSymmetric = function(root);"
+  },
+  "solutions": {
+    "python": "import sys\n\nclass TreeNode:\n    def __init__(self, x):\n        self.val = x\n        self.left = None\n        self.right = None\n\nclass Solution:\n    def isSymmetric(self, root: TreeNode) -> bool:\n        if root is None:\n            return True\n        return self.isMirror(root.left, root.right)\n\n    def isMirror(self, left, right):\n        if left is None and right is None:\n            return True\n        if left is None or right is None:\n            return False\n        return (left.val == right.val) and self.isMirror(left.right, right.left) and self.isMirror(left.left, right.right)\n\nif __name__ == '__main__':\n    n = int(sys.stdin.readline().strip())\n    nodes = []\n    for _ in range(n):\n        nodes.append(int(sys.stdin.readline().strip()))\n    root = TreeNode(nodes[0])\n    nodeList = [root]\n    i = 1\n    while i < n:\n        currentNode = nodeList.pop(0)\n        leftVal = nodes[i]\n        i += 1\n        if leftVal != -1:\n            currentNode.left = TreeNode(leftVal)\n            nodeList.append(currentNode.left)\n        if i < n:\n            rightVal = nodes[i]\n            i += 1\n            if rightVal != -1:\n                currentNode.right = TreeNode(rightVal)\n                nodeList.append(currentNode.right)\n    sol = Solution()\n    print(1 if sol.isSymmetric(root) else 0)",
+    "cpp": "#include <numeric>\n#include <iostream>\n#include <vector>\nusing namespace std;\n\nstruct TreeNode {\n    int val;\n    TreeNode *left;\n    TreeNode *right;\n    TreeNode(int x) : val(x), left(NULL), right(NULL) {}\n};\n\nclass Solution {\npublic:\n    bool isSymmetric(TreeNode* root) {\n        if (root == NULL) return true;\n        return isMirror(root->left, root->right);\n    }\n\n    bool isMirror(TreeNode* left, TreeNode* right) {\n        if (left == NULL && right == NULL) return true;\n        if (left == NULL || right == NULL) return false;\n        return (left->val == right->val) && isMirror(left->right, right->left) && isMirror(left->left, right->right);\n    }\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int n;\n    cin >> n;\n    vector<int> nodes(n);\n    for (int i = 0; i < n; i++) cin >> nodes[i];\n    TreeNode* root = new TreeNode(nodes[0]);\n    vector<TreeNode*> nodeList = {root};\n    int i = 1;\n    while (i < n) {\n        TreeNode* currentNode = nodeList.front();\n        nodeList.erase(nodeList.begin());\n        int leftVal = nodes[i++];\n        if (leftVal != -1) {\n            currentNode->left = new TreeNode(leftVal);\n            nodeList.push_back(currentNode->left);\n        }\n        if (i < n) {\n            int rightVal = nodes[i++];\n            if (rightVal != -1) {\n                currentNode->right = new TreeNode(rightVal);\n                nodeList.push_back(currentNode->right);\n            }\n        }\n    }\n    Solution sol;\n    cout << (sol.isSymmetric(root) ? 1 : 0) << endl;\n    return 0;\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.2
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "8\n1\n2\n3\n4\n-1\n-1\n5\n6\n-1\n-1\n-1\n-1",
+      "output": "0",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "5\n1\n2\n3\n-1\n-1\n-1\n-1",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_3",
+      "input": "3\n1\n2\n2\n3\n4\n4\n3",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_4",
+      "input": "4\n1\n2\n2\n-1\n3\n-1\n-1",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint_5",
+      "input": "1\n1",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

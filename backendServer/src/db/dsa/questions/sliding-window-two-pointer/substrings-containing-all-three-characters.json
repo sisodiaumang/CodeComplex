@@ -1,0 +1,197 @@
+{
+  "_id": "substrings-containing-all-three-characters",
+  "title": "Substrings Containing All Three Characters",
+  "slug": "substrings-containing-all-three-characters",
+  "difficulty": "Hard",
+  "category": "ARRAY",
+  "subCategory": "Medium Problems",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 600,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "ARRAY",
+      "STRING",
+      "GREEDY"
+    ],
+    "patterns": [
+      "sliding window",
+      "two pointer"
+    ],
+    "prerequisites": [
+      "Sliding Window Technique",
+      "Two Pointer Technique"
+    ],
+    "variants": [],
+    "tags": [
+      "substring",
+      "string",
+      "sliding window",
+      "two pointer"
+    ],
+    "keywords": [
+      "all three characters",
+      "substring",
+      "string",
+      "sliding window",
+      "two pointer"
+    ],
+    "interviewFrequency": 4,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "Given a string `s` consisting only of characters `a`, `b` and `c`, return the number of substrings containing at least one occurrence of all these characters `a`, `b` and `c`.",
+    "inputFormat": "s",
+    "outputFormat": "%d",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "s",
+        "type": "string",
+        "min": 3,
+        "max": 500,
+        "description": "The input string consisting only of characters a, b and c"
+      }
+    ],
+    "examples": [
+      {
+        "input": "abcabc",
+        "output": "21",
+        "explanation": "The substrings containing at least one occurrence of all characters a, b and c are \"abc\", \"abca\", \"abcab\", \"abcabc\", \"bcab\", \"bcabc\", \"cabc\", \"abc\", \"bca\", \"cab\"."
+      },
+      {
+        "input": "aaacb",
+        "output": "15",
+        "explanation": "The substrings containing at least one occurrence of all characters a, b and c are \"aaacb\", \"aacb\" and \"acb\"."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "To find the number of substrings containing all three characters, consider using a sliding window approach, where you maintain a window of characters and expand or shrink it based on the presence of 'a', 'b', and 'c'."
+    },
+    {
+      "order": 2,
+      "text": "You can utilize a frequency map to track the occurrence of each character within the current window, ensuring that all three characters are present before counting the substring. This frequency map can be updated as the window moves or changes size."
+    },
+    {
+      "order": 3,
+      "text": "The key to solving this problem efficiently lies in identifying the minimum window size that contains all three characters and then expanding from this minimum window to count all possible substrings that also contain 'a', 'b', and 'c'. This involves understanding how the window's boundaries affect the count of valid substrings."
+    }
+  ],
+  "editorial": {
+    "title": "Substrings Containing All Three Characters",
+    "intuition": "The problem asks us to count the number of substrings in a given string that contain all three characters 'a', 'b', and 'c'. A brute force approach seems intuitive as it checks every possible substring.",
+    "bruteForce": "The brute force solution is correct but slow because it generates all possible substrings of the input string and checks each one for the presence of 'a', 'b', and 'c'. This results in a time complexity of O(n^2) due to the nested loop structure.",
+    "betterSolution": "A more efficient approach involves using a sliding window technique to reduce the number of substring checks, but this problem's constraints and the specific requirement to count all substrings containing 'a', 'b', and 'c' make the brute force approach somewhat inevitable for simplicity and clarity.",
+    "optimalSolution": "Given the problem's nature and the need to examine all substrings, the provided reference solution is essentially the optimal approach under the constraints, as it directly addresses the requirement with minimal overhead, despite its O(n^2) time complexity.",
+    "proofOfCorrectness": "The correctness of the solution can be proven by recognizing that it exhaustively checks every possible substring of the input string. Since it counts a substring if and only if it contains all three characters 'a', 'b', and 'c', it accurately fulfills the problem's requirements.",
+    "dryRun": "To validate the approach, one can manually apply it to a small input string, such as 'abc', and verify that it correctly counts the substrings containing all three characters.",
+    "commonMistakes": [
+      "Not checking all possible substrings",
+      "Incorrectly counting substrings that do not contain all three characters",
+      "Failing to initialize the count variable",
+      "Not iterating over the string correctly to generate all substrings"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    int numberOfSubstrings(string s) {\n        // TODO: implement\n        return 0;\n    }\n};",
+    "java": "import java.util.*;\n\nclass Solution {\n    public int numberOfSubstrings(String s) {\n        // TODO: implement\n        return 0;\n    }\n}",
+    "python": "class Solution:\n    def numberOfSubstrings(self, s: str) -> int:\n        # TODO: implement\n        pass",
+    "javascript": "/**\n * @param {string} s\n * @return {number}\n */\nvar numberOfSubstrings = function(s) {\n    // TODO: implement\n    return 0;\n};"
+  },
+  "functionSignature": {
+    "cpp": "int numberOfSubstrings(string s);",
+    "java": "public int numberOfSubstrings(String s);",
+    "python": "def numberOfSubstrings(self, s: str) -> int:",
+    "javascript": "var numberOfSubstrings = function(s);"
+  },
+  "solutions": {
+    "python": "import sys\n\nclass Solution:\n    def numberOfSubstrings(self, s: str) -> int:\n        count = [0, 0, 0]\n        left = 0\n        res = 0\n        for right in range(len(s)):\n            if s[right] == 'a':\n                count[0] += 1\n            elif s[right] == 'b':\n                count[1] += 1\n            else:\n                count[2] += 1\n            while min(count) > 0:\n                if s[left] == 'a':\n                    count[0] -= 1\n                elif s[left] == 'b':\n                    count[1] -= 1\n                else:\n                    count[2] -= 1\n                left += 1\n            res += len(s) - right\n        return res\n\nif __name__ == '__main__':\n    s = sys.stdin.read().strip()\n    sol = Solution()\n    ans = sol.numberOfSubstrings(s)\n    print(ans)",
+    "cpp": "#include <numeric>\n#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    int numberOfSubstrings(string s) {\n        int count[3] = {0};\n        int left = 0;\n        int res = 0;\n        for (int right = 0; right < s.size(); right++) {\n            if (s[right] == 'a') {\n                count[0]++;\n            } else if (s[right] == 'b') {\n                count[1]++;\n            } else {\n                count[2]++;\n            }\n            while (*min_element(count, count + 3) > 0) {\n                if (s[left] == 'a') {\n                    count[0]--;\n                } else if (s[left] == 'b') {\n                    count[1]--;\n                } else {\n                    count[2]--;\n                }\n                left++;\n            }\n            res += s.size() - right;\n        }\n        return res;\n    }\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    string s;\n    cin >> s;\n    Solution sol;\n    int ans = sol.numberOfSubstrings(s);\n    cout << ans << \"\\n\";\n    return 0;\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.5
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "abcabc",
+      "output": "21",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "aaacb",
+      "output": "15",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint_3",
+      "input": "abc",
+      "output": "6",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "boundary_4",
+      "input": "cbaccba",
+      "output": "28",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    },
+    {
+      "id": "duplicate_5",
+      "input": "aaabbbccc",
+      "output": "45",
+      "isVisible": false,
+      "weight": 1,
+      "category": "duplicate"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

@@ -1,0 +1,141 @@
+{
+  "title": "DOCKER Container Exposed Port Mappings Validator with Incorrect Port Range",
+  "subCategory": "Docker Port Mapping",
+  "statement": {
+    "markdown": "Given a Docker Compose file, validate that each service's exposed ports are within the allowed range of 1024 to 65535. If a service exposes a port outside this range, return an error message indicating the service name and the invalid port number. If all services' exposed ports are valid, return an empty string.",
+    "inputFormat": "A string representing the Docker Compose file contents.",
+    "outputFormat": "A string representing the validation result, either an error message or an empty string.",
+    "notes": "Assume that the Docker Compose file is well-formed and does not contain any syntax errors.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of services in the Docker Compose file."
+      }
+    ],
+    "examples": [
+      {
+        "input": "version: '3'\nweb:\n  port: 80\n  expose:\n    - 8080\n",
+        "output": "0",
+        "explanation": "The port 8080 is within the allowed range."
+      },
+      {
+        "input": "version: '3'\nweb:\n  port: 80\n  expose:\n    - 8081\n",
+        "output": "Error: web exposes port 8081, which is outside the allowed range.",
+        "explanation": "The port 8081 is outside the allowed range."
+      },
+      {
+        "input": "version: '3'\nweb:\n  port: 80\n  expose:\n    - 65536\n",
+        "output": "Error: web exposes port 65536, which is outside the allowed range.",
+        "explanation": "The port 65536 is outside the allowed range."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 70,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DOCKER"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "docker"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "function validateExposedPorts(dockerComposeFile) {\n  // Implement your solution here\n}",
+    "python": "class Solution:\n    def validateExposedPorts(self, dockerComposeFile: str) -> str:\n        # Implement your solution here\n"
+  },
+  "buggyStarterCode": {
+    "javascript": "function validateExposedPorts(dockerComposeFile) {\n  const services = dockerComposeFile.match(/services:\n  - (.*?)\n/gs)\n  const exposedPorts = {};\n  services.forEach((service) => {\n    const serviceName = service.match(/(.*?)\n/gs)[1];\n    const ports = service.match(/port:\n  - (.*?)\n/gs);\n    if (ports) {\n      ports.forEach((port) => {\n        const portNumber = port.match(/- (.*?)\n/gs)[1];\n        if (exposedPorts[serviceName]) {\n          exposedPorts[serviceName].push(portNumber);\n        } else {\n          exposedPorts[serviceName] = [portNumber];\n        }\n      });\n    }\n  });\n  Object.keys(exposedPorts).forEach((serviceName) => {\n    const ports = exposedPorts[serviceName];\n    if (ports.some((port) => port < 1024 || port > 65535)) {\n      return `Error: ${serviceName} exposes port ${ports[0]}, which is outside the allowed range.`\n    }\n  });\n  return '';\n}",
+    "python": "class Solution:\n    def validateExposedPorts(self, dockerComposeFile: str) -> str:\n        import re\n        services = re.findall(r'services:\n  - (.*?)\n', dockerComposeFile)\n        exposedPorts = {}\n        for service in services:\n            port = re.findall(r'port:\n  - (.*?)\n', service)\n            if port:\n                portNumber = int(port[0])\n                if serviceName in exposedPorts:\n                    exposedPorts[serviceName].append(portNumber)\n                else:\n                    exposedPorts[serviceName] = [portNumber]\n        for serviceName, ports in exposedPorts.items():\n            if ports[0] < 1024 or ports[0] > 65535:\n                return f'Error: {serviceName} exposes port {ports[0]}, which is outside the allowed range.'\n        return ''"
+  },
+  "functionSignature": {
+    "javascript": "var validateExposedPorts = function(dockerComposeFile) {\n  // Implement your solution here\n}",
+    "python": "def validateExposedPorts(self, dockerComposeFile: str) -> str:\n    # Implement your solution here\n"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction validateExposedPorts(dockerComposeFile) {\n  const services = dockerComposeFile.split('services:');\n  services.shift();\n  const exposedPorts = {};\n  services.forEach((service) => {\n    const serviceName = service.split('  -')[1].split('\\n')[0];\n    const ports = service.split('\\nport: \\s+-');\n    ports.shift();\n    const portArray = ports.map((port) => port.trim());\n    if (exposedPorts[serviceName]) {\n      exposedPorts[serviceName].push(...portArray);\n    } else {\n      exposedPorts[serviceName] = [...portArray];\n    }\n  });\n  Object.keys(exposedPorts).forEach((serviceName) => {\n    const ports = exposedPorts[serviceName];\n    if (ports.some((port) => port < 1024 || port > 65535)) {\n      return `Error: ${serviceName} exposes port ${ports[0]}, which is outside the allowed range.`;\n    }\n  });\n  return '';\n}",
+    "python": "class Solution:\n    def validateExposedPorts(self, dockerComposeFile: str) -> str:\n        import re\n        services = re.findall(r'services:\n  - (.*?)\n', dockerComposeFile, re.DOTALL)\n        exposedPorts = {}\n        for service in services:\n            ports = re.findall(r'port:\n  - (.*?)\n', service, re.DOTALL)\n            if ports:\n                portNumber = int(ports[0])\n                if serviceName in exposedPorts:\n                    exposedPorts[serviceName].append(portNumber)\n                else:\n                    exposedPorts[serviceName] = [portNumber]\n        for serviceName, ports in exposedPorts.items():\n            if ports[0] < 1024 or ports[0] > 65535:\n                return f'Error: {serviceName} exposes port {ports[0]}, which is outside the allowed range.'\n        return ''"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "version: '3'\nweb:\n  port: 80\n  expose:\n    - 8080\n",
+      "output": "0",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "version: '3'\nweb:\n  port: 80\n  expose:\n    - 8081\n",
+      "output": "Error: web exposes port 8081, which is outside the allowed range.",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "c633702db0e247f0a50698c3",
+  "slug": "docker-container-exposed-port-mappings-validator-with-incorrect-port-range-bugfix-hard-docker",
+  "mode": "bug_fix",
+  "category": "DOCKER",
+  "difficulty": "Hard"
+}

@@ -1,0 +1,136 @@
+{
+  "title": "Fixing React Memoized Component Re-renders Due to Changing Array Depth",
+  "subCategory": "React Memoization",
+  "statement": {
+    "markdown": "Given a React component with memoization, fix the implementation to prevent unnecessary re-renders when the array depth changes. The component should only re-render when the actual array elements change.",
+    "inputFormat": "Input is a JavaScript object with an array property.",
+    "outputFormat": "Output is the rendered string.",
+    "notes": "Time and space complexity should be optimized.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Array length"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"array\": [1, 2, 3]}",
+        "output": "1 2 3",
+        "explanation": "The component should re-render when the array elements change."
+      },
+      {
+        "input": "{\"array\": [1, 2, 3]}",
+        "output": "1 2 3",
+        "explanation": "The component should not re-render when the array depth changes."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 60,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "REACT"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "react"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use a library like `lodash.isequal` to compare arrays."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial Solution",
+    "intuition": "Memoization in React can be tricky when dealing with complex data structures like arrays.",
+    "bruteForce": "A naive approach would be to compare the entire array on every render, which is inefficient.",
+    "betterSolution": "Use a library like `lodash.isequal` to compare arrays and prevent unnecessary re-renders.",
+    "optimalSolution": "Implement a custom array comparison function to handle changes in array depth.",
+    "proofOfCorrectness": "The component should only re-render when the actual array elements change.",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Comparing arrays using `===`",
+      "Not using a library like `lodash.isequal`"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "function MemoizedComponent({ array }) {\n  const [rendered, setRendered] = useState('');\n\n  useEffect(() => {\n    const arrayString = array.join(' ');\n    setRendered(arrayString);\n  }, [array]);\n\n  return (\n    <div>{rendered}</div>\n  );\n}",
+    "python": "class Solution:\n    def MemoizedComponent(self, nums: list[int]) -> bool:\n        # TODO: implement\n        pass"
+  },
+  "buggyStarterCode": {
+    "javascript": "function MemoizedComponent({ array }) {\n  const [rendered, setRendered] = useState('');\n\n  useEffect(() => {\n    const arrayString = JSON.stringify(array);\n    setRendered(arrayString);\n  }, [array]);\n\n  return (\n    <div>{rendered}</div>\n  );\n}",
+    "python": "class Solution:\n    def MemoizedComponent(self, nums: list[int]) -> bool:\n        # Buggy code\n        pass"
+  },
+  "functionSignature": {
+    "javascript": "function MemoizedComponent({ array }) {\n  // Your code here\n}\n",
+    "python": "def MemoizedComponent(self, nums: list[int]) -> bool:"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction MemoizedComponent({ array }) {\n  const [rendered, setRendered] = useState('');\n\n  useEffect(() => {\n    const arrayString = array.join(' ');\n    setRendered(arrayString);\n  }, [array.join(' ')]);\n\n  return (\n    <div>{rendered}</div>\n  );\n}\n",
+    "python": "class MemoizedComponent:\n  def __init__(self, array):\n    self.array = array\n    self.rendered = None\n\n  def render(self):\n    if self.rendered is None or self.array != self.rendered['array']:\n      self.rendered = {'array': ' '.join(self.array)}\n    return self.rendered['array']"
+  },
+  "judgeConfig": {
+    "timeLimit": 5,
+    "memoryLimit": 128,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 2
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"array\": [1, 2, 3]}",
+      "output": "1 2 3",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "{\"array\": [1, [2, 3]]}",
+      "output": "1 2 3",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "_id": "491bdc5f0db96e931c814aa2",
+  "slug": "fixing-react-memoized-component-re-renders-due-to-changing-array-depth-bugfix-hard-react",
+  "mode": "bug_fix",
+  "category": "REACT",
+  "difficulty": "Hard"
+}

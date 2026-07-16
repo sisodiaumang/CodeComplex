@@ -1,0 +1,156 @@
+{
+  "title": "Optimizing a Memoized React Component Re-renders Due to Changing State Array References",
+  "subCategory": "React Memoization",
+  "statement": {
+    "markdown": "Given a React component that uses the `useState` hook to maintain a state array of user IDs, implement memoization to prevent unnecessary re-renders when the state array reference changes. The component should only re-render when the actual elements in the state array change, not when the reference to the array changes. You are given a function `isReferenceEqual` that checks if two references are equal.",
+    "inputFormat": "An array of user IDs representing the initial state",
+    "outputFormat": "The updated state array with memoized values",
+    "notes": "The component should maintain a memoized state of the user IDs and re-render only when the actual elements in the array change.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of user IDs in the state array"
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 0,
+        "max": 10000,
+        "description": "The number of user IDs to be added or removed from the state array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "[1, 2, 3]",
+        "output": "[1, 2, 3]",
+        "explanation": "The initial state array with no changes"
+      },
+      {
+        "input": "[1, 2, 3]",
+        "output": "[1, 2, 3, 4]",
+        "explanation": "Adding a new user ID to the state array"
+      },
+      {
+        "input": "[1, 2, 3]",
+        "output": "[1, 2]",
+        "explanation": "Removing a user ID from the state array"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "REACT"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "react"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the `useState` hook to maintain a memoized state of the user IDs"
+    },
+    {
+      "order": 2,
+      "text": "Implement the `isReferenceEqual` function to check if two references are equal"
+    },
+    {
+      "order": 3,
+      "text": "Use the `useCallback` hook to memoize the function that updates the state array"
+    }
+  ],
+  "editorial": {
+    "title": "Optimizing a Memoized React Component Re-renders Due to Changing State Array References",
+    "intuition": "The correct approach is to use the `useState` hook to maintain a memoized state of the user IDs and implement the `isReferenceEqual` function to check if two references are equal. The `useCallback` hook can be used to memoize the function that updates the state array.",
+    "bruteForce": "A brute-force approach would be to re-render the component on every state change, which would result in unnecessary re-renders.",
+    "betterSolution": "A better solution would be to use the `useCallback` hook to memoize the function that updates the state array and implement the `isReferenceEqual` function to check if two references are equal.",
+    "optimalSolution": "The optimal solution is to use the `useState` hook to maintain a memoized state of the user IDs, implement the `isReferenceEqual` function, and use the `useCallback` hook to memoize the function that updates the state array.",
+    "proofOfCorrectness": "The proof of correctness is that the component will only re-render when the actual elements in the state array change, not when the reference to the array changes.",
+    "dryRun": "Here is an example dry run of the component: \n\n import React, { useState, useCallback } from 'react'; \n\n const isReferenceEqual = (a, b) => a === b; \n\n const InitialStateArray = [1, 2, 3]; \n\n const memoizedComponent = () => { \n   const [stateArray, setStateArray] = useState(InitialStateArray); \n   const updateStateArray = useCallback((newArray) => { \n     if (!isReferenceEqual(stateArray, newArray)) { \n       setStateArray(newArray); \n     } \n   }, [stateArray]); \n   return ( \n     <div> \n       <button onClick={() => updateStateArray([...stateArray, 4])}>Add User ID</button> \n       <button onClick={() => updateStateArray(stateArray.slice(0, -1))}>Remove User ID</button> \n       <ul> \n         {stateArray.map((id, index) => <li key={index}>{id}</li>)} \n       </ul> \n     </div> \n   ); \n };",
+    "commonMistakes": [
+      "Not using the `useState` hook to maintain a memoized state of the user IDs",
+      "Not implementing the `isReferenceEqual` function to check if two references are equal"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// Import React and the useState hook\nimport React, { useState } from 'react';\n\n// Define the InitialStateArray\nconst InitialStateArray = [1, 2, 3];\n\n// Define the memoizedComponent function\nconst memoizedComponent = () => {\n  // Define the stateArray and setStateArray variables using the useState hook\n  const [stateArray, setStateArray] = useState(InitialStateArray);\n  // Define the updateStateArray function\n  const updateStateArray = (newArray) => {\n    // Add your code here\n  };\n  return (\n    // Add your JSX code here\n  );\n};",
+    "python": "import React, { useState } from 'react';\n\ndef memoized_component():\n    # Define the InitialStateArray\n    InitialStateArray = [1, 2, 3];\n    # Define the state_array and set_state_array variables using the useState hook\n    state_array, set_state_array = useState(InitialStateArray);\n    # Define the update_state_array function\n    def update_state_array(new_array):\n        # Add your code here\n        pass;\n    # Return the JSX code here\n    return None;"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Import React and the useState hook\nimport React, { useState } from 'react';\n\n// Define the InitialStateArray\nconst InitialStateArray = [1, 2, 3];\n\n// Define the memoizedComponent function\nconst memoizedComponent = () => {\n  // Define the stateArray and setStateArray variables using the useState hook\n  const [stateArray, setStateArray] = useState(InitialStateArray);\n  // Define the updateStateArray function\n  const updateStateArray = (newArray) => {\n    // BUG: The state array is being updated unnecessarily when the reference to the array changes\n    setStateArray(newArray);\n  };\n  return (\n    // Add your JSX code here\n  );\n};",
+    "python": "import React, { useState } from 'react';\ndef memoized_component():\n    # Define the InitialStateArray\n    InitialStateArray = [1, 2, 3];\n    # Define the state_array and set_state_array variables using the useState hook\n    state_array, set_state_array = useState(InitialStateArray);\n    # Define the update_state_array function\n    def update_state_array(new_array):\n        # BUG: The state array is being updated unnecessarily when the reference to the array changes\n        set_state_array(new_array);\n    # Return the JSX code here\n    return None;"
+  },
+  "functionSignature": {
+    "javascript": "const memoizedComponent = () => {\n  // Add your JSX code here\n};",
+    "python": "def memoized_component():\n    # Add your JSX code here\n    pass;"
+  },
+  "solutions": {
+    "javascript": "// Import React and the useState hook\nimport React, { useState, useCallback } from 'react';\n\n// Define the InitialStateArray\nconst InitialStateArray = [1, 2, 3];\n\n// Define the memoizedComponent function\nconst memoizedComponent = () => {\n  // Define the stateArray and setStateArray variables using the useState hook\n  const [stateArray, setStateArray] = useState(InitialStateArray);\n  // Define the isReferenceEqual function\n  const isReferenceEqual = (a, b) => a === b;\n  // Define the updateStateArray function using the useCallback hook to memoize the function\n  const updateStateArray = useCallback((newArray) => {\n    if (!isReferenceEqual(stateArray, newArray)) {\n      setStateArray(newArray);\n    }\n  }, [stateArray]);\n  return (\n    // Add your JSX code here\n  );\n};",
+    "python": "import React, { useState, useCallback } from 'react';\ndef memoized_component():\n    # Define the InitialStateArray\n    InitialStateArray = [1, 2, 3];\n    # Define the state_array and set_state_array variables using the useState hook\n    state_array, set_state_array = useState(InitialStateArray);\n    # Define the is_reference_equal function\n    def is_reference_equal(a, b):\n        return a == b;\n    # Define the update_state_array function using the useCallback hook to memoize the function\n    def update_state_array(new_array):\n        if not is_reference_equal(state_array, new_array):\n            set_state_array(new_array);\n    # Return the JSX code here\n    return None;"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "[1, 2, 3]",
+      "output": "[1, 2, 3]",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "[1, 2, 3]",
+      "output": "[1, 2, 3, 4]",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "4124847d9441b5126b68ca78",
+  "slug": "optimizing-a-memoized-react-component-re-renders-due-to-changing-state-array-references-bugfix-hard-react",
+  "mode": "bug_fix",
+  "category": "REACT",
+  "difficulty": "Hard"
+}

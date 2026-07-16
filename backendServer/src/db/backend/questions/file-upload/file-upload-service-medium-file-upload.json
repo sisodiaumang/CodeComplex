@@ -1,0 +1,173 @@
+{
+  "_id": "92a66dc5818b974d3dd9446f",
+  "title": "File Upload Service",
+  "slug": "file-upload-service-medium-file-upload",
+  "difficulty": "Medium",
+  "topics": [
+    "FILE_UPLOAD"
+  ],
+  "statement": "Implement a file upload service that accepts images and returns the uploaded file's URL. Ensure the endpoint validates file size and content type before allowing upload. Users should only be able to upload files with a MIME type of 'image/jpeg', 'image/png', or 'image/gif'. The uploaded file should be stored in an AWS S3 bucket.\n\nYou will need to set up AWS S3 with a bucket name, access key ID, and secret access key. Make sure to install the required packages, including `aws-sdk` and `multer`.\n\n**Endpoints**\n\n- **POST /api/upload**: Upload an image to the S3 bucket and return the uploaded file's URL.\n\n**Constraints**\n\n- Must use only the provided `multer`, `express`, and `aws-sdk` packages.\n- File upload size should be capped at 2MB.\n- File content type should be 'image/jpeg', 'image/png', or 'image/gif'.\n\n**Visible Test Cases**\n\n- **tc1**: Upload an image with a valid MIME type and content length within the size limit.\n- **tc2**: Attempt to upload an image with an invalid MIME type.\n- **tc3**: Attempt to upload an image larger than the size limit.\n\n**Hidden Test Cases**\n\n- **tc4**: Test the endpoint's behavior when the AWS S3 bucket is not accessible.\n- **tc5**: Test the endpoint's behavior when the AWS S3 bucket does not exist.\n- **tc6**: Test the endpoint's behavior when the file size is exactly at the size limit.\n",
+  "constraints": [
+    "Must use only the provided multer, express, and aws-sdk packages.",
+    "File upload size should be capped at 2MB.",
+    "File content type should be 'image/jpeg', 'image/png', or 'image/gif'."
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/upload",
+      "description": "Upload an image to the S3 bucket and return the uploaded file's URL."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\"name\": \"file-upload-service\", \"version\": \"1.0.0\", \"main\": \"index.js\", \"scripts\": {\"start\": \"node index.js\"}, \"dependencies\": {\"aws-sdk\": \"^2.7.24\", \"express\": \"^4.18.2\", \"multer\": \"^1.4.4\"}}",
+    "index.js": "const express = require('express');\nconst multer = require('multer');\nconst AWS = require('aws-sdk');\n\nconst app = express();\napp.use(express.json());\n\nconst s3 = new AWS.S3({\n  region: 'your-region',\n  accessKeyId: 'your-access-key-id',\n  secretAccessKey: 'your-secret-access-key'\n});\n\nconst upload = multer({\n  dest: './uploads/',\n  limits: { fileSize: 2 * 1024 * 1024 }\n});\n\napp.post('/api/upload', upload.single('file'), (req, res) => {\n  // TODO: Implement business logic to upload file to S3 and return the uploaded file's URL.\n  res.status(201).send({\n    success: true\n  });\n});\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));\n\n"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "tc1",
+      "method": "POST",
+      "path": "/api/upload",
+      "headers": {
+        "Content-Type": "multipart/form-data"
+      },
+      "body": {
+        "file": {
+          "mimeType": "image/jpeg",
+          "fileName": "image.jpg"
+        }
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "success": true
+      },
+      "isVisible": true
+    },
+    {
+      "id": "tc2",
+      "method": "POST",
+      "path": "/api/upload",
+      "headers": {
+        "Content-Type": "multipart/form-data"
+      },
+      "body": {
+        "file": {
+          "mimeType": "application/octet-stream",
+          "fileName": "image.jpg"
+        }
+      },
+      "expectedStatus": 400,
+      "expectedBody": {
+        "error": "Invalid MIME type"
+      },
+      "isVisible": true
+    },
+    {
+      "id": "tc3",
+      "method": "POST",
+      "path": "/api/upload",
+      "headers": {
+        "Content-Type": "multipart/form-data"
+      },
+      "body": {
+        "file": {
+          "mimeType": "image/jpeg",
+          "fileName": "large-image.jpg"
+        }
+      },
+      "expectedStatus": 413,
+      "expectedBody": {
+        "error": "File too large"
+      },
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "tc4",
+      "method": "POST",
+      "path": "/api/upload",
+      "headers": {
+        "Content-Type": "multipart/form-data"
+      },
+      "body": {
+        "file": {
+          "mimeType": "image/jpeg",
+          "fileName": "image.jpg"
+        }
+      },
+      "expectedStatus": 500,
+      "isVisible": false
+    },
+    {
+      "id": "tc5",
+      "method": "POST",
+      "path": "/api/upload",
+      "headers": {
+        "Content-Type": "multipart/form-data"
+      },
+      "body": {
+        "file": {
+          "mimeType": "image/jpeg",
+          "fileName": "image.jpg"
+        }
+      },
+      "expectedStatus": 403,
+      "isVisible": false
+    },
+    {
+      "id": "tc6",
+      "method": "POST",
+      "path": "/api/upload",
+      "headers": {
+        "Content-Type": "multipart/form-data"
+      },
+      "body": {
+        "file": {
+          "mimeType": "image/jpeg",
+          "fileName": "image.jpg"
+        }
+      },
+      "expectedStatus": 400,
+      "expectedBody": {
+        "error": "File too large"
+      },
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "multer",
+    "cloudinary",
+    "aws-s3",
+    "validation",
+    "image-processing",
+    "file-storage",
+    "File Storage",
+    "AWS S3",
+    "Multer",
+    "Validations",
+    "Image Processing",
+    "file-upload"
+  ]
+}

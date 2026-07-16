@@ -1,0 +1,148 @@
+{
+  "title": "Optimizing React Memoized Component Re-renders Due to Changing Object Properties",
+  "subCategory": "React Memoization",
+  "statement": {
+    "markdown": "You have a React functional component that is memoized using the `useMemo` hook. The memoized value is an object that is created based on the component's props. However, you notice that even though the props haven't changed, the component is re-rendering due to the changing object properties. Your task is to fix the bug by optimizing the memoization to prevent unnecessary re-renders.",
+    "inputFormat": "The input will be an object with two properties: `props` and `state`. The `props` object will contain several keys, and the `state` object will also contain several keys.",
+    "outputFormat": "The function should return the memoized value, which is an object that is created based on the `props` and `state` objects.",
+    "notes": "The function should handle cases where the `props` or `state` objects are deeply nested and contain complex data structures.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of properties in the `props` object"
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of properties in the `state` object"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"props\": {\"a\": 1, \"b\": 2}, \"state\": {\"c\": 3, \"d\": 4}}",
+        "output": "{\"a\": 1, \"b\": 2}",
+        "explanation": "The memoized value is created based on the `props` object. Since the `props` object hasn't changed, the memoized value remains the same."
+      },
+      {
+        "input": "{\"props\": {\"a\": 1, \"b\": 2}, \"state\": {\"c\": 5, \"d\": 6}}",
+        "output": "{\"a\": 1, \"b\": 2}",
+        "explanation": "The `state` object has changed, but the `props` object remains the same. The memoized value remains the same."
+      },
+      {
+        "input": "{\"props\": {\"a\": 1, \"b\": 2}, \"state\": {}}",
+        "output": "{\"a\": 1, \"b\": 2}",
+        "explanation": "The `state` object is empty, so the memoized value is based solely on the `props` object."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "REACT"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "react"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "When using `useMemo`, make sure to provide a correct dependency array to prevent unnecessary re-renders."
+    }
+  ],
+  "editorial": {
+    "title": "Optimizing React Memoization",
+    "intuition": "To optimize the memoization, we need to make sure that the memoized value is recreated only when the `props` object changes. We can use the `JSON.stringify` function to compare the `props` objects and determine whether they have changed.",
+    "bruteForce": "One possible brute-force solution is to recursively traverse the `props` object and compare each property. However, this approach can be inefficient for deeply nested objects.",
+    "betterSolution": "A better solution is to use the `JSON.stringify` function to compare the `props` objects. This approach is more efficient and accurate.",
+    "optimalSolution": "The optimal solution is to use the `JSON.stringify` function to compare the `props` objects and create the memoized value only when the `props` object changes.",
+    "proofOfCorrectness": "The proof of correctness is based on the fact that `JSON.stringify` returns a string representation of the object. If the `props` object changes, the string representation will also change, and the memoized value will be recreated.",
+    "dryRun": "Step-by-step example run:",
+    "commonMistakes": [
+      "Not providing a correct dependency array to `useMemo`",
+      "Not using `JSON.stringify` to compare the `props` objects"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "function MemoizedComponent({ props, state }) {\n  const memoizedValue = useMemo(() => {\n    // Your code here\n  }, [props, state]);\n  return (\n    // Your JSX here\n  );\n}\n",
+    "python": "class MemoizedComponent:\n  def __init__(self, props, state):\n    self.props = props\n    self.state = state\n\n  def memoized_value(self):\n    # Your code here\n    pass\n"
+  },
+  "buggyStarterCode": {
+    "javascript": "function MemoizedComponent({ props, state }) {\n  const memoizedValue = useMemo(() => {\n    return { ...props, state: state.c }\n  }, [props]);\n  return (\n    // Your JSX here\n  );\n}\n",
+    "python": "class MemoizedComponent:\n  def __init__(self, props, state):\n    self.props = props\n    self.state = state\n\n  def memoized_value(self):\n    # Your code here\n    return { **self.props, state: self.state.c }\n"
+  },
+  "functionSignature": {
+    "javascript": "function memoizedComponent(props, state) {}",
+    "python": "def memoized_component(props, state) -> dict: {}"
+  },
+  "solutions": {
+    "javascript": "// Solution: use JSON.stringify to compare props objects\nconst memoizedValue = useMemo(() => {\n  return { ...props }\n}, [JSON.stringify(props)]);\nreturn (\n  // Your JSX here\n);\n",
+    "python": "def memoized_component(props, state) -> dict:\n    # Solution: use json.dumps to compare props objects\n    return { **props }\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"props\": {\"a\": 1, \"b\": 2}, \"state\": {\"c\": 3, \"d\": 4}}",
+      "output": "{\"a\": 1, \"b\": 2}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"props\": {\"a\": 1, \"b\": 2}, \"state\": {\"c\": 5, \"d\": 6}}",
+      "output": "{\"a\": 1, \"b\": 2}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "b2871422ceeb1d06fab135ea",
+  "slug": "optimizing-react-memoized-component-re-renders-due-to-changing-object-properties-bugfix-medium-react",
+  "mode": "bug_fix",
+  "category": "REACT",
+  "difficulty": "Medium"
+}

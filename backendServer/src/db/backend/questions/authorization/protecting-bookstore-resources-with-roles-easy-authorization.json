@@ -1,0 +1,139 @@
+{
+  "_id": "27171a630d4d2fef6a402eba",
+  "title": "Protecting Bookstore Resources with Roles",
+  "slug": "protecting-bookstore-resources-with-roles-easy-authorization",
+  "difficulty": "Easy",
+  "topics": [
+    "AUTHORIZATION"
+  ],
+  "statement": "As a member of the bookstore's development team, you've been tasked with implementing role-based authorization for the bookstore's resources. Write an Express.js server that protects certain resources based on the user's role. You will be given a list of users and their roles. A GET request to `/books` should return a list of all books if the user has `admin` or `moderator` roles, while a GET request to `/books` should return only the books the moderator has access to if the user has only a `moderator` role. A GET request to `/books/1` should return the book with id 1 if the user has `admin`, `moderator`, or `author` roles. Users without any of these roles should receive a 403 Forbidden error.",
+  "constraints": [
+    "Must use the provided users and roles data",
+    "Users and roles data should be stored in-memory"
+  ],
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/books",
+      "description": "Returns a list of books accessible to the user. The list should be filtered based on the user's role."
+    },
+    {
+      "method": "GET",
+      "path": "/books/:id",
+      "description": "Returns the book with the specified id if the user has the correct role."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\"name\":\"bookstore\",\"version\":\"1.0.0\",\"main\":\"index.js\",\"scripts\":{\"start\":\"node index.js\"},\"dependencies\":{\"express\":\"^4.18.2\"}}",
+    "index.js": "const express = require('express');\nconst app = express();\napp.use(express.json());\n\nconst users = [\n  { id: 1, name: 'John Doe', role: 'admin' },\n  { id: 2, name: 'Jane Doe', role: 'moderator' }\n];\n\n// TODO: Implement role-based authorization\n\napp.listen(3000, () => console.log('Server running on port 3000'))"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "GET",
+      "path": "/books",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "books": [
+          {
+            "id": 1,
+            "title": "Book 1"
+          },
+          {
+            "id": 2,
+            "title": "Book 2"
+          },
+          {
+            "id": 3,
+            "title": "Book 3"
+          }
+        ]
+      },
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "GET",
+      "path": "/books",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "expectedStatus": 403,
+      "isVisible": true
+    },
+    {
+      "id": "v_tc3",
+      "method": "GET",
+      "path": "/books/1",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "book": {
+          "id": 1,
+          "title": "Book 1"
+        }
+      },
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "GET",
+      "path": "/books",
+      "expectedStatus": 200,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "GET",
+      "path": "/books/2",
+      "expectedStatus": 403,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "GET",
+      "path": "/books/4",
+      "expectedStatus": 404,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "rbac",
+    "abac",
+    "middleware",
+    "roles",
+    "permissions",
+    "protected-routes",
+    "guards",
+    "RBAC",
+    "authorization"
+  ]
+}

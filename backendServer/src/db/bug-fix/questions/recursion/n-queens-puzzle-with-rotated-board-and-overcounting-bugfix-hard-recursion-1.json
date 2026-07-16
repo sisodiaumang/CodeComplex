@@ -1,0 +1,153 @@
+{
+  "_id": "7dcebdf32eb28c9ff6f58804",
+  "title": "N-Queens Puzzle with Rotated Board and Overcounting",
+  "slug": "n-queens-puzzle-with-rotated-board-and-overcounting-bugfix-hard-recursion-1",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "BACKTRACKING",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 25,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "backtracking"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given a size n, place n queens on a board of size n x n in such a way that no two queens attack each other. The board is rotated by 90 degrees counterclockwise compared to a standard chessboard.\n\n\nYou will be given a 2D array representing the board where a 1 at position [row][col] indicates a queen. You need to place the queens in such a way that they do not attack each other.\n\n\nThis problem is a bit different from the standard N-Queens problem as the board is rotated.\n\n\nYou can place a queen at the end of the board and it will not attack the queens in the current row because the board is rotated.\n\n\nYou can also place a queen at the current row and the current column and it will not attack the queens in the previous row because the board is rotated.\n\n\nHowever, you cannot place a queen on a square that is diagonally adjacent to an already placed queen because the board is rotated.",
+    "inputFormat": "Input is of the size 2*n and contains two parts: the first part contains information about the existing queens on the board, and the second part contains the n for which we have to place the queens.",
+    "outputFormat": "For each test case, output the first line with n, and then output n numbers in each of the next n lines, indicating the positions of the queens.",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "5\n1 5 4 3 1\n5",
+        "output": "5\n1 5 4 3 1",
+        "explanation": "This is the only valid configuration"
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text"
+    }
+  ],
+  "editorial": {
+    "title": "N-Queens Puzzle with Rotated Board and Overcounting",
+    "intuition": "The problem can be solved using backtracking. We need to place the queens in such a way that they do not attack each other. The board is rotated, so we need to consider the rotated version of the board.",
+    "bruteForce": "The brute force approach would be to check every possible configuration and see if it is valid.",
+    "betterSolution": "",
+    "optimalSolution": "The optimal solution uses backtracking to find the first valid configuration. We start by placing a queen at the end of the board and then try to place the remaining queens in such a way that they do not attack each other.",
+    "proofOfCorrectness": "The proof of correctness is based on the fact that the backtracking algorithm tries every possible configuration and returns the first valid one.",
+    "dryRun": "To perform a dry run, start by placing a queen at the end of the board. Then try to place the remaining queens in such a way that they do not attack each other.",
+    "commonMistakes": [
+      "Not considering the rotated version of the board",
+      "Not using backtracking to find the first valid configuration"
+    ],
+    "timeComplexity": "O(N!)",
+    "spaceComplexity": "O(N)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    vector<vector<int>> solve(vector<vector<int>>& board, int n);\n};\n\n",
+    "java": "public class Solution {\npublic:\n    vector<vector<int>> solve(vector<vector<int>>& board, int n);\n}",
+    "python": "class Solution:\n    def solve(self, board, n):\n        pass",
+    "javascript": "var Solution = function() {\n    solve = function(board, n) {\n        return []; \n    };\n};"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    vector<vector<int>> solve(vector<vector<int>>& board, int n) {\n        vector<vector<int>> result(n, vector<int>(n, 0));\n\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < n; j++) {\n                if (board[i][j] == 1) {\n                    result[i][j] = 1;\n                    result[i + 1][j] = 1;\n                }\n            }\n        }\n\n        for (int i = n - 1; i >= 0; i--) {\n            for (int j = n - 1; j >= 0; j--) {\n                if (result[i][j] == 0) {\n                    result[i][j] = 1;\n                    break;\n                }\n            }\n        }\n\n        return result;\n    }\n};",
+    "java": "public class Solution {\npublic:\n    vector<vector<int>> solve(vector<vector<int>>& board, int n) {\n        vector<vector<int>> result(n, vector<int>(n, 0));\n\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < n; j++) {\n                if (board[i][j] == 1) {\n                    result[i][j] = 1;\n                    result[i + 1][j] = 1;\n                }\n            }\n        }\n\n        for (int i = n - 1; i >= 0; i--) {\n            for (int j = n - 1; j >= 0; j--) {\n                if (result[i][j] == 0) {\n                    result[i][j] = 1;\n                    break;\n                }\n            }\n        }\n\n        return result;\n    }\n}",
+    "python": "class Solution:\n    def solve(self, board, n):\n        result = [[0 for _ in range(n)] for _ in range(n)]\n\n\n        for i in range(n):\n            for j in range(n):\n                if board[i][j] == 1:\n                    result[i][j] = 1\n                    result[i + 1][j] = 1\n        \n        for i in range(n - 1, -1, -1):\n            for j in range(n - 1, -1, -1):\n                if result[i][j] == 0:\n                    result[i][j] = 1\n                    break\n        \n        return result",
+    "javascript": "var Solution = function() {\n    solve = function(board, n) {\n        var result = []; \n\n        for (var i = 0; i < n; i++) {\n            result[i] = []; \n            for (var j = 0; j < n; j++) {\n                if (board[i][j] == 1) {\n                    result[i][j] = 1;\n                    result[i + 1][j] = 1;\n                }\n            }\n        } \n\n        for (var i = n - 1; i >= 0; i--) {\n            for (var j = n - 1; j >= 0; j--) {\n                if (result[i][j] == 0) {\n                    result[i][j] = 1;\n                    break;\n                }\n            }\n        } \n\n        return result; \n    };\n};"
+  },
+  "functionSignature": {
+    "cpp": "vector<vector<int>> solve(vector<vector<int>>& board, int n);",
+    "java": "vector<vector<int>> solve(vector<vector<int>>& board, int n);",
+    "python": "def solve(self, board: List[List[int]], n: int) -> List[List[int]]:",
+    "javascript": "var solve = function(board, n) { return []; };"
+  },
+  "solutions": {
+    "python": "import sys\nimport os\nimport random\nimport math\nfrom collections import defaultdict\nimport bisect\n\n\nclass Solution:\n    def readInts(self):\n        return map(int, input().split())\n\n    def readStr(self):\n        return input().rstrip('\\n')\n\n\n    def solve(self, board, n):\n        result = [[0 for _ in range(n)] for _ in range(n)]\n        queens = set()\n\n        def placeQueens(row):\n            if row == n:\n                return True\n\n            for col in range(n):\n                if (row - 1, col) in queens or (row, col) in queens or (col - 1, row) in queens or (col, row) in queens:\n                    continue\n\n                queens.add((row, col))\n\n                if placeQueens(row + 1):\n                    return True\n\n                queens.remove((row, col))\n\n            return False\n\n        if not placeQueens(0):\n            return []\n\n        for i in range(n):\n            for j in range(n):\n                if (i, j) in queens:\n                    result[i][j] = 1\n\n        return result\n\n    def main(self):\n        n = int(input())\n        board = [self.readInts() for _ in range(n)]\n        print(n)\n        for row in self.solve(board, n):\n            print(*row)\n\n\nif __name__ == \"__main__\":\n    print(os.path.basename(__file__))\n    print(os.path.realpath(__file__))\n    sol = Solution()\n    sol.main()\n\n",
+    "cpp": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\n\nclass Solution {\npublic:\n    vector<vector<int>> solve(vector<vector<int>>& board, int n) {\n        vector<vector<int>> result(n, vector<int>(n, 0));\n        set<pair<int, int>> queens;\n\n        bool placeQueens(int row) {\n            if (row == n) {\n                return true;\n            }\n\n            for (int col = 0; col < n; col++) {\n                pair<int, int> pos = make_pair(row - 1, col), pos2 = make_pair(row, col);\n                if (queens.find(pos) != queens.end() || queens.find(pos2) != queens.end() || queens.find(make_pair(col - 1, row)) != queens.end() || queens.find(make_pair(col, row)) != queens.end()) {\n                    continue;\n                }\n\n                queens.insert(make_pair(row, col));\n\n                if (placeQueens(row + 1)) {\n                    return true;\n                }\n\n                queens.erase(make_pair(row, col));\n\n            }\n\n            return false;\n\n        }\n\n        if (!placeQueens(0)) {\n            return result;\n        }\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < n; j++) {\n                if (queens.find(make_pair(i, j)) != queens.end()) {\n                    result[i][j] = 1;\n                }\n            }\n        }\n\n        return result;\n    }\n};",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 1,
+    "memoryLimit": 128,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": false,
+    "ratingEnabled": false,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5\n1 5 4 3 1\n5",
+      "output": "5\n1 5 4 3 1",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_hidden_generated",
+      "input": "5\n1 5 4 3 1\n5",
+      "output": "5\n1 5 4 3 1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

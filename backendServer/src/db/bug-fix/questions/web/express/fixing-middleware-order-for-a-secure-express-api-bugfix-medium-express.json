@@ -1,0 +1,136 @@
+{
+  "title": "Fixing Middleware Order for a Secure Express API",
+  "subCategory": "Authentication and Authorization",
+  "statement": {
+    "markdown": "The code below is attempting to implement a secure Express API with JWT-based authentication. However, it contains a subtle bug in the middleware order. The API should require authentication for all routes. Identify the bug and correct the middleware order.",
+    "inputFormat": "The input will be a JSON object containing user credentials and request data.",
+    "outputFormat": "The API should return a JSON response with a success or error message.",
+    "notes": "The API should handle authentication and authorization for all routes.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The maximum number of users in the system"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"username\":\"john\",\"password\":\"12345\",\"requestData\":{\"method\":\"GET\",\"url\":\"/users\"}}",
+        "output": "{\"message\":\"Authenticated successfully\"}",
+        "explanation": "The user is authenticated successfully"
+      },
+      {
+        "input": "{\"username\":\"john\",\"password\":\"wrong\",\"requestData\":{\"method\":\"GET\",\"url\":\"/users\"}}",
+        "output": "{\"message\":\"Authentication failed\"}",
+        "explanation": "The user authentication fails"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "EXPRESS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "express"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "The bug is related to the middleware order. Think about the correct order for authentication and route handling."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial: Fixing Middleware Order for a Secure Express API",
+    "intuition": "The correct middleware order should be: authentication, then route handling. The authentication middleware should be placed before the route handlers.",
+    "bruteForce": "You can start by printing out the middleware order and checking the results for the first example input.",
+    "betterSolution": "",
+    "optimalSolution": "The optimal solution is to move the authentication middleware before the route handlers, ensuring that all routes require authentication.",
+    "proofOfCorrectness": "The proof of correctness involves showing that the authentication middleware is called before the route handlers for all routes.",
+    "dryRun": "Step-by-step example run: 1) Call the authentication middleware, 2) Call the route handlers, 3) Return the result.",
+    "commonMistakes": [
+      "Not placing the authentication middleware before the route handlers",
+      "Not handling authentication for all routes"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "// Import required modules\nconst express = require('express');\nconst jwt = require('jsonwebtoken');\n\n// Define the app\nconst app = express();\n\n// Define the authentication middleware\napp.use((req, res, next) => {\n  // TO DO: implement authentication logic\n  // TO DO: call next() to continue with route handling\n});\n\n// Define the route handlers\napp.get('/users', (req, res) => {\n  // TO DO: return the user data\n});\napp.post('/login', (req, res) => {\n  // TO DO: handle login request\n});\n\n// Start the server\napp.listen(3000, () => {\n  // TO DO: print a message indicating the server is running\n});\n",
+    "python": "import json\nfrom flask import Flask, request\nfrom werkzeug.security import generate_password_hash\n\napp = Flask(__name__)\n\n# Define the authentication middleware\n@app.before_request\ndef authenticate(req, resp):\n  # TO DO: implement authentication logic\n  # TO DO: call next() to continue with route handling\n  pass\n\n# Define the route handlers\n@app.route('/users', methods=['GET'])\ndef get_users(req, resp):\n  # TO DO: return the user data\n  pass\n\n@app.route('/login', methods=['POST'])\ndef login(req, resp):\n  # TO DO: handle login request\n  pass\n\n# Start the server\nif __name__ == '__main__':\n  # TO DO: print a message indicating the server is running\n  pass\n"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Import required modules\nconst express = require('express');\nconst jwt = require('jsonwebtoken');\n\n// Define the app\nconst app = express();\n\n// Define the route handlers\napp.get('/users', (req, res) => {\n  // TO DO: return the user data\n});\napp.post('/login', (req, res) => {\n  // TO DO: handle login request\n});\n\n// Define the authentication middleware\napp.use((req, res, next) => {\n  // TO DO: implement authentication logic\n  // TO DO: call next() to continue with route handling\n});\n\n// Start the server\napp.listen(3000, () => {\n  // TO DO: print a message indicating the server is running\n});\n",
+    "python": "import json\nfrom flask import Flask, request\nfrom werkzeug.security import generate_password_hash\n\napp = Flask(__name__)\n\n# Define the route handlers\n@app.route('/users', methods=['GET'])\ndef get_users(req, resp):\n  # TO DO: return the user data\n  pass\n\n@app.route('/login', methods=['POST'])\ndef login(req, resp):\n  # TO DO: handle login request\n  pass\n\n# Define the authentication middleware\n@app.after_request\ndef authenticate(req, resp):\n  # TO DO: implement authentication logic\n  # TO DO: call return to continue with route handling\n  return resp\n\n# Start the server\nif __name__ == '__main__':\n  # TO DO: print a message indicating the server is running\n  pass\n"
+  },
+  "functionSignature": {
+    "javascript": "var solve = function(app);",
+    "python": "def solve(self, app):"
+  },
+  "solutions": {
+    "javascript": "// Solution\nvar solve = function(app) {\n  // Define the authentication middleware\n  app.use((req, res, next) => {\n    // Implement authentication logic\n    const token = req.header('Authorization');\n    if (token) {\n      jwt.verify(token, 'secret-key', (err, decoded) => {\n        if (err) {\n          return res.status(401).send({ message: 'Authentication failed' });\n        }\n        next();\n      });\n    } else {\n      res.status(401).send({ message: 'Authentication failed' });\n    }\n  });\n  // Define the route handlers\n  app.get('/users', (req, res) => {\n    // Return the user data\n    res.send({ message: 'Authenticated successfully' });\n  });\n  app.post('/login', (req, res) => {\n    // Handle login request\n    const username = req.body.username;\n    const password = req.body.password;\n    if (username === 'john' && password === '12345') {\n      const token = jwt.sign({ username }, 'secret-key', { expiresIn: '1h' });\n      res.send({ message: 'Logged in successfully' });\n    } else {\n      res.status(401).send({ message: 'Authentication failed' });\n    }\n  });\n};\n",
+    "python": "import json\nfrom flask import Flask, request, jsonify\nfrom werkzeug.security import generate_password_hash\nfrom flask_jwt_extended import JWTManager, jwt_required, create_access_token\n\napp = Flask(__name__)\napp.config['JWT_SECRET_KEY'] = 'secret-key'\njwt = JWTManager(app)\n\n# Define the authentication middleware\n@app.before_request\ndef authenticate(req, resp):\n  # Implement authentication logic\n  token = req.headers.get('Authorization')\n  if token:\n    try:\n      decoded = jwt.decode_token(token)\n      next()\n    except:\n      resp.status_code = 401\n      return jsonify({'message': 'Authentication failed'}), 401\n  else:\n    resp.status_code = 401\n    return jsonify({'message': 'Authentication failed'}), 401\n\n# Define the route handlers\n@app.route('/users', methods=['GET'])\ndef get_users(req, resp):\n  # Return the user data\n  return jsonify({'message': 'Authenticated successfully'}), 200\n\n@app.route('/login', methods=['POST'])\ndef login(req, resp):\n  # Handle login request\n  username = req.json.get('username')\n  password = req.json.get('password')\n  if username == 'john' and password == '12345':\n    token = create_access_token(identity=username)\n    return jsonify({'message': 'Logged in successfully'}), 200\n  else:\n    resp.status_code = 401\n    return jsonify({'message': 'Authentication failed'}), 401\n\n# Start the server\nif __name__ == '__main__':\n  app.run(debug=True)"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"username\":\"john\",\"password\":\"12345\",\"requestData\":{\"method\":\"GET\",\"url\":\"/users\"}}",
+      "output": "{\"message\":\"Authenticated successfully\"}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"username\":\"john\",\"password\":\"wrong\",\"requestData\":{\"method\":\"GET\",\"url\":\"/users\"}}",
+      "output": "{\"message\":\"Authentication failed\"}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "539ed209fce82fd6f2908191",
+  "slug": "fixing-middleware-order-for-a-secure-express-api-bugfix-medium-express",
+  "mode": "bug_fix",
+  "category": "EXPRESS",
+  "difficulty": "Medium"
+}

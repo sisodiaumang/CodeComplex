@@ -1,0 +1,135 @@
+{
+  "title": "Docker Exposed Port Validator with Incorrect Port Range",
+  "subCategory": "Docker Port Mapping",
+  "statement": {
+    "markdown": "Write a function that takes a Docker service configuration as input, where each service has a list of exposed ports. The function should validate that the exposed ports are within the valid TCP port range (0-65535) and not duplicated within the same service. If the input is valid, return 'Valid Docker configuration'. If the configuration is invalid, return 'Invalid Docker configuration'.",
+    "inputFormat": "A list of services, where each service is an object with a 'name' and a 'ports' property, which is a list of port numbers.",
+    "outputFormat": "A string indicating whether the Docker configuration is valid or not.",
+    "notes": "The function should handle empty configurations, duplicated port numbers within the same service, and port numbers outside the valid TCP port range.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 100
+      }
+    ],
+    "examples": [
+      {
+        "input": "[{\"name\":\"service1\",\"ports\":[80, 8080, 8080]},{\"name\":\"service2\",\"ports\":[123]}]",
+        "output": "Invalid Docker configuration",
+        "explanation": "The service 'service1' has a duplicated port number 8080"
+      },
+      {
+        "input": "[{\"name\":\"service1\",\"ports\":[80, 8080]},{\"name\":\"service2\",\"ports\":[123]}]",
+        "output": "Valid Docker configuration",
+        "explanation": "All port numbers are valid and not duplicated"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 10,
+    "points": 25,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DOCKER"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "docker"
+    ],
+    "interviewFrequency": 1,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Check for duplicated port numbers within the same service"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial: Docker Exposed Port Validator",
+    "intuition": "The function should first validate the port numbers within the same service. Then it should check for port numbers outside the valid TCP port range.",
+    "bruteForce": "You can use a nested loop to check for duplicated port numbers within the same service.",
+    "betterSolution": "You can use a Set data structure to store the port numbers within the same service.",
+    "optimalSolution": "You can use a Set data structure to store the port numbers within the same service and check for port numbers outside the valid TCP port range in a single loop.",
+    "proofOfCorrectness": "The function should return 'Valid Docker configuration' if all port numbers are valid and not duplicated, and 'Invalid Docker configuration' otherwise.",
+    "dryRun": "You can test the function with the provided examples to see if it returns the correct output.",
+    "commonMistakes": [
+      "Forgetting to check for port numbers outside the valid TCP port range",
+      "Not handling empty configurations correctly"
+    ],
+    "timeComplexity": "O(n * m)",
+    "spaceComplexity": "O(m)"
+  },
+  "starterCode": {
+    "javascript": "function validateDockerConfig(config) {\n  // Your code here\n}",
+    "python": "class DockerConfigValidator:\n  def validate(self, config) -> str:"
+  },
+  "buggyStarterCode": {
+    "javascript": "function validateDockerConfig(config) {\n  for (let service of config) {\n    let ports = service.ports;\n    let seenPorts = new Set();\n    for (let port of ports) {\n      if (seenPorts.has(port)) {\n        return 'Invalid Docker configuration';\n      }\n      seenPorts.add(port);\n    }\n    // Do not check for port numbers outside the valid TCP port range\n  }\n  return 'Valid Docker configuration';\n}",
+    "python": "class DockerConfigValidator:\n  def validate(self, config) -> str:\n    for service in config:\n      ports = service.get('ports', [])\n      seen_ports = set()\n      for port in ports:\n        if port in seen_ports:\n          return 'Invalid Docker configuration'\n        seen_ports.add(port)\n    # Do not check for port numbers outside the valid TCP port range\n    return 'Valid Docker configuration'"
+  },
+  "functionSignature": {
+    "javascript": "function validateDockerConfig(config: object[]): string",
+    "python": "class DockerConfigValidator:\n  def validate(self, config: list[object]) -> str:"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction validateDockerConfig(config) {\n  for (let service of config) {\n    let ports = service.ports;\n    let seenPorts = new Set();\n    for (let port of ports) {\n      if (port < 0 || port > 65535) {\n        return 'Invalid Docker configuration';\n      }\n      if (seenPorts.has(port)) {\n        return 'Invalid Docker configuration';\n      }\n      seenPorts.add(port);\n    }\n  }\n  return 'Valid Docker configuration';\n}",
+    "python": "class DockerConfigValidator:\n  def validate(self, config) -> str:\n    for service in config:\n      ports = service.get('ports', [])\n      seen_ports = set()\n      for port in ports:\n        if port < 0 or port > 65535:\n          return 'Invalid Docker configuration'\n        if port in seen_ports:\n          return 'Invalid Docker configuration'\n        seen_ports.add(port)\n    return 'Valid Docker configuration'"
+  },
+  "judgeConfig": {
+    "timeLimit": 1,
+    "memoryLimit": 128,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "[{\"name\":\"service1\",\"ports\":[80, 8080, 8080]},{\"name\":\"service2\",\"ports\":[123]}]",
+      "output": "Invalid Docker configuration",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "[{\"name\":\"service1\",\"ports\":[80, 8080]},{\"name\":\"service2\",\"ports\":[123]}]",
+      "output": "Valid Docker configuration",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "_id": "a7e72b1096fc1b46e2f64cf5",
+  "slug": "docker-exposed-port-validator-with-incorrect-port-range-bugfix-easy-docker",
+  "mode": "bug_fix",
+  "category": "DOCKER",
+  "difficulty": "Easy"
+}

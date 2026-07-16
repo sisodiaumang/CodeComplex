@@ -1,0 +1,147 @@
+{
+  "title": "Docker Port Mapping Validator with Duplicate Service Names",
+  "subCategory": "Docker Port Mapping",
+  "statement": {
+    "markdown": "Given a Docker Compose configuration, write a function to validate port mappings. The function should check that port mappings for each service do not overlap with each other. If a conflict is found, return the conflicting services and ports.",
+    "inputFormat": "A list of objects representing Docker services, where each object contains 'name', 'ports', and 'exposedPorts' properties.",
+    "outputFormat": "A list of tuples, where each tuple contains the conflicting service names and their conflicting ports.",
+    "notes": "Assume that the input is well-formed and does not contain any invalid port numbers.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10,
+        "description": "Number of services"
+      },
+      {
+        "variable": "ports",
+        "type": "integer",
+        "min": 1,
+        "max": 100,
+        "description": "Number of ports per service"
+      }
+    ],
+    "examples": [
+      {
+        "input": "[{\"name\":\"service1\",\"ports\":[\"8080\"],\"exposedPorts\":[\"8080\"]},{\"name\":\"service2\",\"ports\":[\"8081\"],\"exposedPorts\":[\"8081\"]}]",
+        "output": "[]",
+        "explanation": "No conflicts found"
+      },
+      {
+        "input": "[{\"name\":\"service1\",\"ports\":[\"8080\"],\"exposedPorts\":[\"8080\"]},{\"name\":\"service2\",\"ports\":[\"8080\"],\"exposedPorts\":[\"8080\"]}]",
+        "output": "[[\"service1\",\"service2\"],[8080]]",
+        "explanation": "Conflict found between service1 and service2 on port 8080"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DOCKER"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "docker"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Create a dictionary to store the ports exposed by each service"
+    },
+    {
+      "order": 2,
+      "text": "Iterate over each service and check if its ports conflict with any other service's ports"
+    }
+  ],
+  "editorial": {
+    "title": "Docker Port Mapping Validator Editorial",
+    "intuition": "This problem requires you to create a dictionary to store the ports exposed by each service, and then iterate over each service to check for conflicts.",
+    "bruteForce": "One possible approach is to use a brute-force algorithm that checks each pair of services for conflicts. However, this approach has a time complexity of O(n^2), where n is the number of services.",
+    "betterSolution": "A better solution is to use a dictionary to store the ports exposed by each service, and then iterate over each service to check for conflicts. This approach has a time complexity of O(n*m), where n is the number of services and m is the number of ports per service.",
+    "optimalSolution": "The optimal solution is to use a dictionary to store the ports exposed by each service, and then iterate over each service to check for conflicts. We also use a set to store the ports that have been exposed by each service, which allows us to check for conflicts in O(1) time.",
+    "proofOfCorrectness": "The correctness of the optimal solution can be proven by showing that it correctly identifies all conflicts and does not report any false positives.",
+    "dryRun": "Here is an example of how the optimal solution works:",
+    "commonMistakes": [
+      "Failing to consider all possible conflicts",
+      "Using a brute-force algorithm that has a high time complexity"
+    ],
+    "timeComplexity": "O(n*m)",
+    "spaceComplexity": "O(n*m)"
+  },
+  "starterCode": {
+    "javascript": "function validatePorts(ports) {\n    const exposedPorts = {};\n    const conflicts = [];\n\n    // Your code here\n}\n",
+    "python": "class Solution:\n    def validate_ports(self, ports):\n        exposed_ports = {}\n        conflicts = []\n\n        # Your code here\n"
+  },
+  "buggyStarterCode": {
+    "javascript": "function validatePorts(ports) {\n    const exposedPorts = {};\n    const conflicts = [];\n\n    for (let i = 0; i < ports.length; i++) {\n        const service = ports[i];\n        const port = service.ports[0];\n        const exposedPort = service.exposedPorts[0];\n\n        if (exposedPorts[port]) {\n            conflicts.push([service.name, port]);\n        }\n        exposedPorts[port] = true;\n    }\n\n    return conflicts;\n}",
+    "python": "class Solution:\n    def validate_ports(self, ports):\n        exposed_ports = {}\n        conflicts = []\n\n        for service in ports:\n            port = service['ports'][0]\n            exposed_port = service['exposedPorts'][0]\n\n            if exposed_port in exposed_ports:\n                conflicts.append([service['name'], exposed_port])\n            exposed_ports[exposed_port] = True\n\n        return conflicts\n"
+  },
+  "functionSignature": {
+    "javascript": "function validatePorts(ports) {\n    // Your code here\n}",
+    "python": "class Solution:\n    def validate_ports(self, ports) {\n        // Your code here\n}"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction validatePorts(ports) {\n    const exposedPorts = {};\n    const conflicts = [];\n\n    for (let i = 0; i < ports.length; i++) {\n        const service = ports[i];\n        const port = service.ports[0];\n        const exposedPort = service.exposedPorts[0];\n\n        if (exposedPort in exposedPorts) {\n            conflicts.push([service.name, port]);\n        }\n        exposedPorts[exposedPort] = true;\n    }\n\n    return conflicts;\n}",
+    "python": "class Solution:\n    def validate_ports(self, ports):\n        exposed_ports = {}\n        conflicts = []\n\n        for service in ports:\n            port = service['ports'][0]\n            exposed_port = service['exposedPorts'][0]\n\n            if exposed_port in exposed_ports:\n                conflicts.append([service['name'], exposed_port])\n            exposed_ports[exposed_port] = True\n\n        return conflicts\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "[{\"name\":\"service1\",\"ports\":[\"8080\"],\"exposedPorts\":[\"8080\"]},{\"name\":\"service2\",\"ports\":[\"8081\"],\"exposedPorts\":[\"8081\"]}]",
+      "output": "[]",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "[{\"name\":\"service1\",\"ports\":[\"8080\"],\"exposedPorts\":[\"8080\"]},{\"name\":\"service2\",\"ports\":[\"8080\"],\"exposedPorts\":[\"8080\"]}]",
+      "output": "[[\"service1\",\"service2\"],[8080]]",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "cc5c9652af87cf1fff63aeef",
+  "slug": "docker-port-mapping-validator-with-duplicate-service-names-bugfix-easy-docker",
+  "mode": "bug_fix",
+  "category": "DOCKER",
+  "difficulty": "Easy"
+}

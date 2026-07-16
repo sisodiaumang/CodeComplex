@@ -1,0 +1,74 @@
+{
+  "_id": "ad9d9c4353b2bb5a7599fc88",
+  "title": "Dependency Injection Container",
+  "slug": "type-dependency-injection-container",
+  "difficulty": "Hard",
+  "topics": [
+    "TYPESCRIPT"
+  ],
+  "statement": {
+    "markdown": "## Dependency Injection Container\nCreate a dependency injection container that can register and retrieve instances of services.\n### Requirements\n1. The container should be able to register services with a specific name.\n2. The container should be able to retrieve services by their name.\n3. The container should be able to create new instances of services when retrieving them.\n4. The container should support singletons, meaning that the same instance of a service will be returned every time it is retrieved."
+  },
+  "constraints": [
+    "The container should be extensible to support additional types of services.",
+    "The container should be able to handle circular dependencies.",
+    "The container should be able to handle nested dependencies."
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "typescript": "src/container.ts: export class DIContainer {\n  private services: { [name: string]: any } = {};\n\n  register(name: string, service: any): void {\n    this.services[name] = service;\n  }\n\n  get<T>(name: string): T {\n    return this.services[name];\n  }\n}\n\n// Usage\nconst container = new DIContainer();\ncontainer.register('serviceA', () => console.log('Service A'));\nsrc/serviceA.ts"
+  },
+  "gradingCriteria": [
+    {
+      "id": "CR1",
+      "description": "The container can register services with a specific name.",
+      "weight": 20
+    },
+    {
+      "id": "CR2",
+      "description": "The container can retrieve services by their name.",
+      "weight": 20
+    },
+    {
+      "id": "CR3",
+      "description": "The container can create new instances of services when retrieving them.",
+      "weight": 15
+    },
+    {
+      "id": "CR4",
+      "description": "The container supports singletons, meaning that the same instance of a service will be returned every time it is retrieved.",
+      "weight": 15
+    },
+    {
+      "id": "CR5",
+      "description": "The container is extensible to support additional types of services.",
+      "weight": 10
+    },
+    {
+      "id": "CR6",
+      "description": "The container can handle circular dependencies.",
+      "weight": 10
+    },
+    {
+      "id": "CR7",
+      "description": "The container can handle nested dependencies.",
+      "weight": 10
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "typescript"
+    ],
+    "referenceSolution": "src/container.ts: import { Injectable } from './decorators';\n       type Services = {\n         [name: string]: Function | { new (...args: any[]): any };\n       };\n\n       /**\n        * Dependency Injection Container\n        */\n       export class DIContainer {\n         private services: Services = {};\n\n         /**\n          * Register a service with the given name\n          */\n         register<T>(name: string, service: Function | { new (...args: any[]): T }): void {\n           this.services[name] = service;\n         }\n\n         /**\n          * Get a service by its name\n          */\n         get<T>(name: string, ...args: any[]): T {\n           const service = this.services[name];\n           if (typeof service === 'function') {\n             return service(...args);\n           } else {\n             return new service(...args);\n           }\n         }\n       }\n\n       /**\n        * Decorator for defining services as singletons\n        */\n       export function Injectable<T>(target: any): void {\n         target.singleton = true;\n       }\n\n       // Usage\n       const container = new DIContainer();\n       container.register('serviceA', Injectable(class {\n         constructor() {\n           console.log('Service A');\n         }\n       }));\n       container.get('serviceA');\n       container.get('serviceA');\nsrc/decorators.ts: {\n export function Injectable<T>(target: any): void {\n   target.singleton = true;\n }\n}\nsrc/serviceA.ts"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

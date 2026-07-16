@@ -1,0 +1,157 @@
+{
+  "_id": "b62c41cfe99b00aed27b6e27",
+  "title": "Stable Merge Sort with Incorrect Edge Handling",
+  "slug": "stable-merge-sort-with-incorrect-edge-handling-bugfix-hard-sorting",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "Merge Sort",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 60,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "sorting"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Solve the problem and fix the bugs.",
+    "inputFormat": "The input consists of an array of integers. The array will contain between 1 and 10000 elements, inclusive. Each element will be a 32-bit integer.",
+    "outputFormat": "Return true if the input array is sorted in non-ascending order, and false otherwise.",
+    "notes": "Your task is to fix the buggy merge sort implementation to handle edge cases correctly.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "[object Object]",
+        "output": "[object Object]",
+        "explanation": "The array [5, 2, 8, 3] is not sorted in non-ascending order, so the function should return False."
+      },
+      {
+        "input": "[object Object]",
+        "output": "[object Object]",
+        "explanation": "The array [1] is already sorted in non-ascending order, so the function should return True."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Consider the merge function and think about how it handles edge cases."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial for Stable Merge Sort with Incorrect Edge Handling",
+    "intuition": "intuition details.",
+    "bruteForce": "brute Force details.",
+    "betterSolution": "",
+    "optimalSolution": "optimal Solution details.",
+    "proofOfCorrectness": "proof Of Correctness details.",
+    "dryRun": "dry Run details.",
+    "commonMistakes": [],
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(1)",
+    "timeComplexityAnalysis": "",
+    "spaceComplexityAnalysis": ""
+  },
+  "starterCode": {
+    "cpp": "class Solution {\\npublic:\\nbool solve(vector<int>& nums);\\n};",
+    "java": "public class Solution {\\npublic:\\nboolean solve(int[] nums);\\n}",
+    "python": "class Solution:\ndef solve(self, nums):\n  # TODO: implement\n  pass",
+    "javascript": "var Solution = function() {\n  this.solve = function(nums) {\n\n  }\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\nbool solve(vector<int>& nums) {\n  if (nums.size() <= 1) {\n    return true;\n  }\n  for (int i = 0; i < nums.size(); i++) {\n    if (nums[i] > nums[i + 1]) {\n      // Swap nums[i] and nums[i + 1] but with incorrect indices\n      swap(nums[i], nums[i + 2]);\n    }\n  }\n  return true;\n};\n}",
+    "java": "public class Solution {\npublic:\nboolean solve(int[] nums) {\n  if (nums.length <= 1) {\n    return true;\n  }\n  for (int i = 0; i < nums.length; i++) {\n    if (nums[i] > nums[i + 1]) {\n      // Swap nums[i] and nums[i + 1] but with incorrect indices\n      nums[i] = nums[i + 1];\n      nums[i + 2] = nums[i];\n    }\n  }\n  return true;\n}",
+    "python": "class Solution:\ndef solve(self, nums):\n  if len(nums) <= 1:\n    return True\n  for i in range(len(nums) - 1):\n    if nums[i] > nums[i + 1]:\n      nums[i], nums[i + 1] = nums[i + 1], nums[i + 1]\n  return True",
+    "javascript": "var Solution = function() {\n  this.solve = function(nums) {\n    if (nums.length <= 1) {\n      return true;\n    }\n    for (var i = 0; i < nums.length - 1; i++) {\n      if (nums[i] > nums[i + 1]) {\n        // Swap nums[i] and nums[i + 1] but with incorrect indices\n        nums[i] = nums[i + 1];\n        nums[i + 2] = nums[i];\n      }\n    }\n    return true;\n  }\n}"
+  },
+  "functionSignature": {
+    "cpp": "bool solve(vector<int>& nums);",
+    "java": "boolean solve(int[] nums);",
+    "python": "def solve(self, nums: list[int]) -> bool:",
+    "javascript": "var solve = function(nums);"
+  },
+  "solutions": {
+    "python": "import sys\nclass Solution:\n  def solve(self, nums):\n    if len(nums) <= 1:\n      return True\n    merged = [nums[0]]\n    for num in nums[1:]:\n      if num >= merged[-1]:\n        merged.append(num)\n      else:\n        merged.append(merged.pop())\n        merged.append(num)\n    return merged == sorted(nums, reverse=True)\n\ns = Solution()\ninput_count = int(sys.stdin.readline())\nnums = list(map(int, sys.stdin.readline().split()))\nprint(s.solve(nums))",
+    "cpp": "#include <iostream>\n#include <vector>\nusing namespace std;\nclass Solution {\npublic:\nbool solve(vector<int>& nums) {\n  if (nums.size() <= 1) {\n    return true;\n  }\n  vector<int> merged;\n  merged.push_back(nums[0]);\n  for (int i = 1; i < nums.size(); i++) {\n    if (nums[i] >= merged.back()) {\n      merged.push_back(nums[i]);\n    } else {\n      merged.pop_back();\n      merged.push_back(nums[i]);\n    }\n  }\n  return merged == sorted(nums.begin(), nums.end(), greater<int>());\n}\n};\n\nint main() {\n  int input_count;\n  cin >> input_count;\n  vector<int> nums(input_count);\n  for (int i = 0; i < input_count; i++) {\n    cin >> nums[i];\n  }\n  cin.ignore();\n  Solution s;\n  cout << (s.solve(nums) ? \"true\" : \"false\") << endl;\n  return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "4\n5 2 8 3",
+      "output": "false",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "1\n1",
+      "output": "true",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

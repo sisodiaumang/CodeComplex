@@ -1,0 +1,153 @@
+{
+  "title": "Handling Middleware-Induced Route Conflicts in Express",
+  "subCategory": "Express Routing",
+  "statement": {
+    "markdown": "You are given an Express.js application that handles GET requests to the '/api/users' and '/api/users/:id' routes. However, the application experiences a middleware-induced route conflict when a GET request is made to '/api/users/id'. The conflict arises due to the incorrect order of route middleware. Your task is to fix the bug by reordering the middleware to prevent the conflict and ensure the application responds correctly to requests to both '/api/users' and '/api/users/:id'.",
+    "inputFormat": "The input will be a string representing a path to be processed by the Express router.",
+    "outputFormat": "The output should be a boolean indicating whether the request was handled successfully.",
+    "notes": "When handling the '/api/users/id' request, the application should respond with a 404 status code if the user ID is not found. If the user ID is found, the application should return the user data in JSON format.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Maximum number of user IDs to be processed"
+      }
+    ],
+    "examples": [
+      {
+        "input": "GET /api/users 200 OK",
+        "output": "true",
+        "explanation": "The GET request to '/api/users' is handled successfully."
+      },
+      {
+        "input": "GET /api/users/1 200 OK",
+        "output": "true",
+        "explanation": "The GET request to '/api/users/1' is handled successfully and returns the user data in JSON format."
+      },
+      {
+        "input": "GET /api/users/non-existent-id 404 Not Found",
+        "output": "false",
+        "explanation": "The GET request to '/api/users/non-existent-id' is not handled successfully and returns a 404 status code."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 75,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "EXPRESS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "express"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Review the Express.js documentation for route middleware ordering best practices."
+    },
+    {
+      "order": 2,
+      "text": "Consider using the 'express.Router' method to handle route conflicts."
+    }
+  ],
+  "editorial": {
+    "title": "Handling Middleware-Induced Route Conflicts in Express",
+    "intuition": "The key to resolving the route conflict is to reorder the middleware to ensure that the '/api/users/:id' route is handled before the '/api/users' route.",
+    "bruteForce": "One approach to resolving the conflict is to add a custom middleware function that checks if the request path matches '/api/users/:id'. If it does, the middleware function can handle the request and prevent the conflict.",
+    "betterSolution": "A better solution involves using the 'express.Router' method to create a separate router for the '/api/users/:id' route. This allows us to handle the route conflict by prioritizing the custom router over the main router.",
+    "optimalSolution": "The optimal solution involves creating a custom router for the '/api/users/:id' route and using the 'express.Router' method to prioritize the custom router over the main router. This ensures that the '/api/users/:id' route is handled correctly and prevents the route conflict.",
+    "proofOfCorrectness": "The correct solution can be verified by sending GET requests to both '/api/users' and '/api/users/:id' and checking that the application responds correctly to each request.",
+    "dryRun": "To test the solution, create an Express.js application and add the custom router for the '/api/users/:id' route. Use the 'express.Router' method to prioritize the custom router over the main router. Send GET requests to both '/api/users' and '/api/users/:id' and verify that the application responds correctly to each request.",
+    "commonMistakes": [
+      "Incorrectly ordering route middleware",
+      "Failing to use the 'express.Router' method to handle route conflicts"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "// Define the Express.js application and the custom router for the '/api/users/:id' route.",
+    "python": "from express import Flask, jsonify"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Define the Express.js application and the custom router for the '/api/users/:id' route.\n// However, the middleware ordering is incorrect, causing a route conflict.\nvar express = require('express');\nvar app = express();\n\n// Custom router for the '/api/users/:id' route\nvar usersRouter = express.Router();\nusersRouter.get('/:id', function(req, res) {\n  // Handle the GET request to '/api/users/:id'\n  var userId = req.params.id;\n  // Simulate a user ID lookup\n  var user = { name: 'John Doe', email: 'john@example.com' };\n  res.json(user);\n});\n\n// Main router\napp.use('/api/users/', usersRouter);\n\n// Route middleware that handles the '/api/users' route\napp.get('/api/users', function(req, res) {\n  // Handle the GET request to '/api/users'\n  res.json({ message: 'Hello, World!' });\n});\n\n// Start the server\nvar server = app.listen(3000, function() {\n  console.log('Server listening on port 3000');\n});",
+    "python": "from express import Flask, jsonify\napp = Flask(__name__)\n\n# Custom router for the '/api/users/:id' route\nusers_router = Blueprint('users', __name__)\n@users_router.route('/<int:id>', methods=['GET'])\ndef get_user(id):\n  # Handle the GET request to '/api/users/:id'\n  user = { 'name': 'John Doe', 'email': 'john@example.com' }\n  return jsonify(user)\n\n# Main router\napp.register_blueprint(users_router, url_prefix='/api/users')\n\n# Route middleware that handles the '/api/users' route\n@app.route('/api/users', methods=['GET'])\ndef get_users():\n  # Handle the GET request to '/api/users'\n  return jsonify({ 'message': 'Hello, World!' })\n\n# Start the server\nif __name__ == '__main__':\n  app.run(debug=True)"
+  },
+  "functionSignature": {
+    "javascript": "var solve = function(app) {\n  // Define the custom router for the '/api/users/:id' route\n  // and the main router that handles the '/api/users' route.\n};\n",
+    "python": "def solve(app):\n  # Define the custom router for the '/api/users/:id' route\n  # and the main router that handles the '/api/users' route.\n"
+  },
+  "solutions": {
+    "javascript": "// Define the Express.js application and the custom router for the '/api/users/:id' route.\n// Use the 'express.Router' method to prioritize the custom router over the main router.\nvar express = require('express');\nvar app = express();\n\n// Custom router for the '/api/users/:id' route\nvar usersRouter = express.Router();\nusersRouter.get('/:id', function(req, res) {\n  // Handle the GET request to '/api/users/:id'\n  var userId = req.params.id;\n  // Simulate a user ID lookup\n  var user = { name: 'John Doe', email: 'john@example.com' };\n  res.json(user);\n});\n\n// Main router\nvar mainRouter = express.Router();\nmainRouter.use('/api/users/', usersRouter);\napp.use(mainRouter);\n\n// Route middleware that handles the '/api/users' route\napp.get('/api/users', function(req, res) {\n  // Handle the GET request to '/api/users'\n  res.json({ message: 'Hello, World!' });\n});\n\n// Start the server\nvar server = app.listen(3000, function() {\n  console.log('Server listening on port 3000');\n});",
+    "python": "from express import Flask, jsonify, Blueprint\napp = Flask(__name__)\n\n# Custom router for the '/api/users/:id' route\nusers_router = Blueprint('users', __name__)\n@users_router.route('/<int:id>', methods=['GET'])\ndef get_user(id):\n  # Handle the GET request to '/api/users/:id'\n  user = { 'name': 'John Doe', 'email': 'john@example.com' }\n  return jsonify(user)\n\n# Main router\nmain_router = Blueprint('main', __name__)\nmain_router.register_blueprint(users_router, url_prefix='/api/users')\napp.register_blueprint(main_router)\n\n# Route middleware that handles the '/api/users' route\n@app.route('/api/users', methods=['GET'])\ndef get_users():\n  # Handle the GET request to '/api/users'\n  return jsonify({ 'message': 'Hello, World!' })\n\n# Start the server\nif __name__ == '__main__':\n  app.run(debug=True)"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "GET /api/users 200 OK",
+      "output": "true",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "GET /api/users/1 200 OK",
+      "output": "true",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_3",
+      "input": "GET /api/users/non-existent-id 404 Not Found",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "_id": "e429e250d1d7764eca8c038e",
+  "slug": "handling-middleware-induced-route-conflicts-in-express-bugfix-hard-express",
+  "mode": "bug_fix",
+  "category": "EXPRESS",
+  "difficulty": "Hard"
+}

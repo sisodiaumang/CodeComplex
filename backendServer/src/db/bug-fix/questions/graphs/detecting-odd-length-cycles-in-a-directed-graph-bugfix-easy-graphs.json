@@ -1,0 +1,153 @@
+{
+  "_id": "8e72343878f71aaf5a51e8ea",
+  "title": "Detecting Odd Length Cycles in a Directed Graph",
+  "slug": "detecting-odd-length-cycles-in-a-directed-graph-bugfix-easy-graphs",
+  "difficulty": "Easy",
+  "category": "DSA",
+  "subCategory": "DFS",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "graph"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given a directed graph represented as an adjacency list, detect whether there exists an odd length cycle in the graph. The graph contains vertices numbered from 0 to n-1, where n is the number of vertices in the graph. Each edge in the graph is represented as a pair of vertices, where the first vertex is the source and the second vertex is the destination.",
+    "inputFormat": "The input will consist of n, the number of vertices, followed by n-1 edges, where each edge is represented as a pair of vertices.",
+    "outputFormat": "Output 1 if the graph contains an odd length cycle, otherwise output 0.",
+    "notes": "You can use DFS or BFS to solve this problem.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "5\n0 1\n1 2\n2 0\n3 4\n4 3",
+        "output": "1",
+        "explanation": "The graph contains an odd length cycle: 0 -> 1 -> 2 -> 0."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use DFS to traverse the graph and detect the presence of an odd length cycle."
+    }
+  ],
+  "editorial": {
+    "title": "Detecting Odd Length Cycles in a Directed Graph",
+    "intuition": "The key insight here is to use a visited array to keep track of the vertices we have visited so far. If we revisit a vertex and its previous visit was via an edge, it means we have found a cycle.",
+    "bruteForce": "Brute force approach: Enumerate all possible paths and check if any of them form a cycle.",
+    "betterSolution": "",
+    "optimalSolution": "Use DFS to traverse the graph and detect the presence of an odd length cycle. We can use a visited array to keep track of the vertices we have visited so far and a recursive function to perform the DFS traversal.",
+    "proofOfCorrectness": "The correctness of this approach follows from the fact that a cycle in a graph exists if and only if there is a path from a vertex back to itself.",
+    "dryRun": "Step-by-step example run: 1. Read the input: Read the number of vertices and the edges from the input. 2. Initialize the visited array: Initialize an array to keep track of the vertices we have visited so far. 3. Perform DFS: Use a recursive function to perform the DFS traversal of the graph.",
+    "commonMistakes": [
+      "Forget to reset the visited array between DFS traversals.",
+      "Use a visited array of the wrong size."
+    ],
+    "timeComplexity": "O(n + m)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    bool dfs(vector<vector<int>>& graph, int vertex, vector<bool>& visited, int parent);\n    bool solve(vector<vector<int>>& graph, int n);\n};",
+    "java": "public class Solution {\npublic:\n    boolean dfs(int[][] graph, int vertex, boolean[] visited, int parent);\n    boolean solve(int[][] graph, int n);\n};",
+    "python": "class Solution:\n    def dfs(self, graph, vertex, visited, parent):\n        pass\n    def solve(self, graph, n):\n        pass",
+    "javascript": "function dfs(graph, vertex, visited, parent) {\n    return false;\n}\nfunction solve(graph, n) {\n    return false;\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    bool dfs(vector<vector<int>>& graph, int vertex, vector<bool>& visited, int parent) {\n        if (visited[vertex]) return true;\n        visited[vertex] = true;\n        for (auto neighbor : graph[vertex]) {\n            if (neighbor == parent) continue;\n            return dfs(graph, neighbor, visited, vertex);\n        }\n        return false;\n    }\n    bool solve(vector<vector<int>>& graph, int n) {\n        vector<bool> visited(n, false);\n        for (int i = 0; i < n; i++) {\n            if (!visited[i]) {\n                if (dfs(graph, i, visited, -1)) return true;\n            }\n        }\n        return false;\n    }\n};",
+    "java": "public class Solution {\npublic:\n    boolean dfs(int[][] graph, int vertex, boolean[] visited, int parent) {\n        if (visited[vertex]) return true;\n        visited[vertex] = true;\n        for (int neighbor : graph[vertex]) {\n            if (neighbor == parent) continue;\n            return dfs(graph, neighbor, visited, vertex);\n        }\n        return false;\n    }\n    boolean solve(int[][] graph, int n) {\n        boolean[] visited = new boolean[n];\n        for (int i = 0; i < n; i++) {\n            if (!visited[i]) {\n                if (dfs(graph, i, visited, -1)) return true;\n            }\n        }\n        return false;\n    }\n};",
+    "python": "class Solution:\n    def dfs(self, graph, vertex, visited, parent):\n        if visited[vertex]: return True\n        visited[vertex] = True\n        for neighbor in graph[vertex]:\n            if neighbor == parent: continue\n            return self.dfs(graph, neighbor, visited, vertex)\n        return False\n    def solve(self, graph, n):\n        visited = [False] * n\n        for i in range(n):\n            if not visited[i]:\n                if self.dfs(graph, i, visited, -1): return True\n        return False",
+    "javascript": "function dfs(graph, vertex, visited, parent) {\n    if (visited[vertex]) return true;\n    visited[vertex] = true;\n    for (var neighbor in graph[vertex]) {\n        if (neighbor == parent) continue;\n        return dfs(graph, neighbor, visited, vertex);\n    }\n    return false;\n}\nfunction solve(graph, n) {\n    var visited = new Array(n).fill(false);\n    for (var i = 0; i < n; i++) {\n        if (!visited[i]) {\n            if (dfs(graph, i, visited, -1)) return true;\n        }\n    }\n    return false;\n}"
+  },
+  "functionSignature": {
+    "cpp": "bool solve(vector<vector<int>>& graph, int n);",
+    "java": "boolean solve(int[][] graph, int n);",
+    "python": "def solve(self, graph: [[int]], n: int) -> bool:",
+    "javascript": "function solve(graph: [[int]], n: int) {"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def dfs(self, graph, vertex, visited, parent):\n        if visited[vertex]: return True\n        visited[vertex] = True\n        for neighbor in graph[vertex]:\n            if neighbor == parent: continue\n            return self.dfs(graph, neighbor, visited, vertex)\n        return False\n    def solve(self, graph, n):\n        visited = [False] * n\n        for i in range(n):\n            if not visited[i]:\n                if self.dfs(graph, i, visited, -1): return True\n        return False\n\nclass Solution:\n    def solve(self, graph, n):\n        visited = [False] * n\n        for i in range(n):\n            if not visited[i]:\n                if self.dfs(graph, i, visited, -1): return True\n        return False\n\ndef main():\n    s = Solution()\n    n = int(input())\n    graph = [[] for _ in range(n)]\n    for _ in range(n-1):\n        u, v = map(int, input().split())\n        graph[u].append(v)\n    print('1' if s.solve(graph, n) else '0')\nif __name__ == '__main__':\n    main()\n",
+    "cpp": "class Solution {\npublic:\n    bool dfs(vector<vector<int>>& graph, int vertex, vector<bool>& visited, int parent) {\n        if (visited[vertex]) return true;\n        visited[vertex] = true;\n        for (auto neighbor : graph[vertex]) {\n            if (neighbor == parent) continue;\n            return dfs(graph, neighbor, visited, vertex);\n        }\n        return false;\n    }\n    bool solve(vector<vector<int>>& graph, int n) {\n        vector<bool> visited(n, false);\n        for (int i = 0; i < n; i++) {\n            if (!visited[i]) {\n                if (dfs(graph, i, visited, -1)) return true;\n            }\n        }\n        return false;\n    }\n};\nclass Solution {\npublic:\n    bool solve(vector<vector<int>>& graph, int n) {\n        vector<bool> visited(n, false);\n        for (int i = 0; i < n; i++) {\n            if (!visited[i]) {\n                if (dfs(graph, i, visited, -1)) return true;\n            }\n        }\n        return false;\n    }\n};\n\nint main() {\n    Solution s;\n    int n;\n    cin >> n;\n    cin.ignore();\n    for (int i = 0; i < n - 1; i++) {\n        int u, v;\n        cin >> u >> v;\n        --u;\n        --v;\n        s.graph[u].push_back(v);\n        s.graph[v].push_back(u);\n    }\n    cout << (s.solve(s.graph, n) ? '1' : '0') << endl;\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5\n0 1\n1 2\n2 0\n3 4\n4 3",
+      "output": "1",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_hidden_generated",
+      "input": "5\n0 1\n1 2\n2 0\n3 4\n4 3",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

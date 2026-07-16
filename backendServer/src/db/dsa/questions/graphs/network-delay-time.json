@@ -1,0 +1,232 @@
+{
+  "_id": "network-delay-time",
+  "title": "Network Delay Time",
+  "slug": "network-delay-time",
+  "difficulty": "Medium",
+  "category": "GRAPH",
+  "subCategory": "Shortest Path Algorithms",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 500,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "Graphs",
+      "Shortest Path Algorithms"
+    ],
+    "patterns": [
+      "dijkstra",
+      "bellman-ford",
+      "topological-sort"
+    ],
+    "prerequisites": [
+      "Floyd-Warshall Algorithm",
+      "Dijkstra's Algorithm"
+    ],
+    "variants": [],
+    "tags": [
+      "graph-traversal",
+      "shortest-path",
+      "topological-sort"
+    ],
+    "keywords": [
+      "network-delay",
+      "time-complexity",
+      "shortest-path-algorithms"
+    ],
+    "interviewFrequency": 4,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "You are given a directed weighted graph representing a network of computers. The graph consists of `n` nodes labeled from `1` to `n` and `m` directed edges. Each edge `u v w` means there is a one‑way communication channel from node `u` to node `v` that takes `w` units of time to transmit a signal.\n\nA signal is sent from a starting node `k`. When a node receives the signal, it immediately forwards the signal to all of its outgoing neighbors. The time for a node to receive the signal is the shortest possible time over all possible paths from `k` to that node.\n\nYour task is to compute the **network delay time**, i.e. the time it will take for all `n` nodes to receive the signal. If it is impossible for some node to receive the signal, output `-1`.\n\n---\n\n**Input Format**\n- The first line contains an integer `n`, the number of nodes in the network.\n- The second line contains an integer `m`, the number of directed edges.\n- The third line contains an integer `m`, the count of edges that follow.\n- Each of the next `m` lines contains three space‑separated integers `u v w` describing a directed edge from `u` to `v` with travel time `w`.\n- The line after the edge list contains an integer `k`, the starting node.\n\n**Output Format**\n- Print a single integer: the minimum time required for all nodes to receive the signal, or `-1` if at least one node cannot be reached.\n\n---\n\n**Notes**\n- The graph may contain multiple edges between the same pair of nodes; treat each edge independently.\n- Edge weights are positive.\n- The graph is not necessarily strongly connected.\n\n---\n\n**Constraints**\n- `1 <= n <= 1000`\n- `0 <= m <= n * (n - 1)`\n- `1 <= u, v, k <= n`\n- `1 <= w <= 1000`\n\n---\n\n**Examples**\n\n**Example 1**\nInput\n```\n4\n3\n3\n2 1 1\n2 3 1\n3 4 1\n2\n```\nOutput\n```\n2\n```\nExplanation\nStarting from node 2, the signal reaches node 1 in 1 unit, node 3 in 1 unit, and node 4 in 2 units (via node 3). The farthest node receives the signal after 2 units of time.\n\n**Example 2**\nInput\n```\n5\n5\n5\n1 2 1\n2 3 2\n1 3 4\n3 4 1\n4 5 3\n1\n```\nOutput\n```\n3\n```\nExplanation\nThe shortest times from node 1 are: node 2 → 1, node 3 → 3 (1→2→3), node 4 → 4, node 5 → 7. The maximum among reachable nodes is 7, but node 5 can also be reached via 1→3→4→5 with total time 3+1+3 = 7, so the network delay time is 7. Since all nodes are reachable, the answer is 7.\n",
+    "inputFormat": "n\nm\nm\nu v w (repeated m times)\nk",
+    "outputFormat": "single integer representing the network delay time or -1",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "int",
+        "min": 1,
+        "max": 1000
+      },
+      {
+        "variable": "m",
+        "type": "int",
+        "min": 0,
+        "max": "n*(n-1)"
+      },
+      {
+        "variable": "u",
+        "type": "int",
+        "min": 1,
+        "max": "n"
+      },
+      {
+        "variable": "v",
+        "type": "int",
+        "min": 1,
+        "max": "n"
+      },
+      {
+        "variable": "w",
+        "type": "int",
+        "min": 1,
+        "max": 1000
+      },
+      {
+        "variable": "k",
+        "type": "int",
+        "min": 1,
+        "max": "n"
+      }
+    ],
+    "examples": [
+      {
+        "input": "4\n3\n3\n2 1 1\n2 3 1\n3 4 1\n2",
+        "output": "2",
+        "explanation": "All nodes receive the signal within 2 time units."
+      },
+      {
+        "input": "5\n5\n5\n1 2 1\n2 3 2\n1 3 4\n3 4 1\n4 5 3\n1",
+        "output": "7",
+        "explanation": "The farthest node (5) receives the signal after 7 time units."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "The problem asks for the network delay time, which is the time it takes for all nodes to receive the signal. You can use Dijkstra's algorithm to find the shortest path from the starting node to all other nodes."
+    },
+    {
+      "order": 2,
+      "text": "Dijkstra's algorithm is a good choice because it can efficiently find the shortest path in a weighted graph. However, it only works for graphs where all edge weights are non-negative."
+    },
+    {
+      "order": 3,
+      "text": "Since the problem statement mentions that edge weights are positive, we can use a modified version of Dijkstra's algorithm that handles negative weights. One such modification is to use Bellman-Ford algorithm."
+    },
+    {
+      "order": 4,
+      "text": "Bellman-Ford algorithm is an extension of Dijkstra's algorithm that can handle graphs with negative weight edges. It works by relaxing all edges repeatedly, and it can detect negative cycles."
+    },
+    {
+      "order": 5,
+      "text": "To find the network delay time, you can use Bellman-Ford algorithm to find the shortest path from the starting node to all other nodes. Then, you can find the maximum distance among all reachable nodes, which represents the network delay time."
+    }
+  ],
+  "editorial": {
+    "title": "From Brute Force to Dijkstra: The Journey to Optimal Network Delay",
+    "intuition": "The problem asks for the longest shortest‑path from a source node to all others in a weighted directed graph. A naïve approach would recompute a shortest path to every node independently, but that ignores the shared structure of the graph and leads to quadratic or worse work. The key observation is that once we know the shortest distance to a node, we can use it to improve distances to its outgoing neighbors, and this process can be organized efficiently by always picking the currently unreached node with the smallest tentative distance. This is exactly the greedy strategy behind Dijkstra’s algorithm, which guarantees optimality on graphs with non‑negative weights.",
+    "bruteForce": "A straightforward brute‑force solution would run a Dijkstra or Bellman‑Ford from the source for each node, or simply perform a breadth‑first search that ignores edge weights, and then take the maximum of the resulting distances. While this works for tiny graphs, its time complexity explodes to O(n·(m log n)) or worse, far beyond the limits when n can be 1000 and m up to n(n‑1). The algorithm would repeatedly relax edges many times, leading to a noticeable slowdown and memory overhead.",
+    "betterSolution": "The optimal approach is a single run of Dijkstra’s algorithm starting from the source node k. By building an adjacency list and using a min‑heap priority queue, we propagate the smallest known distances to all reachable nodes in O(m log n) time and O(n+m) space. After the run, the answer is the maximum distance among all nodes; if any node remains at infinity, the graph is disconnected and we return –1.",
+    "optimalSolution": "The algorithm maintains an array dist[1..n] initialized to infinity except dist[k]=0. A priority queue holds pairs (current_distance, node). While the queue is not empty, we pop the node with the smallest distance. If this distance is stale we skip it. For each outgoing edge (u→v,w), we compute a new distance nd = dist[u]+w; if nd<dist[v], we update dist[v] and push (nd,v) into the queue. Once the queue empties, all shortest distances are finalized. The answer is max(dist[1..n]) unless it is still infinity, in which case we return –1.",
+    "proofOfCorrectness": "Dijkstra’s algorithm is optimal for graphs with non‑negative edge weights because the priority queue always extracts the node with the smallest tentative distance, which is guaranteed to be the true shortest distance at that moment. Once a node is extracted, no shorter path to it can exist via unreached nodes, since any such path would have to go through a node with a larger tentative distance, contradicting the minimality. Thus each dist[v] is finalized correctly. Taking the maximum of these finalized distances yields the longest shortest path from the source. If some node remains at infinity, it is unreachable, so the correct return value is –1.",
+    "dryRun": "Consider a graph with 4 nodes and edges: 1→2 (1), 1→3 (4), 2→3 (1), 3→4 (1), 2→4 (5), source k=1. The adjacency list is built, dist=[∞,0,∞,∞,∞]. The heap starts with (0,1). Pop (0,1): relax 2 to 1, 3 to 4. Heap now [(1,2),(4,3)]. Pop (1,2): relax 3 to 2 (improves from 4), 4 to 6. Heap [(2,3),(6,4),(4,3)]. Pop (2,3): relax 4 to 3 (improves from 6). Heap [(3,4),(4,3)]. Pop (3,4): no outgoing edges. Heap [(4,3)]. Pop (4,3): stale entry, skip. Final dist=[∞,0,1,2,3]; max is 3. The algorithm runs in O(6 log 4).",
+    "commonMistakes": [
+      "Assuming that a single BFS suffices even with weighted edges; BFS ignores weights and can produce incorrect distances.",
+      "Using a simple array to pick the next node instead of a priority queue, leading to O(n^2) time which is acceptable for very small graphs but not for the given limits.",
+      "Updating distances without checking if the popped distance matches the current dist entry, causing stale entries to incorrectly relax neighbors.",
+      "Treating the graph as undirected when it is directed, which doubles the number of edges and changes shortest paths.",
+      "Returning the maximum distance without verifying that all nodes are reachable, thus missing the –1 case.",
+      "Using a data structure that does not support decrease‑key efficiently, leading to unnecessary heap pushes and a higher constant factor."
+    ],
+    "timeComplexity": "O(m log n) where m is the number of edges",
+    "spaceComplexity": "O(n + m) for adjacency list and distance array"
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    int networkDelayTime(vector<vector<int>>& times, int n, int k) {\n        // TODO: implement\n        return 0;\n    }\n};",
+    "java": "import java.util.*;\n\nclass Solution {\n    public int networkDelayTime(int[][] times, int n, int k) {\n        // TODO: implement\n        return 0;\n    }\n}",
+    "python": "from typing import List\n\nclass Solution:\n    def networkDelayTime(self, times: List[List[int]], n: int, k: int) -> int:\n        # TODO: implement\n        pass",
+    "javascript": "/**\n * @param {number[][]} times\n * @param {number} n\n * @param {number} k\n * @return {number}\n */\nvar networkDelayTime = function(times, n, k) {\n    // TODO: implement\n    return 0;\n};"
+  },
+  "functionSignature": {
+    "cpp": "int networkDelayTime(vector<vector<int>>& times, int n, int k);",
+    "java": "public int networkDelayTime(int[][] times, int n, int k);",
+    "python": "def networkDelayTime(self, times: list[list[int]], n: int, k: int) -> int:",
+    "javascript": "var networkDelayTime = function(times, n, k);"
+  },
+  "solutions": {
+    "python": "import sys\nimport heapq\n\nclass Solution:\n    def networkDelayTime(self, times: list[list[int]], n: int, k: int) -> int:\n        # build adjacency list\n        adj = [[] for _ in range(n + 1)]\n        for u, v, w in times:\n            adj[u].append((v, w))\n        INF = 10**18\n        dist = [INF] * (n + 1)\n        dist[k] = 0\n        pq = [(0, k)]\n        while pq:\n            d, u = heapq.heappop(pq)\n            if d != dist[u]:\n                continue\n            for v, w in adj[u]:\n                nd = d + w\n                if nd < dist[v]:\n                    dist[v] = nd\n                    heapq.heappush(pq, (nd, v))\n        maxd = max(dist[1:])\n        return -1 if maxd == INF else maxd\n\nif __name__ == '__main__':\n    it = iter(sys.stdin.read().split())\n    try:\n        n = int(next(it))\n        m = int(next(it))\n        edge_cnt = int(next(it))\n        times = []\n        for _ in range(edge_cnt):\n            u = int(next(it)); v = int(next(it)); w = int(next(it))\n            times.append([u, v, w])\n        k = int(next(it))\n    except StopIteration:\n        sys.exit(0)\n    sol = Solution()\n    ans = sol.networkDelayTime(times, n, k)\n    print(ans)",
+    "cpp": "#include <numeric>\n#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    int networkDelayTime(vector<vector<int>>& times, int n, int k) {\n        vector<vector<pair<int,int>>> adj(n+1);\n        for (auto &e: times) {\n            int u=e[0], v=e[1], w=e[2];\n            adj[u].push_back({v,w});\n        }\n        const long long INF = 4e18;\n        vector<long long> dist(n+1, INF);\n        dist[k]=0;\n        using P = pair<long long,int>;\n        priority_queue<P, vector<P>, greater<P>> pq;\n        pq.push({0,k});\n        while(!pq.empty()){\n            auto _tmp_binding_0 = pq.top(); auto d = _tmp_binding_0.first; auto u = _tmp_binding_0.second; pq.pop();\n            if(d!=dist[u]) continue;\n            for(auto &pr: adj[u]){\n                int v=pr.first; int w=pr.second;\n                long long nd=d+w;\n                if(nd<dist[v]){\n                    dist[v]=nd;\n                    pq.push({nd,v});\n                }\n            }\n        }\n        long long ans=0;\n        for(int i=1;i<=n;i++){\n            if(dist[i]==INF) return -1;\n            ans=max(ans, dist[i]);\n        }\n        return (int)ans;\n    }\n};\n\nint main(){\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int n,m,edge_cnt;\n    if(!(cin>>n)) return 0;\n    cin>>m; // read but not used separately\n    cin>>edge_cnt;\n    vector<vector<int>> times;\n    times.reserve(edge_cnt);\n    for(int i=0;i<edge_cnt;i++){\n        int u,v,w;cin>>u>>v>>w;\n        times.push_back({u,v,w});\n    }\n    int k;cin>>k;\n    Solution sol;\n    int ans=sol.networkDelayTime(times,n,k);\n    cout<<ans<<\"\\n\";\n    return 0;\n}\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.2
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "4\n3\n3\n2 1 1\n2 3 1\n3 4 1\n2",
+      "output": "2",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "5\n5\n5\n1 2 1\n2 3 2\n1 3 4\n3 4 1\n4 5 3\n1",
+      "output": "7",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint_3",
+      "input": "2\n1\n1\n1 2 1\n1\n",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "duplicate_5",
+      "input": "2\n1\n1\n1 2 1\n2\n",
+      "output": "-1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "duplicate"
+    },
+    {
+      "id": "random_medium_6",
+      "input": "7\n6\n6\n1 2 4\n2 3 2\n3 4 3\n4 5 1\n5 6 2\n6 7 4\n1\n",
+      "output": "16",
+      "isVisible": false,
+      "weight": 1,
+      "category": "random_medium"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

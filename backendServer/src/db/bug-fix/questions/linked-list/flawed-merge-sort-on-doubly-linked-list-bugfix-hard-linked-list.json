@@ -1,0 +1,157 @@
+{
+  "_id": "1c32b679b4bf6de6825b48e1",
+  "title": "Flawed Merge Sort on Doubly Linked List",
+  "slug": "flawed-merge-sort-on-doubly-linked-list-bugfix-hard-linked-list",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "Merge Sort",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "linked_list"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Solve the problem and fix the bugs.",
+    "inputFormat": "",
+    "outputFormat": "",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "5\n2 8 1 5 4",
+        "output": "1 2 4 5 8",
+        "explanation": "Sorted array"
+      },
+      {
+        "input": "4\n7 2 3 8",
+        "output": "2 3 7 8",
+        "explanation": "Sorted array"
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "When merging two linked lists, be cautious about handling the `null` case for the next pointers of the nodes in the merged list."
+    }
+  ],
+  "editorial": {
+    "title": "Merge Sort on Doubly Linked List",
+    "intuition": "intuition details.",
+    "bruteForce": "brute Force details.",
+    "betterSolution": "",
+    "optimalSolution": "optimal Solution details.",
+    "proofOfCorrectness": "proof Of Correctness details.",
+    "dryRun": "dry Run details.",
+    "commonMistakes": [
+      "Incorrectly handling the `null` case for the next pointers of the nodes in the merged list"
+    ],
+    "timeComplexity": "O(n log n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    bool sortList(vector<int>& nums) {\n        // TODO: implement\n        return false;\n    }\n};",
+    "java": "class Solution {\n    public boolean sortList(int[] nums) {\n        // TODO: implement\n        return false;\n    }\n}",
+    "python": "class Solution:\n    def sortList(self, nums: list[int]) -> bool:\n        # TODO: implement\n        pass",
+    "javascript": "var sortList = function(nums) {\n    // TODO: implement\n    return false;\n};"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Node {public: int val; Node *prev; Node *next;};\nvoid mergeSort(Node *head){ if (head == nullptr || head->next == nullptr) return ; Node *mid = findMid(head); Node *midNext = mid->next; mid->next = nullptr; mergeSort(head); mergeSort(midNext); Node *merged = merge(head, midNext); head = merged;}\nNode *merge(Node *l, Node *r){ if (l == nullptr) return r; if (r == nullptr) return l; if (l->val <= r->val){ l->next = merge(l->next, r); return l;}\nNode *merged = new Node{l->val}; merged->next = merge(l->next, r); return merged;}\nNode* sortList(Node* head) {\n    if (head == nullptr)\n        return head;\n    mergeSort(head);\n    return head;\n}",
+    "java": "class Solution {\n    public boolean sortList(int[] nums) {\n        // Buggy code\n        return false;\n    }\n}",
+    "python": "class Solution:\n    def sortList(self, nums: list[int]) -> bool:\n        # Buggy code\n        pass",
+    "javascript": "var sortList = function(nums) {\n    // Buggy code\n    return false;\n};"
+  },
+  "functionSignature": {
+    "cpp": "Node* sortList(Node* head);",
+    "java": "public boolean sortList(int[] nums);",
+    "python": "def sortList(self, nums: list[int]) -> bool:",
+    "javascript": "function sortList(head){}"
+  },
+  "solutions": {
+    "python": "// Python solution\nfrom typing import List\n\nclass ListNode:\n    def __init__(self, val=0, prev=None, next=None):\n        self.val = val\n        self.prev = prev\n        self.next = next\n\nclass Solution:\n    def sortList(self, head: ListNode):\n        if not head or not head.next:\n            return head\n\n        mid = self.findMid(head)\n        mid_next = mid.next\n        mid.next = None\n\n        self.mergeSort(head)\n        self.mergeSort(mid_next)\n        merged = self.merge(head, mid_next)\n\n        return merged\n\n    def merge(self, l: ListNode, r: ListNode) -> ListNode:\n        if not l:\n            return r\n        if not r:\n            return l\n        if l.val <= r.val:\n            l.next = self.merge(l.next, r)\n            return l\n\n        merged = ListNode(l.val)\n        merged.next = self.merge(l.next, r)\n        return merged\n\n    def findMid(self, head: ListNode) -> ListNode:\n        slow = fast = head\n        while fast.next and fast.next.next:\n            slow = slow.next\n            fast = fast.next.next\n        return slow\n\n    def mergeSort(self, head: ListNode):\n        # Recursively sort the sublists on either side of the midpoint\n        self.sortList(head)\n        self.sortList(head.next)\n\n# Helper function to read input from sys.stdin and create a linked list\n    def readList(self):\n        line1, line2 = input().split('\\n')\n        n = int(line1)\n        line3 = line2.split('\\s')\n\n        head = tail = ListNode(int(line3[0]))\n        for num in line3[1:]:\n            tail.next = ListNode(int(num))\n            tail = tail.next\n\n        return head\n\n# Read input from sys.stdin and print output to sys.stdout\n    def main(self):\n        head = self.readList()\n        sortedHead = self.sortList(head)\n\n        # Print the sorted linked list to sys.stdout\n        while sortedHead:\n            print(sortedHead.val, end='\\s')\n            sortedHead = sortedHead.next\n        print()\n\nif __name__ == '__main__':\n    s = Solution()\n    s.main()\n",
+    "cpp": "// C++ solution\n#include <iostream>\n#include <vector>\n\nstruct Node { int val; Node *prev; Node *next;};\n\nvoid mergeSort(Node *head) {\n    if (head == nullptr || head->next == nullptr) return ;\n    Node *mid = findMid(head);\n    Node *midNext = mid->next;\n    mid->next = nullptr;\n    mergeSort(head);\n    mergeSort(midNext);\n    Node *merged = merge(head, midNext);\n    head = merged;\n}\n\nNode *merge(Node *l, Node *r) {\n    if (l == nullptr)\n        return r;\n    if (r == nullptr)\n        return l;\n    if (l->val <= r->val){\n        l->next = merge(l->next, r);\n        return l;\n    }\n    Node *merged = new Node{l->val};\n    merged->next = merge(l->next, r);\n    return merged;\n}\n\nNode* sortList(Node* head) {\n    if (head == nullptr)\n        return head;\n    mergeSort(head);\n    return head;\n}\n\nint main() {\n    Node *head = nullptr;\n    // Create a linked list and print the sorted result\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5\\n2 8 1 5 4",
+      "output": "1 2 4 5 8",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "4\\n7 2 3 8",
+      "output": "2 3 7 8",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

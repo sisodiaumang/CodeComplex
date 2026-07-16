@@ -1,0 +1,155 @@
+{
+  "_id": "197d50b23d7184a2c48fe81c",
+  "title": "Incorrect DFS Traversal in a Graph with Cycle Detection",
+  "slug": "incorrect-dfs-traversal-in-a-graph-with-cycle-detection-bugfix-hard-graphs",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "Deep First Search",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "graph"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Solve the problem and fix the bugs.",
+    "inputFormat": "The input consists of an adjacency list representation of a graph, where each element in the list is a list of its neighbors. The first line contains the number of vertices n, and the second line contains the number of edges m. The next m lines contain the edges in the form u v, where u and v are the vertices connected by the edge.",
+    "outputFormat": "You should return a boolean indicating whether the graph contains a cycle or not.",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "3\n2\n0 1\n1 2",
+        "output": "false",
+        "explanation": "No cycle"
+      },
+      {
+        "input": "3\n2\n0 1\n1 0",
+        "output": "true",
+        "explanation": "Cycle detected"
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "brute Force details.",
+    "betterSolution": "",
+    "optimalSolution": "optimal Solution details.",
+    "proofOfCorrectness": "proof Of Correctness details.",
+    "dryRun": "dry Run details.",
+    "commonMistakes": [],
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\nbool solve(vector<vector<int>>& graph);\n};\n\n// TODO: implement",
+    "java": "public class Solution {\npublic boolean solve(int[][] graph);\n}\n// TODO: implement",
+    "python": "class Solution:\n    def solve(self, graph):\n        pass\n# TODO: implement",
+    "javascript": "function solve(graph){\n    // TODO: implement\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "bool Solution::solve(vector<vector<int>>& graph){\n    function<bool(int)> dfs = [&](int node){\n        if(is_visited[node])\n            return true;\n        is_visited[node] = true;\n        for(auto neighbor : graph[node])\n            if(dfs(neighbor))\n                return true;\n        visited_count++;\n        return false;\n    };\n    is_visited.resize(n);\n    visited_count = 0;\n    for(int i = 0; i < n; i++)\n        if(dfs(i))\n            return true;\n    return false;\n}",
+    "java": "public boolean Solution.solve(int[][] graph){\n    boolean[] is_visited = new boolean[n];\n    int visited_count = 0;\n    function dfs = (int node) -> {\n        if(is_visited[node])\n            return true;\n        is_visited[node] = true;\n        for(int neighbor : graph[node])\n            if(dfs(neighbor))\n                return true;\n        visited_count++;\n        return false;\n    };\n    for(int i = 0; i < n; i++)\n        if(dfs(i))\n            return true;\n    return false;\n}",
+    "python": "class Solution:\n    def solve(self, graph):\n        is_visited = [False] * n\n        visited_count = 0\n        def dfs(node):\n            if is_visited[node]:\n                return True\n            is_visited[node] = True\n            for neighbor in graph[node]:\n                if dfs(neighbor):\n                    return True\n            visited_count++\n            return False\n        for i in range(n):\n            if dfs(i):\n                return True\n        return False\n",
+    "javascript": "function solve(graph){\n    var is_visited = new Array(n).fill(false);\n    var visited_count = 0;\n    function dfs(node){\n        if(is_visited[node])\n            return true;\n        is_visited[node] = true;\n        for(var neighbor of graph[node])\n            if(dfs(neighbor))\n                return true;\n        visited_count++;\n        return false;\n    };\n    for(var i = 0; i < n; i++)\n        if(dfs(i))\n            return true;\n    return false;\n}"
+  },
+  "functionSignature": {
+    "cpp": "bool solve(vector<vector<int>>& graph);",
+    "java": "public boolean solve(int[][] graph);",
+    "python": "def solve(self, graph: list[list[int]]) -> bool:",
+    "javascript": "function solve(graph);"
+  },
+  "solutions": {
+    "python": "import sys\nfrom collections import defaultdict\n\nclass Solution:\n    def solve(self, graph):\n        n, m = map(int, sys.stdin.readline().split())\n        self.graph = defaultdict(list, graph)\n        is_visited = [False] * n\n        for i in range(n):\n            if is_visited[i]:\n                continue\n            stack = [i]\n            while stack:\n                node = stack.pop()\n                if is_visited[node]:\n                    return True\n                is_visited[node] = True\n                for neighbor in self.graph[node]:\n                    if not is_visited[neighbor]:\n                        stack.append(neighbor)\n        return False\n\nsolution = Solution()\noutput = solution.solve() and \"true\" or \"false\"\nprint(output)\n",
+    "cpp": "#include <iostream>\n#include <vector>\n#include <set>\n#include <queue>\n#include <string>\n#include <sstream>\n\nusing namespace std;\n\nclass Solution {\npublic:\n    bool solve(vector<vector<int>>& graph) {\n        int n = graph.size();\n        vector<bool> is_visited(n, false);\n        for (int i = 0; i < n; i++) {\n            if (is_visited[i]) {\n                continue;\n            }\n            set<int> stack = {i};\n            while (!stack.empty()) {\n                int node = *stack.begin();\n                stack.erase(stack.begin());\n                if (is_visited[node]) {\n                    return true;\n                }\n                is_visited[node] = true;\n                for (auto neighbor : graph[node]) {\n                    if (!is_visited[neighbor]) {\n                        stack.insert(neighbor);\n                    }\n                }\n            }\n        }\n        return false;\n    }\n};\n\nint main() {\n    Solution solution;\n    int n, m;\n    cin >> n >> m;\n    vector<vector<int>> graph(n);\n    for (int i = 0; i < m; i++) {\n        int u, v;\n        cin >> u >> v;\n        graph[u].push_back(v);\n        graph[v].push_back(u);\n    }\n    cout << (solution.solve(graph) ? \"true\" : \"false\") << endl;\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "3\n2\n0 1\n1 2",
+      "output": "false",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "3\n2\n0 1\n1 0",
+      "output": "true",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

@@ -1,0 +1,142 @@
+{
+  "_id": "ac812877381438125f7b6fa3",
+  "title": "Implement API for Image Uploads with Resizes and Rate Limiting",
+  "slug": "implement-api-for-image-uploads-with-resizes-and-rate-limiting-hard-express",
+  "difficulty": "Hard",
+  "topics": [
+    "EXPRESS"
+  ],
+  "statement": "Create an Express API for image uploads that can resize images on the fly. The API should also implement rate limiting to prevent abuse. The API should have the following endpoints:\n\n- POST /images: Upload a new image.\n- GET /images/:id: Fetch the original image.\n- GET /images/:id/thumb: Fetch the resized image.\n\nConstraints:\n\n* Must use multipart/form-data for image uploads.\n* Must use a rate limiter to limit 10 requests per minute per IP.\n* Must store the uploaded images on disk in the uploads folder.\n* Must handle image resizing using a third-party library.\n* Must return a 404 status code for non-existent images.\n\nEndpoints:\n\n- POST /images: Upload a new image.\n  * Method: POST\n  * Path: /images\n  * Description: Upload a new image.\n  * Request Body: multipart/form-data containing image/jpeg or image/png file\n  * Response: JSON object with image ID and URL (if successful) or error message\n- GET /images/:id: Fetch the original image.\n  * Method: GET\n  * Path: /images/:id\n  * Description: Fetch the original image.\n  * Response: image/jpeg or image/png file (if exists) or 404 status code\n- GET /images/:id/thumb: Fetch the resized image.\n  * Method: GET\n  * Path: /images/:id/thumb\n  * Description: Fetch the resized image.\n  * Response: image/jpeg or image/png file (if exists) or 404 status code\n\nStarter Code:\n\npackage.json:\n{\n  \"name\": \"image-upload-api\",\n  \"version\": \"1.0.0\",\n  \"main\": \"index.js\",\n  \"scripts\": {\n    \"start\": \"node index.js\"\n  },\n  \"dependencies\": {\n    \"express\": \"^4.18.2\",\n    \"multer\": \"^1.4.4\",\n    \"sharp\": \"^4.2.0\",\n    \"rate-limiter-flexible\": \"^3.8.1\",\n    \"path\": \"^0.12.7\"\n  }\n}\n\n\nindex.js:\nconst express = require('express');\nconst multer = require('multer');\nconst sharp = require('sharp');\nconst rateLimiterFlexible = require('rate-limiter-flexible');\nconst path = require('path');\n\nconst app = express();\nconst uploadDir = path.join(__dirname, 'uploads');\n\nconst storage = multer.diskStorage({\n  destination: (req, file, cb) => {\n    cb(null, uploadDir);\n  },\n  filename: (req, file, cb) => {\n    cb(null, Date.now().toString() + file.originalname);\n  },\n});\n\nconst upload = multer({ storage });\n\nconst limiter = rateLimiterFlexible({\n  key: 'ip',\n  max: 10,\n  duration: 1,\n});\n\napp.use(express.json());\napp.use(limiter);\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));\n",
+  "constraints": [
+    "Must use multipart/form-data for image uploads.",
+    "Must use a rate limiter to limit 10 requests per minute per IP.",
+    "Must store the uploaded images on disk in the uploads folder.",
+    "Must handle image resizing using a third-party library.",
+    "Must return a 404 status code for non-existent images."
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/images",
+      "description": "Upload a new image.",
+      "requestBody": "multipart/form-data containing image/jpeg or image/png file"
+    },
+    {
+      "method": "GET",
+      "path": "/images/:id",
+      "description": "Fetch the original image."
+    },
+    {
+      "method": "GET",
+      "path": "/images/:id/thumb",
+      "description": "Fetch the resized image."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\n  \"name\": \"image-upload-api\",\n  \"version\": \"1.0.0\",\n  \"main\": \"index.js\",\n  \"scripts\": {\n    \"start\": \"node index.js\"\n  },\n  \"dependencies\": {\n    \"express\": \"^4.18.2\",\n    \"multer\": \"^1.4.4\",\n    \"sharp\": \"^4.2.0\",\n    \"rate-limiter-flexible\": \"^3.8.1\",\n    \"path\": \"^0.12.7\"\n  }\n}",
+    "index.js": "const express = require('express');\nconst multer = require('multer');\nconst sharp = require('sharp');\nconst rateLimiterFlexible = require('rate-limiter-flexible');\nconst path = require('path');\n\nconst app = express();\nconst uploadDir = path.join(__dirname, 'uploads');\n\nconst storage = multer.diskStorage({\n  destination: (req, file, cb) => {\n    cb(null, uploadDir);\n  },\n  filename: (req, file, cb) => {\n    cb(null, Date.now().toString() + file.originalname);\n  },\n});\n\nconst upload = multer({ storage });\n\nconst limiter = rateLimiterFlexible({\n  key: 'ip',\n  max: 10,\n  duration: 1,\n});\n\napp.use(express.json());\napp.use(limiter);\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));\n"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "POST",
+      "path": "/images",
+      "headers": {
+        "Content-Type": "multipart/form-data"
+      },
+      "body": {
+        "image": {
+          "originalname": "image1.jpg",
+          "mimetype": "image/jpeg",
+          "size": 1024
+        }
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "id": 1,
+        "url": "/images/1"
+      },
+      "expectedBodySchema": null,
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "GET",
+      "path": "/images/1",
+      "expectedStatus": 200,
+      "expectedBody": {},
+      "expectedBodySchema": null,
+      "isVisible": true
+    },
+    {
+      "id": "v_tc3",
+      "method": "GET",
+      "path": "/images/1/thumb",
+      "expectedStatus": 200,
+      "expectedBody": {},
+      "expectedBodySchema": null,
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "GET",
+      "path": "/images/999",
+      "expectedStatus": 404,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "POST",
+      "path": "/images",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "GET",
+      "path": "/images/999/thumb",
+      "expectedStatus": 404,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "middleware",
+    "router",
+    "error-handling",
+    "request",
+    "response",
+    "cookies",
+    "static-files",
+    "cors",
+    "express",
+    "multer",
+    "rate-limiting",
+    "image-processing"
+  ]
+}

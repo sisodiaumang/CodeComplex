@@ -1,0 +1,213 @@
+{
+  "_id": "minimum-insertions-to-make-palindrome",
+  "title": "Minimum Insertions to Make Palindrome",
+  "slug": "minimum-insertions-to-make-palindrome",
+  "difficulty": "Hard",
+  "category": "DP",
+  "subCategory": "DP on Strings",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 700,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "Dynamic Programming",
+      "String Algorithms",
+      "DP on Strings"
+    ],
+    "patterns": [
+      "palindrome",
+      "insertions"
+    ],
+    "prerequisites": [
+      "Longest Common Subsequence",
+      "Edit Distance"
+    ],
+    "variants": [],
+    "tags": [
+      "hard",
+      "dynamic-programming",
+      "string-algorithms"
+    ],
+    "keywords": [
+      "palindrome",
+      "insertions",
+      "dp",
+      "string"
+    ],
+    "interviewFrequency": 4,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "Given a string s, find the minimum number of characters to be inserted to make s a palindrome.",
+    "inputFormat": "N\ns",
+    "outputFormat": "1\nans",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "s",
+        "type": "string",
+        "min": 1,
+        "max": 1000,
+        "description": "The input string."
+      },
+      {
+        "variable": "ans",
+        "type": "number",
+        "min": 0,
+        "max": 1000,
+        "description": "The minimum number of insertions."
+      }
+    ],
+    "examples": [
+      {
+        "input": "6\ngedbed",
+        "output": "3",
+        "explanation": "One possible palindrome is 'dbbedd'."
+      },
+      {
+        "input": "3\nabc",
+        "output": "2",
+        "explanation": "One possible palindrome is 'abba'."
+      },
+      {
+        "input": "4\nrace",
+        "output": "3",
+        "explanation": "One possible palindrome is 'ecarace'."
+      },
+      {
+        "input": "1\na",
+        "output": "0",
+        "explanation": "The string 'a' is already a palindrome."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "The problem involves finding the longest palindromic subsequence in the given string, as this will help in determining the minimum number of insertions required."
+    },
+    {
+      "order": 2,
+      "text": "Dynamic programming can be used to solve this problem by building a 2D table that stores the lengths of the longest common subsequences between the string and its reverse."
+    },
+    {
+      "order": 3,
+      "text": "The problem can be solved by finding the longest common subsequence between the string and its reverse, and then subtracting this length from the total length of the string to get the minimum number of insertions."
+    }
+  ],
+  "editorial": {
+    "title": "Minimum Insertions to Make Palindrome",
+    "intuition": "The problem requires finding the minimum number of insertions to make a given string a palindrome. A palindrome is a string that reads the same backward as forward. The key observation is that this problem can be solved by finding the longest palindromic subsequence and subtracting its length from the length of the string.",
+    "bruteForce": "A brute force approach would involve generating all possible palindromes that can be formed by inserting characters into the string and checking if the resulting string is a palindrome. However, this approach is extremely inefficient and has an exponential time complexity due to the vast number of possible insertions and combinations.",
+    "betterSolution": "The optimal approach involves using dynamic programming to build a 2D table where each cell [i][j] represents the minimum number of insertions needed to make the substring s[i..j] a palindrome.",
+    "optimalSolution": "The dynamic programming approach works by iterating over all possible gaps in the string and for each gap, it checks if the characters at the start and end of the gap are the same. If they are, it uses the value from the inner gap; if not, it considers two possibilities: inserting a character at the start or end of the gap, and chooses the one with the minimum insertions.",
+    "proofOfCorrectness": "The correctness of the dynamic programming approach can be proven by observing that it correctly handles the base cases (single character substrings require 0 insertions) and the recursive case (for substrings of length > 1, it considers all possible insertions and chooses the minimum). The time and space complexity of this approach are known to be O(n^2), where n is the length of the string.",
+    "dryRun": "For a string 'abc', the approach correctly identifies that 2 insertions are needed to make it a palindrome ('abba' or 'aabaa' for example).",
+    "commonMistakes": [
+      "Not considering all possible insertions",
+      "Incorrectly handling the base cases",
+      "Not using dynamic programming to optimize the solution",
+      "Incorrectly calculating the minimum number of insertions",
+      "Not verifying the correctness of the approach with examples"
+    ],
+    "timeComplexity": "O(n^2)",
+    "spaceComplexity": "O(n^2)"
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    int minInsertions(string s) {\n        // TODO: implement\n        return 0;\n    }\n};",
+    "java": "import java.util.*;\n\nclass Solution {\n    public int minInsertions(String s) {\n        // TODO: implement\n        return 0;\n    }\n}",
+    "python": "class Solution:\n    def minInsertions(self, s: str) -> int:\n        # TODO: implement\n        pass",
+    "javascript": "/**\n * @param {string} s\n * @return {number}\n */\nvar minInsertions = function(s) {\n    // TODO: implement\n    return 0;\n};"
+  },
+  "functionSignature": {
+    "cpp": "int minInsertions(string s);",
+    "java": "public int minInsertions(String s);",
+    "python": "def minInsertions(self, s: str) -> int:",
+    "javascript": "var minInsertions = function(s);"
+  },
+  "solutions": {
+    "python": "import sys\n\nclass Solution:\n    def minInsertions(self, s: str) -> int:\n        n = len(s)\n        dp = [[0] * n for _ in range(n)]\n        for gap in range(1, n):\n            for i in range(n - gap):\n                j = i + gap\n                if s[i] == s[j]:\n                    dp[i][j] = dp[i + 1][j - 1]\n                else:\n                    dp[i][j] = 1 + min(dp[i][j - 1], dp[i + 1][j])\n        return dp[0][n - 1]\n\nif __name__ == '__main__':\n    n = int(sys.stdin.readline().strip())\n    s = sys.stdin.readline().strip()\n    sol = Solution()\n    ans = sol.minInsertions(s)\n    print(ans)",
+    "cpp": "#include <numeric>\n#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    int minInsertions(string s) {\n        int n = s.size();\n        vector<vector<int>> dp(n, vector<int>(n, 0));\n        for (int gap = 1; gap < n; gap++) {\n            for (int i = 0; i < n - gap; i++) {\n                int j = i + gap;\n                if (s[i] == s[j]) {\n                    dp[i][j] = (gap == 1) ? 0 : dp[i + 1][j - 1];\n                } else {\n                    dp[i][j] = 1 + min(dp[i][j - 1], dp[i + 1][j]);\n                }\n            }\n        }\n        return dp[0][n - 1];\n    }\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int n;\n    cin >> n;\n    string s;\n    cin >> s;\n    Solution sol;\n    int ans = sol.minInsertions(s);\n    cout << ans << '\\n';\n    return 0;\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.5
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "6\ngedbed",
+      "output": "3",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "3\nabc",
+      "output": "2",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_3",
+      "input": "4\nrace",
+      "output": "3",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_4",
+      "input": "1\na",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "boundary_6",
+      "input": "5\nabcba",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

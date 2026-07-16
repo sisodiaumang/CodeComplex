@@ -1,0 +1,149 @@
+{
+  "title": "Docker Exposed Port Mapping Validator",
+  "subCategory": "Docker Port Mapping",
+  "statement": {
+    "markdown": "Write a function to validate the exposed ports of a Docker container. Given a Docker container object with an `exposed_ports` property, validate that each exposed port is a valid port number (between 1 and 65535). If a port is not valid, return an error message. If all ports are valid, return the container object with the validated ports.",
+    "inputFormat": "Input will be a Docker container object with an `exposed_ports` property, which is an object with port numbers as keys and container names as values.",
+    "outputFormat": "Output will be the container object with the validated ports, or an error message if a port is not valid.",
+    "notes": "Port numbers are in the range 1-65535. Port 0 is not a valid port number.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "port",
+        "type": "integer",
+        "min": 1,
+        "max": 65535,
+        "description": "Port number must be between 1 and 65535."
+      }
+    ],
+    "examples": [
+      {
+        "input": "{ exposed_ports: { 80: 'http', 443: 'https' } }",
+        "output": "{ exposed_ports: { 80: 'http', 443: 'https' } }",
+        "explanation": "All ports are valid, so the container object is returned with the validated ports."
+      },
+      {
+        "input": "{ exposed_ports: { 0: 'http', 443: 'https' } }",
+        "output": "Error: Port 0 is not valid.",
+        "explanation": "Port 0 is not valid, so an error message is returned."
+      },
+      {
+        "input": "{ exposed_ports: { 1: 'http', 65536: 'https' } }",
+        "output": "Error: Port 65536 is not valid.",
+        "explanation": "Port 65536 is not valid, so an error message is returned."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 10,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DOCKER"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "docker"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Check the range of valid port numbers."
+    }
+  ],
+  "editorial": {
+    "title": "Docker Exposed Port Mapping Validator",
+    "intuition": "Validate each port number in the `exposed_ports` object to ensure it is between 1 and 65535.",
+    "bruteForce": "Loop through each port number in the `exposed_ports` object and check if it is within the valid range.",
+    "betterSolution": "Use a single line of code to validate all ports at once.",
+    "optimalSolution": "Use the `Object.keys()` method to get an array of port numbers, then use `every()` to check if all ports are valid.",
+    "proofOfCorrectness": "If all ports are valid, return the container object with the validated ports. If any port is not valid, return an error message.",
+    "dryRun": "Example usage:",
+    "commonMistakes": [
+      "Forgetting to check for port 0",
+      "Not checking the valid range of port numbers"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "// Define a function to validate the exposed ports of a Docker container\nfunction validateExposedPorts(container) {\n  // Your code here\n}\n",
+    "python": "class Solution:\n    def validateExposedPorts(self, container):\n        # Your code here\n        pass\n"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Define a function to validate the exposed ports of a Docker container\nfunction validateExposedPorts(container) {\n  // Loop through each port number in the `exposed_ports` object\n  for (var port in container.exposed_ports) {\n    // Check if the port number is valid\n    if (port > 0) {\n      return container; // If the port number is valid, return the container object\n    } else {\n      return 'Error: Port ' + port + ' is not valid.'; // If the port number is not valid, return an error message\n    }\n  }\n  return container; // Return the container object if all ports are valid\n}\n",
+    "python": "class Solution:\n    def validateExposedPorts(self, container) -> object:\n        # Loop through each port number in the `exposed_ports` object\n        for port in container.exposed_ports.keys():\n            # Check if the port number is valid\n            if port > 0:\n                return container # If the port number is valid, return the container object\n            else:\n                return 'Error: Port ' + str(port) + ' is not valid.' # If the port number is not valid, return an error message\n        return container # Return the container object if all ports are valid\n"
+  },
+  "functionSignature": {
+    "javascript": "function validateExposedPorts(container) {",
+    "python": "def validateExposedPorts(self, container: object) -> object:"
+  },
+  "solutions": {
+    "javascript": "// Define a function to validate the exposed ports of a Docker container\nfunction validateExposedPorts(container) {\n  // Use Object.keys() to get an array of port numbers, then use every() to check if all ports are valid\n  if (Object.keys(container.exposed_ports).every(port => port >= 1 && port <= 65535)) {\n    return container; // If all ports are valid, return the container object\n  } else {\n    return 'Error: One or more ports are not valid.'; // If any port is not valid, return an error message\n  }\n}\n",
+    "python": "class Solution:\n    def validateExposedPorts(self, container):\n        # Use the `every()` method to check if all ports are valid\n        if all(port >= 1 and port <= 65535 for port in container.exposed_ports.keys()):\n            return container # If all ports are valid, return the container object\n        else:\n            return 'Error: One or more ports are not valid.' # If any port is not valid, return an error message\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{ exposed_ports: { 80: 'http', 443: 'https' } }",
+      "output": "{ exposed_ports: { 80: 'http', 443: 'https' } }",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{ exposed_ports: { 0: 'http', 443: 'https' } }",
+      "output": "Error: Port 0 is not valid.",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    },
+    {
+      "id": "tc_3",
+      "input": "{ exposed_ports: { 1: 'http', 65536: 'https' } }",
+      "output": "Error: Port 65536 is not valid.",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "c27008cdf7a43bc685c4b519",
+  "slug": "docker-exposed-port-mapping-validator-bugfix-medium-docker",
+  "mode": "bug_fix",
+  "category": "DOCKER",
+  "difficulty": "Medium"
+}

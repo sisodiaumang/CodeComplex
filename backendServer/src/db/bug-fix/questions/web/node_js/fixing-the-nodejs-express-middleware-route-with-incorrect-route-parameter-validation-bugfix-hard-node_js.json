@@ -1,0 +1,131 @@
+{
+  "title": "Fixing the Node.js Express Middleware Route with Incorrect Route Parameter Validation",
+  "subCategory": "Express Route Validation",
+  "statement": {
+    "markdown": "Implement a Node.js Express middleware route that handles GET requests to '/users/:name'. The route should validate if the provided ':name' parameter is a string. If it is, the route should return a JSON object with a 'message' property containing the provided name. If the parameter is not a string, the route should return a 400 Bad Request error with a JSON body containing an error message.",
+    "inputFormat": "The input will be a string representing the request path.",
+    "outputFormat": "The output will be either a JSON object with a 'message' property or a JSON object with an 'error' property and a 400 Bad Request status code.",
+    "notes": "The route should handle requests to '/users/:name' where ':name' can be any string.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The input string length will be between 1 and 10000 characters."
+      }
+    ],
+    "examples": [
+      {
+        "input": "GET /users/John HTTP/1.1",
+        "output": "{\"message\":\"John\"}",
+        "explanation": "The route should return a JSON object with a 'message' property containing the provided name."
+      },
+      {
+        "input": "GET /users/123 HTTP/1.1",
+        "output": "{\"error\":\"Invalid name\"}",
+        "explanation": "The route should return a JSON object with an 'error' property and a 400 Bad Request status code."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "NODE_JS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "node_js"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the express.Router().param() method to validate the ':name' parameter."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial",
+    "intuition": "The express.Router().param() method is used to validate route parameters. It takes a regular expression as an argument to match the parameter value.",
+    "bruteForce": "The brute force approach would involve checking the type of the parameter value in the route handler function.",
+    "betterSolution": "Use express.Router().param() to validate the parameter value.",
+    "optimalSolution": "Use express.Router().param() with a regular expression to validate the parameter value.",
+    "proofOfCorrectness": "The optimal solution is correct as it uses the express.Router().param() method to validate the parameter value.",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Not using express.Router().param() to validate the parameter value.",
+      "Not using a regular expression to validate the parameter value."
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "// Define a function to handle the GET request to '/users/:name'\n// Use the express.Router().param() method to validate the ':name' parameter\n// Return a JSON object with a 'message' property containing the provided name or a JSON object with an 'error' property and a 400 Bad Request status code"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Import express module\nconst express = require('express');\n\n// Create an express app\nconst app = express();\n\n// Use express Router to define the route\nconst router = express.Router();\n\n// Define a function to handle the GET request to '/users/:name'\nrouter.get('/users/:name', (req, res) => {\n  // Get the ':name' parameter value\n  const name = req.params.name;\n  // Check if the ':name' parameter value is a string\n  if (typeof name === 'string') {\n    // Return a JSON object with a 'message' property containing the provided name\n    res.send({ message: name });\n  } else {\n    // Return a 400 Bad Request error with a JSON body containing an error message\n    res.status(400).send({ error: 'Invalid name' });\n  }\n});\n\n// Use the router to handle GET requests to '/users/:name'\napp.use('/users/:name', router);\n\n// Start the server\napp.listen(3000, () => {\n  console.log('Server started on port 3000');\n});"
+  },
+  "functionSignature": {
+    "javascript": "router.get('/users/:name', (req, res) => {\n  // Return a JSON object with a 'message' property containing the provided name or a JSON object with an 'error' property and a 400 Bad Request status code\n})"
+  },
+  "solutions": {
+    "javascript": "// Import express module\nconst express = require('express');\n\n// Create an express app\nconst app = express();\n\n// Use express Router to define the route\nconst router = express.Router();\n\n// Use express.Router().param() to validate the ':name' parameter\nrouter.param('name', (req, res, next, value) => {\n  if (typeof value !== 'string') {\n    return res.status(400).send({ error: 'Invalid name' });\n  }\n  req.name = value;\n  next();\n});\n\n// Define a function to handle the GET request to '/users/:name'\nrouter.get('/users/:name', (req, res) => {\n  // Return a JSON object with a 'message' property containing the provided name\n  res.send({ message: req.name });\n});\n\n// Use the router to handle GET requests to '/users/:name'\napp.use('/users/:name', router);\n\n// Start the server\napp.listen(3000, () => {\n  console.log('Server started on port 3000');\n});"
+  },
+  "judgeConfig": {
+    "timeLimit": 5,
+    "memoryLimit": 128,
+    "supportedLanguages": [
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "GET /users/John HTTP/1.1\n\n",
+      "output": "{\"message\":\"John\"}\n\n",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "GET /users/123 HTTP/1.1\n\n",
+      "output": "{\"error\":\"Invalid name\"}\n\n",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "112ac73c26509abd99416bb4",
+  "slug": "fixing-the-nodejs-express-middleware-route-with-incorrect-route-parameter-validation-bugfix-hard-node_js",
+  "mode": "bug_fix",
+  "category": "NODE_JS",
+  "difficulty": "Hard"
+}

@@ -1,0 +1,162 @@
+{
+  "_id": "8f29d684babc54f96967e7b2",
+  "title": "Reconstructing Optimal Path in Binary Matrix",
+  "slug": "reconstructing-optimal-path-in-binary-matrix-bugfix-hard-dynamic-programming",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "DP",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 75,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "dp"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given a binary matrix `grid` of size `n x n`, where `0` represents a barrier and `1` represents a free cell, you are tasked with reconstructing the optimal path from the top-left to the bottom-right corner of the grid. The path can only move right or down at any given point. The cells visited along the path should be marked as `2`, indicating the optimal path. A cell is part of the optimal path if it is visited when moving from the top-left corner to the bottom-right corner. The path is considered optimal if it has the minimum cost, which is the number of cells visited in the path.",
+    "inputFormat": "The input will be provided in the format `n m [grid]`",
+    "outputFormat": "The output should be the reconstructed grid with the optimal path marked as `2` in each cell",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of grid"
+      }
+    ],
+    "examples": [
+      {
+        "input": "3 3 [1 0 1 0 1 0 1 0 1]",
+        "output": "[2 2 2 2 2 1 1 1 2]\n",
+        "explanation": ""
+      },
+      {
+        "input": "5 3 [1 1 1 1 1 1 1 1 1 0 0 0 1 0 0 0 0 0 0 1 0 0 0 0 0]",
+        "output": "[2 2 2 2 2 1 1 1 2 2 2 2 2 2 1 1 1 1 1 2 2 2 2 2 2]\n",
+        "explanation": ""
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Start by understanding the problem statement and the constraints given."
+    },
+    {
+      "order": 2,
+      "text": "Identify the bug in the buggy code and figure out how to fix it."
+    }
+  ],
+  "editorial": {
+    "title": "Optimal Path Reconstruction",
+    "intuition": "To solve this problem, we need to use dynamic programming to track the optimal path. We will use a 2D dp array to store the minimum cost to reach each cell.",
+    "bruteForce": "A brute-force approach would involve trying all possible paths from the top-left to the bottom-right corner and calculating the cost of each path.",
+    "betterSolution": "The DP approach involves initializing a 2D dp array of size n x n with all elements set to 0, representing the minimum cost to reach each cell. Then, for each cell, we calculate the minimum cost by considering the minimum cost to reach the cell above it and the cell to its left.",
+    "optimalSolution": "We use a DP approach to find the optimal path, where dp[i][j] represents the minimum cost to reach the cell at position (i, j). We use a visited 2D array to keep track of the cells visited in the optimal path.",
+    "proofOfCorrectness": "proof Of Correctness details.",
+    "dryRun": "dry Run details.",
+    "commonMistakes": [
+      "Failing to initialize the dp array correctly",
+      "Not considering the cost of visiting each cell correctly"
+    ],
+    "timeComplexity": "O(n^2)",
+    "spaceComplexity": "O(n^2)"
+  },
+  "starterCode": {
+    "cpp": "class Solution { public: vector<vector<int>> reconstructPath(vector<vector<int>>& grid); };",
+    "java": "public class Solution { public int[][] reconstructPath(int[][] grid); }",
+    "python": "class Solution:\n  def reconstructPath(self, grid: List[List[int]]) -> List[List[int]]:\n    pass",
+    "javascript": "function reconstructPath(grid) {\n  // Your code here\n  return grid;\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\n  public:\n  vector<vector<int>> reconstructPath(vector<vector<int>>& grid) {\n    int n = grid.size();\n    int m = grid[0].size();\n    vector<vector<int>> dp(n, vector<int>(m, 0));\n    dp[0][0] = grid[0][0];\n\n    for (int i = 1; i < n; i++) {\n      dp[i][0] = dp[i - 1][0] + grid[i][0];\n    }\n\n    for (int j = 1; j < m; j++) {\n      dp[0][j] = dp[0][j - 1] + grid[0][j];\n    }\n\n    for (int i = 1; i < n; i++) {\n      for (int j = 1; j < m; j++) {\n        if (grid[i][j] == 1) {\n          dp[i][j] = min(dp[i - 1][j], dp[i][j - 1]);\n        } else {\n          dp[i][j] = grid[i][j];\n        }\n      }\n    }\n\n    return dp;\n  }\n};",
+    "java": "public class Solution {\n  public int[][] reconstructPath(int[][] grid) {\n    int n = grid.length;\n    int m = grid[0].length;\n    int[][] dp = new int[n][m];\n    dp[0][0] = grid[0][0];\n\n    for (int i = 1; i < n; i++) {\n      dp[i][0] = dp[i - 1][0] + grid[i][0];\n    }\n\n    for (int j = 1; j < m; j++) {\n      dp[0][j] = dp[0][j - 1] + grid[0][j];\n    }\n\n    for (int i = 1; i < n; i++) {\n      for (int j = 1; j < m; j++) {\n        if (grid[i][j] == 1) {\n          dp[i][j] = Math.min(dp[i - 1][j], dp[i][j - 1]);\n        } else {\n          dp[i][j] = grid[i][j];\n        }\n      }\n    }\n\n    return dp;\n  }\n}",
+    "python": "class Solution:\n  def reconstructPath(self, grid: List[List[int]]) -> List[List[int]]:\n    n = len(grid)\n    m = len(grid[0])\n    dp = [[0 for _ in range(m)] for _ in range(n)]\n    dp[0][0] = grid[0][0]\n\n    for i in range(1, n):\n      dp[i][0] = dp[i - 1][0] + grid[i][0]\n\n    for j in range(1, m):\n      dp[0][j] = dp[0][j - 1] + grid[0][j]\n\n    for i in range(1, n):\n      for j in range(1, m):\n        if grid[i][j] == 1:\n          dp[i][j] = min(dp[i - 1][j], dp[i][j - 1])\n        else:\n          dp[i][j] = grid[i][j]\n\n    return dp",
+    "javascript": "function reconstructPath(grid) {\n  let n = grid.length;\n  let m = grid[0].length;\n  let dp = Array(n).fill(0).map(() => Array(m).fill(0));\n  dp[0][0] = grid[0][0];\n\n  for (let i = 1; i < n; i++) {\n    dp[i][0] = dp[i - 1][0] + grid[i][0];\n  }\n\n  for (let j = 1; j < m; j++) {\n    dp[0][j] = dp[0][j - 1] + grid[0][j];\n  }\n\n  for (let i = 1; i < n; i++) {\n    for (let j = 1; j < m; j++) {\n      if (grid[i][j] == 1) {\n        dp[i][j] = Math.min(dp[i - 1][j], dp[i][j - 1]);\n      } else {\n        dp[i][j] = grid[i][j];\n      }\n    }\n  }\n\n  return dp;\n}\n"
+  },
+  "functionSignature": {
+    "cpp": "vector<vector<int>> reconstructPath(vector<vector<int>>& grid);",
+    "java": "int[][] reconstructPath(int[][] grid);",
+    "python": "def reconstructPath(self, grid: List[List[int]]) -> List[List[int]]:\n",
+    "javascript": "function reconstructPath(grid) {\n"
+  },
+  "solutions": {
+    "python": "def main():\n  grid = [[1, 0, 1],\n          [0, 1, 0],\n          [1, 1, 1]]\n  solution = Solution()\n  result = solution.reconstructPath(grid)\n  print(result)\nif __name__ == '__main__':\n  main()\n",
+    "cpp": "int main() {\n  vector<vector<int>> grid = {{1, 0, 1}, {0, 1, 0}, {1, 1, 1}};\n  Solution solution;\n  vector<vector<int>> result = solution.reconstructPath(grid);\n  for (int i = 0; i < result.size(); i++) {\n    for (int j = 0; j < result[i].size(); j++) {\n      cout << result[i][j] << ' ';\n    }\n    cout << endl;\n  }\n  return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2000,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "3 3\n[1 0 1\n0 1 0\n1 1 1]\n",
+      "output": "[2 2 2\n2 1 1\n2 2 2]\n",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "5 3\n[1 1 1\n1 1 1\n0 0 0\n1 0 0\n0 0 0]\n",
+      "output": "[2 2 2\n2 2 2\n1 1 1\n2 2 2\n2 1 1]\n",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

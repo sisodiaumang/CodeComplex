@@ -1,0 +1,128 @@
+{
+  "_id": "69c63014286f90ba0c08f744",
+  "title": "Implement a Simple Cache for Book Titles",
+  "slug": "implement-a-simple-cache-for-book-titles-easy-caching",
+  "difficulty": "Easy",
+  "topics": [
+    "CACHING"
+  ],
+  "statement": "Create a RESTful API using Express.js that manages a simple cache to store and retrieve book titles. Implement a single endpoint to store a book title with its ID and another endpoint to retrieve the book title by its ID from the cache. Consider implementing a mechanism to invalidate the cache when a new book title is added or updated.",
+  "constraints": [
+    "Must use only the in-memory array or mock database provided for caching",
+    "Cache should store book titles for a minimum of 10 seconds"
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/books",
+      "description": "Add a new book title to the cache. Request Body should contain bookId and title. Returns the newly added book title and a success message."
+    },
+    {
+      "method": "GET",
+      "path": "/api/books/:bookId",
+      "description": "Retrieve a book title from the cache by its ID. Returns the book title or a message indicating that the book title is not available in the cache."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\n  \"name\": \"backend-app\",\n  \"version\": \"1.0.0\",\n  \"main\": \"index.js\",\n  \"scripts\": {\n    \"start\": \"node index.js\"\n  },\n  \"dependencies\": {\n    \"express\": \"^4.18.2\"\n  }\n}",
+    "index.js": "const express = require('express');\nconst app = express();\napp.use(express.json());\nconst cache = []; // TODO: Implement cache logic\n\napp.post('/api/books', (req, res) => {\n  // TODO: Handle request to store book title in cache\n});\n\napp.get('/api/books/:bookId', (req, res) => {\n  // TODO: Handle request to retrieve book title from cache\n});\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "POST",
+      "path": "/api/books",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "bookId": 123,
+        "title": "Book Title 1"
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "success": true,
+        "bookTitle": "Book Title 1"
+      },
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "GET",
+      "path": "/api/books/123",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "bookTitle": "Book Title 1"
+      },
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "GET",
+      "path": "/api/books/999",
+      "expectedStatus": 404,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "POST",
+      "path": "/api/books",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "bookId": 123,
+        "title": null
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "POST",
+      "path": "/api/books",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "bookId": 123,
+        "title": "Book Title"
+      },
+      "expectedStatus": 201,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "redis",
+    "cache-aside",
+    "write-through",
+    "ttl",
+    "invalidation",
+    "memory-cache",
+    "cache",
+    "easy"
+  ]
+}

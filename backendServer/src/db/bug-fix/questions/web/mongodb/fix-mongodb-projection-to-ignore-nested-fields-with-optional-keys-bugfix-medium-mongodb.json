@@ -1,0 +1,136 @@
+{
+  "title": "Fix MongoDB Projection to Ignore Nested Fields with Optional Keys",
+  "subCategory": "MongoDB Projection",
+  "statement": {
+    "markdown": "Given a MongoDB collection with the following document structure:\n\n```json\n{\n  \"name\": \"John\",\n  \"age\": 30,\n  \"address\": {\n    \"street\": \"123 Main St\",\n    \"city\": \"New York\",\n    \"state\": \"NY\",\n    \"country\": \"USA\",\n    \"optional\": {\n      \"zip\": \"10001\",\n      \"region\": \"New York\"\n    }\n  }\n}\n```",
+    "inputFormat": "A MongoDB document object",
+    "outputFormat": "A projected document object with the specified fields",
+    "notes": "The projection should ignore any nested fields with optional keys (e.g. \"address_optional\")",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of documents in the collection"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{'name': 'John', 'age': 30, 'address': {'street': '123 Main St', 'city': 'New York', 'state': 'NY', 'country': 'USA', 'optional': {'zip': '10001', 'region': 'New York'}}}",
+        "output": "{'name': 'John', 'age': 30, 'address': {'street': '123 Main St', 'city': 'New York', 'state': 'NY', 'country': 'USA'}}",
+        "explanation": "The projection ignores the optional fields in the address object"
+      },
+      {
+        "input": "{'name': 'Jane', 'age': 25, 'address': {'street': '456 Elm St', 'city': 'Los Angeles', 'state': 'CA', 'country': 'USA', 'optional': {'zip': '90001', 'region': 'California'}}}",
+        "output": "{'name': 'Jane', 'age': 25, 'address': {'street': '456 Elm St', 'city': 'Los Angeles', 'state': 'CA', 'country': 'USA'}}",
+        "explanation": "The projection ignores the optional fields in the address object"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "MONGODB"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "mongodb"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the $elemMatch operator to ignore fields with optional keys"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(...) ",
+    "spaceComplexity": "O(...)"
+  },
+  "starterCode": {
+    "javascript": "function projectDocument(doc) {\n  // return the projected document object\n}",
+    "python": "class Solution:\n  def projectDocument(self, doc):\n    # return the projected document object\n    pass"
+  },
+  "buggyStarterCode": {
+    "javascript": "function projectDocument(doc) {\n  return {name: doc.name, age: doc.age, address: doc.address}\n}",
+    "python": "class Solution:\n  def projectDocument(self, doc):\n    return {'name': doc['name'], 'age': doc['age'], 'address': doc['address']}"
+  },
+  "functionSignature": {
+    "javascript": "function projectDocument(doc) {\n  return doc;\n}",
+    "python": "def projectDocument(self, doc) -> dict:"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction projectDocument(doc) {\n  return {name: doc.name, age: doc.age, address: {street: doc.address.street, city: doc.address.city, state: doc.address.state, country: doc.address.country}}\n}",
+    "python": "class Solution:\n  def projectDocument(self, doc):\n    return {'name': doc['name'], 'age': doc['age'], 'address': {'street': doc['address']['street'], 'city': doc['address']['city'], 'state': doc['address']['state'], 'country': doc['address']['country']}}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{'name': 'John', 'age': 30, 'address': {'street': '123 Main St', 'city': 'New York', 'state': 'NY', 'country': 'USA', 'optional': {'zip': '10001', 'region': 'New York'}}}",
+      "output": "{'name': 'John', 'age': 30, 'address': {'street': '123 Main St', 'city': 'New York', 'state': 'NY', 'country': 'USA'}}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{'name': 'Jane', 'age': 25, 'address': {'street': '456 Elm St', 'city': 'Los Angeles', 'state': 'CA', 'country': 'USA', 'optional': {'zip': '90001', 'region': 'California'}}}",
+      "output": "{'name': 'Jane', 'age': 25, 'address': {'street': '456 Elm St', 'city': 'Los Angeles', 'state': 'CA', 'country': 'USA'}}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "_id": "bd12a39b232719418b1020df",
+  "slug": "fix-mongodb-projection-to-ignore-nested-fields-with-optional-keys-bugfix-medium-mongodb",
+  "mode": "bug_fix",
+  "category": "MONGODB",
+  "difficulty": "Medium"
+}

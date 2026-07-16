@@ -1,0 +1,160 @@
+{
+  "_id": "ab7ba47a09140cafcecef4c8",
+  "title": "Incorrect Memoization in Grid Paths",
+  "slug": "incorrect-memoization-in-grid-paths-bugfix-medium-dynamic-programming-1",
+  "difficulty": "Medium",
+  "category": "DSA",
+  "subCategory": "DP",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "dp"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "A 2D grid has n rows and m columns, and you are allowed to move either down or right from a cell, but you must visit each cell exactly once. You can start from any cell in the first row or first column, and your goal is to find the number of unique paths from the top-left cell to the bottom-right cell.\n\nYour solution function should return the total count of unique paths. Note that some cells may be forbidden, represented by an asterisk (*), and you must skip these cells.\n\nBuggy code attempts to use a 2D array for memoization, but it fails to handle forbidden cells correctly.",
+    "inputFormat": "Input will be provided in the following format: n (grid height) m (grid width).\ngrid (space-separated, 0-indexed values in row-major order, e.g. (1=free, 2=forbidden))",
+    "outputFormat": "Output should be the count of unique paths.",
+    "notes": "Do not consider forbidden cells.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Height of the grid"
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Width of the grid"
+      }
+    ],
+    "examples": [
+      {
+        "input": "5 5\n0 1 0 0 0\n0 0 0 1 0\n0 1 0 0 0\n0 0 1 0 0\n0 0 0 0 0",
+        "output": "6",
+        "explanation": "There are 6 unique paths from the top-left cell to the bottom-right cell."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use memoization to avoid redundant computation, but ensure your code handles forbidden cells correctly."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial Solution",
+    "intuition": "Correctly implement memoization to count unique paths without visiting forbidden cells.",
+    "bruteForce": "Brute-force approach can be used as a reference point.",
+    "betterSolution": "",
+    "optimalSolution": "The optimal solution uses a 1D memoization array, avoiding the use of a 2D array to simplify handling forbidden cells.",
+    "proofOfCorrectness": "Proof of correctness is based on the principle of induction.",
+    "dryRun": "Dry-run example will be provided in the solutions section.",
+    "commonMistakes": [
+      "Incorrect implementation of memoization",
+      "Ignoring forbidden cells"
+    ],
+    "timeComplexity": "O(m*n)",
+    "spaceComplexity": "O(m*n)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\nint solve(vector<vector<int>>& grid);\n};\n\n// TODO: implement",
+    "java": "public class Solution {\npublic int solve(int[][] grid);\n}\n// TODO: implement",
+    "python": "class Solution:\n    def solve(self, grid):\n        pass\n# TODO: implement",
+    "javascript": "function solve(grid) {\n    // TODO: implement\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\nint solve(vector<vector<int>>& grid) {\nint memo[n][m];\nfor (int i = 0; i < n; i++)\n  for (int j = 0; j < m; j++)\n    if (grid[i][j] != 0) // BUG: incorrect handling of forbidden cells\n      memo[i][j] = 0;\n}\n};",
+    "java": "public class Solution {\npublic int solve(int[][] grid) {\nint[][] memo = new int[n][m];\nfor (int i = 0; i < n; i++)\n  for (int j = 0; j < m; j++)\n    if (grid[i][j] != 2) // BUG: incorrect handling of forbidden cells\n      memo[i][j] = 0;\n}\n}\n// TODO: implement",
+    "python": "class Solution:\n    def solve(self, grid):\n        memo = [[0]*m for _ in range(n)]\n        for i in range(n):\n            for j in range(m):\n                if grid[i][j] != 1: # BUG: incorrect handling of forbidden cells\n                    memo[i][j] = 0\n        return 0",
+    "javascript": "function solve(grid) {\n  var memo = Array(n).fill(0).map(_ => Array(m).fill(0));\n  for (var i = 0; i < n; i++)\n    for (var j = 0; j < m; j++)\n      if (grid[i*m+j] != 1) // BUG: incorrect handling of forbidden cells\n        memo[i][j] = 0;\n}"
+  },
+  "functionSignature": {
+    "cpp": "int solve(vector<vector<int>>& grid);",
+    "java": "int solve(int[][] grid);",
+    "python": "def solve(self, grid: list[list[int]]) -> int:",
+    "javascript": "int solve(vector grid);"
+  },
+  "solutions": {
+    "cpp": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nclass Solution {\npublic:\nint solve(vector<vector<int>>& grid) {\n  if (grid.size() == 0 || grid[0].size() == 0) return 0;\n  const int n = grid.size(), m = grid[0].size();\n  vector<int> dp(m);\n  dp[0] = 1;\n  for (int j = 1; j < m; j++)\n    dp[j] = dp[j-1];\n  for (int i = 1; i < n; i++)\n    for (int j = 0; j < m; j++)\n      dp[j] = (grid[i-1][j] == 0 && (j == 0 || grid[i-1][j-1] == 0)) ? dp[j-1] : 0;\n  int res = 0;\n  for (int j = 0; j < m; j++)\n    if (grid[n-1][j] == 0) res += dp[j];\n  return res;\n}\n};\n\nint main() {\n  ios_base::sync_with_stdio(false);\n  cin.tie(nullptr);\n  int n, m;\n  cin >> n >> m;\n  vector<vector<int>> grid(n, vector<int>(m));\n  for (int i = 0; i < n; i++)\n    for (int j = 0; j < m; j++)\n      cin >> grid[i][j];\n  Solution sol;\n  cout << sol.solve(grid) << endl;\n  return 0;\n}",
+    "java": "import java.util.Scanner;\nimport java.util.Arrays;\npublic class Solution {\npublic int solve(int[][] grid) {\n  if (grid.length == 0 || grid[0].length == 0) return 0;\n  int n = grid.length, m = grid[0].length;\n  int[] dp = new int[m];\n  dp[0] = 1;\n  for (int j = 1; j < m; j++)\n    dp[j] = dp[j-1];\n  for (int i = 1; i < n; i++)\n    for (int j = 0; j < m; j++)\n      dp[j] = (grid[i-1][j] == 2) ? dp[j-1] : 0;\n  int res = 0;\n  for (int j = 0; j < m; j++)\n    if (grid[n-1][j] == 2) res += dp[j];\n  return res;\n}\npublic static void main(String[] args) {\n  try (Scanner in = new Scanner(System.in)) {\n    int n = in.nextInt(), m = in.nextInt();\n    int[][] grid = new int[n][m];\n    for (int i = 0; i < n; i++)\n      for (int j = 0; j < m; j++)\n        grid[i][j] = in.nextInt();\n    Solution sol = new Solution();\n    System.out.println(sol.solve(grid));\n  }\n}",
+    "python": "# Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5 5\n0 1 0 0 0\n0 0 0 1 0\n0 1 0 0 0\n0 0 1 0 0\n0 0 0 0 0",
+      "output": "6",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "3 4\n0 1 0 0\n1 0 1 0\n0 0 0 1",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

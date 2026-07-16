@@ -1,0 +1,152 @@
+{
+  "title": "Validating and Normalizing HTML Anchor Link Attributes",
+  "subCategory": "HTML Validator",
+  "statement": {
+    "markdown": "Implement a function that validates and normalizes HTML anchor link attributes. The function should take an object of attributes as input, where each key is an attribute name and each value is the corresponding attribute value. The function should return a new object with the validated and normalized attributes.\n\nThe function should check for the following:\n\n- The 'href' attribute should be a valid URL. You can use the URL class from the URL API to check for validity.\n- The 'rel' attribute should be a string of comma-separated values, where each value is a valid relation type. You can use a list of valid relation types to check for validity.\n- The 'target' attribute should be either '_self' or '_blank'.\n\nThe function should also normalize the 'href' attribute by removing any unnecessary protocol or host information, and the 'rel' attribute by removing any duplicate or empty values.\n\nFor example, if the input attributes are:\n\n```javascript\n{ href: 'https://example.com', rel: 'noopener,noreferrer', target: '_blank' }\n```\n\nThe function should return:\n\n```javascript\n{ href: 'example.com', rel: 'noopener,noreferrer', target: '_blank' }\n```\n\nNote that the 'href' attribute has been normalized to remove the protocol and host information, and the 'rel' attribute has been normalized to remove any duplicate or empty values.",
+    "inputFormat": "The function takes an object of attributes as input, where each key is an attribute name and each value is the corresponding attribute value.",
+    "outputFormat": "The function returns a new object with the validated and normalized attributes.",
+    "notes": "You can use the URL class from the URL API to check for validity of the 'href' attribute.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of attributes in the input object"
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of valid relation types"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"href\": 'https://example.com', \"rel\": 'noopener,noreferrer', \"target\": '_blank'}",
+        "output": "{\"href\": 'example.com', \"rel\": 'noopener,noreferrer', \"target\": '_blank'}",
+        "explanation": "The 'href' attribute has been normalized to remove the protocol and host information, and the 'rel' attribute has been normalized to remove any duplicate or empty values."
+      },
+      {
+        "input": "{\"href\": 'invalid url', \"rel\": 'noopener,noreferrer', \"target\": '_blank'}",
+        "output": "{\"href\": 'invalid url', \"rel\": 'noopener,noreferrer', \"target\": '_blank'}",
+        "explanation": "The 'href' attribute is not a valid URL, so it has not been normalized."
+      },
+      {
+        "input": "{\"href\": 'https://example.com', \"rel\": 'noopener,noreferrer,empty', \"target\": '_blank'}",
+        "output": "{\"href\": 'example.com', \"rel\": 'noopener,noreferrer', \"target\": '_blank'}",
+        "explanation": "The 'rel' attribute has been normalized to remove the empty value."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 75,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "HTML"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "html"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text: Check the 'href' attribute for validity using the URL class from the URL API."
+    },
+    {
+      "order": 2,
+      "text": "Second hint text: Use a set to remove any duplicate values from the 'rel' attribute."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "var solve = function(attributes) {",
+    "python": "class Solution: def solve(self, attributes):"
+  },
+  "buggyStarterCode": {
+    "javascript": "var solve = function(attributes) {\n  var href = attributes.href; // do not normalize href\n  var rel = attributes.rel; // do not remove duplicates\n  var target = attributes.target; // do not check if target is valid\n  return { href: href, rel: rel, target: target };\n}",
+    "python": "class Solution:\n  def solve(self, attributes):\n    href = attributes['href'] # do not normalize href\n    rel = attributes['rel'] # do not remove duplicates\n    target = attributes['target'] # do not check if target is valid\n    return { 'href': href, 'rel': rel, 'target': target }"
+  },
+  "functionSignature": {
+    "javascript": "var solve = function(attributes) {",
+    "python": "class Solution:\n  def solve(self, attributes):"
+  },
+  "solutions": {
+    "javascript": "// Solution:\n// var solve = function(attributes) {\n//   var href = new URL(attributes.href).hostname;\n//   var relSet = new Set(attributes.rel.split(','));\n//   var rel = Array.from(relSet).join(',');\n//   var target = attributes.target === '_self' || attributes.target === '_blank' ? attributes.target : '_self';\n//   return { href: href, rel: rel, target: target };\n// }\n// var attributes = { href: 'https://example.com', rel: 'noopener,noreferrer', target: '_blank' };\n// console.log(solve(attributes));",
+    "python": "import re\nimport urllib.parse\nimport sys\n\nclass Solution:\n  def solve(self, attributes):\n    href = urllib.parse.urlparse(attributes['href']).hostname\n    relSet = set(attributes['rel'].split(','))\n    rel = ','.join(list(relSet))\n    target = attributes['target'] if attributes['target'] in ['_self', '_blank'] else '_self'\n    return { 'href': href, 'rel': rel, 'target': target }\n\nif __name__ == '__main__':\n  attributes = {'href': 'https://example.com', 'rel': 'noopener,noreferrer', 'target': '_blank'}\n  solution = Solution()\n  print(solution.solve(attributes))"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"href\": 'https://example.com', \"rel\": 'noopener,noreferrer', \"target\": '_blank'}",
+      "output": "{\"href\": 'example.com', \"rel\": 'noopener,noreferrer', \"target\": '_blank'}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"href\": 'invalid url', \"rel\": 'noopener,noreferrer', \"target\": '_blank'}",
+      "output": "{\"href\": 'invalid url', \"rel\": 'noopener,noreferrer', \"target\": '_blank'}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "eea2abcd59881408e3d4d8a9",
+  "slug": "validating-and-normalizing-html-anchor-link-attributes-bugfix-hard-html",
+  "mode": "bug_fix",
+  "category": "HTML",
+  "difficulty": "Hard"
+}

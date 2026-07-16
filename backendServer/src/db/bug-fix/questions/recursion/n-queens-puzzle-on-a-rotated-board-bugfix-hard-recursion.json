@@ -1,0 +1,153 @@
+{
+  "_id": "6a269e49da79e1e314281a84",
+  "title": "N-Queens Puzzle on a Rotated Board",
+  "slug": "n-queens-puzzle-on-a-rotated-board-bugfix-hard-recursion",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "BACKTRACKING",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "backtracking"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given an integer n representing the board size, determine the number of distinct configurations of placing n non-attacking queens on a rotated board. A queen can be placed at any position on the board, and a position is considered valid if there is no row, column, or diagonal that contains another queen.",
+    "inputFormat": "Input will be provided in text format, consisting of a single integer n.",
+    "outputFormat": "Output should be an integer representing the number of distinct configurations.",
+    "notes": "This task involves solving an N-Queens Puzzle on a rotated board with a twist. The board can be rotated to any of its four possible orientations.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of board"
+      }
+    ],
+    "examples": [
+      {
+        "input": "4",
+        "output": "4",
+        "explanation": "Sample 1: There are four distinct configurations on a rotated board of size 4."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use a backtracking approach to solve the problem. Consider the board as a grid of rows and columns."
+    }
+  ],
+  "editorial": {
+    "title": "Solution Overview",
+    "intuition": "The problem can be solved using a backtracking approach by considering each possible position on the board and checking for any conflicts.",
+    "bruteForce": "Brute force approach would involve checking every possible configuration on the board, which would be inefficient.",
+    "betterSolution": "Use the given board size to determine the number of rotations.",
+    "optimalSolution": "Apply backtracking with the following steps: place a queen in a row, check for any conflicts in rows, columns, and diagonals; if there are no conflicts, increment the count of configurations.",
+    "proofOfCorrectness": "The approach is correct as it considers all possible configurations and checks for any conflicts using the board size and rotations.",
+    "dryRun": "Consider a board size of 4 and apply the backtracking approach to find the number of distinct configurations.",
+    "commonMistakes": [
+      "Failing to consider all possible rotations of the board",
+      "Not checking for conflicts properly"
+    ],
+    "timeComplexity": "O(n!)",
+    "spaceComplexity": "O(n^2)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {public: int solve(int n); };",
+    "java": "public class Solution {public boolean solve(int n);}",
+    "python": "class Solution: def solve(self, n: int) -> int:",
+    "javascript": "var solve = function(n) {return};"
+  },
+  "buggyStarterCode": {
+    "cpp": "int Solution::solve(int n) { int count = 0; for (int row = 0; row < n; row++) { for (int col = 0; col < n; col++) { if (isValid(row, col)) { count++; } } } return count; } bool Solution::isValid(int row, int col) { for (int i = 0; i < n; i++) { if ((row - i) == col || (row + i) == col || (row - i) * (row + i) == col * col) { return false; } } return true; }",
+    "java": "public boolean Solution::solve(int n) { int count = 0; for (int row = 0; row < n; row++) { for (int col = 0; col < n; col++) { if (isValid(row, col)) { count++; } } } return count; } boolean Solution::isValid(int row, int col) { for (int i = 0; i < n; i++) { if ((row - i) == col || (row + i) == col || (row - i) * (row + i) == col * col) { return false; } } return true; }",
+    "python": "class Solution: def solve(self, n: int) -> int: count = 0\nfor row in range(n):\n    for col in range(n):\n        if self.isValid(row, col):\n            count += 1\nreturn count\n\ndef isValid(self, row, col):\n    for i in range(n):\n        if (row - i) == col or (row + i) == col or (row - i) * (row + i) == col * col:\n            return False\n    return True",
+    "javascript": "var solve = function(n) {\n  var count = 0;\n  for (var row = 0; row < n; row++) {\n    for (var col = 0; col < n; col++) {\n      if (isValid(row, col)) {\n        count++;\n      }\n    }\n  }\n  return count;\n};\n\nfunction isValid(row, col) {\n  for (var i = 0; i < n; i++) {\n    if ((row - i) == col || (row + i) == col || (row - i) * (row + i) == col * col) {\n      return false;\n    }\n  }\n  return true;\n}"
+  },
+  "functionSignature": {
+    "cpp": "int solve(int n);",
+    "java": "public boolean solve(int n);",
+    "python": "def solve(self, n: int) -> int:",
+    "javascript": "var solve = function(n) {return};"
+  },
+  "solutions": {
+    "cpp": "class Solution {public: int solve(int n) {\n  int result = 0;\n  for (int rotation = 0; rotation < 4; rotation++) {\n    int board_size = n;\n    if (rotation == 1) board_size = n;\n    if (rotation == 2) board_size = n;\n    if (rotation == 3) board_size = n;\n    for (int col = 0; col < board_size; col++) {\n      int count = 0;\n      bool board[board_size][board_size] = {{false}};\n      for (int row = 0; row < board_size; row++) {\n        for (int c = 0; c < board_size; c++) {\n          if (isValid(board, row, c)) {\n            board[row][c] = true;\n            count++; // place queen\n          }\n        }\n      }\n      result += count;\n    }\n  }\n  return result;\n}\n\nbool Solution::isValid(bool board[][board_size], int row, int col) {\n  for (int i = 0; i < board_size; i++) {\n    if (board[i][col] || (row - i) == col || (row + i) == col || (row - i) * (row + i) == col * col) {\n      return false;\n    }\n  }\n  return true;\n}",
+    "java": "public class Solution {\n\n  public int solve(int n) {\n    int result = 0;\n    for (int rotation = 0; rotation < 4; rotation++) {\n      int board_size = n;\n      if (rotation == 1) board_size = n;\n      if (rotation == 2) board_size = n;\n      if (rotation == 3) board_size = n;\n      for (int col = 0; col < board_size; col++) {\n        int count = 0;\n        boolean[][] board = new boolean[board_size][board_size];\n        for (int row = 0; row < board_size; row++) {\n          for (int c = 0; c < board_size; c++) {\n            if (isValid(board, row, c)) {\n              board[row][c] = true;\n              count++;\n              // place queen\n            }\n          }\n        }\n        result += count;\n      }\n    }\n    return result;\n  }\n\n  boolean Solution::isValid(boolean board[][], int row, int col) {\n    for (int i = 0; i < board.length; i++) {\n      if (board[i][col] || (row - i) == col || (row + i) == col || (row - i) * (row + i) == col * col) {\n        return false;\n      }\n    }\n    return true;\n  }\n}",
+    "python": "class Solution: def solve(self, n: int) -> int: result = 0\nfor rotation in range(4):\n    board_size = n\n    if rotation == 1:\n        board_size = n\n    if rotation == 2:\n        board_size = n\n    if rotation == 3:\n        board_size = n\n    for col in range(board_size):\n        count = 0\n        board = [[False for _ in range(board_size)] for _ in range(board_size)]\n        for row in range(board_size):\n            for c in range(board_size):\n                if self.isValid(board, row, c):\n                    board[row][c] = True\n                    count++ # place queen\n        result += count\n    return result\ndef isValid(self, board, row, col):\n    for i in range(len(board)):\n        if board[i][col] or (row - i) == col or (row + i) == col or (row - i) * (row + i) == col * col:\n            return False\n    return True",
+    "javascript": "var solve = function(n) {\n  var result = 0;\n  for (var rotation = 0; rotation < 4; rotation++) {\n    var board_size = n;\n    if (rotation == 1) board_size = n;\n    if (rotation == 2) board_size = n;\n    if (rotation == 3) board_size = n;\n    for (var col = 0; col < board_size; col++) {\n      var count = 0;\n      var board = new Array(board_size).fill(0).map(function() {return new Array(board_size).fill(false);});\n      for (var row = 0; row < board_size; row++) {\n        for (var c = 0; c < board_size; c++) {\n          if (isValid(board, row, c)) {\n            board[row][c] = true;\n            count++; // place queen\n          }\n        }\n      }\n      result += count;\n    }\n  }\n  return result;\n};\n\nfunction isValid(board, row, col) {\n  for (var i = 0; i < board.length; i++) {\n    if (board[i][col] || (row - i) == col || (row + i) == col || (row - i) * (row + i) == col * col) {\n      return false;\n    }\n  }\n  return true;\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "First line count, second line elements (stdin match)",
+      "output": "Expected output string",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "Example 2 input",
+      "output": "Example 2 output",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

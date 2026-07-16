@@ -1,0 +1,54 @@
+{
+  "_id": "13745fbab83f5fbaed021026",
+  "title": "Type Safe Store",
+  "slug": "type-type-safe-store",
+  "difficulty": "Hard",
+  "topics": [
+    "TYPESCRIPT"
+  ],
+  "statement": {
+    "markdown": "## Problem Statement: Design a Type Safe Store that allows for the addition and retrieval of items. Items should be of a generic type 'T'.\n### Requirements\n1. The store should be typed safe, meaning that the type of the items being added and retrieved should be determined at compile time.\n2. The store should be able to add items with a unique identifier.\n3. The store should be able to retrieve items by their unique identifier.\n4. The store should not allow for the addition of duplicate items."
+  },
+  "constraints": [
+    "No external dependencies other than those included in the TypeScript standard library.",
+    "Types must be explicitly defined for all variables, function parameters, and return types.",
+    "Functions should be generic where possible to allow for flexibility."
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "typescript": "// Initialize your store here\nclass Store<T> {}\n// Add a method to the Store class to add an item\n// Add a method to the Store class to retrieve an item by its id\n// Add a method to the Store class to check if an item exists by its id\n"
+  },
+  "gradingCriteria": [
+    {
+      "id": "1",
+      "description": "The store should correctly add and retrieve items.",
+      "weight": 40
+    },
+    {
+      "id": "2",
+      "description": "The store should throw an error when trying to add an item with a duplicate id.",
+      "weight": 30
+    },
+    {
+      "id": "3",
+      "description": "The store should return undefined when trying to retrieve a non-existent item.",
+      "weight": 30
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "typescript"
+    ],
+    "referenceSolution": "interface Item<T> {\n  id: number;\n  data: T;\n}\n\nclass Store<T> {\n  private cache: Map<number, Item<T>>;\n\n  constructor() {\n    this.cache = new Map();\n  }\n\n  addItem(id: number, data: T): void {\n    if (this.cache.has(id)) {\n      throw new Error('Item with given id already exists.');\n    }\n    this.cache.set(id, { id, data });\n  }\n\n  getItem(id: number): Item<T> | undefined {\n    return this.cache.get(id);\n  }\n\n  HasItem(id: number): boolean {\n    return this.cache.has(id);\n  }\n}\n\n// Example usage:\\nconst store = new Store<number>();\nstore.addItem(1, 10);\nconsole.log(store.getItem(1));  // Output: { id: 1, data: 10 }\nconst item = store.HasItem(1); // Output: true"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

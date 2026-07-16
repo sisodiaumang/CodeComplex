@@ -1,0 +1,158 @@
+{
+  "_id": "a4c7bf70fc017a2d207c23c2",
+  "title": "Fixing Trie Search Edge Case",
+  "slug": "fixing-trie-search-edge-case-bugfix-easy-tries",
+  "difficulty": "Easy",
+  "category": "DSA",
+  "subCategory": "TRIE",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "trie"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given a trie data structure, implement a method to search for a word in the trie. The search should return true if the word exists in the trie, otherwise return false.",
+    "inputFormat": "The input will be a string containing a trie and a query string.",
+    "outputFormat": "The output will be a boolean indicating whether the query string exists in the trie.",
+    "notes": "The trie data structure is represented as a dictionary of dictionaries, where each key is a character and the value is another dictionary.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "word",
+        "type": "string",
+        "min": 1,
+        "max": 10000,
+        "description": "Word to search in trie"
+      }
+    ],
+    "examples": [
+      {
+        "input": "trie = {{}, 'a': {{}, 'b': {{}}}, 'c': {}}, query = 'abc'",
+        "output": "True",
+        "explanation": "The word 'abc' exists in the trie"
+      },
+      {
+        "input": "trie = {{}, 'a': {{}, 'b': {{}}}, 'c': {}}, query = 'def'",
+        "output": "False",
+        "explanation": "The word 'def' does not exist in the trie"
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(...) ",
+    "spaceComplexity": "O(...)"
+  },
+  "starterCode": {
+    "cpp": "#include <string>\n#include <unordered_map>\nusing namespace std;\nclass Trie {\npublic:\n    bool search(const string& word) {\n        // TODO: implement\n    }\n};",
+    "java": "import java.util.Map;\nimport java.util.HashMap;\nclass Trie {\npublic boolean search(String word) {\n        // TODO: implement\n    }\n}",
+    "python": "class Trie:\n    def search(self, word: str) -> bool:\n        # TODO: implement\n        pass",
+    "javascript": "class Trie {\n    search(word) {\n        // TODO: implement\n    }\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "#include <string>\n#include <unordered_map>\nusing namespace std;\nclass Trie {\npublic:\n    bool search(const string& word) {\n        if (word.empty()) return true;\n        if (trie.find(word[0]) == trie.end()) return false;\n        return trie[word[0]].search(word.substr(1));\n    }\nprivate:\n    unordered_map<char, Trie> trie;\n};",
+    "java": "import java.util.Map;\nimport java.util.HashMap;\nclass Trie {\npublic boolean search(String word) {\n        if (word.isEmpty()) return true;\n        if (!trie.containsKey(word.charAt(0))) return false;\n        return trie.get(word.charAt(0)).search(word.substring(1));\n    }\nprivate Map<Character, Trie> trie;\n}",
+    "python": "class Trie:\n    def search(self, word: str) -> bool:\n        if not word: return True\n        if word not in self.trie: return False\n        return self.trie[word].search(word[1:]);\n    def __init__(self):\n        self.trie = {};\n",
+    "javascript": "class Trie {\n    search(word) {\n        if (!word) return true;\n        if (!this.trie[word[0]]) return false;\n        return this.trie[word[0]].search(word.slice(1));\n    }\n    constructor() {\n        this.trie = {};\n    }\n}"
+  },
+  "functionSignature": {
+    "cpp": "bool search(const string& word);",
+    "java": "public boolean search(String word);",
+    "python": "def search(self, word: str) -> bool;",
+    "javascript": "search(word);"
+  },
+  "solutions": {
+    "python": "// -*- coding: utf-8 -*-\nimport sys\nfrom typing import Dict\nfrom collections import defaultdict\n\nclass Trie:\n    def __init__(self):\n        self.trie = defaultdict(dict)\n\n    def insert(self, word: str) -> None:\n        node = self.trie\n        for ch in word:\n            node = node[ch]\n        node['$'] = ''\n\n    def search(self, word: str) -> bool:\n        node = self.trie\n        for ch in word:\n            if ch not in node:\n                return False\n            node = node[ch]\n        return '$' in node\n\nif __name__ == '__main__':\n    trie = Trie()\n    trie.insert('apple')\n    trie.insert('banana')\n    print(trie.search('apple'))  # True\n    print(trie.search('banana'))  # True\n    print(trie.search('orange'))  # False\n",
+    "cpp": "// -*- coding: utf-8 -*-\n#include <iostream>\n#include <unordered_map>\n#include <string>\n#include <cassert>\n\nusing namespace std;\n\nclass Trie {\npublic:\n    void insert(const string& word) {\n        node = trie;\n        for (char ch : word) {\n            node = node[ch];\n        } node['$'] = ''; \n    }\n\n    bool search(const string& word) {\n        node = trie;\n        for (char ch : word) {\n            if (node.find(ch) == node.end()) {\n                return false;\n            }\n            node = node[ch];\n        }\n        return node.find('$') != node.end();\n    }\nprivate:\n    unordered_map<char, unordered_map<char, void*>> trie;\n};\n\nint main() {\n    Trie trie;\n    trie.insert('apple');\n    trie.insert('banana');\n    cout << (trie.search('apple') ? \"True\" : \"False\") << endl;\n    cout << (trie.search('banana') ? \"True\" : \"False\") << endl;\n    cout << (trie.search('orange') ? \"True\" : \"False\") << endl;\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "First line count, second line elements (stdin match)",
+      "output": "Expected output string",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "Example 2 input",
+      "output": "Example 2 output",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

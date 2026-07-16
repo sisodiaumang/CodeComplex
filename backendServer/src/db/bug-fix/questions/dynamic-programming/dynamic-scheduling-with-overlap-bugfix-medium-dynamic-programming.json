@@ -1,0 +1,169 @@
+{
+  "_id": "e08819bf3c3e77504d30adc3",
+  "title": "Dynamic Scheduling with Overlap",
+  "slug": "dynamic-scheduling-with-overlap-bugfix-medium-dynamic-programming",
+  "difficulty": "Medium",
+  "category": "DSA",
+  "subCategory": "DP/Memoization",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 45,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "dp"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "You are given a list of tasks where each task has a start time, end time, and a profit value. Find the maximum profit that can be made by scheduling the tasks optimally.\n\nYou can schedule the tasks in any order, but you cannot schedule any task that overlaps with a previously scheduled task. You cannot schedule the same task multiple times.\n\nYour task is to implement the dynamic programming solution and fix the existing bug.",
+    "inputFormat": "The first line of input will contain the number of tasks (n). Then n lines will follow, each in the format 's e p' where s and e are the start and end times of the task and p is the profit of the task.",
+    "outputFormat": "The maximum profit that can be made.",
+    "notes": "The input will be such that it is always possible to find an optimal solution. You cannot reschedule the same task.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 100000,
+        "description": "Number of tasks"
+      }
+    ],
+    "examples": [
+      {
+        "input": "3\n1 2 3\n2 4 2\n1 3 1",
+        "output": "5",
+        "explanation": "Choose the first task and then the third task"
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Think about the state that we should maintain in the memoization table."
+    }
+  ],
+  "editorial": {
+    "title": "Optimal Task Scheduling",
+    "intuition": "The main idea is to sort the tasks by their end times and then schedule them in that order. We can use memoization to keep track of the maximum profit that can be made by scheduling the first i tasks.",
+    "bruteForce": "Try all possible combinations of tasks and calculate the maximum profit for each combination.",
+    "betterSolution": "Use memoization to keep track of the maximum profit that can be made by scheduling the first i tasks.",
+    "optimalSolution": "Sort the tasks by their end times and then schedule them in that order.",
+    "proofOfCorrectness": "The correctness of the solution can be proven by induction on the number of tasks.",
+    "dryRun": "Choose a task with the earliest end time, then choose another task that starts after the first task ends.",
+    "commonMistakes": [
+      "Not considering the case where the input is empty",
+      "Not handling the edge case where two tasks have the same end time"
+    ],
+    "timeComplexity": "O(n log n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    int solve(vector<int>& tasks) {\n        // TODO: implement\n    }\n};",
+    "java": "public class Solution {\npublic:\n    int solve(int[][] tasks) {\n        // TODO: implement\n    }\n}",
+    "python": "class Solution:\n    def solve(self, tasks):\n        # TODO: implement\n        pass",
+    "javascript": "function solve(tasks) {\n    // TODO: implement\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    int solve(vector<int>& tasks) {\n        sort(tasks.begin(), tasks.end());\n        for (int i = 0; i < tasks.size(); i++) {\n            if (tasks[i][1] > tasks[i-1][1]) {\n                return tasks[i][2];\n            }\n        }\n        return 0;\n    }\n};",
+    "java": "public class Solution {\npublic:\n    int solve(int[][] tasks) {\n        Arrays.sort(tasks, new Comparator<int[]>() {\n            @Override\n            public int compare(int[] a, int[] b) {\n                return a[1] - b[1];\n            }\n        });\n        for (int i = 0; i < tasks.length; i++) {\n            if (tasks[i][1] > tasks[i-1][1]) {\n                return tasks[i][2];\n            }\n        }\n        return 0;\n    }\n}",
+    "python": "class Solution:\n    def solve(self, tasks):\n        tasks.sort()\n        for i in range(len(tasks)):\n            if tasks[i][1] > tasks[i-1][1]:\n                return tasks[i][2]\n        return 0",
+    "javascript": "function solve(tasks) {\n    tasks.sort((a, b) => a[1] - b[1]);\n    for (let i = 0; i < tasks.length; i++) {\n        if (tasks[i][1] > tasks[i-1][1]) {\n            return tasks[i][2];\n        }\n    }\n    return 0;\n}"
+  },
+  "functionSignature": {
+    "cpp": "int solve(vector<int>& tasks);",
+    "java": "int solve(int[][] tasks);",
+    "python": "def solve(self, tasks: list[list[int]]) -> int:",
+    "javascript": "int solve(int[][] tasks);"
+  },
+  "solutions": {
+    "python": "from typing import List\n\nclass Solution:\n    def solve(self, tasks: List[List[int]]) -> int:\n        tasks.sort(key=lambda x: x[1])\n        prev_end = -1\n        max_profit = 0\n\n        for start, end, profit in tasks:\n            if start >= prev_end:\n                max_profit += profit\n                prev_end = end\n\n        return max_profit\n\n\nif __name__ == '__main__':\n    s = Solution()\n    tasks = [[1, 2, 3], [2, 4, 2], [1, 3, 1]]\n    print(s.solve(tasks))",
+    "cpp": "from typing import List\n\nclass Solution {\npublic:\n    int solve(vector<int>& tasks) {\n        sort(tasks.begin(), tasks.end(), [](int a, int b){ return a[1] < b[1]; });\n        int prev_end = -1, max_profit = 0;\n\n        for (auto &task : tasks) {\n            if (task[0] >= prev_end) {\n                max_profit += task[2];\n                prev_end = task[1];\n            }\n        }\n\n        return max_profit;\n    }\n};\n\nint main()\n{\n    Solution solution;\n    int n;\n    cin >> n;\n    vector<vector<int>> tasks(n, vector<int>(3));\n\n    for (auto &task : tasks)\n    {\n        cin >> task[0] >> task[1] >> task[2];\n    }\n\n    cout << solution.solve(tasks) << endl;\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 1000,
+    "memoryLimit": 128,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "3\n1 2 3\n2 4 2\n1 3 1",
+      "output": "5",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "5\n1 3 4\n2 4 5\n3 5 2\n1 2 1\n3 4 3",
+      "output": "12",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_1",
+      "input": "10\n1 3 10\n2 4 20\n3 5 30\n6 8 40\n9 10 50\n4 6 60\n7 9 70\n1 2 80\n5 7 90\n2 4 100",
+      "output": "250",
+      "isVisible": false,
+      "weight": 2,
+      "category": "hidden"
+    },
+    {
+      "id": "tc_2",
+      "input": "15\n1 3 10\n2 4 20\n3 5 30\n6 8 40\n9 10 50\n4 6 60\n7 9 70\n1 2 80\n5 7 90\n2 4 100\n10 12 110\n11 13 120\n14 16 130\n15 17 140\n8 10 150",
+      "output": "520",
+      "isVisible": false,
+      "weight": 3,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

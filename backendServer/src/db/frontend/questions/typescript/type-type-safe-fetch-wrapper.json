@@ -1,0 +1,54 @@
+{
+  "_id": "5a9c9653db53c2bda556f1cd",
+  "title": "Type Safe Fetch Wrapper",
+  "slug": "type-type-safe-fetch-wrapper",
+  "difficulty": "Medium",
+  "topics": [
+    "TYPESCRIPT"
+  ],
+  "statement": {
+    "markdown": "## Type Safe Fetch Wrapper\n\nAPIs often return loosely-typed data, which makes it easy to introduce runtime bugs. Build a strongly-typed wrapper around `fetch` that keeps request and response types explicit.\n\n### Requirements\n1. Write a function called `fetchTypedData` that takes a `url`, `method`, `data`, and `responseType` (which determines the type of the response).\n2. The function should use the `fetch` API underneath, with proper type safety and error handling.\n3. Handle both successful and unsuccessful responses (e.g., 404, 500)."
+  },
+  "constraints": [
+    "The application should work with both synchronous and asynchronous data fetching",
+    "The function should be able to handle various types of responses (e.g., JSON, text, blob)",
+    "Proper error handling should be implemented to ensure the application doesn't crash due to incorrect input"
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "typescript": "type FetchType = 'GET' | 'POST' | 'PUT' | 'DELETE';\n\ninterface FetchOptions {\n  // Add properties here as needed\n}\n\ninterface ResponseData {\n  // Add properties here as needed\n}\n\nfunction fetchTypedData(url: string, method: FetchType, data: any, responseType: string): Promise<ResponseData> {\n  // TODO: implement\n  return Promise.reject('Not implemented');\n}\n"
+  },
+  "gradingCriteria": [
+    {
+      "id": "1",
+      "description": "Function `fetchTypedData` should correctly fetch typed data from the specified URL",
+      "weight": 60
+    },
+    {
+      "id": "2",
+      "description": "Function `fetchTypedData` should handle errors correctly and return a promise that rejects with an error",
+      "weight": 20
+    },
+    {
+      "id": "3",
+      "description": "Function `fetchTypedData` should be able to handle various types of responses (e.g., JSON, text, blob)",
+      "weight": 20
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "typescript"
+    ],
+    "referenceSolution": "\n```typescript\nimport { Response } from 'node-fetch';\n\ntype FetchType = 'GET' | 'POST' | 'PUT' | 'DELETE';\n\ninterface FetchOptions {\n  method: FetchType;\n  headers?: { [key: string]: string };\n  data?: { [key: string]: string };\n  responseType?: 'json' | 'text' | 'blob';\n  mode?: 'cors' | 'no-cors' | 'same-origin';\n}\n\ninterface ResponseData {\n  status: number;\n  statusText: string;\n  json(): any;\n  text(): string;\n  blob(): Blob;\n}\n\nasync function fetchTypedData(url: string, options: FetchOptions): Promise<ResponseData> {\n  try {\n    const response = await fetch(url, options);\n    const responseType = options.responseType ?? 'json';\n\n    if (response.status >= 200 && response.status < 300) {\n      switch (responseType) {\n        case 'json':\n          return response.json();\n        case 'text':\n          return response.text();\n        case 'blob':\n          return response.blob();\n        default:\n          throw new Error(`Unsupported responseType: ${responseType}`);\n      }\n    } else {\n      throw new Error(`${response.status}: ${response.statusText}`);\n    }\n  } catch (error) {\n    throw error;\n  }\n}\n\nexport default function App(): Promise<void> {\n  const response = fetchTypedData('https://example.com/api/data', {\n    method: 'GET',\n    responseType: 'json'\n  });\n\n  response\n    .then(data => console.log(data))\n    .catch(error => console.error(error));\n\n  return response;\n}\n```\n"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

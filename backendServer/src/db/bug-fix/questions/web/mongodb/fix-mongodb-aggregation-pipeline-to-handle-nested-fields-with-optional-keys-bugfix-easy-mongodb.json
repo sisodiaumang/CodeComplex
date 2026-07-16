@@ -1,0 +1,141 @@
+{
+  "title": "Fix MongoDB Aggregation Pipeline to Handle Nested Fields with Optional Keys",
+  "subCategory": "MongoDB Aggregation Pipeline",
+  "statement": {
+    "markdown": "Given a MongoDB collection `orders` with the following document structure:\n\n```json\n{\n  \"customer\": \"John Doe\",\n  \"orderDate\": \"2022-01-01\",\n  \"orderDetails\": [\n    {\n      \"product\": \"Product A\",\n      \"quantity\": 2\n    },\n    {\n      \"product\": \"Product B\",\n      \"quantity\": 3\n    }\n  ]\n}\n```\n\nWrite a MongoDB aggregation pipeline that extracts the `product` and `quantity` fields from the `orderDetails` array and returns the result as a new document. However, if the `product` field is missing from the document, the pipeline should return an empty array for that document.\n\nThe expected output for the given document is:\n\n```json\n{\n  \"customer\": \"John Doe\",\n  \"orderDate\": \"2022-01-01\",\n  \"orderDetails\": [\n    { \"product\": \"Product A\", \"quantity\": 2 },\n    { \"product\": \"Product B\", \"quantity\": 3 }\n  ]\n}\n```\n\nPlease fix the aggregation pipeline to achieve this result.",
+    "inputFormat": "A MongoDB collection `orders` with the specified document structure.",
+    "outputFormat": "The resulting document with the extracted `orderDetails` fields.",
+    "notes": "The pipeline should handle documents with missing `product` fields properly.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 100
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"customer\": \"John Doe\", \"orderDate\": \"2022-01-01\", \"orderDetails\": [{\"product\": \"Product A\", \"quantity\": 2}, {\"product\": \"Product B\", \"quantity\": 3}]}",
+        "output": "{\"customer\": \"John Doe\", \"orderDate\": \"2022-01-01\", \"orderDetails\": [{\"product\": \"Product A\", \"quantity\": 2}, {\"product\": \"Product B\", \"quantity\": 3}]}"
+      },
+      {
+        "input": "{\"customer\": \"Jane Doe\", \"orderDate\": \"2022-01-02\", \"orderDetails\": []}",
+        "output": "{\"customer\": \"Jane Doe\", \"orderDate\": \"2022-01-02\", \"orderDetails\": []}"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 10,
+    "points": 30,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "MONGODB"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "mongodb"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the `$map` operator to iterate over the `orderDetails` array."
+    },
+    {
+      "order": 2,
+      "text": "Use the `$mergeObjects` operator to merge the `product` and `quantity` fields."
+    },
+    {
+      "order": 3,
+      "text": "Use the `$ifNull` operator to handle missing `product` fields."
+    }
+  ],
+  "editorial": {
+    "title": "Fixing Aggregation Pipeline to Handle Nested Fields with Optional Keys",
+    "intuition": "The aggregation pipeline should use the `$map` operator to iterate over the `orderDetails` array and extract the `product` and `quantity` fields. Then, use the `$mergeObjects` operator to merge these fields into a single object. Finally, use the `$ifNull` operator to handle missing `product` fields by returning an empty array for those documents.",
+    "bruteForce": "One possible brute force approach is to use the `$ifNull` operator to check for missing `product` fields and then use the `$mergeObjects` operator to merge the fields. However, this approach can be inefficient and may not handle edge cases properly.",
+    "betterSolution": "",
+    "optimalSolution": "The optimal solution uses the `$map` operator to iterate over the `orderDetails` array and extract the `product` and `quantity` fields. Then, use the `$mergeObjects` operator to merge these fields into a single object. Finally, use the `$ifNull` operator to handle missing `product` fields by returning an empty array for those documents.",
+    "proofOfCorrectness": "The proof of correctness involves showing that the aggregation pipeline correctly handles documents with missing `product` fields and returns the expected output.",
+    "dryRun": "To dry run the pipeline, start by creating a sample document with missing `product` fields. Then, apply the pipeline to the document and verify that the output is correct. Finally, test the pipeline with a variety of input documents to ensure that it handles edge cases properly.",
+    "commonMistakes": [
+      "Not handling missing `product` fields properly",
+      "Using an inefficient aggregation pipeline"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// Define the aggregation pipeline\nvar pipeline = [\n  // Iterate over the orderDetails array using $map\n  {$map: {...\n  // Merge the product and quantity fields using $mergeObjects\n  {$mergeObjects: {...\n  // Handle missing product fields using $ifNull\n  {$ifNull: {...\n};\n};\n};",
+    "python": "class Solution:\n  def __init__(self):\n    pass\n\n  def solve(self):\n    # Define the aggregation pipeline\n    pipeline = [\n      # Iterate over the orderDetails array using $map\n      {'$map': {...\n      # Merge the product and quantity fields using $mergeObjects\n      {'$mergeObjects': {...\n      # Handle missing product fields using $ifNull\n      {'$ifNull': {...\n};\n"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Define the aggregation pipeline\nvar pipeline = [\n  // Iterate over the orderDetails array using $map\n  {$map: {'input': '$orderDetails', 'as': 'detail', 'in': {'$mergeObjects': {'i': '$$detail'}}}\n];\n\n// Execute the pipeline on a sample document\nvar result = db.orders.aggregate(pipeline).toArray();\nconsole.log(result);\n",
+    "python": "class Solution:\n  def __init__(self):\n    pass\n\n  def solve(self):\n    # Define the aggregation pipeline\n    pipeline = [\n      # Iterate over the orderDetails array using $map\n      {'$map': {'input': '$orderDetails', 'as': 'detail', 'in': {'$mergeObjects': {'i': '$$detail'}}}\n    ];\n\n    # Execute the pipeline on a sample document\n    result = db.orders.aggregate(pipeline).toArray();\n    print(result);\n"
+  },
+  "functionSignature": {
+    "javascript": "var solve = function() {\n  // Define the aggregation pipeline\n  var pipeline = [\n    // Iterate over the orderDetails array using $map\n    {$map: {\n      \"input\": \"$orderDetails\",\n      \"as\": \"detail\",\n      \"in\": {\n        \"$mergeObjects\": {\n          \"i\": \"$$detail\"\n        }\n      }\n    }\n  ];\n\n  // Execute the pipeline on a sample document\n  var result = db.orders.aggregate(pipeline).toArray();\n  console.log(result);\n}",
+    "python": "def solve(self):\n  # Define the aggregation pipeline\n  pipeline = [\n    # Iterate over the orderDetails array using $map\n    {'$map': {'input': '$orderDetails', 'as': 'detail', 'in': {'$mergeObjects': {'i': '$$detail'}}}\n  ];\n\n  # Execute the pipeline on a sample document\n  result = db.orders.aggregate(pipeline).toArray();\n  print(result);"
+  },
+  "solutions": {
+    "javascript": "// Solution\nvar pipeline = [\n  // Iterate over the orderDetails array using $map\n  {$map: {\n    \"input\": \"$orderDetails\",\n    \"as\": \"detail\",\n    \"in\": {\n      \"$mergeObjects\": {\n        \"product\": \"$$detail.product\",\n        \"quantity\": \"$$detail.quantity\"\n      }\n    }\n  }\n];\n\n// Execute the pipeline on a sample document\nvar result = db.orders.aggregate(pipeline).toArray();\nconsole.log(result);\n",
+    "python": "class Solution:\n  def __init__(self):\n    pass\n\n  def solve(self):\n    # Define the aggregation pipeline\n    pipeline = [\n      # Iterate over the orderDetails array using $map\n      {'$map': {\n        \"input\": \"$orderDetails\",\n        \"as\": \"detail\",\n        \"in\": {\n          \"$mergeObjects\": {\n            \"product\": \"$$detail.product\",\n            \"quantity\": \"$$detail.quantity\"\n          }\n        }\n      }\n    ];\n\n    # Execute the pipeline on a sample document\n    result = db.orders.aggregate(pipeline).toArray();\n    print(result);"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"customer\": \"John Doe\", \"orderDate\": \"2022-01-01\", \"orderDetails\": [{\"product\": \"Product A\", \"quantity\": 2}, {\"product\": \"Product B\", \"quantity\": 3}]}",
+      "output": "{\"customer\": \"John Doe\", \"orderDate\": \"2022-01-01\", \"orderDetails\": [{\"product\": \"Product A\", \"quantity\": 2}, {\"product\": \"Product B\", \"quantity\": 3}]}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"customer\": \"Jane Doe\", \"orderDate\": \"2022-01-02\", \"orderDetails\": []}",
+      "output": "{\"customer\": \"Jane Doe\", \"orderDate\": \"2022-01-02\", \"orderDetails\": []}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "8cf53b4e67d7a62b7abce4df",
+  "slug": "fix-mongodb-aggregation-pipeline-to-handle-nested-fields-with-optional-keys-bugfix-easy-mongodb",
+  "mode": "bug_fix",
+  "category": "MONGODB",
+  "difficulty": "Easy"
+}

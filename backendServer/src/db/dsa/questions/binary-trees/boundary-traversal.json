@@ -1,0 +1,196 @@
+{
+  "_id": "boundary-traversal",
+  "title": "Boundary Traversal",
+  "slug": "boundary-traversal",
+  "difficulty": "Medium",
+  "category": "TREE",
+  "subCategory": "Medium Problems",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 500,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "Binary Trees",
+      "Trees",
+      "Depth-First Search"
+    ],
+    "patterns": [
+      "traversal",
+      "binary tree"
+    ],
+    "prerequisites": [
+      "Basic Binary Tree Operations",
+      "Traversal Techniques"
+    ],
+    "variants": [],
+    "tags": [
+      "medium",
+      "binary tree",
+      "traversal"
+    ],
+    "keywords": [
+      "inorder traversal",
+      "preorder traversal",
+      "postorder traversal"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "Given a binary tree, you are required to print its boundary traversal. The boundary traversal of a binary tree is defined as the sequence of nodes that appear on the periphery of the tree when it is viewed from left to right. The traversal consists of three parts, in order:\n\n1. **Left Boundary** – All the nodes on the path from the root to the left‑most leaf, excluding the leaf itself.\n2. **Leaf Nodes** – All leaf nodes of the tree from left to right.\n3. **Right Boundary** – All the nodes on the path from the right‑most leaf up to the root, excluding the leaf and the root, printed in reverse order.\n\nThe root is considered part of the left boundary (unless the tree consists of a single node, in which case the root is also the leaf). Your task is to output the values of the nodes in the exact order described above.\n\n**Input Format**\n- The first line contains an integer `N`, the number of nodes in the binary tree.\n- The second line contains `N` space‑separated integers representing the nodes of the tree in level‑order (breadth‑first) traversal. Use `-1` to denote a null (missing) child. The first value is always the value of the root.\n\n**Output Format**\n- Print a single line containing the boundary traversal of the tree. The node values must be printed in order, separated by a single space.\n\n**Notes**\n- The tree is guaranteed to be a valid binary tree constructed from the given level‑order representation.\n- If the tree has only one node, the boundary traversal consists of that single node.\n- Duplicate values may appear in the tree; treat each node as distinct based on its position.\n\n**Constraints**\n- `1 <= N <= 1000`\n- Node values are integers in the range `-100000` to `100000`.\n- The root node value will never be `-1`.\n\n**Example 1**\nInput:\n7\n1 2 3 4 5 -1 6\nOutput:\n1 2 4 5 6 3\nExplanation:\nThe tree is:\n```\n        1\n      /   \\\n     2     3\n    / \\     \\\n   4   5     6\n```\nLeft boundary (excluding leaf): 1 2\nLeaf nodes (left to right): 4 5 6\nRight boundary (excluding leaf and root, reversed): 3\nCombined: 1 2 4 5 6 3\n\n**Example 2**\nInput:\n5\n10 20 30 -1 -1 -1 -1\nOutput:\n10 20 30\nExplanation:\nThe tree is:\n```\n    10\n   /  \\\n 20   30\n```\nLeft boundary: 10 20\nLeaf nodes: (none besides the already listed leaves)\nRight boundary (reversed, excluding root and leaf): 30\nCombined: 10 20 30",
+    "inputFormat": "The first line contains an integer N, the number of nodes in the binary tree.\nThe second line contains N space-separated integers representing the level-order traversal of the tree, where -1 denotes a null node.",
+    "outputFormat": "A single line with the boundary traversal node values separated by a single space.",
+    "notes": "The level-order list always starts with the root value (which is never -1). Null placeholders are required to preserve the correct tree structure.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "N",
+        "type": "integer",
+        "min": 1,
+        "max": 1000,
+        "description": "Number of entries in the level‑order representation"
+      }
+    ],
+    "examples": [
+      {
+        "input": "7\n1 2 3 4 5 -1 6",
+        "output": "1 2 4 5 6 3",
+        "explanation": "Boundary traversal as described in the statement."
+      },
+      {
+        "input": "7\n10 20 30 -1 -1 -1 -1",
+        "output": "10 20 30",
+        "explanation": "Tree with only root and two children; left boundary includes root and left child, right boundary adds the right child."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "The problem requires a three-part traversal of a binary tree: left boundary, leaf nodes, and right boundary. Start by understanding how to identify and traverse each part separately."
+    },
+    {
+      "order": 2,
+      "text": "To solve this, you will need to perform a level-order traversal to construct the tree and then identify the left boundary, leaf nodes, and right boundary. Consider how to differentiate between left and right child nodes when traversing."
+    },
+    {
+      "order": 3,
+      "text": "The key to solving this problem lies in recognizing the tree structure and identifying the nodes that belong to the left boundary, leaf nodes, and right boundary. Think about how to use recursive or iterative approaches to traverse the tree and collect the required nodes."
+    }
+  ],
+  "editorial": {
+    "title": "Boundary Traversal of a Binary Tree",
+    "intuition": "The problem requires traversing the boundary of a binary tree in a specific order: left boundary, leaf nodes, and right boundary. The key observation is that the left boundary consists of nodes that are on the leftmost path from the root, excluding leaf nodes. Similarly, the right boundary consists of nodes on the rightmost path from the root, excluding leaf nodes.",
+    "bruteForce": "A brute force approach would involve traversing the entire tree and storing all node values. Then, iterate through the nodes to identify the boundary nodes. This approach is slow because it requires unnecessary traversal and storage of non-boundary nodes.",
+    "betterSolution": "The optimal approach involves a level-order traversal to create the tree, and then three separate functions to add left boundary, leaf nodes, and right boundary nodes to the result.",
+    "optimalSolution": "The optimal solution has a time complexity of O(N) and a space complexity of O(N), where N is the number of nodes in the tree. This is because each node is visited at most three times: once during tree creation, and once during each of the three boundary traversals.",
+    "proofOfCorrectness": "The correctness of the optimal solution can be proved by induction on the number of nodes in the tree. The base case is a tree with a single node, where the boundary traversal returns the node's value. For the inductive step, assume the solution works for trees with k nodes. Then, for a tree with k+1 nodes, the solution works because it correctly adds the left boundary, leaf nodes, and right boundary nodes to the result.",
+    "dryRun": "A dry run of the optimal solution on a sample tree confirms that it produces the correct boundary traversal.",
+    "commonMistakes": [
+      "Incorrectly identifying leaf nodes as boundary nodes",
+      "Missing nodes on the left or right boundary",
+      "Not handling the case where the tree has only one node",
+      "Not handling the case where the tree is empty",
+      "Incorrectly ordering the boundary nodes",
+      "Not considering the space complexity of the solution"
+    ],
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(N)"
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass TreeNode {\npublic:\n    int val;\n    TreeNode *left;\n    TreeNode *right;\n    TreeNode() : val(0), left(NULL), right(NULL) {}\n    TreeNode(int x) : val(x), left(NULL), right(NULL) {}\n};\n\nclass Solution {\npublic:\n    vector<int> boundaryOfBinaryTree(TreeNode* root) {\n        // TODO: implement\n        return {};\n    }\n};",
+    "java": "import java.util.*;\n\nclass TreeNode {\n    int val;\n    TreeNode left;\n    TreeNode right;\n    TreeNode(int x) { val = x; }\n}\n\nclass Solution {\n    public List<Integer> boundaryOfBinaryTree(TreeNode root) {\n        // TODO: implement\n        return new ArrayList<>();\n    }\n}",
+    "python": "from typing import List\n\nclass TreeNode:\n    def __init__(self, val=0, left=None, right=None):\n        self.val = val\n        self.left = left\n        self.right = right\n\nclass Solution:\n    def boundaryOfBinaryTree(self, root: TreeNode) -> List[int]:\n        # TODO: implement\n        pass",
+    "javascript": "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n\n/**\n * @param {TreeNode} root\n * @return {number[]}\n */\nvar boundaryOfBinaryTree = function(root) {\n    // TODO: implement\n    return [];\n};"
+  },
+  "functionSignature": {
+    "cpp": "vector<int> boundaryOfBinaryTree(TreeNode* root);",
+    "java": "public List<Integer> boundaryOfBinaryTree(TreeNode root);",
+    "python": "def boundaryOfBinaryTree(self, root: TreeNode) -> List[int]:",
+    "javascript": "var boundaryOfBinaryTree = function(root);"
+  },
+  "solutions": {
+    "python": "import sys\nfrom collections import deque\nfrom typing import List\n\nclass TreeNode:\n    def __init__(self, val=0, left=None, right=None):\n        self.val = val\n        self.left = left\n        self.right = right\n\nclass Solution:\n    def boundaryOfBinaryTree(self, root: TreeNode) -> List[int]:\n        if not root:\n            return []\n        result = [root.val]\n        current = root.left\n        while current and current.left or current.right:\n            result.append(current.val)\n            if current.left:\n                current = current.left\n            else:\n                current = current.right\n        self.addLeaves(root, result)\n        current = root.right\n        temp = []\n        while current and current.left or current.right:\n            temp.append(current.val)\n            if current.right:\n                current = current.right\n            else:\n                current = current.left\n        result.extend(reversed(temp))\n        return result\n\n    def addLeaves(self, node, result):\n        if not node:\n            return\n        if not node.left and not node.right:\n            result.append(node.val)\n            return\n        self.addLeaves(node.left, result)\n        self.addLeaves(node.right, result)\n\nif __name__ == '__main__':\n    n = int(sys.stdin.readline().strip())\n    nodes = list(map(int, sys.stdin.readline().strip().split()))\n    if n == 0:\n        sys.exit(0)\n    root = TreeNode(nodes[0])\n    queue = deque([root])\n    i = 1\n    while i < n:\n        current = queue.popleft()\n        if nodes[i] != -1:\n            current.left = TreeNode(nodes[i])\n            queue.append(current.left)\n        i += 1\n        if i < n and nodes[i] != -1:\n            current.right = TreeNode(nodes[i])\n            queue.append(current.right)\n        i += 1\n    sol = Solution()\n    ans = sol.boundaryOfBinaryTree(root)\n    print(' '.join(map(str, ans)))",
+    "cpp": "#include <numeric>\n#include <bits/stdc++.h>\nusing namespace std;\n\nstruct TreeNode {\n    int val;\n    TreeNode *left;\n    TreeNode *right;\n    TreeNode(int x) : val(x), left(NULL), right(NULL) {}\n};\n\nclass Solution {\npublic:\n    vector<int> boundaryOfBinaryTree(TreeNode* root) {\n        if (!root) return {};\n        vector<int> result = {root->val};\n        TreeNode* current = root->left;\n        while (current && (current->left || current->right)) {\n            result.push_back(current->val);\n            if (current->left) current = current->left;\n            else current = current->right;\n        }\n        addLeaves(root, result);\n        current = root->right;\n        vector<int> temp;\n        while (current && (current->left || current->right)) {\n            temp.push_back(current->val);\n            if (current->right) current = current->right;\n            else current = current->left;\n        }\n        for (auto it = temp.rbegin(); it != temp.rend(); ++it) {\n            result.push_back(*it);\n        }\n        return result;\n    }\n    void addLeaves(TreeNode* node, vector<int>& result) {\n        if (!node) return;\n        if (!node->left && !node->right) {\n            result.push_back(node->val);\n            return;\n        }\n        addLeaves(node->left, result);\n        addLeaves(node->right, result);\n    }\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int n;\n    cin >> n;\n    vector<int> nodes(n);\n    for (int i = 0; i < n; i++) cin >> nodes[i];\n    if (n == 0) return 0;\n    TreeNode* root = new TreeNode(nodes[0]);\n    queue<TreeNode*> q;\n    q.push(root);\n    int i = 1;\n    while (i < n) {\n        TreeNode* current = q.front(); q.pop();\n        if (nodes[i] != -1) {\n            current->left = new TreeNode(nodes[i]);\n            q.push(current->left);\n        }\n        i++;\n        if (i < n && nodes[i] != -1) {\n            current->right = new TreeNode(nodes[i]);\n            q.push(current->right);\n        }\n        i++;\n    }\n    Solution sol;\n    vector<int> ans = sol.boundaryOfBinaryTree(root);\n    for (int i = 0; i < ans.size(); i++) {\n        cout << ans[i] << (i == ans.size() - 1 ? \"\" : \" \");\n    }\n    cout << \"\\n\";\n    return 0;\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.2
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "7\n1 2 3 4 5 -1 6",
+      "output": "1 2 4 5 6 3",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "5\n10 20 30 -1 -1 -1 -1",
+      "output": "10 20 30",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "random_medium_12",
+      "input": "5\n1 2 3 4 5",
+      "output": "1 2 4 5 3",
+      "isVisible": false,
+      "weight": 1,
+      "category": "random_medium"
+    },
+    {
+      "id": "adversarial_19",
+      "input": "5\n1 2 3 -1 -1 4 5",
+      "output": "1 2 3",
+      "isVisible": false,
+      "weight": 1,
+      "category": "adversarial"
+    },
+    {
+      "id": "random_medium_22",
+      "input": "15\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 15",
+      "output": "1 2 4 8 9 10 11 12 13 14 15 7 3",
+      "isVisible": false,
+      "weight": 1,
+      "category": "random_medium"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

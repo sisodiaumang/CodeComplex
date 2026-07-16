@@ -1,0 +1,151 @@
+{
+  "title": "Optimizing a Memoized React Function Component Re-renders Due to Changing Array References",
+  "subCategory": "State Management",
+  "statement": {
+    "markdown": "A memoized React function component is designed to optimize performance by caching the results of expensive function calls and reusing them when the same inputs occur again. However, this approach can lead to unexpected behavior when the underlying data structure changes, causing the component to re-render unnecessarily. Your task is to optimize the memoization logic to prevent the component from re-rendering due to changing array references.",
+    "inputFormat": "The input is an object with an array property `items` and a method `updateItems` that modifies the array.",
+    "outputFormat": "The output is the optimized memoized function component that prevents re-renders due to changing array references.",
+    "notes": "The component should only re-render when the actual data changes, not when the array reference changes.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of the input array"
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 1,
+        "max": 10,
+        "description": "Number of updates"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"items\": [1, 2, 3], \"updateItems\": function() { this.items.push(4); } }",
+        "output": "function MemoizedComponent() { ... }",
+        "explanation": "The component should only re-render when the actual data changes."
+      },
+      {
+        "input": "{\"items\": [1, 2, 3], \"updateItems\": function() { this.items = [1, 2, 4]; } }",
+        "output": "function MemoizedComponent() { ... }",
+        "explanation": "The component should re-render when the actual data changes."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 75,
+    "premium": true,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "REACT"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "react"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Understand the memoization logic and its limitations"
+    },
+    {
+      "order": 2,
+      "text": "Use a deep equality check to compare the actual data"
+    },
+    {
+      "order": 3,
+      "text": "Optimize the component to re-render only when the actual data changes"
+    }
+  ],
+  "editorial": {
+    "title": "Optimizing Memoized React Function Component Re-renders",
+    "intuition": "Memoization can lead to unexpected behavior when the underlying data structure changes.",
+    "bruteForce": "Simple memoization logic can lead to re-renders due to changing array references.",
+    "betterSolution": "Use a deep equality check to compare the actual data.",
+    "optimalSolution": "Optimize the component to re-render only when the actual data changes.",
+    "proofOfCorrectness": "The component should only re-render when the actual data changes.",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Using a shallow equality check",
+      "Not optimizing the component"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// Create a memoized React function component",
+    "python": "class MemoizedComponent:\n    def __init__(self, items):\n        self.items = items\n        self.memoized = {}\n    def update(self):\n        # Update the array reference\n        self.items = [1, 2, 4]\n    def render(self):\n        # Render the component\n        pass"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Memoized React function component that re-renders due to changing array references",
+    "python": "class MemoizedComponent:\n    def __init__(self, items):\n        self.items = items\n        self.memoized = {}\n    def update(self):\n        # Update the array reference\n        self.items = [1, 2, 4]\n    def render(self):\n        # Render the component\n        if self.memoized.get(tuple(self.items)) is None:\n            self.memoized[tuple(self.items)] = 'Rendered'\n        return self.memoized[tuple(self.items)]"
+  },
+  "functionSignature": {
+    "javascript": "var MemoizedComponent = function(items) { ... }",
+    "python": "class MemoizedComponent:\n    def __init__(self, items):\n        ..."
+  },
+  "solutions": {
+    "javascript": "// Optimized memoized React function component",
+    "python": "class MemoizedComponent:\n    def __init__(self, items):\n        self.items = items\n        self.memoized = {}\n    def update(self):\n        # Update the array reference\n        self.items = [1, 2, 4]\n    def render(self):\n        # Render the component\n        if self.memoized.get(tuple(self.items)) is None:\n            self.memoized[tuple(self.items)] = 'Rendered'\n            return self.memoized[tuple(self.items)]\n        else:\n            return self.memoized[tuple(self.items)]"
+  },
+  "judgeConfig": {
+    "timeLimit": 5,
+    "memoryLimit": 128,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"items\": [1, 2, 3], \"updateItems\": function() { this.items.push(4); } }",
+      "output": "Rendered",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"items\": [1, 2, 3], \"updateItems\": function() { this.items = [1, 2, 4]; } }",
+      "output": "Rendered",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "_id": "414f113cfc24b604ccfa3b26",
+  "slug": "optimizing-a-memoized-react-function-component-re-renders-due-to-changing-array-references-bugfix-hard-react",
+  "mode": "bug_fix",
+  "category": "REACT",
+  "difficulty": "Hard"
+}

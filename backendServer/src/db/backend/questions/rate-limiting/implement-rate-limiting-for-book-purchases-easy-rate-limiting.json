@@ -1,0 +1,126 @@
+{
+  "_id": "fe12c233d9662b711ac687d2",
+  "title": "Implement Rate Limiting for Book Purchases",
+  "slug": "implement-rate-limiting-for-book-purchases-easy-rate-limiting",
+  "difficulty": "Easy",
+  "topics": [
+    "RATE_LIMITING"
+  ],
+  "statement": "Design an endpoint to process book purchases. Users can make multiple purchases within a short time frame, but after exceeding the maximum rate limit, the endpoint should return a 429 Too Many Requests error. Use the Fixed Window rate limiting strategy.\n\nImplement the following endpoints:\n\n* GET /api/purchase/limits: Returns the current rate limit data (remaining allowed requests, reset time)\n* POST /api/purchase: Processes a book purchase\n\nVisible test cases cover successful purchases and hitting the rate limit.\n\nHidden test cases cover edge cases, including missing headers, invalid JSON body, and authentication/rate limit limits.",
+  "constraints": [
+    "Must use Fixed Window rate limiting strategy",
+    "Must use Express Rate Limit middleware"
+  ],
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/api/purchase/limits",
+      "description": "Returns the current rate limit data (remaining allowed requests, reset time)"
+    },
+    {
+      "method": "POST",
+      "path": "/api/purchase",
+      "description": "Processes a book purchase",
+      "body": {
+        "bookId": "integer",
+        "userId": "integer"
+      }
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\"name\": \"rate-limiter\",\n  \"version\": \"1.0.0\",\n  \"main\": \"index.js\",\n  \"scripts\": {\n    \"start\": \"node index.js\"\n  },\n  \"dependencies\": {\n    \"express\": \"^4.18.2\",\n    \"express-rate-limit\": \"^5.2.5\"\n  }\n}",
+    "index.js": "const express = require('express');\nconst rateLimit = require('express-rate-limit');\n\nconst app = express();\nconst limiter = rateLimit({\n  windowMs: 15 * 60 * 1000, // 15 minutes\n  max: 10 \n});\n\napp.use(limiter);\napp.use(express.json());\n\n// TODO: Implement endpoints\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "POST",
+      "path": "/api/purchase",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "bookId": 1,
+        "userId": 1
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "success": true
+      },
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "POST",
+      "path": "/api/purchase",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "bookId": 1,
+        "userId": 1
+      },
+      "expectedStatus": 429,
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "POST",
+      "path": "/api/purchase",
+      "headers": {
+        "Content-Type": "text/plain"
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "POST",
+      "path": "/api/purchase",
+      "body": "invalid json",
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "GET",
+      "path": "/api/purchase/limits",
+      "expectedStatus": 200,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "sliding-window",
+    "token-bucket",
+    "fixed-window",
+    "leaky-bucket",
+    "redis",
+    "express-rate-limit",
+    "rate-limiting",
+    "express",
+    "api-design"
+  ]
+}

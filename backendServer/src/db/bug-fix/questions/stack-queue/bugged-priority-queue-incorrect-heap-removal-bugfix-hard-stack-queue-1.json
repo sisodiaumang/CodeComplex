@@ -1,0 +1,157 @@
+{
+  "_id": "1f826e8219bf441373a7f088",
+  "title": "Bugged Priority Queue: Incorrect Heap Removal",
+  "slug": "bugged-priority-queue-incorrect-heap-removal-bugfix-hard-stack-queue-1",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "QUEUE",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 75,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "queue"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "You are given a min-heap implemented as a binary heap, storing elements of the form (data, index). Your goal is to implement a priority queue using this min-heap data structure. The priority queue should support the following methods: peek, dequeue, and insert. However, your implementation has a bug that causes it to sometimes remove the wrong element from the heap.",
+    "inputFormat": "Your implementation will receive a list of elements (data, index) to be inserted into the priority queue. You should process each element in the list and perform the corresponding operations on the priority queue.",
+    "outputFormat": "For each test case, you should output the result of the dequeue operation, followed by a newline character. If the priority queue is empty, output -1.",
+    "notes": "Note that the priority queue is implemented as a min-heap, so the top element is the one with the smallest data. Also, the index of each element is used for tie-breaking. You may assume that the input elements are non-negative integers, and the index of each element is a unique integer from 1 to n, where n is the total number of elements.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "[(1, 1), (3, 2), (2, 1), (4, 3)]",
+        "output": "2\n-1\n",
+        "explanation": "For the input [1, 3, 2, 4], the priority queue will contain the elements [(1, 1), (2, 1), (3, 2), (4, 3)]. After dequeue, the top element is 1, so the output will be 1. After dequeue, the priority queue will contain the elements [(2, 1), (3, 2), (4, 3)], so the output will be -1."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First, analyze the heapify operation to understand why it might be removing the wrong element."
+    },
+    {
+      "order": 2,
+      "text": "Consider the properties of a min-heap and how they relate to the priority queue implementation."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial",
+    "intuition": "The key insight is to understand how the heapify operation affects the priority queue. When a new element is inserted, the heapify operation may move the top element to a different position in the heap. However, the current implementation does not account for this change.",
+    "bruteForce": "One possible approach is to rebuild the entire heap from scratch after each operation. However, this is inefficient and may cause issues for large inputs.",
+    "betterSolution": "",
+    "optimalSolution": "The optimal solution involves modifying the heapify operation to correctly handle the change in the top element. This can be done by checking for the heap property after the heapify operation and adjusting the top element if necessary.",
+    "proofOfCorrectness": "The correct solution satisfies the heap property, which states that for every node i, the value of node i is less than or equal to the values of its children.",
+    "dryRun": "For the input [1, 3, 2, 4], the priority queue will contain the elements [(1, 1), (2, 1), (3, 2), (4, 3)]. After dequeue, the top element is 1, so the output will be 1. After dequeue, the priority queue will contain the elements [(2, 1), (3, 2), (4, 3)], so the output will be -1.",
+    "commonMistakes": [
+      "Not accounting for the change in the top element after heapify",
+      "Not checking for the heap property after heapify"
+    ],
+    "timeComplexity": "O(log n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    int peek(vector<pair<int, int>>& heap) {\n        return heap[0].first;\n    }\n\n    int dequeue(vector<pair<int, int>>& heap) {\n        if (heap.size() == 0) return -1;\n\n        int top = heap[0].first;\n        heap.erase(heap.begin());\n\n        for (int i = 1; i < heap.size(); i++) {\n            int parent = (i - 1) / 2;\n            if (i > heap.size()) continue;\n            if (heap[parent].first > heap[i].first) {\n                swap(heap[parent], heap[i]);\n            }\n        }\n\n        return top;\n    }\n\n    void heapInsert(vector<pair<int, int>>& heap, int data) {\n        heap.push_back(make_pair(data, 0));\n\n        int index = heap.size() - 1;\n        while (index > 0) {\n            int parent = (index - 1) / 2;\n            if (heap[parent].first >= heap[index].first) break;\n            swap(heap[parent], heap[index]);\n            index = parent;\n        }\n    }\n}",
+    "java": "class Solution {\npublic:\n    int peek(int[] heap) {\n        return heap[0].first;\n    }\n\n    int dequeue(int[] heap) {\n        if (heap.length == 0) return -1;\n\n        int top = heap[0].first;\n        heap = Arrays.copyOfRange(heap, 1, heap.length);\n\n        for (int i = 1; i < heap.length; i++) {\n            int parent = (i - 1) / 2;\n            if (i > heap.length) continue;\n            if (heap[parent].first > heap[i].first) {\n                swap(heap[parent], heap[i]);\n            }\n        }\n\n        return top;\n    }\n\n    void insert(int[] heap, int data) {\n        heap = Arrays.copyOf(heap, heap.length + 1);\n        heap[heap.length - 1] = make_pair(data, 0);\n\n        int index = heap.length - 1;\n        while (index > 0) {\n            int parent = (index - 1) / 2;\n            if (heap[parent].first >= heap[index].first) break;\n            swap(heap[parent], heap[index]);\n            index = parent;\n        }\n    }\n}",
+    "python": "class Solution:\n    def peek(self, heap):\n        return heap[0][0]\n\n    def dequeue(self, heap):\n        if not heap:\n            return -1\n\n        top = heap[0]\n        heap.pop(0)\n\n        n = len(heap)\n        for i in range(1, n):\n            parent = (i - 1) // 2\n            if i > n: continue\n            if heap[parent][0] > heap[i][0]: heap[parent], heap[i] = heap[i], heap[parent]\n\n        return top[0]\n\n    def heapInsert(self, heap, data):\n        heap.append((data, 0))\n\n        n = len(heap)\n        index = n - 1\n        while index > 0:\n            parent = (index - 1) // 2\n            if heap[parent][0] >= heap[index][0]: break\n            heap[parent], heap[index] = heap[index], heap[parent]\n            index = parent\n\n    def solve(self, elements):\n        n = len(elements)\n\n        for i in range(n):\n            self.heapInsert([], elements[i][0])\n\n        topElement = self.peek([])\n\n        for i in range(n):\n            topElement = self.dequeue([])\n\n        self.heapInsert([], elements[i][0])\n\n        return topElement\n",
+    "javascript": "class Solution {\n    peek(heap) {\n        return heap[0][0];\n    }\n\n    dequeue(heap) {\n        if (!heap.length) return -1;\n\n        let top = heap[0];\n        heap.shift();\n\n        for (let i = 1; i < heap.length; i++) {\n            let parent = Math.floor((i - 1) / 2);\n            if (i > heap.length) continue;\n            if (heap[parent][0] > heap[i][0]) {\n                [heap[parent], heap[i]] = [heap[i], heap[parent]];\n            }\n        }\n\n        return top[0];\n    }\n\n    heapInsert(heap, data) {\n        heap.push([data, 0]);\n\n        let index = heap.length - 1;\n        while (index > 0) {\n            let parent = Math.floor((index - 1) / 2);\n            if (heap[parent][0] >= heap[index][0]) break;\n            [heap[parent], heap[index]] = [heap[index], heap[parent]];\n            index = parent;\n        }\n    }\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    int peek(vector<pair<int, int>>& heap) {\n        return heap[0].first;\n    }\n\n    int dequeue(vector<pair<int, int>>& heap) {\n        if (heap.size() == 0) return -1;\n\n        int top = heap[0].first;\n        heap.erase(heap.begin());\n\n        for (int i = 1; i < heap.size(); i++) {\n            int parent = (i - 1) / 2;\n            if (i > heap.size()) continue;\n            if (heap[parent].first > heap[i].first) {\n                swap(heap[parent], heap[i]);\n            }\n        }\n\n        // BUG: incorrect heapify operation\n        if (heap.size() > 1) {\n            int smallest = 0;\n            for (int i = 1; i < heap.size(); i++) {\n                if (heap[i].first < heap[smallest].first) smallest = i;\n            }\n            if (smallest != 0) {\n                swap(heap[0], heap[smallest]);\n            }\n        }\n\n        return top;\n    }\n\n    void heapInsert(vector<pair<int, int>>& heap, int data) {\n        heap.push_back(make_pair(data, 0));\n\n        int index = heap.size() - 1;\n        while (index > 0) {\n            int parent = (index - 1) / 2;\n            if (heap[parent].first >= heap[index].first) break;\n            swap(heap[parent], heap[index]);\n            index = parent;\n        }\n    }\n}",
+    "java": "class Solution {\npublic:\n    int peek(int[] heap) {\n        return heap[0].first;\n    }\n\n    int dequeue(int[] heap) {\n        if (heap.length == 0) return -1;\n\n        int top = heap[0].first;\n        heap = Arrays.copyOfRange(heap, 1, heap.length);\n\n        for (int i = 1; i < heap.length; i++) {\n            int parent = (i - 1) / 2;\n            if (i > heap.length) continue;\n            if (heap[parent].first > heap[i].first) {\n                swap(heap[parent], heap[i]);\n            }\n        }\n\n        // BUG: incorrect heapify operation\n        if (heap.length > 1) {\n            int smallest = 0;\n            for (int i = 1; i < heap.length; i++) {\n                if (heap[i].first < heap[smallest].first) smallest = i;\n            }\n            if (smallest != 0) {\n                swap(heap[0], heap[smallest]);\n            }\n        }\n\n        return top;\n    }\n\n    void insert(int[] heap, int data) {\n        heap = Arrays.copyOf(heap, heap.length + 1);\n        heap[heap.length - 1] = make_pair(data, 0);\n\n        int index = heap.length - 1;\n        while (index > 0) {\n            int parent = (index - 1) / 2;\n            if (heap[parent].first >= heap[index].first) break;\n            swap(heap[parent], heap[index]);\n            index = parent;\n        }\n    }\n}",
+    "python": "class Solution:\n    def peek(self, heap):\n        return heap[0][0]\n\n    def dequeue(self, heap):\n        if not heap:\n            return -1\n\n        top = heap[0]\n        heap.pop(0)\n\n        for i in range(1, len(heap)):\n            parent = (i - 1) // 2\n            if i > len(heap): continue\n            if heap[parent][0] > heap[i][0]: heap[parent], heap[i] = heap[i], heap[parent]\n\n        # BUG: incorrect heapify operation\n        if len(heap) > 1:\n            smallest = 0\n            for i in range(1, len(heap)):\n                if heap[i][0] < heap[smallest][0]: smallest = i\n            if smallest != 0: heap[0], heap[smallest] = heap[smallest], heap[0]\n\n        return top[0]\n\n    def heapInsert(self, heap, data):\n        heap.append((data, 0))\n\n        n = len(heap)\n        index = n - 1\n        while index > 0:\n            parent = (index - 1) // 2\n            if heap[parent][0] >= heap[index][0]: break\n            heap[parent], heap[index] = heap[index], heap[parent]\n            index = parent\n\n    def solve(self, elements):\n        n = len(elements)\n\n        for i in range(n):\n            self.heapInsert([], elements[i][0])\n\n        topElement = self.peek([])\n\n        for i in range(n):\n            topElement = self.dequeue([])\n\n        self.heapInsert([], elements[i][0])\n\n        return topElement\n",
+    "javascript": "class Solution {\n    peek(heap) {\n        return heap[0][0];\n    }\n\n    dequeue(heap) {\n        if (!heap.length) return -1;\n\n        let top = heap[0];\n        heap.shift();\n\n        for (let i = 1; i < heap.length; i++) {\n            let parent = Math.floor((i - 1) / 2);\n            if (i > heap.length) continue;\n            if (heap[parent][0] > heap[i][0]) {\n                [heap[parent], heap[i]] = [heap[i], heap[parent]];\n            }\n        }\n\n        // BUG: incorrect heapify operation\n        if (heap.length > 1) {\n            let smallest = 0;\n            for (let i = 1; i < heap.length; i++) {\n                if (heap[i][0] < heap[smallest][0]) smallest = i;\n            }\n            if (smallest != 0) {\n                [heap[0], heap[smallest]] = [heap[smallest], heap[0]];\n            }\n        }\n\n        return top[0];\n    }\n\n    heapInsert(heap, data) {\n        heap.push([data, 0]);\n\n        let index = heap.length - 1;\n        while (index > 0) {\n            let parent = Math.floor((index - 1) / 2);\n            if (heap[parent][0] >= heap[index][0]) break;\n            [heap[parent], heap[index]] = [heap[index], heap[parent]];\n            index = parent;\n        }\n    }\n}"
+  },
+  "functionSignature": {
+    "cpp": "bool solve(vector<pair<int, int>>& elements)",
+    "java": "boolean solve(int[] elements)",
+    "python": "def solve(self, elements: list[tuple[int, int]]) -> int:",
+    "javascript": "var solve = function(elements)"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def peek(self, heap):\n        return heap[0][0]\n\n    def dequeue(self, heap):\n        if not heap:\n            return -1\n\n        top = heap.pop(0)\n\n        for i in range(1, len(heap)):\n            parent = (i - 1) // 2\n            if i > len(heap): continue\n            if heap[parent][0] > heap[i][0]: heap[parent], heap[i] = heap[i], heap[parent]\n\n        return top[0]\n\n    def heapInsert(self, heap, data):\n        heap.append((data, 0))\n\n        n = len(heap)\n        index = n - 1\n        while index > 0:\n            parent = (index - 1) // 2\n            if heap[parent][0] >= heap[index][0]: break\n            heap[parent], heap[index] = heap[index], heap[parent]\n            index = parent\n\n    def solve(self, elements):\n        n = len(elements)\n\n        for i in range(n):\n            self.heapInsert([], elements[i][0])\n\n        topElement = self.peek([])\n\n        for i in range(n):\n            topElement = self.dequeue([])\n\n        self.heapInsert([], elements[i][0])\n\n        return topElement\n",
+    "cpp": "// Complete the implementation of the class and methods\n#include <iostream>\n\nint main() {\n    // Read the input\n    std::vector<int> elements = {1, 3, 2, 4};\n\n    Solution s;\n    int result = s.solve(elements);\n\n    // Print the output\n    std::cout << result << std::endl;\n\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 3,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "[[1, 1], [3, 2], [2, 1], [4, 3]]",
+      "output": "2\n-1\n",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_hidden_generated",
+      "input": "[[1, 1], [3, 2], [2, 1], [4, 3]]",
+      "output": "2\n-1\n",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

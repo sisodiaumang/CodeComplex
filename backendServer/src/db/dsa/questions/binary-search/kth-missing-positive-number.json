@@ -1,0 +1,210 @@
+{
+  "_id": "kth-missing-positive-number",
+  "title": "Kth Missing Positive Number",
+  "slug": "kth-missing-positive-number",
+  "difficulty": "Medium",
+  "category": "ARRAY",
+  "subCategory": "Binary Search on Answers",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 500,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "BINARY SEARCH"
+    ],
+    "patterns": [
+      "binary search",
+      "missing number"
+    ],
+    "prerequisites": [
+      "binary search",
+      "array"
+    ],
+    "variants": [],
+    "tags": [
+      "array",
+      "binary search",
+      "number theory"
+    ],
+    "keywords": [
+      "kth missing positive number",
+      "binary search on answers"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "Given an array `arr` of distinct integers and an integer `k`, find the kth missing positive number in the array. The kth missing positive number is the kth smallest positive number that is not in the array. For example, if the array is `[2, 3, 4]`, the first missing positive number is `1`, the second missing positive number is `5`, and so on. If there are less than `k` missing positive numbers, return the kth smallest positive number that is not in the array, which will be the next positive integer after the maximum element in the array plus `k - (number of missing positive numbers)`. Return the kth missing positive number.",
+    "inputFormat": "The first line contains an integer `n`, the number of elements in the array. The second line contains `n` space-separated integers, the elements of the array. The third line contains an integer `k`, the value of `k`.",
+    "outputFormat": "A single integer, the kth missing positive number.",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of elements in the array."
+      },
+      {
+        "variable": "arr",
+        "type": "array of integers",
+        "min": 1,
+        "max": 10000,
+        "description": "The array of distinct integers."
+      },
+      {
+        "variable": "k",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The value of k."
+      }
+    ],
+    "examples": [
+      {
+        "input": "4\n2 3 4 1\n2",
+        "output": "6",
+        "explanation": "The first missing positive number is 5, the second missing positive number is not present in the array, but the next positive integer after the maximum element in the array plus 1 is 5."
+      },
+      {
+        "input": "4\n3 4 -1 1\n2",
+        "output": "5",
+        "explanation": "The first missing positive number is 2, the second missing positive number is also 2."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Sort the array to find the missing positive numbers in order."
+    },
+    {
+      "order": 2,
+      "text": "Consider using a set of positive numbers to find the kth missing number."
+    },
+    {
+      "order": 3,
+      "text": "You can use a hash set to store the positive numbers in the array and find the kth missing number."
+    },
+    {
+      "order": 4,
+      "text": "Think about how you can use the hash set to find the kth missing positive number without actually counting all the missing numbers."
+    },
+    {
+      "order": 5,
+      "text": "You can use the fact that the kth missing positive number is equal to the maximum of the array plus k minus the number of missing positive numbers less than or equal to the maximum of the array."
+    }
+  ],
+  "editorial": {
+    "title": "Kth Missing Positive Number – From Brute Force to Linear Scan",
+    "intuition": "The problem asks for the k‑th positive integer that does not appear in a given set of distinct numbers. A naïve approach would enumerate all positive integers, check membership in the set, and count until k is reached. This works but is wasteful: membership checks can be O(1) with a hash set, yet we still potentially iterate up to the k‑th missing number, which could be as large as 10 000 + k, leading to O(k) time. The key observation is that the missing numbers are distributed in the gaps between consecutive sorted elements. By sorting the array once, we can compute each gap’s size and decide whether the desired k‑th missing lies inside that gap, eliminating the need to iterate through every integer.",
+    "bruteForce": "A straightforward brute‑force solution would:\n1. Put all array elements into a hash set.\n2. Start from 1 and increment a counter for each integer not in the set.\n3. Stop when the counter reaches k and return that integer.\nThis algorithm is correct because it literally follows the definition of the k‑th missing number. However, its time complexity is O(k) in the worst case, which can be up to 20 000 operations for the given limits, and it still requires O(n) additional space for the hash set. While acceptable for small inputs, it becomes inefficient when n and k are large.\n\nThe reference solution improves on this by sorting the array first. After sorting, a single linear scan over the array suffices to locate the gap that contains the k‑th missing number, reducing the time to O(n log n) for sorting and O(n) for the scan, and using only O(1) extra space.\n",
+    "betterSolution": "The optimal approach is to:\n1. Sort the array (O(n log n)).\n2. Iterate through the sorted numbers, keeping track of the count of missing numbers seen so far and the previous number.\n3. For each gap between the previous number and the current number, compute its size. If the cumulative missing count plus this gap is at least k, the answer lies inside this gap and can be computed directly as prev + (k - missing). Otherwise, update the missing count and continue.\n4. If the loop finishes without finding the answer, the k‑th missing number lies after the last element, so return prev + (k - missing).\n\nThis method runs in O(n log n) time and O(1) extra space, matching the reference solution’s complexity.\n",
+    "optimalSolution": "The reference implementation follows exactly this strategy: it sorts the array, then scans once, maintaining a running total of missing numbers and the previous value. When the cumulative missing count reaches or exceeds k, it returns the appropriate value inside the current gap. If the end of the array is reached first, it returns a value beyond the last element. The algorithm is concise, uses only constant extra space, and handles negative numbers by skipping them.\n",
+    "proofOfCorrectness": "Let arr be sorted as a₁ < a₂ < … < a_m. Define prev₀ = 0 and missing₀ = 0. For each i from 1 to m, the gap size is g_i = a_i – prev_{i-1} – 1, which is exactly the number of positive integers missing between prev_{i-1} and a_i. After processing i, missing_i = missing_{i-1} + g_i counts all missing numbers up to a_i. If missing_i ≥ k, then the k‑th missing number lies in the current gap. The first missing number after prev_{i-1} is prev_{i-1}+1, so the k‑th missing is prev_{i-1} + (k – missing_{i-1}). If the loop completes without missing_i ≥ k, then all missing numbers up to the last element are fewer than k, so the k‑th missing is beyond the last element: prev_m + (k – missing_m). In all cases the algorithm returns the correct integer.\n",
+    "dryRun": "Example: arr = [2, 3, 4, 7, 11], k = 5.\nSorted: [2,3,4,7,11].\nprev=0, missing=0.\n- num=2: gap=1 (1 missing). missing+gap=1<5 → missing=1, prev=2.\n- num=3: gap=0. missing=1, prev=3.\n- num=4: gap=0. missing=1, prev=4.\n- num=7: gap=2 (5,6). missing+gap=3<5 → missing=3, prev=7.\n- num=11: gap=3 (8,9,10). missing+gap=6≥5 → answer = prev + (k - missing) = 7 + (5-3) = 9.\nThe algorithm correctly outputs 9, which is the 5th missing positive.\n",
+    "commonMistakes": [
+      "Assuming the array is already sorted and skipping the sort step, which breaks the gap logic.\nUsing a hash set and iterating up to a large bound, leading to O(k) time instead of O(n).\nIncluding negative numbers in the gap calculation without skipping them, which inflates gap sizes.\nReturning prev + k instead of prev + (k - missing) when the answer lies inside a gap.\nMisinterpreting the gap formula as num - prev instead of num - prev - 1.\nNot handling the case where the k‑th missing number is after the last array element."
+    ],
+    "timeComplexity": "O(n log n) due to sorting; after sorting the scan is O(n).",
+    "spaceComplexity": "O(1) extra space besides the input array (in‑place sorting)."
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    int findKthMissing(vector<int>& arr, int k) {\n        // TODO: implement\n        return 0;\n    }\n};",
+    "java": "import java.util.*;\n\nclass Solution {\n    public int findKthMissing(int[] arr, int k) {\n        // TODO: implement\n        return 0;\n    }\n}",
+    "python": "class Solution:\n    def findKthMissing(self, arr: list[int], k: int) -> int:\n        # TODO: implement\n        pass",
+    "javascript": "/**\n * @param {number[]} arr\n * @param {number} k\n * @return {number}\n */\nvar findKthMissing = function(arr, k) {\n    // TODO: implement\n    return 0;\n};"
+  },
+  "functionSignature": {
+    "cpp": "int findKthMissing(vector<int>& arr, int k);",
+    "java": "public int findKthMissing(int[] arr, int k);",
+    "python": "def findKthMissing(self, arr: list[int], k: int) -> int:",
+    "javascript": "var findKthMissing = function(arr, k);"
+  },
+  "solutions": {
+    "python": "import sys\n\nclass Solution:\n    def findKthMissing(self, arr: list[int], k: int) -> int:\n        # Ensure the array is sorted\n        arr.sort()\n        missing = 0\n        prev = 0\n        for num in arr:\n            if num <= 0:\n                continue\n            # missing numbers between prev and current num\n            gap = num - prev - 1\n            if missing + gap >= k:\n                return prev + k - missing\n            missing += gap\n            prev = num\n        # If not found within the array, continue after the last element\n        return prev + (k - missing)\n\nif __name__ == '__main__':\n    it = iter(sys.stdin.read().split())\n    try:\n        n = int(next(it))\n        arr = [int(next(it)) for _ in range(n)]\n        k = int(next(it))\n    except StopIteration:\n        sys.exit(0)\n    sol = Solution()\n    ans = sol.findKthMissing(arr, k)\n    print(ans)",
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    int findKthMissing(vector<int>& arr, int k) {\n        sort(arr.begin(), arr.end());\n        long long missing = 0;\n        int prev = 0;\n        for (int num : arr) {\n            if (num <= 0) continue;\n            int gap = num - prev - 1;\n            if (missing + gap >= k) {\n                return prev + (k - missing);\n            }\n            missing += gap;\n            prev = num;\n        }\n        return prev + (k - missing);\n    }\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int n;\n    if (!(cin >> n)) return 0;\n    vector<int> arr(n);\n    for (int i = 0; i < n; ++i) cin >> arr[i];\n    int k;\n    if (!(cin >> k)) return 0;\n    Solution sol;\n    int ans = sol.findKthMissing(arr, k);\n    cout << ans << \"\\n\";\n    return 0;\n}\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.2
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "4\n2 3 4 1\n2",
+      "output": "6",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "4\n3 4 -1 1\n2",
+      "output": "5",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint_3",
+      "input": "2\n1 2\n1",
+      "output": "3",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "duplicate_5",
+      "input": "5\n1 2 3 2 4\n2",
+      "output": "7",
+      "isVisible": false,
+      "weight": 1,
+      "category": "duplicate"
+    },
+    {
+      "id": "random_medium_6",
+      "input": "7\n5 2 8 1 9 3 7\n3",
+      "output": "10",
+      "isVisible": false,
+      "weight": 1,
+      "category": "random_medium"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

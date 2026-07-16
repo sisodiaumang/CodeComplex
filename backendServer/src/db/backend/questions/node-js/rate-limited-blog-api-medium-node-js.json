@@ -1,0 +1,220 @@
+{
+  "_id": "4b0f98ce6e778f00ea0e6c7a",
+  "title": "Rate-Limited Blog API",
+  "slug": "rate-limited-blog-api-medium-node-js",
+  "difficulty": "Medium",
+  "topics": [
+    "NODE_JS"
+  ],
+  "statement": "Implement a RESTful API for a blog that uses rate limiting to prevent excessive requests. The API should be accessible at http://localhost:3000/. You'll need to create endpoints for creating and reading blog posts. When creating a post, the client should send a JSON object with the post title and content. When reading posts, you can return an array of all posts. The rate limit should be 5 requests per minute per IP address. If a client exceeds this limit, they should receive a 429 response with a JSON body indicating the remaining attempts within the window.",
+  "constraints": [
+    "Must use the express-rate-limit middleware for rate limiting",
+    "Must implement rate limiting based on IP address"
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/posts",
+      "description": "Create a new blog post. Accepts JSON body with title and content. Returns the newly created post."
+    },
+    {
+      "method": "GET",
+      "path": "/api/posts",
+      "description": "Retrieve all blog posts. Returns an array of post objects."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\"name\": \"blog-api\",\n  \"version\": \"1.0.0\",\n  \"main\": \"index.js\",\n  \"scripts\": {\n    \"start\": \"node index.js\"\n  },\n  \"dependencies\": {\n    \"express\": \"^4.18.2\",\n    \"express-rate-limit\": \"^5.2.0\",\n    \"json-schema\": \"^0.2.3\"\n  }\n}",
+    "index.js": "const express = require('express');\nconst rateLimit = require('express-rate-limit');\nconst limiter = rateLimit({\n    windowMs: 1 * 60 * 1000, // 1 minute window\n    max: 5, // limit each IP to 5 requests per windowMs\n    standardHeaders: true, // return rate limit info in the `RateLimit-*` headers\n    legacyHeaders: false, // disable the `X-RateLimit-*` headers\n    skip: (req, res) => { return false } // handle rate limit exceptions\n});\n\nconst app = express();\napp.use(express.json());\napp.use(limiter);\n\n// TODO: Implement endpoints\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "POST",
+      "path": "/api/posts",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "title": "New Post",
+        "content": "This is a new post"
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "message": "Post created successfully"
+      },
+      "expectedBodySchema": null,
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "GET",
+      "path": "/api/posts",
+      "expectedStatus": 200,
+      "expectedBody": [
+        {
+          "title": "",
+          "content": ""
+        }
+      ],
+      "expectedBodySchema": null,
+      "isVisible": true
+    },
+    {
+      "id": "v_tc3",
+      "method": "POST",
+      "path": "/api/posts",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "title": "Post with bad content"
+      },
+      "expectedStatus": 400,
+      "expectedBody": {
+        "message": "Content is required"
+      },
+      "expectedBodySchema": null,
+      "isVisible": true
+    },
+    {
+      "id": "v_tc4",
+      "method": "POST",
+      "path": "/api/posts",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "title": "Post with bad content",
+        "content": "This is a new post"
+      },
+      "expectedStatus": 400,
+      "expectedBody": {
+        "message": "Title is required"
+      },
+      "expectedBodySchema": null,
+      "isVisible": true
+    },
+    {
+      "id": "v_tc5",
+      "method": "POST",
+      "path": "/api/posts",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "title": "Post with bad content",
+        "content": "This is a new post"
+      },
+      "expectedStatus": 429,
+      "expectedBody": {
+        "message": "Rate limit exceeded"
+      },
+      "expectedBodySchema": null,
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "POST",
+      "path": "/api/posts",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "title": "Invalid content"
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "POST",
+      "path": "/api/posts",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "title": "Multiple invalid contents"
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "GET",
+      "path": "/api/posts",
+      "expectedStatus": 200,
+      "expectedBody": [
+        {
+          "title": "",
+          "content": ""
+        }
+      ],
+      "isVisible": false
+    },
+    {
+      "id": "h_tc4",
+      "method": "GET",
+      "path": "/api/posts",
+      "expectedStatus": 200,
+      "expectedBody": [
+        {
+          "title": "",
+          "content": ""
+        }
+      ],
+      "isVisible": false
+    },
+    {
+      "id": "h_tc5",
+      "method": "GET",
+      "path": "/api/posts",
+      "expectedStatus": 200,
+      "expectedBody": [
+        {
+          "title": "",
+          "content": ""
+        }
+      ],
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "event-loop",
+    "streams",
+    "buffers",
+    "file-system",
+    "process",
+    "child-process",
+    "worker-threads",
+    "cluster",
+    "timers",
+    "rate-limiting",
+    "middleware",
+    "express",
+    "node"
+  ]
+}

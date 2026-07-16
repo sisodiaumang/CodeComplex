@@ -1,0 +1,158 @@
+{
+  "_id": "bc9766d8c4ab424d3e5954f6",
+  "title": "Reversible Flawed Merge Sort on Doubly Linked List",
+  "slug": "reversible-flawed-merge-sort-on-doubly-linked-list-bugfix-hard-linked-list",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "LINKED_LIST",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "linked_list"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Solve the problem and fix the bugs.",
+    "inputFormat": "Doubly linked list represented as an array of integers, where each node has references to the next and previous nodes.",
+    "outputFormat": "Whether or not the resulting linked list is sorted after the merge sort.",
+    "notes": "This problem needs to consider the reversibility of the linked list, meaning we must modify the merge sort function to work with doubly linked lists.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of linked list"
+      }
+    ],
+    "examples": [
+      {
+        "input": "2\n1 2",
+        "output": "True",
+        "explanation": "The linked list 1 -> 2 is already sorted."
+      },
+      {
+        "input": "5\n4 2 1 5 3",
+        "output": "True",
+        "explanation": "After sorting, the linked list should be 1 -> 2 -> 3 -> 4 -> 5."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(n log n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    bool sortList(vector<int>& nums) {\n        // TODO: implement\n        return false;\n    }\n};",
+    "java": "class Solution {\n    public boolean sortList(int[] nums) {\n        // TODO: implement\n        return false;\n    }\n}",
+    "python": "class Solution:\n    def sortList(self, nums: list[int]) -> bool:\n        # TODO: implement\n        pass",
+    "javascript": "var sortList = function(nums) {\n    // TODO: implement\n    return false;\n};"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\n  public:   bool sortList(vector<int>& head, int n) {\n    if (n <= 1) return true;\n    vector<int> arr(n);\n    for (int i = 0; i < n; i++) arr[i] = head[i].data;\n    sort(arr.rbegin(), arr.rend());\n    for (int i = 0; i < n; i++) head[i].data = arr[i];\n    return true;\n  }\n};",
+    "java": "public class Solution {\n  public boolean sortList(int[] head, int n) {\n    if (n <= 1) return true;\n    int[] arr = new int[n];\n    for (int i = 0; i < n; i++) arr[i] = head[i];\n    Arrays.sort(arr);\n    for (int i = 0; i < n; i++) head[i] = arr[n - i - 1];\n    return true;\n  }\n}",
+    "python": "class Solution:\n  def sortList(self, head, n):\n    if n <= 1: return True;\n    arr = [head[i] for i in range(n)];\n    arr.sort(reverse=True);\n    for i in range(n):\n      head[i] = arr[i];\n    return True;",
+    "javascript": "function sortList(head, n) {\n  if (n <= 1) return true;\n  let arr = [\n    for (let i = 0; i < n; i++)\n  ];\n  arr.sort((a, b) => b - a);\n  for (let i = 0; i < n; i++) head[i] = arr[i];\n  return true;\n}"
+  },
+  "functionSignature": {
+    "cpp": "bool sortList(vector<int>& head, int n);",
+    "java": "public boolean sortList(int[] head, int n);",
+    "python": "bool sortList(self, head, n: int) -> bool:",
+    "javascript": "bool sortList(int[] head, int n);"
+  },
+  "solutions": {
+    "python": "```python\nclass Solution:\n  def sort_list(self, head, n):\n    def merge_sort(h, t):\n      if h is None or t is None or h.next is None or t.next is None:\n        return\n      slow = h\n      fast = h\n      pre = h\n      while fast is not None and fast.next is not None:\n        pre = slow\n        slow = slow.next\n        fast = fast.next.next\n      mid = slow\n      next_half = mid.next\n      mid.next = None\n      merge_sort(h, mid)\n      merge_sort(mid.next, t)\n      while pre.next is not None and next_half is not None:\n        if pre.next.data > next_half.data:\n          temp = pre.next\n          pre.next = next_half\n          next_half = next_half.next\n          temp.next = mid\n          mid = temp\n        else:\n          pre = pre.next\n      if pre.next is not None:\n        mid.next = pre.next\n        pre.next = None\n      head = h\n    \n    merge_sort(head, t)\n    return True\n   \n# Define a Node class\nclass Node:\n  def __init__(self, data):\n    self.data = data\n    self.next = None\n    self.prev = None\n\n# Driver code\nif __name__ == '__main__':\n  head = Node(4)\n  temp = head\n  temp.next = Node(2)\n  temp = temp.next\n  temp.prev = Node(1)\n  temp = temp.prev\n  temp.next = Node(5)\n  temp = temp.next\n\n  n = 5\n  print(Solution().sort_list(head, n))\n```",
+    "cpp": "```cpp\n#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nstruct Node {\n  int data;\n  Node* next;\n  Node* prev;\n  Node(int d) { data = d; }\n};\n\nclass Solution {\n  public:   bool sortList(Node* head, int n) {\n    if (n <= 1) return true;\n    Node* cur = head;\n    vector<int> arr(n);\n    for (int i = 0; i < n; i++) arr[i] = cur->data;\n    sort(arr.begin(), arr.end());\n    cur = head;\n    for (int i = 0; i < n; i++) cur->data = arr[i];\n    return true;\n  }\n};\n\nint main() {\n  Node* head = new Node(4);\n  Node* temp = head;\n  temp->next = new Node(2);\n  temp = temp->next;\n  temp->prev = new Node(1);\n  temp = temp->prev;\n  temp->next = new Node(5);\n  temp = temp->next;\n\n  int n = 5;\n  Solution sol;\n  cout << sol.sortList(head, n) << endl;\n  return 0;\n}\n```",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "1\n1",
+      "output": "True",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "5\n4 2 1 5 3",
+      "output": "True",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

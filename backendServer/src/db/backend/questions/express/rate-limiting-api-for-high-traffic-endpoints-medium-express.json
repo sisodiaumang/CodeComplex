@@ -1,0 +1,185 @@
+{
+  "_id": "d5b0f2d10e07636d89ed2b2f",
+  "title": "Rate Limiting API for High-Traffic Endpoints",
+  "slug": "rate-limiting-api-for-high-traffic-endpoints-medium-express",
+  "difficulty": "Medium",
+  "topics": [
+    "EXPRESS"
+  ],
+  "statement": "Design a rate limiting API using Express that allows users to create and manage API keys for accessing a high-traffic endpoint (`/api/endpoint`). The API should enforce a maximum of 100 requests per hour per API key. Implement this using the `express-rate-limit` library. Additionally, provide a `/api/stats` endpoint that returns a JSON object containing the total number of requests made to all API keys within the last hour.\n\nProvide the following endpoints:\n- `POST /api/keys`: Create a new API key with a specified description.\n- `GET /api/keys`: Retrieve all API keys along with their descriptions and the number of requests made within the last hour.\n- `DELETE /api/keys/{id}`: Delete an API key by its ID.\n- `POST /api/endpoint`: Access the high-traffic endpoint using the provided API key.\n- `GET /api/stats`: Retrieve a JSON object containing the total number of requests made to all API keys within the last hour.\n\n**Constraints:**\n- Must use the `express-rate-limit` library for rate limiting.\n- Must store API keys in memory using an object (or mock database).\n- Each API key should have a unique ID and description.\n\n**Visible Test Cases:**",
+  "constraints": [
+    "Must use the `express-rate-limit` library for rate limiting.",
+    "Must store API keys in memory using an object (or mock database)."
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/keys",
+      "description": "Create a new API key with a specified description. Request body: { \"description\": \"string\" }"
+    },
+    {
+      "method": "GET",
+      "path": "/api/keys",
+      "description": "Retrieve all API keys along with their descriptions and the number of requests made within the last hour. Query parameters: `limit` (integer), `offset` (integer)"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/keys/{id}",
+      "description": "Delete an API key by its ID. Path parameter: `id` (integer)"
+    },
+    {
+      "method": "POST",
+      "path": "/api/endpoint",
+      "description": "Access the high-traffic endpoint using the provided API key. Request body: { \"apiKey\": \"string\" }"
+    },
+    {
+      "method": "GET",
+      "path": "/api/stats",
+      "description": "Retrieve a JSON object containing the total number of requests made to all API keys within the last hour."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\"name\":\"rate-limiting-api\",\"version\":\"1.0.0\",\"main\":\"index.js\",\"scripts\":{\"start\":\"node index.js\"},\"dependencies\":{\"express\":\"^4.18.2\",\"express-rate-limit\":\"^5.0.3\"}}",
+    "index.js": "const express = require('express');\nconst rateLimit = require('express-rate-limit');\n\nconst app = express();\napp.use(express.json());\n\nconst API_KEYS = {};\nconst limit = rateLimit({ windowMs: 1 * 60 * 1000, max: 100 });\n\n// TODO: Implement endpoints\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));\n"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "tc1",
+      "method": "POST",
+      "path": "/api/keys",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "description": "Example API key"
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "apiKey": "string",
+        "description": "Example API key",
+        "requests": 0
+      },
+      "expectedBodySchema": null,
+      "isVisible": true
+    },
+    {
+      "id": "tc2",
+      "method": "GET",
+      "path": "/api/keys",
+      "query": {
+        "limit": 10,
+        "offset": 0
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "apiKey": "string",
+        "description": "Example API key",
+        "requests": 10
+      },
+      "expectedBodySchema": null,
+      "isVisible": true
+    },
+    {
+      "id": "tc3",
+      "method": "DELETE",
+      "path": "/api/keys/123",
+      "expectedStatus": 204,
+      "expectedBody": null,
+      "expectedBodySchema": null,
+      "isVisible": true
+    },
+    {
+      "id": "tc4",
+      "method": "POST",
+      "path": "/api/endpoint",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "apiKey": "123"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "success": true
+      },
+      "expectedBodySchema": null,
+      "isVisible": true
+    },
+    {
+      "id": "tc5",
+      "method": "GET",
+      "path": "/api/stats",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "totalRequests": 100
+      },
+      "expectedBodySchema": null,
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "htc1",
+      "method": "POST",
+      "path": "/api/endpoint",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "apiKey": "invalid-api-key"
+      },
+      "expectedStatus": 403,
+      "expectedBody": {
+        "error": "Invalid API key"
+      },
+      "expectedBodySchema": null,
+      "isVisible": false
+    },
+    {
+      "id": "htc2",
+      "method": "GET",
+      "path": "/api/stats",
+      "expectedStatus": 500,
+      "expectedBody": {
+        "error": "Internal Server Error"
+      },
+      "expectedBodySchema": null,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "middleware",
+    "router",
+    "error-handling",
+    "request",
+    "response",
+    "cookies",
+    "static-files",
+    "cors",
+    "ratelimiting",
+    "express",
+    "apikeys",
+    "hightraffic"
+  ]
+}

@@ -1,0 +1,148 @@
+{
+  "title": "Fix MongoDB Query to Handle Missing Fields",
+  "subCategory": "MongoDB Query Projection",
+  "statement": {
+    "markdown": "Write a MongoDB query function that takes a query object and a document, and returns the fields from the document that match the query. If the query specifies a field that doesn't exist, the function should ignore it and continue processing the rest of the query. If the query specifies a field with an empty value, the function should also ignore it. The function should return all fields from the document if the query is empty.",
+    "inputFormat": "The input will be two parameters: a query object and a document.",
+    "outputFormat": "The output should be an object with the fields from the document that match the query.",
+    "notes": "The function should not throw any errors if the query specifies a field that doesn't exist or has an empty value.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of fields in the query"
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of fields in the document"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"a\": 1, \"b\": 2}",
+        "output": "{\"a\": 1, \"b\": 2}",
+        "explanation": "The query matches all fields in the document"
+      },
+      {
+        "input": "{\"a\": 1, \"b\": null}",
+        "output": "{\"a\": 1}",
+        "explanation": "The query matches field \"a\" but not field \"b\" because its value is null"
+      },
+      {
+        "input": "{\"a\": 1, \"c\": 3}",
+        "output": "{\"a\": 1, \"c\": 3}",
+        "explanation": "The query is empty, so the function returns all fields from the document"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 10,
+    "points": 30,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "MONGODB"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "mongodb"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Check if the query is empty before iterating over it"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "function queryFields(query, document) {\n  // Your code here\n}",
+    "python": "class Solution:\n  def queryFields(self, query, document):\n    # Your code here\n"
+  },
+  "buggyStarterCode": {
+    "javascript": "function queryFields(query, document) {\n  if (Object.keys(query).length === 0) return document;\n  for (let field in query) {\n    if (document[field] !== undefined && document[field] !== null) {\n      console.log(field, document[field]); // FIX: this line should be removed\n    }\n  }\n  return {};\n}",
+    "python": "class Solution:\n  def queryFields(self, query, document):\n    if len(query) == 0:\n      return document\n    for field in query:\n      if field in document and document[field] is not None:\n        print(field, document[field]) # FIX: this line should be removed\n    return {}"
+  },
+  "functionSignature": {
+    "javascript": "var queryFields = function(query, document);",
+    "python": "def queryFields(self, query: dict, document: dict) -> dict:"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction queryFields(query, document) {\n  if (Object.keys(query).length === 0) return document;\n  for (let field in query) {\n    if (document[field] !== undefined && document[field] !== null && document[field] === query[field]) {\n      console.log(field, document[field]);\n    }\n  }\n  return {};\n}",
+    "python": "class Solution:\n  def queryFields(self, query, document):\n    if len(query) == 0:\n      return document\n    for field in query:\n      if field in document and document[field] is not None and document[field] == query.get(field):\n        print(field, document[field])\n    return {}"
+  },
+  "judgeConfig": {
+    "timeLimit": 1,
+    "memoryLimit": 128,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"a\": 1, \"b\": 2}\n{\"a\": 1, \"b\": 2}",
+      "output": "{\"a\": 1, \"b\": 2}\n{\n  \"a\": 1,\n  \"b\": 2\n}\n",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"a\": 1, \"b\": null}\n{\"a\": 1, \"b\": null}",
+      "output": "{\"a\": 1}\n{\n  \"a\": 1\n}\n",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "67c9cea562cdac6794bc138f",
+  "slug": "fix-mongodb-query-to-handle-missing-fields-bugfix-easy-mongodb",
+  "mode": "bug_fix",
+  "category": "MONGODB",
+  "difficulty": "Easy"
+}

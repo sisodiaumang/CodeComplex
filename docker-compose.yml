@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  # MongoDB database
+  mongodb:
+    image: mongo:6.0
+    container_name: devarena-mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - devarena-network
+
+  # Redis service
+  redis:
+    image: redis:7.0-alpine
+    container_name: devarena-redis
+    restart: always
+    ports:
+      - "6379:6379"
+    networks:
+      - devarena-network
+
+  # Express Backend
+  backend:
+    build:
+      context: ./backendServer
+      dockerfile: Dockerfile
+    container_name: devarena-backend
+    restart: always
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mongodb
+      - redis
+    environment:
+      - PORT=8000
+      - NODE_ENV=production
+      - MONGODB_URI=mongodb://mongodb:27017/devwar
+      - REDIS_URL=redis://redis:6379
+      - CLIENT_URL=http://localhost:3000 # Update this on VM to your actual domain name
+      - CORS_ORIGIN=http://localhost:3000 # Update this on VM to your actual domain name
+      # Set secure values for secrets:
+      - JWT_ACCESS_SECRET=default-secure-access-secret-at-least-32-chars-long
+      - JWT_REFRESH_SECRET=default-secure-refresh-secret-at-least-32-chars-long
+    networks:
+      - devarena-network
+
+  # Next.js Client
+  frontend:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1 # Update this on VM to https://yourdomain.com/api/v1
+        - NEXT_PUBLIC_SOCKET_URL=http://localhost:8000 # Update this on VM to https://yourdomain.com
+    container_name: devarena-frontend
+    restart: always
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - devarena-network
+
+volumes:
+  mongodb_data:
+
+networks:
+  devarena-network:
+    driver: bridge

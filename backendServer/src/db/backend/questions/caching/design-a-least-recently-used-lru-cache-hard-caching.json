@@ -1,0 +1,228 @@
+{
+  "_id": "e56eb748492c5303bf971619",
+  "title": "Design a Least Recently Used (LRU) Cache",
+  "slug": "design-a-least-recently-used-lru-cache-hard-caching",
+  "difficulty": "Hard",
+  "topics": [
+    "CACHING"
+  ],
+  "statement": "Implement an LRU cache with a capacity of 1000. The cache should use a hash map for O(1) lookups and a doubly linked list to maintain the order of elements. When the cache is full and a new element is added, it should remove the least recently used element. When an element is accessed, it should move to the end of the linked list.\n\n You are given the following endpoints:\n\n * `GET /api/cache` returns a list of all cache keys in the order they were most recently accessed.\n\n * `GET /api/cache/:key` returns the value associated with the given key. If the key does not exist in the cache, return a 404 status code.\n\n * `POST /api/cache` adds a new key-value pair to the cache. If the key already exists, it should update the value and move the key to the end of the linked list. If the cache is full, it should remove the least recently used element before adding the new key-value pair.\n\n The `body` of the `POST /api/cache` request should be in the following format: `{\"key\": \"string\", \"value\": \"string\"}`\n\n The `Content-Type` header of the request should be set to `application/json`.\n\n You can assume that the input values are valid strings.\n\n Example visible request:\n\n * `GET /api/cache`\n\n * `GET /api/cache/key1`\n\n * `POST /api/cache` with body `{\"key\": \"key2\", \"value\": \"value2\"}` and headers `{\"Content-Type\": \"application/json\"}`\n\n Example hidden request:\n\n * `GET /api/cache/key3` with a missing `Content-Type` header\n\n * `GET /api/cache/key4` with an invalid `Content-Type` header\n\n * `POST /api/cache` with a missing body\n\n * `POST /api/cache` with a body in the wrong format\n\n * `POST /api/cache` with a key that already exists and a missing `Content-Type` header\n\n * `GET /api/cache` with an empty cache\n\n * `GET /api/cache` with a cache that contains only one element\n\n * `GET /api/cache` with a cache that contains multiple elements\n\n * `POST /api/cache` when the cache is full\n\n * `POST /api/cache` when the cache is empty\n\n * `GET /api/cache` with a key that does not exist in the cache\n\n * `GET /api/cache` with a key that exists in the cache but has a different value\n\n * `POST /api/cache` with a key that already exists and the same value\n\n",
+  "constraints": [
+    "Must use a doubly linked list to maintain the order of elements.",
+    "Must use a hash map for O(1) lookups."
+  ],
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/api/cache",
+      "description": "Returns a list of all cache keys in the order they were most recently accessed."
+    },
+    {
+      "method": "GET",
+      "path": "/api/cache/:key",
+      "description": "Returns the value associated with the given key. If the key does not exist in the cache, return a 404 status code."
+    },
+    {
+      "method": "POST",
+      "path": "/api/cache",
+      "description": "Adds a new key-value pair to the cache. If the key already exists, it should update the value and move the key to the end of the linked list. If the cache is full, it should remove the least recently used element before adding the new key-value pair."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\"name\": \"backend-app\", \"version\": \"1.0.0\", \"main\": \"index.js\", \"scripts\": {\"start\": \"node index.js\"}, \"dependencies\": {\"express\": \"^4.18.2\"}}",
+    "index.js": "const express = require('express');\nconst app = express();\napp.use(express.json());\n\n// TODO: Implement endpoints\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "GET",
+      "path": "/api/cache",
+      "expectedStatus": 200,
+      "expectedBody": [],
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "GET",
+      "path": "/api/cache/key1",
+      "expectedStatus": 200,
+      "expectedBody": {},
+      "isVisible": true
+    },
+    {
+      "id": "v_tc3",
+      "method": "POST",
+      "path": "/api/cache",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "key": "key2",
+        "value": "value2"
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "success": true
+      },
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "GET",
+      "path": "/api/cache/key3",
+      "headers": [],
+      "expectedStatus": 404,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "GET",
+      "path": "/api/cache/key4",
+      "headers": {
+        "Content-Type": "text/plain"
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "POST",
+      "path": "/api/cache",
+      "headers": [],
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc4",
+      "method": "POST",
+      "path": "/api/cache",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": [],
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc5",
+      "method": "POST",
+      "path": "/api/cache",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "key": "key2"
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc6",
+      "method": "POST",
+      "path": "/api/cache",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "key": "key1",
+        "value": "value2"
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc7",
+      "method": "GET",
+      "path": "/api/cache",
+      "expectedStatus": 200,
+      "expectedBody": [],
+      "isVisible": false
+    },
+    {
+      "id": "h_tc8",
+      "method": "GET",
+      "path": "/api/cache",
+      "expectedStatus": 200,
+      "expectedBody": [],
+      "isVisible": false
+    },
+    {
+      "id": "h_tc9",
+      "method": "GET",
+      "path": "/api/cache",
+      "expectedStatus": 200,
+      "expectedBody": [],
+      "isVisible": false
+    },
+    {
+      "id": "h_tc10",
+      "method": "POST",
+      "path": "/api/cache",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "key": "key2",
+        "value": "value2"
+      },
+      "expectedStatus": 201,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc11",
+      "method": "GET",
+      "path": "/api/cache/key1",
+      "expectedStatus": 200,
+      "expectedBody": {},
+      "isVisible": false
+    },
+    {
+      "id": "h_tc12",
+      "method": "POST",
+      "path": "/api/cache",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "key": "key2",
+        "value": "value2"
+      },
+      "expectedStatus": 201,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "redis",
+    "cache-aside",
+    "write-through",
+    "ttl",
+    "invalidation",
+    "memory-cache",
+    "caching",
+    "lru_cache",
+    "memory_cache"
+  ]
+}

@@ -1,0 +1,150 @@
+{
+  "title": "DOCKER Container Port Mapping Validator with Port Collision",
+  "subCategory": "DOCKER Port Mapping",
+  "statement": {
+    "markdown": "Implement a function to validate a Docker container port mapping configuration. The configuration is a list of objects, each containing a service name and a list of port mappings. Each port mapping is an object with a container port and a host port. The function should return `true` if the configuration is valid and `false` otherwise. A configuration is valid if it does not contain any port collisions (i.e., multiple port mappings for the same container port).",
+    "inputFormat": "A list of objects, each containing a service name and a list of port mappings.",
+    "outputFormat": "A boolean indicating whether the configuration is valid.",
+    "notes": "The input configuration is not empty and contains at least one service.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 100,
+        "description": "Number of services in the configuration"
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 1,
+        "max": 100,
+        "description": "Number of port mappings for each service"
+      },
+      {
+        "variable": "k",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Maximum container port number"
+      }
+    ],
+    "examples": [
+      {
+        "input": "[{\"service\":\"service1\",\"portMappings\":[{\"containerPort\":80,\"hostPort\":8080},{\"containerPort\":81,\"hostPort\":8081}]},{\"service\":\"service2\",\"portMappings\":[{\"containerPort\":80,\"hostPort\":8082}]}]",
+        "output": "true",
+        "explanation": "No port collision"
+      },
+      {
+        "input": "[{\"service\":\"service1\",\"portMappings\":[{\"containerPort\":80,\"hostPort\":8080},{\"containerPort\":80,\"hostPort\":8081}]},{\"service\":\"service2\",\"portMappings\":[{\"containerPort\":81,\"hostPort\":8082}]}]",
+        "output": "false",
+        "explanation": "Port collision at container port 80"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 10,
+    "points": 30,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DOCKER"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "docker"
+    ],
+    "interviewFrequency": 1,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use a set to keep track of used container ports"
+    }
+  ],
+  "editorial": {
+    "title": "Container Port Mapping Validator with Port Collision",
+    "intuition": "The function should iterate over the port mappings for each service and check for collisions.",
+    "bruteForce": "Brute force approach: check each port mapping against all other mappings for the same service.",
+    "betterSolution": "Use a set to keep track of used container ports and check for collisions.",
+    "optimalSolution": "Iterate over the port mappings for each service and use a set to check for collisions.",
+    "proofOfCorrectness": "The function returns true if there are no collisions and false otherwise.",
+    "dryRun": "Example run: input=[{\"service\":\"service1\",\"portMappings\":[{\"containerPort\":80,\"hostPort\":8080},{\"containerPort\":81,\"hostPort\":8081}]},{\"service\":\"service2\",\"portMappings\":[{\"containerPort\":80,\"hostPort\":8082}]}], output=true",
+    "commonMistakes": [
+      "Not handling edge cases",
+      "Not checking for collisions correctly"
+    ],
+    "timeComplexity": "O(n*m)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "function validateConfiguration(config) {\n    // implement the function here\n}",
+    "python": "class Solution:\n    def validate(self, config):\n        # implement the function here\n"
+  },
+  "buggyStarterCode": {
+    "javascript": "function validateConfiguration(config) {\n    let usedPorts = new Set();\n    for (let service of config) {\n        for (let mapping of service.portMappings) {\n            if (usedPorts.has(mapping.containerPort)) {\n                return false;\n            }\n            usedPorts.add(mapping.containerPort);\n        }\n    }\n    return true;\n}",
+    "python": "class Solution:\n    def validate(self, config):\n        usedPorts = set()\n        for service in config:\n            for mapping in service['portMappings']:\n                if mapping['containerPort'] in usedPorts:\n                    return False\n                usedPorts.add(mapping['containerPort'])\n        return True"
+  },
+  "functionSignature": {
+    "javascript": "function validateConfiguration(config) {\n}",
+    "python": "def validate(self, config):"
+  },
+  "solutions": {
+    "javascript": "// implement the function here\nfunction validateConfiguration(config) {\n    let usedPorts = new Set();\n    for (let service of config) {\n        for (let mapping of service.portMappings) {\n            if (usedPorts.has(mapping.containerPort)) {\n                return false;\n            }\n            usedPorts.add(mapping.containerPort);\n        }\n    }\n    return true;\n}",
+    "python": "class Solution:\n    def validate(self, config):\n        usedPorts = set()\n        for service in config:\n            for mapping in service['portMappings']:\n                if mapping['containerPort'] in usedPorts:\n                    return False\n                usedPorts.add(mapping['containerPort'])\n        return True"
+  },
+  "judgeConfig": {
+    "timeLimit": 1,
+    "memoryLimit": 64,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "[{\"service\":\"service1\",\"portMappings\":[{\"containerPort\":80,\"hostPort\":8080},{\"containerPort\":81,\"hostPort\":8081}]},{\"service\":\"service2\",\"portMappings\":[{\"containerPort\":80,\"hostPort\":8082}]}]",
+      "output": "true",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "[{\"service\":\"service1\",\"portMappings\":[{\"containerPort\":80,\"hostPort\":8080},{\"containerPort\":80,\"hostPort\":8081}]},{\"service\":\"service2\",\"portMappings\":[{\"containerPort\":81,\"hostPort\":8082}]}]",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "_id": "7fcd3ea3ec600f3d791fa8fc",
+  "slug": "docker-container-port-mapping-validator-with-port-collision-bugfix-easy-docker",
+  "mode": "bug_fix",
+  "category": "DOCKER",
+  "difficulty": "Easy"
+}

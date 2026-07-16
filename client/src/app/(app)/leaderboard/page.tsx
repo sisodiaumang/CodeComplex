@@ -9,14 +9,14 @@ import type { LeaderboardPage, LeaderboardPlayer } from "@/lib/types";
 import { unwrapList } from "@/lib/types";
 import { MODE_COLORS, type BattleType } from "@/lib/theme";
 import { cn, countryFlag } from "@/lib/utils";
-import { Avatar, Button, Card, EmptyState, Spinner, TierBadge } from "@/components/ui";
+import { Avatar, Button, Card, EmptyState, Skeleton, Spinner, TierBadge } from "@/components/ui";
 
 const MODES: BattleType[] = [
   "DSA",
   "BUG_FIX",
   "FRONTEND",
   "BACKEND",
-  "FULLSTACK",
+  "PROJECTS",
   "PROMPT_WAR",
 ];
 
@@ -126,7 +126,39 @@ export default function LeaderboardPage() {
 
       <Card>
         {query.isLoading ? (
-          <Spinner />
+          <div className="overflow-x-auto">
+            <table className="w-full text-[15px]">
+              <thead>
+                <tr className="border-b border-border text-left text-sm text-text-faint">
+                  <th className="w-16 px-5 py-3 font-medium">#</th>
+                  <th className="px-5 py-3 font-medium">Player</th>
+                  <th className="px-5 py-3 font-medium">Tier</th>
+                  <th className="px-5 py-3 text-right font-medium">Rating</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border/60">
+                {Array.from({ length: 10 }).map((_, i) => (
+                  <tr key={i}>
+                    <td className="px-5 py-4">
+                      <Skeleton className="h-4 w-6" />
+                    </td>
+                    <td className="px-5 py-4">
+                      <div className="flex items-center gap-2.5">
+                        <Skeleton className="h-[30px] w-[30px] rounded-full" />
+                        <Skeleton className="h-4 w-28" />
+                      </div>
+                    </td>
+                    <td className="px-5 py-4">
+                      <Skeleton className="h-4 w-20" />
+                    </td>
+                    <td className="px-5 py-4 text-right">
+                      <Skeleton className="ml-auto h-4 w-12" />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         ) : board.players.length === 0 ? (
           <EmptyState
             icon={friendsOnly ? <Users className="size-6" /> : <Trophy className="size-6" />}

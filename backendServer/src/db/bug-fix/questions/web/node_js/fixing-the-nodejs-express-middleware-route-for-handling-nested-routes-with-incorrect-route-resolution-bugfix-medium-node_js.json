@@ -1,0 +1,144 @@
+{
+  "title": "Fixing the Node.js Express Middleware Route for Handling Nested Routes with Incorrect Route Resolution",
+  "subCategory": "Express Routing",
+  "statement": {
+    "markdown": "Your task is to fix a Node.js Express middleware route that is handling nested routes. However, it's experiencing incorrect route resolution. Your goal is to modify the existing middleware so that it correctly resolves routes even when nested routes are encountered. The middleware should handle both GET and POST requests for any path in the `/api/v1` namespace. For example, it should correctly resolve the `/api/v1/users` and `/api/v1/users/:id` paths. Ensure that the middleware does not throw any errors when handling nested routes.",
+    "inputFormat": "The input will be a string representing the requested path.",
+    "outputFormat": "The middleware should return a JSON object containing the resolved path and any route parameters.",
+    "notes": "The middleware should use the `express.Router()` method to create a new router for handling nested routes.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of nested routes should be within this range."
+      }
+    ],
+    "examples": [
+      {
+        "input": "/api/v1/users",
+        "output": "{\"resolvedPath\":\"/api/v1/users\",\"params\":{}}",
+        "explanation": "The middleware correctly resolves the `/api/v1/users` path."
+      },
+      {
+        "input": "/api/v1/users/123",
+        "output": "{\"resolvedPath\":\"/api/v1/users/123\",\"params\":{\"id\":\"123\"}}",
+        "explanation": "The middleware correctly resolves the `/api/v1/users/123` path and captures the `id` parameter."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 60,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "NODE_JS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "node_js"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the `express.Router()` method to create a new router for handling nested routes."
+    }
+  ],
+  "editorial": {
+    "title": "Fixing the Node.js Express Middleware Route for Handling Nested Routes with Incorrect Route Resolution",
+    "intuition": "The correct approach is to use the `express.Router()` method to create a new router for handling nested routes.",
+    "bruteForce": "One possible brute-force solution is to manually check each path segment against a predefined set of allowed routes.",
+    "betterSolution": "A better solution involves using the `express.Router()` method to create a new router and then using the `app.use()` method to mount the new router at the correct path.",
+    "optimalSolution": "The optimal solution involves using the `express.Router()` method to create a new router, then using the `app.use()` method to mount the new router at the correct path, and finally using the `express.Router().param()` method to capture route parameters.",
+    "proofOfCorrectness": "The correct solution is proven by the fact that it correctly resolves routes even when nested routes are encountered.",
+    "dryRun": "Step-by-step example run: Create a new router using `express.Router()`, mount the new router at the correct path using `app.use()`, and finally use `express.Router().param()` to capture route parameters.",
+    "commonMistakes": [
+      "Not using the `express.Router()` method to create a new router for handling nested routes.",
+      "Not using the `app.use()` method to mount the new router at the correct path."
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// Define a new express application\nconst express = require('express');\nconst app = express();\n\n// Define a new router\nconst router = express.Router();\n\n// Route to handle GET requests for /api/v1/users\nrouter.get('/users', (req, res) => {\n  // Handle get request\n});\n\n// Route to handle GET requests for /api/v1/users/:id\nrouter.get('/users/:id', (req, res) => {\n  // Handle get request\n});\n\n// Route to handle POST requests for /api/v1/users\nrouter.post('/users', (req, res) => {\n  // Handle post request\n});\n\n// Mount the new router at the correct path\napp.use('/api/v1', router);",
+    "python": "import express\napp = express()\n\n# Define a new router\nrouter = express.Router()\n\n# Route to handle GET requests for /api/v1/users\n@app.route('/api/v1/users', methods=['GET'])\ndef get_users(req, res):\n  # Handle get request\n  pass\n\n# Route to handle GET requests for /api/v1/users/:id\n@app.route('/api/v1/users/<int:id>', methods=['GET'])\ndef get_user(req, res):\n  # Handle get request\n  pass\n\n# Mount the new router at the correct path\napp.mount('/api/v1', router)"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Define a new express application\nconst express = require('express');\nconst app = express();\n\n// Define a new router\nconst router = express.Router();\n\n// Route to handle GET requests for /api/v1/users\nrouter.get('/users', (req, res) => {\n  // Handle get request\n  res.status(200).send({ resolvedPath: '/api/v1/users', params: {} });\n});\n\n// Route to handle GET requests for /api/v1/users/:id\nrouter.get('/users/:id', (req, res) => {\n  // Capture the route parameter\n  const id = req.params.id;\n\n  // Handle get request\n  res.status(200).send({ resolvedPath: '/api/v1/users/' + id, params: { id: id } });\n});\n\n// Route to handle POST requests for /api/v1/users\nrouter.post('/users', (req, res) => {\n  // Handle post request\n  res.status(200).send({ resolvedPath: '/api/v1/users', params: {} });\n});\n\n// Mount the new router at the correct path\napp.use('/api/v1', router);\n\n// Incorrectly resolve routes for nested paths\napp.get('/api/v1/users', (req, res) => {\n  // Incorrectly resolve the /api/v1/users path\n  res.status(200).send({ resolvedPath: '/api/v1/users', params: {} });\n});",
+    "python": "import express\napp = express()\n\n# Define a new router\nrouter = express.Router()\n\n# Route to handle GET requests for /api/v1/users\n@app.route('/api/v1/users', methods=['GET'])\ndef get_users(req, res):\n  # Handle get request\n  res.status(200).send({ 'resolvedPath': '/api/v1/users', 'params': {} })\n\n# Route to handle GET requests for /api/v1/users/:id\n@app.route('/api/v1/users/<int:id>', methods=['GET'])\ndef get_user(req, res):\n  # Capture the route parameter\n  id = req.params['id']\n\n  # Handle get request\n  res.status(200).send({ 'resolvedPath': '/api/v1/users/' + id, 'params': { 'id': id } })\n\n# Route to handle POST requests for /api/v1/users\n@app.route('/api/v1/users', methods=['POST'])\ndef post_users(req, res):\n  # Handle post request\n  res.status(200).send({ 'resolvedPath': '/api/v1/users', 'params': {} })\n\n# Mount the new router at the correct path\napp.mount('/api/v1', router)\n\n# Incorrectly resolve routes for nested paths\n@app.route('/api/v1/users', methods=['GET'])\ndef get_users(req, res):\n  # Incorrectly resolve the /api/v1/users path\n  res.status(200).send({ 'resolvedPath': '/api/v1/users', 'params': {} })"
+  },
+  "functionSignature": {
+    "javascript": "app = express();",
+    "python": "app = express()"
+  },
+  "solutions": {
+    "javascript": "// Define a new express application\nconst express = require('express');\nconst app = express();\n\n// Define a new router\nconst router = express.Router();\n\n// Route to handle GET requests for /api/v1/users\nrouter.get('/users', (req, res) => {\n  // Handle get request\n  res.status(200).send({ resolvedPath: '/api/v1/users', params: {} });\n});\n\n// Route to handle GET requests for /api/v1/users/:id\nrouter.get('/users/:id', (req, res) => {\n  // Capture the route parameter\n  const id = req.params.id;\n\n  // Handle get request\n  res.status(200).send({ resolvedPath: '/api/v1/users/' + id, params: { id: id } });\n});\n\n// Route to handle POST requests for /api/v1/users\nrouter.post('/users', (req, res) => {\n  // Handle post request\n  res.status(200).send({ resolvedPath: '/api/v1/users', params: {} });\n});\n\n// Mount the new router at the correct path\napp.use('/api/v1', router);\n\n// Correctly resolve routes for nested paths\napp.get('/api/v1/users', (req, res) => {\n  // Correctly resolve the /api/v1/users path\n  res.status(200).send({ resolvedPath: '/api/v1/users', params: {} });\n});\n\n// Correctly resolve routes for nested paths\napp.get('/api/v1/users/:id', (req, res) => {\n  // Correctly resolve the /api/v1/users/:id path\n  const id = req.params.id;\n\n  // Handle get request\n  res.status(200).send({ resolvedPath: '/api/v1/users/' + id, params: { id: id } });\n});",
+    "python": "import express\napp = express()\n\n# Define a new router\nrouter = express.Router()\n\n# Route to handle GET requests for /api/v1/users\n@app.route('/api/v1/users', methods=['GET'])\ndef get_users(req, res):\n  # Handle get request\n  res.status(200).send({ 'resolvedPath': '/api/v1/users', 'params': {} })\n\n# Route to handle GET requests for /api/v1/users/:id\n@app.route('/api/v1/users/<int:id>', methods=['GET'])\ndef get_user(req, res):\n  # Capture the route parameter\n  id = req.params['id']\n\n  # Handle get request\n  res.status(200).send({ 'resolvedPath': '/api/v1/users/' + id, 'params': { 'id': id } })\n\n# Route to handle POST requests for /api/v1/users\n@app.route('/api/v1/users', methods=['POST'])\ndef post_users(req, res):\n  # Handle post request\n  res.status(200).send({ 'resolvedPath': '/api/v1/users', 'params': {} })\n\n# Mount the new router at the correct path\napp.mount('/api/v1', router)\n\n# Correctly resolve routes for nested paths\n@app.route('/api/v1/users', methods=['GET'])\ndef get_users(req, res):\n  # Correctly resolve the /api/v1/users path\n  res.status(200).send({ 'resolvedPath': '/api/v1/users', 'params': {} })\n\n# Correctly resolve routes for nested paths\n@app.route('/api/v1/users/<int:id>', methods=['GET'])\ndef get_user(req, res):\n  # Correctly resolve the /api/v1/users/:id path\n  id = req.params['id']\n\n  # Handle get request\n  res.status(200).send({ 'resolvedPath': '/api/v1/users/' + id, 'params': { 'id': id } })"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "/api/v1/users",
+      "output": "{\"resolvedPath\":\"/api/v1/users\",\"params\":{}}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "/api/v1/users/123",
+      "output": "{\"resolvedPath\":\"/api/v1/users/123\",\"params\":{\"id\":\"123\"}}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "/api/v1/users/456",
+      "output": "{\"resolvedPath\":\"/api/v1/users/456\",\"params\":{\"id\":\"456\"}}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "cbc4e495593f838b3bcedcc2",
+  "slug": "fixing-the-nodejs-express-middleware-route-for-handling-nested-routes-with-incorrect-route-resolution-bugfix-medium-node_js",
+  "mode": "bug_fix",
+  "category": "NODE_JS",
+  "difficulty": "Medium"
+}

@@ -1,0 +1,170 @@
+{
+  "_id": "187ff06f34c04dda7d3fec0d",
+  "title": "Incorrectly Calculating Strong Connectivity using Kosaraju's Algorithm with DFS",
+  "slug": "incorrectly-calculating-strong-connectivity-using-kosarajus-algorithm-with-dfs-bugfix-hard-graphs",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "Strongly Connected Components in a Graph",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 25,
+    "points": 75,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "graph"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given a directed graph, you need to find the strongly connected components (SCCs) using Kosaraju's algorithm with DFS. However, the current implementation has a bug that causes it to return incorrect results for graphs with multiple SCCs.\n\nYou should write a method that takes a graph represented as an adjacency list and returns the SCCs as a list of lists.\n\nThe graph is represented as an adjacency list where each key is a node and its value is a list of its neighbors. \n\nThe function should return the SCCs where each SCC is a list of nodes.\n\nNote that the graph is connected and has at least one edge.",
+    "inputFormat": "Adjacency list represented as a dictionary where each key is a node and its value is a list of its neighbors.",
+    "outputFormat": "A list of lists where each list represents a strongly connected component.",
+    "notes": "The graph is connected and has at least one edge.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "V",
+        "type": "integer",
+        "min": 1,
+        "max": 100000,
+        "description": "Number of nodes in the graph."
+      },
+      {
+        "variable": "E",
+        "type": "integer",
+        "min": 1,
+        "max": 1000000,
+        "description": "Number of edges in the graph."
+      },
+      {
+        "variable": "N",
+        "type": "integer",
+        "min": 1,
+        "max": 100000,
+        "description": "Number of nodes in each SCC."
+      }
+    ],
+    "examples": [
+      {
+        "input": "[[1, 0], [0], [0, 2, 3], [3], [3], [3, 4], [4, 5], [5], [5]]",
+        "output": "[[3, 4, 5], [0, 1], [2]]",
+        "explanation": "The graph has two SCCs: {{3, 4, 5}} and {{0, 1}}."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Review the Kosaraju's algorithm with DFS and the implementation details to identify the bug."
+    },
+    {
+      "order": 2,
+      "text": "Check the data structures used to represent the graph and the SCCs."
+    },
+    {
+      "order": 3,
+      "text": "Consider using a stack to temporarily store the nodes during the DFS traversal."
+    }
+  ],
+  "editorial": {
+    "title": "Correct Implementation of Kosaraju's Algorithm with DFS",
+    "intuition": "Kosaraju's algorithm uses DFS to find the SCCs of a graph. We first perform a DFS traversal to mark the finishing time of each node. Then, we perform another DFS traversal on the transpose graph to find the SCCs.",
+    "bruteForce": "We can use the Tarjan's algorithm to find the SCCs of the graph, which has a time complexity of O(V + E).",
+    "betterSolution": "",
+    "optimalSolution": "To find the SCCs, we can use Kosaraju's algorithm, which visits the graph twice.",
+    "proofOfCorrectness": "Kosaraju's algorithm is correct because it visits the graph twice, once in the original graph and once in the transpose graph.",
+    "dryRun": "Given a graph with two nodes and one edge, we can find the SCCs using Kosaraju's algorithm as follows:\n DFS traversal 1: {0, 1}\n DFS traversal 2: {1, 0}\n SCCs: {1, 0}",
+    "commonMistakes": [
+      "Incorrectly representing the graph or the SCCs.",
+      "Not performing the DFS traversal correctly."
+    ],
+    "timeComplexity": "O(V + E)",
+    "spaceComplexity": "O(V + E)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    vector<vector<int>> strongConnect(vector<vector<int>>& g);\n};",
+    "java": "public class Solution {\npublic List<List<Integer>> strongConnect(List<List<Integer>> g) {\n    // TODO: implement\n}",
+    "python": "class Solution:\n    def strongConnect(self, g:\n        # TODO: implement\n        return []"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    vector<vector<int>> strongConnect(vector<vector<int>>& g) {\n        vector<bool> visited(g.size(), false);\n        vector<vector<int>> sccs;\n        for (int node = 0; node < g.size(); node++) {\n            if (!visited[node]) {\n                dfs(node, visited, g, sccs);\n            }\n        }\n        return sccs;\n    }\n\n    void dfs(int node, vector<bool>& visited, vector<vector<int>>& g, vector<vector<int>> sccs) {\n        if (visited[node]) return;\n        visited[node] = true;\n        for (int neighbor : g[node]) {\n            if (!visited[neighbor]) {\n                dfs(neighbor, visited, g, sccs);\n            }\n        }\n        sccs.push_back({node});\n    }\n};",
+    "java": "public class Solution {\npublic List<List<Integer>> strongConnect(List<List<Integer>> g) {\n    int n = g.size();\n    List<Boolean> visited = new ArrayList<>(Collections.nCopies(n, false));\n    List<List<Integer>> sccs = new ArrayList<>();\n    for (int node = 0; node < n; node++) {\n        if (!visited.get(node)) {\n            dfs(node, visited, g, sccs);\n        }\n    }\n    return sccs;\n}\n\nprivate void dfs(int node, List<Boolean> visited, List<List<Integer>> g, List<List<Integer>> sccs) {\n    if (visited.get(node)) return;\n    visited.set(node, true);\n    for (int neighbor : g.get(node)) {\n        if (!visited.get(neighbor)) {\n            dfs(neighbor, visited, g, sccs);\n        }\n    }\n    sccs.add(List.of(node));\n}",
+    "python": "class Solution:\n    def strongConnect(self, g:\n        n = len(g)\n        visited = [False] * n\n        sccs = []\n        for node in range(n):\n            if not visited[node]:\n                self.dfs(node, visited, g, sccs)\n        return sccs\n\n    def dfs(self, node, visited, g, sccs) -> None:\n        if visited[node]: return\n        visited[node] = True\n        for neighbor in g[node]:\n            if not visited[neighbor]:\n                self.dfs(neighbor, visited, g, sccs)\n        sccs.append([node])"
+  },
+  "functionSignature": {
+    "cpp": "vector<vector<int>> strongConnect(vector<vector<int>>& g);",
+    "java": "List<List<Integer>> strongConnect(List<List<Integer>> g);",
+    "python": "def strongConnect(self, g: List[List[int]]) -> List[List[int]]: ..."
+  },
+  "solutions": {
+    "cpp": "class Solution {\npublic:\n    vector<vector<int>> strongConnect(vector<vector<int>>& g) {\n        vector<bool> visited(g.size(), false);\n        vector<vector<int>> sccs;\n        stack<int> stk;\n        for (int node = 0; node < g.size(); node++) {\n            if (!visited[node]) {\n                dfs(node, visited, g, stk);\n            }\n        }\n        while (!stk.empty()) {\n            int node = stk.top(); stk.pop();\n            visited[node] = true;\n            for (int neighbor : g[node]) {\n                if (!visited[neighbor]) {\n                    dfs(neighbor, visited, g, stk);\n                }\n            }\n            sccs.push_back({node});\n        }\n        return sccs;\n    }\n\n    void dfs(int node, vector<bool>& visited, vector<vector<int>>& g, stack<int>& stk) {\n        if (visited[node]) return;\n        visited[node] = true;\n        stk.push(node);\n        for (int neighbor : g[node]) {\n            if (!visited[neighbor]) {\n                dfs(neighbor, visited, g, stk);\n            }\n        }\n    }\n};",
+    "java": "public class Solution {\npublic List<List<Integer>> strongConnect(List<List<Integer>> g) {\n    int n = g.size();\n    List<Boolean> visited = new ArrayList<>(Collections.nCopies(n, false));\n    List<List<Integer>> sccs = new ArrayList<>();\n    Stack<Integer> stk = new Stack<>();\n    for (int node = 0; node < n; node++) {\n        if (!visited.get(node)) {\n            dfs(node, visited, g, stk);\n        }\n    }\n    while (!stk.isEmpty()) {\n        int node = stk.pop();\n        visited.set(node, true);\n        for (int neighbor : g.get(node)) {\n            if (!visited.get(neighbor)) {\n                dfs(neighbor, visited, g, stk);\n            }\n        }\n        sccs.add(List.of(node));\n    }\n    return sccs;\n}\n\nprivate void dfs(int node, List<Boolean> visited, List<List<Integer>> g, Stack<Integer> stk) {\n    if (visited.get(node)) return;\n    visited.set(node, true);\n    stk.push(node);\n    for (int neighbor : g.get(node)) {\n        if (!visited.get(neighbor)) {\n            dfs(neighbor, visited, g, stk);\n        }\n    }\n}",
+    "python": "class Solution:\n    def strongConnect(self, g:\n        n = len(g)\n        visited = [False] * n\n        sccs = []\n        stk = []\n        for node in range(n):\n            if not visited[node]:\n                self.dfs(node, visited, g, stk)\n        while stk:\n            node = stk.pop()\n            visited[node] = True\n            for neighbor in g[node]:\n                if not visited[neighbor]:\n                    self.dfs(neighbor, visited, g, stk)\n            sccs.append([node])\n\n        return sccs\n\n    def dfs(self, node, visited, g, stk) -> None:\n        if visited[node]: return\n        visited[node] = True\n        stk.append(node)\n        for neighbor in g[node]:\n            if not visited[neighbor]:\n                self.dfs(neighbor, visited, g, stk)\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "[[1, 0], [0], [0, 2, 3], [3], [3], [3, 4], [4, 5], [5], [5]]",
+      "output": "[[3, 4, 5], [0, 1], [2]]",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "[[0, 1, 2], [1], [2], [2]]",
+      "output": "[[0, 1, 2]]",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

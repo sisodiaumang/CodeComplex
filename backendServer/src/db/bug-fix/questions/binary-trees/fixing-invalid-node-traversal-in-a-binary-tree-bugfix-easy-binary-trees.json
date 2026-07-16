@@ -1,0 +1,153 @@
+{
+  "_id": "f702105841ccbe56452c494b",
+  "title": "Fixing Invalid Node Traversal in a Binary Tree",
+  "slug": "fixing-invalid-node-traversal-in-a-binary-tree-bugfix-easy-binary-trees",
+  "difficulty": "Easy",
+  "category": "DSA",
+  "subCategory": "DFS",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "tree"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given the root of a binary tree, return the values of all nodes at each level from left to right in a vector of vectors.",
+    "inputFormat": "A binary tree represented as a vector of pairs <a, b>, where <a, b> represents a node with left child <a> and right child <b>.",
+    "outputFormat": "A vector of vectors, where each sub-vector represents the values of all nodes at a given level from left to right.",
+    "notes": "There is a bug in the given implementation.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "[1, 2, 3, 4, 5, 6, 7]\n[2, 0, 3, 1, 0, 4, 0]\n",
+        "output": "[[1], [2, 3], [4, 5, 6], [7]]",
+        "explanation": "The first vector represents the values of all nodes at each level from left to right."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Check the code for DFS traversal."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial",
+    "intuition": "To solve this problem, we can use a level order traversal of the binary tree.",
+    "bruteForce": "We can use DFS traversal and process all nodes at a given level before moving on to the next level.",
+    "betterSolution": "",
+    "optimalSolution": "We can use a queue data structure to implement a level order traversal.",
+    "proofOfCorrectness": "proof Of Correctness details.",
+    "dryRun": "dry Run details.",
+    "commonMistakes": [
+      "Not using a queue for level order traversal",
+      "Processing nodes at a given level before moving on to the next level"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    vector<vector<int>> levelOrder(TreeNode* root) {\n        // TODO: implement\n    }\n};",
+    "java": "public class Solution {\n    public List<List<Integer>> levelOrder(TreeNode root) {\n        // TODO: implement\n    }\n}",
+    "python": "class Solution:\n    def levelOrder(self, root: TreeNode) -> List[List[int]]:\n        # TODO: implement\n        pass",
+    "javascript": "// Return a vector of vectors representing the values of all nodes at each level\nvar levelOrder = function(root) {\n    // TODO: implement\n    return [];\n};"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    vector<vector<int>> levelOrder(TreeNode* root) {\n        vector<vector<int>> res;\n        if(!root) return res;\n        vector<int> temp;\n        temp.push_back(root->val);\n        res.push_back(temp);\n        return res;\n    }\n};",
+    "java": "public class Solution {\n    public List<List<Integer>> levelOrder(TreeNode root) {\n        List<List<Integer>> res = new ArrayList<>();\n        if(root == null) return res;\n        List<Integer> temp = new ArrayList<>();\n        temp.add(root.val);\n        res.add(temp);\n        return res;\n    }\n}",
+    "python": "class Solution:\n    def levelOrder(self, root: TreeNode) -> List[List[int]]:\n        res = []; if not root: return res;\n        temp = []; temp.append(root.val);\n        res.append(temp);\n        return res;",
+    "javascript": "var levelOrder = function(root) {\n    if (!root) return []; var temp = [root.val]; return [temp];\n};"
+  },
+  "functionSignature": {
+    "cpp": "vector<vector<int>> levelOrder(TreeNode* root);",
+    "java": "List<List<Integer>> levelOrder(TreeNode root);",
+    "python": "def levelOrder(self, root: TreeNode) -> List[List[int]]:",
+    "javascript": "var levelOrder = function(root);"
+  },
+  "solutions": {
+    "python": "import sys\nfrom typing import List\n\nclass TreeNode:\n    def __init__(self, x):\n        self.val = x\n        self.left = None\n        self.right = None\n\nclass Solution:\n    def levelOrder(self, root: TreeNode) -> List[List[int]]:\n        if not root:\n            return []\n        res = []\n        queue = [root]\n        while queue:\n            level = []\n            for _ in range(len(queue)):\n                node = queue.pop(0)\n                level.append(node.val)\n                if node.left:\n                    queue.append(node.left)\n                if node.right:\n                    queue.append(node.right)\n            res.append(level)\n        return res\n\nif __name__ == '__main__':\n    root = TreeNode(1)\n    root.left = TreeNode(2)\n    root.right = TreeNode(3)\n    root.left.left = TreeNode(4)\n    root.left.right = TreeNode(5)\n    root.right.right = TreeNode(6)\n    root.right.right.right = TreeNode(7)\n    sol = Solution()\n    print(sol.levelOrder(root))\n",
+    "cpp": "#include <vector>\n#include <queue>\n\nusing namespace std;\n\nstruct TreeNode {\n    int val;\n    TreeNode *left;\n    TreeNode *right;\n\n    TreeNode(int x) : val(x), left(NULL), right(NULL) {}\n};\n\nclass Solution {\npublic:\n    vector<vector<int>> levelOrder(TreeNode* root) {\n        vector<vector<int>> res;\n        if (!root)\n            return res;\n        queue<TreeNode*> q;\n        q.push(root);\n        while (q.size()) {\n            vector<int> level;\n            for (int i = q.size(); i > 0; --i) {\n                TreeNode* node = q.front(); q.pop();\n                level.push_back(node->val);\n                if (node->left)\n                    q.push(node->left);\n                if (node->right)\n                    q.push(node->right);\n            }\n            res.push_back(level);\n        }\n        return res;\n    }\n};\n\nint main() {\n    Solution sol;\n    // Construct the binary tree: [1, 2, 3, 4, 5, 6, 7]\n    //        1\n    //      / \\\n    //       2  3\n    //     / \\\n    //    4   5\n    //     \\\n    //     6\n    //      \\\n    //       7\n    TreeNode* root = new TreeNode(1);\n    root->left = new TreeNode(2);\n    root->right = new TreeNode(3);\n    root->left->left = new TreeNode(4);\n    root->left->right = new TreeNode(5);\n    root->right->right = new TreeNode(6);\n    root->right->right->right = new TreeNode(7);\n    // Find the level order traversal of the binary tree\n    vector<vector<int>> result = sol.levelOrder(root);\n    // Print the result\n    for (int i = 0; i < result.size(); ++i) {\n        cout << \"Level \" << i << \": \";\n        for (int j = 0; j < result[i].size(); ++j)\n            cout << result[i][j] << \" \";\n        cout << endl;\n    }\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "[1, 2, 3, 4, 5, 6, 7]\n[2, 0, 3, 1, 0, 4, 0]\n",
+      "output": "[[1], [2, 3], [4, 5, 6], [7]]",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_hidden_generated",
+      "input": "[1, 2, 3, 4, 5, 6, 7]\n[2, 0, 3, 1, 0, 4, 0]\n",
+      "output": "[[1], [2, 3], [4, 5, 6], [7]]",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

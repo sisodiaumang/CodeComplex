@@ -4,17 +4,17 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Swords, KeyRound, DoorOpen, ArrowRight, Users, Play } from "lucide-react";
+import { Swords, KeyRound, DoorOpen, ArrowRight, Users, Play, Info } from "lucide-react";
 import { api, errorMessage } from "@/lib/api";
 import type { BattleRoom } from "@/lib/types";
 import { MODE_COLORS, type BattleType } from "@/lib/theme";
 import { cn } from "@/lib/utils";
 import { Alert, Badge, Button, Card, Input, ModeBadge } from "@/components/ui";
 
-const MODES = Object.entries(MODE_COLORS) as [
+const MODES = (Object.entries(MODE_COLORS) as [
   BattleType,
   (typeof MODE_COLORS)[BattleType],
-][];
+][]).filter(([key]) => key !== "PROJECTS");
 
 const TOPICS_BY_MODE: Record<BattleType, { key: string; label: string }[]> = {
   DSA: [
@@ -37,9 +37,18 @@ const TOPICS_BY_MODE: Record<BattleType, { key: string; label: string }[]> = {
   ],
   BUG_FIX: [
     { key: "DSA", label: "DSA" },
-    { key: "FRONTEND", label: "Frontend" },
-    { key: "BACKEND", label: "Backend" },
-    { key: "FULLSTACK", label: "Fullstack" },
+    { key: "ALGORITHMS", label: "Algorithms" },
+    { key: "JAVASCRIPT", label: "JavaScript" },
+    { key: "TYPESCRIPT", label: "TypeScript" },
+    { key: "REACT", label: "React" },
+    { key: "NODE_JS", label: "Node.js" },
+    { key: "EXPRESS", label: "Express" },
+    { key: "MONGODB", label: "MongoDB" },
+    { key: "SQL", label: "SQL" },
+    { key: "CSS", label: "CSS" },
+    { key: "HTML", label: "HTML" },
+    { key: "DOCKER", label: "Docker" },
+    { key: "GIT", label: "Git" },
   ],
   FRONTEND: [
     { key: "HTML_CSS", label: "HTML / CSS" },
@@ -52,34 +61,46 @@ const TOPICS_BY_MODE: Record<BattleType, { key: string; label: string }[]> = {
   ],
   BACKEND: [
     { key: "REST_API", label: "REST API" },
-    { key: "DATABASE", label: "Database" },
     { key: "AUTH", label: "Authentication" },
-    { key: "NODE_JS", label: "Node.js" },
+    { key: "AUTHORIZATION", label: "Authorization" },
+    { key: "DATABASE", label: "Database" },
+    { key: "ORM", label: "ORM" },
     { key: "CACHING", label: "Caching" },
+    { key: "QUEUES", label: "Queues" },
+    { key: "NODE_JS", label: "Node.js" },
+    { key: "EXPRESS", label: "Express" },
     { key: "WEBSOCKETS", label: "WebSockets" },
-    { key: "FILE_HANDLING", label: "File Handling" },
+    { key: "FILE_UPLOAD", label: "File Upload" },
+    { key: "EMAIL", label: "Email" },
+    { key: "PAYMENT", label: "Payment" },
+    { key: "REDIS", label: "Redis" },
+    { key: "RATE_LIMITING", label: "Rate Limiting" },
   ],
-  FULLSTACK: [
-    { key: "FRONTEND", label: "Frontend" },
-    { key: "BACKEND", label: "Backend" },
-    { key: "DATABASE", label: "Database" },
+  PROJECTS: [
     { key: "AUTH", label: "Authentication" },
-    { key: "DEPLOYMENT", label: "Deployment" },
-    { key: "API_INTEGRATION", label: "API Integration" },
+    { key: "ECOMMERCE", label: "E-commerce" },
+    { key: "CHAT_APP", label: "Chat App" },
+    { key: "DASHBOARD", label: "Dashboard" },
+    { key: "AI_SAAS", label: "AI SaaS" },
+    { key: "CMS", label: "CMS" },
   ],
   PROMPT_WAR: [
-    { key: "TEXT_GENERATION", label: "Text Generation" },
     { key: "CODE_GENERATION", label: "Code Generation" },
-    { key: "REASONING", label: "Reasoning" },
-    { key: "CREATIVE", label: "Creative" },
+    { key: "AGENT_DESIGN", label: "Agent Design" },
+    { key: "STRUCTURED_OUTPUT", label: "Structured Output" },
+    { key: "JSON_GENERATION", label: "JSON Generation" },
     { key: "DATA_EXTRACTION", label: "Data Extraction" },
     { key: "SUMMARIZATION", label: "Summarization" },
-    { key: "ADVERSARIAL_DEFENSE", label: "Adversarial Defense" },
-    { key: "STRUCTURED_OUTPUT", label: "Structured Output" },
-    { key: "CHATBOT_PERSONA", label: "Chatbot Persona" },
-    { key: "CLASSIFICATION", label: "Classification" },
-    { key: "QUERY_TRANSLATION", label: "Query Translation" },
-    { key: "AGENTIC_PLANNING", label: "Agentic Planning" },
+    { key: "RAG", label: "RAG" },
+    { key: "TOOL_CALLING", label: "Tool Calling" },
+    { key: "PLANNING", label: "Planning" },
+    { key: "PROMPT_OPTIMIZATION", label: "Prompt Optimization" },
+    { key: "PROMPT_DEBUGGING", label: "Prompt Debugging" },
+    { key: "PERSONA_DESIGN", label: "Persona Design" },
+    { key: "SAFETY", label: "Safety" },
+    { key: "VISION", label: "Vision" },
+    { key: "SQL_GENERATION", label: "SQL Generation" },
+    { key: "API_GENERATION", label: "API Generation" },
   ],
 };
 
@@ -425,28 +446,43 @@ export default function BattlePage() {
           </form>
         </Card>
 
-        {/* Join */}
-        <Card className="h-fit">
-          <div className="px-6 py-5">
-            <h2 className="text-lg font-semibold text-text">Join a room</h2>
-          </div>
-          <form onSubmit={onJoin} className="space-y-5 border-t border-border px-6 py-6">
-            {joinError && <Alert>{joinError}</Alert>}
-            <Input
-              label="Room code"
-              name="roomCode"
-              required
-              value={roomCode}
-              onChange={(e) => setRoomCode(e.target.value.toUpperCase())}
-              placeholder="XK4-92F"
-              className="text-center font-mono text-lg tracking-[0.25em]"
-            />
-            <Button type="submit" variant="secondary" loading={joining} className="w-full">
-              <KeyRound className="size-4" />
-              Join room
-            </Button>
-          </form>
-        </Card>
+        {/* Join Column */}
+        <div className="flex flex-col gap-6">
+          <Card className="h-fit">
+            <div className="px-6 py-5">
+              <h2 className="text-lg font-semibold text-text">Join a room</h2>
+            </div>
+            <form onSubmit={onJoin} className="space-y-5 border-t border-border px-6 py-6">
+              {joinError && <Alert>{joinError}</Alert>}
+              <Input
+                label="Room code"
+                name="roomCode"
+                required
+                value={roomCode}
+                onChange={(e) => setRoomCode(e.target.value.toUpperCase())}
+                placeholder="XK4-92F"
+                className="text-center font-mono text-lg tracking-[0.25em]"
+              />
+              <Button type="submit" variant="secondary" loading={joining} className="w-full">
+                <KeyRound className="size-4" />
+                Join room
+              </Button>
+            </form>
+          </Card>
+
+          {/* Development Note */}
+          <Card className="border-border/60 bg-surface/30 p-5 flex gap-4 items-start">
+            <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+              <Info className="size-4.5" />
+            </div>
+            <div className="space-y-1">
+              <h3 className="font-semibold text-sm text-text">Beta Notice</h3>
+              <p className="text-[13px] text-text-faint leading-relaxed">
+                We are a small team and still developing this site. If there is any problem in a question, please report the question and we will fix it in 1-2 working days.
+              </p>
+            </div>
+          </Card>
+        </div>
       </div>
 
       {/* Active room bar */}
@@ -485,7 +521,7 @@ export default function BattlePage() {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              {activeRoom.status === "WAITING" && (
+              {(activeRoom.status === "WAITING" || activeRoom.isSolo) && (
                 <Button
                   variant="ghost"
                   size="sm"

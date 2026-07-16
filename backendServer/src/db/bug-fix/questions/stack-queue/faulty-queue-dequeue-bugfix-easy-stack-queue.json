@@ -1,0 +1,152 @@
+{
+  "_id": "c870086932a93acfa94d1ca2",
+  "title": "Faulty Queue Dequeue",
+  "slug": "faulty-queue-dequeue-bugfix-easy-stack-queue",
+  "difficulty": "Easy",
+  "category": "DSA",
+  "subCategory": "QUEUE",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "queue"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "You are given a queue implemented as a linked list. The queue supports enqueue operation. However, the dequeue operation in your code has a bug. The bug causes it to skip the front element in certain scenarios.",
+    "inputFormat": "The input will contain the number of elements in the queue followed by those elements.",
+    "outputFormat": "The output should be the elements of the queue after dequeue operation, separated by spaces.",
+    "notes": "Note that this is a buggy implementation and you need to fix it.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of queue"
+      }
+    ],
+    "examples": [
+      {
+        "input": "5\n1 2 3 4 5",
+        "output": "2 3 4 5",
+        "explanation": "After dequeuing one element, 2 should remain"
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Check the dequeue operation in your code."
+    }
+  ],
+  "editorial": {
+    "title": "Faulty Queue Dequeue Editorial",
+    "intuition": "Implement a correct dequeue operation.",
+    "bruteForce": "Implement a new queue for each dequeue.",
+    "betterSolution": "Dequeue the front element correctly, maintaining the queue structure.",
+    "optimalSolution": "Maintain the queue structure by removing the front element correctly.",
+    "proofOfCorrectness": "Verify that the queue operation is correct.",
+    "dryRun": "Example dry run of a queue operation.",
+    "commonMistakes": [
+      "Incorrect implementation of the dequeue operation"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "cpp": "class Queue {\npublic:\nbool isEmpty();\nvoid enqueue(int val);\nint dequeue();\n};\nbool Queue::isEmpty() {\nreturn /* TODO: implement */;\n}\nvoid Queue::enqueue(int val) {\n/* TODO: implement */;\n}\nint Queue::dequeue() {\n/* TODO: implement */;\n}",
+    "java": "public class Queue {\n   boolean isEmpty();\n   void enqueue(int val);\n   int dequeue();\n}\npublic boolean Queue.isEmpty() {\n   return /* TODO: implement */;\n}\npublic void Queue.enqueue(int val) {\n   /* TODO: implement */;\n}\npublic int Queue.dequeue() {\n   /* TODO: implement */;\n}",
+    "python": "class Queue:\n    def __init__(self):\n        pass\n    def isEmpty(self):\n        return /* TODO: implement */\n    def enqueue(self, val):\n        pass\n    def dequeue(self):\n        pass",
+    "javascript": "class Queue {\n    isEmpty();\n    enqueue(val);\n    dequeue();\n}\nfunction Queue.isEmpty() {\n    return /* TODO: implement */;\n}\nfunction Queue.enqueue(val) {\n    /* TODO: implement */;\n}\nfunction Queue.dequeue() {\n    /* TODO: implement */;\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "int Queue::dequeue() {\n    if (isEmpty()) return 0;\n    int val = head->val;\n    head = head->next;\n    return val;\n}",
+    "java": "public int Queue.dequeue() {\n    if (isEmpty()) return 0;\n    int val = head.val;\n    head = head.next;\n    return val;\n}",
+    "python": "def Queue.dequeue(self):\n    if self.isEmpty(): return 0\n    val = self.head.val\n    self.head = self.head.next\n    return val",
+    "javascript": "function Queue.dequeue() {\n    if (this.isEmpty()) return 0;\n    let val = this.head.val;\n    this.head = this.head.next;\n    return val;\n}"
+  },
+  "functionSignature": {
+    "cpp": "int Queue::dequeue();",
+    "java": "int Queue.dequeue();",
+    "python": "int Queue.dequeue(self: Queue) -> int:",
+    "javascript": "int Queue.dequeue();"
+  },
+  "solutions": {
+    "python": "import sys\nfrom collections import deque\n\nclass Queue:\n    def __init__(self):\n        self.queue = deque()\n\n    def isEmpty(self):\n        return len(self.queue) == 0\n\n    def enqueue(self, val):\n        self.queue.append(val)\n\n    def dequeue(self):\n        if self.isEmpty():\n            raise IndexError('pop from an empty list')\n        return self.queue.popleft()\n\nn = int(input().split()[0])\nqueue = Queue()\nfor _ in range(n):\n    queue.enqueue(int(input().split()[0]))\n\nprint(' '.join(map(str, [queue.dequeue() for _ in range(n-1)])))",
+    "cpp": "#include <iostream>\nusing namespace std;\nclass Node {\npublic:\n    int val;\n    Node* next;\n    Node(int val) {\n        this->val = val;\n        this->next = nullptr;\n    }\n};\nclass Queue {\npublic:\n    Node* head;\n    bool isEmpty();\n    void enqueue(int val);\n    int dequeue();\n};\nbool Queue::isEmpty() {\n    return head == nullptr;\n}\nvoid Queue::enqueue(int val) {\n    Node* node = new Node(val);\n    if (head == nullptr)\n        head = node;\n    else\n        Node* current = head;\n        while (current->next != nullptr)\n            current = current->next;\n        current->next = node;\n}\nint Queue::dequeue() {\n    if (head == nullptr)\n        throw runtime_error(\"pop from an empty list\");\n    int val = head->val;\n    Node* temp = head;\n    head = head->next;\n    delete temp;\n    return val;\n}\nint main() {\n    int n;\n    cin >> n;\n    Queue queue;\n    for (int i = 0; i < n; i++) {\n        int val;\n        cin >> val;\n        queue.enqueue(val);\n    }\n    for (int i = 0; i < n - 1; i++) {\n        cout << queue.dequeue() << ' ';\n    }\n    cout << '\n';\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5\n1 2 3 4 5",
+      "output": "2 3 4 5\n",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_hidden_generated",
+      "input": "5\n1 2 3 4 5",
+      "output": "2 3 4 5\n",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

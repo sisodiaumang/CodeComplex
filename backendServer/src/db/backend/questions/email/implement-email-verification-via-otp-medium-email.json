@@ -1,0 +1,133 @@
+{
+  "_id": "c1f63042e733057fee62caa4",
+  "title": "Implement Email Verification via OTP",
+  "slug": "implement-email-verification-via-otp-medium-email",
+  "difficulty": "Medium",
+  "topics": [
+    "EMAIL"
+  ],
+  "statement": "Create a RESTful API to send email verification codes to users. Users can request a new verification code via POST to the `/api/v1/emails/verify` endpoint, and they can then verify their email by sending the verification code via POST to the `/api/v1/emails/validate` endpoint. Store the verification codes in memory for simplicity, as if you were using a database. Note that verification codes expire after 1 minute. \n\n   When sending the initial verification code via email, store the associated user's ID. Then, validate the code by checking if the provided code matches the stored code for the corresponding user. If the code is correct, update the user's `verified` flag to `true`. If the code is incorrect or has expired, return an error.\n\n   You must use the `nodemailer` library to send emails, and you should implement the following endpoints:\n\n   - `GET /api/v1/emails/validate/{verificationCode}`: Return the user associated with the given verification code, if it is valid. Otherwise, return an error.\n   - `POST /api/v1/emails/verify`: Send a new verification code to the email associated with the provided user ID, and return the verification code.\n   - `POST /api/v1/emails/validate`: Validate the verification code provided, and update the user's `verified` flag accordingly.\n   \n   Use `express.json()` to parse JSON request bodies and store the parsed data in `req.body`. Make sure to handle potential errors when sending and validating the verification code.\n\n   **Constraints:**\n   - Verification codes expire after 1 minute.\n   - User IDs are unique and are used as a primary key for the verification code storage.\n   - Use `nodemailer` to send emails, and handle potential email sending errors.\n\n   **Endpoints:**\n\n   ```json\n   {\n      \"method\": \"GET\",\n      \"path\": \"/api/v1/emails/validate/{verificationCode}\",\n      \"description\": \"Validate a verification code and return the associated user.\"\n   }\n   {\n      \"method\": \"POST\",\n      \"path\": \"/api/v1/emails/verify\",\n      \"description\": \"Send a new verification code to the user's email.\"\n   }\n   {\n      \"method\": \"POST\",\n      \"path\": \"/api/v1/emails/validate\",\n      \"description\": \"Validate the verification code provided and update the user's verified flag.\"\n   }\n   ```",
+  "constraints": [
+    "Must use only the in-memory array or mock database provided",
+    "Use nodemailer to send emails and handle sending errors",
+    "Verification codes expire after 1 minute"
+  ],
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/api/v1/emails/validate/{verificationCode}",
+      "description": "Validate a verification code and return the associated user."
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/emails/verify",
+      "description": "Send a new verification code to the user's email."
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/emails/validate",
+      "description": "Validate the verification code provided and update the user's verified flag."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\"name\": \"email-verification-api\",\n  \"version\": \"1.0.0\",\n  \"main\": \"index.js\",\n  \"scripts\": {\n    \"start\": \"node index.js\"\n  },\n  \"dependencies\": {\n    \"express\": \"^4.18.2\",\n    \"nodemailer\": \"^6.7.6\"\n  }\n}",
+    "index.js": "const express = require('express');\nconst app = express();\napp.use(express.json());\n\nconst nodemailer = require('nodemailer');\nconst users = {};\nconst verificationCodes = {};\nconst transporter = nodemailer.createTransport({\n  host: 'smtp.example.com',\n  port: 587,\n  secure: false,\n  auth: {\n    user: 'username',\n    pass: 'password'\n  }\n});\n\n// TODO: Implement endpoints\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "POST",
+      "path": "/api/v1/emails/verify",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "userId": "1234"
+      },
+      "expectedStatus": 201,
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "POST",
+      "path": "/api/v1/emails/validate",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "userId": "1234",
+        "verificationCode": "abc123"
+      },
+      "expectedStatus": 200,
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "GET",
+      "path": "/api/v1/emails/validate/abc123",
+      "expectedStatus": 200,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "POST",
+      "path": "/api/v1/emails/verify",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "userId": "1234"
+      },
+      "expectedStatus": 404,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "POST",
+      "path": "/api/v1/emails/validate",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "userId": "1234",
+        "verificationCode": "invalid-code"
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "nodemailer",
+    "resend",
+    "smtp",
+    "templates",
+    "otp",
+    "verification",
+    "password-reset",
+    "email",
+    "express"
+  ]
+}

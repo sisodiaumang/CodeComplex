@@ -1,0 +1,54 @@
+{
+  "_id": "fd5f5028a872fe25d5134c58",
+  "title": "Repository Pattern",
+  "slug": "type-repository-pattern",
+  "difficulty": "Easy",
+  "topics": [
+    "TYPESCRIPT"
+  ],
+  "statement": {
+    "markdown": "## Introduction\n\nThe Repository Pattern is a design pattern that abstracts the data access layer of an application, providing a layer of indirection between the business logic and the data storage. This pattern helps to decouple the business logic from the data storage, making it easier to switch between different data storage systems.\n\n### Requirements numbered list\n\n1. Create a repository interface that defines the methods for retrieving and saving data.\n\n2. Implement a concrete repository class that implements the repository interface and provides the actual data storage.\n\n3. Create a service class that uses the repository interface to perform business logic operations."
+  },
+  "constraints": [
+    "The repository interface should be defined with static methods that can be used to retrieve and save data.",
+    "The concrete repository class should implement the repository interface and provide the actual data storage.",
+    "The service class should use the repository interface to perform business logic operations."
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "typescript": "```typescript\ninterface IRepository<T> {\n  getAll(): T[];\n  get(id: number): T;\n  save(data: T): void;\n  update(id: number, data: T): void;\n  delete(id: number): void;\n}\n\nclass Service<T> {\n  private repository: IRepository<T>;\n\n  constructor(repository: IRepository<T>) {\n    this.repository = repository;\n  }\n\n  public getAll(): T[] {\n    return this.repository.getAll();\n  }\n}\n\nclass Repository<T> implements IRepository<T> {\n  private data: T[];\n\n  constructor() {\n    this.data = [];\n  }\n\n  public getAll(): T[] {\n    return this.data;\n  }\n}\n```\n"
+  },
+  "gradingCriteria": [
+    {
+      "id": "1",
+      "description": "Repository Interface",
+      "weight": 30
+    },
+    {
+      "id": "2",
+      "description": "Concrete Repository Class",
+      "weight": 40
+    },
+    {
+      "id": "3",
+      "description": "Service Class",
+      "weight": 30
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "typescript"
+    ],
+    "referenceSolution": "```typescript\ninterface IRepository<T> {\n  getAll(): T[];\n  get(id: number): T;\n  save(data: T): void;\n  update(id: number, data: T): void;\n  delete(id: number): void;\n}\n\nclass InMemoryRepository<T> implements IRepository<T> {\n  private data: T[];\n\n  constructor() {\n    this.data = [];\n  }\n\n  public getAll(): T[] {\n    return this.data;\n  }\n\n  public get(id: number): T {\n    return this.data.find(item => item.id === id);\n  }\n\n  public save(data: T): void {\n    this.data.push(data);\n  }\n\n  public update(id: number, data: T): void {\n    const index = this.data.findIndex(item => item.id === id);\n    if (index !== -1) {\n      this.data[index] = data;\n    }\n  }\n\n  public delete(id: number): void {\n    this.data = this.data.filter(item => item.id !== id);\n  }\n}\n\nclass Service<T> {\n  private repository: InMemoryRepository<T>;\n\n  constructor(repository: InMemoryRepository<T>) {\n    this.repository = repository;\n  }\n\n  public getAll(): T[] {\n    return this.repository.getAll();\n  }\n\n  public save(data: T): void {\n    this.repository.save(data);\n  }\n\n  public update(id: number, data: T): void {\n    this.repository.update(id, data);\n  }\n\n  public delete(id: number): void {\n    this.repository.delete(id);\n  }\n}\n\n// Example usage\nconst repository: InMemoryRepository<{ id: number; name: string }> = new InMemoryRepository();\nconst service: Service<{ id: number; name: string }> = new Service(repository);\n\nrepository.save({ id: 1, name: 'John' });\n\nconsole.log(service.getAll());\nservice.update(1, { id: 1, name: 'Jane' });\nconsole.log(service.getAll());\nservice.delete(1);\nconsole.log(service.getAll());\n```\n"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

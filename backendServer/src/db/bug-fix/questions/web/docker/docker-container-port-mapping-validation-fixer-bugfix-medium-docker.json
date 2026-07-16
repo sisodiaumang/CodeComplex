@@ -1,0 +1,136 @@
+{
+  "title": "DOCKER Container Port Mapping Validation Fixer",
+  "subCategory": "Docker port mapping",
+  "statement": {
+    "markdown": "Write a function to validate Docker container port mappings in a Compose file. The function should take a string representing the Compose file and return `true` if the port mappings are valid and `false` otherwise. Port mappings are valid if each port is unique within a service and all ports are in the range 1-65535.",
+    "inputFormat": "A string representing the Compose file in YAML format.",
+    "outputFormat": "A boolean indicating whether the port mappings are valid.",
+    "notes": "The function should handle cases where a service does not have any port mappings.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Maximum number of services in the Compose file"
+      }
+    ],
+    "examples": [
+      {
+        "input": "version: '3'\nservices:\n  web:\n    ports:\n      - '80:80'\n      - '443:443'\n",
+        "output": "true",
+        "explanation": "The port mappings are valid because each port is unique within the service and all ports are in the range 1-65535."
+      },
+      {
+        "input": "version: '3'\nservices:\n  web:\n    ports:\n      - '80:80'\n      - '80:443'\n",
+        "output": "false",
+        "explanation": "The port mappings are invalid because port 80 is used twice within the service."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DOCKER"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "docker"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Split the Compose file into lines and iterate over each line to extract the service name and port mappings."
+    }
+  ],
+  "editorial": {
+    "title": "DOCKER Container Port Mapping Validation Fixer Editorial",
+    "intuition": "The correct approach is to iterate over each service in the Compose file and check if the port mappings are unique within the service.",
+    "bruteForce": "A brute force approach would be to store all port mappings in a set and check if the size of the set is equal to the number of port mappings.",
+    "betterSolution": "",
+    "optimalSolution": "Create a dictionary to store the port mappings for each service. Then, iterate over each service and check if the port mappings are unique. If a duplicate port mapping is found, return `false`. Otherwise, return `true`.",
+    "proofOfCorrectness": "The proof of correctness is that the function checks for uniqueness of port mappings within each service and checks if all ports are in the range 1-65535.",
+    "dryRun": "See the solutions section for a step-by-step example run.",
+    "commonMistakes": [
+      "Not checking for uniqueness of port mappings within each service.",
+      "Not checking if all ports are in the range 1-65535."
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "function validateComposeFile(composeFile) {\n  // Your code here\n}\n",
+    "python": "class Solution:\n  def __init__(self):\n    pass\n  def validate_compose_file(self, compose_file):\n    # Your code here"
+  },
+  "buggyStarterCode": {
+    "javascript": "function validateComposeFile(composeFile) {\n  const lines = composeFile.split('\\n');\n  const portMappings = {};\n  for (const line of lines) {\n    if (line.startsWith('ports:')) {\n      const service = line.split(':')[1].trim();\n      const ports = line.split(':')[2].split(',').map(port => port.trim());\n      for (const port of ports) {\n        const [hostPort, containerPort] = port.split(':');\n        if (portMappings[service] && portMappings[service].includes(hostPort)) {\n          return false;\n        }\n        if (isNaN(parseInt(hostPort)) || isNaN(parseInt(containerPort))) {\n          return false;\n        }\n        if (parseInt(hostPort) < 1 || parseInt(hostPort) > 65535 || parseInt(containerPort) < 1 || parseInt(containerPort) > 65535) {\n          return false;\n        }\n        portMappings[service].push(hostPort);\n      }\n    }\n  }\n  return true;\n}\n",
+    "python": "class Solution:\n  def __init__(self):\n    pass\n  def validate_compose_file(self, compose_file):\n    lines = compose_file.split('\\n')\n    port_mappings = {}\n    for line in lines:\n      if line.startswith('ports:'):\n        service = line.split(':')[1].strip()\n        ports = line.split(':')[2].split(',')\n        for port in ports:\n          host_port, container_port = port.split(':')\n          if service in port_mappings and host_port in port_mappings[service]:\n            return False\n          if not host_port.isdigit() or not container_port.isdigit():\n            return False\n          if int(host_port) < 1 or int(host_port) > 65535 or int(container_port) < 1 or int(container_port) > 65535:\n            return False\n          port_mappings[service].append(host_port)\n    return True"
+  },
+  "functionSignature": {
+    "javascript": "var validateComposeFile = function(composeFile) {",
+    "python": "def validate_compose_file(self, compose_file: str) -> bool:"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction validateComposeFile(composeFile) {\n  const lines = composeFile.split('\\n');\n  const portMappings = {};\n  for (const line of lines) {\n    if (line.startsWith('ports:')) {\n      const service = line.split(':')[1].trim();\n      const ports = line.split(':')[2].split(',').map(port => port.trim());\n      for (const port of ports) {\n        const [hostPort, containerPort] = port.split(':');\n        if (portMappings[service] && portMappings[service].includes(hostPort)) {\n          return false;\n        }\n        if (isNaN(parseInt(hostPort)) || isNaN(parseInt(containerPort))) {\n          return false;\n        }\n        if (parseInt(hostPort) < 1 || parseInt(hostPort) > 65535 || parseInt(containerPort) < 1 || parseInt(containerPort) > 65535) {\n          return false;\n        }\n        portMappings[service].push(hostPort);\n      }\n    }\n  }\n  return true;\n}\n",
+    "python": "class Solution:\n  def validate_compose_file(self, compose_file: str) -> bool:\n    lines = compose_file.split('\\n')\n    port_mappings = {}\n    for line in lines:\n      if line.startswith('ports:'):\n        service = line.split(':')[1].strip()\n        ports = line.split(':')[2].split(',')\n        for port in ports:\n          host_port, container_port = port.split(':')\n          if service in port_mappings and host_port in port_mappings[service]:\n            return False\n          if not host_port.isdigit() or not container_port.isdigit():\n            return False\n          if int(host_port) < 1 or int(host_port) > 65535 or int(container_port) < 1 or int(container_port) > 65535:\n            return False\n          port_mappings[service].append(host_port)\n    return True"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "version: '3'\nservices:\n  web:\n    ports:\n      - '80:80'\n      - '443:443'\n",
+      "output": "true",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "version: '3'\nservices:\n  web:\n    ports:\n      - '80:80'\n      - '80:443'\n",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "9958fcbb44a4417c79e0f807",
+  "slug": "docker-container-port-mapping-validation-fixer-bugfix-medium-docker",
+  "mode": "bug_fix",
+  "category": "DOCKER",
+  "difficulty": "Medium"
+}

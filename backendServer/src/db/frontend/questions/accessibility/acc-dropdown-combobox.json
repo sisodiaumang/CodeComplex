@@ -1,0 +1,52 @@
+{
+  "_id": "e4dc3a2ddce2b1aa1d0acbc0",
+  "title": "Accessible Dropdown Menu",
+  "slug": "acc-dropdown-combobox",
+  "difficulty": "Medium",
+  "topics": [
+    "ACCESSIBILITY"
+  ],
+  "statement": {
+    "markdown": "## Accessible Dropdown Menu\n\nBuild a dropdown combobox supporting keyboard arrow key controls.\n\n### Requirements:\n1. **Aria Attributes**: Set wrapper to display correct roles like `aria-expanded` and role state tags.\n2. **Arrow Key Navigation**: While open, `ArrowDown` and `ArrowUp` keys navigate active list items highlight indexes. Pressing `Enter` selects active highlight option.\n3. **Escape to close**: Pressing `Escape` key closes active dropdown panel, keeping focus on trigger button."
+  },
+  "constraints": [
+    "Must support complete keyboard scrolling behaviors through focus indices",
+    "Active selection element must gain visual focused state indicators"
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "html": "<div class=\"p-6 bg-slate-900 min-h-[300px] flex items-center justify-center font-sans text-white relative\">\n  <div class=\"w-64 relative\">\n    <button id=\"combo-btn\" aria-haspopup=\"listbox\" aria-expanded=\"false\" class=\"w-full flex items-center justify-between px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg focus:outline-none focus:border-indigo-500 font-medium\">\n      <span>Select Option</span>\n      <svg class=\"w-4 h-4 text-slate-400\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M19 9l-7 7-7-7\" /></svg>\n    </button>\n    <ul id=\"combo-list\" role=\"listbox\" class=\"absolute w-full mt-1.5 bg-slate-950 border border-slate-700 rounded-lg shadow-xl hidden overflow-hidden z-20\">\n      <li role=\"option\" tabindex=\"-1\" class=\"px-4 py-2 text-sm text-slate-300 hover:bg-slate-800 cursor-pointer select-none\">Option A</li>\n      <li role=\"option\" tabindex=\"-1\" class=\"px-4 py-2 text-sm text-slate-300 hover:bg-slate-800 cursor-pointer select-none\">Option B</li>\n      <li role=\"option\" tabindex=\"-1\" class=\"px-4 py-2 text-sm text-slate-300 hover:bg-slate-800 cursor-pointer select-none\">Option C</li>\n    </ul>\n  </div>\n</div>",
+    "css": "",
+    "javascript": "const btn = document.getElementById('combo-btn');\nconst list = document.getElementById('combo-list');\nconst options = Array.from(list.querySelectorAll('li'));\n\n// Implement combobox click toggle, arrow-key navigation (Up/Down), Enter selection, and Escape key listeners here\n"
+  },
+  "gradingCriteria": [
+    {
+      "id": "keyboard_navigation",
+      "description": "Verify ArrowUp and ArrowDown navigate menu items, and Enter selects highlighted items.",
+      "weight": 60
+    },
+    {
+      "id": "aria_attributes",
+      "description": "Verify aria-expanded updates dynamically to true/false states.",
+      "weight": 40
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "html",
+      "css",
+      "javascript"
+    ],
+    "referenceSolution": "const btn = document.getElementById('combo-btn');\nconst list = document.getElementById('combo-list');\nconst options = Array.from(list.querySelectorAll('li'));\n\nlet isOpen = false;\nlet activeIndex = -1;\n\nfunction setOpen(val) {\n  isOpen = val;\n  btn.setAttribute('aria-expanded', val.toString());\n  list.classList.toggle('hidden', !val);\n  if (!val) {\n    activeIndex = -1;\n    options.forEach(opt => opt.classList.remove('bg-indigo-600', 'text-white'));\n  }\n}\n\nbtn.addEventListener('click', () => {\n  setOpen(!isOpen);\n});\n\ndocument.addEventListener('keydown', (e) => {\n  if (!isOpen) return;\n\n  if (e.key === 'Escape') {\n    setOpen(false);\n    btn.focus();\n  } else if (e.key === 'ArrowDown') {\n    e.preventDefault();\n    activeIndex = (activeIndex + 1) % options.length;\n    highlightOption();\n  } else if (e.key === 'ArrowUp') {\n    e.preventDefault();\n    activeIndex = (activeIndex - 1 + options.length) % options.length;\n    highlightOption();\n  } else if (e.key === 'Enter') {\n    if (activeIndex >= 0) {\n      e.preventDefault();\n      selectOption(activeIndex);\n    }\n  }\n});\n\nfunction highlightOption() {\n  options.forEach((opt, idx) => {\n    const active = idx === activeIndex;\n    opt.classList.toggle('bg-indigo-600', active);\n    opt.classList.toggle('text-white', active);\n  });\n}\n\nfunction selectOption(index) {\n  btn.querySelector('span').textContent = options[index].textContent;\n  setOpen(false);\n  btn.focus();\n}\n\noptions.forEach((opt, index) => {\n  opt.addEventListener('click', () => {\n    selectOption(index);\n  });\n});"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

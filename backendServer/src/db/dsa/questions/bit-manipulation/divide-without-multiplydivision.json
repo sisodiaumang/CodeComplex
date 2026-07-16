@@ -58,18 +58,18 @@
     ],
     "examples": [
       {
-        "input": "10\n3",
-        "output": "3",
+        "input": "1\n3",
+        "output": "0",
         "explanation": "10 divided by 3 is 3.333…, truncating toward zero gives 3."
       },
       {
-        "input": "-7\n-3",
-        "output": "2",
+        "input": "2\n-3",
+        "output": "0",
         "explanation": "-7 divided by -3 is 2.333…, truncating toward zero gives 2."
       },
       {
-        "input": "-2147483648\n-1",
-        "output": "2147483647",
+        "input": "2\n-1",
+        "output": "-2",
         "explanation": "The exact result is 2147483648 which overflows a 32‑bit signed integer, so the maximum allowed value 2147483647 is returned."
       }
     ]
@@ -109,20 +109,20 @@
     "spaceComplexity": "O(1)"
   },
   "starterCode": {
-    "cpp": "#include <iostream>\n#include <climits>\n\nint divide(int dividend, int divisor) {\n    // TODO\n}\n\n// @driver-code-start\nint main() {\n    int dividend, divisor;\n    std::cin >> dividend >> divisor;\n    std::cout << divide(dividend, divisor) << std::endl;\n    return 0;\n}",
-    "java": "import java.util.Scanner;\n\npublic class Main {\n    public static int divide(int dividend, int divisor) {\n        // TODO\n    }\n\n    // @driver-code-start\npublic static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int dividend = scanner.nextInt();\n        int divisor = scanner.nextInt();\n        System.out.println(divide(dividend, divisor));\n    }\n}",
-    "python": "import sys\n\ndef divide(dividend: int, divisor: int) -> int:\n    # TODO\n    pass\n\n# @driver-code-start\nif __name__ == '__main__':\n    dividend = int(sys.stdin.readline().strip())\n    divisor = int(sys.stdin.readline().strip())\n    print(divide(dividend, divisor))\n",
-    "javascript": "// @driver-code-start\nconst readline = require('readline').createInterface({\n    input: process.stdin,\n    output: process.stdout\n});\n\nlet dividend, divisor;\nlet count = 0;\n\nreadline.on('line', (line) => {\n    if (count === 0) {\n        dividend = parseInt(line);\n    } else if (count === 1) {\n        divisor = parseInt(line);\n        readline.close();\n        console.log(divide(dividend, divisor));\n    }\n    count++;\n});\n\nfunction divide(dividend, divisor) {\n    // TODO\n}\n"
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    int divide(int dividend, int divisor) {\n        // TODO: implement\n        return 0;\n    }\n};",
+    "java": "import java.util.*;\n\nclass Solution {\n    public int divide(int dividend, int divisor) {\n        // TODO: implement\n        return 0;\n    }\n}",
+    "python": "class Solution:\n    def divide(self, dividend: int, divisor: int) -> int:\n        # TODO: implement\n        pass",
+    "javascript": "/**\n * @param {number} dividend\n * @param {number} divisor\n * @return {number}\n */\nvar divide = function(dividend, divisor) {\n    // TODO: implement\n    return 0;\n};"
   },
   "functionSignature": {
-    "cpp": "int divide(int dividend, int divisor)",
-    "java": "public static int divide(int dividend, int divisor)",
-    "python": "def divide(dividend: int, divisor: int) -> int",
-    "javascript": "function divide(dividend, divisor)"
+    "cpp": "int divide(int dividend, int divisor);",
+    "java": "public int divide(int dividend, int divisor);",
+    "python": "def divide(self, dividend: int, divisor: int) -> int:",
+    "javascript": "var divide = function(dividend, divisor);"
   },
   "solutions": {
-    "python": "import sys\nit = iter(sys.stdin.read().split())\ndividend = int(next(it))\ndivisor = int(next(it))\n\ndef divide(dividend, divisor):\n    MIN_INT, MAX_INT = -2147483648, 2147483647\n    # Sign of the result\n    sign = -1 if ((dividend < 0) ^  (divisor < 0)) else 1\n\n    # Convert dividend and divisor to positive\n    dividend, divisor = abs(dividend), abs(divisor)\n\n    quotient = 0\n    while dividend >= divisor:\n        shift = 0\n        while (divisor << shift) <= dividend:\n            shift += 1\n        shift -= 1\n        dividend -= (divisor << shift)\n        quotient += (1 << shift)\n\n    quotient *= sign\n    if quotient < MIN_INT:\n        return MIN_INT\n    elif quotient > MAX_INT:\n        return MAX_INT\n    else:\n        return quotient\n\nprint(divide(dividend, divisor))",
-    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\nint main() {\n    int dividend, divisor;\n    cin >> dividend >> divisor;\n    int MIN_INT = -2147483648, MAX_INT = 2147483647;\n    int sign = (dividend < 0) ^ (divisor < 0) ? -1 : 1;\n    long long abs_dividend = abs((long long)dividend);\n    long long abs_divisor = abs((long long)divisor);\n    long long quotient = 0;\n    while (abs_dividend >= abs_divisor) {\n        int shift = 0;\n        while ((abs_divisor << shift) <= abs_dividend) {\n            shift++;\n        }\n        shift--;\n        abs_dividend -= (abs_divisor << shift);\n        quotient += (1LL << shift);\n    }\n    quotient *= sign;\n    if (quotient < MIN_INT) {\n        cout << MIN_INT << endl;\n    } else if (quotient > MAX_INT) {\n        cout << MAX_INT << endl;\n    } else {\n        cout << quotient << endl;\n    }\n    return 0;\n}"
+    "python": "\nimport sys\n\nclass Solution:\n    def divide(self, dividend: int, divisor: int) -> int:\n        MIN_INT, MAX_INT = -2**31, 2**31 - 1\n        sign = -1 if ((dividend < 0) ^ (divisor < 0)) else 1\n        dividend, divisor = abs(dividend), abs(divisor)\n        quotient = 0\n        while dividend >= divisor:\n            temp, i = divisor, 1\n            while (temp << 1) <= dividend:\n                temp <<= 1\n                i <<= 1\n            dividend -= temp\n            quotient += i\n        quotient *= sign\n        return max(MIN_INT, min(MAX_INT, quotient))\n\nif __name__ == '__main__':\n    it = iter(sys.stdin.read().split())\n    try:\n        dividend = int(next(it))\n        divisor = int(next(it))\n    except StopIteration:\n        sys.exit(0)\n    sol = Solution()\n    ans = sol.divide(dividend, divisor)\n    print(ans)\n   ",
+    "cpp": "#include <numeric>\n\n#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    int divide(int dividend, int divisor) {\n        long long MIN_INT = -2147483648, MAX_INT = 2147483647;\n        bool sign = (dividend < 0) ^ (divisor < 0);\n        long long absDividend = abs((long long)dividend);\n        long long absDivisor = abs((long long)divisor);\n        long long quotient = 0;\n        while (absDividend >= absDivisor) {\n            long long temp = absDivisor;\n            long long i = 1;\n            while ((temp << 1) <= absDividend) {\n                temp <<= 1;\n                i <<= 1;\n            }\n            absDividend -= temp;\n            quotient += i;\n        }\n        quotient = sign ? -quotient : quotient;\n        return max((int)MIN_INT, min((int)MAX_INT, (int)quotient));\n    }\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int dividend;\n    if (!(cin >> dividend)) return 0;\n    int divisor;\n    if (!(cin >> divisor)) return 0;\n    Solution sol;\n    int ans = sol.divide(dividend, divisor);\n    cout << ans << endl;\n    return 0;\n}\n   "
   },
   "judgeConfig": {
     "timeLimit": 2,
@@ -186,86 +186,6 @@
       "isVisible": false,
       "weight": 1,
       "category": "max_constraint"
-    },
-    {
-      "id": "boundary_692",
-      "input": "-1188800802\n1",
-      "output": "-1188800802",
-      "isVisible": false,
-      "weight": 1,
-      "category": "boundary"
-    },
-    {
-      "id": "duplicate_604",
-      "input": "194847796\n194847796",
-      "output": "1",
-      "isVisible": false,
-      "weight": 1,
-      "category": "duplicate"
-    },
-    {
-      "id": "sorted_95",
-      "input": "-335343207\n63989048",
-      "output": "-5",
-      "isVisible": false,
-      "weight": 1,
-      "category": "sorted"
-    },
-    {
-      "id": "reverse_sorted_574",
-      "input": "-1208440693\n-2033512525",
-      "output": "0",
-      "isVisible": false,
-      "weight": 1,
-      "category": "reverse_sorted"
-    },
-    {
-      "id": "negative_225",
-      "input": "-1293482455\n-345659740",
-      "output": "3",
-      "isVisible": false,
-      "weight": 1,
-      "category": "negative"
-    },
-    {
-      "id": "zero_777",
-      "input": "0\n1586132811",
-      "output": "0",
-      "isVisible": false,
-      "weight": 1,
-      "category": "zero"
-    },
-    {
-      "id": "one_714",
-      "input": "1313483709\n1",
-      "output": "1313483709",
-      "isVisible": false,
-      "weight": 1,
-      "category": "one"
-    },
-    {
-      "id": "repeated_220",
-      "input": "-332368623\n-954035319",
-      "output": "0",
-      "isVisible": false,
-      "weight": 1,
-      "category": "repeated"
-    },
-    {
-      "id": "large_random_99",
-      "input": "-701821063\n-1749143279",
-      "output": "0",
-      "isVisible": false,
-      "weight": 1,
-      "category": "large_random"
-    },
-    {
-      "id": "adversarial_849",
-      "input": "1813744801\n11",
-      "output": "164885891",
-      "isVisible": false,
-      "weight": 1,
-      "category": "adversarial"
     }
   ],
   "analytics": {

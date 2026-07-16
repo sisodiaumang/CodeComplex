@@ -70,13 +70,13 @@
     ],
     "examples": [
       {
-        "input": "4\n10 1 2 7 6 1 5\n8",
-        "output": "0",
+        "input": "7\n10 1 2 7 6 1 5\n8",
+        "output": "4\r\n1 1 6\r\n1 2 5\r\n1 7\r\n2 6",
         "explanation": "Combinations that sum up to 8: 1 + 1 + 6 = 8, 1 + 2 + 5 = 8."
       },
       {
-        "input": "4\n2 5 2 1 2\n5",
-        "output": "1\r\n2",
+        "input": "5\n2 5 2 1 2\n5",
+        "output": "2\r\n1 2 2\r\n5",
         "explanation": "Combinations that sum up to 5: 1 + 2 + 2 = 5, 5."
       }
     ]
@@ -84,59 +84,58 @@
   "hints": [
     {
       "order": 1,
-      "text": "Consider using a set to store unique candidate numbers and a hash map to store their indices in the original array."
+      "text": "To solve this problem, you should start by understanding the constraints and requirements. You need to find all unique combinations of candidate numbers that sum up to the target number, with each number in the candidates list used only once in a combination."
     },
     {
       "order": 2,
-      "text": "Initialize an empty list to store the combinations and a hash map to store the indices of used candidates."
+      "text": "Since the same number can exist multiple times in the candidates list but only one can be used in a combination, you will need to handle duplicates. Sorting the candidates list can help in identifying and skipping duplicate combinations."
     },
     {
       "order": 3,
-      "text": "Iterate through the candidates and for each candidate, iterate through the combinations list. If the sum is equal to the target, append the candidate to the combinations list and update the hash map with the candidate's index."
+      "text": "A suitable approach for this problem involves using a backtracking algorithm. This algorithm will recursively build combinations of candidate numbers, ensuring that each number is used only once and that the sum of the numbers in the combination does not exceed the target."
     },
     {
       "order": 4,
-      "text": "If the sum is greater than the target, remove all combinations from the hash map and reset the combinations list."
+      "text": "In the backtracking process, you will need to keep track of the current combination of numbers and their sum. When the sum equals the target, you have found a valid combination. If the sum exceeds the target, you should backtrack and explore other combinations by changing the last added number or removing it if it's the only option left."
     },
     {
       "order": 5,
-      "text": "If the sum is less than the target, continue iterating through the candidates."
+      "text": "To efficiently handle duplicates and avoid redundant combinations, consider implementing a mechanism to skip over duplicate numbers during the backtracking process. This can be achieved by checking if the current number is the same as the previous one and skipping it if they are the same and the previous one has not been used yet."
     }
   ],
   "editorial": {
-    "title": "Combination Sum II: A Tale of Two Approaches",
-    "intuition": "The problem requires finding all unique combinations of candidates that sum up to a target value, with the added constraint that each candidate can only be used once. A brute force approach would involve generating all possible combinations and checking their sums, but this is inefficient. A key observation is that sorting the candidates and using a backtracking approach with a twist (skipping duplicates) can unlock an optimal solution.",
-    "bruteForce": "A brute force approach would involve generating all possible combinations of candidates and checking if their sum equals the target. This approach is correct but slow, with a time complexity of O(N*2^N) and a space complexity of O(N*2^N), as referenced. However, it's impractical for large inputs due to its exponential time and space requirements.",
-    "betterSolution": "The optimal approach involves sorting the candidates first and then using a backtracking strategy. The backtrack function takes three parameters: the remaining sum, the current combination, and a starting index. It explores all possible combinations by adding candidates to the current combination and recursively calling itself with the updated remaining sum and combination.",
-    "optimalSolution": "The optimal solution builds upon the backtracking approach by adding a crucial optimization: skipping duplicate candidates. This is achieved by checking if the current candidate is the same as the previous one and skipping it if they are the same. This optimization ensures that duplicate combinations are not generated, significantly improving the efficiency of the algorithm.",
-    "proofOfCorrectness": "The correctness of the optimal solution can be proven by observing that it explores all possible combinations of candidates without generating duplicates. The sorting step ensures that duplicate candidates are adjacent, and the skipping optimization ensures that only one of each duplicate candidate is considered. The backtracking approach ensures that all possible combinations are explored. Therefore, the optimal solution is correct and efficient.",
-    "dryRun": "A dry run with a sample input (e.g., N = 4, candidates = [10,1,2,7,6,1,5], target = 8) helps verify the correctness of the optimal solution. The expected output should be all unique combinations that sum up to the target, without duplicates.",
+    "title": "Combination Sum II",
+    "intuition": "The problem requires finding all unique combinations in the given candidates array that sum up to the target. A brute force approach would involve generating all possible combinations and checking their sums, but this is inefficient due to the large number of possible combinations.",
+    "bruteForce": "The brute force approach is correct but slow because it generates all possible combinations of the candidates array, resulting in a time complexity of O(2^n), where n is the number of candidates. This is because each candidate can either be included or excluded from a combination, leading to 2^n possible combinations.",
+    "betterSolution": "A better solution involves sorting the candidates array and using a backtracking approach to generate combinations. This approach skips duplicate combinations by only considering each candidate once and pruning branches that exceed the target sum.",
+    "optimalSolution": "The optimal solution involves using a backtracking approach with pruning to generate combinations. By sorting the candidates array and skipping duplicate combinations, the solution avoids generating redundant combinations and reduces the time complexity. The use of a recursive backtracking function allows the solution to efficiently explore all possible combinations.",
+    "proofOfCorrectness": "The correctness of the optimal solution can be proven by showing that it generates all unique combinations that sum up to the target. The backtracking approach ensures that all possible combinations are explored, and the pruning step ensures that only valid combinations are generated. The sorting step ensures that duplicate combinations are skipped, resulting in a set of unique combinations.",
+    "dryRun": "A dry run of the optimal solution involves initializing the candidates array and target sum, and then calling the recursive backtracking function to generate combinations. The function will recursively explore all possible combinations, pruning branches that exceed the target sum and skipping duplicate combinations.",
     "commonMistakes": [
-      "Not sorting the candidates before applying the backtracking approach",
-      "Failing to skip duplicate candidates, leading to duplicate combinations",
-      "Not properly handling the base cases for the backtracking approach (e.g., when the remaining sum is 0 or negative)",
-      "Not using a efficient data structure to store the result",
-      "Not considering the constraints on the input values (e.g., N, candidate values, target value)",
-      "Not verifying the correctness of the solution with sample inputs"
+      "Not sorting the candidates array, leading to duplicate combinations",
+      "Not pruning branches that exceed the target sum, leading to inefficient exploration",
+      "Not skipping duplicate combinations, leading to redundant combinations",
+      "Not using a recursive backtracking approach, leading to inefficient exploration",
+      "Not initializing the backtracking function correctly, leading to incorrect results"
     ],
     "timeComplexity": "O(2^n)",
     "spaceComplexity": "O(n)"
   },
   "starterCode": {
-    "cpp": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nvoid combinationSum2(vector<int>& candidates, int target, vector<vector<int>>& res, vector<int>& cur, int start) {\n    combinationSum2(candidates, target, res, cur, start);: implement\n    return ;\n}\n\n\n\ncombinationSum2(candidates, target, res, cur, start);\n\n// @driver-code-start\nint main() {\n    int N;\n    cin >> N;\n    vector<int> candidates(N);\n    for (int i = 0; i < N; i++) {\n        cin >> candidates[i];\n    }\n    int target;\n    cin >> target;\n    combinationSum2(candidates, target, res, cur, start);\n    return 0;\n}",
-    "java": "import java.util.*;\nimport java.io.*;\npublic class Main {\n    public static void combinationSum2(int[] candidates, int target, List<List<Integer>> res, List<Integer> cur, int start) {\n        combinationSum2(candidates, target, res, cur, start);: implement\n        return ;\n    }\n\n\n    // @driver-code-start\npublic static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int N = sc.nextInt();\n        int[] candidates = new int[N];\n        for (int i = 0; i < N; i++) {\n            candidates[i] = sc.nextInt();\n        }\n        int target = sc.nextInt();\n        combinationSum2(candidates, target, res, cur, start);\n    }\n}",
-    "python": "def combinationSum2(candidates, target, res, cur, start):\n    combinationSum2(candidates, target, res, cur, start): implement\n    pass\n\nimport sys\n\n# @driver-code-start\ndef main():\n    N = int(sys.stdin.readline().strip())\n    candidates = list(map(int, sys.stdin.readline().strip().split()))\n    target = int(sys.stdin.readline().strip())\n    combinationSum2(candidates, target, res, cur, start)\nif __name__ == '__main__':\n    main()\n",
-    "javascript": "// @driver-code-start\nconst readline = require('readline');\nconst rl = readline.createInterface({\n    input: process.stdin,\n    output: process.stdout\n});\nlet lines = [];\nrl.on('line', (line) => {\n    lines.push(line);\n});\nrl.on('close', () => {\n    let N = parseInt(lines[0]);\n    let candidates = lines[1].split(' ').map(Number);\n    let target = parseInt(lines[2]);\n    const solution = new Solution();\n        solution.combinationSum2(candidates, target, res, cur, start);\n});\n\n\nclass Solution {\n    combinationSum2(candidates, target, res, cur, start) {\n        // TODO: implement\n        return ;\n    }\n}\n"
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    vector<vector<int>> combinationSum2(vector<int>& candidates, int target) {\n        // TODO: implement\n        return {}; // placeholder return\n    }\n};",
+    "java": "import java.util.*;\n\nclass Solution {\n    public List<List<Integer>> combinationSum2(int[] candidates, int target) {\n        // TODO: implement\n        return new ArrayList<>(); // placeholder return\n    }\n}",
+    "python": "from typing import List\n\nclass Solution:\n    def combinationSum2(self, candidates: List[int], target: int) -> List[List[int]]:\n        # TODO: implement\n        pass",
+    "javascript": "/**\n * @param {number[]} candidates\n * @param {number} target\n * @return {number[][]}\n */\nvar combinationSum2 = function(candidates, target) {\n    // TODO: implement\n    return []; // placeholder return\n};"
   },
   "functionSignature": {
-    "cpp": "void combinationSum2(vector<int>& candidates, int target, vector<vector<int>>& res, vector<int>& cur, int start)",
-    "java": "public static void combinationSum2(int[] candidates, int target, List<List<Integer>> res, List<Integer> cur, int start)",
-    "python": "def combinationSum2(candidates, target, res, cur, start)",
-    "javascript": "function combinationSum2(candidates, target, res, cur, start)"
+    "cpp": "vector<vector<int>> combinationSum2(vector<int>& candidates, int target);",
+    "java": "public List<List<Integer>> combinationSum2(int[] candidates, int target);",
+    "python": "def combinationSum2(self, candidates: List[int], target: int) -> List[List[int]]:",
+    "javascript": "var combinationSum2 = function(candidates, target);"
   },
   "solutions": {
-    "python": "\nimport sys\nit = iter(sys.stdin.read().split())\nn = int(next(it))\nnums = [int(next(it)) for _ in range(n)]\ntarget = int(next(it))\nnums.sort()\nres = []\ndef dfs(nums, target, index, path):\n    if target < 0:\n        return\n    if target == 0:\n        res.append(path)\n        return\n    for i in range(index, len(nums)):\n        if i > index and nums[i] == nums[i-1]:\n            continue\n        dfs(nums, target-nums[i], i+1, path+[nums[i]])\ndfs(nums, target, 0, [])\nprint(len(res))\nfor x in res:\n    print(' '.join(map(str,x)))\n",
-    "cpp": "\n#include <bits/stdc++.h>\nusing namespace std;\nint main(){\n    int n;\n    if(!(cin >> n)) return 0;\n    vector<int> nums(n);\n    for(int i = 0; i < n; i++) cin >> nums[i];\n    int target; cin >> target;\n    sort(nums.begin(), nums.end());\n    vector<vector<int>> res;\n    function<void(int, int, vector<int>)> dfs = \n        [&] (int target, int index, vector<int> path) {\n            if (target < 0) return;\n            if (target == 0) {\n                res.push_back(path);\n                return;\n            }\n            for (int i = index; i < nums.size(); i++) {\n                if (i > index && nums[i] == nums[i-1]) continue;\n                path.push_back(nums[i]);\n                dfs(target-nums[i], i+1, path);\n                path.pop_back();\n            }\n        };\n    dfs(target, 0, {});\n    cout << res.size() << endl;\n    for (auto x : res) {\n        for (auto y : x) cout << y << ' ';\n        cout << endl;\n    }\n    return 0;\n}\n"
+    "python": "import sys\n\nclass Solution:\n    def combinationSum2(self, candidates: list[int], target: int) -> list[list[int]]:\n        candidates.sort()\n        res = []\n        def backtrack(start, target, path):\n            if target == 0:\n                res.append(list(path))\n                return\n            for i in range(start, len(candidates)):\n                if i > start and candidates[i] == candidates[i - 1]:\n                    continue\n                if candidates[i] > target:\n                    break\n                path.append(candidates[i])\n                backtrack(i + 1, target - candidates[i], path)\n                path.pop()\n        backtrack(0, target, [])\n        return res\n\nif __name__ == '__main__':\n    tokens = sys.stdin.read().split()\n    if not tokens:\n        sys.exit(0)\n    n = int(tokens[0])\n    candidates = [int(x) for x in tokens[1:1+n]]\n    target = int(tokens[1+n])\n    sol = Solution()\n    ans = sol.combinationSum2(candidates, target)\n    print(len(ans))\n    for row in ans:\n        print(\" \".join(map(str, row)))",
+    "cpp": "#include <numeric>\n#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\nprivate:\n    vector<vector<int>> res;\n    void backtrack(vector<int>& candidates, int target, int start, vector<int>& path) {\n        if (target == 0) {\n            res.push_back(path);\n            return;\n        }\n        for (int i = start; i < candidates.size(); i++) {\n            if (i > start && candidates[i] == candidates[i - 1]) continue;\n            if (candidates[i] > target) break;\n            path.push_back(candidates[i]);\n            backtrack(candidates, target - candidates[i], i + 1, path);\n            path.pop_back();\n        }\n    }\n\npublic:\n    vector<vector<int>> combinationSum2(vector<int>& candidates, int target) {\n        sort(candidates.begin(), candidates.end());\n        res.clear();\n        vector<int> path;\n        backtrack(candidates, target, 0, path);\n        return res;\n    }\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int n;\n    if (!(cin >> n)) return 0;\n    vector<int> candidates(n);\n    for (int i = 0; i < n; i++) cin >> candidates[i];\n    int target;\n    if (!(cin >> target)) return 0;\n    Solution sol;\n    vector<vector<int>> ans = sol.combinationSum2(candidates, target);\n    cout << ans.size() << \"\\n\";\n    for (const auto& row : ans) {\n        for (int i = 0; i < row.size(); i++) {\n            cout << row[i] << (i == row.size() - 1 ? \"\" : \" \");\n        }\n        cout << \"\\n\";\n    }\n    return 0;\n}"
   },
   "judgeConfig": {
     "timeLimit": 2,
@@ -162,124 +161,44 @@
   },
   "testCases": [
     {
-      "id": "sample_0",
-      "input": "4\n10 1 2 7 6 1 5\n8",
-      "output": "0",
+      "id": "sample_1",
+      "input": "7\n10 1 2 7 6 1 5\n8",
+      "output": "4\r\n1 1 6\r\n1 2 5\r\n1 7\r\n2 6",
       "isVisible": true,
       "weight": 1,
       "category": "sample"
     },
     {
-      "id": "sample_1",
-      "input": "4\n2 5 2 1 2\n5",
-      "output": "1\r\n2",
+      "id": "sample_2",
+      "input": "5\n2 5 2 1 2\n5",
+      "output": "2\r\n1 2 2\r\n5",
       "isVisible": false,
       "weight": 1,
       "category": "sample"
     },
     {
-      "id": "min_constraint_2",
-      "input": "1\n1\n1",
-      "output": "1\r\n1",
+      "id": "min_constraint_3",
+      "input": "1\n10\n10",
+      "output": "1\r\n10",
       "isVisible": false,
       "weight": 1,
       "category": "min_constraint"
     },
     {
-      "id": "max_constraint_3",
-      "input": "50\n100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100\n1000",
-      "output": "1\r\n100 100 100 100 100 100 100 100 100 100",
-      "isVisible": false,
-      "weight": 1,
-      "category": "max_constraint"
-    },
-    {
       "id": "boundary_4",
-      "input": "1\n4\n4",
-      "output": "1\r\n4",
+      "input": "5\n1 2 3 4 5\n15",
+      "output": "1\r\n1 2 3 4 5",
       "isVisible": false,
       "weight": 1,
       "category": "boundary"
     },
     {
-      "id": "boundary_5",
-      "input": "3\n32 29 18\n79",
-      "output": "1\r\n18 29 32",
-      "isVisible": false,
-      "weight": 1,
-      "category": "boundary"
-    },
-    {
-      "id": "duplicate_6",
-      "input": "5\n1 2 2 3 4\n5",
-      "output": "3\r\n1 2 2\r\n1 4\r\n2 3",
+      "id": "duplicate_5",
+      "input": "5\n5 5 5 5 5\n15",
+      "output": "1\r\n5 5 5",
       "isVisible": false,
       "weight": 1,
       "category": "duplicate"
-    },
-    {
-      "id": "sorted_7",
-      "input": "5\n1 2 3 4 5\n10",
-      "output": "3\r\n1 2 3 4\r\n1 4 5\r\n2 3 5",
-      "isVisible": false,
-      "weight": 1,
-      "category": "sorted"
-    },
-    {
-      "id": "reverse_sorted_8",
-      "input": "5\n5 4 3 2 1\n10",
-      "output": "3\r\n1 2 3 4\r\n1 4 5\r\n2 3 5",
-      "isVisible": false,
-      "weight": 1,
-      "category": "reverse_sorted"
-    },
-    {
-      "id": "zero_9",
-      "input": "5\n1 2 3 4 5\n0",
-      "output": "1",
-      "isVisible": false,
-      "weight": 1,
-      "category": "zero"
-    },
-    {
-      "id": "one_10",
-      "input": "1\n5\n5",
-      "output": "1\r\n5",
-      "isVisible": false,
-      "weight": 1,
-      "category": "one"
-    },
-    {
-      "id": "repeated_11",
-      "input": "5\n5 5 5 5 5\n25",
-      "output": "1\r\n5 5 5 5 5",
-      "isVisible": false,
-      "weight": 1,
-      "category": "repeated"
-    },
-    {
-      "id": "large_random_12",
-      "input": "11\n87 95 70 12 76 55 5 4 12 28 30\n518",
-      "output": "0",
-      "isVisible": false,
-      "weight": 1,
-      "category": "large_random"
-    },
-    {
-      "id": "large_random_13",
-      "input": "19\n4 72 26 92 84 90 70 54 29 58 76 36 1 98 21 90 55 44 36\n160",
-      "output": "41\r\n1 4 21 26 36 72\r\n1 4 21 36 44 54\r\n1 4 21 36 98\r\n1 4 21 44 90\r\n1 4 21 58 76\r\n1 4 29 36 36 54\r\n1 4 29 36 90\r\n1 4 29 54 72\r\n1 21 26 36 76\r\n1 21 26 54 58\r\n1 21 29 54 55\r\n1 21 36 44 58\r\n1 21 54 84\r\n1 29 36 36 58\r\n1 29 54 76\r\n1 29 58 72\r\n4 21 26 29 36 44\r\n4 21 26 54 55\r\n4 21 29 36 70\r\n4 21 36 44 55\r\n4 26 36 36 58\r\n4 26 54 76\r\n4 26 58 72\r\n4 29 36 36 55\r\n4 29 55 72\r\n4 36 36 84\r\n4 36 44 76\r\n4 44 54 58\r\n4 58 98\r\n4 72 84\r\n21 26 29 84\r\n21 26 55 58\r\n21 55 84\r\n26 36 44 54\r\n26 36 98\r\n26 44 90\r\n26 58 76\r\n29 55 76\r\n36 54 70\r\n70 90\r\n76 84",
-      "isVisible": false,
-      "weight": 1,
-      "category": "large_random"
-    },
-    {
-      "id": "large_random_14",
-      "input": "13\n98 44 14 12 49 13 46 45 78 34 6 94 59\n550",
-      "output": "0",
-      "isVisible": false,
-      "weight": 1,
-      "category": "large_random"
     }
   ],
   "analytics": {

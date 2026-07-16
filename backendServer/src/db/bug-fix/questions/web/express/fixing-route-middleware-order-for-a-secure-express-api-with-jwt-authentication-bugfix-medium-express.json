@@ -1,0 +1,138 @@
+{
+  "title": "Fixing Route Middleware Order for a Secure Express API with JWT Authentication",
+  "subCategory": "Authentication and Authorization",
+  "statement": {
+    "markdown": "In a secure Express API, authentication is typically done using a middleware stack. You have been given a buggy implementation of such a middleware stack. Your task is to fix the bug in the given code to ensure proper JWT authentication for all routes.",
+    "inputFormat": "The input will be a JSON object containing user credentials and a JWT token.",
+    "outputFormat": "The output should be a JSON object containing the user's information and a success message.",
+    "notes": "The middleware stack should authenticate the user before allowing access to the routes.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of routes"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"username\":\"john\",\"password\":\"12345\",\"token\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c\"}",
+        "output": "{\"username\":\"john\",\"password\":\"12345\",\"token\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c\"}",
+        "explanation": "Successful authentication"
+      },
+      {
+        "input": "{\"username\":\"john\"}",
+        "output": "{\"error\":\"Unauthorized\"}",
+        "explanation": "Unsuccessful authentication"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "EXPRESS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "express"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Check the order of the middleware stack."
+    },
+    {
+      "order": 2,
+      "text": "Verify the authentication logic."
+    }
+  ],
+  "editorial": {
+    "title": "Fixing Route Middleware Order for a Secure Express API with JWT Authentication",
+    "intuition": "The middleware stack should authenticate the user before allowing access to the routes.",
+    "bruteForce": "Check the order of the middleware stack and the authentication logic.",
+    "betterSolution": "Use a more secure method for authentication.",
+    "optimalSolution": "Use a library like `jsonwebtoken` to validate the JWT token.",
+    "proofOfCorrectness": "The middleware stack should authenticate the user before allowing access to the routes.",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Incorrect middleware order",
+      "Insufficient authentication logic"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "const express = require('express');\nconst jwt = require('jsonwebtoken');\n\nconst app = express();\nconst port = 3000;\n\napp.use(express.json());\n\n// Buggy middleware stack\napp.use((req, res, next) => {\n  if (req.body.token) {\n    const decoded = jwt.verify(req.body.token, 'secretkey');\n    req.user = decoded;\n  }\n  next();\n});\n\n// Route handler\napp.get('/', (req, res) => {\n  if (req.user) {\n    res.send({ username: req.user.username, password: req.user.password });\n  } else {\n    res.send({ error: 'Unauthorized' });\n  }\n});\n\napp.listen(port, () => {\n  console.log(`Server listening on port ${port}`);\n});"
+  },
+  "buggyStarterCode": {
+    "javascript": "const express = require('express');\nconst jwt = require('jsonwebtoken');\n\nconst app = express();\nconst port = 3000;\n\napp.use(express.json());\n\n// Buggy middleware stack\napp.use((req, res, next) => {\n  if (req.body.token) {\n    const decoded = jwt.verify(req.body.token, 'secretkey');\n    req.user = decoded;\n  } else {\n    req.user = { username: 'guest', password: 'guest' };\n  }\n  next();\n});\n\n// Route handler\napp.get('/', (req, res) => {\n  if (req.user) {\n    res.send({ username: req.user.username, password: req.user.password });\n  } else {\n    res.send({ error: 'Unauthorized' });\n  }\n});\n\napp.listen(port, () => {\n  console.log(`Server listening on port ${port}`);\n});",
+    "python": ""
+  },
+  "functionSignature": {
+    "javascript": "var solve = function(nums);",
+    "python": ""
+  },
+  "solutions": {
+    "javascript": "// TO DO: Fix the bug in the buggyStarterCode",
+    "python": ""
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"username\":\"john\",\"password\":\"12345\",\"token\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c\"}",
+      "output": "{\"username\":\"john\",\"password\":\"12345\",\"token\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c\"}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"username\":\"john\"}",
+      "output": "{\"error\":\"Unauthorized\"}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "9ceb1935dfcfaa7464a620b8",
+  "slug": "fixing-route-middleware-order-for-a-secure-express-api-with-jwt-authentication-bugfix-medium-express",
+  "mode": "bug_fix",
+  "category": "EXPRESS",
+  "difficulty": "Medium"
+}

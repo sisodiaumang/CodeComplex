@@ -1,0 +1,136 @@
+{
+  "title": "Fixing Inconsistent State Updates in a React Memoized Component",
+  "subCategory": "State Management",
+  "statement": {
+    "markdown": "You are given a React component that utilizes the `useMemo` hook to memoize its state. However, the component's state updates are not being reflected correctly due to an inconsistency in the memoization logic. Your task is to identify and fix the bug in the component's code.",
+    "inputFormat": "Input will be a JSON object containing a user's profile information.",
+    "outputFormat": "The output should be a JSON object with the updated user profile information.",
+    "notes": "The component should re-render whenever the user's profile information changes.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 5,
+        "description": "The number of properties in the user's profile information."
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"name\": \"John Doe\", \"age\": 30, \" occupation\": \"Developer\"}",
+        "output": "{\"name\": \"John Doe\", \"age\": 31, \" occupation\": \"Developer\"}",
+        "explanation": "The user's age has been incremented by 1."
+      },
+      {
+        "input": "{\"name\": \"Jane Doe\", \"age\": 25, \" occupation\": \"Designer\"}",
+        "output": "{\"name\": \"Jane Doe\", \"age\": 26, \" occupation\": \"Designer\"}",
+        "explanation": "The user's age has been incremented by 1."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 10,
+    "points": 30,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "REACT"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "react"
+    ],
+    "interviewFrequency": 1,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "The issue lies in the way the state is being updated."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial Solution",
+    "intuition": "The `useMemo` hook is not being updated correctly due to the way the state is being changed.",
+    "bruteForce": "The brute force approach would be to remove the memoization and update the state directly.",
+    "betterSolution": "A better solution would be to use the `useState` hook with the `useEffect` hook to update the state correctly.",
+    "optimalSolution": "The optimal solution is to use the `useState` hook with the `useEffect` hook to update the state correctly and re-render the component when the state changes.",
+    "proofOfCorrectness": "The proof of correctness lies in the fact that the `useState` hook with the `useEffect` hook ensures that the state is updated correctly and the component re-renders when the state changes.",
+    "dryRun": "A dry run would involve creating a sample React app and implementing the buggy code to see the issue firsthand.",
+    "commonMistakes": [
+      "Not using the `useState` hook with the `useEffect` hook.",
+      "Not updating the state correctly."
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "function UserProfile() { const [user, setUser] = useState({name: '', age: 0, occupation: ''}); const updateProfile = useMemo(() => { return () => { setUser({ name: user.name, age: user.age + 1, occupation: user.occupation }); } }, [user]); return () => { updateProfile(); } }",
+    "python": "class UserProfile: def __init__(self, user): self.user = user def update_profile(self): self.user = {'name': self.user['name'], 'age': self.user['age'] + 1, 'occupation': self.user['occupation']} def render(self): self.update_profile()"
+  },
+  "buggyStarterCode": {
+    "javascript": "function UserProfile() { const [user, setUser] = useState({name: '', age: 0, occupation: ''}); const updateProfile = useMemo(() => { return () => { setUser({ name: user.name, age: user.age + 1, occupation: user.occupation }); } }, [user]); return () => { updateProfile(); } }",
+    "python": "class UserProfile: def __init__(self, user): self.user = user def update_profile(self): self.user = {'name': self.user['name'], 'age': self.user['age'] + 1, 'occupation': self.user['occupation']} def render(self): self.update_profile()"
+  },
+  "functionSignature": {
+    "javascript": "function UserProfile() {",
+    "python": "class UserProfile: def __init__(self, user):"
+  },
+  "solutions": {
+    "javascript": "// Solution: const [user, setUser] = useState({name: '', age: 0, occupation: ''}); const updateProfile = useEffect(() => { setUser({ name: user.name, age: user.age + 1, occupation: user.occupation }); }, [user]);",
+    "python": "class UserProfile: def __init__(self, user): self.user = user def update_profile(self): self.user = {'name': self.user['name'], 'age': self.user['age'] + 1, 'occupation': self.user['occupation']} def render(self): self.update_profile()"
+  },
+  "judgeConfig": {
+    "timeLimit": 1,
+    "memoryLimit": 128,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"name\": \"John Doe\", \"age\": 30, \" occupation\": \"Developer\"}",
+      "output": "{\"name\": \"John Doe\", \"age\": 31, \" occupation\": \"Developer\"}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"name\": \"Jane Doe\", \"age\": 25, \" occupation\": \"Designer\"}",
+      "output": "{\"name\": \"Jane Doe\", \"age\": 26, \" occupation\": \"Designer\"}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "ffbf1f0d94b0d2ea710d13cf",
+  "slug": "fixing-inconsistent-state-updates-in-a-react-memoized-component-bugfix-easy-react",
+  "mode": "bug_fix",
+  "category": "REACT",
+  "difficulty": "Easy"
+}

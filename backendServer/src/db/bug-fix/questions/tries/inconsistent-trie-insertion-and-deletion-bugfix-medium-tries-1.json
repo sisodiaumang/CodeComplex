@@ -1,0 +1,147 @@
+{
+  "_id": "78c87c82a2b092ff338a5892",
+  "title": "Inconsistent Trie Insertion and Deletion",
+  "slug": "inconsistent-trie-insertion-and-deletion-bugfix-medium-tries-1",
+  "difficulty": "Medium",
+  "category": "DSA",
+  "subCategory": "TRIE",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "trie"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given a Trie data structure, implement a method to insert a word into the Trie. However, the method will incorrectly delete the word from the Trie during insertion. The bug is hidden in the implementation of the Trie node creation. The goal is to fix the bug and return the updated Trie.\nWrite a function to insert a word into a Trie, handling the case where the word is already present in the Trie. The function should return the updated Trie.\n",
+    "inputFormat": "The input will be provided in the function's parameters. The first parameter is the root of the Trie, and the second parameter is the word to be inserted.",
+    "outputFormat": "The function should return the updated Trie.",
+    "notes": "The Trie is represented as a node with children nodes for each character. The word to be inserted is a string of characters.",
+    "images": [],
+    "constraints": [],
+    "examples": [
+      {
+        "input": "root = [None, ['a']]\nword = 'apple'\n",
+        "output": "0",
+        "explanation": "Insert the word 'apple' into the Trie."
+      },
+      {
+        "input": "root = [None, ['apple']]\nword = 'apple'\n",
+        "output": "0",
+        "explanation": "Insert the word 'apple' into the Trie, and the word is already present."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text: Check the implementation of the Trie node creation."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach: The Trie node creation should only create a new node if the character does not exist in the Trie. If the character already exists, reuse the existing node.",
+    "bruteForce": "brute Force details.",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details: The optimal solution is to create a new node only if the character does not exist in the Trie. If the character already exists, reuse the existing node.",
+    "proofOfCorrectness": "Correctness proof: The correctness proof is based on the correct implementation of the Trie node creation.",
+    "dryRun": "Step-by-step example run: Create a new node for the first character 'a' and reuse the existing node for the second character 'a'.",
+    "commonMistakes": [],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    bool insert(vector<int>& nums) {\n        // TODO: implement\n        return false;\n    }\n};",
+    "java": "class Solution {\n    public boolean insert(int[] nums) {\n        // TODO: implement\n        return false;\n    }\n}",
+    "python": "class Solution:\n    def insert(self, nums: list[int]) -> bool:\n        # TODO: implement\n        pass",
+    "javascript": "var insert = function(nums) {\n    // TODO: implement\n    return false;\n};"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    bool insert(vector<int>& nums) {\n        // Buggy code\n        return false;\n    }\n};",
+    "java": "class Solution {\n    public boolean insert(int[] nums) {\n        // Buggy code\n        return false;\n    }\n}",
+    "python": "class TrieNode:\n    def __init__(self, char):\n        self.char = char\n        self.children = {'a':None,'b':None,'c':None}\n\ndef insert(root, word):\n    for char in word:\n        if char not in root.children:\n            new_node = TrieNode(char)\n            root.children[char] = new_node\n        else:\n            new_node = None # BUG: Delete the word from the Trie\n            root.children.pop(char)\n        root = new_node\n    return root",
+    "javascript": "class TrieNode {\n    constructor(char) {\n        this.char = char;\n        this.children = {'a':null,'b':null,'c':null};\n    }\n}\nfunction insert(root, word) {\n    for (let char of word) {\n        if (!Object.keys(root.children).includes(char)) {\n            let new_node = new TrieNode(char);\n            root.children[char] = new_node;\n        } else {\n            let new_node = null; // BUG: Delete the word from the Trie\n            root.children = Object.fromEntries(Object.keys(root.children).filter(key => key !== char).map(key => [key, root.children[key]]));\n        }\n        root = new_node;\n    }\n    return root;\n}"
+  },
+  "functionSignature": {
+    "cpp": "TrieNode* insert(TrieNode* root, string word);",
+    "java": "TrieNode insert(TrieNode root, String word);",
+    "python": "def insert(root, word):\n    \"\"\"\n    \n    \"\"\"\n    ...",
+    "javascript": "function insert(root, word) {\n    \"\"\"\n    \n    \"\"\"\n    ..."
+  },
+  "solutions": {
+    "python": "class TrieNode:\n    def __init__(self, char):\n        self.char = char\n        self.children = {}\n\n    def add_child(self, char):\n        self.children[char] = TrieNode(char)\n\n    def remove_child(self, char):\n        if char in self.children:\n            del self.children[char]\n\n    def has_child(self, char):\n        return char in self.children\n\nclass Trie:\n    def __init__(self):\n        self.root = TrieNode('')\n\n    def insert(self, word):\n        node = self.root\n        for char in word:\n            if char not in node.children:\n                node.add_child(char)\n            else:\n                pass # Don't delete the word from the Trie\n            node = node.children[char]\n        return self.root\n\nif __name__ == '__main__':\n    trie = Trie()\n    trie.insert('apple')\n    trie.insert('banana')\n    # Test the Trie\n    print(trie.root.char) # Should print ''\n    for char in 'apple':\n        print(trie.root.children[char].char) # Should print 'a', 'p', 'p', 'l', 'e'\n    print(trie.root.children['a'].has_child('a')) # Should print True\n",
+    "cpp": "class TrieNode {\npublic:\n    char char;\n    unordered_map<char, TrieNode*> children;\n\n    TrieNode(char c) : char(c) {}\n\n    void add_child(char c) {\n        children[c] = new TrieNode(c);\n    }\n\n    void remove_child(char c) {\n        if (children.find(c) != children.end()) {\n            delete children[c];\n            children.erase(c);\n        }\n    }\n\n    bool has_child(char c) {\n        return children.find(c) != children.end();\n    }\n};\n\nclass Trie {\npublic:\n    TrieNode* root;\n\n    Trie() : root(new TrieNode('')) {}\n\n    void insert(string word) {\n        TrieNode* node = root;\n        for (char c : word) {\n            if (node->children.find(c) == node->children.end()) {\n                node->add_child(c);\n            }\n            node = node->children[c];\n        }\n    }\n\n    ~Trie() {\n        delete root;\n    }\n};\n\nint main() {\n    Trie trie;\n    trie.insert('apple');\n    trie.insert('banana');\n    // Test the Trie\n    std::cout << trie.root->char << std::endl; // Should print ''\n    for (char c : 'apple') {\n        std::cout << trie.root->children[c]->char << std::endl; // Should print 'a', 'p', 'p', 'l', 'e'\n    }\n    std::cout << trie.root->children['a']->has_child('a') << std::endl; // Should print 1\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 3,
+    "memoryLimit": 128,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 150,
+    "partialScoring": true
+  },
+  "battleConfig": {
+    "enabled": false,
+    "ratingEnabled": false,
+    "timeBonus": false,
+    "maxBattleScore": 75,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "0",
+      "output": "0",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "0",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

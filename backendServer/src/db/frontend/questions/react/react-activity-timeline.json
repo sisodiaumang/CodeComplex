@@ -1,0 +1,53 @@
+{
+  "_id": "0a65f68365d84d02a1e621ec",
+  "title": "React Activity Timeline Feed",
+  "slug": "react-activity-timeline",
+  "difficulty": "Easy",
+  "topics": [
+    "REACT",
+    "REACT_ACTIVITY_TIMELINE"
+  ],
+  "statement": {
+    "markdown": "## React Activity Timeline Feed Component\n\nCreate a chronological Activity Timeline feed component for user dashboards.\n\n### Requirements:\n1. **Vertical Timeline Bar**: Draw a vertical gray timeline connector line connecting all event cards.\n2. **Event Categories**: Support styling distinct timeline nodes based on categories: `\"comment\"` (blue icon background), `\"action\"` (green icon background), and `\"alert\"` (yellow icon background).\n3. **Collapsible Details**: Clicking on an activity card collapses or expands detailed logs associated with it.\n4. **Relative Timestamps**: Highlight event timeline days with clean visual layout dates.\n"
+  },
+  "constraints": [
+    "Must support mobile responsive layout coordinates",
+    "Must utilize React hooks",
+    "Must use Tailwind CSS"
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "html": "",
+    "css": "",
+    "react": "import React, { useState } from 'react';\n\nexport default function ActivityTimeline({ activities }) {\n  // Implement collapsible activity feed timeline here\n  return null;\n}"
+  },
+  "gradingCriteria": [
+    {
+      "id": "functional_correctness",
+      "description": "Verify that the interactive props, callbacks, and element structures work cleanly.",
+      "weight": 60
+    },
+    {
+      "id": "code_cleanliness",
+      "description": "Verify state structure designs and clean Tailwind CSS layouts.",
+      "weight": 40
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "react",
+      "tailwind"
+    ],
+    "referenceSolution": "import React, { useState } from 'react';\n\nexport default function ActivityTimeline({ activities }) {\n  const [expandedId, setExpandedId] = useState(null);\n\n  const toggleExpand = (id) => {\n    setExpandedId(expandedId === id ? null : id);\n  };\n\n  const icons = {\n    comment: (\n      <svg className=\"w-4 h-4 text-blue-600\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path strokeLinecap=\"round\" strokeLinejoin=\"round\" strokeWidth={2.5} d=\"M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z\" /></svg>\n    ),\n    action: (\n      <svg className=\"w-4 h-4 text-green-600\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path strokeLinecap=\"round\" strokeLinejoin=\"round\" strokeWidth={2.5} d=\"M5 13l4 4L19 7\" /></svg>\n    ),\n    alert: (\n      <svg className=\"w-4 h-4 text-yellow-600\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path strokeLinecap=\"round\" strokeLinejoin=\"round\" strokeWidth={2.5} d=\"M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z\" /></svg>\n    )\n  };\n\n  const bgColors = {\n    comment: \"bg-blue-100\",\n    action: \"bg-green-100\",\n    alert: \"bg-yellow-100\"\n  };\n\n  return (\n    <div className=\"relative border-l border-gray-200 ml-6 pl-6 flex flex-col gap-6 max-w-md mx-auto py-10 font-sans\">\n      {activities.map((act) => {\n        const isExpanded = expandedId === act.id;\n        return (\n          <div key={act.id} className=\"relative\">\n            {/* Absolute Timeline Dot Icon */}\n            <span className={`absolute -left-[37px] top-0 flex items-center justify-center w-6 h-6 rounded-full border-2 border-white dark:border-gray-900 ${bgColors[act.category]}`}>\n              {icons[act.category]}\n            </span>\n\n            {/* Content card */}\n            <div\n              onClick={() => toggleExpand(act.id)}\n              className=\"cursor-pointer border border-gray-150 rounded-xl p-4 bg-white hover:bg-gray-50 transition shadow-xs\"\n            >\n              <div className=\"flex justify-between items-start\">\n                <span className=\"text-sm font-semibold text-gray-800\">{act.title}</span>\n                <span className=\"text-xs text-gray-400\">{act.time}</span>\n              </div>\n              <p className=\"text-xs text-gray-500 mt-1 leading-relaxed\">{act.description}</p>\n\n              {isExpanded && act.details && (\n                <div className=\"mt-3 pt-3 border-t border-gray-100 text-xs text-gray-600 bg-gray-50/50 p-2.5 rounded-lg animate-fade-in leading-relaxed\">\n                  {act.details}\n                </div>\n              )}\n            </div>\n          </div>\n        );\n      })}\n    </div>\n  );\n}"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

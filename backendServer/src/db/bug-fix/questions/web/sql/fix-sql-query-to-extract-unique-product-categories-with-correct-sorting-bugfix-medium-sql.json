@@ -1,0 +1,145 @@
+{
+  "title": "Fix SQL Query to Extract Unique Product Categories with Correct Sorting",
+  "subCategory": "SQL Query",
+  "statement": {
+    "markdown": "Write a SQL query that extracts the unique product categories from a table called `products`. The query should return the categories in descending order of their count and then in ascending order of their names. You can assume that the `products` table has a column called `category` that stores the product categories as strings.",
+    "inputFormat": "Table: products (category: string)",
+    "outputFormat": "List of unique categories sorted by count in descending order and then by name in ascending order",
+    "notes": "You can use the `GROUP BY` clause to group the products by category and the `ORDER BY` clause to sort the result. The `COUNT` aggregation function can be used to count the number of products in each category.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of rows in the products table"
+      }
+    ],
+    "examples": [
+      {
+        "input": "products: ['Electronics', 'Electronics', 'Fashion', 'Fashion', 'Fashion', 'Home', 'Home', 'Home', 'Home']",
+        "output": "['Fashion', 'Electronics', 'Home']",
+        "explanation": "The output is sorted by count in descending order (3 Home, 2 Electronics, 1 Fashion) and then by name in ascending order"
+      },
+      {
+        "input": "products: ['Electronics', 'Fashion', 'Fashion', 'Fashion', 'Fashion', 'Home', 'Home', 'Home']",
+        "output": "['Fashion', 'Electronics', 'Home']",
+        "explanation": "The output is sorted by count in descending order (4 Fashion, 2 Home, 1 Electronics) and then by name in ascending order"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "SQL"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "sql"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the `GROUP BY` clause to group the products by category"
+    },
+    {
+      "order": 2,
+      "text": "Use the `COUNT` aggregation function to count the number of products in each category"
+    },
+    {
+      "order": 3,
+      "text": "Use the `ORDER BY` clause to sort the result"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial Solution",
+    "intuition": "The key to this problem is to use the `GROUP BY` clause to group the products by category and the `COUNT` aggregation function to count the number of products in each category. Then, use the `ORDER BY` clause to sort the result.",
+    "bruteForce": "You can use a simple SQL query to extract the unique categories, but this will not give you the correct sorting.",
+    "betterSolution": "You can use the `GROUP BY` clause to group the products by category and the `COUNT` aggregation function to count the number of products in each category.",
+    "optimalSolution": "Then, use the `ORDER BY` clause to sort the result in descending order of the count and then in ascending order of the category name.",
+    "proofOfCorrectness": "The optimal solution is correct because it uses the `GROUP BY` clause to group the products by category, the `COUNT` aggregation function to count the number of products in each category, and the `ORDER BY` clause to sort the result.",
+    "dryRun": "Let's run the query on the example input: products: ['Electronics', 'Electronics', 'Fashion', 'Fashion', 'Fashion', 'Home', 'Home', 'Home', 'Home']",
+    "commonMistakes": [
+      "forgetting to use the `GROUP BY` clause",
+      "forgetting to use the `COUNT` aggregation function",
+      "forgetting to use the `ORDER BY` clause"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// Write a SQL query to extract the unique product categories from the products table",
+    "python": "class Solution:\n    def solve(self):\n        pass"
+  },
+  "buggyStarterCode": {
+    "javascript": "SELECT DISTINCT category FROM products ORDER BY category, COUNT(*)",
+    "python": "class Solution:\n    def solve(self):\n        return sorted(set(row[0] for row in self.conn.execute('SELECT DISTINCT category FROM products'))) \n                 sorted(key=lambda x: x[0])"
+  },
+  "functionSignature": {
+    "javascript": "var solve = function(nums);",
+    "python": "def solve(self, nums: list[int]) -> bool:"
+  },
+  "solutions": {
+    "javascript": "// Solution",
+    "python": "class Solution:\n    def solve(self):\n        self.conn = sqlite3.connect(':memory:');\n        self.conn.execute('CREATE TABLE products (category TEXT)');\n        self.conn.executemany('INSERT INTO products VALUES (?)', [('Electronics',), ('Electronics',), ('Fashion',), ('Fashion',), ('Fashion',), ('Home',), ('Home',), ('Home',), ('Home',)]);\n        result = list(self.conn.execute('SELECT DISTINCT category FROM products ORDER BY COUNT(*) DESC, category ASC'));\n        self.conn.close();\n        return [row[0] for row in result];"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "products: ['Electronics', 'Electronics', 'Fashion', 'Fashion', 'Fashion', 'Home', 'Home', 'Home', 'Home']",
+      "output": "['Fashion', 'Electronics', 'Home']",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "products: ['Electronics', 'Fashion', 'Fashion', 'Fashion', 'Fashion', 'Home', 'Home', 'Home']",
+      "output": "['Fashion', 'Electronics', 'Home']",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "e331aeb5af280c89fee27749",
+  "slug": "fix-sql-query-to-extract-unique-product-categories-with-correct-sorting-bugfix-medium-sql",
+  "mode": "bug_fix",
+  "category": "SQL",
+  "difficulty": "Medium"
+}

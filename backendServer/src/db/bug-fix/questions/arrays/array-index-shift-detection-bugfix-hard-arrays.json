@@ -1,0 +1,153 @@
+{
+  "_id": "80456e5c6ae48dad3c68a7f9",
+  "title": "Array Index Shift Detection",
+  "slug": "array-index-shift-detection-bugfix-hard-arrays",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "Two Pointers",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "array"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "You are given an array of integers. The array has been shifted by some number of positions. Your task is to determine the number of positions by which the array has been shifted.\n\nFor example, if the input array is `[9, 4, 1, 7, 3, 6, 5, 8, 2, 0]`, the original array is `0, 2, 3, 4, 5, 6, 7, 8, 9, 1`.\n\nYou are expected to write a function `solve` that takes a shifted array as input and returns the number of positions by which the array has been shifted.",
+    "inputFormat": "A single line containing n integers separated by spaces. The array has been shifted by some number of positions.",
+    "outputFormat": "A single integer representing the number of positions by which the array has been shifted.",
+    "notes": "The array has been shifted by some number of positions, which can be any integer from 1 to n-1.\n\nIf a shift of k positions results in the same array, then a shift of k+n, k+n+1, ..., k+2n-1 positions is equivalent to a shift of k positions.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "10\n1 10 2 9 3 8 4 7 5 6",
+        "output": "2",
+        "explanation": "The array [1, 10, 2, 9, 3, 8, 4, 7, 5, 6] has been shifted 2 positions from its original position."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Start by finding the index of the minimum element in the array."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial Solution for Array Index Shift Detection",
+    "intuition": "The correct approach is to find the index of the minimum element in the array.\n\nThe idea behind this is that after shifting the array, the minimum element will be at the correct position.",
+    "bruteForce": "A brute force approach would be to try all possible shifts and check if the resulting array is sorted.",
+    "betterSolution": "",
+    "optimalSolution": "Using a two-pointer approach, we can find the minimum element in the array and then iterate over the array using two pointers, one starting from the minimum element and one from the beginning of the array.\n\nThe distance between the two pointers will be the number of positions by which the array has been shifted.",
+    "proofOfCorrectness": "The proof of correctness is based on the fact that the minimum element in the array is at the correct position after shifting the array.",
+    "dryRun": "Let's take the array [9, 4, 1, 7, 3, 6, 5, 8, 2, 0] and find the number of positions by which it has been shifted.\n\nThe minimum element in the array is 0.\n\nStarting from the minimum element, we have: 0, 1, 2, 3, 4, 5, 6, 7, 8\n\nStarting from the beginning of the array, we have: 9, 4, 1, 7, 3, 6, 5, 8, 2, 0\n\nThe distance between the two pointers is 9, which is the number of positions by which the array has been shifted.",
+    "commonMistakes": [
+      "Not finding the minimum element correctly",
+      "Not using a two-pointer approach"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "cpp": "class Solution { public: int solve(vector<int>& nums); };",
+    "java": "public class Solution { public int solve(int[] nums); }",
+    "python": "class Solution: def solve(self, nums: list[int]) -> int:",
+    "javascript": "function solve(nums) { /* TO DO: implement the logic */ }"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution { public: int solve(vector<int>& nums) { int minElement = *min_element(nums.begin(), nums.end()); int minIndex = (lower_bound(nums.begin(), nums.end(), minElement) - nums.begin()); for (int i = 0; i < nums.size(); i++) { if (nums[i] == minElement) { minIndex = i; break; } } return minIndex; } };",
+    "java": "public class Solution { public int solve(int[] nums) { int minElement = Collections.min(Arrays.asList(nums)); int minIndex = (Arrays.binarySearch(nums, minElement) + 1); for (int i = 0; i < nums.length; i++) { if (nums[i] == minElement) { minIndex = i; break; } } return minIndex; } }",
+    "python": "class Solution: def solve(self, nums: list[int]) -> int: minElement = min(nums); minIndex = nums.index(minElement); for i in range(len(nums)): if nums[i] == minElement: minIndex = i; break; return minIndex;",
+    "javascript": "function solve(nums) { let minElement = Math.min(...nums); let minIndex = nums.indexOf(minElement); for (let i = 0; i < nums.length; i++) { if (nums[i] == minElement) { minIndex = i; break; } } return minIndex; }"
+  },
+  "functionSignature": {
+    "cpp": "int solve(vector<int>& nums);",
+    "java": "int solve(int[] nums);",
+    "python": "int solve(self, nums: list[int]) -> int:",
+    "javascript": "int solve(nums)"
+  },
+  "solutions": {
+    "python": "#!/usr/bin/python3\nimport sys\n\nclass Solution:\n    def solve(self, nums: list[int]) -> int:\n        minElement = min(nums)\n        minIndex = nums.index(minElement)\n        for i in range(len(nums)):\n            if nums[i] == minElement:\n                minIndex = i\n                break\n        for i in range(1, len(nums)):\n            if nums[i] < nums[i-1]:\n                return i\n        return len(nums)\n\nsolution = Solution()\n\nnums = list(map(int, input().split()))\n\nprint(solution.solve(nums))",
+    "cpp": "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\nclass Solution {\npublic:\n    int solve(vector<int>& nums) {\n        int minElement = *min_element(nums.begin(), nums.end());\n        int minIndex = (lower_bound(nums.begin(), nums.end(), minElement) - nums.begin());\n        for (int i = 0; i < nums.size(); i++) { if (nums[i] == minElement) { minIndex = i; break; } }\n        for (int i = 1; i < nums.size(); i++) { if (nums[i] < nums[i-1]) { return i; } }\n        return nums.size();\n    }\n};\n\nint main() {\n    Solution solution;\n    int n;\n    cin >> n;\n    vector<int> nums(n);\n    for(int i = 0; i < n; i++) {\n        cin >> nums[i];\n    }\n\n    cout << solution.solve(nums) << endl;\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "10\n1 10 2 9 3 8 4 7 5 6",
+      "output": "2",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_hidden_generated",
+      "input": "10\n1 10 2 9 3 8 4 7 5 6",
+      "output": "2",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

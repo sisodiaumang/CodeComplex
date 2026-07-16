@@ -1,0 +1,149 @@
+{
+  "title": "Fixing Node.js Express Middleware Route with Incorrect Route Parameter Validation for Multiple Path Segments",
+  "subCategory": "Express Middleware Route Parameter Validation",
+  "statement": {
+    "markdown": "Create a Node.js Express middleware route that handles GET requests to the root URL ('/') and validates the query parameters. The route should expect a 'limit' and a 'skip' parameter, both of which should be integers. If either parameter is invalid, it should return a 400 Bad Request error response with a JSON body containing an error message.",
+    "inputFormat": "The input will be a JSON object containing the query parameters.",
+    "outputFormat": "The output should be a JSON object containing an error message if the query parameters are invalid, or an empty JSON object with a 'result' property set to true if the query parameters are valid.",
+    "notes": "The route should handle multiple path segments, including the root URL ('/'), which is not explicitly defined in the route.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Input integers limit and skip should be within the range [1, 10000]"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"limit\": 10, \"skip\": 5}",
+        "output": "{\"result\": true}",
+        "explanation": "Valid query parameters"
+      },
+      {
+        "input": "{\"limit\": \"a\", \"skip\": 5}",
+        "output": "{\"error\": \"Invalid limit parameter\"}",
+        "explanation": "Invalid limit parameter"
+      },
+      {
+        "input": "{\"limit\": 10, \"skip\": \"b\"}",
+        "output": "{\"error\": \"Invalid skip parameter\"}",
+        "explanation": "Invalid skip parameter"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "NODE_JS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "node_js"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the express-validator library to validate the query parameters."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(...) ",
+    "spaceComplexity": "O(...)"
+  },
+  "starterCode": {
+    "javascript": "// Define the middleware route function\napp.get('/', (req, res) => {\n  // TO DO: validate query parameters\n  res.json({ result: true });\n});",
+    "python": "// Define the middleware route function\n@app.route('/', methods=['GET'])\ndef get_root_url(self):\n    # TO DO: validate query parameters\n    return {'result': True}"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Define the middleware route function\napp.get('/', (req, res) => {\n  try {\n    const limit = parseInt(req.query.limit);\n    const skip = parseInt(req.query.skip);\n    if (limit < 0) {\n      res.status(400).json({ error: 'Invalid limit parameter' });\n    } else if (skip < 0) {\n      res.status(400).json({ error: 'Invalid skip parameter' });\n    } else {\n      res.json({ result: true });\n    }\n  } catch (e) {\n    res.status(400).json({ error: 'Invalid limit parameter' });\n  }\n});",
+    "python": "// Define the middleware route function\n@app.route('/', methods=['GET'])\ndef get_root_url(self):\n    try:\n        limit = int(self.request.args.get('limit'))\n        skip = int(self.request.args.get('skip'))\n        if limit < 0:\n            return {'error': 'Invalid limit parameter'}\n        elif skip < 0:\n            return {'error': 'Invalid skip parameter'}\n        else:\n            return {'result': True}\n    except ValueError:\n        return {'error': 'Invalid limit parameter'}"
+  },
+  "functionSignature": {
+    "javascript": "app.get('/', (req, res) => {\n  // TO DO: validate query parameters\n  res.json({ result: true });\n});",
+    "python": "@app.route('/', methods=['GET'])\ndef get_root_url(self):\n    # TO DO: validate query parameters\n    return {'result': True}"
+  },
+  "solutions": {
+    "javascript": "// Define the middleware route function\napp.get('/', (req, res) => {\n  try {\n    const limit = parseInt(req.query.limit);\n    const skip = parseInt(req.query.skip);\n    if (isNaN(limit) || isNaN(skip)) {\n      res.status(400).json({ error: 'Invalid limit or skip parameter' });\n    } else if (limit < 1 || skip < 1) {\n      res.status(400).json({ error: 'Invalid limit or skip parameter' });\n    } else {\n      res.json({ result: true });\n    }\n  } catch (e) {\n    res.status(400).json({ error: 'Invalid limit or skip parameter' });\n  }\n});",
+    "python": "// Define the middleware route function\n@app.route('/', methods=['GET'])\ndef get_root_url(self):\n    try:\n        limit = int(self.request.args.get('limit'))\n        skip = int(self.request.args.get('skip'))\n        if limit <= 0 or skip <= 0:\n            return {'error': 'Invalid limit or skip parameter'}\n        else:\n            return {'result': True}\n    except ValueError:\n        return {'error': 'Invalid limit or skip parameter'}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"limit\": 10, \"skip\": 5}",
+      "output": "{\"result\": true}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"limit\": \"a\", \"skip\": 5}",
+      "output": "{\"error\": \"Invalid limit or skip parameter\"}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    },
+    {
+      "id": "tc_3",
+      "input": "{\"limit\": 10, \"skip\": \"b\"}",
+      "output": "{\"error\": \"Invalid limit or skip parameter\"}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "750d00d9c6a52a1cfd8bfd10",
+  "slug": "fixing-nodejs-express-middleware-route-with-incorrect-route-parameter-validation-for-multiple-path-segments-bugfix-hard-node_js",
+  "mode": "bug_fix",
+  "category": "NODE_JS",
+  "difficulty": "Hard"
+}

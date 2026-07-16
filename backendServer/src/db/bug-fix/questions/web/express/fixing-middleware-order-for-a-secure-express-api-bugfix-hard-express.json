@@ -1,0 +1,157 @@
+{
+  "title": "Fixing Middleware Order for a Secure Express API",
+  "subCategory": "Express Middleware",
+  "statement": {
+    "markdown": "Implement a secure Express API by arranging the middleware in the correct order. The API should handle GET and POST requests to the root URL `/`. The GET request should return a message indicating that it's a secure API, while the POST request should validate and return the provided username and password. The API should also handle errors and implement logging using the Morgan logging middleware.\n\n### Constraints\n\n- The API should handle GET and POST requests to the root URL `/`.\n- The GET request should return a message indicating that it's a secure API.\n- The POST request should validate and return the provided username and password.\n- The API should handle errors and implement logging using the Morgan logging middleware.\n- The API should not crash even if the provided username or password is invalid.\n\n### Example Input/Output\n\nWhen you send a GET request to `/`, the API should return the following output:\n\n```\nGET / HTTP/1.1\r\n\r\n\"Secure API\"\n\n```\n\nWhen you send a POST request to `/` with a valid username and password, the API should return the following output:\n\n```\nPOST / HTTP/1.1\r\n\r\n\"User: user, Password: password\"\n\n```\n\nIf you send a POST request with an invalid username or password, the API should return an error message.",
+    "inputFormat": "A GET or POST request to the root URL `/`.",
+    "outputFormat": "The response from the API, which should match the examples above.",
+    "notes": "Make sure to handle errors and implement logging using the Morgan logging middleware.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of requests to handle"
+      }
+    ],
+    "examples": [
+      {
+        "input": "GET / HTTP/1.1\r\n\r\n",
+        "output": "GET / HTTP/1.1\r\n\r\n\"Secure API\"\n\n",
+        "explanation": "The API should return a message indicating that it's a secure API."
+      },
+      {
+        "input": "POST / HTTP/1.1\r\n\r\nuser:password",
+        "output": "POST / HTTP/1.1\r\n\r\n\"User: user, Password: password\"\n\n",
+        "explanation": "The API should validate and return the provided username and password."
+      },
+      {
+        "input": "POST / HTTP/1.1\r\n\r\ninvalid:password",
+        "output": "POST / HTTP/1.1\r\n\r\n\"Error: Invalid username or password\"\n\n",
+        "explanation": "The API should handle errors and return an error message."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 60,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "EXPRESS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "express"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Implement the Morgan logging middleware to handle errors and log requests."
+    },
+    {
+      "order": 2,
+      "text": "Arrange the middleware in the correct order to handle GET and POST requests."
+    },
+    {
+      "order": 3,
+      "text": "Validate the username and password in the POST request handler."
+    }
+  ],
+  "editorial": {
+    "title": "Fixing Middleware Order for a Secure Express API",
+    "intuition": "The API should handle GET and POST requests to the root URL `/`. The GET request should return a message indicating that it's a secure API, while the POST request should validate and return the provided username and password.",
+    "bruteForce": "Create separate routes for GET and POST requests and implement the middleware in the correct order.",
+    "betterSolution": "",
+    "optimalSolution": "Implement the middleware in the correct order, handle errors, and validate the username and password in the POST request handler.",
+    "proofOfCorrectness": "proof Of Correctness details.",
+    "dryRun": "dry Run details.",
+    "commonMistakes": [
+      "Incorrect middleware order",
+      "Invalid username or password validation"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "const express = require('express');\nconst morgan = require('morgan');\nconst app = express();\napp.use(morgan('combined'));\napp.use(express.json());\napp.get('/', (req, res) => {\n  // TO DO: Return a message indicating that it's a secure API\n});\napp.post('/', (req, res) => {\n  // TO DO: Validate and return the provided username and password\n});\napp.listen(3000, () => {\n  console.log('Server listening on port 3000');\n});",
+    "python": "from flask import Flask, request\nfrom logging import getLogger\napp = Flask(__name__)\nlogger = getLogger(__name__)\napp.before_request(lambda: logger.info('%s %s', request.method, request.path))\n@app.route('/', methods=['GET'])\ndef get_handler():\n    # TO DO: Return a message indicating that it's a secure API\n    pass\n@app.route('/', methods=['POST'])\ndef post_handler():\n    # TO DO: Validate and return the provided username and password\n    pass\nif __name__ == '__main__':\n    app.run(debug=True)"
+  },
+  "buggyStarterCode": {
+    "javascript": "const express = require('express');\nconst morgan = require('morgan');\nconst app = express();\napp.use(morgan('combined'));\napp.use(express.json());\napp.get('/', (req, res) => {\n  res.send('Welcome to our API');\n});\napp.post('/', (req, res) => {\n  const { username, password } = req.body;\n  if (username === 'user' && password === 'password') {\n    res.send(`User: ${username}, Password: ${password}`);\n  } else {\n    res.send('Invalid username or password');\n  }\n});\napp.use(express.static('public'));\napp.listen(3000, () => {\n  console.log('Server listening on port 3000');\n});",
+    "python": "from flask import Flask, request\nfrom logging import getLogger\napp = Flask(__name__)\nlogger = getLogger(__name__)\napp.before_request(lambda: logger.info('%s %s', request.method, request.path))\n@app.route('/', methods=['GET'])\ndef get_handler():\n    return 'Welcome to our API'\n@app.route('/', methods=['POST'])\ndef post_handler():\n    const { username, password } = request.json;\n    if (username === 'user' && password === 'password') {\n        return f'User: {username}, Password: {password}'\n    } else {\n        return 'Invalid username or password'\n    }\nif __name__ == '__main__':\n    app.run(debug=True)"
+  },
+  "functionSignature": {
+    "javascript": "var solve = function() {\n    // TO DO: Implement the middleware in the correct order and handle errors\n};",
+    "python": "def solve(self): \n    # TO DO: Implement the middleware in the correct order and handle errors\n    pass"
+  },
+  "solutions": {
+    "javascript": "// Solution\nconst express = require('express');\nconst morgan = require('morgan');\nconst app = express();\napp.use(morgan('combined'));\napp.use(express.json());\napp.get('/', (req, res) => {\n  res.send('Secure API');\n});\napp.post('/', (req, res) => {\n  const { username, password } = req.body;\n  if (username === 'user' && password === 'password') {\n    res.send(`User: ${username}, Password: ${password}`);\n  } else {\n    res.status(401).send('Invalid username or password');\n  }\n});\napp.use((err, req, res, next) => {\n  res.status(500).send('Internal Server Error');\n});\napp.listen(3000, () => {\n  console.log('Server listening on port 3000');\n});",
+    "python": "from flask import Flask, request\nfrom logging import getLogger\nfrom logging.handlers import RotatingFileHandler\napp = Flask(__name__)\nlogger = getLogger(__name__)\nlogger.setLevel(logging.ERROR)\nhandler = RotatingFileHandler('error.log', maxBytes=10000, backupCount=1)\nlogger.addHandler(handler)\napp.before_request(lambda: logger.info('%s %s', request.method, request.path))\n@app.route('/', methods=['GET'])\ndef get_handler():\n    return 'Secure API'\n@app.route('/', methods=['POST'])\ndef post_handler():\n    const { username, password } = request.json;\n    if (username === 'user' && password === 'password') {\n        return f'User: {username}, Password: {password}'\n    } else {\n        logger.error('Invalid username or password')\n        return 'Invalid username or password', 401\n    }\n@app.errorhandler(500)\ndef error_handler(e):\n    return 'Internal Server Error', 500\nif __name__ == '__main__':\n    app.run(debug=True)"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "GET / HTTP/1.1\r\n\r\n",
+      "output": "GET / HTTP/1.1\r\n\r\n\"Secure API\"\n\n",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "POST / HTTP/1.1\r\n\r\nuser:password",
+      "output": "POST / HTTP/1.1\r\n\r\n\"User: user, Password: password\"\n\n",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_3",
+      "input": "POST / HTTP/1.1\r\n\r\ninvalid:password",
+      "output": "POST / HTTP/1.1\r\n\r\n\"Error: Invalid username or password\"\n\n",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "_id": "39878e48b83190a18ffe99e1",
+  "slug": "fixing-middleware-order-for-a-secure-express-api-bugfix-hard-express",
+  "mode": "bug_fix",
+  "category": "EXPRESS",
+  "difficulty": "Hard"
+}

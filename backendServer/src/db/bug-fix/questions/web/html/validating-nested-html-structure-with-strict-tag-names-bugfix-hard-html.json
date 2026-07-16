@@ -1,0 +1,162 @@
+{
+  "title": "Validating Nested HTML Structure with Strict Tag Names",
+  "subCategory": "HTML Structural Validation",
+  "statement": {
+    "markdown": "Given a string representing a nested HTML structure, validate if it meets the strict tag name requirements. The structure is considered valid if all tags are properly nested and all tag names are strictly lowercase and one of the following: 'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'a', 'img', 'br', 'hr', 'div'.",
+    "inputFormat": "A string representing the nested HTML structure, where each line represents a tag and the tags are separated by a space.",
+    "outputFormat": "A boolean indicating whether the HTML structure is valid or not.",
+    "notes": "The input string can be empty.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 100000,
+        "description": "The maximum number of tags in the input string."
+      }
+    ],
+    "examples": [
+      {
+        "input": "<p><h1>Hello</h1><p>World</p></p>",
+        "output": "true",
+        "explanation": "The input string represents a valid HTML structure."
+      },
+      {
+        "input": "<p><h1>Hello</h1><p>World</p>",
+        "output": "false",
+        "explanation": "The input string represents an invalid HTML structure because the last tag is not closed."
+      },
+      {
+        "input": "<p><h1>Hello</h1><p>World</p></p><h2>Foo</h2>",
+        "output": "false",
+        "explanation": "The input string represents an invalid HTML structure because the tag name 'h2' is not allowed."
+      },
+      {
+        "input": "<",
+        "output": "false",
+        "explanation": "The input string represents an invalid HTML structure because it is empty."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 70,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "HTML"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "html"
+    ],
+    "interviewFrequency": 1,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use a stack data structure to keep track of the opening tags."
+    }
+  ],
+  "editorial": {
+    "title": "Validating Nested HTML Structure with Strict Tag Names",
+    "intuition": "The key insight is to use a stack to keep track of the opening tags and check if the closing tag matches the top of the stack.",
+    "bruteForce": "You can use a recursive approach to validate the HTML structure, but this will be less efficient than using a stack.",
+    "betterSolution": "",
+    "optimalSolution": "Use a stack to keep track of the opening tags and check if the closing tag matches the top of the stack. If the closing tag does not match the top of the stack, return false. If the input string is empty, return true. Otherwise, iterate over the input string, pushing opening tags onto the stack and popping the stack when a closing tag is encountered. If the stack is empty when the input string is exhausted, return true; otherwise, return false.",
+    "proofOfCorrectness": "The stack ensures that all tags are properly nested. The check for valid tag names ensures that only allowed tags are used.",
+    "dryRun": "Example run: Input: <p><h1>Hello</h1><p>World</p></p>; Output: true",
+    "commonMistakes": [
+      "Not checking for valid tag names",
+      "Not using a stack to keep track of opening tags"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// Return true if the HTML structure is valid, false otherwise",
+    "python": "def is_valid_html(html: str) -> bool:"
+  },
+  "buggyStarterCode": {
+    "javascript": "function solve(html) { let stack = []; let validTags = ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'a', 'img', 'br', 'hr', 'div']; for (let tag of html.split(' ')) { if (tag.startsWith('</')) { let closingTag = tag.substring(2); if (stack.length > 0) { if (stack[stack.length - 1] !== closingTag) { return false; } stack.pop(); } else { return false; } } else { if (validTags.includes(tag)) { stack.push(tag); } else { return false; } } } return stack.length === 0;",
+    "python": "def solve(self, html: str) -> bool: stack = []; valid_tags = ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'a', 'img', 'br', 'hr', 'div']; for tag in html.split(): if tag.startswith('</'): closing_tag = tag[2:]; if stack: if stack[-1] != closing_tag: return False; stack.pop(); else: return False; elif tag in valid_tags: stack.append(tag); else: return False; return len(stack) == 0;"
+  },
+  "functionSignature": {
+    "javascript": "function solve(html) {",
+    "python": "def solve(self, html: str) -> bool:"
+  },
+  "solutions": {
+    "javascript": "// Solution",
+    "python": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "<p><h1>Hello</h1><p>World</p></p>",
+      "output": "true",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "<p><h1>Hello</h1><p>World</p>",
+      "output": "false",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_1",
+      "input": "<p><h1>Hello</h1><p>World</p></p><h2>Foo</h2>",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    },
+    {
+      "id": "tc_2",
+      "input": "<",
+      "output": "false",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "_id": "0ef65fdb27efcab7f1923113",
+  "slug": "validating-nested-html-structure-with-strict-tag-names-bugfix-hard-html",
+  "mode": "bug_fix",
+  "category": "HTML",
+  "difficulty": "Hard"
+}

@@ -1,0 +1,127 @@
+{
+  "_id": "029411de0e77f1e189e0926d",
+  "title": "Implementing Least Recently Used (LRU) Cache",
+  "slug": "implementing-least-recently-used-lru-cache-medium-caching",
+  "difficulty": "Medium",
+  "topics": [
+    "CACHING"
+  ],
+  "statement": "You are tasked with implementing a Least Recently Used (LRU) cache with a given capacity. The cache should handle GET and SET operations for keys of type string. You must implement a cache eviction strategy that removes the least recently used item from the cache whenever the capacity is reached. Assume that the cache will be accessed in order (i.e., first access to key 'A', then 'B', and finally 'A' again).\n\nImplement the following endpoints as described:\n\n- **GET /api/cache/**: Retrieve the value for the given key. Return a 404 Not Found status code if the key is not present in the cache.\n- **POST /api/cache**: Set a new key-value pair in the cache. If the key already exists, update the value. If the cache is full, remove the least recently used item before adding the new key-value pair.\n\nPlease note that the cache data structure you implement should store key-value pairs where the key is a string and the value can be any JSON-serializable object.\n\nUse the `express` framework to create a server. Remember to handle request bodies and query parameters as needed. Make sure to return responses in the correct format and status code for each endpoint.\n\n**Starter code provides a complete Express server setup, including body parsing and port listening.**",
+  "constraints": [
+    "Must use LRU cache eviction strategy",
+    "Cache must be implemented using a single underlying data structure, not a combination of separate data structures"
+  ],
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/api/cache/:key",
+      "description": "Retrieve the value for the given key. Return a 404 Not Found status code if the key is not present in the cache."
+    },
+    {
+      "method": "POST",
+      "path": "/api/cache",
+      "description": "Set a new key-value pair in the cache. If the key already exists, update the value. If the cache is full, remove the least recently used item before adding the new key-value pair."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\"name\":\"cache-app\",\"version\":\"1.0.0\",\"main\":\"index.js\",\"scripts\":{\"start\":\"node index.js\"},\"dependencies\":{\"express\":\"^4.18.2\",\"lru-cache\":\"^6.0.0\"}}",
+    "index.js": "const express = require('express');\nconst app = express();\napp.use(express.json());\nconst LRU = require('lru-cache');\nconst cache = new LRU({ max: 100 });\n\n// TODO: Implement endpoints\napp.get('/api/cache/:key', (req, res) => {\n    const key = req.params.key;\n    // TODO: Retrieve value from cache\n});\napp.post('/api/cache', (req, res) => {\n    // TODO: Implement SET operation\n});\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "GET",
+      "path": "/api/cache/key1",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "value": "hello"
+      },
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "POST",
+      "path": "/api/cache",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "key": "key2",
+        "value": "world"
+      },
+      "expectedStatus": 201,
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "GET",
+      "path": "/api/cache/non-existent-key",
+      "expectedStatus": 404,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "POST",
+      "path": "/api/cache",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "key": "existing-key",
+        "value": "new-value"
+      },
+      "expectedStatus": 200,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "POST",
+      "path": "/api/cache",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "key": "key3",
+        "value": "over-full-cache-value"
+      },
+      "expectedStatus": 200,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "redis",
+    "cache-aside",
+    "write-through",
+    "ttl",
+    "invalidation",
+    "memory-cache",
+    "caching",
+    "lru-cache",
+    "nodejs",
+    "express",
+    "cache-eviction"
+  ]
+}

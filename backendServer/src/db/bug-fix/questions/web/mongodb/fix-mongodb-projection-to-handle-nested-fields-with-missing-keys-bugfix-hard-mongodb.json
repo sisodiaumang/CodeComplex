@@ -1,0 +1,147 @@
+{
+  "title": "Fix MongoDB Projection to Handle Nested Fields with Missing Keys",
+  "subCategory": "MongoDB Projection",
+  "statement": {
+    "markdown": "You are given a MongoDB document and a projection object. The projection object has nested fields with missing keys. Your task is to fix the buggy code that projects the MongoDB document according to the projection object, handling missing keys correctly.",
+    "inputFormat": "The input will be a MongoDB document (JSON object) and a projection object (JSON object). The projection object may have nested fields with missing keys.",
+    "outputFormat": "The output will be the projected MongoDB document (JSON object).",
+    "notes": "You should handle missing keys in the projection object correctly, i.e., ignore them and not throw an error.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of fields in the MongoDB document"
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of fields in the projection object"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"name\":\"John\",\"age\":30,\"address\":{\"street\":\"123 Main St\",\"city\":\"Anytown\",\"state\":\"CA\"}}\n{\"name\":true,\"age\":false,\"address.street\":true}",
+        "output": "{\"name\":\"John\",\"address\":{\"street\":\"123 Main St\"}}",
+        "explanation": "The projection object specifies that only the 'name' and 'address.street' fields should be included. The 'age' field should be excluded."
+      },
+      {
+        "input": "{\"name\":\"Jane\",\"age\":25,\"address\":{\"street\":\"456 Elm St\",\"city\":\"Othertown\",\"state\":\"NY\"}}\n{\"age\":true,\"address.city\":false,\"address.state\":false}",
+        "output": "{\"age\":25}",
+        "explanation": "The projection object specifies that only the 'age' field should be included. The 'address' field and its nested fields should be excluded."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 75,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "MONGODB"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "mongodb"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text"
+    },
+    {
+      "order": 2,
+      "text": "Consider using the `$` operator to handle nested fields in the projection object"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(n + m)",
+    "spaceComplexity": "O(n + m)"
+  },
+  "starterCode": {
+    "javascript": "// Define a function to project the MongoDB document\nfunction projectDocument(document, projection) {\n  // ... buggy code ...\n  return projectedDocument;\n}",
+    "python": "class Solution:\n    def projectDocument(self, document, projection):\n        # ... buggy code ...\n        return projected_document"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Define a function to project the MongoDB document\nfunction projectDocument(document, projection) {\n  // Use Object.keys(projection) to get the keys of the projection object\n  // However, this approach does not handle nested fields correctly\n  Object.keys(projection).forEach(key => {\n    if (projection[key] === true) {\n      projectedDocument[key] = document[key];\n    }\n  });\n  return projectedDocument;\n}",
+    "python": "class Solution:\n    def projectDocument(self, document, projection):\n        # Use dictionary comprehension to project the document\n        # However, this approach does not handle nested fields correctly\n        projected_document = {key: document[key] for key in projection if projection[key]}\n        return projected_document"
+  },
+  "functionSignature": {
+    "javascript": "function projectDocument(document, projection) {\n  // ...\n}",
+    "python": "class Solution:\n    def projectDocument(self, document, projection) -> dict:\n        # ..."
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction projectDocument(document, projection) {\n  const projectedDocument = {}; // Create a new object to store the projected document\n  Object.keys(projection).forEach(key => {\n    const parts = key.split('.'); // Split the key into nested parts\n    let current = projectedDocument;\n    for (let i = 0; i < parts.length; i++) {\n      if (i === parts.length - 1) { // If this is the last part, set the value\n        current[parts[i]] = document[parts[i]];\n      } else { // Otherwise, create a new object if it doesn't exist\n        current[parts[i]] = current[parts[i]] || {};\n        current = current[parts[i]];\n      }\n    }\n  });\n  return projectedDocument;\n}",
+    "python": "class Solution:\n    def projectDocument(self, document, projection) -> dict:\n        projected_document = {}\n        for key in projection:\n            parts = key.split('.')\n            current = projected_document\n            for i in range(len(parts)):\n                if i == len(parts) - 1:\n                    current[parts[i]] = document[parts[i]]\n                else:\n                    current = current.setdefault(parts[i], {})\n        return projected_document"
+  },
+  "judgeConfig": {
+    "timeLimit": 5,
+    "memoryLimit": 128,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 2
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"name\":\"John\",\"age\":30,\"address\":{\"street\":\"123 Main St\",\"city\":\"Anytown\",\"state\":\"CA\"}}\n{\"name\":true,\"age\":false,\"address.street\":true}",
+      "output": "{\"name\":\"John\",\"address\":{\"street\":\"123 Main St\"}}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"name\":\"Jane\",\"age\":25,\"address\":{\"street\":\"456 Elm St\",\"city\":\"Othertown\",\"state\":\"NY\"}}\n{\"age\":true,\"address.city\":false,\"address.state\":false}",
+      "output": "{\"age\":25}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "e262f0b579150ae7e2d12a9d",
+  "slug": "fix-mongodb-projection-to-handle-nested-fields-with-missing-keys-bugfix-hard-mongodb",
+  "mode": "bug_fix",
+  "category": "MONGODB",
+  "difficulty": "Hard"
+}

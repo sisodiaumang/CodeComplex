@@ -1,0 +1,130 @@
+{
+  "_id": "99fc99be77d72760d5ff98f4",
+  "title": "Implement a Low-Latency, Scalable WebSockets Server",
+  "slug": "implement-a-low-latency-scalable-websockets-server-hard-websockets",
+  "difficulty": "Hard",
+  "topics": [
+    "WEBSOCKETS"
+  ],
+  "statement": "Implement a high-performance WebSockets server using the `ws` library in Node.js. Your server should support multiple WebSocket connections, handle incoming messages, and broadcast messages to specific WebSocket connections or all connections. The server should also handle disconnections and reconnects correctly.\n\nYour server will have the following endpoints:\n\n### WebSocket Endpoints\n\n* **ws**: Connect to the WebSocket server on the specified port.\n* **ws/rooms/{roomId}**: Establish a WebSocket connection to a specific room.\n\nEach room should have its own WebSocket channel, and messages sent to a room should only be received by connections established in that room.\n\n### API Endpoints\n\n* **GET /api/rooms**: List all available rooms.\n* **GET /api/connections**: List all current WebSocket connections.\n\nYour server should handle multiple concurrent connections and broadcast messages efficiently. You can use any caching or persistence mechanisms to improve performance.\n\nNote: Implement a simple authentication mechanism to restrict access to the `/rooms/{roomId}` endpoint.",
+  "constraints": [
+    "Must use the `ws` library for WebSockets.",
+    "Must handle incoming messages and broadcast messages to specific rooms or all rooms.",
+    "Must implement a simple authentication mechanism to restrict access to the `/rooms/{roomId}` endpoint."
+  ],
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/api/rooms",
+      "description": "List all available rooms."
+    },
+    {
+      "method": "GET",
+      "path": "/api/connections",
+      "description": "List all current WebSocket connections."
+    },
+    {
+      "method": "GET",
+      "path": "/ws/rooms/{roomId}",
+      "description": "Establish a WebSocket connection to a specific room."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\n  \"name\": \"websockets-server\",\n  \"version\": \"1.0.0\",\n  \"main\": \"index.js\",\n  \"scripts\": {\n    \"start\": \"node index.js\"\n  },\n  \"dependencies\": {\n    \"express\": \"^4.18.2\",\n    \"ws\": \"^8.6.1\"\n  }\n}",
+    "index.js": "const express = require('express');\nconst WebSocket = require('ws');\nconst app = express();\nconst wss = new WebSocket.Server({ port: 8080 });\n\napp.use(express.json());\n\nconst rooms = new Map();\nconst connections = new Map();\n\nwss.on('connection', (ws) => {\n  console.log('Client connected');\n\n  // Handle incoming messages\n  ws.on('message', (message) => {\n    console.log(`Received message => ${message}`);\n    // Handle message broadcast\n  });\n\n  // Handle disconnections\n  ws.on('close', () => {\n    console.log('Client disconnected');\n    // Remove connection from map\n  });\n\n  // Implement authentication for /rooms/{roomId}\n});\n\napp.get('/api/rooms', (req, res) => {\n  res.json([...rooms.keys()]);\n});\n\napp.get('/api/connections', (req, res) => {\n  res.json([...connections.keys()]);\n});\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "GET",
+      "path": "/api/rooms",
+      "expectedStatus": 200,
+      "expectedBody": [],
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "GET",
+      "path": "/api/connections",
+      "expectedStatus": 200,
+      "expectedBody": [],
+      "isVisible": true
+    },
+    {
+      "id": "v_tc3",
+      "method": "GET",
+      "path": "/ws/rooms/12345",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "expectedStatus": 404,
+      "expectedBody": null,
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "GET",
+      "path": "/api/rooms",
+      "expectedStatus": 200,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "GET",
+      "path": "/ws/rooms/12345",
+      "headers": {
+        "Authorization": "Bearer invalid_token"
+      },
+      "expectedStatus": 401,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "POST",
+      "path": "/ws/rooms/12345",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "key": "value"
+      },
+      "expectedStatus": 405,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "socket.io",
+    "rooms",
+    "namespaces",
+    "events",
+    "real-time-chat",
+    "broadcasting",
+    "websockets",
+    "real-time",
+    "scalability",
+    "performance"
+  ]
+}

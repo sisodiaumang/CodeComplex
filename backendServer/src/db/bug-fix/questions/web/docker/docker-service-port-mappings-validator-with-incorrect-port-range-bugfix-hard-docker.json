@@ -1,0 +1,155 @@
+{
+  "title": "DOCKER Service Port Mappings Validator with Incorrect Port Range",
+  "subCategory": "Docker Port Mapping",
+  "statement": {
+    "markdown": "Given a Docker Compose file, validate that the port mappings specified for each service are correct. A service's port mapping is valid if the exposed port is within the range of 1-32768 and the host port is within the range of 1-65535. Additionally, a service's port mapping is valid if the host port is not already in use by another service. This task assumes that the Docker Compose file is well-formed and the service names are unique.\n\nYour task is to write a function that takes a list of service port mappings as input, where each service port mapping is an object with the service name and port information, and returns an array of boolean values indicating whether each service's port mapping is valid or not.\n\nExample:\n\nInput: `[{'service': 'web', 'exposed': 8080, 'host': 80}, {'service': 'db', 'exposed': 5432, 'host': 5432}]`\n\nOutput: `[true, false]` because port 5432 is in use by another service.\n\nConstraints:\n\n*   1 <= n <= 10000 (number of services)\n*   1 <= exposed <= 32768\n*   1 <= host <= 65535\n",
+    "inputFormat": "A list of objects, where each object represents a service's port mapping, with fields 'service', 'exposed', and 'host'.",
+    "outputFormat": "A list of boolean values, where each value indicates whether the corresponding service's port mapping is valid or not.",
+    "notes": "The function should return an array of boolean values. It should not return the number of invalid services.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of services"
+      },
+      {
+        "variable": "exposed",
+        "type": "integer",
+        "min": 1,
+        "max": 32768,
+        "description": "Exposed port"
+      },
+      {
+        "variable": "host",
+        "type": "integer",
+        "min": 1,
+        "max": 65535,
+        "description": "Host port"
+      }
+    ],
+    "examples": [
+      {
+        "input": "[{'service': 'web', 'exposed': 8080, 'host': 80}, {'service': 'db', 'exposed': 5432, 'host': 5432}]",
+        "output": "[true, false]",
+        "explanation": "Port 5432 is in use by another service."
+      },
+      {
+        "input": "[{'service': 'web', 'exposed': 8080, 'host': 80}, {'service': 'db', 'exposed': 54321, 'host': 54321}]",
+        "output": "[true, false]",
+        "explanation": "Port 54321 is out of range."
+      },
+      {
+        "input": "[{'service': 'web', 'exposed': 8080, 'host': 65536}, {'service': 'db', 'exposed': 54321, 'host': 54321}]",
+        "output": "[false, false]",
+        "explanation": "Port 8080 is out of range and port 54321 is out of range."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DOCKER"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "docker"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "function validatePortMappings(portMappings) {\n    // Your code here\n}",
+    "python": "class Solution:\n    def validatePortMappings(self, portMappings):\n        # Your code here\n"
+  },
+  "buggyStarterCode": {
+    "javascript": "function validatePortMappings(portMappings) {\n    let isValid = true;\n    for (let i = 0; i < portMappings.length; i++) {\n        if (portMappings[i].exposed > 32768 || portMappings[i].host > 65535) {\n            isValid = false;\n        }\n    }\n    return isValid;\n}",
+    "python": "class Solution:\n    def validatePortMappings(self, portMappings):\n        isValid = True\n        for mapping in portMappings:\n            if mapping['exposed'] > 32768 or mapping['host'] > 65535:\n                isValid = False\n        return isValid\n"
+  },
+  "functionSignature": {
+    "javascript": "function validatePortMappings(portMappings: object[]): boolean[]",
+    "python": "class Solution:\n    def validatePortMappings(self, portMappings: list[dict[str, int]]) -> list[bool]:"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction validatePortMappings(portMappings) {\n    let usedPorts = new Set();\n    let result = [];\n    for (let i = 0; i < portMappings.length; i++) {\n        let isValid = true;\n        if (portMappings[i].exposed > 32768 || portMappings[i].host > 65535) {\n            isValid = false;\n        }\n        if (usedPorts.has(portMappings[i].host)) {\n            isValid = false;\n        }\n        usedPorts.add(portMappings[i].host);\n        result.push(isValid);\n    }\n    return result;\n}",
+    "python": "class Solution:\n    def validatePortMappings(self, portMappings: list[dict[str, int]]) -> list[bool]:\n        usedPorts = set()\n        result = []\n        for mapping in portMappings:\n            isValid = True\n            if mapping['exposed'] > 32768 or mapping['host'] > 65535:\n                isValid = False\n            if mapping['host'] in usedPorts:\n                isValid = False\n            usedPorts.add(mapping['host'])\n            result.append(isValid)\n        return result\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "[{'service': 'web', 'exposed': 8080, 'host': 80}, {'service': 'db', 'exposed': 5432, 'host': 5432}]",
+      "output": "[true, false]",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "[{'service': 'web', 'exposed': 8080, 'host': 80}, {'service': 'db', 'exposed': 54321, 'host': 54321}]",
+      "output": "[true, false]",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "4c0840b623ad359cf56e048d",
+  "slug": "docker-service-port-mappings-validator-with-incorrect-port-range-bugfix-hard-docker",
+  "mode": "bug_fix",
+  "category": "DOCKER",
+  "difficulty": "Hard"
+}

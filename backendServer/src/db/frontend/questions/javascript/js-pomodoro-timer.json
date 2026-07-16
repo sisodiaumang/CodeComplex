@@ -1,0 +1,52 @@
+{
+  "_id": "4c5b97f73c9a0d65f29c8b68",
+  "title": "Pomodoro Countdown Timer",
+  "slug": "js-pomodoro-timer",
+  "difficulty": "Medium",
+  "topics": [
+    "JAVASCRIPT"
+  ],
+  "statement": {
+    "markdown": "## Interactive Pomodoro Countdown Timer\n\nBuild a Pomodoro timer component allowing users to set a timer, play, pause, and reset progress.\n\n### Requirements:\n1. **Time display**: Format remaining seconds into a `MM:SS` layout (e.g. `25:00`).\n2. **Play/Pause controls**: Play button starts counting down second by second. Clicking pause suspends countdown. Toggle display buttons dynamically.\n3. **Custom durations & Reset**: Input allows setting custom durations in minutes. Reset button loads the active custom duration value, stops the ticking timer, and restores default UI styles."
+  },
+  "constraints": [
+    "Must correctly formats values (e.g. prefixing single digits with 0)",
+    "Must clean up timers on reset and prevent multiple concurrent timers running"
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "html": "<div class=\"p-6 bg-slate-800 rounded-xl max-w-sm mx-auto text-center text-white border border-slate-700 shadow-md font-sans\">\n  <div id=\"timer-display\" class=\"text-5xl font-bold font-mono tracking-wider mb-6\">25:00</div>\n  <div class=\"flex justify-center gap-4 mb-4\">\n    <button id=\"start-btn\" class=\"px-4 py-2 bg-emerald-600 rounded font-bold hover:bg-emerald-500 transition-colors\">Start</button>\n    <button id=\"pause-btn\" class=\"px-4 py-2 bg-amber-600 rounded font-bold hover:bg-amber-500 transition-colors hidden\">Pause</button>\n    <button id=\"reset-btn\" class=\"px-4 py-2 bg-slate-700 rounded font-bold hover:bg-slate-600 transition-colors\">Reset</button>\n  </div>\n  <div class=\"flex items-center justify-center gap-2\">\n    <label class=\"text-xs text-slate-400\">Duration (mins):</label>\n    <input id=\"duration-input\" type=\"number\" value=\"25\" min=\"1\" max=\"60\" class=\"w-16 px-2 py-1 bg-slate-950 border border-slate-700 text-white rounded font-mono text-center\" />\n  </div>\n</div>",
+    "css": "",
+    "javascript": "const timerDisplay = document.getElementById('timer-display');\nconst startBtn = document.getElementById('start-btn');\nconst pauseBtn = document.getElementById('pause-btn');\nconst resetBtn = document.getElementById('reset-btn');\nconst durationInput = document.getElementById('duration-input');\n\n// Implement Pomodoro timer state changes, intervals, MM:SS formatting, and resets here\n"
+  },
+  "gradingCriteria": [
+    {
+      "id": "countdown",
+      "description": "Verify timer ticks down accurately and stops at 00:00.",
+      "weight": 60
+    },
+    {
+      "id": "reset_input",
+      "description": "Verify custom duration configurations load correctly and resets stop ticking timers.",
+      "weight": 40
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "html",
+      "css",
+      "javascript"
+    ],
+    "referenceSolution": "const timerDisplay = document.getElementById('timer-display');\nconst startBtn = document.getElementById('start-btn');\nconst pauseBtn = document.getElementById('pause-btn');\nconst resetBtn = document.getElementById('reset-btn');\nconst durationInput = document.getElementById('duration-input');\n\nlet timerInterval;\nlet remainingSeconds = 25 * 60;\n\nfunction formatTime(totalSeconds) {\n  const mins = Math.floor(totalSeconds / 60);\n  const secs = totalSeconds % 60;\n  return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;\n}\n\nfunction updateDisplay() {\n  timerDisplay.textContent = formatTime(remainingSeconds);\n}\n\nfunction start() {\n  if (timerInterval) return;\n  startBtn.classList.add('hidden');\n  pauseBtn.classList.remove('hidden');\n  \n  timerInterval = setInterval(() => {\n    if (remainingSeconds > 0) {\n      remainingSeconds--;\n      updateDisplay();\n    } else {\n      pause();\n    }\n  }, 1000);\n}\n\nfunction pause() {\n  clearInterval(timerInterval);\n  timerInterval = null;\n  startBtn.classList.remove('hidden');\n  pauseBtn.classList.add('hidden');\n}\n\nfunction reset() {\n  pause();\n  const mins = Math.max(1, parseInt(durationInput.value, 10) || 25);\n  remainingSeconds = mins * 60;\n  updateDisplay();\n}\n\nstartBtn.addEventListener('click', start);\npauseBtn.addEventListener('click', pause);\nresetBtn.addEventListener('click', reset);\ndurationInput.addEventListener('change', reset);\n\nupdateDisplay();"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

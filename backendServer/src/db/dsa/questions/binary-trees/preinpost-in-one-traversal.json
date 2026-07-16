@@ -1,0 +1,209 @@
+{
+  "_id": "preinpost-in-one-traversal",
+  "title": "Pre/In/Post in One Traversal",
+  "slug": "preinpost-in-one-traversal",
+  "difficulty": "Easy",
+  "category": "TREE",
+  "subCategory": "Traversals",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 10,
+    "points": 100,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "BINARY TREES",
+      "TRIE",
+      "TREE TRAVERSAL"
+    ],
+    "patterns": [
+      "preorder traversal",
+      "inorder traversal",
+      "postorder traversal",
+      "binary tree traversal"
+    ],
+    "prerequisites": [
+      "Basic Binary Tree Operations"
+    ],
+    "variants": [],
+    "tags": [
+      "BINARY TREE",
+      "TREE TRAVERSAL",
+      "PREORDER",
+      "INORDER",
+      "POSTORDER"
+    ],
+    "keywords": [
+      "PREORDER",
+      "INORDER",
+      "POSTORDER",
+      "BINARY TREE",
+      "TREE TRAVERSAL",
+      "RECURSION",
+      "ITERATION"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given the root of a binary tree, return the preorder, inorder, and postorder traversals in a single traversal.",
+    "inputFormat": "The first line contains a single integer N, the number of nodes in the tree.\nThe next N lines contain three integers each: val, left_child, and right_child, representing the node's value, left child index, and right child index, respectively.\nThe root of the tree is node 0.",
+    "outputFormat": "The output consists of three lines, each containing a space-separated sequence of node values.\nThe first line represents the preorder traversal.\nThe second line represents the inorder traversal.\nThe third line represents the postorder traversal.",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "N",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of nodes in the tree."
+      },
+      {
+        "variable": "val",
+        "type": "integer",
+        "min": -10000,
+        "max": 10000,
+        "description": "The value of a node."
+      }
+    ],
+    "examples": [
+      {
+        "input": "5\n1 1 2\n2 3 4\n3 -1 -1\n4 -1 -1\n5 -1 -1",
+        "output": "1 2 4 5 3\r\n4 5 2 3 1\r\n4 5 2 3 1",
+        "explanation": "The preorder traversal visits the current node before its children (root, left, right).\nThe inorder traversal visits the current node between its children (left, root, right).\nThe postorder traversal visits the current node after its children (left, right, root)."
+      },
+      {
+        "input": "3\n1 -1 -1",
+        "output": "1\r\n1\r\n1",
+        "explanation": "A tree with a single node has the same preorder, inorder, and postorder traversals."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "To solve this problem, start by understanding the basic traversal techniques of a binary tree: preorder, inorder, and postorder. Each has a distinct order in which it visits the nodes. Preorder visits the current node before its child nodes, inorder visits the left subtree, the current node, then the right subtree, and postorder visits the child nodes before the current node."
+    },
+    {
+      "order": 2,
+      "text": "Realize that the key to performing all three traversals in a single pass lies in utilizing a data structure that can keep track of the nodes to be visited and their respective traversal types. A stack can be particularly useful here, as it allows for efficient addition and removal of nodes, which is essential for simulating the recursive calls of the tree traversals."
+    },
+    {
+      "order": 3,
+      "text": "Consider using a modified version of the preorder traversal algorithm, where instead of just visiting the node and then recursively calling on its children, you also keep track of when a node has been visited in the context of inorder and postorder traversals. This can be achieved by pushing nodes onto the stack along with a flag indicating the type of traversal to be performed on that node."
+    }
+  ],
+  "editorial": {
+    "title": "Pre/In/Post Traversal in One Pass",
+    "intuition": "The problem requires generating pre-order, in-order, and post-order traversals of a binary tree in a single pass. This can be achieved by utilizing a depth-first search (DFS) approach, which visits nodes in a specific order, allowing for the construction of all three traversals simultaneously.",
+    "bruteForce": "A brute force approach would involve performing three separate DFS traversals: one for pre-order, one for in-order, and one for post-order. However, this would result in redundant computations and increased time complexity, making it inefficient for large trees.",
+    "betterSolution": "An improved solution would be to use a single DFS traversal and maintain separate lists for pre-order, in-order, and post-order nodes. By visiting nodes in the correct order and appending them to the respective lists, we can generate all three traversals in a single pass.",
+    "optimalSolution": "The optimal solution involves using a recursive DFS function that takes a node index as input and performs the necessary operations to generate the pre-order, in-order, and post-order traversals. By utilizing the recursive nature of DFS, we can efficiently traverse the tree and construct the traversals in a single pass, resulting in a time complexity of O(N) and a space complexity of O(N).",
+    "proofOfCorrectness": "The correctness of the optimal solution can be proven by analyzing the order in which nodes are visited during the DFS traversal. By definition, pre-order traversal visits the current node before its children, in-order traversal visits the current node between its children, and post-order traversal visits the current node after its children. The recursive DFS function ensures that nodes are visited in the correct order, resulting in accurate pre-order, in-order, and post-order traversals.",
+    "dryRun": "A dry run of the algorithm can be performed by creating a sample binary tree and verifying that the generated traversals match the expected output. This can be done by manually constructing the tree and applying the DFS function to generate the traversals.",
+    "commonMistakes": [
+      "Incorrectly ordering node visits during the DFS traversal",
+      "Failing to handle edge cases, such as an empty tree or a tree with a single node",
+      "Not properly appending nodes to the pre-order, in-order, and post-order lists",
+      "Using an iterative approach instead of a recursive one, which can lead to increased complexity",
+      "Not considering the recursive nature of the DFS function, which can result in incorrect traversals"
+    ],
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(N)"
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\nclass Solution {\npublic:\n    vector<int> preorderTraversal, inorderTraversal, postorderTraversal;\n    void solve(vector<vector<int>>& tree) {\n        // TODO: implement\n        return;\n    }\n};",
+    "java": "import java.util.*;\nclass Solution {\n    List<Integer> preorderTraversal = new ArrayList<>();\n    List<Integer> inorderTraversal = new ArrayList<>();\n    List<Integer> postorderTraversal = new ArrayList<>();\n    public void solve(int[][] tree) {\n        // TODO: implement\n        return;\n    }\n}",
+    "python": "from typing import List\nclass Solution:\n    def solve(self, tree: List[List[int]]) -> None:\n        # TODO: implement\n        pass",
+    "javascript": "/**\n * @param {number[][]} tree\n * @return {void}\n */\nvar solve = function(tree) {\n    // TODO: implement\n    return;\n};"
+  },
+  "functionSignature": {
+    "cpp": "void solve(vector<vector<int>>& tree);",
+    "java": "public void solve(int[][] tree);",
+    "python": "def solve(self, tree: list[list[int]]) -> None:",
+    "javascript": "var solve = function(tree);"
+  },
+  "solutions": {
+    "python": "import sys\n\nclass Solution:\n    def solve(self, tree: list[list[int]]) -> None:\n        n = len(tree)\n        pre = []\n        ino = []\n        post = []\n        stk = [(0, False)]\n        while stk:\n            i, visited = stk.pop()\n            if i == -1:\n                continue\n            if visited:\n                ino.append(tree[i][0])\n                post.append(tree[i][0])\n            else:\n                pre.append(tree[i][0])\n                stk.append((i, True))\n                stk.append((tree[i][2], False))\n                stk.append((tree[i][1], False))\n        print(' '.join(map(str, pre)))\n        print(' '.join(map(str, ino)))\n        print(' '.join(map(str, post)))\n\nif __name__ == '__main__':\n    try:\n        n = int(sys.stdin.readline().strip())\n        tree = [list(map(int, sys.stdin.readline().strip().split())) for _ in range(n)]\n    except Exception as e:\n        sys.exit(0)\n    sol = Solution()\n    sol.solve(tree)",
+    "cpp": "#include <numeric>\n#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    void solve(vector<vector<int>>& tree) {\n        int n = tree.size();\n        vector<int> pre, ino, post;\n        vector<pair<int, bool>> stk = {{0, false}};\n        while (!stk.empty()) {\n            int i = stk.back().first;\n            bool visited = stk.back().second;\n            stk.pop_back();\n            if (i == -1) {\n                continue;\n            }\n            if (visited) {\n                ino.push_back(tree[i][0]);\n                post.push_back(tree[i][0]);\n            } else {\n                pre.push_back(tree[i][0]);\n                stk.push_back({i, true});\n                stk.push_back({tree[i][2], false});\n                stk.push_back({tree[i][1], false});\n            }\n        }\n        for (int x : pre) cout << x << \" \";\n        cout << \"\\n\";\n        for (int x : ino) cout << x << \" \";\n        cout << \"\\n\";\n        for (int x : post) cout << x << \" \";\n        cout << \"\\n\";\n    }\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int n;\n    cin >> n;\n    vector<vector<int>> tree(n);\n    for (int i = 0; i < n; i++) {\n        tree[i].resize(3);\n        cin >> tree[i][0] >> tree[i][1] >> tree[i][2];\n    }\n    Solution sol;\n    sol.solve(tree);\n    return 0;\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5\n1 1 2\n2 3 4\n3 -1 -1\n4 -1 -1\n5 -1 -1",
+      "output": "1 2 4 5 3\r\n4 5 2 3 1\r\n4 5 2 3 1",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "3\n1 -1 -1",
+      "output": "1\r\n1\r\n1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint_3",
+      "input": "1\n1 -1 -1",
+      "output": "1\r\n1\r\n1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "boundary_4",
+      "input": "5\n1 2 3\n2 4 -1\n3 -1 -1\n4 -1 -1\n5 -1 -1",
+      "output": "1 3 4\r\n3 4 1\r\n3 4 1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    },
+    {
+      "id": "duplicate_5",
+      "input": "3\n1 1 2\n1 -1 -1\n1 -1 -1",
+      "output": "1 1 1\r\n1 1 1\r\n1 1 1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "duplicate"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

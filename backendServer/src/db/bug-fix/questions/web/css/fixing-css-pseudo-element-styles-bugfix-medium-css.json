@@ -1,0 +1,141 @@
+{
+  "title": "Fixing CSS Pseudo-Element Styles",
+  "subCategory": "CSS Selectors",
+  "statement": {
+    "markdown": "Write a function that takes a CSS string and returns the styles applied to pseudo-elements. The function should correctly parse the CSS and return the style rules for pseudo-elements like `::before` and `::after`. For example, if the input is `.class::before { content: 'Hello'; }`, the output should be `{'::before': {'content': 'Hello'}}`. If the input is `.class { background-color: red; }`, the output should be `{}`. Note that the function should ignore other CSS rules and only return the styles applied to pseudo-elements.",
+    "inputFormat": "A string representing the CSS styles",
+    "outputFormat": "An object where the keys are the pseudo-element names and the values are objects containing the corresponding style rules",
+    "notes": "You can assume that the input is a valid CSS string. You can use a CSS parser library if needed.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of CSS rules in the input string"
+      }
+    ],
+    "examples": [
+      {
+        "input": ".class::before { content: 'Hello'; }",
+        "output": "{'::before': {'content': 'Hello'}}",
+        "explanation": "This is a simple example with a pseudo-element rule"
+      },
+      {
+        "input": ".class { background-color: red; }",
+        "output": "{}",
+        "explanation": "This is an example without pseudo-element rules"
+      },
+      {
+        "input": ".class::before { content: 'Hello'; } .class::after { content: 'World'; }",
+        "output": "{'::before': {'content': 'Hello'}, '::after': {'content': 'World'}}",
+        "explanation": "This is an example with multiple pseudo-element rules"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 60,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "CSS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "css"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use a CSS parser library to parse the input string into a CSS AST"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial: Fixing CSS Pseudo-Element Styles",
+    "intuition": "Use a CSS parser library to parse the input string into a CSS AST, then iterate over the AST to find the pseudo-element rules",
+    "bruteForce": "Use a regular expression to match the pseudo-element rules in the input string",
+    "betterSolution": "Use a CSS parser library to parse the input string into a CSS AST, then use a loop to find the pseudo-element rules",
+    "optimalSolution": "Use a CSS parser library to parse the input string into a CSS AST, then use a dictionary to store the pseudo-element rules",
+    "proofOfCorrectness": "The function correctly returns the styles applied to pseudo-elements",
+    "dryRun": "Example run",
+    "commonMistakes": [
+      "Not using a CSS parser library",
+      "Not iterating over the CSS AST"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// Define a function to parse the CSS string into a CSS AST\n",
+    "python": "class CSSParser: pass\n"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Define a function to parse the CSS string into a CSS AST\nvar css = require('css');\nfunction parseCss(cssString) {\n  var stylesheet = css.parse(cssString);\n  // Iterate over the CSS rules\n  stylesheet.stylesheet.rules.forEach(function(rule) {\n    // Check if the rule is a pseudo-element rule\n    if (rule.type === 'rule') {\n      // Get the selector and styles of the rule\n      var selector = rule.selectors[0];\n      var styles = rule.declarations;\n      // Add the rule to the result object\n      result[selector] = styles;\n    }\n  });\n  return result;\n}\n\n// Call the function with a test CSS string\nvar result = parseCss('.class::before { content: 'Hello'; }');\nconsole.log(result);\n",
+    "python": "import cssutils\n\nclass CSSParser:\n  def parse_css(self, css_string):\n    stylesheet = cssutils.parseString(css_string)\n    # Iterate over the CSS rules\n    for rule in stylesheet:\n      # Check if the rule is a pseudo-element rule\n      if rule.type == 'rule':\n        # Get the selector and styles of the rule\n        selector = rule.selectorText\n        styles = rule.style\n        # Add the rule to the result dictionary\n        result[selector] = {'content': styles.getPropertyValue('content')}\n    return result\n\n# Call the function with a test CSS string\nresult = CSSParser().parse_css('.class::before { content: 'Hello'; }')\nprint(result)"
+  },
+  "functionSignature": {
+    "javascript": "function parseCss(cssString) { ... }",
+    "python": "def parse_css(self, css_string) -> dict: ... "
+  },
+  "solutions": {
+    "javascript": "// Solution\nvar css = require('css');\nfunction parseCss(cssString) {\n  var stylesheet = css.parse(cssString);\n  var result = {};\n  // Iterate over the CSS rules\n  stylesheet.stylesheet.rules.forEach(function(rule) {\n    // Check if the rule is a pseudo-element rule\n    if (rule.type === 'rule') {\n      // Get the selector and styles of the rule\n      var selector = rule.selectors[0];\n      var styles = rule.declarations;\n      // Add the rule to the result object\n      if (selector.includes('::before') || selector.includes('::after')) {\n        result[selector] = {};\n        for (var i = 0; i < styles.length; i++) {\n          result[selector][styles[i].property] = styles[i].value;\n        }\n      }\n    }\n  });\n  return result;\n}\n\n// Call the function with a test CSS string\nvar result = parseCss('.class::before { content: 'Hello'; }');\nconsole.log(result);\n",
+    "python": "import cssutils\n\nclass CSSParser:\n  def parse_css(self, css_string):\n    stylesheet = cssutils.parseString(css_string)\n    result = {}\n    # Iterate over the CSS rules\n    for rule in stylesheet:\n      # Check if the rule is a pseudo-element rule\n      if rule.type == 'rule':\n        # Get the selector and styles of the rule\n        selector = rule.selectorText\n        styles = rule.style\n        # Add the rule to the result dictionary\n        if '::before' in selector or '::after' in selector:\n          result[selector] = {}\n          for prop, value in styles.items():\n            result[selector][prop] = value\n    return result\n\n# Call the function with a test CSS string\nresult = CSSParser().parse_css('.class::before { content: 'Hello'; }')\nprint(result)"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": ".class::before { content: 'Hello'; }",
+      "output": "{'::before': {'content': 'Hello'}}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": ".class { background-color: red; }",
+      "output": "{}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "c41dbafa256a3367376b93c8",
+  "slug": "fixing-css-pseudo-element-styles-bugfix-medium-css",
+  "mode": "bug_fix",
+  "category": "CSS",
+  "difficulty": "Medium"
+}

@@ -1,0 +1,159 @@
+{
+  "title": "Fixing a Node.js Express Middleware Route with Incorrect Route Parameter Validation",
+  "subCategory": "Route Validation",
+  "statement": {
+    "markdown": "Write a Node.js Express middleware route to validate user input for a username. The route should handle GET requests to the `/users/:username` endpoint. A valid username should be at least 3 characters long and contain only alphanumeric characters. If the input is invalid, return a 400 Bad Request response with an error message. If the input is valid, return a 200 OK response with a JSON object containing the username.",
+    "inputFormat": "A string representing the username to be validated",
+    "outputFormat": "Either a 200 OK response with a JSON object containing the username or a 400 Bad Request response with an error message",
+    "notes": "The route should handle GET requests only. The input string should be parsed and validated accordingly.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 3,
+        "max": 100,
+        "description": "Minimum length of a valid username"
+      }
+    ],
+    "examples": [
+      {
+        "input": "john_doe",
+        "output": "{\"username\":\"john_doe\"}",
+        "explanation": "A valid username is passed to the route"
+      },
+      {
+        "input": "johndoe123",
+        "output": "{\"username\":\"johndoe123\"}",
+        "explanation": "A valid username is passed to the route"
+      },
+      {
+        "input": "1234567890",
+        "output": "{\"username\":\"1234567890\"}",
+        "explanation": "A valid username is passed to the route"
+      },
+      {
+        "input": "0",
+        "output": "{\"error\":\"Invalid username\"}",
+        "explanation": "An empty string is passed to the route"
+      },
+      {
+        "input": "john",
+        "output": "{\"error\":\"Invalid username\"}",
+        "explanation": "A username shorter than 3 characters is passed to the route"
+      },
+      {
+        "input": "john!)",
+        "output": "{\"error\":\"Invalid username\"}",
+        "explanation": "A username containing special characters is passed to the route"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 60,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "NODE_JS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "node_js"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the `regExp` pattern to match alphanumeric characters and underscores"
+    }
+  ],
+  "editorial": {
+    "title": "Fixing a Node.js Express Middleware Route with Incorrect Route Parameter Validation",
+    "intuition": "The route should use a regular expression to validate the username.",
+    "bruteForce": "The route can be implemented by checking if the username is at least 3 characters long and contains only alphanumeric characters and underscores.",
+    "betterSolution": "The route can be implemented by using a regular expression to match the username pattern.",
+    "optimalSolution": "The route should use a regular expression to match the username pattern and return a 400 Bad Request response if the input is invalid.",
+    "proofOfCorrectness": "The route should return a 200 OK response if the input is valid and a 400 Bad Request response if the input is invalid.",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Not using a regular expression to match the username pattern",
+      "Not checking if the username is at least 3 characters long"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "const express = require('express'); const app = express(); app.get('/users/:username', (req, res) => { // TO DO: validate username });"
+  },
+  "buggyStarterCode": {
+    "javascript": "const express = require('express'); const app = express(); app.get('/users/:username', (req, res) => { const username = req.params.username; if (username.length >= 3) { res.json({ username }); } else { res.json({ username }); } });"
+  },
+  "functionSignature": {
+    "javascript": "app.get('/users/:username', (req, res) => {"
+  },
+  "solutions": {
+    "javascript": "const express = require('express'); const app = express(); app.get('/users/:username', (req, res) => { const username = req.params.username; if (!/^[a-zA-Z0-9]+$/.test(username) || username.length < 3) { res.status(400).json({ error: 'Invalid username' }); } else { res.json({ username }); } }); app.listen(3000, () => { console.log('Server listening on port 3000'); });"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "john_doe",
+      "output": "{\"username\":\"john_doe\"}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "1234567890",
+      "output": "{\"username\":\"1234567890\"}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_3",
+      "input": "0",
+      "output": "{\"error\":\"Invalid username\"}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "4eeea2b239f1387d4d1ff4ea",
+  "slug": "fixing-a-nodejs-express-middleware-route-with-incorrect-route-parameter-validation-bugfix-hard-node_js",
+  "mode": "bug_fix",
+  "category": "NODE_JS",
+  "difficulty": "Hard"
+}

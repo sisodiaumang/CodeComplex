@@ -1,0 +1,52 @@
+{
+  "_id": "5913b0c7bb706683595f5fb6",
+  "title": "Drag and Drop Reordering",
+  "slug": "js-drag-drop",
+  "difficulty": "Hard",
+  "topics": [
+    "JAVASCRIPT"
+  ],
+  "statement": {
+    "markdown": "## Drag-and-Drop List Reordering\n\nCreate a list where items can be re-ordered interactively using Native HTML5 Drag and Drop events.\n\n### Requirements:\n1. **Draggable Items**: Set proper HTML attributes to make items draggable.\n2. **Drag Visuals**: Apply a temporary lower opacity (`opacity-50`) to the active dragging item while it is being dragged.\n3. **Drag Over Highlight**: Apply border styles dynamically to target drop containers when an item is dragged over them.\n4. **Reorder Logic**: On drop, swap the position of the dragged item with the target item in the DOM."
+  },
+  "constraints": [
+    "Must utilize standard HTML5 drag and drop events (dragstart, dragover, drop, dragend)",
+    "Must reorder DOM nodes cleanly based on drop target positions"
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "html": "<div class=\"flex flex-col items-center justify-center min-h-[300px] bg-slate-900 font-sans p-4\">\n  <div class=\"w-full max-w-sm p-5 bg-slate-800 rounded-2xl border border-slate-700 shadow-xl\">\n    <h3 class=\"text-lg font-bold text-white mb-4\">Rank Priorities</h3>\n    <ul id=\"draggable-list\" class=\"space-y-2\">\n      <li class=\"draggable-item p-3 bg-slate-900 hover:bg-slate-900/80 text-slate-200 border border-slate-750 text-sm rounded-lg cursor-grab active:cursor-grabbing flex items-center justify-between\" draggable=\"true\"><span>1. Deploy code to production</span><span class=\"text-xs text-slate-500 font-mono\">☰</span></li>\n      <li class=\"draggable-item p-3 bg-slate-900 hover:bg-slate-900/80 text-slate-200 border border-slate-750 text-sm rounded-lg cursor-grab active:cursor-grabbing flex items-center justify-between\" draggable=\"true\"><span>2. Review security scan reports</span><span class=\"text-xs text-slate-500 font-mono\">☰</span></li>\n      <li class=\"draggable-item p-3 bg-slate-900 hover:bg-slate-900/80 text-slate-200 border border-slate-750 text-sm rounded-lg cursor-grab active:cursor-grabbing flex items-center justify-between\" draggable=\"true\"><span>3. Refactor legacy module database logic</span><span class=\"text-xs text-slate-500 font-mono\">☰</span></li>\n      <li class=\"draggable-item p-3 bg-slate-900 hover:bg-slate-900/80 text-slate-200 border border-slate-750 text-sm rounded-lg cursor-grab active:cursor-grabbing flex items-center justify-between\" draggable=\"true\"><span>4. Conduct team sprint planning</span><span class=\"text-xs text-slate-500 font-mono\">☰</span></li>\n    </ul>\n  </div>\n</div>",
+    "css": "",
+    "javascript": "const list = document.getElementById('draggable-list');\nconst items = document.querySelectorAll('.draggable-item');\n\n// Implement HTML5 drag and drop swap listeners here\n"
+  },
+  "gradingCriteria": [
+    {
+      "id": "functional_correctness",
+      "description": "Verify dragstart adds opacity classes, dragover is intercepted, and drop swaps items properly in list order.",
+      "weight": 60
+    },
+    {
+      "id": "code_cleanliness",
+      "description": "Verify clean event listener registration, preventDefault use on dragover to enable drops, and correct node index adjustments.",
+      "weight": 40
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "html",
+      "css",
+      "javascript"
+    ],
+    "referenceSolution": "const list = document.getElementById('draggable-list');\nconst items = document.querySelectorAll('.draggable-item');\n\nlet dragSrcEl = null;\n\nfunction handleDragStart(e) {\n  dragSrcEl = this;\n  this.style.opacity = '0.4';\n  e.dataTransfer.effectAllowed = 'move';\n}\n\nfunction handleDragOver(e) {\n  if (e.preventDefault) {\n    e.preventDefault(); // Necessary. Allows us to drop.\n  }\n  return false;\n}\n\nfunction handleDrop(e) {\n  e.stopPropagation();\n  if (dragSrcEl !== this) {\n    // Swap content / swap siblings in DOM\n    const listArray = Array.from(list.children);\n    const srcIndex = listArray.indexOf(dragSrcEl);\n    const destIndex = listArray.indexOf(this);\n\n    if (srcIndex < destIndex) {\n      list.insertBefore(dragSrcEl, this.nextSibling);\n    } else {\n      list.insertBefore(dragSrcEl, this);\n    }\n  }\n  return false;\n}\n\nfunction handleDragEnd(e) {\n  this.style.opacity = '1.0';\n}\n\nitems.forEach(item => {\n  item.addEventListener('dragstart', handleDragStart);\n  item.addEventListener('dragover', handleDragOver);\n  item.addEventListener('drop', handleDrop);\n  item.addEventListener('dragend', handleDragEnd);\n});"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

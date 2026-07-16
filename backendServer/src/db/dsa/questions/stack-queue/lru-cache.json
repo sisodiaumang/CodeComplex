@@ -1,0 +1,212 @@
+{
+  "_id": "lru-cache",
+  "title": "LRU Cache",
+  "slug": "lru-cache",
+  "difficulty": "Medium",
+  "category": "ARRAY",
+  "subCategory": "Implementation Problems",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 500,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "Stack",
+      "Queue",
+      "Implementation Problems"
+    ],
+    "patterns": [
+      "cache",
+      "lru"
+    ],
+    "prerequisites": [
+      "Stack",
+      "Queue"
+    ],
+    "variants": [],
+    "tags": [
+      "data-structure",
+      "implementation"
+    ],
+    "keywords": [
+      "cache",
+      "lru",
+      "stack",
+      "queue"
+    ],
+    "interviewFrequency": 4,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "Implement an LRU (Least Recently Used) cache that supports two operations:\n\n* **GET key** – Retrieve the value of the key if it exists in the cache, otherwise return -1.\n* **PUT key value** – Insert the key with its value into the cache. If the cache reaches its capacity, it should evict the least recently used key before inserting the new one. If the key already exists, update its value and mark it as most recently used.\n\nThe cache must operate in O(1) time per operation.\n\nYou will be given the cache capacity followed by a sequence of operations. Process the operations in order and output the result of each **GET** operation on a separate line.\n\n**Input format**\n- The first line contains an integer **C**, the capacity of the cache (1 ≤ C ≤ 10000).\n- The second line contains an integer **N**, the number of operations (1 ≤ N ≤ 100000).\n- The next **N** lines each describe an operation:\n  - For a **GET** operation: the line starts with the string `GET` followed by a space and an integer **key**.\n  - For a **PUT** operation: the line starts with the string `PUT` followed by a space, an integer **key**, another space, and an integer **value**.\n\n**Output format**\n- For each **GET** operation, output a single line containing the retrieved value or -1 if the key is not present in the cache.\n\n**Notes**\n- Keys and values are 32‑bit signed integers.\n- When a key is accessed by either **GET** or **PUT**, it becomes the most recently used.\n- If a **PUT** operation tries to insert a key that already exists, only its value is updated and it becomes the most recently used; no eviction occurs.\n\n**Constraints**\n- 1 ≤ C ≤ 10000\n- 1 ≤ N ≤ 100000\n- -10^9 ≤ key, value ≤ 10^9\n- The total number of **GET** operations does not exceed N.\n\n**Example 1**\n```\n2\n7\nPUT 1 1\nPUT 2 2\nGET 1\nPUT 3 3\nGET 2\nPUT 4 4\nGET 1\n```\n**Output**\n```\n1\n-1\n-1\n```\nExplanation:\n- Cache capacity is 2.\n- After first two PUTs, cache has {1=1,2=2}.\n- GET 1 returns 1 and makes key 1 most recent.\n- PUT 3 evicts key 2 (least recent) and inserts {3=3}.\n- GET 2 returns -1 because key 2 was evicted.\n- PUT 4 evicts key 1 and inserts {4=4}.\n- GET 1 returns -1 because key 1 was evicted.\n\n**Example 2**\n```\n3\n5\nPUT 10 100\nGET 10\nPUT 20 200\nGET 20\nGET 30\n```\n**Output**\n```\n100\n200\n-1\n```\nExplanation:\n- Cache capacity is 3, all puts fit without eviction.\n- GET 10 and GET 20 retrieve the stored values.\n- GET 30 returns -1 because key 30 was never inserted.",
+    "inputFormat": "C\nN\noperation_1\noperation_2\n...\noperation_N",
+    "outputFormat": "value_of_GET_1\nvalue_of_GET_2\n...\nvalue_of_GET_K",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "C",
+        "type": "integer",
+        "min": 1,
+        "max": 10000
+      },
+      {
+        "variable": "N",
+        "type": "integer",
+        "min": 1,
+        "max": 100000
+      },
+      {
+        "variable": "key",
+        "type": "integer",
+        "min": -1000000000,
+        "max": 1000000000
+      },
+      {
+        "variable": "value",
+        "type": "integer",
+        "min": -1000000000,
+        "max": 1000000000
+      }
+    ],
+    "examples": [
+      {
+        "input": "2\n7\nPUT 1 1\nPUT 2 2\nGET 1\nPUT 3 3\nGET 2\nPUT 4 4\nGET 1",
+        "output": "1\r\n-1\r\n-1",
+        "explanation": "Demonstrates eviction and retrieval as described in the statement."
+      },
+      {
+        "input": "3\n5\nPUT 10 100\nGET 10\nPUT 20 200\nGET 20\nGET 30",
+        "output": "100\r\n200\r\n-1",
+        "explanation": "Shows basic put and get operations without eviction."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "To implement an LRU cache that supports GET and PUT operations in O(1) time, consider using a combination of data structures that allow for efficient insertion, deletion, and search. A hash map can be used for storing key-value pairs, but it does not inherently maintain the order of elements, which is crucial for LRU cache eviction policy."
+    },
+    {
+      "order": 2,
+      "text": "A doubly linked list can be used in conjunction with a hash map to keep track of the order of elements. Each node in the linked list represents a key-value pair, and the hash map stores pointers to these nodes for O(1) access. When a key is accessed (via GET or PUT), its corresponding node can be moved to the front of the list to mark it as the most recently used."
+    },
+    {
+      "order": 3,
+      "text": "The PUT operation needs to handle two scenarios: inserting a new key-value pair and updating an existing key. If the key already exists, its value should be updated, and its node should be moved to the front of the list. If the key is new and the cache is at capacity, the least recently used key (the one at the end of the list) should be evicted before inserting the new key-value pair."
+    }
+  ],
+  "editorial": {
+    "title": "Mastering the LRU Cache: From Brute Force to O(1) Elegance",
+    "intuition": "The core of an LRU cache is the notion of recency: the most recently accessed items should stay in memory, while the oldest ones are evicted when capacity is exceeded.  If we could instantly identify and move the ‘most recent’ key, we could keep the cache in perfect order without scanning or sorting.",
+    "bruteForce": "A naïve implementation keeps a list of key–value pairs and, on every GET or PUT, scans the list to find the key, updates or inserts it, and then reorders the list by moving the accessed key to the front.  When the list grows beyond capacity, the last element is removed.  This works, but each operation costs O(C) time because of the linear search and the need to shift elements, making it impractical for the 100 000 operations in the constraints.",
+    "betterSolution": "The optimal solution uses a hash map for O(1) key lookup and a doubly linked list (or an OrderedDict in Python) to maintain recency order.  The map stores pointers to nodes in the list, so a GET or PUT can immediately locate the node, move it to the front (or back) in constant time, and evict the tail node when necessary.  This yields O(1) time per operation and O(C) space.",
+    "optimalSolution": "By combining a hash table and a doubly linked list, we achieve constant‑time updates and evictions.  The hash table maps keys to list nodes, while the list preserves the exact LRU order.  Each operation performs only a handful of pointer adjustments and dictionary lookups, guaranteeing the required performance.",
+    "proofOfCorrectness": "The algorithm maintains two invariants: (1) the hash table contains exactly the keys currently in the cache, each pointing to its node; (2) the linked list is ordered from most recently used (head) to least recently used (tail).  On a GET, if the key exists we move its node to the head, preserving the recency order.  On a PUT, we first remove any existing node (ensuring no duplicates), insert the new node at the head, and if the size exceeds capacity we remove the tail node, which by invariant (2) is the least recently used.  Because every operation preserves both invariants, the structure always reflects the correct LRU state, and the returned values match the specification.",
+    "dryRun": "Consider capacity 2, operations: PUT(1,1), PUT(2,2), GET(1), PUT(3,3).  After the first two PUTs, list is [2,1] (head=2).  GET(1) moves 1 to head → [1,2].  PUT(3,3) inserts 3 at head → [3,1,2]; size>2 so evict tail 2 → final list [3,1].  All operations follow the algorithm’s steps and produce the expected results.",
+    "commonMistakes": [
+      "Using a list and scanning it for every access, leading to O(C) time;",
+      "Not updating the hash table when moving nodes, causing stale references;",
+      "Evicting the wrong end of the list (head instead of tail);",
+      "Allowing duplicate keys by not removing an existing entry before inserting;",
+      "Using a singly linked list, which would require O(C) time to move nodes to the head;",
+      "Neglecting to handle the case where the cache capacity is zero."
+    ],
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(C)"
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\nclass Node {\npublic:\n    int key, value;\n    Node* prev;\n    Node* next;\n    Node(int k, int v) : key(k), value(v), prev(nullptr), next(nullptr) {}\n};\nclass LRUCache {\nprivate:\n    int capacity;\n    unordered_map<int, Node*> cache;\n    Node* head;\n    Node* tail;\npublic:\n    LRUCache(int capacity) {\n        this->capacity = capacity;\n        head = new Node(0, 0);\n        tail = new Node(0, 0);\n        head->next = tail;\n        tail->prev = head;\n    }\n    ~LRUCache() {\n        while (head->next != tail) {\n            Node* node = head->next;\n            head->next = node->next;\n            node->next->prev = head;\n            delete node;\n        }\n        delete head;\n        delete tail;\n    }\n    int get(int key) {\n        if (cache.find(key) != cache.end()) {\n            Node* node = cache[key];\n            remove(node);\n            add(node);\n            return node->value;\n        }\n        return -1;\n    }\n    void put(int key, int value) {\n        if (cache.find(key) != cache.end()) {\n            Node* node = cache[key];\n            node->value = value;\n            remove(node);\n            add(node);\n        } else {\n            if (cache.size() == capacity) {\n                cache.erase(tail->prev->key);\n                remove(tail->prev);\n            }\n            Node* node = new Node(key, value);\n            add(node);\n            cache[key] = node;\n        }\n    }\n    void remove(Node* node) {\n        Node* prev = node->prev;\n        Node* next = node->next;\n        prev->next = next;\n        next->prev = prev;\n    }\n    void add(Node* node) {\n        Node* prev = head;\n        Node* next = head->next;\n        prev->next = node;\n        next->prev = node;\n        node->prev = prev;\n        node->next = next;\n    }\n};\nclass Solution {\npublic:\n    vector<int> solve(int capacity, vector<vector<string>>& operations) {\n        LRUCache cache(capacity);\n        vector<int> result;\n        for (const auto& op : operations) {\n            if (op[0] == \"GET\") {\n                result.push_back(cache.get(stoi(op[1])));\n            } else {\n                cache.put(stoi(op[1]), stoi(op[2]));\n            }\n        }\n        return result;\n    }\n};",
+    "java": "import java.util.*;\nclass Node {\n    int key, value;\n    Node prev, next;\n    Node(int k, int v) {\n        key = k;\n        value = v;\n    }\n}\nclass LRUCache {\n    private int capacity;\n    private HashMap<Integer, Node> cache;\n    private Node head, tail;\n    public LRUCache(int capacity) {\n        this.capacity = capacity;\n        cache = new HashMap<>();\n        head = new Node(0, 0);\n        tail = new Node(0, 0);\n        head.next = tail;\n        tail.prev = head;\n    }\n    public int get(int key) {\n        if (cache.containsKey(key)) {\n            Node node = cache.get(key);\n            remove(node);\n            add(node);\n            return node.value;\n        }\n        return -1;\n    }\n    public void put(int key, int value) {\n        if (cache.containsKey(key)) {\n            Node node = cache.get(key);\n            node.value = value;\n            remove(node);\n            add(node);\n        } else {\n            if (cache.size() == capacity) {\n                cache.remove(tail.prev.key);\n                remove(tail.prev);\n            }\n            Node node = new Node(key, value);\n            add(node);\n            cache.put(key, node);\n        }\n    }\n    private void remove(Node node) {\n        Node prev = node.prev;\n        Node next = node.next;\n        prev.next = next;\n        next.prev = prev;\n    }\n    private void add(Node node) {\n        Node prev = head;\n        Node next = head.next;\n        prev.next = node;\n        next.prev = node;\n        node.prev = prev;\n        node.next = next;\n    }\n}\nclass Solution {\n    public int[] solve(int capacity, String[] operations) {\n        LRUCache cache = new LRUCache(capacity);\n        int[] result = new int[operations.length];\n        int j = 0;\n        for (String op : operations) {\n            String[] parts = op.split(\" \");\n            if (parts[0].equals(\"GET\")) {\n                result[j++] = cache.get(Integer.parseInt(parts[1]));\n            } else {\n                cache.put(Integer.parseInt(parts[1]), Integer.parseInt(parts[2]));\n            }\n        }\n        return result;\n    }\n}",
+    "python": "from collections import OrderedDict\nclass LRUCache:\n    def __init__(self, capacity: int):\n        self.capacity = capacity\n        self.cache = OrderedDict()\n    def get(self, key: int) -> int:\n        if key in self.cache:\n            value = self.cache.pop(key)\n            self.cache[key] = value\n            return value\n        return -1\n    def put(self, key: int, value: int) -> None:\n        if key in self.cache:\n            self.cache.pop(key)\n        elif len(self.cache) == self.capacity:\n            self.cache.popitem(last=False)\n        self.cache[key] = value\nclass Solution:\n    def solve(self, capacity: int, operations: list[list[str]]) -> list[int]:\n        cache = LRUCache(capacity)\n        result = []\n        for op in operations:\n            if op[0] == 'GET':\n                result.append(cache.get(int(op[1])))\n            else:\n                cache.put(int(op[1]), int(op[2]))\n        return result",
+    "javascript": "/**\n * @param {number}\n * @param {string[]}\n * @return {number[]}\n */\nvar solve = function(capacity, operations) {\n    class LRUCache {\n        constructor(capacity) {\n            this.capacity = capacity;\n            this.cache = new Map();\n        }\n        get(key) {\n            if (this.cache.has(key)) {\n                let value = this.cache.get(key);\n                this.cache.delete(key);\n                this.cache.set(key, value);\n                return value;\n            }\n            return -1;\n        }\n        put(key, value) {\n            if (this.cache.has(key)) {\n                this.cache.delete(key);\n            } else if (this.cache.size === this.capacity) {\n                let keys = Array.from(this.cache.keys());\n                this.cache.delete(keys[0]);\n            }\n            this.cache.set(key, value);\n        }\n    }\n    let cache = new LRUCache(capacity);\n    let result = [];\n    for (let op of operations) {\n        if (op[0] === 'GET') {\n            result.push(cache.get(parseInt(op[1])));\n        } else {\n            cache.put(parseInt(op[1]), parseInt(op[2]));\n        }\n    }\n    return result;\n};"
+  },
+  "functionSignature": {
+    "cpp": "vector<int> solve(int capacity, vector<vector<string>>& operations);",
+    "java": "public int[] solve(int capacity, String[] operations);",
+    "python": "def solve(self, capacity: int, operations: list[list[str]]) -> list[int]:",
+    "javascript": "var solve = function(capacity, operations);"
+  },
+  "solutions": {
+    "python": "import sys\nfrom collections import OrderedDict\n\nclass Solution:\n    def solve(self, capacity: int, operations: list[list[str]]) -> list[int]:\n        cache = OrderedDict()\n        results = []\n        for op in operations:\n            if op[0] == 'GET':\n                key = int(op[1])\n                if key in cache:\n                    value = cache.pop(key)\n                    cache[key] = value\n                    results.append(value)\n                else:\n                    results.append(-1)\n            elif op[0] == 'PUT':\n                key, value = int(op[1]), int(op[2])\n                if key in cache:\n                    cache.pop(key)\n                elif len(cache) >= capacity:\n                    cache.popitem(last=False)\n                cache[key] = value\n        return results\n\nif __name__ == '__main__':\n    it = iter(sys.stdin.read().splitlines())\n    try:\n        capacity = int(next(it))\n        n = int(next(it))\n        operations = [line.split() for line in it]\n    except StopIteration:\n        sys.exit(0)\n    sol = Solution()\n    ans = sol.solve(capacity, operations)\n    print('\\n'.join(map(str, ans)))",
+    "cpp": "#include <numeric>\n#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    vector<int> solve(int capacity, vector<vector<string>>& operations) {\n        unordered_map<int, int> cache;\n        list<int> order;\n        vector<int> results;\n        for (const auto& op : operations) {\n            if (op[0] == \"GET\") {\n                int key = stoi(op[1]);\n                if (cache.count(key)) {\n                    order.remove(key);\n                    order.push_back(key);\n                    results.push_back(cache[key]);\n                } else {\n                    results.push_back(-1);\n                }\n            } else if (op[0] == \"PUT\") {\n                int key = stoi(op[1]), value = stoi(op[2]);\n                if (cache.count(key)) {\n                    order.remove(key);\n                } else if (cache.size() >= capacity) {\n                    cache.erase(order.front());\n                    order.pop_front();\n                }\n                cache[key] = value;\n                order.push_back(key);\n            }\n        }\n        return results;\n    }\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int capacity, n;\n    cin >> capacity >> n;\n    vector<vector<string>> operations(n);\n    for (int i = 0; i < n; i++) {\n        string op;\n        cin >> op;\n        operations[i].push_back(op);\n        if (op == \"GET\") {\n            int key;\n            cin >> key;\n            operations[i].push_back(to_string(key));\n        } else {\n            int key, value;\n            cin >> key >> value;\n            operations[i].push_back(to_string(key));\n            operations[i].push_back(to_string(value));\n        }\n    }\n    Solution sol;\n    vector<int> ans = sol.solve(capacity, operations);\n    for (int val : ans) {\n        cout << val << \"\\n\";\n    }\n    return 0;\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.2
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "2\n7\nPUT 1 1\nPUT 2 2\nGET 1\nPUT 3 3\nGET 2\nPUT 4 4\nGET 1",
+      "output": "1\r\n-1\r\n-1",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "3\n5\nPUT 10 100\nGET 10\nPUT 20 200\nGET 20\nGET 30",
+      "output": "100\r\n200\r\n-1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "zero_11",
+      "input": "1\n2\nPUT 1 1\nGET 1",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "zero"
+    },
+    {
+      "id": "one_12",
+      "input": "1\n1\nGET 1",
+      "output": "-1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "one"
+    },
+    {
+      "id": "negative_13",
+      "input": "2\n3\nPUT -1 1\nPUT -2 2\nGET -1",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "negative"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

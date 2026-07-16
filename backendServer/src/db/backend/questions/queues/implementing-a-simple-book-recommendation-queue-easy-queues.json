@@ -1,0 +1,194 @@
+{
+  "_id": "d37e92dab20e9594d129c0a1",
+  "title": "Implementing a Simple Book Recommendation Queue",
+  "slug": "implementing-a-simple-book-recommendation-queue-easy-queues",
+  "difficulty": "Easy",
+  "topics": [
+    "QUEUES"
+  ],
+  "statement": "Design a RESTful API that accepts book recommendations and stores them in a queue. Then, have a separate endpoint that retrieves the next available book recommendation from the queue. The API should handle errors, invalid input, and edge cases. Please note that this is an in-memory queue and will reset after each restart. You are required to implement the following endpoints:\n\n### POST /queue\n- Accepts a book recommendation in the request body.\n- Creates a new entry in the queue with the book title, author, and publisher.\n\n### GET /queue\n- Retrieves the next available book recommendation from the queue.\n- If the queue is empty, returns a 204 No Content status code.\n- If the queue is full (10 entries), returns a 429 Too Many Requests status code.\n\n### GET /queue/size\n- Retrieves the current size of the queue.\n\n### GET /queue/all\n- Retrieves all entries in the queue.\n\n### GET /health\n- A health check endpoint to verify the API is operating correctly.\n\nYou can use a mock queue in-memory array provided by the starter code. You don't need to store the data persistently.\n\nPlease ensure to handle edge cases, errors, and invalid input correctly.\n\nvisible test cases will be provided for the following scenarios:\n\n- Valid book recommendation\n- Queue retrieval\n- Queue size\n- Queue retrieval when empty\n- Queue retrieval when full\n- Error cases (e.g., invalid input, missing headers)\n\nhidden test cases will be provided to check edge cases, error states, and bad input formats.\n\nYou are required to write your own mock queue, and please do not use a library for the queue implementation.",
+  "constraints": [
+    "Must use only the in-memory array or mock database provided",
+    "Do not use any external libraries for the queue implementation"
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/queue",
+      "description": "Creates a new entry in the queue with the book title, author, and publisher."
+    },
+    {
+      "method": "GET",
+      "path": "/queue",
+      "description": "Retrieves the next available book recommendation from the queue."
+    },
+    {
+      "method": "GET",
+      "path": "/queue/size",
+      "description": "Retrieves the current size of the queue."
+    },
+    {
+      "method": "GET",
+      "path": "/queue/all",
+      "description": "Retrieves all entries in the queue."
+    },
+    {
+      "method": "GET",
+      "path": "/health",
+      "description": "A health check endpoint to verify the API is operating correctly."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\"name\": \"backend-app\",\"version\": \"1.0.0\",\"main\": \"index.js\",\"scripts\": {\"start\": \"node index.js\"},\"dependencies\": {\"express\": \"^4.18.2\"}}",
+    "index.js": "const express = require('express');\nconst app = express();\nconst queue = []; // Your in-memory queue implementation\napp.use(express.json());\n\n// TODO: Implement endpoints\n\napp.post('/queue', (req, res) => {\n    // TODO: Handle POST /queue request\n});\n\napp.get('/queue', (req, res) => {\n    // TODO: Handle GET /queue request\n});\n\napp.get('/queue/size', (req, res) => {\n    // TODO: Handle GET /queue/size request\n});\n\napp.get('/queue/all', (req, res) => {\n    // TODO: Handle GET /queue/all request\n});\n\napp.get('/health', (req, res) => {\n    // TODO: Handle GET /health request\n});\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));\n"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "POST",
+      "path": "/queue",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "title": "Book Title",
+        "author": "Author Name",
+        "publisher": "Publisher Name"
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "success": true
+      },
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "GET",
+      "path": "/queue",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "title": "Book Title",
+        "author": "Author Name",
+        "publisher": "Publisher Name"
+      },
+      "isVisible": true
+    },
+    {
+      "id": "v_tc3",
+      "method": "GET",
+      "path": "/queue/size",
+      "expectedStatus": 200,
+      "expectedBody": 1,
+      "isVisible": true
+    },
+    {
+      "id": "v_tc4",
+      "method": "GET",
+      "path": "/queue/all",
+      "expectedStatus": 200,
+      "expectedBody": [
+        {
+          "title": "Book Title",
+          "author": "Author Name",
+          "publisher": "Publisher Name"
+        }
+      ],
+      "isVisible": true
+    },
+    {
+      "id": "v_tc5",
+      "method": "GET",
+      "path": "/queue",
+      "expectedStatus": 204,
+      "isVisible": true
+    },
+    {
+      "id": "v_tc6",
+      "method": "GET",
+      "path": "/queue",
+      "expectedStatus": 429,
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "POST",
+      "path": "/queue",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "title": null,
+        "author": "Author Name",
+        "publisher": "Publisher Name"
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "POST",
+      "path": "/queue",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "title": "Book Title",
+        "author": null,
+        "publisher": "Publisher Name"
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "POST",
+      "path": "/queue",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "title": "Book Title",
+        "author": "Author Name",
+        "publisher": ""
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "bullmq",
+    "rabbitmq",
+    "kafka",
+    "background-jobs",
+    "workers",
+    "retry",
+    "delayed-jobs",
+    "queues",
+    "in-memory-queue",
+    "simple-implementation",
+    "book-recommendation"
+  ]
+}

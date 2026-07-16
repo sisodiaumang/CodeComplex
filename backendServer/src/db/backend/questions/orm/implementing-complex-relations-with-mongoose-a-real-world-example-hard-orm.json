@@ -1,0 +1,158 @@
+{
+  "_id": "97cd954c164b868d0205790c",
+  "title": "Implementing Complex Relations with Mongoose: A Real-World Example",
+  "slug": "implementing-complex-relations-with-mongoose-a-real-world-example-hard-orm",
+  "difficulty": "Hard",
+  "topics": [
+    "ORM"
+  ],
+  "statement": "Build a RESTful API using Mongoose to manage a bookstore database with multiple relations between entities. The database schema should include: Book, Author, Publisher, and Review. Each book has a publisher, author, and multiple reviews. Each author can write multiple books. Each publisher has multiple books. Each review is associated with one book. Create endpoints to perform CRUD operations for all entities, including retrieving related data via population. Implement at least the following endpoints: GET /api/books/:id, GET /api/authors/:id, GET /api/reviews/:id, POST /api/books, POST /api/reviews. Use the provided in-memory mock database to store and retrieve data. Note that this challenge is hard due to the complexity of the relations and the need to handle multiple query parameters, body requirements, and success/failure responses.",
+  "constraints": [
+    "Must use Mongoose as the ORM library.",
+    "Must implement at least the specified endpoints."
+  ],
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/api/books/:id",
+      "description": "Retrieve a book by its ID, including its publisher, author, and reviews. Query parameters: page, limit."
+    },
+    {
+      "method": "GET",
+      "path": "/api/authors/:id",
+      "description": "Retrieve an author by its ID, including the books they wrote."
+    },
+    {
+      "method": "GET",
+      "path": "/api/reviews/:id",
+      "description": "Retrieve a review by its ID, including the associated book."
+    },
+    {
+      "method": "POST",
+      "path": "/api/books",
+      "description": "Create a new book. Body: { title, authorId, publisherId }."
+    },
+    {
+      "method": "POST",
+      "path": "/api/reviews",
+      "description": "Create a new review. Body: { bookId, rating, comment }."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": {
+      "name": "bookstore-api",
+      "version": "1.0.0",
+      "main": "index.js",
+      "scripts": {
+        "start": "node index.js"
+      },
+      "dependencies": {
+        "express": "^4.18.2",
+        "mongoose": "^6.5.3"
+      }
+    },
+    "index.js": "const express = require('express');\nconst app = express();\napp.use(express.json());\nconst mongoose = require('mongoose');\nmongoose.connect('mongodb://localhost/bookstore', { useNewUrlParser: true, useUnifiedTopology: true });\nconst Book = mongoose.model('Book', {\n  title: String,\n  publisherId: String,\n  authorId: String\n});\nconst Author = mongoose.model('Author', {\n  name: String,\n  books: [{ type: String, ref: 'Book' }]\n});\nconst Publisher = mongoose.model('Publisher', {\n  name: String,\n  books: [{ type: String, ref: 'Book' }]\n});\nconst Review = mongoose.model('Review', {\n  rating: Number,\n  comment: String,\n  bookId: String\n});\n\napp.get('/api/books/:id', (req, res) => {\n  // TODO: Implement book population and query parameter handling\n  res.json({});\n});\napp.get('/api/authors/:id', (req, res) => {\n  // TODO: Implement author population\n  res.json({});\n});\napp.get('/api/reviews/:id', (req, res) => {\n  // TODO: Implement review population\n  res.json({});\n});\napp.post('/api/books', (req, res) => {\n  // TODO: Implement book creation\n  res.json({});\n});\napp.post('/api/reviews', (req, res) => {\n  // TODO: Implement review creation\n  res.json({});\n});\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "GET",
+      "path": "/api/books/12345",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {},
+      "expectedStatus": 200,
+      "expectedBody": {
+        "title": "The Book Title",
+        "publisherId": "67890",
+        "authorId": "11111",
+        "reviews": [
+          {
+            "rating": 5,
+            "comment": "Great book!"
+          }
+        ]
+      },
+      "expectedBodySchema": null,
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "POST",
+      "path": "/api/books",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "title": "New Book",
+        "authorId": "11111",
+        "publisherId": "67890"
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "title": "New Book",
+        "publisherId": "67890",
+        "authorId": "11111"
+      },
+      "expectedBodySchema": null,
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "GET",
+      "path": "/api/authors/22222",
+      "expectedStatus": 200,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "GET",
+      "path": "/api/reviews/33333",
+      "expectedStatus": 200,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "GET",
+      "path": "/api/books/12345?limit=10&page=2",
+      "expectedStatus": 200,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "mongoose",
+    "prisma",
+    "sequelize",
+    "typeorm",
+    "drizzle",
+    "relations",
+    "populate",
+    "schema",
+    "migration",
+    "orm"
+  ]
+}

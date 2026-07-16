@@ -1,0 +1,136 @@
+{
+  "title": "Fixing a Basic Express Route with Middleware",
+  "subCategory": "Express Middleware",
+  "statement": {
+    "markdown": "Implement a basic Express route that returns a message when accessed. However, the route should also log the request time for the route. You will need to use the `express` library and include a middleware function to calculate the request time. The middleware function should take the request and response objects as parameters, log the request time, and then call `next()`. The route should return a message indicating the request time, but the message should be 'Too slow' if it takes more than 1000 milliseconds.",
+    "inputFormat": "GET /",
+    "outputFormat": "A message indicating the request time.",
+    "notes": "You can use the `console.log` function to log the request time.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of milliseconds to check against."
+      }
+    ],
+    "examples": [
+      {
+        "input": "/",
+        "output": "Request took 1000ms",
+        "explanation": "The request took 1000 milliseconds to complete."
+      },
+      {
+        "input": "/",
+        "output": "Too slow",
+        "explanation": "The request took more than 1000 milliseconds to complete."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 10,
+    "points": 40,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "EXPRESS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "express"
+    ],
+    "interviewFrequency": 1,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the `express` library to create a server and a route."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "const express = require('express');\nconst app = express();\nconst PORT = 3000;\n\napp.use((req, res, next) => {\n  const startTime = Date.now();\n  // add code here\n  next();\n});\n\napp.get('/', (req, res) => {\n  // add code here\n  res.send();\n});\n\napp.listen(PORT, () => {\n  console.log(`Server running on port ${PORT}`);\n});",
+    "python": "import time\nimport datetime\nfrom flask import Flask\napp = Flask(__name__)\n\n@app.before_request\ndef before_request():\n  # add code here\n  pass\n\n@app.route('/', methods=['GET'])\ndef home():\n  # add code here\n  return\n\nif __name__ == '__main__':\n  app.run(debug=True)\n  print('Server running...')\n"
+  },
+  "buggyStarterCode": {
+    "javascript": "const express = require('express');\nconst app = express();\nconst PORT = 3000;\n\napp.use((req, res, next) => {\n  const startTime = Date.now();\n  res.send(`Request took ${Date.now() - startTime}ms`);\n  next();\n});\n\napp.get('/', (req, res) => {\n  res.send('Hello World!');\n});\n\napp.listen(PORT, () => {\n  console.log(`Server running on port ${PORT}`);\n});",
+    "python": "import time\nimport datetime\nfrom flask import Flask\napp = Flask(__name__)\n\n@app.before_request\ndef before_request():\n  res = datetime.datetime.now()\n  return f\"Request took \\{datetime.datetime.now()-res}ms\"\n\n@app.route('/', methods=['GET'])\ndef home():\n  return \"Hello World!\"\n\nif __name__ == '__main__':\n  app.run(debug=True)\n  print('Server running...')\n"
+  },
+  "functionSignature": {
+    "javascript": "var solve = function() {\n  // add code here\n};",
+    "python": "def home(self):\n  # add code here\n  return\n"
+  },
+  "solutions": {
+    "javascript": "// Solution\nconst express = require('express');\nconst app = express();\nconst PORT = 3000;\n\nvar solve = function() {\n  app.use((req, res, next) => {\n    const startTime = Date.now();\n    const endTime = Date.now();\n    if (endTime - startTime > 1000) {\n      res.send('Too slow');\n    } else {\n      res.send(`Request took ${endTime - startTime}ms`);\n    }\n    next();\n  });\n\n  app.get('/', (req, res) => {\n    res.send('Hello World!');\n  });\n\n  app.listen(PORT, () => {\n    console.log(`Server running on port ${PORT}`);\n  });\n};\n\n// Driver code\nvar server = require('http').createServer(solve);\nserver.listen(0, function() {\n  console.log('Server is running on port', server.address().port);\n});",
+    "python": "import time\nimport datetime\nfrom flask import Flask\napp = Flask(__name__)\n\nclass Solution:\n  def home(self):\n    def before_request():\n      res = datetime.datetime.now()\n      endTime = datetime.datetime.now()\n      if endTime - res > datetime.timedelta(milliseconds=1000):\n        return \"Too slow\"\n      else:\n        return f\"Request took \\{endTime-res}ms\"\n\n    @app.before_request\n    def _before_request():\n      return before_request()\n\n    @app.route('/', methods=['GET'])\ndef _home():\n      return \"Hello World!\"\n\n    return _home()\n\nif __name__ == '__main__':\n  app.run(debug=True)\n  print('Server running...')\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "/",
+      "output": "Request took 1000ms",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "/",
+      "output": "Too slow",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "0837cda4fa6e9a6ae9e36e4f",
+  "slug": "fixing-a-basic-express-route-with-middleware-bugfix-easy-express",
+  "mode": "bug_fix",
+  "category": "EXPRESS",
+  "difficulty": "Easy"
+}

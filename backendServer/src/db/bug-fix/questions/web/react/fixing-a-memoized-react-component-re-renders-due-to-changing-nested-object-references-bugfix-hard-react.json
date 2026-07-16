@@ -1,0 +1,145 @@
+{
+  "title": "Fixing a Memoized React Component Re-renders Due to Changing Nested Object References",
+  "subCategory": "State Management",
+  "statement": {
+    "markdown": "A memoized React component is used to render a list of items, where each item contains a complex object with nested properties. The component re-renders unnecessarily when the nested object properties change, despite the top-level object reference remaining the same. Fix the bug to prevent unnecessary re-renders.",
+    "inputFormat": "A JSON object representing the complex data structure with nested properties",
+    "outputFormat": "The rendered list of items as a string",
+    "notes": "The component should only re-render when the top-level object reference changes or when the nested object properties change in a way that affects the rendered output.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10,
+        "description": "The number of items in the list"
+      },
+      {
+        "variable": "k",
+        "type": "integer",
+        "min": 1,
+        "max": 100,
+        "description": "The number of nested properties in each item"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"data\": [{\"id\": 1, \"name\": \"Item 1\", \"details\": {\"price\": 10.99, \"description\": \"This is item 1\"}}, {\"id\": 2, \"name\": \"Item 2\", \"details\": {\"price\": 5.99, \"description\": \"This is item 2\"}}]}",
+        "output": "[{\"id\": 1, \"name\": \"Item 1\", \"details\": {\"price\": 10.99, \"description\": \"This is item 1\"}}, {\"id\": 2, \"name\": \"Item 2\", \"details\": {\"price\": 5.99, \"description\": \"This is item 2\"}}]",
+        "explanation": "The component should re-render when the nested object properties change, but not when the top-level object reference remains the same."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 100,
+    "premium": true,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "REACT"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "react"
+    ],
+    "interviewFrequency": 1,
+    "revisionLevel": 1,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Understand the problem and the buggy behavior"
+    },
+    {
+      "order": 2,
+      "text": "Identify the logical bug in the code"
+    },
+    {
+      "order": 3,
+      "text": "Develop a solution to fix the bug"
+    }
+  ],
+  "editorial": {
+    "title": "Fixing a Memoized React Component Re-renders Due to Changing Nested Object References",
+    "intuition": "The key to solving this problem is to understand the differences between object references and object equality. The memoized component should only re-render when the top-level object reference changes or when the nested object properties change in a way that affects the rendered output.",
+    "bruteForce": "A brute-force approach would involve rewriting the entire component to use a different data structure, but this is not necessary. A more elegant solution involves using a library like `lodash` to help with object equality checks.",
+    "betterSolution": "A better solution involves using a library like `lodash` to help with object equality checks and a custom `useMemo` hook to memoize the component's state.",
+    "optimalSolution": "The optimal solution involves using the `useMemo` hook to memoize the component's state, and a custom `isEqual` function to check for object equality.",
+    "proofOfCorrectness": "The proof of correctness involves demonstrating that the component only re-renders when the top-level object reference changes or when the nested object properties change in a way that affects the rendered output.",
+    "dryRun": "A dry run of the solution should involve testing the component with different inputs and verifying that it only re-renders when necessary.",
+    "commonMistakes": [
+      "Failing to understand the difference between object references and object equality",
+      "Not using a library like `lodash` to help with object equality checks"
+    ],
+    "timeComplexity": "O(n*k)",
+    "spaceComplexity": "O(n*k)"
+  },
+  "starterCode": {
+    "javascript": "function Item({ id, name, details }) {\n  const [data, setData] = React.useState({ id, name, details });\n  const [list, setList] = React.useState([]);\n\n  React.useMemo(() => {\n    if (data.id !== list[data.id].id) {\n      setList([...list, data]);\n    }\n  }, [data, list]);\n\n  return (\n    <div>\n      <h2>{name}</h2>\n      <p>Price: {details.price}</p>\n      <p>Description: {details.description}</p>\n    </div>\n  );\n}\n\nfunction App() {\n  const [data, setData] = React.useState({ data: [] });\n\n  React.useMemo(() => {\n    setData({ data: [{ id: 1, name: \"Item 1\", details: { price: 10.99, description: \"This is item 1\" } }, { id: 2, name: \"Item 2\", details: { price: 5.99, description: \"This is item 2\" } }] });\n  }, []);\n\n  return (\n    <div>\n      {data.data.map((item, index) => (\n        <Item key={index} id={item.id} name={item.name} details={item.details} />\n      ))}\n    </div>\n  );\n}",
+    "python": ""
+  },
+  "buggyStarterCode": {
+    "javascript": "function Item({ id, name, details }) {\n  const [data, setData] = React.useState({ id, name, details });\n  const [list, setList] = React.useState([]);\n\n  React.useMemo(() => {\n    if (data.id === list[data.id].id) {\n      setList([...list, data]);\n    }\n  }, [data, list]);\n\n  return (\n    <div>\n      <h2>{name}</h2>\n      <p>Price: {details.price}</p>\n      <p>Description: {details.description}</p>\n    </div>\n  );\n}\n\nfunction App() {\n  const [data, setData] = React.useState({ data: [] });\n\n  React.useMemo(() => {\n    setData({ data: [{ id: 1, name: \"Item 1\", details: { price: 10.99, description: \"This is item 1\" } }, { id: 2, name: \"Item 2\", details: { price: 5.99, description: \"This is item 2\" } }] });\n  }, []);\n\n  return (\n    <div>\n      {data.data.map((item, index) => (\n        <Item key={index} id={item.id} name={item.name} details={item.details} />\n      ))}\n    </div>\n  );\n}",
+    "python": ""
+  },
+  "functionSignature": {
+    "javascript": "var solve = function(s);",
+    "python": ""
+  },
+  "solutions": {
+    "javascript": "// Solution\nvar solve = function(s) {\n  // Your code here...\n};",
+    "python": ""
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"data\": [{\"id\": 1, \"name\": \"Item 1\", \"details\": {\"price\": 10.99, \"description\": \"This is item 1\"}}, {\"id\": 2, \"name\": \"Item 2\", \"details\": {\"price\": 5.99, \"description\": \"This is item 2\"}}]}",
+      "output": "[{\"id\": 1, \"name\": \"Item 1\", \"details\": {\"price\": 10.99, \"description\": \"This is item 1\"}}, {\"id\": 2, \"name\": \"Item 2\", \"details\": {\"price\": 5.99, \"description\": \"This is item 2\"}}]",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"data\": [{\"id\": 1, \"name\": \"Item 1\", \"details\": {\"price\": 10.99, \"description\": \"This is item 1 changed\"}}, {\"id\": 2, \"name\": \"Item 2\", \"details\": {\"price\": 5.99, \"description\": \"This is item 2 changed\"}}]}",
+      "output": "[{\"id\": 1, \"name\": \"Item 1\", \"details\": {\"price\": 10.99, \"description\": \"This is item 1 changed\"}}, {\"id\": 2, \"name\": \"Item 2\", \"details\": {\"price\": 5.99, \"description\": \"This is item 2 changed\"}}]",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "3bd90304b22d601b919f24e8",
+  "slug": "fixing-a-memoized-react-component-re-renders-due-to-changing-nested-object-references-bugfix-hard-react",
+  "mode": "bug_fix",
+  "category": "REACT",
+  "difficulty": "Hard"
+}

@@ -1,0 +1,149 @@
+{
+  "title": "DOCKER Container Port Mapping Validator with Duplicate Service Names",
+  "subCategory": "Docker Port Mapping",
+  "statement": {
+    "markdown": "Given a list of Docker container port mappings, validate that there are no duplicate service names and all port mappings are valid. A port mapping is valid if it is of the form `<port>/udp` or `<port>/tcp` and the port number is between 1 and 65535. If the input is valid, return `true`; otherwise, return `false`.",
+    "inputFormat": "A list of strings representing Docker container port mappings in the format `<service_name>:<port>/<protocol>`. For example: `['service1:80/tcp', 'service2:443/udp', 'service1:80/tcp']`.",
+    "outputFormat": "A boolean indicating whether the input is valid.",
+    "notes": "The service names must be unique, and the port numbers must be between 1 and 65535.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of port mappings"
+      }
+    ],
+    "examples": [
+      {
+        "input": "['service1:80/tcp', 'service2:443/udp', 'service3:8080/tcp']",
+        "output": "true",
+        "explanation": "All service names are unique, and all port mappings are valid."
+      },
+      {
+        "input": "['service1:80/tcp', 'service1:443/udp', 'service3:8080/tcp']",
+        "output": "false",
+        "explanation": "The service name 'service1' appears twice, so the input is invalid."
+      },
+      {
+        "input": "['service1:80/tcp', 'service2:123456/udp', 'service3:8080/tcp']",
+        "output": "false",
+        "explanation": "The port number 123456 is greater than 65535, so the input is invalid."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DOCKER"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "docker"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use a Set to keep track of unique service names"
+    }
+  ],
+  "editorial": {
+    "title": "DOCKER Container Port Mapping Validator with Duplicate Service Names",
+    "intuition": "You can use a Set to keep track of unique service names and check for duplicate service names in O(n) time.",
+    "bruteForce": "You can iterate over each port mapping and check if the service name exists in the Set. If it does, return false. Otherwise, add the service name to the Set and continue to the next port mapping.",
+    "betterSolution": "You can use a Set to keep track of unique service names and check for invalid port numbers in O(n) time.",
+    "optimalSolution": "You can use a Set to keep track of unique service names and check for invalid port numbers in O(n) time. You can use regular expressions to parse the port number and protocol.",
+    "proofOfCorrectness": "The solution is correct because it checks for both duplicate service names and invalid port numbers.",
+    "dryRun": "Example input: ['service1:80/tcp', 'service2:443/udp', 'service3:8080/tcp']. Expected output: true.",
+    "commonMistakes": [
+      "Not checking for invalid port numbers",
+      "Not using a Set to keep track of unique service names"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// Function to validate Docker container port mappings",
+    "python": "class Solution:\n    def validatePortMappings(self, port_mappings):\n        # Your code here"
+  },
+  "buggyStarterCode": {
+    "javascript": "function validatePortMappings(portMappings) {\n    let serviceNames = new Set();\n    for (let i = 0; i < portMappings.length; i++) {\n        let parts = portMappings[i].split(':');\n        let serviceName = parts[0];\n        let port = parts[1].split('/')[0];\n        if (serviceNames.has(serviceName)) {\n            return false;\n        }\n        serviceNames.add(serviceName);\n    }\n    return true;\n}",
+    "python": "class Solution:\n    def validate_port_mappings(self, nums: list[int]) -> bool:\n        # Buggy code\n        pass"
+  },
+  "functionSignature": {
+    "javascript": "function validatePortMappings(portMappings);",
+    "python": "def validate_port_mappings(self, port_mappings: List[str]) -> bool:"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction validatePortMappings(portMappings) {\n    let serviceNames = new Set();\n    for (let i = 0; i < portMappings.length; i++) {\n        let parts = portMappings[i].split(':');\n        let serviceName = parts[0];\n        let port = parts[1].split('/')[0];\n        if (serviceNames.has(serviceName)) {\n            return false;\n        }\n        let portNumber = parseInt(port);\n        if (portNumber < 1 || portNumber > 65535) {\n            return false;\n        }\n        serviceNames.add(serviceName);\n    }\n    return true;\n}",
+    "python": "class Solution:\n    def validate_port_mappings(self, port_mappings: List[str]) -> bool:\n        service_names = set()\n        for mapping in port_mappings:\n            parts = mapping.split(':')\n            service_name = parts[0]\n            port = parts[1].split('/')[0]\n            if service_name in service_names:\n                return False\n            service_names.add(service_name)\n            port_number = int(port)\n            if port_number < 1 or port_number > 65535:\n                return False\n        return True"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "['service1:80/tcp', 'service2:443/udp', 'service3:8080/tcp']",
+      "output": "true",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "['service1:80/tcp', 'service1:443/udp', 'service3:8080/tcp']",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    },
+    {
+      "id": "tc_3",
+      "input": "['service1:80/tcp', 'service2:123456/udp', 'service3:8080/tcp']",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "43f7bf330945e2803447508a",
+  "slug": "docker-container-port-mapping-validator-with-duplicate-service-names-bugfix-hard-docker",
+  "mode": "bug_fix",
+  "category": "DOCKER",
+  "difficulty": "Hard"
+}

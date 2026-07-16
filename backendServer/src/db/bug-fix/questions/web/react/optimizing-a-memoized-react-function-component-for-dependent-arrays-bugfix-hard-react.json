@@ -1,0 +1,152 @@
+{
+  "title": "Optimizing a Memoized React Function Component for Dependent Arrays",
+  "subCategory": "Memoization",
+  "statement": {
+    "markdown": "Write a memoized React function component that optimizes rendering by avoiding unnecessary re-renders due to changing array references. The component receives a list of objects, and each object has an `id` and a list of `children`. The component should render a list of objects, and for each object, render its `id` and the children. However, if the array of objects changes but the objects themselves are the same, the component should not re-render. If the array of objects changes and the objects are different, the component should re-render. If an object's children change, the component should not re-render. This is a common issue in React applications where the state of components changes, but it's not necessary to re-render the entire component tree.",
+    "inputFormat": "An object with an `array` property containing a list of objects, where each object has an `id` and a list of `children`.",
+    "outputFormat": "A React function component that renders the list of objects, with each object's `id` and children.",
+    "notes": "This is a common issue in React applications where the state of components changes, but it's not necessary to re-render the entire component tree.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The maximum number of objects in the array."
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The maximum number of children in an object."
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"array\": [{\"id\": 1, \"children\": [1, 2, 3]}, {\"id\": 2, \"children\": [4, 5, 6]}]}",
+        "output": "<div><p>1</p><ul><li>1</li><li>2</li><li>3</li></ul><p>2</p><ul><li>4</li><li>5</li><li>6</li></ul></div>",
+        "explanation": "The component should render the list of objects with their `id` and children."
+      },
+      {
+        "input": "{\"array\": [{\"id\": 1, \"children\": [1, 2, 3]}, {\"id\": 2, \"children\": [4, 5, 6]}]}",
+        "output": "<div><p>1</p><ul><li>1</li><li>2</li><li>3</li></ul><p>2</p><ul><li>4</li><li>5</li><li>6</li></ul></div>",
+        "explanation": "The component should not re-render if the array of objects changes but the objects themselves are the same."
+      },
+      {
+        "input": "{\"array\": [{\"id\": 1, \"children\": [1, 2, 3]}, {\"id\": 2, \"children\": [4, 5, 7]}]}",
+        "output": "<div><p>1</p><ul><li>1</li><li>2</li><li>3</li></ul><p>2</p><ul><li>4</li><li>5</li><li>7</li></ul></div>",
+        "explanation": "The component should re-render if the array of objects changes and the objects are different."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 100,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "REACT"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "react"
+    ],
+    "interviewFrequency": 1,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the `useMemo` hook to memoize the list of objects."
+    },
+    {
+      "order": 2,
+      "text": "Use the `useCallback` hook to memoize the function that renders the list of objects."
+    }
+  ],
+  "editorial": {
+    "title": "Optimizing a Memoized React Function Component",
+    "intuition": "The `useMemo` hook can be used to memoize the list of objects, and the `useCallback` hook can be used to memoize the function that renders the list of objects.",
+    "bruteForce": "A brute force approach would be to re-render the component tree every time the state changes.",
+    "betterSolution": "A better solution would be to use memoization to avoid unnecessary re-renders.",
+    "optimalSolution": "The optimal solution would be to use the `useMemo` and `useCallback` hooks to memoize the list of objects and the function that renders the list of objects.",
+    "proofOfCorrectness": "The correctness proof is that the component will not re-render if the array of objects changes but the objects themselves are the same, and the component will re-render if the array of objects changes and the objects are different.",
+    "dryRun": "A dry run of the component would show that it renders the list of objects with their `id` and children.",
+    "commonMistakes": [
+      "Not using memoization",
+      "Not using `useMemo` and `useCallback` hooks"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// Use the React hooks to memoize the list of objects and the function that renders the list of objects.",
+    "python": "class MemoizedComponent(React.Component):\n    def __init__(self, props):\n        self.props = props\n        self.state = {\n            'array': [],\n            'renderFunction': None\n        }\n\n    def useMemo(self):\n        return self.props['array']\n\n    def useCallback(self):\n        return self.renderComponent\n\n    def renderComponent(self):\n        return React.createElement('div', {}, self.props['array'].map((object, index) =>\n            React.createElement('p', {}, object['id']) +\n            React.createElement('ul', {}, object['children'].map((child, index) =>\n                React.createElement('li', {}, child)\n            ))\n        ))"
+  },
+  "buggyStarterCode": {
+    "javascript": "import React from 'react';\n\nfunction MemoizedComponent(props) {\n    const array = props.array;\n    const renderFunction = React.useCallback(() => {\n        return React.createElement('div', {}, array.map((object, index) =>\n            React.createElement('p', {}, object.id) +\n            React.createElement('ul', {}, object.children.map((child, index) =>\n                React.createElement('li', {}, child)\n            ))\n        ));\n    }, [array]);\n\n    React.useEffect(() => {\n        renderFunction();\n    }, [array]);\n\n    return React.createElement('div', {}, renderFunction());\n}\n\nexport default MemoizedComponent;\n\n",
+    "python": "class Solution:\n    def MemoizedComponent(self, nums: list[int]) -> bool:\n        # Buggy code\n        pass"
+  },
+  "functionSignature": {
+    "javascript": "function MemoizedComponent(props) {\n    // ... code ...\n}",
+    "python": "class MemoizedComponent(React.Component):\n    def __init__(self, props):\n        # ... code ...\n"
+  },
+  "solutions": {
+    "javascript": "// Solution\nimport React from 'react';\n\nfunction MemoizedComponent(props) {\n    const array = React.useMemo(() => props.array, [props.array]);\n    const renderFunction = React.useCallback(() => {\n        return React.createElement('div', {}, array.map((object, index) =>\n            React.createElement('p', {}, object.id) +\n            React.createElement('ul', {}, object.children.map((child, index) =>\n                React.createElement('li', {}, child)\n            ))\n        ));\n    }, [array]);\n\n    return renderFunction();\n}\n\nexport default MemoizedComponent;",
+    "python": "import React\n\nclass MemoizedComponent(React.Component):\n    def __init__(self, props):\n        self.props = props\n        self.state = {\n            'array': [],\n            'renderFunction': None\n        }\n\n    def useMemo(self):\n        return self.props['array']\n\n    def useCallback(self):\n        return self.renderComponent\n\n    def renderComponent(self):\n        return React.createElement('div', {}, self.props['array'].map((object, index) =>\n            React.createElement('p', {}, object['id']) +\n            React.createElement('ul', {}, object['children'].map((child, index) =>\n                React.createElement('li', {}, child)\n            ))\n        ))\n\n    def shouldComponentUpdate(self, nextProps, nextState):\n        return nextProps['array'] != self.props['array'] or nextState['renderFunction'] != self.state['renderFunction']\n\n    def render(self):\n        return self.renderComponent()"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"array\": [{\"id\": 1, \"children\": [1, 2, 3]}, {\"id\": 2, \"children\": [4, 5, 6]}]}",
+      "output": "<div><p>1</p><ul><li>1</li><li>2</li><li>3</li></ul><p>2</p><ul><li>4</li><li>5</li><li>6</li></ul></div>",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"array\": [{\"id\": 1, \"children\": [1, 2, 3]}, {\"id\": 2, \"children\": [4, 5, 6]}]}",
+      "output": "<div><p>1</p><ul><li>1</li><li>2</li><li>3</li></ul><p>2</p><ul><li>4</li><li>5</li><li>6</li></ul></div>",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "cd2f72890ddff53e33476dad",
+  "slug": "optimizing-a-memoized-react-function-component-for-dependent-arrays-bugfix-hard-react",
+  "mode": "bug_fix",
+  "category": "REACT",
+  "difficulty": "Hard"
+}

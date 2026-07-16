@@ -1,0 +1,149 @@
+{
+  "title": "Validate MongoDB Projection with Nested Fields and Optional Keys",
+  "subCategory": "MongoDB Query Projection",
+  "statement": {
+    "markdown": "Write a function `validateProjection` that takes a MongoDB projection object as input and returns `true` if the projection is valid, `false` otherwise. A valid projection is one where all nested fields have a valid key and the fields are not missing. Note that the projection may contain optional keys, which are denoted by a `$` symbol at the beginning of the key. For example, `{$field1: 1}` is a valid projection, while `{field1: 1, field2: {field3: 1}}` is not because `field3` is missing. You may assume that the input projection is a nested object.",
+    "inputFormat": "A MongoDB projection object as a string",
+    "outputFormat": "A boolean indicating whether the projection is valid or not",
+    "notes": "The function should handle projections with nested fields and optional keys. Time complexity: O(n), where n is the number of keys in the projection. Space complexity: O(n), where n is the number of keys in the projection.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of keys in the projection"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"_id\": 1, \"name\": \"John\", \"address\": {\"street\": \"123 Main St\"}}",
+        "output": "true",
+        "explanation": "The projection is valid because all fields are present."
+      },
+      {
+        "input": "{\"_id\": 1, \"name\": \"John\", \"address\": {\"$street\": \"123 Main St\"}}",
+        "output": "true",
+        "explanation": "The projection is valid because the optional key $street is present."
+      },
+      {
+        "input": "{\"_id\": 1, \"name\": \"John\", \"address\": {\"street\": {\"city\": \"New York\"}}}",
+        "output": "false",
+        "explanation": "The projection is invalid because the field city is missing."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "MONGODB"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "mongodb"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Start by checking if the projection is a nested object."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial",
+    "intuition": "To validate a MongoDB projection, we need to check if all nested fields have a valid key and the fields are not missing. We can use a recursive function to check the projection object.",
+    "bruteForce": "We can use a brute-force approach by checking each field in the projection object. If a field is missing, we return false.",
+    "betterSolution": "We can use a recursive approach to check the projection object. If a field is missing, we return false.",
+    "optimalSolution": "We can use a recursive approach to check the projection object. If a field is missing, we return false. We can also use a memoization technique to optimize the function.",
+    "proofOfCorrectness": "The function is correct because it checks all fields in the projection object and returns false if any field is missing.",
+    "dryRun": "Example run: input: {\"_id\": 1, \"name\": \"John\", \"address\": {\"street\": \"123 Main St\"}}; output: true",
+    "commonMistakes": [
+      "Not checking for missing fields",
+      "Not handling optional keys correctly"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// Function to validate a MongoDB projection\nfunction validateProjection(projection) {\n    // Your code here\n}",
+    "python": "class Solution:\n    def validateProjection(self, projection: dict) -> bool:\n        # Your code here"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Function to validate a MongoDB projection\nfunction validateProjection(projection) {\n    // Check if the projection is a nested object\n    if (typeof projection === 'object') {\n        // Check each field in the projection object\n        for (let key in projection) {\n            if (projection[key] === null) {\n                return false;\n            }\n        }\n        return true;\n    }\n    return false;\n}",
+    "python": "class Solution:\n    def validateProjection(self, projection: dict) -> bool:\n        # Check if the projection is a nested object\n        if isinstance(projection, dict):\n            # Check each field in the projection object\n            for key in projection:\n                if projection[key] is None:\n                    return False\n            return True\n        return False"
+  },
+  "functionSignature": {
+    "javascript": "function validateProjection(projection: object): boolean;",
+    "python": "def validateProjection(self, projection: dict) -> bool:"
+  },
+  "solutions": {
+    "javascript": "// Function to validate a MongoDB projection\nfunction validateProjection(projection) {\n    function isObject(obj) {\n        return typeof obj === 'object' && obj !== null;\n    }\n\n    function hasKey(obj, key) {\n        return Object.prototype.hasOwnProperty.call(obj, key);\n    }\n\n    function validate(obj) {\n        for (let key in obj) {\n            if (isObject(obj[key])) {\n                if (!hasKey(obj[key], '$')) {\n                    if (!validate(obj[key])) {\n                        return false;\n                    }\n                } else {\n                    if (!validate(obj[key])) {\n                        return false;\n                    }\n                }\n            }\n        }\n        return true;\n    }\n\n    return validate(projection);\n}",
+    "python": "class Solution:\n    def validateProjection(self, projection: dict) -> bool:\n        def is_object(obj) -> bool:\n            return isinstance(obj, dict)\n\n        def has_key(obj, key) -> bool:\n            return key in obj\n\n        def validate(obj) -> bool:\n            for key in obj:\n                if is_object(obj[key]):\n                    if not has_key(obj[key], '$'):\n                        if not self.validateProjection(obj[key]):\n                            return False\n                    else:\n                        if not self.validateProjection(obj[key]):\n                            return False\n            return True\n\n        return validate(projection)"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"_id\": 1, \"name\": \"John\", \"address\": {\"street\": \"123 Main St\"}}",
+      "output": "true",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"_id\": 1, \"name\": \"John\", \"address\": {\"$street\": \"123 Main St\"}}",
+      "output": "true",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_3",
+      "input": "{\"_id\": 1, \"name\": \"John\", \"address\": {\"street\": {\"city\": \"New York\"}}}",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "_id": "ad2f503143a9dcf44d7b5c6e",
+  "slug": "validate-mongodb-projection-with-nested-fields-and-optional-keys-bugfix-hard-mongodb",
+  "mode": "bug_fix",
+  "category": "MONGODB",
+  "difficulty": "Hard"
+}

@@ -1,0 +1,146 @@
+{
+  "_id": "c78dce797ca64ca039d9a720",
+  "title": "Implement a Simple Payment Endpoint",
+  "slug": "implement-a-simple-payment-endpoint-easy-payment",
+  "difficulty": "Easy",
+  "topics": [
+    "PAYMENT"
+  ],
+  "statement": "Create an Express server that accepts a payment object and stores it in memory. Implement a GET endpoint to retrieve all payments. Ensure the payment object has a valid amount and currency. If the endpoint receives an invalid payment object, return a suitable error message with a 400 status code.",
+  "constraints": [
+    "Must use only the in-memory array provided to store payments",
+    "Cannot use any external libraries or databases"
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/payments",
+      "description": "Create a new payment. Input: JSON object with amount and currency. Success: 201 status code, success message. Error: 400 status code, error message."
+    },
+    {
+      "method": "GET",
+      "path": "/api/payments",
+      "description": "Retrieve all payments. Success: 200 status code, JSON array of payment objects. Error: 500 status code, error message."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": {
+      "name": "backend-app",
+      "version": "1.0.0",
+      "main": "index.js",
+      "scripts": {
+        "start": "node index.js"
+      },
+      "dependencies": {
+        "express": "^4.18.2"
+      }
+    },
+    "index.js": "const express = require('express');\nconst app = express();\napp.use(express.json());\nconst payments = [];\n\n// TODO: Implement endpoints\n\napp.listen(3000, () => console.log('Server running on port ' + 3000));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "POST",
+      "path": "/api/payments",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "amount": 10.99,
+        "currency": "USD"
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "success": true
+      },
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "POST",
+      "path": "/api/payments",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "amount": 10.99,
+        "currency": "EURO"
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "success": true
+      },
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "POST",
+      "path": "/api/payments",
+      "body": {},
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "POST",
+      "path": "/api/payments",
+      "headers": {
+        "Content-Type": "text/plain"
+      },
+      "body": {
+        "amount": 10.99,
+        "currency": "USD"
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "POST",
+      "path": "/api/payments",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "amount": "ten dollars"
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "stripe",
+    "razorpay",
+    "webhooks",
+    "checkout",
+    "refunds",
+    "subscriptions",
+    "payment",
+    "express",
+    "nodejs",
+    "easy"
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "_id": "52ff82d499b8cbb12d2f8db6",
+  "title": "React Sliding Tabs Navigation",
+  "slug": "react-tabs-navigation",
+  "difficulty": "Easy",
+  "topics": [
+    "REACT",
+    "REACT_TABS_NAVIGATION"
+  ],
+  "statement": {
+    "markdown": "## React Sliding Tabs Navigation Component\n\nBuild a tab navigation component featuring a smooth sliding active background bar.\n\n### Requirements:\n1. **Dynamic Content**: Renders tabs from a list of objects containing tab keys, labels, badges, and optional disabled states.\n2. **Smooth Sliding Highlight**: Use a single absolute background element that slides smoothly to highlight the active tab using CSS transitions.\n3. **Badge counts**: Tab badges should render if present (e.g. \"Messages [12]\").\n4. **Disabling option**: Respect tab disabled options by ignoring clicks and applying muted layouts.\n"
+  },
+  "constraints": [
+    "Must be fully responsive",
+    "Must use React state hooks",
+    "Must style elements with Tailwind CSS"
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "html": "",
+    "css": "",
+    "react": "import React, { useState, useRef, useEffect } from 'react';\n\nexport default function SlidingTabs({ tabs, onChange }) {\n  // Implement tabs component with active background slide transition here\n  return (\n    <nav className=\"relative flex p-1 bg-gray-100 rounded-xl max-w-max\">\n      {/* Tabs list with sliding backdrop */}\n    </nav>\n  );\n}"
+  },
+  "gradingCriteria": [
+    {
+      "id": "functional_correctness",
+      "description": "Check if the component state is managed properly and fulfills all interaction criteria.",
+      "weight": 50
+    },
+    {
+      "id": "accessibility_focus",
+      "description": "Verify that keyboard focus, event handlers, and ARIA roles match custom specifications.",
+      "weight": 30
+    },
+    {
+      "id": "code_cleanliness",
+      "description": "Verify proper component code design structure and clean state structures.",
+      "weight": 20
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "react",
+      "tailwind"
+    ],
+    "referenceSolution": "import React, { useState, useRef, useEffect } from 'react';\n\nexport default function SlidingTabs({ tabs, onChange }) {\n  const [activeTab, setActiveTab] = useState(tabs[0]?.key || '');\n  const [coords, setCoords] = useState({ left: 0, width: 0 });\n  const activeTabRef = useRef(null);\n\n  const handleTabClick = (tab) => {\n    if (tab.disabled) return;\n    setActiveTab(tab.key);\n    if (onChange) onChange(tab.key);\n  };\n\n  useEffect(() => {\n    if (activeTabRef.current) {\n      const { offsetLeft, offsetWidth } = activeTabRef.current;\n      setCoords({ left: offsetLeft, width: offsetWidth });\n    }\n  }, [activeTab]);\n\n  return (\n    <div className=\"relative flex p-1 bg-gray-100 rounded-xl max-w-max border border-gray-200\">\n      {/* Sliding Underline / Background highlighting element */}\n      <div\n        className=\"absolute bottom-1 top-1 bg-white rounded-lg shadow-sm transition-all duration-300 ease-out\"\n        style={{ left: coords.left, width: coords.width }}\n      />\n\n      {tabs.map((tab) => {\n        const isActive = activeTab === tab.key;\n        return (\n          <button\n            key={tab.key}\n            onClick={() => handleTabClick(tab)}\n            ref={isActive ? activeTabRef : null}\n            disabled={tab.disabled}\n            className={`relative z-10 px-4 py-2 text-sm font-semibold rounded-lg flex items-center gap-2 select-none focus:outline-none transition ${\n              tab.disabled\n                ? 'opacity-40 cursor-not-allowed text-gray-400'\n                : isActive\n                ? 'text-purple-700'\n                : 'text-gray-500 hover:text-gray-800'\n            }`}\n          >\n            <span>{tab.label}</span>\n            {tab.badge !== undefined && (\n              <span className={`text-xs px-2 py-0.5 rounded-full ${isActive ? 'bg-purple-100 text-purple-700' : 'bg-gray-200 text-gray-600'}`}>\n                {tab.badge}\n              </span>\n            )}\n          </button>\n        );\n      })}\n    </div>\n  );\n}"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

@@ -1,0 +1,153 @@
+{
+  "_id": "37f97af1e2320974729834ad",
+  "title": "Detecting Disconnected Components in a Graph",
+  "slug": "detecting-disconnected-components-in-a-graph-bugfix-easy-graphs",
+  "difficulty": "Easy",
+  "category": "DSA",
+  "subCategory": "DFS",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "graph"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given an undirected graph represented as an adjacency list, your task is to detect and return the number of disconnected components in the graph. A component is a subgraph where there is a path between every pair of vertices.",
+    "inputFormat": "The graph will be represented as a dictionary where each key is a node and its corresponding value is a list of its neighboring nodes.",
+    "outputFormat": "Your function should return the number of disconnected components in the graph.",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of adjacency list"
+      }
+    ],
+    "examples": [
+      {
+        "input": "Example 1\n{{'A': ['B', 'C'], 'B': ['A', 'D'], 'C': ['A', 'D'], 'D': ['B', 'C']} }\nA\n1\n2\n1\n2",
+        "output": "1",
+        "explanation": ""
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text"
+    }
+  ],
+  "editorial": {
+    "title": "Detecting Disconnected Components in a Graph Editorial",
+    "intuition": "Perform DFS from an arbitrary node. Each time you visit a node that is not visited yet, mark its parent, increment the component count, and continue DFS.",
+    "bruteForce": "brute Force details.",
+    "betterSolution": "Use DFS to find the first unvisited node and start exploring from there.",
+    "optimalSolution": "DFS is the most suitable algorithm for this task. Perform DFS from an arbitrary node and count the number of connected components.",
+    "proofOfCorrectness": "proof Of Correctness details.",
+    "dryRun": "Perform DFS from an arbitrary node and mark the visited nodes.",
+    "commonMistakes": [
+      "Incorrect DFS traversal.",
+      "Forgetting to mark visited nodes."
+    ],
+    "timeComplexity": "O(V + E)",
+    "spaceComplexity": "O(V)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\n public:\n     int solve(dictionary<node_t, vector<node_t>>& adjList) {\n         // TODO: implement\n     }\n };",
+    "java": "public class Solution {\n public:\n     int solve(Map<node_t, List<node_t>> adjList) {\n         // TODO: implement\n     }\n }",
+    "python": "class Solution:\n     def solve(self, adj_list: dict) -> int:\n         # TODO: implement\n         return",
+    "javascript": "function solve(adjList) {\n     // TODO: implement\n }"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\n public:\n     int solve(dictionary<node_t, vector<node_t>>& adjList) {\n         int count = 0;\n         for (auto& node : adjList) {\n             if (!visited[node.first]) {\n                 count += 1; // <--- BUG: increment count for each node\n                 visited[node.first] = true;\n             }\n         }\n         return count;\n     }\n private:\n     unordered_set<node_t> visited;\n };",
+    "java": "public class Solution {\n public:\n     int solve(Map<node_t, List<node_t>> adjList) {\n         int count = 0;\n         for (Map.Entry<node_t, List<node_t>> entry : adjList.entrySet()) {\n             if (!visited.contains(entry.getKey())) {\n                 count += 1; // <--- BUG: increment count for each node\n                 visited.add(entry.getKey());\n             }\n         }\n         return count;\n     }\n private:\n     Set<node_t> visited;\n }",
+    "python": "class Solution:\n     def solve(self, adj_list: dict) -> int:\n         count = 0\n         for node in adj_list:\n             if not self.visited[node]:\n                 count += 1 # <--- BUG: increment count for each node\n                 self.visited[node] = True\n         return count\n     def __init__(self):\n         self.visited = {}",
+    "javascript": "function solve(adjList) {\n     let count = 0;\n     for (let node in adjList) {\n         if (!visited.has(node)) {\n             count += 1; // <--- BUG: increment count for each node\n             visited.add(node);\n         }\n     }\n     return count;\n }\n let visited = new Set();"
+  },
+  "functionSignature": {
+    "cpp": "int solve(dictionary<node_t, vector<node_t>>& adjList);",
+    "java": "int solve(Map<node_t, List<node_t>> adjList);",
+    "python": "int solve(adj_list: dict) -> int;",
+    "javascript": "function solve(adjList) {"
+  },
+  "solutions": {
+    "python": "class Solution:\n     def __init__(self):\n         self.visited = {}\n\n     def solve(self, adj_list: dict) -> int:\n         count = 0\n         for node in adj_list:\n             if node not in self.visited:\n                 self.visited[node] = True\n                 count += 1\n                 for neighbor in adj_list[node]:\n                     if neighbor not in self.visited:\n                         self.visited[neighbor] = True\n         return count\n\n def main() -> None:\n     solution = Solution()\n     adj_list = {{'A': ['B', 'C'], 'B': ['A', 'D'], 'C': ['A', 'D'], 'D': ['B', 'C']} }\n     print(solution.solve(adj_list))\n",
+    "cpp": "class Solution {\n public:\n     unordered_set<node_t> visited;\n\n     int solve(dictionary<node_t, vector<node_t>>& adjList) {\n         int count = 0;\n         for (auto& node : adjList) {\n             if (!visited.count(node.first)) {\n                 visited.insert(node.first);\n                 count += 1;\n                 for (auto& neighbor : node.second) {\n                     if (!visited.count(neighbor)) {\n                         visited.insert(neighbor);\n                     }\n                 }\n             }\n         }\n         return count;\n     }\n };",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "4\n{{'A': ['B', 'C'], 'B': ['A', 'D'], 'C': ['A', 'D'], 'D': ['B', 'C']} }\n1\n2\n3\n4",
+      "output": "1",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "3\n{{'A': ['B', 'C'], 'B': ['A'], 'C': ['B']} }\n1\n2\n3",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

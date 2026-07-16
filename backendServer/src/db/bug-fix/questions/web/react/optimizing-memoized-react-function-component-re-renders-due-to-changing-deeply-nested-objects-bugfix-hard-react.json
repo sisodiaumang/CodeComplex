@@ -1,0 +1,147 @@
+{
+  "title": "Optimizing Memoized React Function Component Re-renders Due to Changing Deeply Nested Objects",
+  "subCategory": "Memoization",
+  "statement": {
+    "markdown": "Given a memoized React function component `DeeplyNestedMemo`, which renders a deeply nested object `data` recursively, optimize the component to prevent unnecessary re-renders when the `data` object changes. The component should only re-render when the reference of the `data` object changes, not when its deeply nested properties change.",
+    "inputFormat": "An object `data` with deeply nested properties",
+    "outputFormat": "The memoized component's rendered HTML",
+    "notes": "The component should only re-render when the `data` object reference changes, not when its deeply nested properties change.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 100,
+        "max": 10000,
+        "description": "The number of nested levels in the `data` object"
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 10,
+        "max": 1000,
+        "description": "The maximum number of properties in each nested level"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"a\":{\"b\":{\"c\":1}}}",
+        "output": "<div>a<b>c1</b></div>",
+        "explanation": "The component should re-render only when the `data` object reference changes"
+      },
+      {
+        "input": "{\"a\":{\"b\":{\"c\":2}}}",
+        "output": "<div>a<b>c2</b></div>",
+        "explanation": "The component should re-render only when the `data` object reference changes"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 100,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "REACT"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "react"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the `useMemo` hook to memoize the component's dependencies"
+    },
+    {
+      "order": 2,
+      "text": "Use a deep comparison function to check for reference changes in the `data` object"
+    }
+  ],
+  "editorial": {
+    "title": "Optimizing Memoized React Function Component Re-renders Due to Changing Deeply Nested Objects",
+    "intuition": "Memoize the component's dependencies and use a deep comparison function to check for reference changes in the `data` object",
+    "bruteForce": "Use a recursive approach to check for changes in each nested level",
+    "betterSolution": "Use the `useMemo` hook and a deep comparison function",
+    "optimalSolution": "Use the `useMemo` hook and a deep comparison function with a custom comparison function",
+    "proofOfCorrectness": "The component should only re-render when the `data` object reference changes",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Not using memoization",
+      "Not using a deep comparison function"
+    ],
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "import React, { useReducer, useState } from 'react';\n\nfunction DeeplyNestedMemo({ data }) {\n  // Implement memoization and deep comparison function here\n  return <div>{JSON.stringify(data)}</div>;\n}\n\nexport default DeeplyNestedMemo;",
+    "python": "import re\nfrom typing import Any\n\nclass DeeplyNestedMemo:\n    def __init__(self, data: Any):\n        self.data = data\n\n    def memoized_component(self):\n        # Implement memoization and deep comparison function here\n        return str(self.data)\n\n# Implement driver code here"
+  },
+  "buggyStarterCode": {
+    "javascript": "import React, { useReducer, useState } from 'react';\n\nfunction DeeplyNestedMemo({ data }) {\n  const [count, setCount] = useState(0);\n  const [memo, setMemo] = useState(data);\n\n  React.useEffect(() => {\n    setMemo(data);\n  }, [data]);\n\n  return <div>{JSON.stringify(memo)}</div>;\n}\n\nexport default DeeplyNestedMemo;",
+    "python": "import re\nfrom typing import Any\n\nclass DeeplyNestedMemo:\n    def __init__(self, data: Any):\n        self.data = data\n\n    def memoized_component(self):\n        count = 0\n        memo = self.data\n\n        def update_memo():\n            nonlocal count\n            count += 1\n            memo = self.data\n        \n        update_memo()\n        return str(memo)\n\n# Implement driver code here"
+  },
+  "functionSignature": {
+    "javascript": "function DeeplyNestedMemo({ data }) {",
+    "python": "class DeeplyNestedMemo: def __init__(self, data: Any):"
+  },
+  "solutions": {
+    "javascript": "// Solution\nimport React, { useMemo, useState } from 'react';\n\nfunction DeeplyNestedMemo({ data }) {\n  const memo = useMemo(() => JSON.stringify(data), [JSON.stringify(data)]);\n  return <div>{memo}</div>;\n}\n\nexport default DeeplyNestedMemo;",
+    "python": "import re\nfrom typing import Any\n\nclass DeeplyNestedMemo:\n    def __init__(self, data: Any):\n        self.data = data\n\n    def memoized_component(self):\n        return str(self.data)\n\n# Implement driver code here"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"a\":{\"b\":{\"c\":1}}}",
+      "output": "<div>a<b>c1</b></div>",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"a\":{\"b\":{\"c\":2}}}",
+      "output": "<div>a<b>c2</b></div>",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "d49c9794b9d461cb4cb52ebd",
+  "slug": "optimizing-memoized-react-function-component-re-renders-due-to-changing-deeply-nested-objects-bugfix-hard-react",
+  "mode": "bug_fix",
+  "category": "REACT",
+  "difficulty": "Hard"
+}

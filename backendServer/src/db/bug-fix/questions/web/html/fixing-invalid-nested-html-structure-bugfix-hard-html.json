@@ -1,0 +1,145 @@
+{
+  "title": "Fixing Invalid Nested HTML Structure",
+  "subCategory": "HTML Structural Validation",
+  "statement": {
+    "markdown": "Given a string of HTML tags, validate if they follow a strict nesting structure. The string will contain only uppercase letters, spaces, and '<' or '>' characters. Each '<' character represents the start of a new tag, and each '>' character represents the end of a tag. A tag is valid if it has a corresponding closing tag with the same name or is a self-closing tag (e.g., '<img/>'). The string starts and ends with a '<' character. The task is to write a function that returns true if the HTML string is valid, and false otherwise.",
+    "inputFormat": "A string of HTML tags",
+    "outputFormat": "A boolean indicating whether the HTML string is valid",
+    "notes": "The string may contain comments (<!-- -->), doctype declarations, and other HTML elements.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of tags in the input string"
+      }
+    ],
+    "examples": [
+      {
+        "input": "<html><body><h1>Hello World</h1></body></html>",
+        "output": "true",
+        "explanation": "The HTML string is valid as it follows a strict nesting structure"
+      },
+      {
+        "input": "<html><body><h1>Hello World</html>",
+        "output": "false",
+        "explanation": "The HTML string is invalid as it contains a mismatched closing tag"
+      },
+      {
+        "input": "<html><body><h1>Hello World</h1></body></html>",
+        "output": "true",
+        "explanation": "The HTML string is valid as it follows a strict nesting structure"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 75,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "HTML"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "html"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use a stack to keep track of opening tags"
+    },
+    {
+      "order": 2,
+      "text": "Iterate over the string and check for mismatched closing tags"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial: Fixing Invalid Nested HTML Structure",
+    "intuition": "The problem requires a stack-based approach to validate the HTML string",
+    "bruteForce": "A brute-force approach would involve parsing the string and manually checking for mismatched tags",
+    "betterSolution": "A better solution would involve using a stack to keep track of opening tags",
+    "optimalSolution": "The optimal solution involves using a stack to keep track of opening tags and iterating over the string to check for mismatched closing tags",
+    "proofOfCorrectness": "The solution is correct as it accurately checks for mismatched tags and handles self-closing tags",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1: Not handling self-closing tags",
+      "Mistake 2: Not checking for mismatched closing tags"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// Write a function to check if the HTML string is valid",
+    "python": "class Solution:\n    def isValid(self, s: str) -> bool:"
+  },
+  "buggyStarterCode": {
+    "javascript": "function isValid(s) {\n    let stack = [];\n    for (let i = 0; i < s.length; i++) {\n        if (s[i] === '<') {\n            stack.push(s[i]);\n        } else if (s[i] === '>') {\n            stack.pop();\n        }\n    }\n    return stack.length === 0;\n}",
+    "python": "class Solution:\n    def isValid(self, s: str) -> bool:\n        stack = []\n        for char in s:\n            if char == '<':\n                stack.push(char)\n            elif char == '>':\n                stack.pop()\n        return len(stack) == 0"
+  },
+  "functionSignature": {
+    "javascript": "function isValid(s);",
+    "python": "def isValid(self, s: str) -> bool:"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction isValid(s) {\n    let stack = [];\n    let i = 0;\n    while (i < s.length) {\n        if (s[i] === '<') {\n            let tag = '';\n            while (i < s.length && s[i] !== '>') {\n                tag += s[i++];\n            }\n            if (tag[0] === '/') {\n                if (stack.length === 0 || stack.pop() !== tag.slice(1)) {\n                    return false;\n                }\n            } else {\n                stack.push(tag);\n            }\n        } else {\n            i++;\n        }\n    }\n    return stack.length === 0;\n}",
+    "python": "class Solution:\n    def isValid(self, s: str) -> bool:\n        stack = []\n        i = 0\n        while i < len(s):\n            if s[i] == '<':\n                tag = ''\n                while i < len(s) and s[i] != '>':\n                    tag += s[i]\n                    i += 1\n                if tag[0] == '/':\n                    if len(stack) == 0 or stack.pop() != tag[1:]:\n                        return False\n                else:\n                    stack.append(tag)\n            else:\n                i += 1\n        return len(stack) == 0"
+  },
+  "judgeConfig": {
+    "timeLimit": 3,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "<html><body><h1>Hello World</h1></body></html>",
+      "output": "true",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "<html><body><h1>Hello World</html>",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "6335f1edd147666f0c3df85b",
+  "slug": "fixing-invalid-nested-html-structure-bugfix-hard-html",
+  "mode": "bug_fix",
+  "category": "HTML",
+  "difficulty": "Hard"
+}

@@ -1,0 +1,170 @@
+{
+  "_id": "f77c6b9afd6c57ed1f53928f",
+  "title": "Email Templating and Sending System",
+  "slug": "email-templating-and-sending-system-hard-email",
+  "difficulty": "Hard",
+  "topics": [
+    "EMAIL"
+  ],
+  "statement": "Develop a robust email templating and sending system that integrates with an SMTP server. Implement the following endpoints:\n\n**Endpoint 1: Email Template Management**\n\n*   POST /api/templates: Create a new email template with a given subject, body, and attachment.\n*   GET /api/templates/:id: Retrieve a specific email template by ID.\n*   PUT /api/templates/:id: Update an existing email template.\n*   DELETE /api/templates/:id: Delete an email template.\n\n**Endpoint 2: Email Sending**\n\n*   POST /api/send: Send an email using a specified template, recipient email, and attachment. Handle errors, authentication, and rate limiting.\n\nInstructions:\n\n*   Use the Nodemailer library for interacting with the SMTP server.\n*   Store email templates in memory (use a mock database) for simplicity.\n*   Implement authentication and rate limiting to prevent abuse.\n\nYour implementation should include the following:\n\n*   A robust email template management system with CRUD operations.\n*   An email sending endpoint that integrates with the SMTP server.\n*   Authentication and rate limiting to prevent abuse.\n\n**Assumptions:**\n\n*   The SMTP server is available at `smtp.example.com` with username `user` and password `password`.\n*   Email templates are stored in memory using a mock database.\n\n**Constraints:**\n\n*   You must use the Nodemailer library for interacting with the SMTP server.\n*   Email templates must be stored in memory using a mock database.\n*   You must implement authentication and rate limiting to prevent abuse.\n",
+  "constraints": [
+    "Use the Nodemailer library for interacting with the SMTP server.",
+    "Email templates must be stored in memory using a mock database.",
+    "Implement authentication and rate limiting to prevent abuse."
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/templates",
+      "description": "Create a new email template with subject, body, and attachment."
+    },
+    {
+      "method": "GET",
+      "path": "/api/templates/:id",
+      "description": "Retrieve a specific email template by ID."
+    },
+    {
+      "method": "PUT",
+      "path": "/api/templates/:id",
+      "description": "Update an existing email template."
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/templates/:id",
+      "description": "Delete an email template."
+    },
+    {
+      "method": "POST",
+      "path": "/api/send",
+      "description": "Send an email using a specified template, recipient email, and attachment."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": {
+      "name": "email-system",
+      "version": "1.0.0",
+      "main": "index.js",
+      "scripts": {
+        "start": "node index.js"
+      },
+      "dependencies": {
+        "express": "^4.18.2",
+        "nodemailer": "^6.7.5"
+      }
+    },
+    "index.js": "const express = require('express');\nconst app = express();\nconst nodemailer = require('nodemailer');\napp.use(express.json());\n\n// Mock database for email templates\nconst templates = {};\n// SMTP server configuration\nconst smtpConfig = {\n  host: 'smtp.example.com',\n  auth: {\n    user: 'user',\n    pass: 'password'\n  }\n};\n// Nodemailer transport\nconst transport = nodemailer.createTransport(smtpConfig);\n\n// TODO: Implement email template management endpoints\n// TODO: Implement email sending endpoint\n\napp.listen(3000, () => console.log('Server running on port 3000'));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "POST",
+      "path": "/api/templates",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "subject": "Test Email",
+        "body": "Hello, World!",
+        "attachment": "path/to/attachment"
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "templateId": 1
+      },
+      "expectedBodySchema": null,
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "GET",
+      "path": "/api/templates/1",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "subject": "Test Email",
+        "body": "Hello, World!",
+        "attachment": "path/to/attachment"
+      },
+      "expectedBodySchema": null,
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "POST",
+      "path": "/api/send",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "templateId": 1,
+        "recipient": " recipient@example.com",
+        "attachment": "path/to/attachment"
+      },
+      "expectedStatus": 200,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "POST",
+      "path": "/api/send",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "templateId": 1,
+        "recipient": " non-existent@example.com",
+        "attachment": "path/to/attachment"
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "POST",
+      "path": "/api/send",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "templateId": " invalid-id",
+        "recipient": " recipient@example.com",
+        "attachment": "path/to/attachment"
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "nodemailer",
+    "resend",
+    "smtp",
+    "templates",
+    "otp",
+    "verification",
+    "password-reset",
+    "email",
+    "templating"
+  ]
+}

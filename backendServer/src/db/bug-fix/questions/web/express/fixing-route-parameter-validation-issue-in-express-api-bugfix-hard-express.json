@@ -1,0 +1,136 @@
+{
+  "title": "Fixing Route Parameter Validation Issue in Express API",
+  "subCategory": "Express Routing and Validation",
+  "statement": {
+    "markdown": "Implement a route handler for a GET /users/:id endpoint in an Express API. The route should validate the id parameter to be an integer between 1 and 1000, and if valid, return the user details. If the id is invalid, return a 400 Bad Request error with a JSON response containing an error message. You should use the express-validator library to validate the id parameter.",
+    "inputFormat": "The input will be a single string matching the format /users/:id, where id is a string.",
+    "outputFormat": "The output will be either a JSON object representing the user details, or a JSON object with a 400 Bad Request error message.",
+    "notes": "You should use the express-validator library to validate the id parameter. The user details should be returned in the following format: { \"id\": id, \"name\": \"John Doe\", \"email\": \"john.doe@example.com\" }",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "id",
+        "type": "integer",
+        "min": 1,
+        "max": 1000,
+        "description": "Valid id range"
+      }
+    ],
+    "examples": [
+      {
+        "input": "/users/123",
+        "output": "{\"id\": 123, \"name\": \"John Doe\", \"email\": \"john.doe@example.com\"}",
+        "explanation": "Valid id, returns user details"
+      },
+      {
+        "input": "/users/abcdef",
+        "output": "{\"error\": \"Invalid id\"}",
+        "explanation": "Invalid id, returns 400 Bad Request error"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "EXPRESS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "express"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the express-validator library to validate the id parameter."
+    }
+  ],
+  "editorial": {
+    "title": "Fixing Route Parameter Validation Issue in Express API Editorial",
+    "intuition": "The key to solving this problem is to use the express-validator library to validate the id parameter. You should use the 'isInt' and 'isIn' middleware to check if the id is an integer between 1 and 1000.",
+    "bruteForce": "One possible brute force approach is to use a try-catch block to check if the id parameter can be parsed as an integer. However, this approach is not efficient and may not cover all edge cases.",
+    "betterSolution": "A better solution is to use the express-validator library to validate the id parameter. This approach is more efficient and effective in handling different types of input.",
+    "optimalSolution": "The optimal solution is to use the express-validator library to validate the id parameter. You should use the 'isInt' and 'isIn' middleware to check if the id is an integer between 1 and 1000. If the id is invalid, return a 400 Bad Request error with a JSON response containing an error message. If the id is valid, return the user details.",
+    "proofOfCorrectness": "The proof of correctness for this solution is to test it with different inputs. You should test it with valid and invalid id parameters to ensure that it returns the correct output.",
+    "dryRun": "Step-by-step example run: 1. Define the route handler for the GET /users/:id endpoint. 2. Use the express-validator library to validate the id parameter. 3. If the id is valid, return the user details. 4. If the id is invalid, return a 400 Bad Request error with a JSON response containing an error message.",
+    "commonMistakes": [
+      "Not using the express-validator library to validate the id parameter",
+      "Not checking if the id is an integer between 1 and 1000"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "// Define the route handler for the GET /users/:id endpoint\nrouter.get('/users/:id', (req, res) => {\n    // Validate the id parameter\n    // Return the user details or a 400 Bad Request error\n})\n",
+    "python": "class Solution:\n    def __init__(self):\n        pass\n    def get_users(self, req, res):\n        # Define the route handler for the GET /users/:id endpoint\n        # Validate the id parameter\n        # Return the user details or a 400 Bad Request error\n        pass"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Define the route handler for the GET /users/:id endpoint\nrouter.get('/users/:id', (req, res) => {\n    // Validate the id parameter using express-validator\n    const { error } = Joi.validate({ id: req.params.id }, { id: Joi.string().required() });\n    if (error) {\n        res.status(400).send({ error: 'Invalid id' });\n    } else {\n        // Return the user details\n        res.json({ id: req.params.id, name: 'John Doe', email: 'john.doe@example.com' });\n    }\n})\n",
+    "python": "class Solution:\n    def __init__(self):\n        pass\n    def get_users(self, req, res):\n        # Define the route handler for the GET /users/:id endpoint\n        # Validate the id parameter using express-validator\n        try:\n            id = int(req.params.id)\n            if id < 1 or id > 1000:\n                res.status(400).send({ error: 'Invalid id' })\n            else:\n                # Return the user details\n                res.json({ id: id, name: 'John Doe', email: 'john.doe@example.com' })\n        except ValueError:\n            res.status(400).send({ error: 'Invalid id' })\n"
+  },
+  "functionSignature": {
+    "javascript": "var solve = function(router, req, res) { ... }",
+    "python": "def solve(self, req, res): ... "
+  },
+  "solutions": {
+    "javascript": "// Solution\nconst express = require('express')\nconst router = express.Router()\nconst Joi = require('joi')\n\nrouter.get('/users/:id', (req, res) => {\n    const schema = Joi.object().keys({ id: Joi.string().required() })\n    const { error } = Joi.validate({ id: req.params.id }, schema)\n    if (error) {\n        res.status(400).send({ error: 'Invalid id' })\n    } else {\n        const id = parseInt(req.params.id)\n        if (isNaN(id) || id < 1 || id > 1000) {\n            res.status(400).send({ error: 'Invalid id' })\n        } else {\n            res.json({ id: id, name: 'John Doe', email: 'john.doe@example.com' })\n        }\n    }\n})\n",
+    "python": "class Solution:\n    def __init__(self):\n        pass\n    def get_users(self, req, res):\n        # Define the route handler for the GET /users/:id endpoint\n        try:\n            id = int(req.params.id)\n            if id < 1 or id > 1000:\n                res.status(400).send({ error: 'Invalid id' })\n            else:\n                # Return the user details\n                res.json({ id: id, name: 'John Doe', email: 'john.doe@example.com' })\n        except ValueError:\n            res.status(400).send({ error: 'Invalid id' })\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "/users/123",
+      "output": "{\"id\": 123, \"name\": \"John Doe\", \"email\": \"john.doe@example.com\"}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "/users/abcdef",
+      "output": "{\"error\": \"Invalid id\"}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "577a3b2f39caf146ca050d13",
+  "slug": "fixing-route-parameter-validation-issue-in-express-api-bugfix-hard-express",
+  "mode": "bug_fix",
+  "category": "EXPRESS",
+  "difficulty": "Hard"
+}

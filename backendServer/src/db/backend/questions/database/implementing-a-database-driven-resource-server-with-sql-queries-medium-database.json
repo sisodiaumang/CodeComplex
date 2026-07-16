@@ -1,0 +1,133 @@
+{
+  "_id": "e518f21d7afe27b3ba9ca93b",
+  "title": "Implementing a Database-Driven Resource Server with SQL Queries",
+  "slug": "implementing-a-database-driven-resource-server-with-sql-queries-medium-database",
+  "difficulty": "Medium",
+  "topics": [
+    "DATABASE"
+  ],
+  "statement": "Create a RESTful API server using Express.js that interacts with an in-memory SQLite database. The server should handle GET, POST, PUT, and DELETE requests for managing books stored in the database. Each book has a unique ID, title, author, and publication year.\n\n### Requirements\n\n- The server should start listening on port 3000.\n- All incoming requests should be parsed as JSON.\n- Implement the following endpoints:\n\n#### `GET /api/books`\n\n- Return a list of all existing books in the database.\n- The response should be in JSON format and include each book's ID, title, author, and publication year.\n\n#### `POST /api/books`\n\n- Create a new book in the database based on the provided JSON payload.\n- The payload should contain the title, author, and publication year of the book.\n- The server should generate a unique ID for the new book and return it in the response.\n- The response should be in JSON format and include the ID, title, author, and publication year of the newly created book.\n\n#### `GET /api/books/:id`\n\n- Return the book with the specified ID in the database.\n- The response should be in JSON format and include the ID, title, author, and publication year of the book.\n\n#### `PUT /api/books/:id`\n\n- Update the book with the specified ID in the database based on the provided JSON payload.\n- The payload should contain the title, author, or publication year of the book.\n- The server should return the updated book in the response.\n- The response should be in JSON format and include the ID, title, author, and publication year of the updated book.\n\n#### `DELETE /api/books/:id`\n\n- Delete the book with the specified ID from the database.\n- The server should return a success message in the response.\n\n### Constraints\n\n- Must use the in-memory SQLite database provided.",
+  "constraints": [
+    "Must use the in-memory SQLite database provided",
+    "Must handle JSON payload parsing"
+  ],
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/api/books",
+      "description": "Return a list of all existing books in the database"
+    },
+    {
+      "method": "POST",
+      "path": "/api/books",
+      "description": "Create a new book in the database based on the provided JSON payload"
+    },
+    {
+      "method": "GET",
+      "path": "/api/books/:id",
+      "description": "Return the book with the specified ID in the database"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/books/:id",
+      "description": "Update the book with the specified ID in the database based on the provided JSON payload"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/books/:id",
+      "description": "Delete the book with the specified ID from the database"
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\"name\": \"resource-server\",\n  \"version\": \"1.0.0\",\n  \"main\": \"index.js\",\n  \"scripts\": {\n    \"start\": \"node index.js\"\n  },\n  \"dependencies\": {\n    \"express\": \"^4.18.2\",\n    \"sqlite3\": \"^5.0.2\"\n  }\n}",
+    "index.js": "const express = require('express');\nconst sqlite3 = require('sqlite3').verbose();\nconst app = express();\napp.use(express.json());\n\n// Connect to the in-memory SQLite database\nconst db = new sqlite3.Database(':memory:');\ndb.serialize(function () {\n  db.run('CREATE TABLE books (\n    id INTEGER PRIMARY KEY,\n    title TEXT NOT NULL,\n    author TEXT NOT NULL,\n    publication_year INTEGER NOT NULL\n  )');\n});\n\n// TODO: Implement endpoints\napp.listen(3000, () => console.log('Server running on port 3000'));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "GET",
+      "path": "/api/books",
+      "expectedStatus": 200,
+      "expectedBody": "[{\"id\":1,\"title\":\"Book 1\",\"author\":\"Author 1\",\"publication_year\":2020},{\"id\":2,\"title\":\"Book 2\",\"author\":\"Author 2\",\"publication_year\":2021}]",
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "POST",
+      "path": "/api/books",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": "{\"title\":\"New Book\",\"author\":\"Author 3\",\"publication_year\":2022}",
+      "expectedStatus": 201,
+      "expectedBody": "{\"id\":3,\"title\":\"New Book\",\"author\":\"Author 3\",\"publication_year\":2022}",
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "GET",
+      "path": "/api/books/1",
+      "expectedStatus": 200,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "PUT",
+      "path": "/api/books/1",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": "{\"title\":\"Updated Book 1\",\"publication_year\":2030}",
+      "expectedStatus": 200,
+      "expectedBody": "{\"id\":1,\"title\":\"Updated Book 1\",\"author\":\"Author 1\",\"publication_year\":2030}",
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "DELETE",
+      "path": "/api/books/1",
+      "expectedStatus": 200,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "sql",
+    "nosql",
+    "transactions",
+    "indexing",
+    "aggregation",
+    "joins",
+    "relationships",
+    "normalization",
+    "denormalization",
+    "acid",
+    "cap-theorem",
+    "database",
+    "sqlite",
+    "express",
+    "node"
+  ]
+}

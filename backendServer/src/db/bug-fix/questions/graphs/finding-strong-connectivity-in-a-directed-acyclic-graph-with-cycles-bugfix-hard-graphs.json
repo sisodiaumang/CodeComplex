@@ -1,0 +1,164 @@
+{
+  "_id": "ad86a2ec4fda6ec504d967b3",
+  "title": "Finding Strong Connectivity in a Directed Acyclic Graph with Cycles",
+  "slug": "finding-strong-connectivity-in-a-directed-acyclic-graph-with-cycles-bugfix-hard-graphs",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "Tarjan's Algorithm",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 100,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [
+      "Depth-First Search (DFS)"
+    ],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "graph",
+      "tarjan's algorithm",
+      "strong connectivity",
+      "dfs"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given an undirected connected graph `n` vertices, `m` edges, implement the correct version of Tarjan's algorithm to find strongly connected components (SCCs) using Depth-First Search (DFS). The current implementation has a logical bug. Your task is to identify and fix the issue.",
+    "inputFormat": "The first line contains the number of vertices `n`. The next `n` lines contain `n-1` edges with two vertices in each line.",
+    "outputFormat": "The strongly connected components are represented as lists of vertices. Each component is on a new line.",
+    "notes": "Time complexity should be O(VE) where V is the number of vertices and E is the number of edges.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of vertices"
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 0,
+        "max": 100000,
+        "description": "Number of edges"
+      }
+    ],
+    "examples": [
+      {
+        "input": "5\n1 2\n2 3\n3 4\n4 5\n5 1",
+        "output": "1 2 3 4\n5",
+        "explanation": "Strongly connected component 1: 1, 2, 3, 4. Strongly connected component 2: 5."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Review Tarjan's algorithm for strongly connected components"
+    }
+  ],
+  "editorial": {
+    "title": "Tarjan's Algorithm for Strong Connectivity",
+    "intuition": "Tarjan's algorithm uses the concept of DFS and a stack to find strongly connected components.",
+    "bruteForce": "Brute force approach is O(V^2 E), which is inefficient.",
+    "betterSolution": "",
+    "optimalSolution": "Tarjan's algorithm is an efficient approach with a time complexity of O(V E) using DFS.",
+    "proofOfCorrectness": "The algorithm finds strongly connected components by visiting each vertex in a DFS order and maintaining a stack of visited vertices.",
+    "dryRun": "Step-by-step example run to find strongly connected components",
+    "commonMistakes": [
+      "Incorrect use of stack or recursion"
+    ],
+    "timeComplexity": "O(V + E)",
+    "spaceComplexity": "O(|V| + |E|)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\nvoid stronglyConnectedComponents(vector<vector<int>> &graph, int n);\n};",
+    "java": "public class Solution {\npublic void stronglyConnectedComponents(int[][] graph, int n) {\n}\n}",
+    "python": "class Solution:\n\ndef strongly_connected_components(self, graph, n):\n    pass\n",
+    "javascript": "var solve = function(graph, n) {\n    return; // fix the bug here\n};"
+  },
+  "buggyStarterCode": {
+    "cpp": "void Solution::stronglyConnectedComponents(vector<vector<int>> &graph, int n) {\n  int s = 0, t = 0;\n  vector<int> visited(n, false);\n  vector<int> low(n, -1);\n  vector<int> disc(n);\n  vector<int> stack(n);\n  int time = 0;\n\n  for (int i = 0; i < n; i++) {\n    if (!visited[i]) {\n      dfs(graph, i, visited, low, disc, stack, i);\n    }\n  }\n\n  for (int i = n-1; i >= 0; i--) {\n    if (low[i] == -1) {\n      cout << i << \\n\";\n    }\n  }\n}\nvoid Solution::dfs(vector<vector<int>> &graph, int u, vector<int> &visited, vector<int> &low, vector<int> &disc, vector<int> &stack, int p) {\n  visited[u] = true;\n  low[u] = u;\n  disc[u] = time++;\n  stack.push_back(u);\n\n  for (int v : graph[u]) {\n    if (!visited[v]) {\n      dfs(graph, v, visited, low, disc, stack, u);\n    } else if (stack.back() != v) {\n      low[u] = min(low[u], low[v]);\n    }\n  }\n\n  if (low[u] == u) {\n    int v;\n    do {\n      v = stack.back();\n      stack.pop_back();\n      low[v] = n;\n      disc[v] = n;\n    } while (v != u);\n  }\n}",
+    "java": "public void stronglyConnectedComponents(int[][] graph, int n) {\n  int s = 0, t = 0;\n  boolean[] visited = new boolean[n];\n  int[] low = new int[n];\n  int[] disc = new int[n];\n  Stack<Integer> stack = new Stack<>();\n  int time = 0;\n\n  for (int i = 0; i < n; i++) {\n    if (!visited[i]) {\n      dfs(graph, i, visited, low, disc, stack, i);\n    }\n  }\n\n  for (int i = n-1; i >= 0; i--) {\n    if (low[i] == -1) {\n      System.out.println(i);\n    }\n  }\n}\nprotected void dfs(int[][] graph, int u, boolean[] visited, int[] low, int[] disc, Stack<Integer> stack, int p) {\n  visited[u] = true;\n  low[u] = u;\n  disc[u] = time++;\n  stack.push(u);\n\n  for (int v : graph[u]) {\n    if (!visited[v]) {\n      dfs(graph, v, visited, low, disc, stack, u);\n    } else if (stack.peek() != v) {\n      low[u] = Math.min(low[u], low[v]);\n    }\n  }\n\n  if (low[u] == u) {\n    int v;\n    do {\n      v = stack.pop();\n      low[v] = n;\n      disc[v] = n;\n    } while (v != u);\n  }\n}",
+    "python": "class Solution:\n    def strongly_connected_components(self, graph, n):\n        visited = [False]*n\n        low = [-1]*n\n        disc = [0]*n\n        stack = []\n        time = 0\n\n        for i in range(n):\n            if not visited[i]:\n                self.dfs(graph, i, visited, low, disc, stack, i)\n\n        for i in range(n-1, -1, -1):\n            if low[i] == -1:\n                print(i)\n\n    def dfs(self, graph, u, visited, low, disc, stack, p):\n        visited[u] = True\n        low[u] = u\n        disc[u] = self.time++\n        stack.append(u)\n\n        for v in graph[u]:\n            if not visited[v]:\n                self.dfs(graph, v, visited, low, disc, stack, u)\n            else if stack[-1] != v:\n                low[u] = min(low[u], low[v])\n\n        if low[u] == u:\n            v = None\n            while v != u:\n                v = stack.pop()\n                low[v] = n\n                disc[v] = n\n",
+    "javascript": "var solve = function(graph, n) {\n  var s = 0, t = 0;\n  var visited = new Array(n).fill(false);\n  var low = new Array(n).fill(-1);\n  var disc = new Array(n).fill(0);\n  var stack = [];\n  var time = 0;\n\n  for (var i = 0; i < n; i++) {\n    if (!visited[i]) {\n      solve.dfs(graph, i, visited, low, disc, stack, i);\n    }\n  }\n\n  for (var i = n-1; i >= 0; i--) {\n    if (low[i] == -1) {\n      console.log(i);\n    }\n  }\n}\nsolve.dfs = function(graph, u, visited, low, disc, stack, p) {\n  visited[u] = true;\n  low[u] = u;\n  disc[u] = time++;\n  stack.push(u);\n\n  for (var v of graph[u]) {\n    if (!visited[v]) {\n      solve.dfs(graph, v, visited, low, disc, stack, u);\n    } else if (stack[stack.length - 1] != v) {\n      low[u] = Math.min(low[u], low[v]);\n    }\n  }\n\n  if (low[u] == u) {\n    var v;\n    do {\n      v = stack.pop();\n      low[v] = n;\n      disc[v] = n;\n    } while (v != u);\n  }\n};"
+  },
+  "functionSignature": {
+    "cpp": "void stronglyConnectedComponents(vector<vector<int>> &graph, int n);",
+    "java": "public void stronglyConnectedComponents(int[][] graph, int n);",
+    "python": "def strongly_connected_components(self, graph, n):",
+    "javascript": "var solve = function(graph, n) {"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def strongly_connected_components(self, graph, n):\n        visited = [False]*n\n        low = [-1]*n\n        disc = [0]*n\n        stack = []\n        time = 0\n        ret = []\n\n        for i in range(n):\n            if not visited[i]:\n                self.dfs(graph, i, visited, low, disc, stack, time, i, ret)\n\n        return ret\n\n    def dfs(self, graph, u, visited, low, disc, stack, time, p, ret):\n        visited[u] = True\n        low[u] = u\n        disc[u] = time\n        stack.append(u)\n\n        for v in graph[u]:\n            if not visited[v]:\n                self.dfs(graph, v, visited, low, disc, stack, time, u, ret)\n            else if low[v] >= disc[u]:\n                low[u] = min(low[u], low[v])\n\n        if low[u] == u:\n            component = []\n            while u != p:\n                component.append(stack.pop())\n                u = stack[-1]\n            stack.pop()\n            component.reverse()\n            ret.append(component)\n        return ret\n\n# Main driver code\nif __name__ == '__main__':\n    n = int(input())\n    m = n - 1\n    graph = [[] for i in range(n)]\n\n    for i in range(m):\n        u, v = map(int, input().split())\n        graph[u - 1].append(v - 1)\n        graph[v - 1].append(u - 1)\n\n    sol = Solution()\n    res = sol.strongly_connected_components(graph, n)\n\n    for i in res:\n        print(' '.join(map(str, i)))",
+    "cpp": "void Solution::stronglyConnectedComponents(vector<vector<int>> &graph, int n) {\n  int s = 0, t = 0;\n  vector<bool> visited(n, false);\n  vector<int> low(n, -1);\n  vector<int> disc(n);\n  vector<int> stack(n);\n  int time = 0;\n  vector<vector<int>> res;\n\n  for (int i = 0; i < n; i++) {\n    if (!visited[i]) {\n      dfs(graph, i, visited, low, disc, stack, time, i, res);\n    }\n  }\n\n  for (auto& c : res) {\n    for (auto& v : c) {\n      cout << v << \\n\";\n    }\n  }\n}\nvoid Solution::dfs(vector<vector<int>> &graph, int u, vector<bool> &visited, vector<int> &low, vector<int> &disc, vector<int> &stack, int time, int p, vector<vector<int>> &res) {\n  visited[u] = true;\n  low[u] = u;\n  disc[u] = time++;\n  stack.push_back(u);\n\n  for (int v : graph[u]) {\n    if (!visited[v]) {\n      dfs(graph, v, visited, low, disc, stack, time, u, res);\n    } else if (low[v] >= disc[u]) {\n      low[u] = min(low[u], low[v]);\n    }\n  }\n\n  if (low[u] == u) {\n    vector<int> component;\n    while (u != p) {\n      component.push_back(stack.back());\n      stack.pop_back();\n      u = stack.back();\n    }\n    stack.pop_back();\n    component.reverse();\n    res.push_back(component);\n  }\n}\nint main() {\n  int n;\n  cin >> n;\n  int m = n - 1;\n  vector<vector<int>> graph(n);\n\n  for (int i = 0; i < m; i++) {\n    int u, v;\n    cin >> u >> v;\n    graph[u - 1].push_back(v - 1);\n    graph[v - 1].push_back(u - 1);\n  }\n\n  Solution s;\n  s.stronglyConnectedComponents(graph, n);\n  return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5\n1 2\n2 3\n3 4\n4 5\n5 1",
+      "output": "1 2 3 4\n5",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "3\n1 2\n2 3",
+      "output": "1 2\n3",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

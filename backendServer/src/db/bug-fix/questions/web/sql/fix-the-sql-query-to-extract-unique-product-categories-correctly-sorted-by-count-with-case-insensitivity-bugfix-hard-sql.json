@@ -1,0 +1,139 @@
+{
+  "title": "Fix the SQL Query to Extract Unique Product Categories Correctly Sorted by Count with Case Insensitivity",
+  "subCategory": "SQL Query Builder",
+  "statement": {
+    "markdown": "You are given a table `products` with columns `id`, `name`, and `category`. Write a SQL query to extract unique product categories, sorted in descending order by the count of products in each category. The query should be case insensitive.",
+    "inputFormat": "The input will be a table with columns `id`, `name`, and `category`.",
+    "outputFormat": "The output should be a list of unique categories sorted in descending order by the count of products in each category.",
+    "notes": "The query should handle duplicate categories and empty strings correctly.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of rows in the input table"
+      }
+    ],
+    "examples": [
+      {
+        "input": "CREATE TABLE products (\n  id INT,\n  name VARCHAR(255),\n  category VARCHAR(255)\n);\nINSERT INTO products (id, name, category) VALUES\n  (1, 'Product 1', 'Category A'),\n  (2, 'Product 2', 'Category A'),\n  (3, 'Product 3', 'Category B'),\n  (4, 'Product 4', 'Category B'),\n  (5, 'Product 5', '');",
+        "output": "Category B\nCategory A\n",
+        "explanation": "The query should return the unique categories sorted in descending order by the count of products in each category."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 75,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "SQL"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "sql"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use a subquery to count the number of products in each category."
+    },
+    {
+      "order": 2,
+      "text": "Use the `GROUP BY` clause to group the products by category."
+    },
+    {
+      "order": 3,
+      "text": "Use the `ORDER BY` clause to sort the categories in descending order by count."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial Solution",
+    "intuition": "The key to this problem is to use a subquery to count the number of products in each category, and then use the `GROUP BY` clause to group the products by category.",
+    "bruteForce": "A brute force approach would be to use two separate queries, one to count the number of products in each category and another to sort the categories in descending order by count.",
+    "betterSolution": "A better solution would be to use a single query with a subquery to count the number of products in each category, and then use the `GROUP BY` clause to group the products by category and sort the categories in descending order by count.",
+    "optimalSolution": "The optimal solution is to use a single query with a subquery to count the number of products in each category, and then use the `GROUP BY` clause to group the products by category and sort the categories in descending order by count. This solution has a time complexity of O(n) and a space complexity of O(n).",
+    "proofOfCorrectness": "The proof of correctness is that the query returns the unique categories sorted in descending order by the count of products in each category.",
+    "dryRun": "A dry run of the query would be to use a sample table with some data to test the query and verify that it returns the correct results.",
+    "commonMistakes": [
+      "Using a separate query to count the number of products in each category, and then sorting the categories in descending order by count.",
+      "Not using a subquery to count the number of products in each category."
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// Write your SQL query here",
+    "python": "class Solution:\n    def solve(self):\n        pass"
+  },
+  "buggyStarterCode": {
+    "javascript": "SELECT DISTINCT category FROM products GROUP BY category ORDER BY COUNT(*) DESC;",
+    "python": "class Solution:\n    def solve(self):\n        query = \"SELECT DISTINCT category FROM products GROUP BY category ORDER BY COUNT(*) DESC;\"\n        return query"
+  },
+  "functionSignature": {
+    "javascript": "var solve = function(s);",
+    "python": "def solve(self, s: str) -> bool:"
+  },
+  "solutions": {
+    "javascript": "// Solution\nSELECT category, COUNT(*) as count\nFROM products\nGROUP BY category\nORDER BY count DESC;",
+    "python": "class Solution:\n    def solve(self):\n        query = \"SELECT category, COUNT(*) as count\nFROM products\nGROUP BY category\nORDER BY count DESC;\"\n        return query"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "CREATE TABLE products (\n  id INT,\n  name VARCHAR(255),\n  category VARCHAR(255)\n);\nINSERT INTO products (id, name, category) VALUES\n  (1, 'Product 1', 'Category A'),\n  (2, 'Product 2', 'Category A'),\n  (3, 'Product 3', 'Category B'),\n  (4, 'Product 4', 'Category B'),\n  (5, 'Product 5', '');",
+      "output": "Category B\nCategory A\n",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "CREATE TABLE products (\n  id INT,\n  name VARCHAR(255),\n  category VARCHAR(255)\n);\nINSERT INTO products (id, name, category) VALUES\n  (1, 'Product 1', 'Category A'),\n  (2, 'Product 2', 'Category A'),\n  (3, 'Product 3', 'Category A'),\n  (4, 'Product 4', 'Category B'),\n  (5, 'Product 5', 'Category B');",
+      "output": "Category A\nCategory B\n",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "0a1523560407fca57e9b85cc",
+  "slug": "fix-the-sql-query-to-extract-unique-product-categories-correctly-sorted-by-count-with-case-insensitivity-bugfix-hard-sql",
+  "mode": "bug_fix",
+  "category": "SQL",
+  "difficulty": "Hard"
+}

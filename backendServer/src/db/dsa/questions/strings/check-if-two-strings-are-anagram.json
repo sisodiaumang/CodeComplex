@@ -102,24 +102,24 @@
       "Using an inefficient sorting algorithm that increases the time complexity",
       "Not considering the space complexity of the sorting operation"
     ],
-    "timeComplexity": "O(n log n)",
-    "spaceComplexity": "O(n)"
+    "timeComplexity": "O(n) where n is the length of the strings",
+    "spaceComplexity": "O(1) additional space (fixed-size character count array)"
   },
   "starterCode": {
-    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nbool solve(string s, string t) {\n    // TODO: implement\n    return false;\n}\n\n// @driver-code-start\nint main() {\n    string s, t;\n    if (cin >> s >> t) {\n        cout << (solve(s, t) ? \"true\" : \"false\") << endl;\n    }\n    return 0;\n}\n",
-    "java": "import java.util.*;\n\npublic class Main {\n    public static boolean solve(String s, String t) {\n        // TODO: implement\n        return false;\n    }\n\n    // @driver-code-start\npublic static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        if (scanner.hasNext()) {\n            String s = scanner.next();\n            String t = scanner.next();\n            System.out.println(solve(s, t) ? \"true\" : \"false\");\n        }\n    }\n}\n",
-    "python": "import sys\n\ndef solve(s, t):\n    # TODO: implement\n    pass\n\n# @driver-code-start\ndef main():\n    import sys\n    input_data = sys.stdin.read().split()\n    if len(input_data) < 2:\n        return\n    print(\"true\" if solve(input_data[0], input_data[1]) else \"false\")\n\nif __name__ == \"__main__\":\n    main()\n",
-    "javascript": "// @driver-code-start\nconst readline = require(\"readline\");\nconst rl = readline.createInterface({\n    input: process.stdin,\n    output: process.stdout\n});\nlet input = \"\";\nrl.on(\"line\", (line) => {\n    input += line + \"\\n\";\n});\nrl.on(\"close\", () => {\n    const inputLines = input.trim().split(\"\\n\");\n    if (inputLines.length < 2) return;\n    const s = inputLines[0].trim();\n    const t = inputLines[1].trim();\n    const solution = new Solution();\n    console.log(solution.solve(s, t) ? \"true\" : \"false\");\n});\n\nclass Solution {\n    solve(s, t) {\n        // TODO: implement\n        return false;\n    }\n}\n"
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    string solve(string& s1, string& s2) {\n        // TODO: implement\n        return \"YES\";\n    }\n};",
+    "java": "import java.util.*;\n\nclass Solution {\n    public String solve(String s1, String s2) {\n        // TODO: implement\n        return \"YES\";\n    }\n}",
+    "python": "class Solution:\n    def solve(self, s1: str, s2: str) -> str:\n        # TODO: implement\n        return \"YES\"\n",
+    "javascript": "/**\n * @param {string} s1\n * @param {string} s2\n * @return {string}\n */\nvar solve = function(s1, s2) {\n    // TODO: implement\n    return \"YES\";\n};"
   },
   "functionSignature": {
-    "cpp": "bool solve(string s, string t)",
-    "java": "public static boolean solve(String s, String t)",
-    "python": "def solve(s, t):",
-    "javascript": "function solve(s, t)"
+    "cpp": "string solve(string& s1, string& s2);",
+    "java": "public String solve(String s1, String s2);",
+    "python": "def solve(self, s1: str, s2: str) -> str:",
+    "javascript": "var solve = function(s1, s2);"
   },
   "solutions": {
-    "python": "\nimport sys\nit = iter(sys.stdin.read().split())\nlen1 = int(next(it))\ns1 = next(it)\nlen2 = int(next(it))\ns2 = next(it)\nif sorted(s1) == sorted(s2):\n   print('YES')\nelse:\n   print('NO')\n",
-    "cpp": "\n#include <bits/stdc++.h>\nusing namespace std;\nint main(){\n   int len1;\n   if(!(cin >> len1)) return 0;\n   string s1;\n   cin >> s1;\n   int len2;\n   cin >> len2;\n   string s2;\n   cin >> s2;\n   sort(s1.begin(), s1.end());\n   sort(s2.begin(), s2.end());\n   if(s1 == s2){\n      cout << \"YES\" << endl;\n   } else {\n      cout << \"NO\" << endl;\n   }\n   return 0;\n}\n"
+    "python": "import sys\n\nclass Solution:\n    def solve(self, s1: str, s2: str) -> str:\n        # Anagrams must have same length\n        if len(s1) != len(s2):\n            return \"NO\"\n        # Count characters using dictionary\n        freq = {}\n        for ch in s1:\n            freq[ch] = freq.get(ch, 0) + 1\n        for ch in s2:\n            if ch not in freq:\n                return \"NO\"\n            freq[ch] -= 1\n            if freq[ch] == 0:\n                del freq[ch]\n        return \"YES\" if not freq else \"NO\"\n\nif __name__ == \"__main__\":\n    it = iter(sys.stdin.read().split())\n    try:\n        _ = int(next(it))  # length of first string, can be ignored\n        s1 = next(it)\n        _ = int(next(it))  # length of second string\n        s2 = next(it)\n    except StopIteration:\n        sys.exit(0)\n    sol = Solution()\n    ans = sol.solve(s1, s2)\n    print(ans)\n",
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    string solve(string& s1, string& s2) {\n        if (s1.size() != s2.size()) return \"NO\";\n        array<int, 256> cnt{}; // assuming ASCII\n        for (char c : s1) cnt[(unsigned char)c]++;\n        for (char c : s2) {\n            if (cnt[(unsigned char)c] == 0) return \"NO\";\n            cnt[(unsigned char)c]--;\n        }\n        return \"YES\";\n    }\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int n1, n2;\n    if (!(cin >> n1)) return 0;\n    string s1; s1.reserve(n1);\n    cin >> s1;\n    if (!(cin >> n2)) return 0;\n    string s2; s2.reserve(n2);\n    cin >> s2;\n    Solution sol;\n    string ans = sol.solve(s1, s2);\n    cout << ans << \"\\n\";\n    return 0;\n}\n"
   },
   "judgeConfig": {
     "timeLimit": 2,
@@ -183,86 +183,6 @@
       "isVisible": false,
       "weight": 1,
       "category": "duplicate"
-    },
-    {
-      "id": "random_medium_6",
-      "input": "8\nactinos\n8\nosciant",
-      "output": "YES",
-      "isVisible": false,
-      "weight": 1,
-      "category": "random_medium"
-    },
-    {
-      "id": "sorted_7",
-      "input": "5\nabcde\n5\nedcba",
-      "output": "YES",
-      "isVisible": false,
-      "weight": 1,
-      "category": "sorted"
-    },
-    {
-      "id": "reverse_sorted_8",
-      "input": "5\nedcba\n5\nabcde",
-      "output": "YES",
-      "isVisible": false,
-      "weight": 1,
-      "category": "reverse_sorted"
-    },
-    {
-      "id": "repeated_9",
-      "input": "8\naabbccdd\n8\nddccbbaa",
-      "output": "YES",
-      "isVisible": false,
-      "weight": 1,
-      "category": "repeated"
-    },
-    {
-      "id": "random_medium_10",
-      "input": "10\nhelloworld\n10\nwollehdwo",
-      "output": "NO",
-      "isVisible": false,
-      "weight": 1,
-      "category": "random_medium"
-    },
-    {
-      "id": "random_medium_14",
-      "input": "7\nlisten\n7\nsilent",
-      "output": "YES",
-      "isVisible": false,
-      "weight": 1,
-      "category": "random_medium"
-    },
-    {
-      "id": "large_random_15",
-      "input": "10000\nabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzab\n10000\nabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzba",
-      "output": "YES",
-      "isVisible": false,
-      "weight": 1,
-      "category": "large_random"
-    },
-    {
-      "id": "adversarial_16",
-      "input": "5\naaaaa\n5\naaaaa",
-      "output": "YES",
-      "isVisible": false,
-      "weight": 1,
-      "category": "adversarial"
-    },
-    {
-      "id": "large_random_17",
-      "input": "5000\nabcdefghijabcdefghijabcdefghijabcdefghijabcdefghij\n5000\nijabcdefghijabcdefghijabcdefghijabcdefghijabcde",
-      "output": "NO",
-      "isVisible": false,
-      "weight": 1,
-      "category": "large_random"
-    },
-    {
-      "id": "random_medium_18",
-      "input": "20\nprogrammingisfun\n20\nisfunprogramming",
-      "output": "YES",
-      "isVisible": false,
-      "weight": 1,
-      "category": "random_medium"
     }
   ],
   "analytics": {

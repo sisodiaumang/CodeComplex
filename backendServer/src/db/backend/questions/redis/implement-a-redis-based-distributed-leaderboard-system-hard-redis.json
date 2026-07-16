@@ -1,0 +1,136 @@
+{
+  "_id": "07539dfe72144f716b2015a8",
+  "title": "Implement a Redis-based Distributed Leaderboard System",
+  "slug": "implement-a-redis-based-distributed-leaderboard-system-hard-redis",
+  "difficulty": "Hard",
+  "topics": [
+    "REDIS"
+  ],
+  "statement": "\nImplement a backend API for a distributed leaderboard system using Redis as the primary data store. The API should allow users to create, read, update, and delete users' scores. The leaderboard should display the top N users with the highest scores.\n\n*   The API should support two endpoints:\n    *   **POST /api/leaderboard**: Create a new user with a custom score. The request body should contain `username` and `score`. The response should include the user's ID, username, and score.\n    *   **GET /api/leaderboard**: Retrieve the top N users with the highest scores. The response should include the user's ID, username, and score.\n*   The leaderboard should be sorted in descending order of users' scores.\n*   If two or more users have the same score, their order in the leaderboard should be determined by their usernames in ascending order.\n*   The API should handle pagination. If the request to retrieve the leaderboard includes a `limit` query parameter, the API should return the top N users as specified. Otherwise, it should return the top 10 users by default.\n*   To handle concurrent writes and updates, utilize Redis transactions using the Redis client's `multi` and `exec` methods.\n*   The API should be implemented using Express.js and the Redis client.\n\n### Constraints\n\n*   Use Redis as the primary data store.\n*   Implement Redis transactions to handle concurrent writes and updates.\n*   Use the Redis client's `multi` and `exec` methods.\n\n### Endpoints\n\n| Method | Path | Description | Request Body | Response |\n| --- | --- | --- | --- | --- |\n| POST | /api/leaderboard | Create a new user with a custom score | `username`, `score` | `userId`, `username`, `score` |\n| GET | /api/leaderboard | Retrieve the top N users with the highest scores | - | `userId`, `username`, `score` |\n\n### Starter Code\n\n```json\n// package.json\n{\n  \"name\": \"leaderboard-api\",\n  \"version\": \"1.0.0\",\n  \"main\": \"index.js\",\n  \"scripts\": {\n    \"start\": \"node index.js\"\n  },\n  \"dependencies\": {\n    \"express\": \"^4.18.2\",\n    \"redis\": \"^3.0.2\"\n  }\n}\n\n// index.js\nconst express = require(\"express\");\nconst redis = require(\"redis\");\nconst app = express();\nconst client = redis.createClient();\napp.use(express.json());\n\n// TODO: Implement endpoints\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));\n```\n\n### Judge Config\n\n```json\n{\n  \"requestTimeoutMs\": 2000,\n  \"startupTimeoutMs\": 4000,\n  \"healthCheckPath\": \"/\",\n  \"port\": 3000,\n  \"stack\": [\"node\"]\n}\n```\n\n### Scoring\n\n```json\n{\n  \"type\": \"binary\",\n  \"maxScore\": 100,\n  \"partialScoring\": false\n}\n```\n\n### Visible API Test Cases\n\n```json\n[\n  {\n    \"id\": \"v_tc1\",\n    \"method\": \"POST\",\n    \"path\": \"/api/leaderboard\",\n    \"headers\": {\n      \"Content-Type\": \"application/json\"\n    },\n    \"body\": {\n      \"username\": \"john\",\n      \"score\": 100\n    },\n    \"expectedStatus\": 201,\n    \"expectedBody\": {\n      \"userId\": \"1\",\n      \"username\": \"john\",\n      \"score\": 100\n    },\n    \"expectedBodySchema\": null,\n    \"isVisible\": true\n  },\n  {\n    \"id\": \"v_tc2\",\n    \"method\": \"GET\",\n    \"path\": \"/api/leaderboard\",\n    \"expectedStatus\": 200,\n    \"expectedBody\": [\n      {\n        \"userId\": \"1\",\n        \"username\": \"john\",\n        \"score\": 100\n      }\n    ],\n    \"expectedBodySchema\": null,\n    \"isVisible\": true\n  }\n]\n\n### Hidden API Test Cases\n\n```json\n[\n  {\n    \"id\": \"h_tc1\",\n    \"method\": \"POST\",\n    \"path\": \"/api/leaderboard\",\n    \"headers\": {\n      \"Content-Type\": \"application/json\"\n    },\n    \"body\": {\n      \"username\": \"\",\n      \"score\": 0\n    },\n    \"expectedStatus\": 400,\n    \"isVisible\": false\n  },\n  {\n    \"id\": \"h_tc2\",\n    \"method\": \"GET\",\n    \"path\": \"/api/leaderboard\",\n    \"expectedStatus\": 500,\n    \"isVisible\": false\n  },\n  {\n    \"id\": \"h_tc3\",\n    \"method\": \"POST\",\n    \"path\": \"/api/leaderboard\",\n    \"headers\": {\n      \"Content-Type\": \"application/json\"\n    },\n    \"body\": {\n      \"username\": \"john\",\n      \"score\": \"abc\"\n    },\n    \"expectedStatus\": 400,\n    \"isVisible\": false\n  }\n]\n\n### Tags\n\n[\"backend\", \"distributed\", \"leaderboard\", \"redis\", \"transactions\"]\n```\n\n",
+  "constraints": [
+    "Use Redis as the primary data store.",
+    "Implement Redis transactions to handle concurrent writes and updates."
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/leaderboard",
+      "description": "Create a new user with a custom score"
+    },
+    {
+      "method": "GET",
+      "path": "/api/leaderboard",
+      "description": "Retrieve the top N users with the highest scores"
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\"name\":\"leaderboard-api\",\"version\":\"1.0.0\",\"main\":\"index.js\",\"scripts\":{\"start\":\"node index.js\"},\"dependencies\":{\"express\":\"^4.18.2\",\"redis\":\"^3.0.2\"}}",
+    "index.js": "const express = require(\"express\");const redis = require(\"redis\");const app = express();const client = redis.createClient();app.use(express.json());\n// TODO: Implement endpoints\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT))"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "POST",
+      "path": "/api/leaderboard",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "username": "john",
+        "score": 100
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "userId": "1",
+        "username": "john",
+        "score": 100
+      },
+      "expectedBodySchema": null,
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "GET",
+      "path": "/api/leaderboard",
+      "expectedStatus": 200,
+      "expectedBody": [
+        {
+          "userId": "1",
+          "username": "john",
+          "score": 100
+        }
+      ],
+      "expectedBodySchema": null,
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "POST",
+      "path": "/api/leaderboard",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "username": "",
+        "score": 0
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "GET",
+      "path": "/api/leaderboard",
+      "expectedStatus": 500,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "POST",
+      "path": "/api/leaderboard",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "username": "john",
+        "score": "abc"
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "pub/sub",
+    "cache",
+    "sessions",
+    "rate-limiting",
+    "leaderboard",
+    "streams",
+    "distributed",
+    "redis",
+    "transactions"
+  ]
+}

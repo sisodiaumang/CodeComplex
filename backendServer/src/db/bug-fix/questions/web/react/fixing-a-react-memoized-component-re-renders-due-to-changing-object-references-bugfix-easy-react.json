@@ -1,0 +1,126 @@
+{
+  "title": "Fixing a React Memoized Component Re-renders Due to Changing Object References",
+  "subCategory": "Memoization in React",
+  "statement": {
+    "markdown": "A React-based web application is using memoization to optimize the performance of its components. However, a component is re-rendering unnecessarily when the object references in its dependencies change. Your task is to fix the bug and optimize the component's rendering.",
+    "inputFormat": "The application's state and props as JSON objects",
+    "outputFormat": "The optimized component's code",
+    "notes": "The component should re-render only when the object itself changes, not when the reference changes.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Constraint description"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"state\":{\"a\":1,\"b\":2},\"props\":{\"c\":3,\"d\":4},\"deps\":[{\"key\":\"a\"},{\"key\":\"b\"}]}",
+        "output": "{\"state\":{\"a\":1,\"b\":2},\"props\":{\"c\":3,\"d\":4},\"deps\":[{\"key\":\"a\",\"value\":1},{\"key\":\"b\",\"value\":2}]}",
+        "explanation": "The component should re-render only when the object itself changes."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "REACT"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "react"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the `JSON.stringify` method to compare object values"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial: Fixing a React Memoized Component Re-renders Due to Changing Object References",
+    "intuition": "Memoization in React is used to optimize the performance of components by re-rendering them only when the dependencies change. However, when the object references change, the component re-renders unnecessarily.",
+    "bruteForce": "The brute force approach is to check each dependency individually and compare its values.",
+    "betterSolution": "A better solution is to use the `JSON.stringify` method to compare object values.",
+    "optimalSolution": "The optimal solution is to use the `JSON.stringify` method to compare object values and re-render the component only when the object itself changes.",
+    "proofOfCorrectness": "The proof of correctness is that the component re-renders only when the object itself changes, not when the reference changes.",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// Create a memoized component\nconst MemoizedComponent = ({ state, props, deps }) => {\n  // Render the component\n  return <div>{state.a} {state.b}</div>\n};\n\n// Use the memoized component\nfunction App() {\n  const [state, setState] = useState({ a: 1, b: 2 });\n  const [props, setProps] = useState({ c: 3, d: 4 });\n  const deps = [state.a, state.b];\n  return <MemoizedComponent state={state} props={props} deps={deps} />;\n}"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Create a memoized component\nconst MemoizedComponent = ({ state, props, deps }) => {\n  // Render the component\n  return <div>{state.a} {state.b}</div>\n};\n\n// Use the memoized component\nfunction App() {\n  const [state, setState] = useState({ a: 1, b: 2 });\n  const [props, setProps] = useState({ c: 3, d: 4 });\n  const deps = [state.a, state.b];\n  // Fix the bug by comparing object references instead of values\n  return <MemoizedComponent state={state} props={props} deps={deps} />\n}"
+  },
+  "functionSignature": {
+    "javascript": "const MemoizedComponent = ({ state, props, deps }) => {"
+  },
+  "solutions": {
+    "javascript": "function solve(input) {\n  // Parse the input JSON object\n  const { state, props, deps } = JSON.parse(input);\n\n  // Check if the object itself has changed\n  if (JSON.stringify(state) !== JSON.stringify(dep[0].value) ||\n      JSON.stringify(props) !== JSON.stringify(dep[1].value)) {\n    // Re-render the component\n    console.log(\"Component re-rendered\");\n  }\n}\n\n// Call the solve function with the input string\nsolve(input);\n\n// Read input from stdin\nconst readline = require('readline').createInterface(\n  {\n    input: process.stdin,\n    output: process.stdout\n  });\n\nreadline.on('line', (input) => {\n  solve(input);\n});"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"state\":{\"a\":1,\"b\":2},\"props\":{\"c\":3,\"d\":4},\"deps\":[{\"key\":\"a\",\"value\":1},{\"key\":\"b\",\"value\":2}]}",
+      "output": "0",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_hidden_generated",
+      "input": "{\"state\":{\"a\":1,\"b\":2},\"props\":{\"c\":3,\"d\":4},\"deps\":[{\"key\":\"a\",\"value\":1},{\"key\":\"b\",\"value\":2}]}",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "ad02c2dcbeadb6f59d840237",
+  "slug": "fixing-a-react-memoized-component-re-renders-due-to-changing-object-references-bugfix-easy-react",
+  "mode": "bug_fix",
+  "category": "REACT",
+  "difficulty": "Easy"
+}

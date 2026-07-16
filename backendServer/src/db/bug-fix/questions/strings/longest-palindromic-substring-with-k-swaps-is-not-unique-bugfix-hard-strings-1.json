@@ -1,0 +1,174 @@
+{
+  "_id": "440a082fa7cc8eeb27e513d0",
+  "title": "Longest Palindromic Substring with K Swaps is NOT Unique",
+  "slug": "longest-palindromic-substring-with-k-swaps-is-not-unique-bugfix-hard-strings-1",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "Dynamic Programming",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 45,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "string"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given a string s and an integer k, return the length of the longest palindromic substring that can be obtained by at most k swaps.",
+    "inputFormat": "Input is a string and an integer",
+    "outputFormat": "Output is the length of the longest palindromic substring",
+    "notes": "At most k swaps are allowed",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of string"
+      },
+      {
+        "variable": "k",
+        "type": "integer",
+        "min": 0,
+        "max": 10000,
+        "description": "Maximum number of swaps allowed"
+      }
+    ],
+    "examples": [
+      {
+        "input": "s = \"abcba\", k = 0\n",
+        "output": "5\n",
+        "explanation": "The longest palindromic substring is \"abcba\""
+      },
+      {
+        "input": "s = \"abccba\", k = 1\n",
+        "output": "7\n",
+        "explanation": "The longest palindromic substring is \"abccba\""
+      },
+      {
+        "input": "s = \"abcdedcba\", k = 2\n",
+        "output": "12\n",
+        "explanation": "The longest palindromic substring is \"abcdedcba\""
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use a dynamic programming approach to build up a table of longest palindromic substrings"
+    },
+    {
+      "order": 2,
+      "text": "Use the table to find the longest palindromic substring with at most k swaps"
+    }
+  ],
+  "editorial": {
+    "title": "Solving Longest Palindromic Substring with K Swaps",
+    "intuition": "The problem can be solved using dynamic programming.",
+    "bruteForce": "The brute force approach would be to try all possible substrings and check if they are palindromes. However, this approach is too slow.",
+    "betterSolution": "We can use a dynamic programming approach to build up a table of longest palindromic substrings.",
+    "optimalSolution": "We can use the table to find the longest palindromic substring with at most k swaps.",
+    "proofOfCorrectness": "The proof of correctness is that we are correctly calculating the longest palindromic substring with at most k swaps.",
+    "dryRun": "An example of a dry run would be to try input s = \"abcba\" and k = 0.",
+    "commonMistakes": [
+      "Not using dynamic programming",
+      "Not correctly calculating the longest palindromic substring"
+    ],
+    "timeComplexity": "O(n^2)",
+    "spaceComplexity": "O(n^2)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    int longestPalindrome(string s) {\n        // TODO: implement\n        return 0;\n    }\n};\n",
+    "java": "public class Solution {\npublic int longestPalindrome(String s) {\n    // TODO: implement\n    return 0;\n}\n}\n",
+    "python": "class Solution:\n    def longestPalindrome(self, s: str) -> int:\n        # TODO: implement\n        pass\n",
+    "javascript": "var solve = function(s) {\n    // TODO: implement\n    return 0;\n};\n"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    int longestPalindrome(string s) {\n        vector<vector<int>> dp(n, vector<int>(n, 0));\n        for (int i = 0; i < n; i++) {\n            dp[i][i] = 1;\n        }\n        for (int len = 2; len <= n; len++) {\n            for (int i = 0; i <= n - len; i++) {\n                int j = i + len - 1;\n                if (s[i] == s[j] && len == 2) {\n                    dp[i][j] = 2;\n                }\n                else if (s[i] == s[j]) {\n                    dp[i][j] = dp[i + 1][j - 1] + 2;\n                }\n                else {\n                    dp[i][j] = max(dp[i + 1][j], dp[i][j - 1]);\n                }\n            }\n        }\n        int result = 0;\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < n; j++) {\n                if (i <= j && dp[i][j] > result) {\n                    result = dp[i][j];\n                }\n            }\n        }\n        int k = 0;\n        while (k < n && s[k] == s[n - 1 - k]) {\n            k++;\n        }\n        return result + k;\n    }\n};\n",
+    "java": "public class Solution {\npublic int longestPalindrome(String s) {\n    int n = s.length();\n    int[][] dp = new int[n][n];\n    for (int i = 0; i < n; i++) {\n        dp[i][i] = 1;\n    }\n    for (int len = 2; len <= n; len++) {\n        for (int i = 0; i <= n - len; i++) {\n            int j = i + len - 1;\n            if (s.charAt(i) == s.charAt(j) && len == 2) {\n                dp[i][j] = 2;\n            }\n            else if (s.charAt(i) == s.charAt(j)) {\n                dp[i][j] = dp[i + 1][j - 1] + 2;\n            }\n            else {\n                dp[i][j] = Math.max(dp[i + 1][j], dp[i][j - 1]);\n            }\n        }\n    }\n    int result = 0;\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < n; j++) {\n            if (i <= j && dp[i][j] > result) {\n                result = dp[i][j];\n            }\n        }\n    }\n    int k = 0;\n    while (k < n && s.charAt(k) == s.charAt(n - 1 - k)) {\n        k++;\n    }\n    return result + k;\n}\n}\n",
+    "python": "class Solution:\n    def longestPalindrome(self, s: str) -> int:\n        n = len(s)\n        dp = [[0] * (n + 1) for _ in range(n + 1)]\n        for i in range(n):\n            dp[i][i] = 1\n        for len_ in range(2, n + 1):\n            for i in range(n - len_ + 1):\n                j = i + len_ - 1\n                if s[i] == s[j] and len_ == 2:\n                    dp[i][j] = 2\n                elif s[i] == s[j]:\n                    dp[i][j] = dp[i + 1][j - 1] + 2\n                else:\n                    dp[i][j] = max(dp[i + 1][j], dp[i][j - 1])\n        result = 0\n        for i in range(n):\n            for j in range(n):\n                if i <= j and dp[i][j] > result:\n                    result = dp[i][j]\n        k = 0\n        while k < n and s[k] == s[n - 1 - k]:\n            k += 1\n        return result + k\n",
+    "javascript": "var solve = function(s) {\n    var n = s.length;\n    var dp = Array(n).fill(0).map(function () {\n        return Array(n).fill(0);\n    })\n    ;\n    for (var i = 0; i < n; i++) {\n        dp[i][i] = 1;\n    }\n    for (var len = 2; len <= n; len++) {\n        for (var i = 0; i <= n - len; i++) {\n            var j = i + len - 1;\n            if (s[i] == s[j] && len == 2) {\n                dp[i][j] = 2;\n            }\n            else if (s[i] == s[j]) {\n                dp[i][j] = dp[i + 1][j - 1] + 2;\n            }\n            else {\n                dp[i][j] = Math.max(dp[i + 1][j], dp[i][j - 1]);\n            }\n        }\n    }\n    var result = 0;\n    for (var i = 0; i < n; i++) {\n        for (var j = 0; j < n; j++) {\n            if (i <= j && dp[i][j] > result) {\n                result = dp[i][j];\n            }\n        }\n    }\n    var k = 0;\n    while (k < n && s[k] == s[n - 1 - k]) {\n        k++;\n    }\n    return result + k;\n};\n"
+  },
+  "functionSignature": {
+    "cpp": "int longestPalindrome(string s);\n",
+    "java": "int longestPalindrome(String s);\n",
+    "python": "def longestPalindrome(self, s: str) -> int:\n",
+    "javascript": "var solve = function(s) {\n    ...;\n}\n"
+  },
+  "solutions": {
+    "python": "import sys\n\nclass Solution:\n    def longestPalindrome(self, s: str) -> int:\n        n = len(s)\n        dp = [[0] * (n + 1) for _ in range(n + 1)]\n        for i in range(n):\n            dp[i][i] = 1\n        for len_ in range(2, n + 1):\n            for i in range(n - len_ + 1):\n                j = i + len_ - 1\n                if s[i] == s[j] and len_ == 2:\n                    dp[i][j] = 2\n                elif s[i] == s[j]:\n                    dp[i][j] = dp[i + 1][j - 1] + 2\n                else:\n                    dp[i][j] = max(dp[i + 1][j], dp[i][j - 1])\n        result = 0\n        for i in range(n):\n            for j in range(n):\n                if i <= j and dp[i][j] > result:\n                    result = dp[i][j]\n        k = 0\n        while k < n and s[k] == s[n - 1 - k]:\n            k += 1\n        return result + k\n\nif __name__ == '__main__':\n    s = input().strip()\n    k = int(input())\n    solution = Solution()\n    print(solution.longestPalindrome(s))\n",
+    "cpp": "// Solution",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "tc_1",
+      "input": "First line string length, second line string elements\n",
+      "output": "Expected output string",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "Example 2 input\n",
+      "output": "Example 2 output",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

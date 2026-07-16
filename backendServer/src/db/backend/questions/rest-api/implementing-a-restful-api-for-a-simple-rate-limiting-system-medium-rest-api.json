@@ -1,0 +1,190 @@
+{
+  "_id": "e193a910f08ed46445e6e1f7",
+  "title": "Implementing a RESTful API for a Simple Rate-Limiting System",
+  "slug": "implementing-a-restful-api-for-a-simple-rate-limiting-system-medium-rest-api",
+  "difficulty": "Medium",
+  "topics": [
+    "REST_API"
+  ],
+  "statement": "Design a RESTful API to manage a rate-limiting system. The system has two types of resources: users and plans. Users can have plans associated with them, and each plan has a specific rate limit (e.g., 10 requests per minute). Implement the following endpoints:\n\n* POST /api/users: Creates a new user with a rate limit (default: 10 requests per minute). The request body should contain the user's email, name, and rate limit.\n* GET /api/users/:id/plans: Retrieves a list of plans associated with the specified user.\n* POST /api/plans: Creates a new plan with a specified rate limit (default: 10 requests per minute). The request body should contain the plan's name and rate limit.\n* PUT /api/plans/:id: Updates an existing plan's rate limit.\n* DELETE /api/users/:id: Deletes a user and their associated plans.\n\nImplement the following constraints:\n\n* The rate limit is enforced using a simple token bucket algorithm.\n* The system should handle concurrent requests and rate limiting accurately.\n* The API should return a JSON response with a `success` property indicating whether the operation was successful.\n\nYou can use an in-memory array to store users and plans. Make sure to handle errors and edge cases properly.\n\n**Visible Test Cases**\n\n* `v_tc1`: Create a new user with a custom rate limit (e.g., 20 requests per minute).\n* `v_tc2`: Retrieve a list of plans associated with a user.\n* `h_tc3`: Attempt to create a new user with an invalid rate limit (e.g., -1).\n* `h_tc4`: Attempt to update a plan with an invalid rate limit (e.g., -1).\n* `h_tc5`: Delete a user with an associated plan.\n\n**Hidden Test Cases**\n\n* `h_tc6`: Create multiple users with concurrent requests and verify that the rate limit is enforced correctly.\n* `h_tc7`: Update the rate limit of a plan and verify that the change is reflected correctly.\n\nNote: You can use the provided starter code as a starting point. Make sure to implement the required endpoints and constraints accurately.",
+  "constraints": [
+    "Use only the in-memory array provided to store users and plans.",
+    "Implement a simple token bucket algorithm to enforce rate limiting."
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/users",
+      "description": "Creates a new user with a rate limit. Request body: email, name, rate limit."
+    },
+    {
+      "method": "GET",
+      "path": "/api/users/:id/plans",
+      "description": "Retrieves a list of plans associated with the specified user."
+    },
+    {
+      "method": "POST",
+      "path": "/api/plans",
+      "description": "Creates a new plan with a specified rate limit. Request body: name, rate limit."
+    },
+    {
+      "method": "PUT",
+      "path": "/api/plans/:id",
+      "description": "Updates an existing plan's rate limit."
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/users/:id",
+      "description": "Deletes a user and their associated plans."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\n  \"name\": \"rate-limiting-api\",\n  \"version\": \"1.0.0\",\n  \"main\": \"index.js\",\n  \"scripts\": {\n    \"start\": \"node index.js\"\n  },\n  \"dependencies\": {\n    \"express\": \"^4.18.2\"\n  }\n}",
+    "index.js": "const express = require('express');\nconst app = express();\napp.use(express.json());\n\nconst users = []; // TODO: Implement user storage and retrieval\nconst plans = []; // TODO: Implement plan storage and retrieval\n\napp.post('/api/users', (req, res) => {\n  // TODO: Implement user creation logic\n});\n\napp.get('/api/users/:id/plans', (req, res) => {\n  // TODO: Implement plan retrieval logic\n});\n\napp.post('/api/plans', (req, res) => {\n  // TODO: Implement plan creation logic\n});\n\napp.put('/api/plans/:id', (req, res) => {\n  // TODO: Implement plan update logic\n});\n\napp.delete('/api/users/:id', (req, res) => {\n  // TODO: Implement user deletion logic\n});\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "POST",
+      "path": "/api/users",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "email": "user@example.com",
+        "name": "John Doe",
+        "rateLimit": 20
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "success": true
+      },
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "GET",
+      "path": "/api/users/:id/plans",
+      "pathParams": {
+        "id": "1"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "plans": []
+      },
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc3",
+      "method": "POST",
+      "path": "/api/users",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "email": "user@example.com",
+        "name": "John Doe",
+        "rateLimit": -1
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc4",
+      "method": "PUT",
+      "path": "/api/plans/:id",
+      "pathParams": {
+        "id": "1"
+      },
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "rateLimit": -1
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc5",
+      "method": "DELETE",
+      "path": "/api/users/:id",
+      "pathParams": {
+        "id": "1"
+      },
+      "expectedStatus": 204,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc6",
+      "method": "POST",
+      "path": "/api/users",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "email": "user@example.com",
+        "name": "John Doe",
+        "rateLimit": 20
+      },
+      "expectedStatus": 201,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc7",
+      "method": "PUT",
+      "path": "/api/plans/:id",
+      "pathParams": {
+        "id": "1"
+      },
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "rateLimit": 30
+      },
+      "expectedStatus": 200,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "crud",
+    "rest-principles",
+    "http-methods",
+    "status-codes",
+    "headers",
+    "query-parameters",
+    "pagination",
+    "filtering",
+    "sorting",
+    "versioning",
+    "api-design",
+    "idempotency",
+    "rate-limiting",
+    "http-status-codes",
+    "express-js"
+  ]
+}

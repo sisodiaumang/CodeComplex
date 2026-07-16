@@ -1,0 +1,129 @@
+{
+  "_id": "aeb82ce1d37a02389ab241a8",
+  "title": "File Upload Service",
+  "slug": "file-upload-service-easy-file-upload",
+  "difficulty": "Easy",
+  "topics": [
+    "FILE_UPLOAD"
+  ],
+  "statement": "Create a RESTful API to handle file uploads. The API should accept file uploads via HTTP POST requests with a multipart/form-data request body. Users should be able to upload files of any type and the API should return the file name and its size. Use Multer to handle file uploads.",
+  "constraints": [
+    "Must use Multer to handle file uploads",
+    "Files should be stored in memory for simplicity (no file system access)"
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/upload",
+      "description": "Uploads a file. Accepts multipart/form-data request bodies with a file field named 'file'. Returns the file name and size."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\"name\": \"file-upload-service\",\"version\": \"1.0.0\",\"main\": \"index.js\",\"scripts\": {\"start\": \"node index.js\"},\"dependencies\": {\"express\": \"^4.18.2\",\"multer\": \"^1.4.4\"}}",
+    "index.js": "const express = require('express');const app = express();const multer = require('multer');const upload = multer({ dest: 'uploads/' });app.post('/api/upload', upload.single('file'), (req, res) => {console.log(req.file);res.json({ fileName: req.file.filename, fileSize: req.file.size });});app.listen(3000, () => console.log('Server running on port 3000'))"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "POST",
+      "path": "/api/upload",
+      "headers": {
+        "Content-Type": "multipart/form-data"
+      },
+      "body": {
+        "file": "data:application/octet-stream;base64,SGVsbG8gd29ybGQh"
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "fileName": "file",
+        "fileSize": 11
+      },
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "POST",
+      "path": "/api/upload",
+      "headers": {
+        "Content-Type": "multipart/form-data"
+      },
+      "body": {
+        "file": "data:image/png;base64,iVBORw0KGg..."
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "fileName": "file",
+        "fileSize": 0
+      },
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "POST",
+      "path": "/api/upload",
+      "headers": {
+        "Content-Type": "text/plain"
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "POST",
+      "path": "/api/upload",
+      "headers": {
+        "Content-Type": "multipart/form-data"
+      },
+      "body": {},
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "POST",
+      "path": "/api/upload",
+      "headers": {
+        "Content-Type": "multipart/form-data"
+      },
+      "body": {
+        "file": "invalid file"
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "multer",
+    "cloudinary",
+    "aws-s3",
+    "validation",
+    "image-processing",
+    "file-storage",
+    "file-upload",
+    "express",
+    "node"
+  ]
+}

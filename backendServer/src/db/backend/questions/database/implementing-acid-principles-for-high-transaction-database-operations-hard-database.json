@@ -1,0 +1,128 @@
+{
+  "_id": "dc64b1f79dfe035b4635bcf5",
+  "title": "Implementing ACID Principles for High-Transaction Database Operations",
+  "slug": "implementing-acid-principles-for-high-transaction-database-operations-hard-database",
+  "difficulty": "Hard",
+  "topics": [
+    "DATABASE"
+  ],
+  "statement": "Design and implement a high-transaction banking system that adheres to the principles of Atomicity, Consistency, Isolation, and Durability. The system should be able to handle concurrent transactions from multiple users and maintain a consistent database state.\n\nThe banking system should provide the following endpoints:\n\n*   `POST /transactions`: Create a new transaction.\n*   `GET /transactions`: Retrieve a list of all transactions.\n*   `GET /balances/{accountNumber}`: Retrieve the balance for a specific account.\n\nThe system should also handle errors and edge cases, such as duplicate transactions, invalid account numbers, and network failures.\n\nTo test your implementation, use the provided test cases.\n\n**Note:** This is a high-transaction system, so be mindful of your database's performance and use efficient data structures and algorithms.",
+  "constraints": [
+    "Must use a database that supports transactions and isolation levels (e.g., PostgreSQL, MySQL).",
+    "Must handle concurrent transactions from multiple users."
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/transactions",
+      "description": "Creates a new transaction.\n\nRequest Body:\n\n*   `fromAccount`: The source account number.\n*   `toAccount`: The destination account number.\n*   `amount`: The transaction amount.\n\nResponse:\n\n*   `201 Created`: The transaction was created successfully.\n*   `400 Bad Request`: Invalid request data or account numbers.\n*   `500 Internal Server Error`: Network failure or database error."
+    },
+    {
+      "method": "GET",
+      "path": "/transactions",
+      "description": "Retrieves a list of all transactions.\n\nResponse:\n\n*   `200 OK`: A list of all transactions.\n*   `500 Internal Server Error`: Network failure or database error."
+    },
+    {
+      "method": "GET",
+      "path": "/balances/{accountNumber}",
+      "description": "Retrieves the balance for a specific account.\n\nResponse:\n\n*   `200 OK`: The balance for the account.\n*   `404 Not Found`: Account not found.\n*   `500 Internal Server Error`: Network failure or database error."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\"name\": \"banking-system\", \"version\": \"1.0.0\", \"main\": \"index.js\", \"scripts\": {\"start\": \"node index.js\"}, \"dependencies\": {\"express\": \"^4.18.2\", \"pg\": \"^8.7.3\"}}",
+    "index.js": "const express = require('express');\nconst app = express();\napp.use(express.json());\n\n// Connect to the database\nconst { Pool } = require('pg');\nconst pool = new Pool({\n  user: 'username',\n  host: 'localhost',\n  database: 'banking',\n  password: 'password',\n  port: 5432\n});\n\n// TODO: Implement transactions endpoint\n\napp.listen(3000, () => console.log('Server running on port 3000'));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "vtc1",
+      "method": "POST",
+      "path": "/transactions",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "fromAccount": "12345",
+        "toAccount": "67890",
+        "amount": 100
+      },
+      "expectedStatus": 201,
+      "isVisible": true
+    },
+    {
+      "id": "vtc2",
+      "method": "GET",
+      "path": "/transactions",
+      "expectedStatus": 200,
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "htc1",
+      "method": "POST",
+      "path": "/transactions",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "fromAccount": "12345",
+        "toAccount": "67890",
+        "amount": -100
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "htc2",
+      "method": "GET",
+      "path": "/balances/12345",
+      "expectedStatus": 200,
+      "isVisible": false
+    },
+    {
+      "id": "htc3",
+      "method": "GET",
+      "path": "/balances/67890",
+      "expectedStatus": 404,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "sql",
+    "nosql",
+    "transactions",
+    "indexing",
+    "aggregation",
+    "joins",
+    "relationships",
+    "normalization",
+    "denormalization",
+    "acid",
+    "cap-theorem",
+    "ACID",
+    "isolation",
+    "database",
+    "banking"
+  ]
+}

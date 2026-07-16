@@ -1,0 +1,135 @@
+{
+  "title": "Fix MongoDB Aggregation Pipeline to Ignore Missing Fields",
+  "subCategory": "Aggregation Pipeline",
+  "statement": {
+    "markdown": "Write a MongoDB aggregation pipeline that projects a document to ignore missing fields. Given an array of objects, each object represents a document in a MongoDB collection. The pipeline should iterate over the documents, and for each document, it should project the fields that have a value. The resulting projected fields should be returned as an array of documents.",
+    "inputFormat": "An array of documents, where each document is an object with string keys and values of any type.",
+    "outputFormat": "An array of projected documents, where each document has only the fields with a value.",
+    "notes": "The pipeline should handle documents with missing fields, and it should not include fields with a value of null or undefined.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of documents in the input array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "[{a: 1, b: null}, {c: 2, d: undefined, e: 3}, {f: null, g: 4}]",
+        "output": "[{c: 2, e: 3}, {g: 4}]",
+        "explanation": "The input array has three documents. The first document has a missing field 'b' and a null value. The second document has a missing field 'd' and an undefined value. The third document has a null value. The resulting projected documents are the second and third documents from the input array."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 75,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "MONGODB"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "mongodb"
+    ],
+    "interviewFrequency": 5,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the $project aggregation operator to specify the fields to include in the projected documents."
+    },
+    {
+      "order": 2,
+      "text": "Use the $cond aggregation operator to check if a field has a value before including it in the projected documents."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial Solution",
+    "intuition": "The pipeline should iterate over the documents and project the fields that have a value. The $project aggregation operator can be used to specify the fields to include in the projected documents. The $cond aggregation operator can be used to check if a field has a value before including it in the projected documents.",
+    "bruteForce": "A brute force approach would be to use a loop to iterate over the fields of each document and check if the field has a value. However, this approach would be inefficient and would not take advantage of the MongoDB aggregation pipeline.",
+    "betterSolution": "",
+    "optimalSolution": "The optimal solution uses the $project aggregation operator to specify the fields to include in the projected documents. The $cond aggregation operator is used to check if a field has a value before including it in the projected documents.",
+    "proofOfCorrectness": "The optimal solution is correct because it uses the $project aggregation operator to specify the fields to include in the projected documents and the $cond aggregation operator to check if a field has a value before including it in the projected documents.",
+    "dryRun": "Step-by-step example run: [1] Create a MongoDB collection with the input data. [2] Run the aggregation pipeline on the collection. [3] The resulting projected documents are returned as an array.",
+    "commonMistakes": [
+      "Including fields with a value of null or undefined in the projected documents.",
+      "Failing to handle documents with missing fields."
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "function aggregatePipeline(documents) {\n  // Your code here\n  return []; // Return an empty array\n}\n",
+    "python": "class Solution:\n  def aggregate_pipeline(self, documents):\n    # Your code here\n    return [] # Return an empty list\n"
+  },
+  "buggyStarterCode": {
+    "javascript": "function aggregatePipeline(documents) {\n  return documents.map(doc => {\n    return Object.keys(doc).reduce((acc, key) => {\n      if (doc[key] !== null) {\n        acc[key] = doc[key];\n      }\n      return acc;\n    }, {});\n  });\n}\n",
+    "python": "class Solution:\n  def aggregate_pipeline(self, documents):\n    return [dict((key, value) for key, value in doc.items() if value is not None) for doc in documents]\n"
+  },
+  "functionSignature": {
+    "javascript": "function aggregatePipeline(documents);",
+    "python": "class Solution:\n  def aggregate_pipeline(self, documents: list);\n"
+  },
+  "solutions": {
+    "javascript": "// Corrected solution\nfunction aggregatePipeline(documents) {\n  return documents.map(doc => {\n    return Object.keys(doc).reduce((acc, key) => {\n      if (doc[key] !== null && doc[key] !== undefined) {\n        acc[key] = doc[key];\n      }\n      return acc;\n    }, {});\n  });\n}\n",
+    "python": "class Solution:\n  def aggregate_pipeline(self, documents: list) -> list:\n    return [dict((key, value) for key, value in doc.items() if value is not None and value is not undefined) for doc in documents]\n\n# Driver code\nif __name__ == '__main__':\n  documents = [{'a': 1, 'b': None}, {'c': 2, 'd': undefined, 'e': 3}, {'f': None, 'g': 4}]\n  solution = Solution()\n  result = solution.aggregate_pipeline(documents)\n  print(result)\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 1000,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "[{a: 1, b: null}, {c: 2, d: undefined, e: 3}, {f: null, g: 4}]",
+      "output": "[{c: 2, e: 3}, {g: 4}]",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "[{a: 1, b: 2}, {c: null, d: null}, {e: undefined, f: undefined}]\n",
+      "output": "[{a: 1, b: 2}, {}, {}]\n",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "3f326dcf2467e0ad564f844b",
+  "slug": "fix-mongodb-aggregation-pipeline-to-ignore-missing-fields-bugfix-medium-mongodb",
+  "mode": "bug_fix",
+  "category": "MONGODB",
+  "difficulty": "Medium"
+}

@@ -1,0 +1,154 @@
+{
+  "_id": "36ed3202dc82c61238e77410",
+  "title": "Incorrect Node Deletion in Binary Tree",
+  "slug": "incorrect-node-deletion-in-binary-tree-bugfix-medium-binary-trees-2",
+  "difficulty": "Medium",
+  "category": "DSA",
+  "subCategory": "DFS",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "tree",
+      "DFS"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "You are given a binary tree and a target node. Delete the target node from the binary tree. Note that the binary tree nodes contain an additional `data` field (not the standard `val` or `value`), a `left` child, and a `right` child. The tree nodes are defined as follows:\n\n```cpp\nstruct TreeNode {\n    int data;\n    TreeNode *left, *right;\n    TreeNode(int x) : data(x), left(NULL), right(NULL) {}\n};\n```\n\nThe function `solution` should delete the target node and return the modified binary tree. Note that the tree nodes are not manually allocated with `new`, and instead, a recursive `createTree` helper function is provided to create and populate the tree with node values.\n\n### Constraints\n\n* The binary tree nodes are not manually allocated with `new`. Instead, use the `createTree` function to create and populate the tree.\n\n### Example\n\n```cpp\nTreeNode* root = createTree({8,3,10,1,6,null,14,null,null,4,7,15});\nTreeNode* newRoot = solution(root, 3);\nassert(newRoot->data == 8);\nassert(newRoot->left == solution(root->left, 1)/* returns new root of left subtree */);\nassert(newRoot->right == solution(root->right, 14)/* returns new root of right subtree */);\n```\n\n```python\nfrom collections import deque\nfrom typing import Optional\n\nclass TreeNode:\n    def __init__(self, data, left=None, right=None):\n        self.data = data\n        self.left = left\n        self.right = right\n\ndef create_tree(lst):\n    if not lst:\n        return None\n    queue = deque(lst)\n    root = TreeNode(queue.popleft())\n    tree_nodes = [root]\n    while queue:\n        node = tree_nodes.pop()\n        if node:\n            node.left = TreeNode(queue.popleft()) if queue else None\n            node.right = TreeNode(queue.popleft()) if queue else None\n            tree_nodes.append(node.left)\n            tree_nodes.append(node.right)\n    return root\n\ndef solution(root: Optional[TreeNode], target_data: int):\n    # BUGGY CODE: Incorrect node deletion logic\n    if root is None:\n        return None\n    if root.data == target_data:\n        # TO DO: Delete the target node\n        return None\n    root.left = solution(root.left, target_data)\n    root.right = solution(root.right, target_data)\n    return root\n",
+    "inputFormat": "The input will be a binary tree represented as an array of node values.\n```cpp\nint[] arr = {8,3,10,1,6,14,4,7,15};\nTreeNode* root = createTree(arr);\n```\n\n```python\nfrom collections import deque\nfrom typing import List\n\ndef create_tree(lst: List[int]):\n    if not lst:\n        return None\n    queue = deque(lst)\n    root = TreeNode(queue.popleft())\n    tree_nodes = [root]\n    while queue:\n        node = tree_nodes.pop()\n        if node:\n            node.left = TreeNode(queue.popleft()) if queue else None\n            node.right = TreeNode(queue.popleft()) if queue else None\n            tree_nodes.append(node.left)\n            tree_nodes.append(node.right)\n    return root\n\nroot = create_tree([8, 3, 10, 1, 6, 14, 4, 7, 15])\n",
+    "outputFormat": "The output should be the modified binary tree after deleting the target node.\n```cpp\n// To print the entire binary tree, use a depth-first search\nvoid printTree(TreeNode* root) {\n    if (root) {\n        printTree(root->left);\n        std::cout << root->data << ",
+    "notes": "Note that the binary tree nodes contain an additional `data` field, which should be used for node deletion.\n\n**Hint:** Update the `solution` function to correctly delete the target node by handling the case where the target node is the root node.\n\n### Example\n```python\nfrom typing import Optional\n\nclass TreeNode:\n    def __init__(self, data, left=None, right=None):\n        self.data = data\n        self.left = left\n        self.right = right\n\ndef create_tree(lst):\n    if not lst:\n        return None\n    queue = deque(lst)\n    root = TreeNode(queue.popleft())\n    tree_nodes = [root]\n    while queue:\n        node = tree_nodes.pop()\n        if node:\n            node.left = TreeNode(queue.popleft()) if queue else None\n            node.right = TreeNode(queue.popleft()) if queue else None\n            tree_nodes.append(node.left)\n            tree_nodes.append(node.right)\n    return root\n\nroot = create_tree([8, 3, 10, 1, 6, 14, 4, 7, 15])\nnew_root = solution(root, 3)\nassert(new_root.data == 8)\nassert(new_root.left.data == 10)\nassert(new_root.right.data == 6)\nassert(new_root.left.left.data == 4)\nassert(new_root.left.right.data == 7)\nassert(new_root.right.left.data == 1)\n",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "arr",
+        "type": "array",
+        "min": 1,
+        "max": 15,
+        "description": "Input array of node values"
+      }
+    ],
+    "examples": [
+      {
+        "input": "Create a binary tree from the array [8, 3, 10, 1, 6, 14, 4, 7, 15]. Delete the node with value 3. Print the modified binary tree.",
+        "output": "The output should be the modified binary tree after deleting the node with value 3.",
+        "explanation": ""
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Update the `solution` function to correctly delete the target node by handling the case where the target node is the root node."
+    }
+  ],
+  "editorial": {
+    "title": "Deleting a Node in a Binary Tree",
+    "intuition": "To delete a node in a binary tree, we need to handle three cases:\n1. The target node has no children.\n2. The target node has one child.\n3. The target node has two children.\n\n**Case 1:** If the target node has no children, we simply return `nullptr`.\n\n**Case 2:** If the target node has one child, we return the child node.\n\n**Case 3:** If the target node has two children, we replace the target node with its right child and then recursively delete the right child.\n\n```python\n# Correct implementation of solution function\ndef solution(root: Optional[TreeNode], target_data: int) -> Optional[TreeNode]:\n    if root is None:\n        return None\n    if root.data == target_data:\n        # Case 1: No children\n        if root.left is None and root.right is None:\n            return None\n        # Case 2: One child\n        elif root.left is None:\n            return root.right\n        elif root.right is None:\n            return root.left\n        # Case 3: Two children\n        else:\n            temp = root.right\n            while temp.left:\n                temp = temp.left\n            root.data = temp.data\n            root.right = solution(root.right, temp.data)\n            return root\n    root.left = solution(root.left, target_data)\n    root.right = solution(root.right, target_data)\n    return root\n",
+    "bruteForce": "The brute force approach would involve searching for the target node in the binary tree and then deleting it by traversing the tree from the root node.",
+    "betterSolution": "",
+    "optimalSolution": "The optimal solution involves handling the three cases mentioned above and using a recursive approach to delete the target node.",
+    "proofOfCorrectness": "The correctness of the solution can be proven by considering the three cases mentioned above and showing that the target node is successfully deleted in each case.",
+    "dryRun": "To dry run the solution, start by creating a binary tree from the input array and then delete a node from the binary tree. Print the modified binary tree to verify the correctness of the solution.",
+    "commonMistakes": [
+      "Failing to handle the case where the target node is the root node.",
+      "Incorrectly deleting the target node in the binary tree."
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(h)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n\n// BUGGY CODE: Incorrect node deletion logic\nint solution(TreeNode* root, int target_data) {\n    if (root == NULL) {\n        return -1;\n    }\n    if (root->data == target_data) {\n        // TO DO: Delete the target node\n        return -1;\n    }\n    int left_result = solution(root->left, target_data);\n    if (left_result != -1) {\n        return left_result;\n    }\n    int right_result = solution(root->right, target_data);\n    if (right_result != -1) {\n        return right_result;\n    }\n    return root->data;\n}\n\n}",
+    "java": "class Solution {\npublic:\n\n// BUGGY CODE: Incorrect node deletion logic\nint solution(TreeNode* root, int target_data) {\n    if (root == NULL) {\n        return -1;\n    }\n    if (root->data == target_data) {\n        // TO DO: Delete the target node\n        return -1;\n    }\n    int left_result = solution(root->left, target_data);\n    if (left_result != -1) {\n        return left_result;\n    }\n    int right_result = solution(root->right, target_data);\n    if (right_result != -1) {\n        return right_result;\n    }\n    return root->data;\n}\n\n}",
+    "python": "class Solution:\n\ndef solution(self, root: Optional[TreeNode], target_data: int) -> Optional[TreeNode]:\n    if root is None:\n        return None\n    if root.data == target_data:\n        # TO DO: Delete the target node\n        return None\n    root.left = solution(root.left, target_data)\n    root.right = solution(root.right, target_data)\n    return root\n",
+    "javascript": "function solution(root, target_data) {\n    if (root === null) {\n        return null;\n    }\n    if (root.data === target_data) {\n        // TO DO: Delete the target node\n        return null;\n    }\n    let left_result = solution(root.left, target_data);\n    if (left_result !== null) {\n        return left_result;\n    }\n    let right_result = solution(root.right, target_data);\n    if (right_result !== null) {\n        return right_result;\n    }\n    return root.data;\n}\n"
+  },
+  "buggyStarterCode": {
+    "cpp": "int solution(TreeNode* root, int target_data) {\n    if (root == NULL) {\n        return -1;\n    }\n    if (root->data == target_data) {\n        // TO DO: Delete the target node\n        return -1;\n    }\n    int left_result = solution(root->left, target_data);\n    if (left_result != -1) {\n        return left_result;\n    }\n    int right_result = solution(root->right, target_data);\n    if (right_result != -1) {\n        return right_result;\n    }\n    return root->data;\n}\n\n",
+    "java": "int solution(TreeNode* root, int target_data) {\n    if (root == NULL) {\n        return -1;\n    }\n    if (root->data == target_data) {\n        // TO DO: Delete the target node\n        return -1;\n    }\n    int left_result = solution(root->left, target_data);\n    if (left_result != -1) {\n        return left_result;\n    }\n    int right_result = solution(root->right, target_data);\n    if (right_result != -1) {\n        return right_result;\n    }\n    return root->data;\n}\n\n",
+    "python": "def solution(self, root: Optional[TreeNode], target_data: int) -> Optional[TreeNode]:\n    if root is None:\n        return None\n    if root.data == target_data:\n        # TO DO: Delete the target node\n        return None\n    root.left = solution(root.left, target_data)\n    root.right = solution(root.right, target_data)\n    return root\n",
+    "javascript": "function solution(root, target_data) {\n    if (root === null) {\n        return null;\n    }\n    if (root.data === target_data) {\n        // TO DO: Delete the target node\n        return null;\n    }\n    let left_result = solution(root.left, target_data);\n    if (left_result !== null) {\n        return left_result;\n    }\n    let right_result = solution(root.right, target_data);\n    if (right_result !== null) {\n        return right_result;\n    }\n    return root.data;\n}\n"
+  },
+  "functionSignature": {
+    "cpp": "int solution(TreeNode* root, int target_data) {\n}",
+    "java": "int solution(TreeNode* root, int target_data) {\n}",
+    "python": "def solution(self, root: Optional[TreeNode], target_data: int) -> Optional[TreeNode]:",
+    "javascript": "function solution(root, target_data) {\n}"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def solution(self, root: Optional[TreeNode], target_data: int) -> Optional[TreeNode]:\n        if root is None:\n            return None\n        if root.data == target_data:\n            # TO DO: Delete the target node\n            return None\n        root.left = self.solution(root.left, target_data)\n        root.right = self.solution(root.right, target_data)\n        return root\n\n\n# Create a binary tree from the input array\nfrom collections import deque\nfrom typing import List\n\nclass TreeNode:\n    def __init__(self, data, left=None, right=None):\n        self.data = data\n        self.left = left\n        self.right = right\n\ndef create_tree(lst: List[int]) -> Optional[TreeNode]:\n    if not lst:\n        return None\n    queue = deque(lst)\n    root = TreeNode(queue.popleft())\n    tree_nodes = [root]\n    while queue:\n        node = tree_nodes.pop()\n        if node:\n            node.left = TreeNode(queue.popleft()) if queue else None\n            node.right = TreeNode(queue.popleft()) if queue else None\n            tree_nodes.append(node.left)\n            tree_nodes.append(node.right)\n    return root\n\nroot = create_tree([8, 3, 10, 1, 6, 14, 4, 7, 15])\nnew_root = Solution().solution(root, 3)\n\n# Print the modified binary tree\ndef print_tree(root: Optional[TreeNode], indent: int = 0) -> None:\n    if root:\n        print_tree(root.right, indent + 1)\n        print('  ' * indent + str(root.data))\n        print_tree(root.left, indent + 1)\n\nprint_tree(new_root)\n",
+    "cpp": "#include <iostream>\n#include <vector>\n\nusing namespace std;\n\nstruct TreeNode {\n    int data;\n    TreeNode *left, *right;\n    TreeNode(int x) : data(x), left(NULL), right(NULL) {}\n};\n\nbool createTree(vector<int>& arr, TreeNode*& root) {\n    if (!arr.empty()) {\n        root = new TreeNode(arr[0]);\n        arr.erase(arr.begin());\n        root->left = createTree(arr, root->left);\n        root->right = createTree(arr, root->right);\n        return true;\n    }\n    return false;\n}\n\nTreeNode* solution(TreeNode* root, int target_data) {\n    if (!root) {\n        return NULL;\n    }\n    if (root->data == target_data) {\n        // TO DO: Delete the target node\n        return NULL;\n    }\n    root->left = solution(root->left, target_data);\n    root->right = solution(root->right, target_data);\n    return root;\n}\n\nint main() {\n    vector<int> arr = {8, 3, 10, 1, 6, 14, 4, 7, 15};\n    TreeNode* root;\n    createTree(arr, root);\n    TreeNode* newRoot = solution(root, 3);\n    // Print the modified binary tree\n    printTree(newRoot);\n\n    return 0;\n}\n\nvoid printTree(TreeNode* root) {\n    if (root) {\n        printTree(root->right);\n        cout << root->data << \" \";\n        printTree(root->left);\n    }\n}\n",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "Create a binary tree from the array [8, 3, 10, 1, 6, 14, 4, 7, 15]. Delete the node with value 3. Print the modified binary tree.",
+      "output": "The output should be the modified binary tree after deleting the node with value 3.",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_hidden_generated",
+      "input": "Create a binary tree from the array [8, 3, 10, 1, 6, 14, 4, 7, 15]. Delete the node with value 3. Print the modified binary tree.",
+      "output": "The output should be the modified binary tree after deleting the node with value 3.",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

@@ -1,0 +1,149 @@
+{
+  "title": "Fixing CSS Media Query Priority",
+  "subCategory": "CSS Conditional Rules",
+  "statement": {
+    "markdown": "Write a function that takes a CSS rule string and returns the priority of the first media query present in the rule. The priority is determined by the number of conditions in the media query. For example, consider the following media query: `(min-width: 768px) and (max-width: 1024px)`. It has 2 conditions. If a CSS rule has multiple media queries, the function should return the priority of the first one. If the CSS rule does not contain any media queries, the function should return 0.",
+    "inputFormat": "A CSS rule string that may contain media queries. The input string can be up to 10000 characters long.",
+    "outputFormat": "The priority of the first media query present in the rule. If there are no media queries, the output should be 0.",
+    "notes": "The conditions in a media query are the parts inside the parentheses, separated by `and` or `or`.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 0,
+        "max": 10000,
+        "description": "Length of the input CSS rule string"
+      }
+    ],
+    "examples": [
+      {
+        "input": "@media (min-width: 768px) and (max-width: 1024px) { body { background-color: #f2f2f2; } }",
+        "output": "2",
+        "explanation": "The media query has 2 conditions"
+      },
+      {
+        "input": "body { background-color: #f2f2f2; }",
+        "output": "0",
+        "explanation": "There is no media query"
+      },
+      {
+        "input": "@media (min-width: 768px) { body { background-color: #f2f2f2; } }",
+        "output": "1",
+        "explanation": "The media query has 1 condition"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "CSS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "css"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Look for the `@media` keyword to find the start of a media query"
+    }
+  ],
+  "editorial": {
+    "title": "Fixing CSS Media Query Priority",
+    "intuition": "To find the priority of the first media query, we need to count the number of conditions it has. We can do this by counting the number of `and` and `or` keywords in the media query.",
+    "bruteForce": "We can use a regular expression to find all conditions in the media query and count them.",
+    "betterSolution": "",
+    "optimalSolution": "We can use a stack to keep track of the conditions in the media query. When we see an `and` or `or` keyword, we push it onto the stack. When we see a closing parenthesis, we pop the stack and increment the count.",
+    "proofOfCorrectness": "This solution correctly counts the number of conditions in the media query.",
+    "dryRun": "Let's try to find the priority of the media query in the first example:",
+    "commonMistakes": [
+      "not counting the number of conditions correctly",
+      "not handling multiple media queries correctly"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "function getMediaQueryPriority(cssRule) {\n  // TO DO: implement the function\n}",
+    "python": "class Solution:\n  def get_media_query_priority(self, css_rule: str) -> int:\n    # TO DO: implement the function\n"
+  },
+  "buggyStarterCode": {
+    "javascript": "function getMediaQueryPriority(cssRule) {\n  let mediaQueryStart = cssRule.indexOf('@media');\n  if (mediaQueryStart === -1) return 0;\n  let count = 0;\n  let i;\n  for (i = mediaQueryStart + 6; i < cssRule.length; i++) {\n    if (cssRule[i] === ' ') {\n      count++;\n    }\n  }\n  return count;\n}",
+    "python": "class Solution:\n  def get_media_query_priority(self, css_rule: str) -> int:\n    media_query_start = css_rule.find('@media')\n    if media_query_start == -1:\n      return 0\n    count = 0\n    for i in range(media_query_start + 6, len(css_rule)):\n      if css_rule[i] == ' ':\n        count++\n    return count"
+  },
+  "functionSignature": {
+    "javascript": "function getMediaQueryPriority(cssRule) {\n  return;\n}",
+    "python": "class Solution:\n  def get_media_query_priority(self, css_rule: str) -> int:\n    return;\n"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction getMediaQueryPriority(cssRule) {\n  let mediaQueryStart = cssRule.indexOf('@media');\n  if (mediaQueryStart === -1) return 0;\n  let count = 0;\n  let i;\n  for (i = mediaQueryStart + 6; i < cssRule.length; i++) {\n    if (cssRule[i] === ' ' || cssRule[i] === 'a' || cssRule[i] === 'o') {\n      count++;\n    }\n  }\n  return count;\n}",
+    "python": "class Solution:\n  def get_media_query_priority(self, css_rule: str) -> int:\n    media_query_start = css_rule.find('@media')\n    if media_query_start == -1:\n      return 0\n    count = 0\n    for i in range(media_query_start + 6, len(css_rule)):\n      if css_rule[i] == ' ' or css_rule[i] == 'a' or css_rule[i] == 'o':\n        count++\n    return count"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "@media (min-width: 768px) and (max-width: 1024px) { body { background-color: #f2f2f2; } }",
+      "output": "2",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "body { background-color: #f2f2f2; }",
+      "output": "0",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_3",
+      "input": "@media (min-width: 768px) { body { background-color: #f2f2f2; } }",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "_id": "ce5312d3a96ba12abf077882",
+  "slug": "fixing-css-media-query-priority-bugfix-medium-css",
+  "mode": "bug_fix",
+  "category": "CSS",
+  "difficulty": "Medium"
+}

@@ -1,0 +1,136 @@
+{
+  "title": "SQL Query to Extract Uniquely Named Tables",
+  "subCategory": "SQL Parser",
+  "statement": {
+    "markdown": "Given a SQL schema string, write a function to extract and return a list of uniquely named tables. **Note:** The function should be case-insensitive and handle multiple schema strings with table names. The function should return an array of unique table names in the order they appear in the schema.",
+    "inputFormat": "A single SQL schema string containing `CREATE TABLE <table_name> (<column_definitions>)` statements.",
+    "outputFormat": "An array of unique table names in the order they appear in the schema.",
+    "notes": "This is an Easy difficulty question. You should be able to solve it within 10-15 minutes. Consider using a SQL parser library to help you.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Maximum number of tables in the schema"
+      }
+    ],
+    "examples": [
+      {
+        "input": "CREATE TABLE users (\n  id INT PRIMARY KEY,\n  name VARCHAR(255)\n);\nCREATE TABLE products (\n  id INT PRIMARY KEY,\n  name VARCHAR(255)\n);",
+        "output": "users\nproducts",
+        "explanation": "The function should return an array of unique table names"
+      },
+      {
+        "input": "CREATE TABLE users (\n  id INT PRIMARY KEY,\n  name VARCHAR(255)\n);\nCREATE TABLE users_backup (\n  id INT PRIMARY KEY,\n  name VARCHAR(255)\n);",
+        "output": "users\nusers_backup",
+        "explanation": "The function should handle duplicate table names"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "SQL"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "sql"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use a SQL parser library to help you parse the schema string"
+    }
+  ],
+  "editorial": {
+    "title": "Extracting Uniquely Named Tables",
+    "intuition": "We can use a SQL parser library to parse the schema string and extract the table names. We can then use a set to keep track of unique table names.",
+    "bruteForce": "We can use regular expressions to extract the table names from the schema string. However, this approach may be slower and less accurate.",
+    "betterSolution": "We can use a SQL parser library to parse the schema string and extract the table names. We can then use a set to keep track of unique table names.",
+    "optimalSolution": "We can use a SQL parser library to parse the schema string and extract the table names. We can then use a set to keep track of unique table names. Finally, we can return the sorted list of unique table names.",
+    "proofOfCorrectness": "We can prove the correctness of our solution by showing that it handles all possible cases and returns the correct output.",
+    "dryRun": "Let's try running our solution on the example inputs and see if it returns the correct output.",
+    "commonMistakes": [
+      "Not handling duplicate table names",
+      "Not using a SQL parser library"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// Define a function to extract uniquely named tables\nfunction extractTables(schema) {\n  // TO DO: Implement the function\n}",
+    "python": "class Solution:\n    def extractTables(self, schema: str) -> list:\n        # TO DO: Implement the function\n        pass"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Define a function to extract uniquely named tables\nfunction extractTables(schema) {\n  // Split the schema into individual statements\n  const statements = schema.split(';');\n\n  // Initialize an empty array to store the table names\n  let tables = [];\n\n  // Loop through each statement\n  for (let statement of statements) {\n    // Trim the statement to remove any whitespace\n    statement = statement.trim();\n\n    // Check if the statement contains a table name\n    if (statement.includes('CREATE TABLE')) {\n      // Extract the table name from the statement\n      const tableName = statement.replace('CREATE TABLE ', '').split('(')[0];\n\n      // Add the table name to the array\n      tables.push(tableName);\n    }\n  }\n\n  // Return the array of unique table names\n  return tables;\n}",
+    "python": "class Solution:\n    def extractTables(self, schema: str) -> list:\n        # Split the schema into individual statements\n        statements = schema.split(';')\n\n        # Initialize an empty array to store the table names\n        tables = []\n\n        # Loop through each statement\n        for statement in statements:\n            # Trim the statement to remove any whitespace\n            statement = statement.strip()\n\n            # Check if the statement contains a table name\n            if 'CREATE TABLE' in statement:\n                # Extract the table name from the statement\n                tableName = statement.replace('CREATE TABLE ', '').split('(')[0]\n\n                # Add the table name to the array\n                tables.append(tableName)\n\n        # Return the array of unique table names\n        return tables"
+  },
+  "functionSignature": {
+    "javascript": "function extractTables(schema: string): string[]",
+    "python": "def extractTables(self, schema: str) -> list[str]:"
+  },
+  "solutions": {
+    "javascript": "// Define a function to extract uniquely named tables\nfunction extractTables(schema) {\n  // Split the schema into individual statements\n  const statements = schema.split(';');\n\n  // Initialize an empty set to store unique table names\n  let tableSet = new Set();\n\n  // Loop through each statement\n  for (let statement of statements) {\n    // Trim the statement to remove any whitespace\n    statement = statement.trim();\n\n    // Check if the statement contains a table name\n    if (statement.includes('CREATE TABLE')) {\n      // Extract the table name from the statement\n      const tableName = statement.replace('CREATE TABLE ', '').split('(')[0];\n\n      // Add the table name to the set\n      tableSet.add(tableName);\n    }\n  }\n\n  // Convert the set to an array and return it\n  return Array.from(tableSet);\n}",
+    "python": "class Solution:\n    def extractTables(self, schema: str) -> list[str]:\n        # Split the schema into individual statements\n        statements = schema.split(';')\n\n        # Initialize an empty set to store unique table names\n        tableSet = set()\n\n        # Loop through each statement\n        for statement in statements:\n            # Trim the statement to remove any whitespace\n            statement = statement.strip()\n\n            # Check if the statement contains a table name\n            if 'CREATE TABLE' in statement:\n                # Extract the table name from the statement\n                tableName = statement.replace('CREATE TABLE ', '').split('(')[0]\n\n                # Add the table name to the set\n                tableSet.add(tableName)\n\n        # Convert the set to an array and return it\n        return list(tableSet)"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "CREATE TABLE users (\n  id INT PRIMARY KEY,\n  name VARCHAR(255)\n);\nCREATE TABLE products (\n  id INT PRIMARY KEY,\n  name VARCHAR(255)\n);",
+      "output": "users\nproducts",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "CREATE TABLE users (\n  id INT PRIMARY KEY,\n  name VARCHAR(255)\n);\nCREATE TABLE users_backup (\n  id INT PRIMARY KEY,\n  name VARCHAR(255)\n);",
+      "output": "users\nusers_backup",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "c9aca14a99253a6053ce76c7",
+  "slug": "sql-query-to-extract-uniquely-named-tables-bugfix-easy-sql",
+  "mode": "bug_fix",
+  "category": "SQL",
+  "difficulty": "Easy"
+}

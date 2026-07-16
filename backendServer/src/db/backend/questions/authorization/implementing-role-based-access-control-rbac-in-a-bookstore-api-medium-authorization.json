@@ -1,0 +1,200 @@
+{
+  "_id": "54c4f18160cb6c0b83ee2ca6",
+  "title": "Implementing Role-Based Access Control (RBAC) in a Bookstore API",
+  "slug": "implementing-role-based-access-control-rbac-in-a-bookstore-api-medium-authorization",
+  "difficulty": "Medium",
+  "topics": [
+    "AUTHORIZATION"
+  ],
+  "statement": "Create a simple web API for a bookstore that authenticates users based on their roles and permissions. Implement a robust role-based access control (RBAC) system to restrict access to certain endpoints based on the user's role. Write your API using Node.js and the Express framework. Your API should have the following endpoints:\n\n* `POST /api/auth/login`: logs in a user and returns a JWT token\n* `GET /api/admin/books`: returns a list of all books\n* `GET /api/books/:id`: returns a specific book\n* `POST /api/books`: creates a new book\n* `PATCH /api/books/:id`: updates an existing book\n* `DELETE /api/books/:id`: deletes a book\n\nYour API should authenticate users based on their roles. Users can have either the `ADMIN` or `USER` role. Only users with the `ADMIN` role can access the `/api/admin/books` endpoint. All other endpoints should be accessible to users with both `ADMIN` and `USER` roles.\n\nYou should also implement rate limiting to prevent abuse. Your API is subject to a 100 requests per minute limit. Any excessive requests will result in a 429 Too Many Requests response.\n\nYour API should also handle errors correctly. For example, if a user tries to delete a book that does not exist, your API should return a 404 Not Found response.\n\nYou will be tested with a variety of requests, including valid and invalid user credentials, missing or invalid headers, and excessive requests. Your API should handle all of these scenarios correctly.",
+  "constraints": [
+    "Must use a secret key for JWT token encryption",
+    "Must use the `express-rate-limit` middleware for rate limiting"
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/auth/login",
+      "description": "Logs in a user and returns a JWT token",
+      "body": {
+        "username": "string",
+        "password": "string"
+      },
+      "success": {
+        "token": "string"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/books",
+      "description": "Returns a list of all books",
+      "success": {
+        "books": "[Book]"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/books/:id",
+      "description": "Returns a specific book",
+      "success": {
+        "book": "Book"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/books",
+      "description": "Creates a new book",
+      "body": {
+        "title": "string",
+        "author": "string"
+      }
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/books/:id",
+      "description": "Updates an existing book",
+      "body": {
+        "title": "string",
+        "author": "string"
+      }
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/books/:id",
+      "description": "Deletes a book"
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\"name\":\"bookstore-api\",\"version\":\"1.0.0\",\"main\":\"index.js\",\"scripts\":{\"start\":\"node index.js\"},\"dependencies\":{\"express\":\"^4.18.2\",\"express-rate-limit\":\"^5.1.1\",\"jsonwebtoken\":\"^8.5.1\"}}",
+    "index.js": "const express = require('express');\nconst rateLimit = require('express-rate-limit');\nconst jwt = require('jsonwebtoken');\n\nconst app = express();\napp.use(express.json());\n\nconst limiter = rateLimit({\n  windowMs: 60 * 1000,\n  max: 100\n});\n\napp.use(limiter);\n\nconst users = [\n  {\n    id: 1,\n    username: 'admin',\n    password: 'password',\n    role: 'ADMIN'\n  },\n  {\n    id: 2,\n    username: 'user',\n    password: 'password',\n    role: 'USER'\n  }\n];\n\nconst authenticate = (req, res, next) => {\n  const token = req.header('Authorization');\n  if (!token) return res.status(401).send({\n    error: 'Unauthorized'\n  });\n\n  jwt.verify(token, 'secretKey', (err, user) => {\n    if (err) return res.status(401).send({\n      error: 'Invalid token'\n    });\n\n    req.user = user;\n    next();\n  });\n};\n\nconst checkRole = (role) => {\n  return (req, res, next) => {\n    if (req.user.role !== role) return res.status(403).send({\n      error: 'Forbidden'\n    });\n\n    next();\n  };\n};\n\napp.post('/api/auth/login', (req, res) => {\n  const { username, password } = req.body;\n  const user = users.find((u) => u.username === username && u.password === password);\n  if (!user) return res.status(401).send({\n    error: 'Invalid credentials'\n  });\n\n  const token = jwt.sign({ id: user.id, role: user.role }, 'secretKey');\n  res.send({\n    token\n  });\n});\n\napp.get('/api/admin/books', authenticate, checkRole('ADMIN'), (\n  req, res\n) => {\n  res.send({\n    books: users.map((user) => ({ id: user.id, username: user.username }))\n  });\n});\n\napp.get('/api/books/:id', authenticate, (\n  req, res\n) => {\n  const id = parseInt(req.params.id);\n  const user = users.find((u) => u.id === id);\n  if (!user) return res.status(404).send({\n    error: 'Book not found'\n  });\n\n  res.send({\n    book: user\n  });\n});\n\napp.post('/api/books', authenticate, (\n  req, res\n) => {\n  const { title, author } = req.body;\n  const user = users.find((u) => u.id === req.user.id);\n  const book = {\n    id: users.length + 1,\n    title,\n    author,\n    user:{\n        id:user.id,\n        username:user.username\n    }\n  };\n  users.push(book);\n  res.send({\n    book\n  });\n});\n\napp.patch('/api/books/:id', authenticate, (\n  req, res\n) => {\n  const id = parseInt(req.params.id);\n  const user = users.find((u) => u.id === id);\n  if (!user) return res.status(404).send({\n    error: 'Book not found'\n  });\n\n  const { title, author } = req.body;\n  user.title = title;\n  user.author = author;\n  res.send({\n    book: user\n  });\n});\n\napp.delete('/api/books/:id', authenticate, (\n  req, res\n) => {\n  const id = parseInt(req.params.id);\n  const index = users.findIndex((u) => u.id === id);\n  if (index === -1) return res.status(404).send({\n    error: 'Book not found'\n  });\n\n  users.splice(index, 1);\n  res.send({\n    message: 'Book deleted'\n  });\n});\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));",
+    "users.json": "[\n  {\n    \"id\": 1,\n    \"username\": \"admin\",\n    \"password\": \"password\",\n    \"role\": \"ADMIN\"\n  },\n  {\n    \"id\": 2,\n    \"username\": \"user\",\n    \"password\": \"password\",\n    \"role\": \"USER\"\n  }\n]"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "POST",
+      "path": "/api/auth/login",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "username": "admin",
+        "password": "password"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "token": "string"
+      },
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "GET",
+      "path": "/api/books/1",
+      "headers": {
+        "Authorization": "token123"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "book": {
+          "id": 1,
+          "username": "admin",
+          "password": "password"
+        }
+      },
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "POST",
+      "path": "/api/books",
+      "body": {
+        "title": "book title",
+        "author": "author name"
+      },
+      "expectedStatus": 201,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "PATCH",
+      "path": "/api/books/1",
+      "body": {
+        "title": "new title",
+        "author": "new author"
+      },
+      "expectedStatus": 200,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "DELETE",
+      "path": "/api/books/1",
+      "expectedStatus": 200,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc4",
+      "method": "GET",
+      "path": "/api/admin/books",
+      "headers": {
+        "Authorization": "invalid token"
+      },
+      "expectedStatus": 401,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc5",
+      "method": "POST",
+      "path": "/api/books",
+      "body": {
+        "title": ""
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc6",
+      "method": "GET",
+      "path": "/api/books/999",
+      "expectedStatus": 404,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "rbac",
+    "abac",
+    "middleware",
+    "roles",
+    "permissions",
+    "protected-routes",
+    "guards",
+    "authorization",
+    "rate-limiting",
+    "express",
+    "node.js"
+  ]
+}

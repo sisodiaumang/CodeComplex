@@ -1,0 +1,166 @@
+{
+  "_id": "4b6cec90365ea2c81cf27381",
+  "title": "Detecting Cycles in an Undirected Graph: Fix the Low Link Values",
+  "slug": "detecting-cycles-in-an-undirected-graph-fix-the-low-link-values-bugfix-medium-graphs-3",
+  "difficulty": "Medium",
+  "category": "DSA",
+  "subCategory": "DFS",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "graph"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Write a function to detect whether a given undirected graph has a cycle. If the graph is cyclic, return the node with the lowest lowlink value.\n\nNote that the graph is represented as a list of edges, where each edge is a pair of nodes. The nodes are numbered from 0 to n-1.\n\nThis problem is a variation of the original DFS cycle detection problem. Here, we are asked to return the node with the lowest lowlink value if the graph has a cycle, instead of just detecting the presence of a cycle.\n\nAssume that the graph is connected, i.e., there is a path between any two nodes in the graph.\n\nYou can use the DFS traversal algorithm to solve this problem.\n\n**Input Formats:** \n\n* The first line contains an integer n, the number of nodes in the graph.\n* The next n-1 lines contain pairs of nodes that form an edge.\n\n**Output Format:** \n\n* If the graph has a cycle, return the node with the lowest lowlink value.\n* If the graph does not have a cycle, return -1.",
+    "inputFormat": "The first line contains an integer n, the number of nodes in the graph. The next n-1 lines contain pairs of nodes that form an edge.",
+    "outputFormat": "Return the node with the lowest lowlink value if the graph has a cycle, otherwise return -1.",
+    "notes": "Assume that the graph is connected, i.e., there is a path between any two nodes in the graph.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 100000,
+        "description": "Number of nodes"
+      }
+    ],
+    "examples": [
+      {
+        "input": "5\n0 1\n0 2\n1 3\n2 4",
+        "output": "3",
+        "explanation": ""
+      },
+      {
+        "input": "3\n0 1\n1 2",
+        "output": "-1",
+        "explanation": ""
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Recall the definition of lowlink values in the DFS traversal algorithm. How can you use it to detect cycles in a graph?"
+    },
+    {
+      "order": 2,
+      "text": "What should you return if the graph has a cycle? Use the lowlink values to determine which node has the lowest lowlink value."
+    },
+    {
+      "order": 3,
+      "text": "How can you handle the case when the graph does not have a cycle?"
+    }
+  ],
+  "editorial": {
+    "title": "Detecting Cycles in an Undirected Graph: Fix the Low Link Values",
+    "intuition": "To detect cycles in a graph, we can use the DFS traversal algorithm. We will use the lowlink values to keep track of the lowest ancestor of each node. If we visit a node and its lowlink value is less than or equal to its discovery time, it means that we have a cycle.",
+    "bruteForce": "brute Force details.",
+    "betterSolution": "",
+    "optimalSolution": "We can use a recursive DFS function to traverse the graph. We will keep track of the discovery time and lowlink value for each node. If we visit a node and its lowlink value is less than or equal to its discovery time, it means that we have a cycle. In this case, we will return the node with the lowest lowlink value.",
+    "proofOfCorrectness": "We can prove the correctness of our solution by showing that it correctly detects cycles in a graph and returns the node with the lowest lowlink value if the graph has a cycle.",
+    "dryRun": "The dry run will provide an example of how to use the solution to detect cycles in a graph.",
+    "commonMistakes": [
+      "Incorrectly handling the case when the graph does not have a cycle",
+      "Not keeping track of the discovery time and lowlink value for each node"
+    ],
+    "timeComplexity": "O(n + m)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    int find(int x, std::vector<int>& disc, std::vector<int>& low, std::vector<int>& parent, int& timer, std::vector<int>& graph) {\n        // TODO: implement\n        return -1;\n    }\n};",
+    "java": "public class Solution {\n    public int find(int x, int[] disc, int[] low, int[] parent, int timer, int[][] graph) {\n        // TODO: implement\n        return -1;\n    }\n}",
+    "python": "class Solution:\n    def find(self, x, disc, low, parent, timer, graph):\n        # TODO: implement\n        return -1\n",
+    "javascript": "var Solution = function() {\n    solve = function(x, disc, low, parent, timer, graph) {\n        // TODO: implement\n        return -1;\n    }\n};\n"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    int find(int x, std::vector<int>& disc, std::vector<int>& low, std::vector<int>& parent, int& timer, std::vector<int>& graph) {\n        if (disc[x] == -1) {\n            disc[x] = low[x] = timer++;\n            for (int v : graph[x]) {\n                if (v == parent[x]) continue;\n                int y = find(v, disc, low, parent, timer, graph);\n                if (y != -1) low[x] = std::min(low[x], low[y]);\n                if (y == parent[x]) low[x] = std::min(low[x], disc[x]);\n                if (low[y] > disc[x]) return x;\n            }\n            return -1;\n        }\n        return -1;\n    }\n};",
+    "java": "public class Solution {\n    public int find(int x, int[] disc, int[] low, int[] parent, int timer, int[][] graph) {\n        if (disc[x] == -1) {\n            disc[x] = low[x] = timer++;\n            for (int v : graph[x]) {\n                if (v == parent[x]) continue;\n                int y = find(v, disc, low, parent, timer, graph);\n                if (y != -1) low[x] = Math.min(low[x], low[y]);\n                if (y == parent[x]) low[x] = Math.min(low[x], disc[x]);\n                if (low[y] > disc[x]) return x;\n            }\n            return -1;\n        }\n        return -1;\n    }\n}",
+    "python": "class Solution:\n    def find(self, x, disc, low, parent, timer, graph):\n        if disc[x] == -1:\n            disc[x] = low[x] = timer += 1\n            for v in graph[x]:\n                if v == parent[x]:\n                    continue\n                y = self.find(v, disc, low, parent, timer, graph)\n                if y != -1:\n                    low[x] = min(low[x], low[y])\n                if y == parent[x]:\n                    low[x] = min(low[x], disc[x])\n                if low[y] > disc[x]:\n                    return x\n            return -1\n        return -1\n",
+    "javascript": "var Solution = function() {\n    solve = function(x, disc, low, parent, timer, graph) {\n        if (disc[x] == -1) {\n            disc[x] = low[x] = timer++;\n            for (var v in graph[x]) {\n                if (v == parent[x]) continue;\n                var y = solve(v, disc, low, parent, timer, graph);\n                if (y != -1) low[x] = Math.min(low[x], low[y]);\n                if (y == parent[x]) low[x] = Math.min(low[x], disc[x]);\n                if (low[y] > disc[x]) return x;\n            }\n            return -1;\n        }\n        return -1;\n    }\n};"
+  },
+  "functionSignature": {
+    "cpp": "int find(int x, std::vector<int>& disc, std::vector<int>& low, std::vector<int>& parent, int& timer, std::vector<int>& graph);",
+    "java": "int find(int x, int[] disc, int[] low, int[] parent, int timer, int[][] graph);",
+    "python": "def find(self, x, disc, low, parent, timer, graph):",
+    "javascript": "var solve = function(x, disc, low, parent, timer, graph);"
+  },
+  "solutions": {
+    "python": "from sys import stdin\nfrom collections import defaultdict\nclass Solution:\n    def find(self, x, disc, low, parent, timer, graph):\n        if disc[x] == -1:\n            disc[x] = low[x] = timer += 1\n            for v in graph[x]:\n                if v == parent[x]:\n                    continue\n                y = self.find(v, disc, low, parent, timer, graph)\n                if y != -1:\n                    low[x] = min(low[x], low[y])\n                if y == parent[x]:\n                    low[x] = min(low[x], disc[x])\n                if low[y] > disc[x]:\n                    return x\n            return -1\n        return -1\n    def solve(self):\n        n = int(stdin.readline())\n        disc = [None]*n\n        low = [None]*n\n        parent = [None]*n\n        timer = 0\n        graph = defaultdict(list)\n        for _ in range(n-1):\n            x, y = map(int, stdin.readline().split())\n            graph[x].append(y)\n            graph[y].append(x)\n\n        for i in range(n):\n            if disc[i] == None:\n                res = self.find(i, disc, low, parent, timer, graph)\n                if res != -1:\n                    return res\n        return -1\n\nif __name__ == '__main__':\n    s = Solution()\n    print(s.solve())",
+    "cpp": "#include <bits/stdc++.h>\nclass Solution {\npublic:\n    int find(int x, std::vector<int>& disc, std::vector<int>& low, std::vector<int>& parent, int& timer, std::vector<int>& graph) {\n        if (disc[x] == -1) {\n            disc[x] = low[x] = timer++;\n            for (int v : graph[x]) {\n                if (v == parent[x]) continue;\n                int y = find(v, disc, low, parent, timer, graph);\n                if (y != -1) low[x] = std::min(low[x], low[y]);\n                if (y == parent[x]) low[x] = std::min(low[x], disc[x]);\n                if (low[y] > disc[x]) return x;\n            }\n            return -1;\n        }\n        return -1;\n    }\n    void solve() {\n        int n;\n        std::cin >> n;\n        std::vector<int> disc(n, -1);\n        std::vector<int> low(n, -1);\n        std::vector<int> parent(n, -1);\n        int timer = 0;\n        std::vector<int> graph(n);\n        for (int i = 0; i < n - 1; i++) {\n            int x, y;\n            std::cin >> x >> y;\n            graph[x].push_back(y);\n            graph[y].push_back(x);\n        }\n        for (int i = 0; i < n; i++) {\n            if (disc[i] == -1) {\n                int res = find(i, disc, low, parent, timer, graph);\n                if (res != -1) {\n                    std::cout << res << std::endl;\n                    return;\n                }\n            }\n        }\n        std::cout << -1 << std::endl;\n    }\n};\nint main() {\n    Solution s;\n    s.solve();\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5\n0 1\n0 2\n1 3\n2 4",
+      "output": "3",
+      "isVisible": true,
+      "weight": 10,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "3\n0 1\n1 2",
+      "output": "-1",
+      "isVisible": false,
+      "weight": 5,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

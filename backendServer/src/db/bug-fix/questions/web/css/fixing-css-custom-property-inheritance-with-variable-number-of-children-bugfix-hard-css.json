@@ -1,0 +1,149 @@
+{
+  "title": "Fixing CSS Custom Property Inheritance with Variable Number of Children",
+  "subCategory": "CSS Custom Properties",
+  "statement": {
+    "markdown": "Given a nested HTML structure with a varying number of child elements, write a CSS function to calculate and return the correct custom property value for the parent element based on the custom property values of its children. The custom property value should be the maximum value of its children's custom property values, but only if the parent element has at least one child. If the parent element has no children, the custom property value should be 0.",
+    "inputFormat": "A nested HTML string with a variable number of child elements, where each child element has a custom property value.",
+    "outputFormat": "A string representing the calculated custom property value for the parent element.",
+    "notes": "The parent element's custom property value should only be affected by its children's custom property values.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The maximum number of child elements"
+      }
+    ],
+    "examples": [
+      {
+        "input": "<div style=\"--value: 10; \"><div style=\"--value: 20; \"></div></div>",
+        "output": "20",
+        "explanation": "The parent element's custom property value should be the maximum value of its child's custom property value."
+      },
+      {
+        "input": "<div style=\"--value: 10; \"><div style=\"--value: 5; \"></div><div style=\"--value: 25; \"></div></div>",
+        "output": "25",
+        "explanation": "The parent element's custom property value should be the maximum value of its children's custom property values."
+      },
+      {
+        "input": "<div style=\"--value: 10; \"></div>",
+        "output": "0",
+        "explanation": "The parent element has no children, so its custom property value should be 0."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 100,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "CSS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "css"
+    ],
+    "interviewFrequency": 1,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Consider using the `getComputedStyle` function to parse the custom property values of the child elements."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "// Define a function to calculate the custom property value for the parent element\nfunction calculateCustomProperty(parentElement) {\n  // Return the custom property value of the parent element\n}",
+    "python": "class Solution:\n  def calculate_custom_property(self, parent_element):\n    # Return the custom property value of the parent element\n    pass"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Define a function to calculate the custom property value for the parent element\nfunction calculateCustomProperty(parentElement) {\n  // If the parent element has at least one child, return the maximum value of its children's custom property values\n  if (parentElement.children.length > 0) {\n    return Math.max(...parentElement.children.map((child) => child.style.getPropertyValue('--value')));\n  }\n  // If the parent element has no children, return 0\n  return 0;\n}",
+    "python": "class Solution:\n  def calculate_custom_property(self, parent_element):\n    # If the parent element has at least one child, return the maximum value of its children's custom property values\n    if len(parent_element.children) > 0:\n      return max([child.style.getPropertyValue('--value') for child in parent_element.children])\n    # If the parent element has no children, return 0\n    return 0"
+  },
+  "functionSignature": {
+    "javascript": "var calculateCustomProperty = function(parentElement) {\n  // Return the custom property value of the parent element\n};",
+    "python": "def calculate_custom_property(self, parent_element: Node) -> str:\n  # Return the custom property value of the parent element\n"
+  },
+  "solutions": {
+    "javascript": "// Define a function to calculate the custom property value for the parent element\nfunction calculateCustomProperty(parentElement) {\n  // If the parent element has at least one child, return the maximum value of its children's custom property values\n  if (parentElement.children.length > 0) {\n    return Math.max(...parentElement.children.map((child) => parseFloat(child.style.getPropertyValue('--value'))))\n  }\n  // If the parent element has no children, return 0\n  return 0;\n}",
+    "python": "from bs4 import BeautifulSoup\nfrom io import StringIO\nimport sys\n\nclass Solution:\n  def calculate_custom_property(self):\n    # Read the input HTML string from stdin\n    s = sys.stdin.read()\n\n    # Parse the HTML string using BeautifulSoup\n    soup = BeautifulSoup(s, 'html.parser')\n\n    # Find the parent element\n    parent_element = soup.find('div')\n\n    # If the parent element has at least one child, return the maximum value of its children's custom property values\n    if len(parent_element.find_all('div')) > 0:\n      return max([float(child['style'].split(';')[0].split(':')[1]) for child in parent_element.find_all('div')])\n    # If the parent element has no children, return 0\n    return 0\n\n# Create an instance of the Solution class\nsolution = Solution()\n# Call the calculate_custom_property method and print the result to stdout\nprint(solution.calculate_custom_property())\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "<div style=\"--value: 10; \"><div style=\"--value: 20; \"></div></div>",
+      "output": "20",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "<div style=\"--value: 10; \"><div style=\"--value: 5; \"></div><div style=\"--value: 25; \"></div></div>",
+      "output": "25",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_3",
+      "input": "<div style=\"--value: 10; \"></div>",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "_id": "1d767f404e9b9820abf7fd6e",
+  "slug": "fixing-css-custom-property-inheritance-with-variable-number-of-children-bugfix-hard-css",
+  "mode": "bug_fix",
+  "category": "CSS",
+  "difficulty": "Hard"
+}

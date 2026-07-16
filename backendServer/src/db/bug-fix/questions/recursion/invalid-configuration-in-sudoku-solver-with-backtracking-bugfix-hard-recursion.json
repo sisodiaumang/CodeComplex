@@ -1,0 +1,161 @@
+{
+  "_id": "3c14f466ed38b33b5a396fe3",
+  "title": "Invalid Configuration in Sudoku Solver with Backtracking",
+  "slug": "invalid-configuration-in-sudoku-solver-with-backtracking-bugfix-hard-recursion",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "BACKTRACKING",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "backtracking"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Solve the problem and fix the bugs.",
+    "inputFormat": "The input will be in the following format: 9 lines, first 8 contain 0 for empty cells, then the 9x9 grid, followed by 0 and a line with the row, column, and box indices of the empty cell to fill in the order of [row, col, box].",
+    "outputFormat": "The output should be the boolean representing whether the puzzle is solvable.",
+    "notes": "The puzzle will be valid with no duplicate numbers in each row, column, or 3x3 box. You may assume that the input puzzle is solvable.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "0\n0\n0\n0\n0\n0\n0\n0\n0\n5 3 0 0 7 0 0 0 0\n6 0 0 1 9 5 0 0 0\n8 0 0 0 6 0 0 0 3\n4 0 8 0 3 0 0 0 1\n7 0 0 0 2 0 0 0 6\n0 6 0 0 0 0 2 8 0\n0 0 0 4 1 9 0 0 5\n0 0 0 0 8 0 0 7 9\n0 0 0 0 0 0 0 0 0\n0 0 0 0 0 0 0 0 0\n0 0 0 0 0 0 0 0 0\n",
+        "output": "true",
+        "explanation": ""
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Consider the cases when the Sudoku puzzle has no solution. Check the logic of your backtracking algorithm."
+    },
+    {
+      "order": 2,
+      "text": "Make sure the puzzle construction is complete. A Sudoku puzzle is solvable if and only if the given partial Sudoku grid can be completed without violating the Sudoku rules."
+    },
+    {
+      "order": 3,
+      "text": "Review your Sudoku puzzle input validation. Ensure it checks for the following conditions: duplicate numbers in any row, column, or 3x3 box, and the row, column, and box indices of an empty cell are within valid ranges."
+    }
+  ],
+  "editorial": {
+    "title": "Solving Sudoku with Backtracking",
+    "intuition": "Sudoku puzzle consists of a grid of 9x9 cells divided into nine 3x3 sub-grids or regions, called boxes. The puzzle involves filling the empty cells with numbers from 1 to 9, such that no number is repeated in the same row, column, or box.",
+    "bruteForce": "Brute force approach to solving the Sudoku puzzle would involve trying all possible permutations of numbers from 1 to 9 in each empty cell, which would be extremely time-consuming.",
+    "betterSolution": "",
+    "optimalSolution": "The optimal solution involves using a backtracking algorithm. Backtracking is a problem-solving strategy that involves recursively trying all possible solutions and backtracking to the previous state when the current solution fails. In this case, we start by randomly filling an empty cell in the Sudoku puzzle with a number from 1 to 9. We then recursively try to fill all other empty cells, checking if the current solution is valid. If it is, we move on to the next empty cell. If it's not, we backtrack to the previous state and try a different number in the current cell.",
+    "proofOfCorrectness": "This backtracking strategy is correct because it considers all possible solutions to the Sudoku puzzle. When trying all possible numbers in an empty cell, we ensure that the current solution is valid by checking the Sudoku rules in each step. If we cannot find a solution, we backtrack and try a different number, effectively exploring all possible solutions.",
+    "dryRun": "dry Run details.",
+    "commonMistakes": [
+      "Trying all possible permutations without backtracking",
+      "Not checking the validity of the Sudoku rules in each step"
+    ],
+    "timeComplexity": "O(9^n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "class Solution { public: bool solve(vector<vector<int>>& board); };",
+    "java": "public class Solution { public boolean solve(int[][] board); }",
+    "python": "class Solution: def solve(self, board: List[List[int]]) -> bool: pass",
+    "javascript": "function solve(board) { // TODO: implement }"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution { public: bool solve(vector<vector<int>>& board) { for (int k = 0; k < board.size(); ++k) for (int m = 0; m < board.size(); ++m) { for (int i = 0; i < board.size(); ++i) for (int j = 0; j < board.size(); ++j) { if (board[k][m] == 0) { for (int n = 1; n <= 9; ++n) { board[k][m] = n; if (isValid(board)) return true; } } } } return false; } bool isValid(vector<vector<int>>& board) { for (int k = 0; k < board.size(); ++k) { for (int m = 0; m < board.size(); ++m) { for (int i = 0; i < board.size(); ++i) { for (int j = 0; j < board.size(); ++j) { if (i == k) continue; if (m == j) continue; if (k == m && (i - k == j - m || i - k == 3 - (j - m))) continue; if (board[k][m] == board[i][j]) return false; } } } } return true; } };",
+    "java": "public class Solution { public boolean solve(int[][] board) { for (int k = 0; k < board.length; ++k) for (int m = 0; m < board.length; ++m) { for (int i = 0; i < board.length; ++i) for (int j = 0; j < board.length; ++j) { if (board[k][m] == 0) { for (int n = 1; n <= 9; ++n) { board[k][m] = n; if (isValid(board)) return true; } } } } return false; } boolean isValid(int[][] board) { for (int k = 0; k < board.length; ++k) { for (int m = 0; m < board.length; ++m) { for (int i = 0; i < board.length; ++i) { for (int j = 0; j < board.length; ++j) { if (i == k) continue; if (m == j) continue; if (k == m && (i - k == j - m || i - k == 3 - (j - m))) continue; if (board[k][m] == board[i][j]) return false; } } } } return true; } };",
+    "python": "class Solution: def solve(self, board: List[List[int]]) -> bool: \n    for k in range(len(board)): \n        for m in range(len(board)): \n            for i in range(len(board)): \n                for j in range(len(board)): \n                    if board[k][m] == 0: \n                        for n in range(1, 10): \n                            board[k][m] = n \n                            if self.isValid(board): \n                                return True \n    return False \n \ndef isValid(self, board: List[List[int]]) -> bool: \n    for k in range(len(board)): \n        for m in range(len(board)): \n            for i in range(len(board)): \n                for j in range(len(board)): \n                    if i == k: \n                        continue \n                    if m == j: \n                        continue \n                    if k == m and (i - k == j - m or i - k == 3 - (j - m)): \n                        continue \n                    if board[k][m] == board[i][j]: \n                        return False \n    return True",
+    "javascript": "function solve(board) { for (var k = 0; k < board.length; ++k) for (var m = 0; m < board.length; ++m) { for (var i = 0; i < board.length; ++i) for (var j = 0; j < board.length; ++j) { if (board[k][m] == 0) { for (var n = 1; n <= 9; ++n) { board[k][m] = n; if (isValid(board)) return true; } } } } return false; } function isValid(board) { for (var k = 0; k < board.length; ++k) { for (var m = 0; m < board.length; ++m) { for (var i = 0; i < board.length; ++i) { for (var j = 0; j < board.length; ++j) { if (i == k) continue; if (m == j) continue; if (k == m && (i - k == j - m || i - k == 3 - (j - m))) continue; if (board[k][m] == board[i][j]) return false; } } } } return true; };"
+  },
+  "functionSignature": {
+    "cpp": "bool solve(vector<vector<int>>& board);",
+    "java": "boolean solve(int[][] board);",
+    "python": "def solve(self, board: List[List[int]]) -> bool: ...",
+    "javascript": "function solve(board) { ... }"
+  },
+  "solutions": {
+    "python": "from typing import List\n\nclass Solution:\n    def isValid(self, board: List[List[int]]) -> bool:\n        for k in range(len(board)):\n            for m in range(len(board)):\n                for i in range(len(board)):\n                    for j in range(len(board)):\n                        if i == k:\n                            continue\n                        if m == j:\n                            continue\n                        if k == m and (i - k == j - m or i - k == 3 - (j - m)):\n                            continue\n                        if board[k][m] == board[i][j]:\n                            return False\n        return True\n\n    def solve(self, board: List[List[int]]) -> bool:\n        # Find the index of the empty cell\n        for k in range(len(board)):\n            for m in range(len(board)):\n                if board[k][m] == 0:\n                    # Fill in the cell with 1 to 9 and check if the puzzle is valid\n                    for n in range(1, 10):\n                        board[k][m] = n\n                        if self.isValid(board):\n                            return True\n                    # If the puzzle is not valid, backtrack and return False\n                    return False\n        # If no empty cells are found, return True\n        return True\n\n# Test the solution\nsolution = Solution()\nboard = [[5, 3, 0, 0, 7, 0, 0, 0, 0], [6, 0, 0, 1, 9, 5, 0, 0, 0], [8, 0, 0, 0, 6, 0, 0, 0, 3], [4, 0, 8, 0, 3, 0, 0, 0, 1], [7, 0, 0, 0, 2, 0, 0, 0, 6], [0, 6, 0, 0, 0, 0, 2, 8, 0], [0, 0, 0, 4, 1, 9, 0, 0, 5], [0, 0, 0, 0, 8, 0, 0, 7, 9], [0, 0, 0, 0, 0, 0, 0, 0, 0]]\nprint(solution.solve(board))",
+    "cpp": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nclass Solution {\npublic:\n    bool isValid(vector<vector<int>>& board) {\n        int rows = board.size(); \n        int cols = board[0].size();\n        bool visited[rows][cols];\n        memset(visited, false, sizeof(visited));\n\n        for (int k = 0; k < rows; ++k) {\n            for (int m = 0; m < cols; ++m) {\n                if (board[k][m] == 0) {\n                    for (int n = 1; n <= 9; ++n) {\n                        board[k][m] = n;\n                        if (isValidBacktracking(board, k, m, 0))\n                            return true;\n                        board[k][m] = 0;\n                    }\n                    return false;\n                }\n            }\n        }\n\n        return true;\n    }\n\n    bool isValidBacktracking(vector<vector<int>>& board, int k, int m, int step) {\n        int rows = board.size();\n        int cols = board[0].size();\n\n        if (step >= rows * cols)\n            return true;\n\n        int x = step / cols;\n        int y = step % cols;\n\n        if (x == k) \n            continue;\n        if (m == y) \n            continue;\n        if (k == m && (x - k == y - m || x - k == 3 - (y - m))) \n            continue;\n\n        if (board[x][y] == board[k][m]) \n            return false;\n\n        board[x][y] = board[k][m];\n        if (isValidBacktracking(board, k, m, step + 1))\n            return true;\n        board[x][y] = 0;\n\n        return false;\n    }\n\n    bool solve(vector<vector<int>>& board) {\n        int rows = board.size(); \n        int cols = board[0].size();\n\n        int step = 0;\n\n        for (int i = 0; i < rows; ++i) {\n            for (int j = 0; j < cols; ++j) {\n                if (board[i][j] == 0)\n                    step += 1;\n            }\n        }\n\n        return isValid(board);\n    }\n};\n\nint main() {\n    Solution solution;\n    vector<vector<int>> board = {{5, 3, 0, 0, 7, 0, 0, 0, 0}, {6, 0, 0, 1, 9, 5, 0, 0, 0}, {8, 0, 0, 0, 6, 0, 0, 0, 3}, {4, 0, 8, 0, 3, 0, 0, 0, 1}, {7, 0, 0, 0, 2, 0, 0, 0, 6}, {0, 6, 0, 0, 0, 0, 2, 8, 0}, {0, 0, 0, 4, 1, 9, 0, 0, 5}, {0, 0, 0, 0, 8, 0, 0, 7, 9}, {0, 0, 0, 0, 0, 0, 0, 0, 0}};\n\n    cout << (solution.solve(board) ? 'true' : 'false') << std::endl;\n\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "1\n3\n3 3 00 00 7 00 00 00 00\n6 00 00 1 9 5 00 00 00\n8 00 00 00 6 00 00 00 3\n4 00 8 00 3 00 00 00 1\n7 00 00 00 2 00 00 00 6\n0 6 00 00 00 00 2 8 00\n0 00 00 4 1 9 00 00 5\n0 00 00 00 8 00 00 7 9\n0 00 00 00 00 00 00 00 00\n0 00 00 00 00 00 00 00 00\n0 0 0 0 \n0 1 2 0 0 0 0 0 0\n0 0 0 0 0 0 0 0 0\n",
+      "output": "true",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "1\n9\n5 3 00 00 7 00 00 00 00\n6 00 00 1 9 5 00 00 00\n8 00 00 00 6 00 00 00 3\n4 00 8 00 3 00 00 00 1\n7 00 00 00 2 00 00 00 6\n0 6 00 00 00 00 2 8 00\n0 00 00 4 1 9 00 00 5\n0 00 00 00 8 0 00 7 9\n0 00 00 00 0 00 00 0 0\n0 0 0 0 0 0 0 0 0\n0 0 0 0 0 0 0 0 0\n",
+      "output": "true",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

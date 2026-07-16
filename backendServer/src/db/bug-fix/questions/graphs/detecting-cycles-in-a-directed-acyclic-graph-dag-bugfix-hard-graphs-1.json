@@ -1,0 +1,157 @@
+{
+  "_id": "b2ad9ed2e2b89f80576368f3",
+  "title": "Detecting Cycles in a Directed Acyclic Graph (DAG)",
+  "slug": "detecting-cycles-in-a-directed-acyclic-graph-dag-bugfix-hard-graphs-1",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "DFS/BFS",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "graph"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given a DAG represented as an adjacency list, implement a function to detect whether the graph contains a cycle. The function should return a boolean value indicating whether a cycle exists. ",
+    "inputFormat": "An adjacency list representation of a DAG, where each entry 'i' is a list of integers representing the nodes that node 'i' is connected to.",
+    "outputFormat": "A boolean value indicating whether a cycle exists in the graph.",
+    "notes": "The graph is represented as a list of lists, where each inner list represents a node and the integers within the list represent the nodes that the current node is connected to.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "[[1,2],[2,3],[3,4],[4,1]]",
+        "output": "true",
+        "explanation": ""
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Check if the adjacency list contains any redundant connections."
+    },
+    {
+      "order": 2,
+      "text": "Consider a depth-first search to traverse the graph and detect cycles."
+    }
+  ],
+  "editorial": {
+    "title": "Detecting Cycles in a DAG",
+    "intuition": "A cycle in a DAG can be detected using a depth-first search (DFS) traversal. If a node has already been visited and is revisited during the traversal, it indicates a cycle.",
+    "bruteForce": "A brute-force approach involves checking for cycles by traversing the graph in all possible paths, which is time-consuming and inefficient for large graphs.",
+    "betterSolution": "A more efficient approach involves using a cycle detection algorithm, such as the DFS traversal with a stack and a set to keep track of visited nodes.",
+    "optimalSolution": "The optimal solution involves using a cycle detection algorithm that can detect cycles in O(V+E) time complexity, where V is the number of vertices and E is the number of edges.",
+    "proofOfCorrectness": "The correctness of the algorithm can be proven by showing that if a cycle exists, the algorithm will detect it, and if no cycle exists, the algorithm will correctly indicate that.",
+    "dryRun": "To illustrate the dry-run, consider the graph [1,2],[2,3],[3,4],[4,1]. Start the traversal from node 1. The DFS will follow the connections: 1 -> 2 -> 3 -> 4 -> 1. Since node 1 has already been visited, it indicates a cycle.",
+    "commonMistakes": [
+      "Failing to handle redundant connections",
+      "Not keeping track of visited nodes"
+    ],
+    "timeComplexity": "O(V+E)",
+    "spaceComplexity": "O(V)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\nbool isCycle(vector<vector<int>>& g) {\n\t// TODO: implement\n}\n};",
+    "java": "public class Solution {\npublic boolean isCycle(int[][] g) {\n\t// TODO: implement\n\treturn false;\n}\n}",
+    "python": "class Solution:\ndef isCycle(self, g):\n\t# TODO: implement\n\treturn False",
+    "javascript": "var Solution = function() {\nreturn {\n  isCycle: function(g) {\n\t// TODO: implement\n\treturn false;\n}\n};"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\nbool isCycle(vector<vector<int>>& g) {\n\tvector<bool> visited;\n\tbool res = false;\n\tfor (int node = 0; node != g.size(); ++node) {\n\t\tif (!visited[node]) {\n\t\t\tvisited[node] = true;\n\t\t\tres |= cycleUtil(g, node, visited);\n\t\t}\n\t}\n\treturn res;\n}\nbool cycleUtil(vector<vector<int>>& g, int node, vector<bool>& visited) {\n\tvisited[node] = false;\n\tfor (int neighbor : g[node]) {\n\t\tif (!cycleUtil(g, neighbor, visited)) return false;\n\t}\n\treturn true;\n}\n};",
+    "java": "public class Solution {\npublic boolean isCycle(int[][] g) {\n\tboolean[] visited = new boolean[g.length];\n\tboolean res = false;\n\tfor (int node = 0; node != g.length; ++node) {\n\t\tif (!visited[node]) {\n\t\t\tvisited[node] = true;\n\t\t\tres |= cycleUtil(g, node, visited);\n\t\t}\n\t}\n\treturn res;\n}\nboolean cycleUtil(int[][] g, int node, boolean[] visited) {\n\tvisited[node] = false;\n\tfor (int neighbor : g[node]) {\n\t\tif (!cycleUtil(g, neighbor, visited)) return false;\n\t}\n\treturn true;\n}\n}",
+    "python": "class Solution:\n    def isCycle(self, g):\n        visited = [False] * len(g)\n        res = False\n        for node in range(len(g)):\n            if not visited[node]:\n                visited[node] = True\n                res |= self.cycleUtil(g, node, visited)\n        return res\n    def cycleUtil(self, g, node, visited):\n        visited[node] = False\n        for neighbor in g[node]:\n            if not self.cycleUtil(g, neighbor, visited):\n                return False\n        return True\n",
+    "javascript": "var Solution = function() {\nreturn {\n  isCycle: function(g) {\n\tvar visited = new Array(g.length).fill(false);\n\tvar res = false;\n\tfor (var node = 0; node != g.length; ++node) {\n\t\tif (!visited[node]) {\n\t\t\tvisited[node] = true;\n\t\t\tres |= this.cycleUtil(g, node, visited);\n\t\t}\n\t}\n\treturn res;\n\t},\n  cycleUtil: function(g, node, visited) {\n\tvisited[node] = false;\n\tfor (var neighbor in g[node]) {\n\t\tif (!this.cycleUtil(g, neighbor, visited)) return false;\n\t}\n\treturn true;\n\t}\n};"
+  },
+  "functionSignature": {
+    "cpp": "bool isCycle(vector<vector<int>>& g);",
+    "java": "public boolean isCycle(int[][] g);",
+    "python": "def isCycle(self, g: List[List[int]]) -> bool:",
+    "javascript": "var isCycle = function(g);"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def cycleUtil(self, g, node, visited):\n        visited[node] = True\n        for neighbor in g[node]:\n            if neighbor == node or (visited[neighbor] and not visited[node]):\n                return True\n            if not self.cycleUtil(g, neighbor, visited):\n                return False\n        return False\n\n    def isCycle(self, g):\n        visited = [False] * len(g)\n        res = False\n        for node in range(len(g)):\n            if not visited[node]:\n                res |= self.cycleUtil(g, node, visited)\n        return res\n\nsol = Solution()\ntestcases = [[1, 2], [2, 3], [3, 4], [4, 1]]\nprint(sol.isCycle(testcases))\n",
+    "cpp": "class Solution {\npublic:\nbool isCycle(vector<vector<int>>& g) {\n\tvector<bool> visited;\n\tfor (int node = 0; node != g.size(); ++node) {\n\t\tvisited.push_back(false);\n\t}\n\tbool res = false;\n\tfor (int node = 0; node != g.size(); ++node) {\n\t\tif (!visited[node]) {\n\t\t\tres |= cycleUtil(g, node, visited);\n\t\t}\n\t}\n\treturn res;\n}\nbool cycleUtil(vector<vector<int>>& g, int node, vector<bool>& visited) {\n\tvisited[node] = true;\n\tfor (int neighbor : g[node]) {\n\t\tif (neighbor == node || (visited[neighbor] && !visited[node])) return true;\n\t\tif (!cycleUtil(g, neighbor, visited)) return false;\n\t}\n\treturn false;\n}\n};\nsol = Solution(); testcases = {{1,2},{2,3},{3,4},{4,1}}; cout << (sol.isCycle(testcases) ? 'true' : 'false') << endl;\n",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "3\n[[1,2],[2,3],[3,1]]",
+      "output": "true",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_1",
+      "input": "4\n[[1,2],[2,3],[3,4],[4,1]]",
+      "output": "true",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

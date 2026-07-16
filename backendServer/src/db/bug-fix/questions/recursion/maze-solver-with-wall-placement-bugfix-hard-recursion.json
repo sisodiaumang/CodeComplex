@@ -1,0 +1,159 @@
+{
+  "_id": "17d3d1429d990fcdd130a75e",
+  "title": "Maze Solver with Wall Placement",
+  "slug": "maze-solver-with-wall-placement-bugfix-hard-recursion",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "BACKTRACKING",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 75,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "backtracking"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Solve the problem and fix the bugs.",
+    "inputFormat": "Input is a 2D array maze, where 0 represents an empty cell and 1 represents a wall.",
+    "outputFormat": "Output is a boolean indicating whether it's possible to place walls in the maze to create a unique solution that allows only one way to enter and exit.",
+    "notes": "The maze is a square with an odd number of rows and columns. You can place walls at any empty cell. The start and end points are marked as (0, 0) and (rows-1, cols-1) respectively.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "rows",
+        "type": "integer",
+        "min": 3,
+        "max": 100,
+        "description": "Number of rows in the maze"
+      },
+      {
+        "variable": "cols",
+        "type": "integer",
+        "min": 3,
+        "max": 100,
+        "description": "Number of columns in the maze"
+      }
+    ],
+    "examples": [
+      {
+        "input": "4\n[[0,0,0,0],[1,1,0,0],[0,1,0,0],[0,0,0,0]]",
+        "output": "false",
+        "explanation": "No valid placement of walls to create a unique solution."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Try to find a recursive relation between the number of walls in the sub-maze and the number of possible paths."
+    }
+  ],
+  "editorial": {
+    "title": "Maze Solver with Wall Placement Editorial",
+    "intuition": "Use a backtracking approach to try all possible placements of walls in the maze.",
+    "bruteForce": "Start by placing walls at all empty cells in the maze and then check if only one path exists.",
+    "betterSolution": "Use a backtracking approach to try all possible placements of walls and use the number of walls in the sub-maze and the number of possible paths to prune the search space.",
+    "optimalSolution": "Use the number of walls in the sub-maze and the number of possible paths to prune the search space and find a unique solution.",
+    "proofOfCorrectness": "proof Of Correctness details.",
+    "dryRun": "dry Run details.",
+    "commonMistakes": [
+      "Inadequate pruning of the search space"
+    ],
+    "timeComplexity": "O(row*col*2^(row*col/2))",
+    "spaceComplexity": "O(row*col)"
+  },
+  "starterCode": {
+    "cpp": "// TODO: implement a backtracking function to find a valid placement of walls",
+    "java": "// TODO: implement a backtracking function to find a valid placement of walls",
+    "python": "def solve(maze: List[List[int]]) -> bool:\n    \n    return False",
+    "javascript": "function solve(maze) {\n\treturn false;"
+  },
+  "buggyStarterCode": {
+    "cpp": "bool solve(vector<vector<int>>& maze) {\n    if (maze.size() == 1) return true;\n    for (int i = 0; i < maze.size(); i++) {\n        for (int j = 0; j < maze.size(); j++) {\n            if (maze[i][j] == 0) {\n                maze[i][j] = 1;\n                if (solve(maze)) return true;\n                maze[i][j] = 0;\n            }\n        }\n    }\n    return false;\n}",
+    "java": "public boolean solve(int[][] maze) {\n    if (maze.length == 1) return true;\n    for (int i = 0; i < maze.length; i++) {\n        for (int j = 0; j < maze.length; j++) {\n            if (maze[i][j] == 0) {\n                maze[i][j] = 1;\n                if (solve(maze)) return true;\n                maze[i][j] = 0;\n            }\n        }\n    }\n    return false;\n}",
+    "python": "def solve(maze: List[List[int]]) -> bool:\n    if len(maze) == 1:\n        return True\n    for i in range(len(maze)):\n        for j in range(len(maze)):\n            if maze[i][j] == 0:\n                maze[i][j] = 1\n                if solve(maze):\n                    return True\n                maze[i][j] = 0\n    return False",
+    "javascript": "function solve(maze) {\n    if (maze.length == 1) return true;\n    for (var i = 0; i < maze.length; i++) {\n        for (var j = 0; j < maze.length; j++) {\n            if (maze[i][j] == 0) {\n                maze[i][j] = 1;\n                if (solve(maze)) return true;\n                maze[i][j] = 0;\n            }\n        }\n    }\n    return false;"
+  },
+  "functionSignature": {
+    "cpp": "bool solve(vector<vector<int>>& maze);",
+    "java": "public boolean solve(int[][] maze);",
+    "python": "def solve(self, maze: List[List[int]]) -> bool;",
+    "javascript": "function solve(maze);"
+  },
+  "solutions": {
+    "python": "from typing import List\n\ndef solve(maze: List[List[int]]) -> bool:\n    rows, cols = len(maze), len(maze[0])\n    def backtrack(r, c, count_walls):\n        # Base case: if we reach the end, it's valid\n        if r == rows - 1 and c == cols - 1:\n            return True\n\n        # If we're at the end of a row, try to backtrack to the previous row\n        if r > 0 and backtrack(r - 1, c, count_walls):\n            return True\n        # If we're at the end of a column, try to backtrack to the previous column\n        if c > 0 and backtrack(r, c - 1, count_walls):\n            return True\n\n        # If we can't backtrack, try to place a wall at the current cell\n        if count_walls < rows * cols // 2:\n            maze[r][c] = 1\n            if backtrack(r, c, count_walls + 1):\n                return True\n            maze[r][c] = 0\n        # If we can't place a wall, backtrack\n        return False\n    return backtrack(0, 0, 0)",
+    "cpp": "bool solve(vector<vector<int>>& maze) {\n    int rows = maze.size(), cols = maze[0].size();\n    bool backtrack(int r, int c, int count_walls) {\n        // Base case: if we reach the end, it's valid\n        if (r == rows - 1 && c == cols - 1) return true;\n\n        // If we're at the end of a row, try to backtrack to the previous row\n        if (r > 0 && backtrack(r - 1, c, count_walls)) return true;\n        // If we're at the end of a column, try to backtrack to the previous column\n        if (c > 0 && backtrack(r, c - 1, count_walls)) return true;\n\n        // If we can't backtrack, try to place a wall at the current cell\n        if (count_walls < rows * cols / 2) {\n            maze[r][c] = 1;\n            if (backtrack(r, c, count_walls + 1)) return true;\n            maze[r][c] = 0;\n        } // If we can't place a wall, backtrack\n        return false;\n    }\n    return backtrack(0, 0, 0);\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "4\n[[0,0,0,0],[1,1,0,0],[0,1,0,0],[0,0,0,0]]",
+      "output": "false",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_hidden_generated",
+      "input": "4\n[[0,0,0,0],[1,1,0,0],[0,1,0,0],[0,0,0,0]]",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

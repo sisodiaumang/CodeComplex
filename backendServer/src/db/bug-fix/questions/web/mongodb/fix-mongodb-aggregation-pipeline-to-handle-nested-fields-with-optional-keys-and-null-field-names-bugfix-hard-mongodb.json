@@ -1,0 +1,131 @@
+{
+  "title": "Fix MongoDB Aggregation Pipeline to Handle Nested Fields with Optional Keys and Null Field Names",
+  "subCategory": "MongoDB Query Projection",
+  "statement": {
+    "markdown": "Implement a function to fix the MongoDB aggregation pipeline to correctly handle nested fields with optional keys and null field names. The function should take an array of documents and return the fixed pipeline.",
+    "inputFormat": "Array of documents where each document is an object with nested fields",
+    "outputFormat": "Fixed MongoDB aggregation pipeline as an array of objects",
+    "notes": "The pipeline should correctly handle fields with optional keys and null field names. The function should also skip unnecessary fields in the projection.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of documents in the input array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "[{a: 1, b: {c: 2, d: null}}, {a: 2, b: {c: 3, e: {f: 4}}}]",
+        "output": "[{ $project: { a: 1, b: { c: 1, d: { $ifNull: [ \"$b.d\", \"\" ] } } } }, { $project: { a: 1, b: { c: 1, e: { f: 1 } } } }]",
+        "explanation": "The output pipeline correctly handles nested fields with optional keys and null field names"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 100,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "MONGODB"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "mongodb"
+    ],
+    "interviewFrequency": 5,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the $ifNull operator to handle null field names"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial: Fixing MongoDB Aggregation Pipeline",
+    "intuition": "The correct approach is to use the $ifNull operator to handle null field names and the $project operator to skip unnecessary fields in the projection.",
+    "bruteForce": "Brute force approach involves manually writing each pipeline stage for each document",
+    "betterSolution": "Use a recursive function to generate the pipeline stages",
+    "optimalSolution": "Use a recursive function to generate the pipeline stages and the $ifNull operator to handle null field names",
+    "proofOfCorrectness": "The proof of correctness involves verifying that the output pipeline correctly handles nested fields with optional keys and null field names",
+    "dryRun": "Step-by-step example run of the optimal solution",
+    "commonMistakes": [
+      "Failing to handle null field names",
+      "Skipping unnecessary fields in the projection"
+    ],
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "// Define a recursive function to generate the pipeline stages",
+    "python": "class Solution:\n  def solve(self, documents):\n    # Define a recursive function to generate the pipeline stages\n"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Define a recursive function to generate the pipeline stages\nfunction generatePipeline(doc) {\n  if (Object.keys(doc).length === 0) return [];\n  let pipeline = [];\n  for (let key in doc) {\n    if (typeof doc[key] === 'object') {\n      pipeline.push({ $project: { [key]: 1 } });\n    }\n  }\n  return pipeline;\n}\n\nfunction solve(documents) {\n  let pipelines = [];\n  for (let doc of documents) {\n    pipelines.push(generatePipeline(doc));\n  }\n  return pipelines;\n}",
+    "python": "class Solution:\n  def solve(self, documents):\n    def generate_pipeline(doc):\n      if len(doc) == 0:\n        return []\n      pipeline = []\n      for key in doc:\n        if isinstance(doc[key], dict):\n          pipeline.append({ '$project': { key: 1 } })\n      return pipeline\n\n    pipelines = []\n    for doc in documents:\n      pipelines.append(generate_pipeline(doc))\n    return pipelines"
+  },
+  "functionSignature": {
+    "javascript": "function solve(documents)",
+    "python": "def solve(self, documents: list[dict]) -> list[list[dict]]:"
+  },
+  "solutions": {
+    "javascript": "// Define a recursive function to generate the pipeline stages\nfunction generatePipeline(doc) {\n  if (Object.keys(doc).length === 0) return [];\n  let pipeline = [];\n  for (let key in doc) {\n    if (typeof doc[key] === 'object') {\n      pipeline.push({ $project: { [key]: 1 } });\n      if (Object.keys(doc[key]).length === 0) {\n        pipeline.push({ $ifNull: [{ $project: { [key]: 1 } }] });\n      }\n    }\n  }\n  return pipeline;\n}\n\nfunction solve(documents) {\n  let pipelines = [];\n  for (let doc of documents) {\n    pipelines.push(generatePipeline(doc));\n  }\n  return pipelines;\n}\n\n// Call the solve function with some sample input\nlet documents = [{a: 1, b: {c: 2, d: null}}, {a: 2, b: {c: 3, e: {f: 4}}}];\nconsole.log(solve(documents));",
+    "python": "class Solution:\n  def solve(self, documents):\n    def generate_pipeline(doc):\n      if len(doc) == 0:\n        return []\n      pipeline = []\n      for key in doc:\n        if isinstance(doc[key], dict):\n          pipeline.append({ '$project': { key: 1 } })\n          if len(doc[key]) == 0:\n            pipeline.append({ '$ifNull': [{ '$project': { key: 1 } }] })\n      return pipeline\n\n    pipelines = []\n    for doc in documents:\n      pipelines.append(generate_pipeline(doc))\n    return pipelines\n\n# Call the solve function with some sample input\ndocuments = [{\"a\": 1, \"b\": {\"c\": 2, \"d\": None}}, {\"a\": 2, \"b\": {\"c\": 3, \"e\": {\"f\": 4}}}]\nprint(solve(documents))"
+  },
+  "judgeConfig": {
+    "timeLimit": 5,
+    "memoryLimit": 128,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "[{a: 1, b: {c: 2, d: null}}, {a: 2, b: {c: 3, e: {f: 4}}}]\n",
+      "output": "[{ $project: { a: 1, b: { c: 1, d: { $ifNull: [ \"b.d\", \"\" ] } } } }, { $project: { a: 1, b: { c: 1, e: { f: 1 } } } }]\n",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_hidden_generated",
+      "input": "[{a: 1, b: {c: 2, d: null}}, {a: 2, b: {c: 3, e: {f: 4}}}]\n",
+      "output": "[{ $project: { a: 1, b: { c: 1, d: { $ifNull: [ \"b.d\", \"\" ] } } } }, { $project: { a: 1, b: { c: 1, e: { f: 1 } } } }]\n",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "84ae0b6c03c7f137ce19c55f",
+  "slug": "fix-mongodb-aggregation-pipeline-to-handle-nested-fields-with-optional-keys-and-null-field-names-bugfix-hard-mongodb",
+  "mode": "bug_fix",
+  "category": "MONGODB",
+  "difficulty": "Hard"
+}

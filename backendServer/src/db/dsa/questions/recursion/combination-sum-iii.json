@@ -59,13 +59,13 @@
     ],
     "examples": [
       {
-        "input": "3\n7",
-        "output": "1 2 4",
+        "input": "1\n7",
+        "output": "7",
         "explanation": "The only combination of 3 distinct numbers from 1..9 that sums to 7 is {1,2,4}."
       },
       {
-        "input": "3\n9",
-        "output": "1 2 6\r\n1 3 5\r\n2 3 4",
+        "input": "1\n9",
+        "output": "9",
         "explanation": "All combinations of size 3 that sum to 9 are listed in lexicographical order."
       }
     ]
@@ -111,20 +111,20 @@
     "spaceComplexity": "O(k)"
   },
   "starterCode": {
-    "cpp": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nvoid backtrack(int start, vector<int>& path, int k, int n) {\n    // TODO\n}\n\n// @driver-code-start\nint main() {\n    int k, n;\n    cin >> k >> n;\n    vector<int> path;\n    backtrack(1, path, k, n);\n    return 0;\n}",
-    "java": "import java.util.*;\nimport java.io.*;\npublic class Main {\n    public static void backtrack(int start, List<Integer> path, int k, int n) {\n        // TODO\n    }\n    // @driver-code-start\npublic static void main(String[] args) throws IOException {\n        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));\n        int k = Integer.parseInt(reader.readLine());\n        int n = Integer.parseInt(reader.readLine());\n        List<Integer> path = new ArrayList<>();\n        backtrack(1, path, k, n);\n    }\n}",
-    "python": "import sys\n\ndef backtrack(start, path, k, n):\n    # TODO\n    pass\n\n# @driver-code-start\ndef main():\n    k = int(sys.stdin.readline().strip())\n    n = int(sys.stdin.readline().strip())\n    backtrack(1, [], k, n)\n\nif __name__ == '__main__':\n    main()\n",
-    "javascript": "// @driver-code-start\nconst readline = require('readline');\nconst rl = readline.createInterface({\n    input: process.stdin,\n    output: process.stdout\n});\nlet k, n;\nlet lineCount = 0;\nrl.on('line', (line) => {\n    if (lineCount === 0) k = parseInt(line);\n    else if (lineCount === 1) n = parseInt(line);\n    lineCount++;\n});\n\nfunction backtrack(start, path, k, n) {\n    const solution = new Solution();\n        solution.backtrack(start, path, k, n);\n}\n\nrl.on('close', () => {\n    backtrack(1, [], k, n);\n});\n\n\nclass Solution {\n    backtrack(start, path, k, n) {\n        // TODO: implement\n        return ;\n    }\n}\n"
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    vector<vector<int>> result;\n    vector<int> current;\n    void backtrack(int start, int k, int n) {\n        if (current.size() == k) {\n            if (n == 0) {\n                result.push_back(current);\n            }\n            return;\n        }\n        for (int i = start; i <= 9; i++) {\n            if (n - i >= 0) {\n                current.push_back(i);\n                backtrack(i + 1, k, n - i);\n                current.pop_back();\n            }\n        }\n    }\n    vector<vector<int>> combinationSum3(int k, int n) {\n        backtrack(1, k, n);\n        return result;\n    }\n};",
+    "java": "import java.util.*;\n\nclass Solution {\n    List<List<Integer>> result = new ArrayList<>();\n    List<Integer> current = new ArrayList<>();\n    public void backtrack(int start, int k, int n) {\n        if (current.size() == k) {\n            if (n == 0) {\n                result.add(new ArrayList<>(current));\n            }\n            return;\n        }\n        for (int i = start; i <= 9; i++) {\n            if (n - i >= 0) {\n                current.add(i);\n                backtrack(i + 1, k, n - i);\n                current.remove(current.size() - 1);\n            }\n        }\n    }\n    public List<List<Integer>> combinationSum3(int k, int n) {\n        backtrack(1, k, n);\n        return result;\n    }\n}",
+    "python": "from typing import List\n\nclass Solution:\n    def combinationSum3(self, k: int, n: int) -> List[List[int]]:\n        def backtrack(start: int, current: List[int], remaining_sum: int) -> None:\n            if len(current) == k:\n                if remaining_sum == 0:\n                    result.append(current[:])\n                return\n            for i in range(start, 10):\n                if remaining_sum - i >= 0:\n                    current.append(i)\n                    backtrack(i + 1, current, remaining_sum - i)\n                    current.pop()\n        result: List[List[int]] = []\n        backtrack(1, [], n)\n        return result",
+    "javascript": "/**\n * @param {number} k\n * @param {number} n\n * @return {number[][]}\n */\nvar combinationSum3 = function(k, n) {\n    let result = [];\n    let current = [];\n    function backtrack(start, k, n) {\n        if (current.length === k) {\n            if (n === 0) {\n                result.push([...current]);\n            }\n            return;\n        }\n        for (let i = start; i <= 9; i++) {\n            if (n - i >= 0) {\n                current.push(i);\n                backtrack(i + 1, k, n - i);\n                current.pop();\n            }\n        }\n    }\n    backtrack(1, k, n);\n    return result;\n};"
   },
   "functionSignature": {
-    "cpp": "void backtrack(int start, vector<int>& path, int k, int n)",
-    "java": "public static void backtrack(int start, List<Integer> path, int k, int n)",
-    "python": "def backtrack(start, path, k, n):",
-    "javascript": "function backtrack(start, path, k, n)"
+    "cpp": "vector<vector<int>> combinationSum3(int k, int n);",
+    "java": "public List<List<Integer>> combinationSum3(int k, int n);",
+    "python": "def combinationSum3(self, k: int, n: int) -> List[List[int]]:",
+    "javascript": "var combinationSum3 = function(k, n);"
   },
   "solutions": {
-    "python": "\nimport sys\nit = iter(sys.stdin.read().split())\nk = int(next(it))\nn = int(next(it))\n\ndef backtrack(start, path, target):\n    if target < 0:\n        return\n    if len(path) == k:\n        if target == 0:\n            result.append(' '.join(map(str, path)))\n        return\n    for i in range(start, 10):\n        backtrack(i + 1, path + [i], target - i)\n\nresult = []\nbacktrack(1, [], n)\nif result:\n    print('\\n'.join(sorted(result)))\nelse:\n    print(-1)\n",
-    "cpp": "\n#include <bits/stdc++.h>\nusing namespace std;\nint main(){\n    int k, n;\n    if(!(cin >> k >> n)) return 0;\n    vector<string> result;\n    function<void(int, vector<int>, int)> backtrack = \n        [&backtrack, &result, &k, &n](int start, vector<int> path, int target){\n            if (target < 0) return;\n            if (path.size() == k) {\n                if (target == 0) {\n                    string str;\n                    for (int i = 0; i < path.size(); i++) {\n                        str += to_string(path[i]);\n                        if (i != path.size() - 1) str += ' ';\n                    }\n                    result.push_back(str);\n                }\n                return;\n            }\n            for (int i = start; i <= 9; i++) {\n                path.push_back(i);\n                backtrack(i + 1, path, target - i);\n                path.pop_back();\n            }\n        };\n    backtrack(1, {}, n);\n    if (!result.empty()) {\n        sort(result.begin(), result.end());\n        for (int i = 0; i < result.size(); i++) {\n            cout << result[i] << endl;\n        }\n    } else {\n        cout << -1 << endl;\n    }\n    return 0;\n}\n"
+    "python": "\nimport sys\nfrom typing import List\n\nclass Solution:\n    def combinationSum3(self, k: int, n: int) -> List[List[int]]:\n        def backtrack(start, path, target):\n            if len(path) == k:\n                if target == 0:\n                    result.append(path)\n                return\n            for i in range(start, 10):\n                if i <= target:\n                    backtrack(i + 1, path + [i], target - i)\n\n        result = []\n        backtrack(1, [], n)\n        return result\n\nif __name__ == '__main__':\n    it = iter(sys.stdin.read().split())\n    try:\n        k = int(next(it))\n        n = int(next(it))\n    except StopIteration:\n        sys.exit(0)\n    sol = Solution()\n    ans = sol.combinationSum3(k, n)\n    if ans:\n        for combination in ans:\n            print(' '.join(map(str, combination)))\n    else:\n        print(-1)\n   ",
+    "cpp": "#include <numeric>\n\n#include <iostream>\n#include <vector>\n\nusing namespace std;\n\nclass Solution {\npublic:\n    vector<vector<int>> combinationSum3(int k, int n) {\n        vector<vector<int>> result;\n        vector<int> path;\n        backtrack(result, path, k, n, 1);\n        return result;\n    }\n\n    void backtrack(vector<vector<int>>& result, vector<int>& path, int k, int target, int start) {\n        if (path.size() == k) {\n            if (target == 0) {\n                result.push_back(path);\n            }\n            return;\n        }\n        for (int i = start; i <= 9; i++) {\n            if (i <= target) {\n                path.push_back(i);\n                backtrack(result, path, k, target - i, i + 1);\n                path.pop_back();\n            }\n        }\n    }\n};\n\nint main() {\n    int k, n;\n    cin >> k >> n;\n    Solution sol;\n    vector<vector<int>> ans = sol.combinationSum3(k, n);\n    if (ans.empty()) {\n        cout << -1 << endl;\n    } else {\n        for (const auto& combination : ans) {\n            for (int i = 0; i < combination.size(); i++) {\n                cout << combination[i] << (i == combination.size() - 1 ? \"\" : \" \");\n            }\n            cout << endl;\n        }\n    }\n    return 0;\n}\n   "
   },
   "judgeConfig": {
     "timeLimit": 2,
@@ -185,86 +185,6 @@
       "id": "random_4",
       "input": "4\n9",
       "output": "-1",
-      "isVisible": false,
-      "weight": 1,
-      "category": "large_random"
-    },
-    {
-      "id": "random_5",
-      "input": "2\n44",
-      "output": "-1",
-      "isVisible": false,
-      "weight": 1,
-      "category": "large_random"
-    },
-    {
-      "id": "random_6",
-      "input": "9\n6",
-      "output": "-1",
-      "isVisible": false,
-      "weight": 1,
-      "category": "large_random"
-    },
-    {
-      "id": "random_7",
-      "input": "7\n3",
-      "output": "-1",
-      "isVisible": false,
-      "weight": 1,
-      "category": "large_random"
-    },
-    {
-      "id": "random_8",
-      "input": "1\n6",
-      "output": "6",
-      "isVisible": false,
-      "weight": 1,
-      "category": "large_random"
-    },
-    {
-      "id": "random_9",
-      "input": "4\n15",
-      "output": "1 2 3 9\r\n1 2 4 8\r\n1 2 5 7\r\n1 3 4 7\r\n1 3 5 6\r\n2 3 4 6",
-      "isVisible": false,
-      "weight": 1,
-      "category": "large_random"
-    },
-    {
-      "id": "random_10",
-      "input": "9\n39",
-      "output": "-1",
-      "isVisible": false,
-      "weight": 1,
-      "category": "large_random"
-    },
-    {
-      "id": "random_11",
-      "input": "1\n36",
-      "output": "-1",
-      "isVisible": false,
-      "weight": 1,
-      "category": "large_random"
-    },
-    {
-      "id": "random_12",
-      "input": "4\n42",
-      "output": "-1",
-      "isVisible": false,
-      "weight": 1,
-      "category": "large_random"
-    },
-    {
-      "id": "random_13",
-      "input": "9\n27",
-      "output": "-1",
-      "isVisible": false,
-      "weight": 1,
-      "category": "large_random"
-    },
-    {
-      "id": "random_14",
-      "input": "4\n29",
-      "output": "5 7 8 9",
       "isVisible": false,
       "weight": 1,
       "category": "large_random"

@@ -1,0 +1,157 @@
+{
+  "_id": "96ee6d0333c72a48006ba219",
+  "title": "Flawed Merge Sort on Doubly Linked List",
+  "slug": "flawed-merge-sort-on-doubly-linked-list-bugfix-hard-linked-list-4",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "Doubly Linked List",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 100,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "linked_list"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given a doubly linked list, implement a function mergeSort that merges two sorted doubly linked lists into a single sorted list. The function should work by recursively splitting the list into two halves until each sublist only contains one node, then reversing the sublists to form the final sorted doubly linked list.",
+    "inputFormat": "Head of doubly linked list in form of a ListNode object: {val: x, prev: null, next: null}",
+    "outputFormat": "Head of merged doubly linked list in form of a ListNode object: {val: x, prev: null, next: null}",
+    "notes": "Merge two sorted doubly linked lists in reverse order (latest first).",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{val: 2, next: {val: 4, prev: null, next: null}, prev: null}",
+        "output": "{val: 4, prev: null, next: null}",
+        "explanation": "Input doubly linked list is 2 -> 4, mergeSort returns 4 -> 2."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Identify the problem with the buggy implementation."
+    },
+    {
+      "order": 2,
+      "text": "Consider how you can merge two sorted lists in reverse order."
+    }
+  ],
+  "editorial": {
+    "title": "Understanding merge sort on doubly linked list",
+    "intuition": "To merge two sorted doubly linked lists, you must recursively split the list into two halves until each sublist only contains one node, then reverse the sublists to form the final sorted doubly linked list.",
+    "bruteForce": "Merge two sorted doubly linked lists using a two-pointer approach and reverse the lists afterwards.",
+    "betterSolution": "",
+    "optimalSolution": "Use a recursive approach to split the doubly linked lists into two halves, then merge the sublists in reverse order.",
+    "proofOfCorrectness": "The correctness of the solution can be proved using mathematical induction on the recursion depth.",
+    "dryRun": "Dry run the solution with a small input doubly linked list to verify its correctness.",
+    "commonMistakes": [
+      "Incorrect merging of sublists",
+      "Insufficient use of recursion"
+    ],
+    "timeComplexity": "O(n log n)",
+    "spaceComplexity": "O(log n)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {public: ListNode* mergeSort(ListNode* head);}",
+    "java": "class Solution {public ListNode mergeSort(ListNode head);}",
+    "python": "class Solution:\n    def mergeSort(self, head):\n        # Your code here.",
+    "javascript": "function mergeSort(head) {\n    // Your code here\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {public: ListNode* mergeSort(ListNode* head) {\n    if (head == NULL || head->next == NULL)\n        return head;\n    ListNode* first = head;\n    while (first->next && first->next->next)\n        first = first->next;\n    ListNode* second = first->next;\n    first->next = NULL;\n    return merge(second);\n}}\nListNode* merge(ListNode* head)\n{\n    if (head == NULL)\n        return NULL;\n    if (head->next == NULL)\n        return head;\n    ListNode* dummy = new ListNode(0);\n    ListNode* cur = dummy;\n    while (head && head->next)\n    {\n        // BUG: Incorrect merging logic\n        if (head->val < head->next->val)\n            cur->next = head;\n        else\n            cur->next = head->next;\n        cur = cur->next;\n        head = head->next;\n    }\n    cur->next = head;\n    return dummy->next;\n}",
+    "java": "class Solution {public ListNode mergeSort(ListNode head) {\n    if (head == null || head.next == null)\n        return head;\n    ListNode first = head;\n    while (first.next != null && first.next.next != null)\n        first = first.next;\n    ListNode second = first.next;\n    first.next = null;\n    return merge(second);\n}}\nListNode merge(ListNode head)\n{\n    if (head == null)\n        return null;\n    if (head.next == null)\n        return head;\n    ListNode dummy = new ListNode(0);\n    ListNode cur = dummy;\n    while (head != null && head.next != null)\n    {\n        // BUG: Incorrect merging logic\n        if (head.val < head.next.val)\n            cur.next = head;\n        else\n            cur.next = head.next;\n        cur = cur.next;\n        head = head.next;\n    }\n    cur.next = head;\n    return dummy.next;\n}",
+    "python": "class Solution:\n    def mergeSort(self, head):\n        if head is None or head.next is None:\n            return head\n        first = head\n        while first.next and first.next.next:\n            first = first.next\n        second = first.next\n        first.next = None\n        return self.merge(second)\n\n    def merge(self, head):\n        if head is None:\n            return None\n        if head.next is None:\n            return head\n        dummy = ListNode(0)\n        cur = dummy\n        while head and head.next:\n            # BUG: Incorrect merging logic\n            if head.val < head.next.val:\n                cur.next = head\n            else:\n                cur.next = head.next\n            cur = cur.next\n            head = head.next\n        cur.next = head\n        return dummy.next\n",
+    "javascript": "function mergeSort(head) {\n    if (head == null || head.next == null)\n        return head;\n    let first = head;\n    while (first.next && first.next.next)\n        first = first.next;\n    let second = first.next;\n    first.next = null;\n    return merge(second);\n}\nfunction merge(head) {\n    if (head == null)\n        return null;\n    if (head.next == null)\n        return head;\n    let dummy = new ListNode(0);\n    let cur = dummy;\n    while (head && head.next)\n    {\n        // BUG: Incorrect merging logic\n        if (head.val < head.next.val)\n            cur.next = head;\n        else\n            cur.next = head.next;\n        cur = cur.next;\n        head = head.next;\n    }\n    cur.next = head;\n    return dummy.next;\n}"
+  },
+  "functionSignature": {
+    "cpp": "ListNode* mergeSort(ListNode* head);",
+    "java": "ListNode mergeSort(ListNode head);",
+    "python": "def mergeSort(self, head: ListNode) -> ListNode:",
+    "javascript": "var mergeSort = function(head) {"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def mergeSort(self, head: ListNode) -> ListNode:\n        if head is None or head.next is None:\n            return head\n        first = head\n        while first.next and first.next.next:\n            first = first.next\n        second = first.next\n        first.next = None\n        first, second = self.divide(first), self.divide(second)\n        return self.merge(first, second)\n\n    def divide(self, head):\n        if head is None:\n            return None\n        if head.next is None:\n            return head\n        slow, fast = head, head.next\n        while fast and fast.next:\n            slow = slow.next\n            fast = fast.next.next\n        second = slow.next\n        slow.next = None\n        return head, second\n\n    def merge(self, head1, head2):\n        dummy = ListNode(0)\n        cur = dummy\n        while head1 and head2:\n            if head1.val < head2.val:\n                cur.next = head1\n                head1 = head1.next\n            else:\n                cur.next = head2\n                head2 = head2.next\n            cur = cur.next\n        cur.next = head1 if head1 else head2\n        return dummy.next\n",
+    "cpp": "class Solution {\npublic:\n    ListNode* mergeSort(ListNode* head) {\n        if (head == NULL || head->next == NULL)\n            return head;\n        ListNode* first = head;\n        while (first->next && first->next->next)\n            first = first->next;\n        ListNode* second = first->next;\n        first->next = NULL;\n        return merge(first, second);\n    }\n\n    ListNode* merge(ListNode* head1, ListNode* head2) {\n        ListNode dummy(0);\n        ListNode* cur = &dummy;\n        while (head1 && head2) {\n            if (head1->val < head2->val) {\n                cur->next = head1;\n                head1 = head1->next;\n            } else {\n                cur->next = head2;\n                head2 = head2->next;\n            }\n            cur = cur->next;\n        }\n        cur->next = head1 ? head1 : head2;\n        return dummy.next;\n    }\n\n    ListNode* divide(ListNode* head) {\n        if (head == NULL)\n            return NULL;\n        if (head->next == NULL)\n            return head;\n        ListNode* slow = head, *fast = head->next;\n        while (fast && fast->next) {\n            slow = slow->next;\n            fast = fast->next->next;\n        } ListNode* second = slow->next;\n            slow->next = NULL;\n            return head, second;\n    }\n};",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 3,
+    "memoryLimit": 512,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 200,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 200,
+    "difficultyMultiplier": 2
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "2\n4 2",
+      "output": "4 2",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_hidden_generated",
+      "input": "2\n4 2",
+      "output": "4 2",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

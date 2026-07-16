@@ -1,0 +1,169 @@
+{
+  "_id": "295e79f96f8094cab7f1dba1",
+  "title": "Implement a Simple Payment Gateway",
+  "slug": "implement-a-simple-payment-gateway-easy-payment",
+  "difficulty": "Easy",
+  "topics": [
+    "PAYMENT"
+  ],
+  "statement": "Implement a RESTful API using Express.js to handle payments. The API should accept payment details in JSON format via POST request to the /api/payments endpoint. The payment details should include the amount and currency. The API should then respond with the transaction ID and a success message if the payment is successful, or an error message if the payment fails. Assume a mock payment gateway that always returns a transaction ID and a success status, regardless of the payment amount or currency.",
+  "constraints": [
+    "Must use only the in-memory array provided for storing payments",
+    "Payment details should be stored in the format { amount: number, currency: string }"
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/payments",
+      "description": "Create a new payment and store it in the in-memory array",
+      "requestBody": {
+        "description": "Payment details",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "amount": {
+              "type": "number"
+            },
+            "currency": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "amount",
+            "currency"
+          ]
+        }
+      },
+      "response": {
+        "description": "Transaction ID and success message",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "transactionId": {
+              "type": "string"
+            },
+            "success": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "transactionId",
+            "success"
+          ]
+        }
+      }
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\"name\": \"payment-api\",\"version\": \"1.0.0\",\"main\": \"index.js\",\"scripts\": {\"start\": \"node index.js\"},\"dependencies\": {\"express\": \"^4.18.2\"}}",
+    "index.js": "const express = require('express');\nconst app = express();\napp.use(express.json());\n\nconst payments = [];\n\napp.post(\"/api/payments\", (req, res) => {\n  // TODO: Implement payment logic\n});\n\napp.listen(3000, () => console.log('Server running on port 3000'))"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "POST",
+      "path": "/api/payments",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "amount": 10.99,
+        "currency": "USD"
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "transactionId": "1234567890",
+        "success": true
+      },
+      "expectedBodySchema": {
+        "type": "object",
+        "properties": {
+          "transactionId": {
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "transactionId",
+          "success"
+        ]
+      },
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "POST",
+      "path": "/api/payments",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "amount": -1.99,
+        "currency": "USD"
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "POST",
+      "path": "/api/payments",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "amount": 10.99,
+        "currency": ""
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "POST",
+      "path": "/api/payments",
+      "headers": {
+        "Content-Type": "text/plain"
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "stripe",
+    "razorpay",
+    "webhooks",
+    "checkout",
+    "refunds",
+    "subscriptions",
+    "payment",
+    "express",
+    "json",
+    "api"
+  ]
+}

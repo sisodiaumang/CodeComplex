@@ -1,0 +1,136 @@
+{
+  "title": "Fixing Dynamic Route Resolution for a Node.js Express Middleware",
+  "subCategory": "Dynamic Route Resolution",
+  "statement": {
+    "markdown": "Write a Node.js Express middleware to resolve dynamic routes for a RESTful API. The middleware should extract the route parameters from the URL and validate them against a predefined pattern. If the pattern matches, it should proceed to the next middleware in the chain. Otherwise, it should return a 404 Not Found error.\n\nYou are given a `/users/:id` route and the parameter pattern `/^\\d+$/. The middleware should handle GET requests to this route.\n\nAssuming the input is a URL string, the middleware should return `true` if the route is valid and `false` otherwise.\n\nYou can use the following code as a starting point:",
+    "inputFormat": "A URL string as input (e.g., `/users/123`)",
+    "outputFormat": "A boolean indicating whether the route is valid (true) or not (false)",
+    "notes": "You can use any Node.js Express middleware function to achieve this. You should handle the case where the route is valid and where it's invalid. You can use any validation library or built-in functions to check the route pattern.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The route parameter value"
+      }
+    ],
+    "examples": [
+      {
+        "input": "/users/123",
+        "output": "true",
+        "explanation": "The route is valid because the parameter value (123) matches the pattern (/^\\d+$/)"
+      },
+      {
+        "input": "/users/abc",
+        "output": "false",
+        "explanation": "The route is invalid because the parameter value (abc) does not match the pattern (/^\\d+$/)"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "NODE_JS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "node_js"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use a regular expression to validate the route pattern"
+    }
+  ],
+  "editorial": {
+    "title": "Dynamic Route Resolution",
+    "intuition": "Use a middleware function to extract the route parameters and validate them against a predefined pattern",
+    "bruteForce": "Use a switch statement to check each possible route parameter value",
+    "betterSolution": "Use a regular expression to validate the route pattern",
+    "optimalSolution": "Use a middleware function with a regular expression to validate the route pattern",
+    "proofOfCorrectness": "The middleware function should return true if the route is valid and false otherwise",
+    "dryRun": "Step-by-step example run of the middleware function",
+    "commonMistakes": [
+      "not using a regular expression to validate the route pattern",
+      "not handling the case where the route is invalid"
+    ],
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "// Define a middleware function to resolve dynamic routes\n// The function should take a URL string as input and return a boolean indicating\n// whether the route is valid or not\n",
+    "python": "// Define a class with a method to resolve dynamic routes\n// The method should take a URL string as input and return a boolean indicating\n// whether the route is valid or not\n"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Define a middleware function to resolve dynamic routes\nvar resolveRoute = function(url) {\n  // Extract the route parameters from the URL\n  var params = url.split(//:([a-zA-Z0-9_]+)/);\n  // Check if the route parameters match the pattern\n  var pattern = /^\\d+$/;\n  for (var i = 1; i < params.length; i++) {\n    var param = params[i];\n    if (!pattern.test(param)) {\n      // If the pattern does not match, return false\n      return false;\n    }\n  }\n  // If the pattern matches, return true\n  return true;\n}\n\n// Example usage\nconsole.log(resolveRoute(\"/users/123\")); // Output: true\nconsole.log(resolveRoute(\"/users/abc\")); // Output: false\n",
+    "python": "// Define a class with a method to resolve dynamic routes\nclass RouteResolver:\n  def __init__(self):\n    pass\n\n  def resolve(self, url):\n    # Extract the route parameters from the URL\n    params = url.split(\"/:\")\n    # Check if the route parameters match the pattern\n    pattern = re.compile(\"^\\d+$\")\n    for param in params[1:]:\n      if not pattern.match(param):\n        # If the pattern does not match, return False\n        return False\n    # If the pattern matches, return True\n    return True\n\n# Example usage\nresolver = RouteResolver()\nprint(resolver.resolve(\"/users/123\")) # Output: True\nprint(resolver.resolve(\"/users/abc\")) # Output: False\n"
+  },
+  "functionSignature": {
+    "javascript": "var resolveRoute = function(url);",
+    "python": "def resolve(self, url: str) -> bool:"
+  },
+  "solutions": {
+    "javascript": "// Define a middleware function to resolve dynamic routes\nvar resolveRoute = function(url) {\n  // Extract the route parameters from the URL\n  var params = url.split(/\\//);\n  // Check if the route parameters match the pattern\n  var pattern = /^\\d+$/;\n  var param = params[params.length - 1];\n  if (param.startsWith(\"/\") === false) return false;\n  if (param.length === 0) return false;\n  if (!pattern.test(param.substring(1))) {\n    // If the pattern does not match, return false\n    return false;\n  }\n  // If the pattern matches, return true\n  return true;\n}\n\n// Example usage\nconsole.log(resolveRoute(\"/users/123\")); // Output: true\nconsole.log(resolveRoute(\"/users/abc\")); // Output: false\n",
+    "python": "// Define a class with a method to resolve dynamic routes\nclass RouteResolver:\n  def __init__(self):\n    pass\n\n  def resolve(self, url):\n    # Extract the route parameters from the URL\n    params = url.split(\"/\")\n    # Check if the route parameters match the pattern\n    pattern = re.compile(\"^\\d+$\")\n    param = params[-1]\n    if param.startswith(\"/\") == False:\n      return False\n    if param == \"\":\n      return False\n    if not pattern.match(param[1:]):\n      # If the pattern does not match, return False\n      return False\n    # If the pattern matches, return True\n    return True\n\n# Example usage\nresolver = RouteResolver()\nprint(resolver.resolve(\"/users/123\")) # Output: True\nprint(resolver.resolve(\"/users/abc\")) # Output: False\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "/users/123",
+      "output": "true",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "/users/abc",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "_id": "18ceaa0fb535a61d4de02061",
+  "slug": "fixing-dynamic-route-resolution-for-a-nodejs-express-middleware-bugfix-medium-node_js",
+  "mode": "bug_fix",
+  "category": "NODE_JS",
+  "difficulty": "Medium"
+}

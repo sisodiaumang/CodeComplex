@@ -1,0 +1,136 @@
+{
+  "title": "Fixing Docker Compose Environment Variable Validation with Complex Patterns",
+  "subCategory": "Docker Compose Configuration Validation",
+  "statement": {
+    "markdown": "Given a Docker Compose configuration file, your task is to write a function that validates environment variable references in the file. The function should check if all environment variables are properly defined and referenced within the file, including complex patterns such as array indices and object paths. If any environment variable reference is invalid, the function should return false; otherwise, it should return true.",
+    "inputFormat": "A string representing the Docker Compose configuration file content.",
+    "outputFormat": "A boolean value indicating whether the environment variable references are valid.",
+    "notes": "Assume that the Docker Compose configuration file is a string containing JSON-formatted key-value pairs.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 100,
+        "description": "Number of environment variable references"
+      }
+    ],
+    "examples": [
+      {
+        "input": "version: '3'\nservices:\n  web:\n    environment:\n      - VIRTUAL_HOST=${VIRTUAL_HOST}\n      - VIRTUAL_PORT=80",
+        "output": "true",
+        "explanation": "The environment variable references in this configuration file are valid."
+      },
+      {
+        "input": "version: '3'\nservices:\n  web:\n    environment:\n      - VIRTUAL_HOST=${INVALID_VAR}",
+        "output": "false",
+        "explanation": "The environment variable reference in this configuration file is invalid."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 75,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DOCKER"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "docker-compose",
+      "environment-variables"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 1,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use a regular expression to parse the environment variable references in the configuration file."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial: Fixing Docker Compose Environment Variable Validation",
+    "intuition": "The key to solving this problem is to use a regular expression to parse the environment variable references in the configuration file.",
+    "bruteForce": "You can use a brute-force approach by iterating over all environment variable references in the configuration file and checking if they are defined.",
+    "betterSolution": "A better approach is to use a regular expression to parse the environment variable references in the configuration file, which can be more efficient and accurate.",
+    "optimalSolution": "The optimal solution is to use a regular expression to parse the environment variable references in the configuration file, and then iterate over the environment variable definitions to check if they are defined.",
+    "proofOfCorrectness": "The proof of correctness is that the regular expression correctly parses the environment variable references, and the iteration over the environment variable definitions correctly checks if they are defined.",
+    "dryRun": "Step-by-step example run: 1. Parse the environment variable references in the configuration file using a regular expression. 2. Iterate over the environment variable definitions to check if they are defined.",
+    "commonMistakes": [
+      "Incorrectly parsing environment variable references",
+      "Failing to iterate over environment variable definitions"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "function validateEnvironmentVariables(config) {\n  // Your solution here\n}",
+    "python": "class Solution:\n  def validate_environment_variables(self, config):\n    # Your solution here\n"
+  },
+  "buggyStarterCode": {
+    "javascript": "function validateEnvironmentVariables(config) {\n  const regex = /env_(.*?)=(.*)/g;\n  let match;\n  while ((match = regex.exec(config)) !== null) {\n    const variable = match[1];\n    if (!config.includes(`env_${variable}=`)) {\n      return false;\n    }\n  }\n  return true;\n}",
+    "python": "class Solution:\n  def validate_environment_variables(self, config):\n    regex = re.compile(r'env_(.*?)=(.*)')\n    match = regex.search(config)\n    while match:\n      variable = match.group(1)\n      if config.find(f'env_{variable}=') == -1:\n        return False\n      match = regex.search(config, match.end())\n    return True\n"
+  },
+  "functionSignature": {
+    "javascript": "function validateEnvironmentVariables(config) {\n  return true / false;\n}",
+    "python": "class Solution:\n  def validate_environment_variables(self, config) -> bool:"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction validateEnvironmentVariables(config) {\n  const regex = /env_(.*?)=(.*)/g;\n  let match;\n  while ((match = regex.exec(config)) !== null) {\n    const variable = match[1];\n    const pattern = new RegExp(`env_${variable}=([^#\\n]+)`);\n    if (!pattern.test(config)) {\n      return false;\n    }\n  }\n  return true;\n}",
+    "python": "class Solution:\n  def validate_environment_variables(self, config):\n    regex = re.compile(r'env_(.*?)=(.*)')\n    match = regex.search(config)\n    while match:\n      variable = match.group(1)\n      pattern = re.compile(f'env_{variable}=[^#\\n]+')\n      if not pattern.search(config):\n        return False\n      match = regex.search(config, match.end())\n    return True\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 128,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "version: '3'\nservices:\n  web:\n    environment:\n      - VIRTUAL_HOST=${VIRTUAL_HOST}\n      - VIRTUAL_PORT=80",
+      "output": "true",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "version: '3'\nservices:\n  web:\n    environment:\n      - VIRTUAL_HOST=${INVALID_VAR}",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "c9669bab6face282be44f844",
+  "slug": "fixing-docker-compose-environment-variable-validation-with-complex-patterns-bugfix-hard-docker",
+  "mode": "bug_fix",
+  "category": "DOCKER",
+  "difficulty": "Hard"
+}

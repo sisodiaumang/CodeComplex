@@ -1,0 +1,153 @@
+{
+  "_id": "b6469f2a7045f0892bdec0f6",
+  "title": "N-Queens II: Backtracking Bug Fix",
+  "slug": "n-queens-ii-backtracking-bug-fix-bugfix-medium-recursion-1",
+  "difficulty": "Medium",
+  "category": "DSA",
+  "subCategory": "BACKTRACKING",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "backtracking"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "The N-Queens II problem is a classic backtracking puzzle, but the given code seems to have a bug. The code aims to count the number of distinct arrangements of N queens on an NxN chessboard such that no two queens attack each other. However, the code only correctly counts the number of arrangements for boards up to size 4. Write a corrected version of the method, using backtracking, to find the total number of distinct arrangements of N queens on an NxN board.",
+    "inputFormat": "The input will be a single integer n, representing the size of the chessboard (n x n).",
+    "outputFormat": "The output should be the total number of distinct arrangements of N queens on the chessboard.",
+    "notes": "Use backtracking to explore all possible placements of the queens.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of the chessboard (n x n)"
+      }
+    ],
+    "examples": [
+      {
+        "input": "4",
+        "output": "2",
+        "explanation": "There are 2 possible arrangements of 4 queens on a 4x4 board such that no two queens attack each other."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Recall that a queen can attack another queen if she is in the same row, column, or diagonal."
+    }
+  ],
+  "editorial": {
+    "title": "N-Queens II: Backtracking Bug Fix",
+    "intuition": "The given code only counts the number of arrangements for boards of size up to 4. The key to solving this problem lies in using backtracking to correctly count the number of distinct arrangements of N queens on an NxN chessboard, regardless of the board size.",
+    "bruteForce": "The brute force approach involves trying all possible placements of the queens and checking if they are valid. However, this approach is inefficient and will not work for larger board sizes.",
+    "betterSolution": "A better solution involves using backtracking to explore all possible placements of the queens.",
+    "optimalSolution": "The optimal solution involves using backtracking to correctly count the number of distinct arrangements of N queens on an NxN chessboard, regardless of the board size.",
+    "proofOfCorrectness": "The correctness of the solution lies in the use of backtracking to explore all possible placements of the queens and checking if each placement is valid.",
+    "dryRun": "For a board size of 4, the placements would be: \n[1, 3, 0, 2]\n[2, 0, 3, 1]\n[3, 1, 0, 2]\n[3, 2, 1, 0]\n[2, 0, 3, 1]\n[3, 1, 0, 2]\n[0, 1, 2, 3]\n[2, 3, 0, 1]\n[1, 0, 3, 2]\n[0, 2, 3, 1]\n[1, 3, 0, 2]\n[3, 0, 2, 1]\nThe total number of valid arrangements is 2, as specified in the example.",
+    "commonMistakes": [
+      "Incorrectly counting the number of valid arrangements",
+      "Failing to use backtracking to explore all possible placements of the queens"
+    ],
+    "timeComplexity": "O(N! * N^2)",
+    "spaceComplexity": "O(N)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    int tot_ways = 0;\n    bool place(int row, vector<int>& cols, vector<int>& ld, vector<int>& rd, vector<int>& cur_row) {\n        if (row == n) {\n            tot_ways++;\n            return true;\n        }\n        for (int i = 0; i < n; i++) {\n            if (!(cols[i] || ld[row-i] || rd[row+i])) {\n                cols[i] = ld[row-i] = rd[row+i] = true;\n                if (place(row+1, cols, ld, rd, cur_row)) {\n                    return true;\n                }\n                cols[i] = ld[row-i] = rd[row+i] = false;\n            }\n        }\n        return false;\n    }\n    int totalNQueens(int n) {\n        vector<int> cols(n, false);\n        vector<int> ld(n, false);\n        vector<int> rd(n, false);\n        vector<int> cur_row;\n        return place(0, cols, ld, rd, cur_row);\n    }\n};",
+    "java": "class Solution {\npublic:\n    int tot_ways = 0;\n    boolean place(int row, boolean[] cols, boolean[] ld, boolean[] rd, boolean[] cur_row) {\n        if (row == n) {\n            tot_ways++;\n            return true;\n        }\n        for (int i = 0; i < n; i++) {\n            if (!(cols[i] || ld[row-i] || rd[row+i])) {\n                cols[i] = ld[row-i] = rd[row+i] = true;\n                if (place(row+1, cols, ld, rd, cur_row)) {\n                    return true;\n                }\n                cols[i] = ld[row-i] = rd[row+i] = false;\n            }\n        }\n        return false;\n    }\n    int totalNQueens(int n) {\n        boolean[] cols = new boolean[n];\n        boolean[] ld = new boolean[n];\n        boolean[] rd = new boolean[n];\n        boolean[] cur_row = new boolean[n];\n        return place(0, cols, ld, rd, cur_row);\n    }\n}",
+    "python": "class Solution:\n    def place(self, row, cols, ld, rd, cur_row):\n        if row == self.n:\n            self.tot_ways += 1\n            return True\n        for i in range(self.n):\n            if not (cols[i] or ld[row-i] or rd[row+i]):\n                cols[i] = ld[row-i] = rd[row+i] = True\n                if self.place(row+1, cols, ld, rd, cur_row):\n                    return True\n                cols[i] = ld[row-i] = rd[row+i] = False\n        return False\n    def totalNQueens(self, n):\n        self.n = n\n        cols = [False] * n\n        ld = [False] * n\n        rd = [False] * n\n        cur_row = [False] * n\n        self.tot_ways = 0\n        return self.place(0, cols, ld, rd, cur_row)",
+    "javascript": "class Solution {\n    constructor() {\n        this.tot_ways = 0;\n    }\n    place(row, cols, ld, rd, cur_row) {\n        if (row == this.n) {\n            this.tot_ways++;\n            return true;\n        }\n        for (let i = 0; i < this.n; i++) {\n            if (!(cols[i] || ld[row-i] || rd[row+i])) {\n                cols[i] = ld[row-i] = rd[row+i] = true;\n                if (this.place(row+1, cols, ld, rd, cur_row)) {\n                    return true;\n                }\n                cols[i] = ld[row-i] = rd[row+i] = false;\n            }\n        }\n        return false;\n    }\n    totalNQueens(n) {\n        this.n = n;\n        let cols = new Array(n).fill(false);\n        let ld = new Array(n).fill(false);\n        let rd = new Array(n).fill(false);\n        let cur_row = new Array(n).fill(false);\n        return this.place(0, cols, ld, rd, cur_row);\n    }\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    int tot_ways = 0;\n    bool place(int row, vector<int>& cols, vector<int>& ld, vector<int>& rd, vector<int>& cur_row) {\n        if (row == n) {\n            tot_ways++;\n            return true;\n        }\n        for (int i = 0; i < (n - 1); i++) {\n            if (!(cols[i] || ld[row-i] || rd[row+i])) {\n                cols[i] = ld[row-i] = rd[row+i] = true;\n                if (place(row+1, cols, ld, rd, cur_row)) {\n                    return true;\n                }\n                cols[i] = ld[row-i] = rd[row+i] = false;\n            }\n        }\n        return false;\n    }\n    int totalNQueens(int n) {\n        vector<int> cols(n, false);\n        vector<int> ld(n, false);\n        vector<int> rd(n, false);\n        vector<int> cur_row;\n        return place(0, cols, ld, rd, cur_row);\n    }\n};",
+    "java": "class Solution {\npublic:\n    int tot_ways = 0;\n    boolean place(int row, boolean[] cols, boolean[] ld, boolean[] rd, boolean[] cur_row) {\n        if (row == n) {\n            tot_ways++;\n            return true;\n        }\n        for (int i = 0; i < (n - 1); i++) {\n            if (!(cols[i] || ld[row-i] || rd[row+i])) {\n                cols[i] = ld[row-i] = rd[row+i] = true;\n                if (place(row+1, cols, ld, rd, cur_row)) {\n                    return true;\n                }\n                cols[i] = ld[row-i] = rd[row+i] = false;\n            }\n        }\n        return false;\n    }\n    int totalNQueens(int n) {\n        boolean[] cols = new boolean[n];\n        boolean[] ld = new boolean[n];\n        boolean[] rd = new boolean[n];\n        boolean[] cur_row = new boolean[n];\n        return place(0, cols, ld, rd, cur_row);\n    }\n}",
+    "python": "class Solution:\n    def place(self, row, cols, ld, rd, cur_row):\n        if row == self.n:\n            self.tot_ways += 1\n            return True\n        for i in range(self.n - 1):\n            if not (cols[i] or ld[row-i] or rd[row+i]):\n                cols[i] = ld[row-i] = rd[row+i] = True\n                if self.place(row+1, cols, ld, rd, cur_row):\n                    return True\n                cols[i] = ld[row-i] = rd[row+i] = False\n        return False\n    def totalNQueens(self, n):\n        self.n = n\n        cols = [False] * n\n        ld = [False] * n\n        rd = [False] * n\n        cur_row = [False] * n\n        self.tot_ways = 0\n        return self.place(0, cols, ld, rd, cur_row)",
+    "javascript": "class Solution {\n    constructor() {\n        this.tot_ways = 0;\n    }\n    place(row, cols, ld, rd, cur_row) {\n        if (row == this.n) {\n            this.tot_ways++;\n            return true;\n        }\n        for (let i = 0; i < (this.n - 1); i++) {\n            if (!(cols[i] || ld[row-i] || rd[row+i])) {\n                cols[i] = ld[row-i] = rd[row+i] = true;\n                if (this.place(row+1, cols, ld, rd, cur_row)) {\n                    return true;\n                }\n                cols[i] = ld[row-i] = rd[row+i] = false;\n            }\n        }\n        return false;\n    }\n    totalNQueens(n) {\n        this.n = n;\n        let cols = new Array(n).fill(false);\n        let ld = new Array(n).fill(false);\n        let rd = new Array(n).fill(false);\n        let cur_row = new Array(n).fill(false);\n        return this.place(0, cols, ld, rd, cur_row);\n    }\n}"
+  },
+  "functionSignature": {
+    "cpp": "int totalNQueens(int n);",
+    "java": "int totalNQueens(int n);",
+    "python": "def totalNQueens(self, n: int) -> int:",
+    "javascript": "var totalNQueens = function(n);"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def totalNQueens(self, n: int) -> int:\n        self.n = n\n        cols = [False] * n\n        ld = [False] * n\n        rd = [False] * n\n        cur_row = [False] * n\n        self.tot_ways = 0\n        for first_col in range(n):\n            self.place(0, first_col, cols, ld, rd, cur_row)\n        return self.tot_ways\n\n    def place(self, row, first_col, cols, ld, rd, cur_row):\n        if row == self.n:\n            self.tot_ways += 1\n            return\n        for col in range(self.n):\n            if col == first_col:\n                continue\n            if not (cols[col] or ld[row-col+first_col] or rd[row+col-first_col]):\n                cols[col] = ld[row-col+first_col] = rd[row+col-first_col] = True\n                self.place(row+1, first_col, cols, ld, rd, cur_row)\n                cols[col] = ld[row-col+first_col] = rd[row+col-first_col] = False\n\n\n        return\n\n\n    def read_input():\n        n = int(input())\n        sol = Solution()\n        print(sol.totalNQueens(n))",
+    "cpp": "class Solution {\npublic:\n    int totalNQueens(int n) {\n        int result = 0;\n        for (int first_col = 0; first_col < n; first_col++) {\n            int cols[n] = {false};\n            int ld[n] = {false};\n            int rd[n] = {false};\n            int cur_row = 0;\n            bool place(int row, int first_col, int cols[], int ld[], int rd[], int cur_row);\n            result += place(0, first_col, cols, ld, rd, cur_row);\n        }\n        return result;\n    }\n\n    int place(int row, int first_col, int cols[], int ld[], int rd[], int cur_row) {\n        if (row == n) return 1;\n        for (int col = 0; col < n; col++)\n            if (col != first_col && !cols[col] && !ld[row-col+first_col] && !rd[row+col-first_col])\n            {\n                cols[col] = ld[row-col+first_col] = rd[row+col-first_col] = true;\n                result = place(row+1, first_col, cols, ld, rd, cur_row);\n                cols[col] = ld[row-col+first_col] = rd[row+col-first_col] = false;\n            }\n        return 0;\n    }\n}",
+    "javascript": "class Solution {\n    constructor() {\n        this.tot_ways = 0;\n    }\n    totalNQueens(n) {\n        for (let first_col = 0; first_col < n; first_col++) {\n            this.place(0, first_col, new Array(n).fill(false), new Array(n).fill(false), new Array(n).fill(false), new Array(n).fill(false));\n        }\n        return this.tot_ways;\n    }\n\n    place(row, first_col, cols, ld, rd, cur_row) {\n        if (row == this.n) return 1;\n        for (let col = 0; col < this.n; col++)\n            if (col != first_col && !cols[col] && !ld[row-col+first_col] && !rd[row+col-first_col])\n            {\n                cols[col] = ld[row-col+first_col] = rd[row+col-first_col] = true;\n                let result = this.place(row+1, first_col, cols, ld, rd, cur_row);\n                cols[col] = ld[row-col+first_col] = rd[row+col-first_col] = false;\n            }\n        return 0;\n    }\n}",
+    "java": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "4",
+      "output": "2",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "5",
+      "output": "10",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

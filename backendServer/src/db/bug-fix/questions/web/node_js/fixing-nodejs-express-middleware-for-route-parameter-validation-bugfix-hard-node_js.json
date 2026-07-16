@@ -1,0 +1,131 @@
+{
+  "title": "Fixing Node.js Express Middleware for Route Parameter Validation",
+  "subCategory": "Express Middleware",
+  "statement": {
+    "markdown": "Implement a middleware function `validateRouteParamsMiddleware` that validates route parameters for a given route. The middleware should check if the route parameters exist and are not empty. If the validation fails, it should return a 400 Bad Request error with a customized error message.",
+    "inputFormat": "The middleware will be called with an Express request object `req` and an Express response object `res`.",
+    "outputFormat": "The middleware should return a JSON object with a status code and an error message if validation fails, or continue executing the route if validation succeeds.",
+    "notes": "Assume that the route parameters are accessed through the `req.params` property. The middleware should handle cases where the route parameters are missing or empty.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "numRoutes",
+        "type": "integer",
+        "min": 1,
+        "max": 100,
+        "description": "Number of routes to validate"
+      }
+    ],
+    "examples": [
+      {
+        "input": "GET /users/:id",
+        "output": "{}",
+        "explanation": "Validation succeeds for the given route"
+      },
+      {
+        "input": "GET /users/",
+        "output": "{\"error\":\"Missing route parameter 'id'\",\"statusCode\":400}",
+        "explanation": "Validation fails for the given route due to missing route parameter"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 75,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "NODE_JS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "node_js"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Validate the existence of route parameters using the `req.params` property"
+    }
+  ],
+  "editorial": {
+    "title": "Express Middleware Route Parameter Validation",
+    "intuition": "To validate the route parameters, check if the `req.params` property exists and has a non-empty value.",
+    "bruteForce": "Iterate over the `req.params` property to check each parameter individually.",
+    "betterSolution": "Use JavaScript's built-in `Object.keys()` function to check if the `req.params` object has any properties.",
+    "optimalSolution": "Use a conditional statement to check if the `req.params` object has any properties and has a non-empty value.",
+    "proofOfCorrectness": "The middleware should return a 400 Bad Request error if the validation fails, and continue executing the route if validation succeeds.",
+    "dryRun": "Test the middleware with different routes and parameter values to ensure correct behavior.",
+    "commonMistakes": [
+      "Failing to handle cases where route parameters are missing or empty",
+      "Not returning a 400 Bad Request error when validation fails"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "// Define the validateRouteParamsMiddleware function\nfunction validateRouteParamsMiddleware(req, res, next) {\n    // Implement the middleware logic here\n}\n\n// Export the middleware function\nmodule.exports = validateRouteParamsMiddleware;"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Define the validateRouteParamsMiddleware function\nfunction validateRouteParamsMiddleware(req, res, next) {\n    // Check if the req.params object exists\n    if (req.params) {\n        // Check if any of the route parameters have a non-empty value\n        if (Object.keys(req.params).some(key => req.params[key].length > 0)) {\n            // Continue executing the route\n            next();\n        } else {\n            // Return a 400 Bad Request error\n            res.status(400).json({ error: 'Missing route parameter', statusCode: 400 });\n        }\n    } else {\n        // Return a 400 Bad Request error\n        res.status(400).json({ error: 'Missing route parameter', statusCode: 400 });\n    }\n}\n\n// Export the middleware function\nmodule.exports = validateRouteParamsMiddleware;"
+  },
+  "functionSignature": {
+    "javascript": "function validateRouteParamsMiddleware(req, res, next) {"
+  },
+  "solutions": {
+    "javascript": "// Define the validateRouteParamsMiddleware function\nfunction validateRouteParamsMiddleware(req, res, next) {\n    // Check if the req.params object exists\n    if (req.params) {\n        // Check if all route parameters have a non-empty value\n        if (Object.keys(req.params).every(key => req.params[key].length > 0)) {\n            // Continue executing the route\n            next();\n        } else {\n            // Return a 400 Bad Request error\n            res.status(400).json({ error: 'Missing route parameter', statusCode: 400 });\n        }\n    } else {\n        // Return a 400 Bad Request error\n        res.status(400).json({ error: 'Missing route parameter', statusCode: 400 });\n    }\n}\n\n// Export the middleware function\nmodule.exports = validateRouteParamsMiddleware;"
+  },
+  "judgeConfig": {
+    "timeLimit": 1000,
+    "memoryLimit": 128,
+    "supportedLanguages": [
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "GET /users/:id",
+      "output": "{}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "GET /users/",
+      "output": "{\"error\":\"Missing route parameter 'id'\",\"statusCode\":400}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "180167622d95ff61722e5870",
+  "slug": "fixing-nodejs-express-middleware-for-route-parameter-validation-bugfix-hard-node_js",
+  "mode": "bug_fix",
+  "category": "NODE_JS",
+  "difficulty": "Hard"
+}

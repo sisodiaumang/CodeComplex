@@ -1,0 +1,153 @@
+{
+  "title": "Fixing Route Middleware Order for an Express API",
+  "subCategory": "Express Routing",
+  "statement": {
+    "markdown": "Given an Express API, fix the route middleware order to ensure that authentication and rate limiting middleware are applied before the route handler. The API should handle GET requests to the root URL '/'. The authentication middleware should check for a valid JWT token in the 'Authorization' header, and the rate limiting middleware should limit the number of requests to 5 per minute per IP address.",
+    "inputFormat": "A string representing the URL path, and an object with 'method' and 'headers' properties.",
+    "outputFormat": "A string representing the response status code.",
+    "notes": "Use the `express-rate-limit` library to implement rate limiting.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of requests per minute"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"method\":\"GET\",\"url\":\"/\",\"headers\":{\"Authorization\":\"Bearer <valid-jwt-token>\"}}",
+        "output": "200",
+        "explanation": "Successful response"
+      },
+      {
+        "input": "{\"method\":\"GET\",\"url\":\"/\",\"headers\":{\"Authorization\":\"Bearer invalid-jwt-token\"}}",
+        "output": "401",
+        "explanation": "Unauthorized response"
+      },
+      {
+        "input": "{\"method\":\"GET\",\"url\":\"/\",\"headers\":{\"Authorization\":\"Bearer <valid-jwt-token>\"}}",
+        "output": "429",
+        "explanation": "Rate limiting response"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "EXPRESS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "express"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the `express-rate-limit` library to implement rate limiting."
+    },
+    {
+      "order": 2,
+      "text": "Ensure that the authentication middleware is applied before the route handler."
+    }
+  ],
+  "editorial": {
+    "title": "Fixing Route Middleware Order for an Express API",
+    "intuition": "The key to solving this problem is to understand the order in which middleware are executed in Express. The authentication middleware should be applied before the route handler, and the rate limiting middleware should be applied before the authentication middleware.",
+    "bruteForce": "One possible approach is to manually implement rate limiting using a timer and a counter. However, this approach is inefficient and prone to errors.",
+    "betterSolution": "Use the `express-rate-limit` library to simplify the implementation of rate limiting.",
+    "optimalSolution": "Create a middleware stack with the authentication middleware first, followed by the rate limiting middleware, and finally the route handler. Use the `express-rate-limit` library to implement rate limiting.",
+    "proofOfCorrectness": "The correct solution should handle both successful and failed authentication attempts, as well as rate limiting responses.",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Incorrect middleware order",
+      "Insufficient rate limiting configuration"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "// Import required modules\nconst express = require('express');\nconst rateLimit = require('express-rate-limit');\nconst jwt = require('jsonwebtoken');\n\n// Create an Express app\nconst app = express();\n\n// Define the rate limiting middleware\nconst limiter = rateLimit({\n  windowMs: 60 * 1000, // 1 minute\n  max: 5 // 5 requests per minute\n});\n\n// Define the authentication middleware\nconst authenticate = (req, res, next) => {\n  const token = req.headers.authorization;\n  if (!token) {\n    res.status(401).send('Unauthorized');\n  } else {\n    try {\n      const decoded = jwt.verify(token, 'secret-key');\n      next();\n    } catch (err) {\n      res.status(401).send('Invalid token');\n    }\n  }\n};\n\n// Define the route handler\napp.get('/', (req, res) => {\n  res.send('Hello World!');\n});\n\n// Add the middleware stack\napp.use(limiter); // Incorrect position\napp.use(authenticate); // Correct position\napp.get('/', (req, res) => {\n  res.send('Hello World!');\n});\n\n// Start the server\nconst server = app.listen(3000, () => {\n  console.log('Server listening on port 3000');\n});",
+    "python": "// Import required modules\nfrom flask import Flask, request\nfrom flask_limiter import Limiter\nfrom flask_limiter.util import get_remote_address\nimport jwt\n\n# Create a Flask app\napp = Flask(__name__)\n\n# Define the rate limiting middleware\nlimiter = Limiter(app, key_func=get_remote_address, default_limits=[\"5/m\"])\n\n# Define the authentication middleware\ndef authenticate(req, res, next):\n    token = req.headers.get(\"Authorization\")\n    if not token:\n        return res.status(401).send(\"Unauthorized\")\n    try:\n        decoded = jwt.decode(token, \"secret-key\", algorithms=[\"HS256\"])\n        next()\n    except:\n        return res.status(401).send(\"Invalid token\")\n\n# Define the route handler\n@app.route(\"/\", methods=[\"GET\"])\n@limiter.limit(\"5/m\") # Incorrect rate limiting configuration\n@authenticate\ndef index():\n    return \"Hello World!\"\n\n# Start the server\nif __name__ == \"__main__\":\n    app.run(debug=True, port=3000)"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Import required modules\nconst express = require('express');\nconst rateLimit = require('express-rate-limit');\nconst jwt = require('jsonwebtoken');\n\n// Create an Express app\nconst app = express();\n\n// Define the rate limiting middleware\nconst limiter = rateLimit({\n  windowMs: 60 * 1000, // 1 minute\n  max: 5 // 5 requests per minute\n});\n\n// Define the authentication middleware\nconst authenticate = (req, res, next) => {\n  const token = req.headers.authorization;\n  if (!token) {\n    res.status(401).send('Unauthorized');\n  } else {\n    try {\n      const decoded = jwt.verify(token, 'secret-key');\n      next();\n    } catch (err) {\n      res.status(401).send('Invalid token');\n    }\n  }\n};\n\n// Define the route handler\napp.get('/', (req, res) => {\n  res.send('Hello World!');\n});\n\n// Add the middleware stack\napp.use(limiter); // Incorrect position\napp.get('/', (req, res) => {\n  res.send('Hello World!');\n});\napp.use(authenticate); // Incorrect position\n\n// Start the server\nconst server = app.listen(3000, () => {\n  console.log('Server listening on port 3000');\n});",
+    "python": "// Import required modules\nfrom flask import Flask, request\nfrom flask_limiter import Limiter\nfrom flask_limiter.util import get_remote_address\nimport jwt\n\n# Create a Flask app\napp = Flask(__name__)\n\n# Define the rate limiting middleware\nlimiter = Limiter(app, key_func=get_remote_address, default_limits=[\"5/m\"])\n\n# Define the authentication middleware\ndef authenticate(req, res, next):\n    token = req.headers.get(\"Authorization\")\n    if not token:\n        return res.status(401).send(\"Unauthorized\")\n    try:\n        decoded = jwt.decode(token, \"secret-key\", algorithms=[\"HS256\"])\n        next()\n    except:\n        return res.status(401).send(\"Invalid token\")\n\n# Define the route handler\n@app.route(\"/\", methods=[\"GET\"])\n@limiter.limit(\"5/m\") # Incorrect rate limiting configuration\ndef index():\n    return \"Hello World!\"\n\n# Start the server\nif __name__ == \"__main__\":\n    app.run(debug=True, port=3000)"
+  },
+  "functionSignature": {
+    "javascript": "var solve = function(nums);",
+    "python": "def solve(self, nums: list[int]) -> bool:"
+  },
+  "solutions": {
+    "javascript": "// Solution\nconst express = require('express');\nconst rateLimit = require('express-rate-limit');\nconst jwt = require('jsonwebtoken');\n\n// Create an Express app\nconst app = express();\n\n// Define the rate limiting middleware\nconst limiter = rateLimit({\n  windowMs: 60 * 1000, // 1 minute\n  max: 5 // 5 requests per minute\n});\n\n// Define the authentication middleware\nconst authenticate = (req, res, next) => {\n  const token = req.headers.authorization;\n  if (!token) {\n    res.status(401).send('Unauthorized');\n  } else {\n    try {\n      const decoded = jwt.verify(token, 'secret-key');\n      next();\n    } catch (err) {\n      res.status(401).send('Invalid token');\n    }\n  }\n};\n\n// Define the route handler\napp.get('/', authenticate, limiter, (req, res) => {\n  res.send('Hello World!');\n});\n\n// Start the server\nconst server = app.listen(3000, () => {\n  console.log('Server listening on port 3000');\n});",
+    "python": "// Solution\nfrom flask import Flask, request\nfrom flask_limiter import Limiter\nfrom flask_limiter.util import get_remote_address\nimport jwt\n\n# Create a Flask app\napp = Flask(__name__)\n\n# Define the rate limiting middleware\nlimiter = Limiter(app, key_func=get_remote_address, default_limits=[\"5/m\"])\n\n# Define the authentication middleware\ndef authenticate(req, res, next):\n    token = req.headers.get(\"Authorization\")\n    if not token:\n        return res.status(401).send(\"Unauthorized\")\n    try:\n        decoded = jwt.decode(token, \"secret-key\", algorithms=[\"HS256\"])\n        next()\n    except:\n        return res.status(401).send(\"Invalid token\")\n\n# Define the route handler\n@app.route(\"/\", methods=[\"GET\"])\n@limiter.limit(\"5/m\")\n@authenticate\ndef index():\n    return \"Hello World!\"\n\n# Start the server\nif __name__ == \"__main__\":\n    app.run(debug=True, port=3000)"
+  },
+  "judgeConfig": {
+    "timeLimit": 2000,
+    "memoryLimit": 128,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"method\":\"GET\",\"url\":\"/\",\"headers\":{\"Authorization\":\"Bearer <valid-jwt-token>\"}}",
+      "output": "200",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"method\":\"GET\",\"url\":\"/\",\"headers\":{\"Authorization\":\"Bearer invalid-jwt-token\"}}",
+      "output": "401",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    },
+    {
+      "id": "tc_3",
+      "input": "{\"method\":\"GET\",\"url\":\"/\",\"headers\":{\"Authorization\":\"Bearer <valid-jwt-token>\"}}",
+      "output": "429",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "dea4dfbf719fc4f4c20fcf60",
+  "slug": "fixing-route-middleware-order-for-an-express-api-bugfix-medium-express",
+  "mode": "bug_fix",
+  "category": "EXPRESS",
+  "difficulty": "Medium"
+}

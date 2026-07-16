@@ -1,0 +1,217 @@
+{
+  "_id": "children-sum-property",
+  "title": "Children Sum Property",
+  "slug": "children-sum-property",
+  "difficulty": "Medium",
+  "category": "TREE",
+  "subCategory": "Hard Problems",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 500,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "BINARY TREES",
+      "TREE",
+      "BINARY TREE"
+    ],
+    "patterns": [
+      "property",
+      "sum",
+      "children"
+    ],
+    "prerequisites": [
+      "BINARY TREE TRAVERSAL",
+      "BINARY TREE PROPERTIES",
+      "TREE TRAVERSAL"
+    ],
+    "variants": [],
+    "tags": [
+      "BINARY TREE",
+      "TREE",
+      "PROPERTIES",
+      "SUM"
+    ],
+    "keywords": [
+      "BINARY TREE",
+      "TREE",
+      "PROPERTIES",
+      "SUM",
+      "CHILDREN",
+      "NODES"
+    ],
+    "interviewFrequency": 4,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "Given a binary tree, determine whether it satisfies the **Children Sum Property**. A binary tree is said to satisfy this property if for every non‑leaf node, the value stored in the node is exactly equal to the sum of the values stored in its left and right children. If a child is missing (i.e., the corresponding pointer is null), its contribution to the sum is considered to be 0. You are required to read the tree from standard input, check the property, and print the result.\n\n**Input Format**\n- The first line contains a single integer **N**, the number of nodes in the tree.\n- The second line contains **N** space‑separated integers representing the node values in **level‑order** (breadth‑first) traversal. Use **-1** to denote a null (missing) node. The sequence always starts with the root node (which will never be -1).\n\n**Output Format**\n- Print `YES` if the tree satisfies the Children Sum Property, otherwise print `NO`.\n\n**Notes**\n- A leaf node automatically satisfies the property because it has no children.\n- The tree may be incomplete; missing children are represented by -1 in the level‑order list.\n- The input guarantees that the given level‑order representation corresponds to a valid binary tree.\n\n**Constraints**\n- 1 ≤ N ≤ 100000\n- Each node value (including the placeholder -1) fits in a 32‑bit signed integer.\n- The root node value is never -1.\n\n**Example 1**\n```\n7\n10 8 2 3 5 -1 -1\n```\n**Output**\n```\nYES\n```\n**Explanation**\nThe tree is:\n```\n        10\n       /  \\\n      8    2\n     / \\   \n    3   5\n```\n- Node 10 = 8 + 2 ✅\n- Node 8 = 3 + 5 ✅\n- Node 2 has no children (both are null), so 2 = 0 + 0 is considered satisfied.\nAll non‑leaf nodes meet the condition, therefore the answer is YES.\n\n**Example 2**\n```\n5\n5 3 1 -1 -1\n```\n**Output**\n```\nNO\n```\n**Explanation**\nThe tree is:\n```\n    5\n   / \\\n  3   1\n```\nNode 5 should equal 3 + 1 = 4, but its value is 5, so the property is violated.\n\n**Solution Overview**\nTraverse the tree in level order (or any order) while keeping track of each node’s children using the index relationships of a complete binary tree representation. For each non‑leaf node, compute the sum of its left and right child values (treating missing children as 0) and compare it with the node’s own value. If any mismatch is found, output `NO`; otherwise, after processing all nodes, output `YES`.\n\n**Complexity Analysis**\n- Time: O(N) – each node is visited once.\n- Space: O(N) – to store the level‑order array (or O(1) extra if processed in‑place).",
+    "inputFormat": "The first line contains an integer N, the number of nodes.\nThe second line contains N space‑separated integers representing the node values in level‑order, using -1 for null nodes.",
+    "outputFormat": "Print a single line containing YES if the tree satisfies the Children Sum Property, otherwise NO.",
+    "notes": "A missing child contributes 0 to the sum. Leaf nodes are always considered valid.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "N",
+        "type": "integer",
+        "min": 1,
+        "max": 100000,
+        "description": "Number of nodes in the tree"
+      },
+      {
+        "variable": "node value",
+        "type": "integer",
+        "min": -2147483648,
+        "max": 2147483647,
+        "description": "Value stored in each node (including -1 for null)"
+      }
+    ],
+    "examples": [
+      {
+        "input": "7\n10 8 2 3 5 -1 -1",
+        "output": "YES",
+        "explanation": "All non‑leaf nodes satisfy value = left child + right child."
+      },
+      {
+        "input": "5\n5 3 1 -1 -1",
+        "output": "NO",
+        "explanation": "Root node value 5 does not equal 3+1."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Read the tree from standard input and store the node values in an array. Use -1 to denote a null node."
+    },
+    {
+      "order": 2,
+      "text": "Process the array in level order, treating each group of nodes as a level. For each node, check if it's a leaf node (i.e., its value is not -1) and if it's a non-leaf node, compute the sum of its left and right child values."
+    },
+    {
+      "order": 3,
+      "text": "When comparing a node's value with the sum of its left and right child values, consider a mismatch if the values are not equal. If any mismatch is found, immediately print NO and exit the program."
+    },
+    {
+      "order": 4,
+      "text": "If the program completes processing all nodes without finding any mismatches, print YES to indicate that the tree satisfies the Children Sum Property."
+    },
+    {
+      "order": 5,
+      "text": "To efficiently compute the sum of a node's left and right child values, use the index relationships of a complete binary tree representation. For example, if the node is at index i, its left child is at index 2*i + 1 and its right child is at index 2*i + 2."
+    }
+  ],
+  "editorial": {
+    "title": "Ensuring the Children Sum Property in a Binary Tree",
+    "intuition": "The Children Sum Property states that every internal node’s value must equal the sum of its children’s values. When the tree is represented as an array, each node’s children are at predictable indices, so the check reduces to a simple array traversal. The key insight is that a null child (denoted by –1) contributes zero to the sum, and missing indices are treated the same way. This observation turns a potentially recursive verification into a linear scan.",
+    "bruteForce": "A naive approach would recursively walk the tree, building subtrees and summing child values on the fly. While this works for small trees, the recursion overhead and repeated index calculations quickly become costly as the number of nodes grows to 100 000. Moreover, handling nulls and out‑of‑range indices in a recursive manner adds unnecessary complexity and can lead to stack overflows on deep trees.",
+    "betterSolution": "By exploiting the array layout of a binary heap, we can avoid recursion entirely. For each index i, we compute the indices of its left and right children (2i+1 and 2i+2). If a child index is out of bounds or the value at that index is –1, we treat its contribution as zero. We then compare the node’s value to the sum of its children’s contributions. This single pass over the array guarantees O(N) time and O(1) auxiliary space beyond the input array.",
+    "optimalSolution": "The optimal solution processes each node exactly once, performing constant work per node: computing child indices, fetching values, handling nulls, and a single comparison. Because the array already contains all node values, no additional data structures are needed. The algorithm runs in O(N) time and uses O(N) space only for the input, matching the problem’s constraints.",
+    "proofOfCorrectness": "For any node i, let L and R be its left and right child indices. If either index is outside the array or the value at that index is –1, the child contributes 0 to the sum, which is exactly the definition of the Children Sum Property for missing or null children. The algorithm checks that node[i] equals the sum of the contributions from L and R. Since this condition is verified for every non‑leaf node, all internal nodes satisfy the property. Leaves are automatically valid because they have no children, and the algorithm skips them. Therefore, if the algorithm returns true, the entire tree satisfies the Children Sum Property; if it returns false, at least one node violates the property. Thus the algorithm is correct.",
+    "dryRun": "Consider the array [5, 2, 3, 1, 1, -1, -1].\n- i=0 (value 5): left=1 (2), right=2 (3). Sum=5 → OK.\n- i=1 (value 2): left=3 (1), right=4 (1). Sum=2 → OK.\n- i=2 (value 3): left=5 (-1 → 0), right=6 (-1 → 0). Sum=0 ≠ 3 → violation.\nThe algorithm stops and outputs NO, correctly identifying the failure.",
+    "commonMistakes": [
+      "Misinterpreting –1 as a valid node value instead of a null placeholder.",
+      "Treating missing child indices as zero without checking bounds, leading to index errors.",
+      "Including leaf nodes in the sum check and incorrectly flagging them as violations.",
+      "Using recursion without tail‑call optimization, causing stack overflows on large inputs.",
+      "Ignoring the fact that a null child contributes zero, thus miscalculating the sum.",
+      "Not handling negative node values properly, assuming all values are non‑negative."
+    ],
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(N) for storing the input array"
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    bool solve(vector<int>& nodes) {\n        // TODO: implement\n        return false;\n    }\n};",
+    "java": "import java.util.*;\n\nclass Solution {\n    public boolean solve(int[] nodes) {\n        // TODO: implement\n        return false;\n    }\n}",
+    "python": "class Solution:\n    def solve(self, nodes: list[int]) -> bool:\n        # TODO: implement\n        return False",
+    "javascript": "/**\n * @param {number[]} nodes\n * @return {boolean}\n */\nvar solve = function(nodes) {\n    // TODO: implement\n    return false;\n};"
+  },
+  "functionSignature": {
+    "cpp": "bool solve(vector<int>& nodes);",
+    "java": "public boolean solve(int[] nodes);",
+    "python": "def solve(self, nodes: list[int]) -> bool:",
+    "javascript": "var solve = function(nodes);"
+  },
+  "solutions": {
+    "python": "import sys\n\nclass Solution:\n    def solve(self, nodes: list[int]) -> bool:\n        n = len(nodes)\n        # iterate over each node index\n        for i, val in enumerate(nodes):\n            # if node is null, skip\n            if val == -1:\n                continue\n            left_idx = 2 * i + 1\n            right_idx = 2 * i + 2\n            # check if leaf: both children out of range or null\n            left_val = nodes[left_idx] if left_idx < n else -1\n            right_val = nodes[right_idx] if right_idx < n else -1\n            # treat missing or null child as 0\n            left_contrib = 0 if left_val == -1 else left_val\n            right_contrib = 0 if right_val == -1 else right_val\n            # if both children are missing (i.e., leaf), property holds automatically\n            if left_idx >= n and right_idx >= n:\n                continue\n            if left_idx < n and left_val == -1 and (right_idx >= n or right_val == -1):\n                # leaf as well\n                continue\n            # non-leaf: compare sum\n            if val != left_contrib + right_contrib:\n                return False\n        return True\n\nif __name__ == \"__main__\":\n    data = sys.stdin.read().split()\n    if not data:\n        sys.exit(0)\n    it = iter(data)\n    n = int(next(it))\n    nodes = [int(next(it)) for _ in range(n)]\n    sol = Solution()\n    result = sol.solve(nodes)\n    print(\"YES\" if result else \"NO\")\n",
+    "cpp": "#include <numeric>\n#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    bool solve(vector<int>& nodes) {\n        int n = nodes.size();\n        for (int i = 0; i < n; ++i) {\n            int val = nodes[i];\n            if (val == -1) continue; // null node, skip\n            long long left_contrib = 0, right_contrib = 0;\n            int left_idx = 2 * i + 1;\n            int right_idx = 2 * i + 2;\n            bool hasLeft = left_idx < n && nodes[left_idx] != -1;\n            bool hasRight = right_idx < n && nodes[right_idx] != -1;\n            // leaf check: no existing children\n            if (!hasLeft && !hasRight) continue;\n            if (hasLeft) left_contrib = nodes[left_idx];\n            if (hasRight) right_contrib = nodes[right_idx];\n            if ((long long)val != left_contrib + right_contrib) return false;\n        }\n        return true;\n    }\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int N;\n    if (!(cin >> N)) return 0;\n    vector<int> nodes(N);\n    for (int i = 0; i < N; ++i) cin >> nodes[i];\n    Solution sol;\n    bool ok = sol.solve(nodes);\n    cout << (ok ? \"YES\" : \"NO\") << \"\\n\";\n    return 0;\n}\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.2
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "7\n10 8 2 3 5 -1 -1",
+      "output": "YES",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "5\n5 3 1 -1 -1",
+      "output": "NO",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint_3",
+      "input": "3\n1 2 -1\n3\n1 2 -1\n3\n1 2 -1",
+      "output": "NO",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "random_medium_6",
+      "input": "3\n1 2 3\n3\n1 2 4\n3\n1 2 5",
+      "output": "NO",
+      "isVisible": false,
+      "weight": 1,
+      "category": "random_medium"
+    },
+    {
+      "id": "sorted_7",
+      "input": "5\n-1 2 4 -1 -1\n-1 4 5 -1 -1\n-1 -1 -1 -1 -1\n-1 -1 -1 -1 -1\n-1 -1 -1 -1 -1",
+      "output": "YES",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sorted"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

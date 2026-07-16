@@ -10,7 +10,7 @@ export type BattleType =
     | "DSA"
     | "FRONTEND"
     | "BACKEND"
-    | "FULLSTACK"
+    | "PROJECTS"
     | "PROMPT_WAR"
     | "BUG_FIX"
     | "PROMPT_WAR"

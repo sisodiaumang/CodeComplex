@@ -1,0 +1,52 @@
+{
+  "_id": "5913b0c7bb706683595f5fb3",
+  "title": "Interactive Modal Dialog",
+  "slug": "js-modal",
+  "difficulty": "Medium",
+  "topics": [
+    "JAVASCRIPT"
+  ],
+  "statement": {
+    "markdown": "## Interactive Modal Dialog with Backdrop Dismiss\n\nBuild an interactive modal dialog that overlay-centers on screen and can be dismissed dynamically.\n\n### Requirements:\n1. **Trigger Open**: Clicking the `Open Modal` button must display the modal container and backdrop overlay.\n2. **Backdrop & Dismiss Controls**: Clicking the `Close` icon/button, or clicking directly on the backdrop overlay area behind the modal card, must close and hide the modal.\n3. **Event delegation**: Ensure backdrop clicks do not close the modal if the user clicks inside the modal card container itself (event propagation stopping)."
+  },
+  "constraints": [
+    "Must use click event listeners to toggle visibility",
+    "Must prevent click propagation on the modal content card"
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "html": "<div class=\"flex items-center justify-center min-h-[260px] bg-slate-900 font-sans p-4\">\n  <button id=\"open-btn\" class=\"px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg shadow-md transition-colors\">Open Modal</button>\n\n  <!-- Backdrop & Modal Container (Initially hidden) -->\n  <div id=\"modal-overlay\" class=\"fixed inset-0 bg-black/60 flex items-center justify-center hidden z-50 p-4\">\n    <!-- Modal Card Content -->\n    <div id=\"modal-card\" class=\"bg-slate-800 border border-slate-700 rounded-2xl w-full max-w-sm p-6 shadow-2xl relative\">\n      <h3 class=\"text-lg font-bold text-white mb-2\">Confirm Action</h3>\n      <p class=\"text-sm text-slate-300 mb-6\">Are you sure you want to proceed with this configuration update?</p>\n      <div class=\"flex justify-end gap-3\">\n        <button id=\"close-btn\" class=\"px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 hover:text-white font-semibold rounded-lg text-sm transition-colors\">Cancel</button>\n        <button class=\"px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg text-sm transition-colors\">Confirm</button>\n      </div>\n    </div>\n  </div>\n</div>",
+    "css": "",
+    "javascript": "const openBtn = document.getElementById('open-btn');\nconst closeBtn = document.getElementById('close-btn');\nconst modalOverlay = document.getElementById('modal-overlay');\nconst modalCard = document.getElementById('modal-card');\n\n// Implement open, close, and backdrop dismiss click listeners here\n"
+  },
+  "gradingCriteria": [
+    {
+      "id": "functional_correctness",
+      "description": "Verify modal opens on click, closes on close button click, closes on backdrop click, and prevents closing when clicking the inner modal card.",
+      "weight": 60
+    },
+    {
+      "id": "code_cleanliness",
+      "description": "Verify correct class toggle application and correct use of stopPropagation or event target verification to handle backdrop dismissal.",
+      "weight": 40
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "html",
+      "css",
+      "javascript"
+    ],
+    "referenceSolution": "const openBtn = document.getElementById('open-btn');\nconst closeBtn = document.getElementById('close-btn');\nconst modalOverlay = document.getElementById('modal-overlay');\nconst modalCard = document.getElementById('modal-card');\n\nopenBtn.addEventListener('click', () => {\n  modalOverlay.classList.remove('hidden');\n});\n\nfunction closeModal() {\n  modalOverlay.classList.add('hidden');\n}\n\ncloseBtn.addEventListener('click', closeModal);\n\n// Dismiss on backdrop click\nmodalOverlay.addEventListener('click', closeModal);\n\n// Prevent modal card clicks from closing the modal\nmodalCard.addEventListener('click', (e) => {\n  e.stopPropagation();\n});"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

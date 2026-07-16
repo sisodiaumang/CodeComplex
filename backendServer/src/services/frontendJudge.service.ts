@@ -1,7 +1,7 @@
 // ─────────────────────────────────────────────────────────────────────────
 // frontendJudge.service.ts
 //
-// Judging engine for FRONTEND and FULLSTACK battles. Fundamentally
+// Judging engine for FRONTEND and PROJECTS battles. Fundamentally
 // different from both judge.service.ts (DSA/BUG_FIX — stdin/stdout diff
 // via Judge0) and backendJudge.service.ts (BACKEND — Docker container +
 // HTTP test runner):
@@ -71,7 +71,6 @@ import type { IFrontendGradingCriterion } from "../interfaces/frontendQuestion.i
 // ── Constants ─────────────────────────────────────────────────────────────
 
 const JUDGE_MODEL = "meta-llama/llama-4-scout-17b-16e-instruct";
-const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
 
 // Source code truncated at this limit before sending to the LLM.
 // ~40k chars ≈ ~10k tokens — leaves headroom for prompt + image blocks.
@@ -128,16 +127,7 @@ interface RawVerdict {
 
 import { env } from "../config/env.js";
 
-function getApiKey(): string {
-    const key = env.GROQ_API_KEY || env.XAI_API_KEY;
-    if (!key) {
-        throw new Error(
-            "[FrontendJudge] GROQ_API_KEY or XAI_API_KEY is not set. " +
-            "Add it to your environment to enable FRONTEND/FULLSTACK judging."
-        );
-    }
-    return key;
-}
+import { callLLM } from "./aiGateway.service.js";
 
 // OpenAI-compatible content block types used in the Grok request
 type TextContentBlock = { type: "text"; text: string };
@@ -156,75 +146,10 @@ interface GrokRequest {
     temperature: number;
 }
 
-interface GrokResponse {
-    choices: {
-        message: {
-            content: string;
-        };
-        finish_reason: string;
-    }[];
-    usage?: {
-        prompt_tokens?: number;
-        completion_tokens?: number;
-        total_tokens?: number;
-    };
-    model?: string;
-    error?: { message: string };
-}
-
 async function callGrok(request: GrokRequest): Promise<string> {
-    const apiKey = getApiKey();
-
-    const res = await fetch(GROQ_API_URL, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${apiKey}`,
-        },
-        body: JSON.stringify(request),
-    });
-
-    if (!res.ok) {
-        const body = await res.text().catch(() => "");
-        throw new Error(
-            `[FrontendJudge] Groq API request failed: ${res.status} ${res.statusText}` +
-            (body ? ` — ${body.slice(0, 300)}` : "")
-        );
-    }
-
-    const data = (await res.json()) as GrokResponse;
-
-    if (data.error) {
-        throw new Error(`[FrontendJudge] xAI API error: ${data.error.message}`);
-    }
-
-    // Log token usage asynchronously in the background
-    if (data.usage) {
-        import("../models/tokenUsage.model.js")
-            .then(({ default: TokenUsage }) => {
-                const promptTokens = data.usage?.prompt_tokens ?? 0;
-                const completionTokens = data.usage?.completion_tokens ?? 0;
-                const totalTokens = data.usage?.total_tokens ?? 0;
-                const cost = (promptTokens * 5 + completionTokens * 15) / 1_000_000;
-
-                TokenUsage.create({
-                    promptTokens,
-                    completionTokens,
-                    totalTokens,
-                    model: data.model || "grok-2",
-                    feature: "FRONTEND",
-                    cost,
-                }).catch((e) => console.error("[TokenUsage] Failed to create record:", e));
-            })
-            .catch((e) => console.error("[TokenUsage] Failed to load model:", e));
-    }
-
-    const text = data.choices?.[0]?.message?.content;
-    if (typeof text !== "string" || text.trim().length === 0) {
-        throw new Error("[FrontendJudge] xAI API returned an empty response");
-    }
-
-    return text;
+    const { model, ...rest } = request;
+    const result = await callLLM(model, rest, "FRONTEND");
+    return result.text;
 }
 
 // ── Source code normalisation ─────────────────────────────────────────────
@@ -273,8 +198,9 @@ Your task is to evaluate a frontend code submission against a set of weighted gr
 Rules:
 - Score each criterion from 0 to 100 (integers only).
 - Base scores strictly on the submitted code and any reference assets (design mockups/screenshots) provided.
-- Be fair but rigorous — a score of 100 means the criterion is fully and correctly met.
-- Keep per-criterion feedback concise: 1–2 sentences only.
+- If a "Reference Correct Solution" is provided, you MUST compare the player's submission code directly against it. Pay close attention to visual layout, dimensions (width, height), positioning (absolute/relative coordinates, top/left/right/bottom offsets, margins, paddings, flex/grid configuration, gap size, translate/transforms), shapes, clip-paths, borders, and visual structure.
+- Be fair but rigorous — a score of 100 means the criterion is fully and correctly met. If there is any misalignment, dimension discrepancy, or visual position mismatch compared to the Reference Correct Solution, you MUST deduct points from the layout correctness (or layout-related) criterion accordingly. Do NOT award full points if there are layout/position differences.
+- Keep per-criterion feedback concise: 1–2 sentences only, pointing out any specific misalignments or differences.
 - Keep the overall summary concise: 1–3 sentences only.
 - You MUST respond with ONLY a valid JSON object matching the schema below — no preamble, no markdown fences, no explanation outside the JSON.
 
@@ -333,6 +259,12 @@ function buildReferenceImageBlocks(
     for (const asset of referenceAssets) {
         try {
             new URL(asset.url); // validate URL — bad DB entries shouldn't crash the judge
+            
+            // Skip localhost and 127.0.0.1 URLs since cloud LLMs cannot resolve local hosts
+            if (asset.url.includes("localhost") || asset.url.includes("127.0.0.1")) {
+                continue;
+            }
+
             blocks.push({
                 type: "image_url",
                 image_url: { url: asset.url },
@@ -410,7 +342,7 @@ function computeWeightedScore(
 // ── Public entrypoint ─────────────────────────────────────────────────────
 
 /**
- * Judges one FRONTEND or FULLSTACK submission against its question's
+ * Judges one FRONTEND or PROJECTS submission against its question's
  * grading rubric using Grok as the LLM evaluator.
  *
  * Mirrors the contract of judgeBackendSubmission() so submission.service.ts
@@ -432,10 +364,10 @@ export async function judgeFrontendSubmission(
     const question = await FrontendQuestion.findOne({ slug: questionSlug })
         .select("statement gradingCriteria referenceAssets judgeConfig scoring")
         .lean<{
-            statement: string;
+            statement: { markdown: string };
             gradingCriteria: IFrontendGradingCriterion[];
             referenceAssets: { url: string; caption?: string }[];
-            judgeConfig: { judgeModel?: string };
+            judgeConfig: { judgeModel?: string; referenceSolution?: string };
             scoring: { maxScore: number; passingScore: number };
         }>();
 
@@ -472,11 +404,15 @@ export async function judgeFrontendSubmission(
     // ── 3. Build message content ──────────────────────────────────────────
     const imageBlocks = buildReferenceImageBlocks(referenceAssets ?? []);
 
-    const userPromptText = buildUserPromptText({
-        statement: question.statement,
+    let userPromptText = buildUserPromptText({
+        statement: question.statement?.markdown || "",
         sourceCode,
         criteria: gradingCriteria,
     });
+
+    if (question.judgeConfig?.referenceSolution) {
+        userPromptText += `\n\n## Reference Correct Solution\nUse the following correct solution code to guide your architectural and visual layout evaluation of the player's submission:\n\`\`\`html\n${question.judgeConfig.referenceSolution}\n\`\`\`\n\n## Comparison Instructions\nYou MUST compare the player's submission code directly against the Reference Correct Solution code. Check if the layout, sizes, positions, alignments, spacing, translation/transform values, clip-paths, borders, and margins match. If there is any misalignment or difference in dimension/position values that would result in a visual discrepancy (e.g. alignment mismatch, different sizing, shifted elements), you must penalize the "layout_correctness" (or layout-related) criterion and explain the misalignment/mismatch in the feedback. Do not give full points for layout correctness if there are positioning or dimensional differences.`;
+    }
 
     // Interleave reference images after the text prompt so the model can
     // visually compare the submission against the design mockups while

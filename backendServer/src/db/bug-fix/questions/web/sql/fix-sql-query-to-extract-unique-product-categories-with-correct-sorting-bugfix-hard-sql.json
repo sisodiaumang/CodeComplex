@@ -1,0 +1,145 @@
+{
+  "title": "Fix SQL Query to Extract Unique Product Categories with Correct Sorting",
+  "subCategory": "SQL Query Optimization",
+  "statement": {
+    "markdown": "You are given a table `products` with columns `id`, `name`, and `category`. Write a SQL query to extract unique product categories in alphabetical order, along with their count. If a category has no products, it should not be included in the result. The query should be efficient and use indexes where possible.",
+    "inputFormat": "Input is a SQL query with a subtle logical bug",
+    "outputFormat": "Expected output is a list of unique categories with their count in alphabetical order",
+    "notes": "The query should use the `GROUP BY` clause and the `COUNT` aggregation function.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of products in the table"
+      }
+    ],
+    "examples": [
+      {
+        "input": "SELECT category, COUNT(*) FROM products GROUP BY category ORDER BY category DESC;",
+        "output": "['Electronics', 'Clothing', 'Home Goods']",
+        "explanation": "The input query is buggy and returns incorrect results because of the incorrect sort order."
+      },
+      {
+        "input": "SELECT category, COUNT(*) FROM products GROUP BY category ORDER BY category ASC;",
+        "output": "['Clothing', 'Electronics', 'Home Goods']",
+        "explanation": "This input query is correct and returns the expected results."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "SQL"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "sql"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the `GROUP BY` clause to group products by category."
+    },
+    {
+      "order": 2,
+      "text": "Use the `COUNT` aggregation function to count the number of products in each category."
+    },
+    {
+      "order": 3,
+      "text": "Use the `ORDER BY` clause to sort the categories in alphabetical order."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial: Fixing the SQL Query",
+    "intuition": "The correct query should use the `GROUP BY` clause to group products by category, the `COUNT` aggregation function to count the number of products in each category, and the `ORDER BY` clause to sort the categories in alphabetical order.",
+    "bruteForce": "One possible brute-force solution is to use a subquery to count the number of products in each category, and then use the `ORDER BY` clause to sort the categories in alphabetical order.",
+    "betterSolution": "A better solution is to use the `GROUP BY` clause and the `COUNT` aggregation function in a single query.",
+    "optimalSolution": "The optimal solution is to use the `GROUP BY` clause, the `COUNT` aggregation function, and the `ORDER BY` clause in a single query, with the correct sort order.",
+    "proofOfCorrectness": "The correct query returns the expected results because it uses the `GROUP BY` clause to group products by category, the `COUNT` aggregation function to count the number of products in each category, and the `ORDER BY` clause to sort the categories in alphabetical order.",
+    "dryRun": "Step-by-step example run of the correct query.",
+    "commonMistakes": [
+      "Incorrect sort order",
+      "Missing `GROUP BY` clause",
+      "Missing `COUNT` aggregation function"
+    ],
+    "timeComplexity": "O(n log n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// Define a function to solve the problem",
+    "python": "class Solution:\n    def solve(self):\n        pass"
+  },
+  "buggyStarterCode": {
+    "javascript": "function solve(products) {\n    return products.reduce((acc, product) => {\n        acc[product.category] = (acc[product.category] || 0) + 1;\n        return acc;\n    }, {});\n}",
+    "python": "class Solution:\n    def solve(self):\n        return {product.category: product.category_count for product in products if product.category_count > 0}"
+  },
+  "functionSignature": {
+    "javascript": "function solve(products) {\n    // Return a list of unique categories with their count in alphabetical order\n}",
+    "python": "class Solution:\n    def solve(self, products) -> List[Dict[str, int]]:\n        pass"
+  },
+  "solutions": {
+    "javascript": "// Return a list of unique categories with their count in alphabetical order",
+    "python": "class Solution:\n    def solve(self, products) -> List[Dict[str, int]]:\n        category_counts = {};\n        for product in products:\n            category = product['category'];\n            if category in category_counts:\n                category_counts[category] += 1;\n            else:\n                category_counts[category] = 1;\n        return sorted(category_counts.items(), key=lambda x: x[0]);\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "[{'name': 'Product 1', 'category': 'Electronics'}, {'name': 'Product 2', 'category': 'Clothing'}, {'name': 'Product 3', 'category': 'Home Goods'}]",
+      "output": "[['Clothing', 1], ['Electronics', 1], ['Home Goods', 1]]",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_hidden_generated",
+      "input": "[{'name': 'Product 1', 'category': 'Electronics'}, {'name': 'Product 2', 'category': 'Clothing'}, {'name': 'Product 3', 'category': 'Home Goods'}]",
+      "output": "[['Clothing', 1], ['Electronics', 1], ['Home Goods', 1]]",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "a2fcd368cf248b6ba075ac45",
+  "slug": "fix-sql-query-to-extract-unique-product-categories-with-correct-sorting-bugfix-hard-sql",
+  "mode": "bug_fix",
+  "category": "SQL",
+  "difficulty": "Hard"
+}

@@ -1,0 +1,122 @@
+{
+  "_id": "cfb8b3fc04260da3bfdcca77",
+  "title": "Implement a Background Job Queue with Message Expiration",
+  "slug": "implement-a-background-job-queue-with-message-expiration-medium-queues",
+  "difficulty": "Medium",
+  "topics": [
+    "QUEUES"
+  ],
+  "statement": "\n   Implement a RESTful API to manage background jobs using a queue. The queue should have a TTL (time to live) for each message, and a job should be considered expired after its TTL expires.\n   The API should support the following endpoints:\n   - POST /queue: Add a new job to the queue with a specified TTL.\n   - GET /queue: Retrieve all jobs from the queue sorted by their TTL.\n   - DELETE /queue/:id: Remove a job from the queue by its ID.\n   \n   The queue should store its state in a in-memory array for simplicity.\n   \n   The expected behavior is:\n   - If a job's TTL is reached before it is retrieved, the job should be ignored by the retrieval endpoint.\n   - If a job with an ID that does not exist is deleted, the endpoint should return a 404 Not Found error.\n   \n   Consider edge cases such as when the queue is empty or a job is deleted before being retrieved.\n   ",
+  "constraints": [
+    "Must use the in-memory array provided for storing queue state.",
+    "Must handle edge cases and potential errors."
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/queue",
+      "description": "Add a new job to the queue with a specified TTL. The request body should contain a JSON object with the job's data and TTL."
+    },
+    {
+      "method": "GET",
+      "path": "/queue",
+      "description": "Retrieve all jobs from the queue sorted by their TTL."
+    },
+    {
+      "method": "DELETE",
+      "path": "/queue/:id",
+      "description": "Remove a job from the queue by its ID."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\n  \"name\": \"queue-app\",\n  \"version\": \"1.0.0\",\n  \"main\": \"index.js\",\n  \"scripts\": {\n    \"start\": \"node index.js\"\n  },\n  \"dependencies\": {\n    \"express\": \"^4.18.2\"\n  }\n}",
+    "index.js": "const express = require('express');\nconst app = express();\napp.use(express.json());\nconst queue = [];\n\n// TODO: Implement endpoints\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "POST",
+      "path": "/queue",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "data": "example job",
+        "ttl": 3600
+      },
+      "expectedStatus": 201,
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "GET",
+      "path": "/queue",
+      "headers": {},
+      "expectedStatus": 200,
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "POST",
+      "path": "/queue",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "data": "example job",
+        "ttl": 0
+      },
+      "expectedStatus": 201,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "GET",
+      "path": "/queue",
+      "expectedStatus": 200,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "DELETE",
+      "path": "/queue/12345",
+      "expectedStatus": 404,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "bullmq",
+    "rabbitmq",
+    "kafka",
+    "background-jobs",
+    "workers",
+    "retry",
+    "delayed-jobs",
+    "queues",
+    "job-queue",
+    "ttl"
+  ]
+}

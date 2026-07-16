@@ -1,0 +1,162 @@
+{
+  "title": "Fixing React Memoized Component Re-renders on Object Reference Change",
+  "subCategory": "React Memo",
+  "statement": {
+    "markdown": "Create a memoized React component that displays a person's name and age. The component should only re-render when the person's name or age has changed. However, the current implementation re-renders on every change, even if the person remains the same but the object reference has changed. Fix the bug to optimize the re-renders.",
+    "inputFormat": "The function takes an object with 'name' and 'age' properties.",
+    "outputFormat": "The function returns a React memoized component.",
+    "notes": "Time and space complexity should be optimized.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of times the component is re-rendered"
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of times the person object is reassigned"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"name\": 'John', \"age\": 30}",
+        "output": "<div>Name: John, Age: 30</div>",
+        "explanation": "Person remains the same, no re-render"
+      },
+      {
+        "input": "{\"name\": 'John', \"age\": 30}",
+        "output": "<div>Name: John, Age: 30</div>",
+        "explanation": "Person remains the same, no re-render"
+      },
+      {
+        "input": "{\"name\": 'Jane', \"age\": 30}",
+        "output": "<div>Name: Jane, Age: 30</div>",
+        "explanation": "Person changes, re-render"
+      },
+      {
+        "input": "{\"name\": 'John', \"age\": 31}",
+        "output": "<div>Name: John, Age: 31</div>",
+        "explanation": "Person's age changes, re-render"
+      },
+      {
+        "input": "{\"name\": 'John', \"age\": 30}",
+        "output": "<div>Name: John, Age: 30</div>",
+        "explanation": "Person remains the same, no re-render"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 60,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "REACT"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "react"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 1,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the `React.memo` component to memoize the component's props."
+    },
+    {
+      "order": 2,
+      "text": "Use the `areEqual` function to compare the person object's reference."
+    }
+  ],
+  "editorial": {
+    "title": "Optimizing React Memoized Component Re-renders",
+    "intuition": "The `React.memo` component can be used to memoize the component's props, but it requires a custom comparison function to avoid re-renders on object reference changes.",
+    "bruteForce": "One possible brute-force approach is to use `JSON.stringify` to compare the person object's properties.",
+    "betterSolution": "A better solution is to use a custom comparison function that checks for object reference changes.",
+    "optimalSolution": "The optimal solution is to use `React.memo` with a custom comparison function that checks for both object reference and property changes.",
+    "proofOfCorrectness": "The correct solution will optimize the re-renders and match the expected output.",
+    "dryRun": "Step-by-step example run: Create a person object, re-render the component, and verify the output.",
+    "commonMistakes": [
+      "Not using `React.memo`",
+      "Not providing a custom comparison function"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "// Define a memoized React component",
+    "python": "class MemoizedComponent:\n    def __init__(self):\n        pass\n    def render(self):\n        pass"
+  },
+  "buggyStarterCode": {
+    "javascript": "import React, { memo } from 'react';\n\nconst Person = ({ person }) => {\n  const areEqual = (prevProps, nextProps) => {\n    return prevProps.person === nextProps.person;\n  };\n  return <div>Name: {person.name}, Age: {person.age}</div>\n};\n\nexport default memo(Person, areEqual);\n\n// BUG: Incorrect comparison function\n",
+    "python": "import React\nclass Person(React.Component):\n    def __init__(self, props):\n        self.props = props\n    def render(self):\n        return React.DOM.div(None,\n            React.DOM.span(None, self.props.name + ', ' + self.props.age),\n            React.DOM.span(None, self.props.age))\n    def shouldComponentUpdate(self, nextProps, nextState):\n        return True\n    def getMemoizedProps(self):\n        return self.props\nPerson = React.memo(Person, self.getMemoizedProps)\n# BUG: Incorrect comparison function"
+  },
+  "functionSignature": {
+    "javascript": "const MemoizedComponent = memo(({ person }) => { ... });",
+    "python": "class MemoizedComponent(React.Component):\n    def render(self):\n        pass\nMemoizedComponent = React.memo(MemoizedComponent, self.getMemoizedProps)"
+  },
+  "solutions": {
+    "javascript": "// Define a memoized React component",
+    "python": "class MemoizedComponent(React.Component):\n    def __init__(self):\n        pass\n    def render(self):\n        return React.DOM.div(None,\n            React.DOM.span(None, self.props.name + ', ' + str(self.props.age)),\n            React.DOM.span(None, str(self.props.age)))\n    def shouldComponentUpdate(self, nextProps, nextState):\n        return nextProps.person === self.props.person\n    def getMemoizedProps(self):\n        return self.props\nMemoizedComponent = React.memo(MemoizedComponent, self.getMemoizedProps)\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"name\": 'John', \"age\": 30}",
+      "output": "<div>Name: John, Age: 30</div>",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"name\": 'Jane', \"age\": 30}",
+      "output": "<div>Name: Jane, Age: 30</div>",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "9c2d31a11edcf002d4ec42cd",
+  "slug": "fixing-react-memoized-component-re-renders-on-object-reference-change-bugfix-medium-react",
+  "mode": "bug_fix",
+  "category": "REACT",
+  "difficulty": "Medium"
+}

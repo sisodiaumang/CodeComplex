@@ -1,0 +1,161 @@
+{
+  "_id": "155e8f3680a67636b0dac4df",
+  "title": "Implementing a Leaderboard using Redis",
+  "slug": "implementing-a-leaderboard-using-redis-medium-redis",
+  "difficulty": "Medium",
+  "topics": [
+    "REDIS"
+  ],
+  "statement": "Create a RESTful API that allows users to score points and view the global leaderboard. The leaderboard should be stored in Redis, sorted by the total score of each user. The API should handle concurrent updates to the leaderboard and provide a robust way to handle errors.",
+  "constraints": [
+    "Must use Redis as the leaderboard store",
+    "Must handle concurrent updates to the leaderboard",
+    "Must handle errors when scoring points for invalid users"
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/leaderboard/score",
+      "description": "Score points for a user. The body should contain the user ID and the points to add.\n\nInput:\n- body: { user_id: int, points: int }\nOutput:\n- 201 Created on success\n- 400 Bad Request on invalid user ID or points"
+    },
+    {
+      "method": "GET",
+      "path": "/api/leaderboard/top",
+      "description": "Get the top N users in the leaderboard. The response should contain the user ID, name, and total score.\n\nInput:\n- query: { num_users: int }\nOutput:\n- 200 OK on success\n- 400 Bad Request on invalid num_users"
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\n  \"name\": \"leaderboard-app\",\n  \"version\": \"1.0.0\",\n  \"main\": \"index.js\",\n  \"scripts\": {\n    \"start\": \"node index.js\"\n  },\n  \"dependencies\": {\n    \"express\": \"^4.18.2\",\n    \"redis\": \"^3.1.2\"\n  }\n}",
+    "index.js": "const express = require('express');\nconst Redis = require('redis');\nconst client = Redis.createClient();\nconst app = express();\napp.use(express.json());\n\n// Connect to Redis\nclient.on('error', (err) => {\n    console.error('Redis client error:', err);\n});\n\n// TODO: Implement leaderboard endpoints\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "POST",
+      "path": "/api/leaderboard/score",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "user_id": 1,
+        "points": 100
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "message": "Points scored successfully"
+      },
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "GET",
+      "path": "/api/leaderboard/top",
+      "query": {
+        "num_users": 5
+      },
+      "expectedStatus": 200,
+      "expectedBody": [
+        {
+          "user_id": 1,
+          "name": "John Doe",
+          "total_score": 100
+        },
+        {
+          "user_id": 2,
+          "name": "Jane Doe",
+          "total_score": 80
+        },
+        {
+          "user_id": 3,
+          "name": "Bob Smith",
+          "total_score": 70
+        },
+        {
+          "user_id": 4,
+          "name": "Alice Johnson",
+          "total_score": 60
+        },
+        {
+          "user_id": 5,
+          "name": "Mike Brown",
+          "total_score": 50
+        }
+      ],
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "POST",
+      "path": "/api/leaderboard/score",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "user_id": -1,
+        "points": 100
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "GET",
+      "path": "/api/leaderboard/top",
+      "query": {
+        "num_users": "abc"
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "POST",
+      "path": "/api/leaderboard/score",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "user_id": 1,
+        "points": "abc"
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "pub/sub",
+    "cache",
+    "sessions",
+    "rate-limiting",
+    "leaderboard",
+    "streams",
+    "select",
+    "appropriate",
+    "tags",
+    "from",
+    "redis"
+  ]
+}

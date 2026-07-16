@@ -1,0 +1,140 @@
+{
+  "title": "Optimizing a React Memoized Component Re-renders on State Change Due to Dependent Arrays",
+  "subCategory": "Memoization",
+  "statement": {
+    "markdown": "You are given a React function component `Counter` that displays two counters. The component uses React's `useMemo` hook to memoize the counters' values based on the state `counters`. However, when the state `counters` changes, the component re-renders unnecessarily. Your task is to fix the bug by optimizing the memoization of the counters' values.",
+    "inputFormat": "The input will be an object with one property: `counters` - an array of objects with two properties: `id` and `value`.",
+    "outputFormat": "The output will be an array of two numbers.",
+    "notes": "The component should only re-render when the counters' values change.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "counters.length",
+        "type": "integer",
+        "min": 1,
+        "max": 10,
+        "description": "The number of counters"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"counters\": [{\"id\": 1, \"value\": 5}, {\"id\": 2, \"value\": 10}]}",
+        "output": "[5, 10]",
+        "explanation": "When the state `counters` does not change, the component should not re-render."
+      },
+      {
+        "input": "{\"counters\": [{\"id\": 1, \"value\": 5}, {\"id\": 2, \"value\": 15}]}",
+        "output": "[5, 15]",
+        "explanation": "When the state `counters` changes, the component should re-render with the updated values."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "REACT"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "react"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Check the dependencies used in the `useMemo` hook."
+    },
+    {
+      "order": 2,
+      "text": "Consider using a different approach to memoize the counters' values."
+    }
+  ],
+  "editorial": {
+    "title": "Optimizing Memoization in React Components",
+    "intuition": "The `useMemo` hook is used to memoize the counters' values based on the state `counters`. However, when the state `counters` changes, the component re-renders unnecessarily.",
+    "bruteForce": "One possible solution is to use the `useEffect` hook to update the counters' values only when the state `counters` changes.",
+    "betterSolution": "A better solution is to use a different approach to memoize the counters' values, such as using the `useReducer` hook to update the counters' values only when the state `counters` changes.",
+    "optimalSolution": "The optimal solution is to use the `useReducer` hook to update the counters' values only when the state `counters` changes, and to use the `useMemo` hook to memoize the counters' values based on the state `counters`.",
+    "proofOfCorrectness": "The correct solution can be proven by showing that the component only re-renders when the counters' values change.",
+    "dryRun": "A dry run of the correct solution will show that the component only re-renders when the counters' values change.",
+    "commonMistakes": [
+      "Not using the `useReducer` hook to update the counters' values.",
+      "Not using the `useMemo` hook to memoize the counters' values."
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// This is a React function component\nimport React, { useState, useMemo } from 'react';\n\nfunction Counter(props) {\n  const [counters, setCounters] = useState([{\n    id: 1,\n    value: 5\n  }]);\n\n  const countersValues = useMemo(() => {\n    return counters.map(counter => counter.value);\n  }, [counters]);\n\n  return (\n    <div>\n      {countersValues.map((value, index) => (\n        <p key={index}>{value}</p>\n      ))}\n    </div>\n  );\n}\n\nexport default Counter;",
+    "python": "// This is a React function component\nimport React, { useState, useMemo } from 'react';\n\ndef Counter(props):\n  counters, setCounters = useState([{'id': 1, 'value': 5}])\n\n  counters_values = useMemo(() => [\n    counter['value'] for counter in counters\n  ], [counters])\n\n  return React.createElement(\n    'div', null,\n    React.createElement(\n      'p', {key: 0}, counters_values[0]\n    ),\n    React.createElement(\n      'p', {key: 1}, counters_values[1]\n    )\n  )\n\nexport default Counter"
+  },
+  "buggyStarterCode": {
+    "javascript": "// This is a React function component\nimport React, { useState, useMemo } from 'react';\n\nfunction Counter(props) {\n  const [counters, setCounters] = useState([{\n    id: 1,\n    value: 5\n  }]);\n\n  const countersValues = useMemo(() => {\n    return counters.map(counter => counter.value);\n  }, [counters.length]);\n\n  return (\n    <div>\n      {countersValues.map((value, index) => (\n        <p key={index}>{value}</p>\n      ))}\n    </div>\n  );\n}\n\nexport default Counter;",
+    "python": "// This is a React function component\nimport React, { useState, useMemo } from 'react';\n\ndef Counter(props):\n  counters, setCounters = useState([{'id': 1, 'value': 5}])\n\n  counters_values = useMemo(() => [\n    counter['value'] for counter in counters\n  ], [counters.length])\n\n  return React.createElement(\n    'div', null,\n    React.createElement(\n      'p', {key: 0}, counters_values[0]\n    ),\n    React.createElement(\n      'p', {key: 1}, counters_values[1]\n    )\n  )\n\nexport default Counter"
+  },
+  "functionSignature": {
+    "javascript": "function Counter(props);",
+    "python": "def Counter(props):"
+  },
+  "solutions": {
+    "javascript": "// This is a React function component\nimport React, { useState, useReducer } from 'react';\n\nfunction Counter(props) {\n  const [counters, setCounters] = useState([{\n    id: 1,\n    value: 5\n  }]);\n\n  const [countersValues, dispatch] = useReducer((state, action) => {\n    if (action.type === 'UPDATE_COUNTER') {\n      return state.map(counter => {\n        if (counter.id === action.id) {\n          return { ...counter, value: action.value }\n        }\n        return counter;\n      });\n    }\n    return state;\n  }, []);\n\n  const updateCounter = (id, value) => {\n    dispatch({ type: 'UPDATE_COUNTER', id, value });\n  }\n\n  return (\n    <div>\n      {countersValues.map((counter, index) => (\n        <p key={index}>{counter.value}</p>\n      ))}\n      <button onClick={() => updateCounter(1, 10)}>Update Counter 1</button>\n    </div>\n  );\n}\n\nexport default Counter;",
+    "python": "// This is a React function component\nimport React, { useState, useReducer } from 'react';\n\ndef Counter(props):\n  counters, setCounters = useState([{'id': 1, 'value': 5}])\n\n  counters_values, dispatch = useReducer(\n    (state, action):\n      if action['type'] == 'UPDATE_COUNTER':\n        return [{'id': counter['id'], 'value': counter['value']} for counter in state if counter['id'] != action['id']] +\n               [{'id': action['id'], 'value': action['value']}]\n      return state,\n    [],\n  )\n\n  def update_counter(id, value):\n    dispatch({'type': 'UPDATE_COUNTER', 'id': id, 'value': value})\n\n  return React.createElement(\n    'div', null,\n    React.createElement(\n      'p', {key: 0}, counters_values[0]['value']\n    ),\n    React.createElement(\n      'p', {key: 1}, counters_values[1]['value']\n    ),\n    React.createElement(\n      'button', {onClick: lambda: update_counter(1, 10)},\n      'Update Counter 1'\n    )\n  )\n\nexport default Counter"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"counters\": [{\"id\": 1, \"value\": 5}, {\"id\": 2, \"value\": 10}]}",
+      "output": "[5, 10]",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "{\"counters\": [{\"id\": 1, \"value\": 5}, {\"id\": 2, \"value\": 15}]}",
+      "output": "[5, 15]",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "_id": "5e6dba2b37aeed2510b4bb2e",
+  "slug": "optimizing-a-react-memoized-component-re-renders-on-state-change-due-to-dependent-arrays-bugfix-medium-react",
+  "mode": "bug_fix",
+  "category": "REACT",
+  "difficulty": "Medium"
+}

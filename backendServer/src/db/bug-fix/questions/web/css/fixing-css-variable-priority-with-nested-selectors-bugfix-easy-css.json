@@ -1,0 +1,143 @@
+{
+  "title": "Fixing CSS Variable Priority with Nested Selectors",
+  "subCategory": "CSS Variable Priority",
+  "statement": {
+    "markdown": "Given a string representing a CSS stylesheet, fix the bug in the code that handles nested selectors and CSS variables. The code should correctly calculate the priority of CSS variables when they appear in nested selectors.\n\nFor example, consider the following CSS:\n\n```\n.example { --primary-color: red; }\n.example .child { --primary-color: blue; }\n.example .child .grandchild { background-color: var(--primary-color) };\n```\nThe variable `--primary-color` in the `.grandchild` selector should be `blue`, not `red`.\n\nYour task is to write a function that takes a string representing a CSS stylesheet as input, parses it, and returns a corrected string with the correct variable priority.",
+    "inputFormat": "A string representing a CSS stylesheet.",
+    "outputFormat": "A string representing the corrected CSS stylesheet.",
+    "notes": "You can assume that the input string is a valid CSS stylesheet.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of selectors in the CSS stylesheet."
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of CSS variables in the stylesheet."
+      }
+    ],
+    "examples": [
+      {
+        "input": ".example { --primary-color: red; }\n.example .child { --primary-color: blue; }\n.example .child .grandchild { background-color: var(--primary-color) };\n",
+        "output": ".example { --primary-color: red; }\n.example .child { --primary-color: blue; }\n.example .child .grandchild { background-color: var(--primary-color) };\n",
+        "explanation": "The variable `--primary-color` in the `.grandchild` selector should be `blue`, not `red`."
+      },
+      {
+        "input": ".container { --background-color: #f2f2f2; }\n.container .child { --background-color: #333; }\n.container .child .grandchild { background-color: var(--background-color) };\n",
+        "output": ".container { --background-color: #f2f2f2; }\n.container .child { --background-color: #333; }\n.container .child .grandchild { background-color: var(--background-color) };\n",
+        "explanation": "The variable `--background-color` in the `.grandchild` selector should be `#333`, not `#f2f2f2`."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "CSS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "css"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Consider using a stack data structure to keep track of the current selector scope."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial: Fixing CSS Variable Priority with Nested Selectors",
+    "intuition": "To fix the bug, we need to correctly calculate the priority of CSS variables when they appear in nested selectors. We can use a stack data structure to keep track of the current selector scope and update the variable priority accordingly.",
+    "bruteForce": "One possible brute force approach is to parse the CSS stylesheet, identify all CSS variables, and then recursively traverse the selector hierarchy to update the variable priority.",
+    "betterSolution": "A better solution is to use a stack data structure to keep track of the current selector scope and update the variable priority accordingly. This approach has a time complexity of O(n) where n is the number of selectors in the CSS stylesheet.",
+    "optimalSolution": "The optimal solution uses a stack data structure to keep track of the current selector scope and update the variable priority accordingly. This approach has a time complexity of O(n) where n is the number of selectors in the CSS stylesheet.",
+    "proofOfCorrectness": "The proof of correctness for the optimal solution is based on the fact that we correctly update the variable priority for each selector and its nested selectors.",
+    "dryRun": "Here's a step-by-step example run of the optimal solution:\n1. Initialize an empty stack to keep track of the current selector scope.\n2. Parse the CSS stylesheet and identify all CSS variables.\n3. Recursively traverse the selector hierarchy and update the variable priority accordingly.\n4. Return the corrected CSS stylesheet.",
+    "commonMistakes": [
+      "Failing to update the variable priority correctly for nested selectors",
+      "Using a brute force approach with a high time complexity"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// Fix the bug in this function\nfunction fixCssVariables(cssString) {\n  // Your code here\n  return cssString;\n}",
+    "python": "class Solution:\n  def fix_css_variables(self, css_string) -> str:\n    # Your code here\n    return css_string"
+  },
+  "buggyStarterCode": {
+    "javascript": "function fixCssVariables(cssString) {\n  // Split the CSS string into selectors\n  const selectors = cssString.split('}');\n\n  // Initialize an empty array to store the corrected selectors\n  const correctedSelectors = [];\n\n  // Iterate over each selector\n  for (const selector of selectors) {\n    // Check if the selector contains a CSS variable\n    if (selector.includes('var(')) {\n      // Update the variable priority by replacing the variable with its value\n      const updatedSelector = selector.replace('var(', '').replace(')', '').replace('}', '') + '}';\n      correctedSelectors.push(updatedSelector);\n    } else {\n      correctedSelectors.push(selector);\n    }\n  }\n\n  // Join the corrected selectors back into a string\n  return correctedSelectors.join('');\n}",
+    "python": "class Solution:\n  def fix_css_variables(self, css_string) -> str:\n    # Split the CSS string into selectors\n    selectors = css_string.split('}');\n\n    # Initialize an empty list to store the corrected selectors\n    corrected_selectors = [];\n\n    # Iterate over each selector\n    for selector in selectors:\n      # Check if the selector contains a CSS variable\n      if 'var(' in selector:\n        # Update the variable priority by replacing the variable with its value\n        updated_selector = selector.replace('var(', '').replace(')', '').replace('}', '') + '}';\n        corrected_selectors.append(updated_selector);\n      else:\n        corrected_selectors.append(selector);\n\n    # Join the corrected selectors back into a string\n    return ''.join(corrected_selectors)"
+  },
+  "functionSignature": {
+    "javascript": "var solve = function(cssString) {",
+    "python": "def solve(self, css_string: str) -> str:"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction fixCssVariables(cssString) {\n  // Split the CSS string into selectors\n  const selectors = cssString.split('}');\n\n  // Initialize an empty array to store the corrected selectors\n  const correctedSelectors = [];\n\n  // Iterate over each selector\n  for (const selector of selectors) {\n    // Split the selector into parts\n    const parts = selector.split(' ');;\n\n    // Initialize a stack to keep track of the current selector scope\n    const scopeStack = [];\n\n    // Iterate over each part\n    for (const part of parts) {\n      // Check if the part is a CSS variable\n      if (part.startsWith('--')) {\n        // Update the variable priority by pushing the current scope to the stack\n        scopeStack.push(part);\n      } else if (part === '{') {\n        // Update the variable priority by popping the current scope from the stack\n        scopeStack.pop();\n      }\n    }\n\n    // Join the corrected parts back into a selector\n    const correctedSelector = parts.join(' ') + '}';\n    correctedSelectors.push(correctedSelector);\n  }\n\n  // Join the corrected selectors back into a string\n  return correctedSelectors.join('');\n}",
+    "python": "class Solution:\n  def fix_css_variables(self, css_string) -> str:\n    # Split the CSS string into selectors\n    selectors = css_string.split('}');\n\n    # Initialize an empty list to store the corrected selectors\n    corrected_selectors = [];\n\n    # Iterate over each selector\n    for selector in selectors:\n      # Split the selector into parts\n      parts = selector.split(' ');;\n\n      # Initialize a stack to keep track of the current selector scope\n      scope_stack = [];\n\n      # Iterate over each part\n      for part in parts:\n        # Check if the part is a CSS variable\n        if part.startswith('--'):\n          # Update the variable priority by pushing the current scope to the stack\n          scope_stack.append(part);\n        elif part == '{':\n          # Update the variable priority by popping the current scope from the stack\n          scope_stack.pop();\n      # Join the corrected parts back into a selector\n      corrected_selector = ' '.join(parts) + '}';\n      corrected_selectors.append(corrected_selector);\n\n    # Join the corrected selectors back into a string\n    return ''.join(corrected_selectors)"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": ".example { --primary-color: red; }\n.example .child { --primary-color: blue; }\n.example .child .grandchild { background-color: var(--primary-color) };\n",
+      "output": ".example { --primary-color: red; }\n.example .child { --primary-color: blue; }\n.example .child .grandchild { background-color: var(--primary-color) };\n",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": ".container { --background-color: #f2f2f2; }\n.container .child { --background-color: #333; }\n.container .child .grandchild { background-color: var(--background-color) };\n",
+      "output": ".container { --background-color: #f2f2f2; }\n.container .child { --background-color: #333; }\n.container .child .grandchild { background-color: var(--background-color) };\n",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "cf2d00788bd0a6f1e4d902c1",
+  "slug": "fixing-css-variable-priority-with-nested-selectors-bugfix-easy-css",
+  "mode": "bug_fix",
+  "category": "CSS",
+  "difficulty": "Easy"
+}

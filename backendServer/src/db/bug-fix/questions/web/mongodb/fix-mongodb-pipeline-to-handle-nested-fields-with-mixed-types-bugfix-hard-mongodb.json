@@ -1,0 +1,143 @@
+{
+  "title": "Fix MongoDB Pipeline to Handle Nested Fields with Mixed Types",
+  "subCategory": "Aggregation Pipeline",
+  "statement": {
+    "markdown": "You are given a MongoDB collection with documents that contain nested fields with mixed types. Your task is to write an aggregation pipeline that extracts the values from these nested fields and returns them in a flat format.",
+    "inputFormat": "The input will be a JSON object representing a MongoDB collection.",
+    "outputFormat": "The output should be a JSON object with the extracted values in a flat format.",
+    "notes": "The nested fields can contain strings, numbers, booleans, or arrays.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of documents in the collection"
+      },
+      {
+        "variable": "maxDepth",
+        "type": "integer",
+        "min": 1,
+        "max": 10,
+        "description": "The maximum depth of the nested fields"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"a\": 1, \"b\": {\"c\": 2, \"d\": [3, 4]}}",
+        "output": "{\"a\": 1, \"c\": 2, \"d\": [3, 4]}",
+        "explanation": "The pipeline should extract the values from the nested fields and return them in a flat format."
+      },
+      {
+        "input": "{\"e\": true, \"f\": {\"g\": false, \"h\": {\"i\": null}}}",
+        "output": "{\"e\": true, \"g\": false, \"i\": null}",
+        "explanation": "The pipeline should handle nested fields with booleans and null values."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "MONGODB"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "mongodb"
+    ],
+    "interviewFrequency": 5,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the $unwind and $project stages to flatten the nested fields."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial: Handling Nested Fields with Mixed Types",
+    "intuition": "The key to solving this problem is to use the $unwind stage to flatten the nested fields and then use the $project stage to extract the values.",
+    "bruteForce": "One possible solution is to use the $unwind stage to flatten the nested fields and then use the $group stage to extract the values.",
+    "betterSolution": "We can use the $unwind stage to flatten the nested fields and then use the $project stage to extract the values in a more efficient way.",
+    "optimalSolution": "We can use a recursive approach to flatten the nested fields and then use the $project stage to extract the values.",
+    "proofOfCorrectness": "The optimal solution has a time complexity of O(n*maxDepth), where n is the number of documents and maxDepth is the maximum depth of the nested fields.",
+    "dryRun": "Let's try to solve this problem using the optimal solution.",
+    "commonMistakes": [
+      "Mistaking the $unwind stage for the $group stage.",
+      "Not handling nested fields with booleans and null values."
+    ],
+    "timeComplexity": "O(n*maxDepth)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// Implement the aggregation pipeline using the $unwind and $project stages.\nfunction solve(collection) {\n  // Your code here\n}\n",
+    "python": "def solve(self, collection):\n    # Your code here\n"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Implement the aggregation pipeline using the $unwind and $project stages.\nfunction solve(collection) {\n  // Unwind the nested fields\n  let pipeline = [{ $unwind: { path: '$a' } }];\n  // Project the unwound fields\n  pipeline.push({ $project: { _id: 0, a: 1, b: { $cond: { if: { $eq: [ '$a', 1 ] }, then: '$b.c', else: '$b.d' } } } });\n  return pipeline;\n}\n",
+    "python": "def solve(self, collection):\n    # Unwind the nested fields\n    pipeline = [{ 'unwind': { 'path': '$a' } }]\n    # Project the unwound fields\n    pipeline.append({ 'project': { '_id': 0, 'a': 1, 'b': { '$cond': { 'if': { '$eq': [ '$a', 1 ] }, 'then': '$b.c', 'else': '$b.d' } } } })\n    return pipeline;"
+  },
+  "functionSignature": {
+    "javascript": "function solve(collection) { ... }",
+    "python": "def solve(self, collection): ...\n"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction solve(collection) {\n  let pipeline = [\n    { $unwind: { path: '$a' } },\n    { $unwind: { path: '$b' } },\n    { $project: { _id: 0, a: 1, c: 1, d: 1 } }\n  ];\n  return pipeline;\n}\n",
+    "python": "def solve(self, collection):\n    pipeline = [\n        {'unwind': {'path': '$a'}},\n        {'unwind': {'path': '$b'}},\n        {'project': {'_id': 0, 'a': 1, 'c': 1, 'd': 1}},\n    ];\n    return pipeline;"
+  },
+  "judgeConfig": {
+    "timeLimit": 1,
+    "memoryLimit": 128,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"a\": 1, \"b\": {\"c\": 2, \"d\": [3, 4]}}",
+      "output": "{\"a\": 1, \"c\": 2, \"d\": [3, 4]}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"e\": true, \"f\": {\"g\": false, \"h\": {\"i\": null}}}",
+      "output": "{\"e\": true, \"g\": false, \"i\": null}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "d1e2acae7f6a22bd034503e2",
+  "slug": "fix-mongodb-pipeline-to-handle-nested-fields-with-mixed-types-bugfix-hard-mongodb",
+  "mode": "bug_fix",
+  "category": "MONGODB",
+  "difficulty": "Hard"
+}

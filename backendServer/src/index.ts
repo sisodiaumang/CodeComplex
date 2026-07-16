@@ -21,6 +21,9 @@ import startRefreshTokenCleanupJob from "./jobs/refreshTokenCleanup.js";
 import startOtpCleanupJob from "./jobs/otpCleanup.js";
 import startNotificationCleanupJob from "./jobs/notificationCleanup.js";
 import startStaleBattleRoomCleanupJob from "./jobs/staleBattleRoomCleanup.js";
+import { startGrindReminderJob } from "./jobs/grindReminder.js";
+import { seedModels } from "./services/aiGateway.service.js";
+import { seedAchievements } from "./services/achievement.service.js";
 
 //sockets
 import { registerBattleChatHandlers } from "./sockets/battleChat.socket.js";
@@ -59,8 +62,26 @@ const app = express();
 // HTTP logging middleware
 app.use(pinoHttp({ logger }));
 
+// API Latency telemetry logging
+import { recordApiLatency } from "./utils/telemetry.js";
+app.use((req, res, next) => {
+    const start = process.hrtime();
+    res.on("finish", () => {
+        const diff = process.hrtime(start);
+        const timeInMs = diff[0] * 1000 + diff[1] / 1000000;
+        recordApiLatency(timeInMs);
+    });
+    next();
+});
+
 // Security headers
-app.use(helmet());
+app.use(
+    helmet({
+        crossOriginResourcePolicy: { policy: "cross-origin" },
+        frameguard: false,
+        contentSecurityPolicy: false
+    })
+);
 
 // Response compression
 app.use(compression());
@@ -109,6 +130,14 @@ app.use(
     })
 );
 
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+app.use("/public", express.static(path.join(__dirname, "../public")));
+
 // --------------------
 // Health Check
 // --------------------
@@ -138,6 +167,7 @@ app.use("/api/v1/battle", battleRouter);
 app.use("/api/v1/match", matchRouter);
 app.use("/api/v1/submission", submissionRouter);
 app.use("/api/v1/ratings", ratingRouter);
+app.use("/api/v1/rating", ratingRouter);
 app.use("/api/v1/friends", friendshipRouter);
 app.use("/api/v1/notifications", notificationRouter);
 app.use("/api/v1/achievements", achievementRouter);
@@ -209,6 +239,8 @@ connectDB()
     .then(() => {
 
         console.log(" MongoDB Connected");
+        seedModels();
+        seedAchievements();
 
         // Start background cron jobs
         startCleanupJob();
@@ -217,6 +249,7 @@ connectDB()
         startOtpCleanupJob();
         startNotificationCleanupJob();
         startStaleBattleRoomCleanupJob();
+        startGrindReminderJob();
 
         server.listen(PORT, () => {
 

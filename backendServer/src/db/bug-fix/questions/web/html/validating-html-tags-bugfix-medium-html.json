@@ -1,0 +1,136 @@
+{
+  "title": "Validating HTML Tags",
+  "subCategory": "HTML Parser",
+  "statement": {
+    "markdown": "Write a function to validate whether a given string of HTML tags is valid. A string of HTML tags is valid if it contains a series of well-formed opening and closing tags. The function should return an array of strings representing the valid tags in the order they appear in the input string.",
+    "inputFormat": "A string of HTML tags, e.g. '<p>Hello</p><span>World</span><p>Foo</p>'",
+    "outputFormat": "An array of strings representing the valid tags in the order they appear in the input string, e.g. ['<p>', '</p>', '<span>', '</span>', '<p>']",
+    "notes": "You can assume that the input string only contains well-formed HTML tags, i.e., there are no mismatched or overlapping tags. The input string may contain duplicate tags.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The maximum number of tags in the input string"
+      }
+    ],
+    "examples": [
+      {
+        "input": "<p>Hello</p><span>World</span><p>Foo</p>",
+        "output": "<p>\n</p>\n<span>\n</span>\n<p>",
+        "explanation": "This example demonstrates a valid string of HTML tags with well-formed opening and closing tags."
+      },
+      {
+        "input": "<p>Hello</p><p>Foo</p>",
+        "output": "<p>\n</p>\n<p>",
+        "explanation": "This example demonstrates a valid string of HTML tags with duplicate tags."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "HTML"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "html"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "You can use a stack to keep track of the opening tags."
+    }
+  ],
+  "editorial": {
+    "title": "Validating HTML Tags",
+    "intuition": "You can use a stack to keep track of the opening tags. When you encounter a closing tag, you can pop the corresponding opening tag from the stack.",
+    "bruteForce": "You can use a regular expression to match the opening and closing tags. However, this approach may not be efficient for large input strings.",
+    "betterSolution": "You can use a stack to keep track of the opening tags. When you encounter a closing tag, you can pop the corresponding opening tag from the stack.",
+    "optimalSolution": "You can use a stack to keep track of the opening tags. When you encounter a closing tag, you can pop the corresponding opening tag from the stack. Finally, you can return the stack as the array of valid tags.",
+    "proofOfCorrectness": "The stack-based approach ensures that the output array contains the valid tags in the order they appear in the input string.",
+    "dryRun": "Here's a step-by-step example run: input = '<p>Hello</p><span>World</span><p>Foo</p>'; output = ['<p>', '</p>', '<span>', '</span>', '<p>'];",
+    "commonMistakes": [
+      "Forgetting to pop the corresponding opening tag from the stack when encountering a closing tag.",
+      "Not using a stack to keep track of the opening tags."
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "function solve(input) {\n\treturn [];\n}",
+    "python": "def solve(self, input: str) -> list[str]:\n\treturn [];"
+  },
+  "buggyStarterCode": {
+    "javascript": "function solve(input) {\n\tlet tags = [];\n\tfor (let i = 0; i < input.length; i++) {\n\t\tif (input[i] === '<') {\n\t\t\tlet tag = '';\n\t\t\twhile (input[i] !== '>') {\n\t\t\t\ttag += input[i++];\n\t\t\t}\n\t\t\ttags.push(tag);\n\t\t}\n\t}\n\treturn tags;\n}",
+    "python": "def solve(self, input: str) -> list[str]:\n\ttags = []\n\tfor i in range(len(input)):\n\t\tif input[i] == '<':\n\t\t\ttag = ''\n\t\t\twhile input[i] != '>':\n\t\t\t\ttag += input[i]\n\t\t\t\ti += 1\n\t\t\ttags.append(tag)\n\treturn tags"
+  },
+  "functionSignature": {
+    "javascript": "function solve(input: string): string[]",
+    "python": "def solve(self, input: str) -> list[str]:"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction solve(input) {\n\tlet stack = [];\n\tlet tags = [];\n\tfor (let i = 0; i < input.length; i++) {\n\t\tif (input[i] === '<') {\n\t\t\tlet tag = '';\n\t\t\twhile (input[i] !== '>') {\n\t\t\t\ttag += input[i++];\n\t\t\t}\n\t\t\tif (tag[1] === '/') {\n\t\t\t\tstack.pop();\n\t\t\t} else {\n\t\t\t\tstack.push(tag);\n\t\t\t}\n\t\t\ttags.push(tag);\n\t\t}\n\t}\n\twhile (stack.length > 0) {\n\t\ttags.push('</' + stack.pop() + '>');\n\t}\n\treturn tags;\n}",
+    "python": "// Solution\ndef solve(self, input: str) -> list[str]:\n\tstack = []\n\ttags = []\n\tfor i in range(len(input)):\n\t\tif input[i] == '<':\n\t\t\ttag = ''\n\t\t\twhile input[i] != '>':\n\t\t\t\ttag += input[i]\n\t\t\t\ti += 1\n\t\t\tif tag[1] == '/':\n\t\t\t\tstack.pop()\n\t\t\telse:\n\t\t\t\tstack.append(tag)\n\t\t\ttags.append(tag)\n\twhile stack:\n\t\ttags.append('</' + stack.pop() + '>')\n\treturn tags"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "<p>Hello</p><span>World</span><p>Foo</p>",
+      "output": "<p>\n</p>\n<span>\n</span>\n<p>",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "<p>Hello</p><p>Foo</p>",
+      "output": "<p>\n</p>\n<p>",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "3b9aedc74feb9b608bf5acd2",
+  "slug": "validating-html-tags-bugfix-medium-html",
+  "mode": "bug_fix",
+  "category": "HTML",
+  "difficulty": "Medium"
+}

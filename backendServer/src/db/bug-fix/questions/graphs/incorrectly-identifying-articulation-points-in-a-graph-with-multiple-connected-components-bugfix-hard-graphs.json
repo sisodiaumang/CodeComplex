@@ -1,0 +1,151 @@
+{
+  "_id": "52544d04d96f2b4d0991049b",
+  "title": "Incorrectly Identifying Articulation Points in a Graph with Multiple Connected Components",
+  "slug": "incorrectly-identifying-articulation-points-in-a-graph-with-multiple-connected-components-bugfix-hard-graphs",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "DFS/BFS",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 100,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "graph",
+      "articulation points"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given a graph represented as an adjacency list, identify and return the articulation points in the graph. An articulation point is a vertex whose removal increases the number of connected components in the graph. The graph may have multiple connected components.\n\nThe function `articulationPoints` should return a list of vertex ids that are articulation points in the graph.\n\nYou may assume that the graph is connected and does not have self-loops or parallel edges.\n\n**Example 1**\n\nInput:\n\n```\n[[1,2,0],[1,3,0],[2,4,0],[1,0,0]]\n```\n\nOutput:\n\n``\n[0]\n``\n\n**Notes:\"\n\n* Time complexity: O(n+m), where n is the number of vertices in the graph and m is the number of edges.\n\n* Space complexity: O(n+m), where n is the number of vertices in the graph and m is the number of edges.\n\n* You may use DFS or BFS traversal to solve this problem.\n",
+    "inputFormat": "[[int, int, int], [int, int, int], ...]",
+    "outputFormat": "[int]",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "[[1,2,0],[1,3,0],[2,4,0],[1,0,0]]",
+        "output": "[0]",
+        "explanation": "In this example, vertex 0 is an articulation point because removing it would increase the number of connected components from 1 to 2."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Think about how you can modify the DFS traversal to keep track of articulation points."
+    }
+  ],
+  "editorial": {
+    "title": "Incorrectly Identifying Articulation Points in a Graph with Multiple Connected Components",
+    "intuition": "Use a modified DFS traversal to keep track of articulation points. In particular, keep track of the discovery time of each vertex and the number of children of each vertex.",
+    "bruteForce": "brute Force details.",
+    "betterSolution": "",
+    "optimalSolution": "Perform a DFS traversal of the graph and keep track of the discovery time of each vertex and the number of children of each vertex. A vertex is an articulation point if it has at least two children and is the root of some subtree, or if it has at least one child and is the last vertex in some subtree.",
+    "proofOfCorrectness": "proof Of Correctness details.",
+    "dryRun": "dry Run details.",
+    "commonMistakes": [],
+    "timeComplexity": "O(n+m)",
+    "spaceComplexity": "O(n+m)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    vector<int> articulationPoints(vector<vector<int>>& graph);\n};\n",
+    "java": "public class Solution {\n    public List<Integer> articulationPoints(int[][] graph);\n}\n",
+    "python": "class Solution:\n    def articulationPoints(self, graph):\n        pass\n",
+    "javascript": "function articulationPoints(graph) {\n    // TODO: implement\n}\n"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    vector<int> articulationPoints(vector<vector<int>>& graph) {\n        int n = graph.size();\n        vector<int> disc(n, -1);\n        vector<int> low(n, -1);\n        vector<bool> visited(n, false);\n        vector<int> ap(n, false);\n        int time = 0;\n        for (int i = 0; i < n; ++i) {\n            if (!visited[i]) {\n                dfs(i, -1, graph, disc, low, visited, ap, time);\n            }\n        }\n        vector<int> result;\n        for (int i = 0; i < n; ++i) {\n            if (ap[i]) {\n                result.push_back(i);\n            }\n        }\n        return result;\n    }\n\n    void dfs(int u, int p, vector<vector<int>>& graph, vector<int>& disc, vector<int>& low, vector<bool>& visited, vector<bool>& ap, int& time) {\n        visited[u] = true;\n        disc[u] = low[u] = time;\n        time++;\n        int child = 0;\n        for (int v : graph[u]) {\n            if (v == p) {\n                continue;\n            }\n            if (visited[v]) {\n                low[u] = min(low[u], disc[v]);\n            } else {\n                dfs(v, u, graph, disc, low, visited, ap, time);\n                low[u] = min(low[u], low[v]);\n                child++;\n                if (disc[u] < low[v]) {\n                    ap[u] = true;\n                } else if (p != -1 && child > 1) {\n                    ap[u] = true;\n                }\n            }\n        }\n    }\n};\n",
+    "java": "public class Solution {\n    public List<Integer> articulationPoints(int[][] graph) {\n        int n = graph.length;\n        int[] disc = new int[n];\n        int[] low = new int[n];\n        boolean[] visited = new boolean[n];\n        boolean[] ap = new boolean[n];\n        int time = 0;\n        for (int i = 0; i < n; ++i) {\n            if (!visited[i]) {\n                dfs(i, -1, graph, disc, low, visited, ap, time);\n            }\n        }\n        List<Integer> result = new ArrayList<>();\n        for (int i = 0; i < n; ++i) {\n            if (ap[i]) {\n                result.add(i);\n            }\n        }\n        return result;\n    }\n\n    private void dfs(int u, int p, int[][] graph, int[] disc, int[] low, boolean[] visited, boolean[] ap, int time) {\n        visited[u] = true;\n        disc[u] = low[u] = time;\n        time++;\n        int child = 0;\n        for (int v : graph[u]) {\n            if (v == p) {\n                continue;\n            }\n            if (visited[v]) {\n                low[u] = Math.min(low[u], disc[v]);\n            } else {\n                dfs(v, u, graph, disc, low, visited, ap, time);\n                low[u] = Math.min(low[u], low[v]);\n                child++;\n                if (disc[u] < low[v]) {\n                    ap[u] = true;\n                } else if (p != -1 && child > 1) {\n                    ap[u] = true;\n                }\n            }\n        }\n    }\n}\n",
+    "python": "class Solution:\n    def articulationPoints(self, graph):\n        n = len(graph)\n        disc = [-1]*n\n        low = [-1]*n\n        visited = [False]*n\n        ap = [False]*n\n        time = 0\n        for i in range(n):\n            if not visited[i]:\n                self.dfs(i, -1, graph, disc, low, visited, ap, time)\n        result = [\n            i for i in range(n) if ap[i]\n        ]\n        return result\n\n    def dfs(self, u, p, graph, disc, low, visited, ap, time):\n        visited[u] = True\n        disc[u] = low[u] = time\n        time += 1\n        child = 0\n        for v in graph[u]:\n            if v == p:\n                continue\n            if visited[v]:\n                low[u] = min(low[u], disc[v])\n            else:\n                self.dfs(v, u, graph, disc, low, visited, ap, time)\n                low[u] = min(low[u], low[v])\n                child += 1\n                if disc[u] < low[v]:\n                    ap[u] = True\n                elif p != -1 and child > 1:\n                    ap[u] = True\n",
+    "javascript": "function articulationPoints(graph) {\n    let n = graph.length;\n    let disc = new Array(n).fill(-1);\n    let low = new Array(n).fill(-1);\n    let visited = new Array(n).fill(false);\n    let ap = new Array(n).fill(false);\n    let time = 0;\n    for (let i = 0; i < n; ++i) {\n        if (!visited[i]) {\n            dfs(i, -1, graph, disc, low, visited, ap, time);\n        }\n    }\n    let result = [];\n    for (let i = 0; i < n; ++i) {\n        if (ap[i]) {\n            result.push(i);\n        }\n    }\n    return result;\n\n    function dfs(u, p, graph, disc, low, visited, ap, time) {\n        visited[u] = true;\n        disc[u] = low[u] = time;\n        time++;\n        let child = 0;\n        for (let v of graph[u]) {\n            if (v == p) {\n                continue;\n            }\n            if (visited[v]) {\n                low[u] = Math.min(low[u], disc[v]);\n            } else {\n                dfs(v, u, graph, disc, low, visited, ap, time);\n                low[u] = Math.min(low[u], low[v]);\n                child++;\n                if (disc[u] < low[v]) {\n                    ap[u] = true;\n                } else if (p != -1 && child > 1) {\n                    ap[u] = true;\n                }\n            }\n        }\n    }\n}"
+  },
+  "functionSignature": {
+    "cpp": "vector<int> articulationPoints(vector<vector<int>>& graph);",
+    "java": "List<Integer> articulationPoints(int[][] graph);",
+    "python": "def articulationPoints(self, graph: list[list[int]]) -> list[int]:",
+    "javascript": "function articulationPoints(graph: number[][]): number[];"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def articulationPoints(self, graph):\n        n = len(graph)\n        disc = [-1]*n\n        low = [-1]*n\n        visited = [False]*n\n        ap = [False]*n\n        time = 0\n        for i in range(n):\n            if not visited[i]:\n                self.dfs(i, -1, graph, disc, low, visited, ap, time)\n        result = [\n            i for i in range(n) if ap[i]\n        ]\n        return result\n\n    def dfs(self, u, p, graph, disc, low, visited, ap, time):\n        visited[u] = True\n        disc[u] = low[u] = time\n        time += 1\n        child = 0\n        for v in graph[u]:\n            if v == p:\n                continue\n            if visited[v]:\n                low[u] = min(low[u], disc[v])\n            else:\n                self.dfs(v, u, graph, disc, low, visited, ap, time)\n                low[u] = min(low[u], low[v])\n                child += 1\n                if disc[u] < low[v]:\n                    ap[u] = True\n                elif p != -1 and child > 1:\n                    ap[u] = True\n        return\n\nif __name__ == '__main__':\n    s = Solution()\n    graph = [[1,2,0],[1,3,0],[2,4,0],[1,0,0]]\n    print(s.articulationPoints(graph))",
+    "cpp": "#include <iostream>\n#include <vector>\nusing namespace std;\nclass Solution {\npublic:\n    vector<int> articulationPoints(vector<vector<int>>& graph) {\n        int n = graph.size();\n        vector<int> disc(n, -1);\n        vector<int> low(n, -1);\n        vector<bool> visited(n, false);\n        vector<bool> ap(n, false);\n        int time = 0;\n        for (int i = 0; i < n; ++i) {\n            if (!visited[i]) {\n                dfs(i, -1, graph, disc, low, visited, ap, time);\n            }\n        }\n        vector<int> result;\n        for (int i = 0; i < n; ++i) {\n            if (ap[i]) {\n                result.push_back(i);\n            }\n        }\n        return result;\n    }\n\n    void dfs(int u, int p, vector<vector<int>>& graph, vector<int>& disc, vector<int>& low, vector<bool>& visited, vector<bool>& ap, int& time) {\n        visited[u] = true;\n        disc[u] = low[u] = time;\n        time++;\n        int child = 0;\n        for (int v : graph[u]) {\n            if (v == p) {\n                continue;\n            }\n            if (visited[v]) {\n                low[u] = min(low[u], disc[v]);\n            } else {\n                dfs(v, u, graph, disc, low, visited, ap, time);\n                low[u] = min(low[u], low[v]);\n                child++;\n                if (disc[u] < low[v]) {\n                    ap[u] = true;\n                } else if (p != -1 && child > 1) {\n                    ap[u] = true;\n                }\n            }\n        }\n    }\n};\nint main() {\n    Solution s;\n    vector<vector<int>> graph = {{1,2,0},{1,3,0},{2,4,0},{1,0,0}};\n    vector<int> result = s.articulationPoints(graph);\n    for (int i : result) {\n        cout << i << endl;\n    }\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "4\n[[1,2,0],[1,3,0],[2,4,0],[1,0,0]]",
+      "output": "[0]",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "5\n[[1,2,0],[2,3,0],[1,4,0],[2,5,0],[3,4,0]]",
+      "output": "[1]",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

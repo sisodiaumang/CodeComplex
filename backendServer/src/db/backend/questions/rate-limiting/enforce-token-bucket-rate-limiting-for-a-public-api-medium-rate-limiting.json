@@ -1,0 +1,134 @@
+{
+  "_id": "7848ea4a6aa680616e8cf8b9",
+  "title": "Enforce Token Bucket Rate Limiting for a Public API",
+  "slug": "enforce-token-bucket-rate-limiting-for-a-public-api-medium-rate-limiting",
+  "difficulty": "Medium",
+  "topics": [
+    "RATE_LIMITING"
+  ],
+  "statement": "Design and implement a token bucket rate limiting system to restrict the number of requests from a client to your API. The bucket is refilled at a constant rate, and each request consumes a certain number of tokens.\n\nImplement the following endpoints:\n\n- **GET /api/resource**: Returns a list of available resources.\n- **POST /api/resource**: Creates a new resource.\n\n**Behavioral Expectations:**\n\n- The rate limiting system should be per-client (identified by the `X-Client-Id` header).\n- A client can make up to 5 requests per minute.\n- Each request consumes 1 token.\n- The bucket is refilled at a rate of 1 token per second.\n- If a client exceeds the rate limit, the server should return a 429 Too Many Requests response.\n- If the `X-Client-Id` header is missing, the server should return a 401 Unauthorized response.\n\n**Constraints:**\n\n- Use the `express-rate-limit` library to implement rate limiting.\n- Use a mock in-memory database to store client information.\n\n**Test Cases:**\n\n- **Normal Operation**: A client makes 5 requests within 1 minute and then waits for 1 minute. The server returns a list of resources for each request.\n- **Rate Limit Exceeded**: A client makes 10 requests within 1 minute. The server returns a 429 response for the 6th request.\n- **Missing X-Client-Id Header**: A client makes a request without the `X-Client-Id` header. The server returns a 401 response.\n",
+  "constraints": [
+    "Must use only the in-memory array provided to store client information",
+    "Must use the `express-rate-limit` library to implement rate limiting"
+  ],
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/api/resource",
+      "description": "Returns a list of available resources"
+    },
+    {
+      "method": "POST",
+      "path": "/api/resource",
+      "description": "Creates a new resource"
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": {
+      "name": "backend-app",
+      "version": "1.0.0",
+      "main": "index.js",
+      "scripts": {
+        "start": "node index.js"
+      },
+      "dependencies": {
+        "express": "^4.18.2",
+        "express-rate-limit": "^5.2.0"
+      }
+    },
+    "index.js": "const express = require('express');\nconst rateLimit = require('express-rate-limit');\nconst app = express();\napp.use(express.json());\nconst clients = []; // TODO: Implement in-memory client database\n\nconst limiter = rateLimit({ windowMs: 60000, max: 5 });\napp.use('X-Client-Id', limiter);\n\napp.get('/api/resource', (req, res) => {\n  // TODO: Return a list of available resources\n});\n\napp.post('/api/resource', (req, res) => {\n  // TODO: Create a new resource\n});\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "GET",
+      "path": "/api/resource",
+      "headers": {
+        "X-Client-Id": "client-1"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "resources": [
+          "resource-1",
+          "resource-2"
+        ]
+      },
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "POST",
+      "path": "/api/resource",
+      "headers": {
+        "X-Client-Id": "client-1"
+      },
+      "body": {
+        "name": "resource-1"
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "success": true
+      },
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "GET",
+      "path": "/api/resource",
+      "expectedStatus": 429,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "POST",
+      "path": "/api/resource",
+      "expectedStatus": 401,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "POST",
+      "path": "/api/resource",
+      "headers": {
+        "X-Client-Id": "client-2"
+      },
+      "expectedStatus": 403,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "sliding-window",
+    "token-bucket",
+    "fixed-window",
+    "leaky-bucket",
+    "redis",
+    "express-rate-limit",
+    "rate-limiting",
+    "express",
+    "node",
+    "javascript"
+  ]
+}

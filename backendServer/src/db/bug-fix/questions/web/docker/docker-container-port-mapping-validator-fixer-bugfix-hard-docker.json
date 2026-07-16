@@ -1,0 +1,147 @@
+{
+  "title": "DOCKER Container Port Mapping Validator Fixer",
+  "subCategory": "Docker Port Mapping",
+  "statement": {
+    "markdown": "Implement a function that validates Docker container port mappings. The function should take an object of container names to their corresponding port mappings as input. Each port mapping should be an array of two integers representing the host port and the container port. The function should return `true` if all port mappings are valid, and `false` otherwise. A port mapping is considered valid if the host port and container port are both within the valid range (1-65535) and the host port is not already in use by another container.",
+    "inputFormat": "Object of container names to their port mappings",
+    "outputFormat": "Boolean indicating whether all port mappings are valid",
+    "notes": "The function should not consider the case where a container has multiple port mappings with the same host port but different container ports.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of containers"
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of port mappings per container"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"container1\": [[80, 8080]], \"container2\": [[8080, 8081]]}",
+        "output": "true",
+        "explanation": "Both port mappings are valid"
+      },
+      {
+        "input": "{\"container1\": [[80, 8080]], \"container2\": [[8080, 8081], [8080, 8082]]}",
+        "output": "false",
+        "explanation": "The second port mapping for container2 is invalid because the host port 8080 is already in use by container1"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 100,
+    "premium": true,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DOCKER"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "docker"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 1,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Start by initializing an empty set to keep track of the host ports in use"
+    },
+    {
+      "order": 2,
+      "text": "Iterate over the port mappings for each container and check if the host port is already in use"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial: Docker Container Port Mapping Validator Fixer",
+    "intuition": "The key to solving this problem is to keep track of the host ports in use as we iterate over the port mappings",
+    "bruteForce": "A brute-force approach would involve checking each port mapping individually and verifying that the host port is not in use",
+    "betterSolution": "A better solution would involve using a set to keep track of the host ports in use",
+    "optimalSolution": "The optimal solution involves initializing the set of host ports in use, iterating over the port mappings, and checking for validity",
+    "proofOfCorrectness": "The correctness of the solution can be proven by showing that it correctly identifies valid and invalid port mappings",
+    "dryRun": "A dry run of the solution would involve iterating over the port mappings and checking for validity",
+    "commonMistakes": [
+      "Failing to initialize the set of host ports in use",
+      "Failing to check for validity"
+    ],
+    "timeComplexity": "O(n*m)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "function validatePortMappings(portMappings) {\n  // Initialize an empty set to keep track of the host ports in use\n  let hostPortsInUse = new Set();\n  // Iterate over the port mappings for each container\n  for (let container in portMappings) {\n    // Check if the host port is already in use\n    for (let portMapping of portMappings[container]) {\n      // Check if the host port is valid\n    }\n  }\n  // Return true if all port mappings are valid, false otherwise\n}",
+    "python": "class Solution:\n  def validatePortMappings(self, portMappings):\n    # Initialize an empty set to keep track of the host ports in use\n    hostPortsInUse = set()\n    # Iterate over the port mappings for each container\n    for container in portMappings:\n      # Check if the host port is already in use\n      for portMapping in portMappings[container]:\n        # Check if the host port is valid\n        pass\n    # Return true if all port mappings are valid, false otherwise\n    return True"
+  },
+  "buggyStarterCode": {
+    "javascript": "function validatePortMappings(portMappings) {\n  // Initialize an empty set to keep track of the host ports in use\n  let hostPortsInUse = new Set();\n  // Iterate over the port mappings for each container\n  for (let container in portMappings) {\n    // Check if the host port is already in use\n    for (let portMapping of portMappings[container]) {\n      // Check if the host port is valid\n      if (portMapping[0] >= 0 && portMapping[0] <= 65535 && portMapping[1] >= 0 && portMapping[1] <= 65535) {\n        hostPortsInUse.add(portMapping[0]);\n        if (hostPortsInUse.size > 1) {\n          return false;\n        }\n      }\n    }\n  }\n  // Return true if all port mappings are valid, false otherwise\n  return true;\n}",
+    "python": "class Solution:\n  def validatePortMappings(self, portMappings):\n    # Initialize an empty set to keep track of the host ports in use\n    hostPortsInUse = set()\n    # Iterate over the port mappings for each container\n    for container in portMappings:\n      # Check if the host port is already in use\n      for portMapping in portMappings[container]:\n        # Check if the host port is valid\n        if (portMapping[0] >= 0 and portMapping[0] <= 65535 and portMapping[1] >= 0 and portMapping[1] <= 65535):\n          hostPortsInUse.add(portMapping[0]);\n          if (len(hostPortsInUse) > 1):\n            return False\n    # Return true if all port mappings are valid, false otherwise\n    return True"
+  },
+  "functionSignature": {
+    "javascript": "function validatePortMappings(portMappings);",
+    "python": "def validatePortMappings(self, portMappings: dict) -> bool:"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction validatePortMappings(portMappings) {\n  // Initialize an empty set to keep track of the host ports in use\n  let hostPortsInUse = new Set();\n  // Iterate over the port mappings for each container\n  for (let container in portMappings) {\n    // Check if the host port is already in use\n    for (let portMapping of portMappings[container]) {\n      // Check if the host port is valid\n      if (portMapping[0] >= 0 && portMapping[0] <= 65535 && portMapping[1] >= 0 && portMapping[1] <= 65535 && !hostPortsInUse.has(portMapping[0])) {\n        hostPortsInUse.add(portMapping[0]);\n      } else {\n        return false;\n      }\n    }\n  }\n  // Return true if all port mappings are valid, false otherwise\n  return true;\n}\n",
+    "python": "class Solution:\n  def validatePortMappings(self, portMappings):\n    # Initialize an empty set to keep track of the host ports in use\n    hostPortsInUse = set()\n    # Iterate over the port mappings for each container\n    for container in portMappings:\n      # Check if the host port is already in use\n      for portMapping in portMappings[container]:\n        # Check if the host port is valid\n        if (portMapping[0] >= 0 and portMapping[0] <= 65535 and portMapping[1] >= 0 and portMapping[1] <= 65535 and portMapping[0] not in hostPortsInUse):\n          hostPortsInUse.add(portMapping[0])\n        else:\n          return False\n    # Return true if all port mappings are valid, false otherwise\n    return True\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"container1\": [[80, 8080]], \"container2\": [[8080, 8081]]}",
+      "output": "true",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"container1\": [[80, 8080]], \"container2\": [[8080, 8081], [8080, 8082]]}",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "39235e48e352bcfd88e14a97",
+  "slug": "docker-container-port-mapping-validator-fixer-bugfix-hard-docker",
+  "mode": "bug_fix",
+  "category": "DOCKER",
+  "difficulty": "Hard"
+}

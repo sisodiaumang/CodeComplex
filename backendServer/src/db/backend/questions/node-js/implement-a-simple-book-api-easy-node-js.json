@@ -1,0 +1,137 @@
+{
+  "_id": "971723cfa5e1772747dc6b37",
+  "title": "Implement a Simple Book API",
+  "slug": "implement-a-simple-book-api-easy-node-js",
+  "difficulty": "Easy",
+  "topics": [
+    "NODE_JS"
+  ],
+  "statement": "Create a RESTful API using Express.js to manage a collection of books. The API should have three endpoints: one to retrieve all books, one to create a new book, and one to retrieve a book by its ID.\n\nThe book collection should be stored in an in-memory array. When creating a new book, ensure the ID is automatically generated as a unique incrementing integer.\n\nYour API should be able to handle JSON payloads and respond with JSON in all endpoints.\n\nImplement the following endpoints:\n\n### GET /api/books\n\nRetrieves all books from the collection.\n\n### POST /api/books\n\nCreates a new book in the collection.\n\n### GET /api/books/:id\n\nRetrieves a book from the collection by its ID.\n\n### Constraints\n\n* Use only the in-memory array provided.\n* Do not store any books in a database.\n* Use a JSON schema to validate incoming request bodies.\n* Handle errors properly (e.g., 404 Not Found, 400 Bad Request).\n",
+  "constraints": [
+    "Use only the in-memory array provided.",
+    "Do not store any books in a database."
+  ],
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/api/books",
+      "description": "Retrieves all books from the collection."
+    },
+    {
+      "method": "POST",
+      "path": "/api/books",
+      "description": "Creates a new book in the collection. Expected request body:\n\n```json\n{\n  \"title\": \"Book Title\",\n  \"author\": \"Author Name\"\n}\n```"
+    },
+    {
+      "method": "GET",
+      "path": "/api/books/:id",
+      "description": "Retrieves a book from the collection by its ID. Example: /api/books/1"
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\"name\":\"backend-app\",\"version\":\"1.0.0\",\"main\":\"index.js\",\"scripts\":{\"start\":\"node index.js\"},\"dependencies\":{\"express\":\"^4.18.2\"}}",
+    "index.js": "const express = require('express');\nconst app = express();\napp.use(express.json());\nconst books = [\n  // TODO: Initialize the in-memory book collection\n];\napp.get('/api/books', (req, res) => {\n  // TODO: Retrieve all books from the collection and send them in the response\n});\napp.post('/api/books', (req, res) => {\n  // TODO: Create a new book in the collection and send the new book in the response\n});\napp.get('/api/books/:id', (req, res) => {\n  // TODO: Retrieve a book by its ID and send it in the response\n});\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "GET",
+      "path": "/api/books",
+      "expectedStatus": 200,
+      "expectedBody": [
+        {
+          "id": 1,
+          "title": "Book 1",
+          "author": "Author 1"
+        },
+        {
+          "id": 2,
+          "title": "Book 2",
+          "author": "Author 2"
+        }
+      ],
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "POST",
+      "path": "/api/books",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "title": "New Book",
+        "author": "New Author"
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "id": 3,
+        "title": "New Book",
+        "author": "New Author"
+      },
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "GET",
+      "path": "/api/books/999",
+      "expectedStatus": 404,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "POST",
+      "path": "/api/books",
+      "headers": {
+        "Content-Type": "text/plain"
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "GET",
+      "path": "/api/books/-1",
+      "expectedStatus": 400,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "event-loop",
+    "streams",
+    "buffers",
+    "file-system",
+    "process",
+    "child-process",
+    "worker-threads",
+    "cluster",
+    "timers",
+    "nodejs",
+    "express",
+    "easy",
+    "restful-api"
+  ]
+}

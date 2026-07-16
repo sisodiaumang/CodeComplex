@@ -1,0 +1,59 @@
+{
+  "_id": "049f4e5f5fd51913701e3b6f",
+  "title": "Type Safe Config",
+  "slug": "type-type-safe-config",
+  "difficulty": "Medium",
+  "topics": [
+    "TYPESCRIPT"
+  ],
+  "statement": {
+    "markdown": "## Problem Statement\nWe need to create a configuration system that is safe against incorrect usage and easy to extend.\n\n### Requirements\n1. Create a class `Config` that accepts an object of type `ConfigData`.\n\n2. Implement type safety by using the `ConfigData` type to validate the provided configuration.\n3. Allow extension of the configuration by adding new fields to `ConfigData`.\n4. Use TypeScript's built-in features to ensure the correctness of the configuration."
+  },
+  "constraints": [
+    "No external dependencies other than TypeScript's built-in functionality can be used.",
+    "The configuration must be validated at runtime.",
+    "Any changes to `ConfigData` should not affect existing code."
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "typescript": "```typescript\ninterface ConfigData {\n  // Add fields here\n}\n\nclass Config {\n  private data: ConfigData;\n\n  constructor(data: ConfigData) {\n    this.data = data;\n  }\n\n  getConfig() {\n    return this.data;\n  }\n}\n\nconst config = new Config({});\n```\n"
+  },
+  "gradingCriteria": [
+    {
+      "id": "1",
+      "description": "ConfigData interface is correctly defined.",
+      "weight": 20
+    },
+    {
+      "id": "2",
+      "description": "Config class constructor validates the provided configuration.",
+      "weight": 30
+    },
+    {
+      "id": "3",
+      "description": "Config class allows extension of the configuration.",
+      "weight": 30
+    },
+    {
+      "id": "4",
+      "description": "Config class correctly implements type safety.",
+      "weight": 20
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "typescript"
+    ],
+    "referenceSolution": "```typescript\ninterface ConfigData {\n  db: {\n    host: string,\n    port: number,\n    username: string,\n    password: string,\n  },\n  server: {\n    host: string,\n    port: number,\n  },\n}\n\nclass Config {\n  private data: ConfigData;\n\n  constructor(data: ConfigData) {\n    this.data = data;\n  }\n\n  getConfig() {\n    return this.data;\n  }\n\n  getDbHost(): string {\n    return this.data.db.host;\n  }\n\n  getDbUsername(): string {\n    return this.data.db.username;\n  }\n\n  getServerHost(): string {\n    return this.data.server.host;\n  }\n}\n\nconst config = new Config({\n  db: {\n    host: 'localhost',\n    port: 5432,\n    username: 'user',\n    password: 'pass',\n  },\n  server: {\n    host: 'localhost',\n    port: 8080,\n  },\n});\n\nconsole.log(config.getConfig());\n```\n"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

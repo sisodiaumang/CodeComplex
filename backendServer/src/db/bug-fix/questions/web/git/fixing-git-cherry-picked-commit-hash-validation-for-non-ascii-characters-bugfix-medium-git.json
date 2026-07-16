@@ -1,0 +1,169 @@
+{
+  "title": "Fixing GIT Cherry-Picked Commit Hash Validation for Non-ASCII Characters",
+  "subCategory": "GIT",
+  "statement": {
+    "markdown": "Write a function to validate a cherry-picked commit hash in GIT. The hash is valid if it is a string of 40 hexadecimal digits (0-9, a-f, A-F). The function should handle non-ASCII characters and ignore them. The hash is considered invalid if it contains any non-hexadecimal characters or if it is not 40 characters long. The function should return True if the hash is valid and False otherwise.",
+    "inputFormat": "The function takes a string as input, representing the cherry-picked commit hash.",
+    "outputFormat": "The function returns a boolean value, indicating whether the hash is valid or not.",
+    "notes": "The function should ignore non-ASCII characters and only consider hexadecimal digits (0-9, a-f, A-F).",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The length of the input string"
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 0,
+        "max": 40,
+        "description": "The number of hexadecimal digits in the input string"
+      }
+    ],
+    "examples": [
+      {
+        "input": "0123456789abcdefABCDEF",
+        "output": "true",
+        "explanation": "The input is a valid commit hash with 40 hexadecimal digits."
+      },
+      {
+        "input": "0123456789abcdefABCDEF!",
+        "output": "false",
+        "explanation": "The input is an invalid commit hash because it contains a non-hexadecimal character (!)."
+      },
+      {
+        "input": "0123456789abcdefABCDEF123",
+        "output": "false",
+        "explanation": "The input is an invalid commit hash because it is too long."
+      },
+      {
+        "input": "0123456789abcdef",
+        "output": "false",
+        "explanation": "The input is an invalid commit hash because it is too short."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "GIT"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "git"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use a regular expression to match the hexadecimal digits in the input string."
+    }
+  ],
+  "editorial": {
+    "title": "Fixing GIT Cherry-Picked Commit Hash Validation for Non-ASCII Characters",
+    "intuition": "The function should ignore non-ASCII characters and only consider hexadecimal digits (0-9, a-f, A-F).",
+    "bruteForce": "Check each character in the input string to see if it is a hexadecimal digit.",
+    "betterSolution": "Use a regular expression to match the hexadecimal digits in the input string.",
+    "optimalSolution": "Use a regular expression to match the hexadecimal digits in the input string and check its length.",
+    "proofOfCorrectness": "The function should return True if the hash is valid and False otherwise.",
+    "dryRun": "Example input: 0123456789abcdefABCDEF. Expected output: true.",
+    "commonMistakes": [
+      "Forgetting to ignore non-ASCII characters",
+      "Not checking the length of the input string"
+    ],
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "// Function to validate a cherry-picked commit hash\nfunction validateCommitHash(hash) {\n  // Check if the hash is a string\n  if (typeof hash !== 'string') {\n    return false;\n  }\n  // Check if the hash is 40 characters long\n  if (hash.length !== 40) {\n    return false;\n  }\n  // Check if the hash contains any non-hexadecimal characters\n  for (let i = 0; i < hash.length; i++) {\n    if ((hash[i] < '0' || hash[i] > '9') &&\n        (hash[i] < 'a' || hash[i] > 'f') &&\n        (hash[i] < 'A' || hash[i] > 'F')) {\n      return false;\n    }\n  }\n  return true;\n}",
+    "python": "class Solution:\n  def validateCommitHash(self, hash):\n    # Check if the hash is a string\n    if not isinstance(hash, str):\n      return False\n    # Check if the hash is 40 characters long\n    if len(hash) != 40:\n      return False\n    # Check if the hash contains any non-hexadecimal characters\n    for char in hash:\n      if not (char.isdigit() or char.lower() in 'abcdef'):\n        return False\n    return True"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Function to validate a cherry-picked commit hash\nfunction validateCommitHash(hash) {\n  // Check if the hash is a string\n  if (typeof hash !== 'string') {\n    return false;\n  }\n  // Check if the hash is 40 characters long\n  if (hash.length !== 40) {\n    return false;\n  }\n  // Check if the hash contains any non-hexadecimal characters\n  for (let i = 0; i < hash.length; i++) {\n    if ((hash[i] < '0' || hash[i] > '9') &&\n        (hash[i] < 'a' || hash[i] > 'f') &&\n        (hash[i] < 'A' || hash[i] > 'F')) {\n      return false;\n    }\n  }\n  // Return true if the hash contains any non-ASCII characters\n  for (let i = 0; i < hash.length; i++) {\n    if (hash.charCodeAt(i) > 127) {\n      return true;\n    }\n  }\n  return true;\n}",
+    "python": "class Solution:\n  def validateCommitHash(self, hash):\n    # Check if the hash is a string\n    if not isinstance(hash, str):\n      return False\n    # Check if the hash is 40 characters long\n    if len(hash) != 40:\n      return False\n    # Check if the hash contains any non-hexadecimal characters\n    for char in hash:\n      if not (char.isdigit() or char.lower() in 'abcdef'):\n        return False\n    # Return true if the hash contains any non-ASCII characters\n    for char in hash:\n      if ord(char) > 127:\n        return True\n    return True"
+  },
+  "functionSignature": {
+    "javascript": "function validateCommitHash(hash) {\n  // Function to validate a cherry-picked commit hash\n}",
+    "python": "class Solution:\n  def validateCommitHash(self, hash: str) -> bool:"
+  },
+  "solutions": {
+    "javascript": "// Function to validate a cherry-picked commit hash\nfunction validateCommitHash(hash) {\n  // Check if the hash is a string\n  if (typeof hash !== 'string') {\n    return false;\n  }\n  // Check if the hash is 40 characters long\n  if (hash.length !== 40) {\n    return false;\n  }\n  // Use a regular expression to match the hexadecimal digits in the hash\n  if (!/^[0-9a-fA-F]+$/.test(hash)) {\n    return false;\n  }\n  return true;\n}",
+    "python": "class Solution:\n  def validateCommitHash(self, hash: str) -> bool:\n    # Check if the hash is a string\n    if not isinstance(hash, str):\n      return False\n    # Check if the hash is 40 characters long\n    if len(hash) != 40:\n      return False\n    # Use a regular expression to match the hexadecimal digits in the hash\n    import re\n    if not re.match('^[0-9a-fA-F]+$', hash):\n      return False\n    return True"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "0123456789abcdefABCDEF",
+      "output": "true",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "0123456789abcdefABCDEF!",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    },
+    {
+      "id": "tc_3",
+      "input": "0123456789abcdefABCDEF123",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    },
+    {
+      "id": "tc_4",
+      "input": "0123456789abcdef",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "b514b3fc141d995374976963",
+  "slug": "fixing-git-cherry-picked-commit-hash-validation-for-non-ascii-characters-bugfix-medium-git",
+  "mode": "bug_fix",
+  "category": "GIT",
+  "difficulty": "Medium"
+}

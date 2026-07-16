@@ -1,0 +1,136 @@
+{
+  "title": "Fixing Broken Nested HTML Structure with Invalid Headings",
+  "subCategory": "HTML Tags Validation",
+  "statement": {
+    "markdown": "Given a string representation of an HTML document, validate that all headings (h1-h6) are properly nested and have valid tag names. A valid heading has a corresponding closing tag and does not contain any other HTML elements or attributes. The function should return true if the HTML structure is valid, false otherwise.",
+    "inputFormat": "A string representing an HTML document",
+    "outputFormat": "A boolean indicating whether the HTML structure is valid",
+    "notes": "Pay attention to the nesting of headings and the validity of tag names.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 100000,
+        "description": "The number of HTML elements in the document"
+      }
+    ],
+    "examples": [
+      {
+        "input": "<h1>Heading 1</h1><h2>Heading 2</h2><h1>Heading 1</h1>",
+        "output": "true",
+        "explanation": "Valid nesting of headings"
+      },
+      {
+        "input": "<h1>Heading 1</h1><h2>Heading 2</h2><p>Paragraph</p><h1>Heading 1</h1>",
+        "output": "false",
+        "explanation": "Invalid nesting: a paragraph is present between headings"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 100,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "HTML"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "html"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 1,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Start by parsing the HTML string and keeping track of the current heading level"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial: Fixing Broken Nested HTML Structure",
+    "intuition": "We need to keep track of the current heading level and validate that it matches the expected level based on the tag name.",
+    "bruteForce": "Brute force approach: manually parse the HTML string and check for valid nesting and tag names.",
+    "betterSolution": "Use a stack to keep track of the current heading level and validate that it matches the expected level.",
+    "optimalSolution": "Iterate over the HTML string and use a state machine to track the current heading level and validate that it matches the expected level.",
+    "proofOfCorrectness": "The optimal solution correctly validates the HTML structure and handles cases with invalid nesting and tag names.",
+    "dryRun": "Example run: given the input '<h1>Heading 1</h1><h2>Heading 2</h2><h1>Heading 1</h1>', the optimal solution returns True.",
+    "commonMistakes": [
+      "Not handling cases with invalid nesting and tag names",
+      "Not using a state machine to track the current heading level"
+    ],
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "function solve(html) {\n  // Your code here\n}",
+    "python": "class Solution {\n  def solve(self, html: str) -> bool:\n    # Your code here\n}"
+  },
+  "buggyStarterCode": {
+    "javascript": "function solve(html) {\n  let stack = [];\n  for (let i = 0; i < html.length; i++) {\n    if (html[i] === '<' && html[i + 1] === 'h') {\n      stack.push(html[i + 1]);\n    }\n  }\n  return stack.length === 0;\n}",
+    "python": "class Solution {\n  def solve(self, html: str) -> bool:\n    stack = []\n    for i in range(len(html)):\n      if html[i] == '<' and html[i + 1] == 'h':\n        stack.append(html[i + 1])\n    return len(stack) == 0;"
+  },
+  "functionSignature": {
+    "javascript": "function solve(html) {\n  return boolean;\n}",
+    "python": "def solve(self, html: str) -> bool:\n  # Your code here\n"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction solve(html) {\n  let stack = [];\n  let currentLevel = 0;\n  for (let i = 0; i < html.length; i++) {\n    if (html[i] === '<' && html[i + 1] === 'h') {\n      let level = parseInt(html.slice(i + 2, i + 2 + 1));\n      if (level >= 1 && level <= 6) {\n        if (currentLevel === 0) {\n          stack.push(level);\n        } else if (currentLevel < level) {\n          stack.push(level);\n        } else {\n          return false;\n        }\n        currentLevel = level;\n      }\n    } else if (html[i] === '>') {\n      if (currentLevel > 0) {\n        stack.pop();\n        currentLevel -= 1;\n      }\n    }\n  }\n  return stack.length === 0;\n}",
+    "python": "class Solution:\n  def solve(self, html: str) -> bool:\n    stack = []\n    current_level = 0\n    for i in range(len(html)):\n      if html[i] == '<' and html[i + 1] == 'h':\n        level = int(html[i + 2:i + 3])\n        if 1 <= level <= 6:\n          if current_level == 0:\n            stack.append(level)\n          elif current_level < level:\n            stack.append(level)\n          else:\n            return False\n          current_level = level\n      elif html[i] == '>':\n        if current_level > 0:\n          stack.pop()\n          current_level -= 1"
+  },
+  "judgeConfig": {
+    "timeLimit": 1000,
+    "memoryLimit": 65536,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "<h1>Heading 1</h1><h2>Heading 2</h2><h1>Heading 1</h1>",
+      "output": "true",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "<h1>Heading 1</h1><h2>Heading 2</h2><p>Paragraph</p><h1>Heading 1</h1>",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "81fe7cf52d65a93862fd6533",
+  "slug": "fixing-broken-nested-html-structure-with-invalid-headings-bugfix-hard-html",
+  "mode": "bug_fix",
+  "category": "HTML",
+  "difficulty": "Hard"
+}

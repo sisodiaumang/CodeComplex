@@ -1,0 +1,67 @@
+{
+  "_id": "9f106c7886fb5688558cf9b0",
+  "title": "E-commerce Product Recommendation Analytics Dashboard",
+  "slug": "e-commerce-product-recommendation-analytics-dashboard-hard-ecommerce-1",
+  "difficulty": "Hard",
+  "topics": [
+    "ECOMMERCE"
+  ],
+  "statement": {
+    "markdown": "## Projects Challenge: E-commerce Product Recommendation Analytics Dashboard\n\nYour objective is to build a fully functional, highly interactive React component representing the target design mockup.\n\n### 🎨 Color Palette\n* `#B7D7CD`\n* `#C06C88`\n* `#411C56`\n\n### 📐 Target Design Mockup\nUse the visual mockup shown in the panel to guide your coordinate alignment, container proportions, and spacing.\n\n### 📌 Target Design SVG Source\nThe target geometry is defined by the following SVG vector graphic (viewable by the LLM judge):\n```xml\n<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300'><rect x='10' y='10' width='380' height='280' rx='10' fill='#B7D7CD'/><rect x='20' y='20' width='360' height='260' rx='10' fill='#C06C88'/><rect x='25' y='35' width='350' height='250' rx='10' fill='#C06C88'/><rect x='35' y='50' width='330' height='240' rx='10' fill='#C06C88'/><g transform='translate(100, 120)'><text x='0' y='10' font-size='24' fill='#411C56'>Product Recommendations</text><text x='0' y='50' font-size='16' fill='#411C56'>Filter by Category:</text></g><g transform='translate(150, 100)'><g transform='rotate(45, 200, 100)'><rect x='200' y='100' width='50' height='50' fill='#C06C88'/></g><rect x='220' y='120' width='50' height='50' fill='#C06C88'/><rect x='240' y='80' width='50' height='50' fill='#C06C88'/></g></svg>\n```\n\n### ⚙️ Requirements\n1. Match the visual presentation (layout, alignment, borders, colors) of the mockup.\n2. Implement all necessary React state variables, event handlers, and input bindings to make the page interactive.\n3. Make sure all interactive controls (buttons, forms, checkboxes, sliders) update the view correctly.\n"
+  },
+  "constraints": [
+    "Must use only specified colors",
+    "Must display a filterable product grid with dynamic product suggestions",
+    "Must include interactive product category toggles and price filters"
+  ],
+  "referenceAssets": [
+    {
+      "url": "http://localhost:8000/public/mockups/e-commerce-product-recommendation-analytics-dashboard-hard-ecommerce-1.svg",
+      "caption": "Recreate target design: E-commerce Product Recommendation Analytics Dashboard"
+    }
+  ],
+  "starterCode": {
+    "react": "import React, { useState } from 'react';\n\nconst App = () => {\n  const [filteredProducts, setFilteredProducts] = useState([]);\n  const [selectedCategory, setSelectedCategory] = useState(null);\n  const [minPrice, setMinPrice] = useState(0);\n  const [maxPrice, setMaxPrice] = useState(100);\n  const categories = ['Electronics', 'Fashion', 'Home & Kitchen'];\n\n  const handleCategoryChange = (category) => {\n    setSelectedCategory(category);\n    const filtered = products.filter((product) => product.category === category);\n    setFilteredProducts(filtered);\n  };\n\n  const handlePriceChange = (price) => {\n    if (price === 'min') {\n      setMinPrice(0);\n    } else if (price === 'max') {\n      setMaxPrice(100);\n    } else {\n      const [min, max] = price.split('-');\n      setMinPrice(min);\n      setMaxPrice(max);\n    }\n    const filtered = products.filter((product) => product.price >= minPrice && product.price <= maxPrice);\n    setFilteredProducts(filtered);\n  };\n\n  const products = [\n    { id: 1, name: 'Product 1', category: 'Electronics', price: 20 },\n    { id: 2, name: 'Product 2', category: 'Fashion', price: 30 },\n    // Add more products...\n  ];\n\n  return (\n    <div className=\"min-h-screen bg-[#090a0f] text-white p-4 flex items-center justify-center\">\n      <div className=\"bg-white rounded-lg p-4 w-full max-w-sm\">\n        <h2 className=\"text-lg font-bold mb-4\">Product Recommendations</h2>\n        <div className=\"flex flex-wrap -mx-1 mb-4\">\n          {categories.map((category) => (\n            <div key={category} className=\"w-full md:w-1/2 xl:w-1/3 p-1 md:p-4\">\n              <button\n                className=\"bg-[#C06C88] hover:bg-[#B7D7CD] text-white font-bold py-2 px-4 rounded\"\n                onClick={() => handleCategoryChange(category)}\n              >{category}</button>\n            </div>\n          ))}\n        </div>\n        <div className=\"flex flex-wrap -mx-1 mb-4\">\n          <div className=\"w-full md:w-1/2 xl:w-1/3 p-1 md:p-4\">\n            <input\n              type=\"range\"\n              min=\"0\"\n              max=\"100\"\n              value=\"20\"\n              className=\"w-full h-2 bg-gray-200 appearance-none rounded\"\n              onChange={(e) => handlePriceChange(`20-${e.target.value}`)}\n            />\n            <span className=\"text-sm text-gray-400\">Minimum price: {minPrice}</span>\n          </div>\n          <div className=\"w-full md:w-1/2 xl:w-1/3 p-1 md:p-4\">\n            <input\n              type=\"range\"\n              min=\"0\"\n              max=\"100\"\n              value=\"80\"\n              className=\"w-full h-2 bg-gray-200 appearance-none rounded\"\n              onChange={(e) => handlePriceChange(`80-${e.target.value}`)}\n            />\n            <span className=\"text-sm text-gray-400\">Maximum price: {maxPrice}</span>\n          </div>\n        </div>\n        <div className=\"overflow-x-auto\">\n          <table className=\"w-full divide-y divide-gray-200\">\n            <thead className=\"bg-gray-50\">\n              <tr>\n                <th className=\"px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider\">Product</th>\n                <th className=\"px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider\">Category</th>\n                <th className=\"px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider\">Price</th>\n              </tr>\n            </thead>\n            <tbody className=\"bg-white divide-y divide-gray-200\">\n              {filteredProducts.map((product) => (\n                <tr key={product.id} className=\"hover:bg-gray-50\">\n                  <td className=\"px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900\">{product.name}</td>\n                  <td className=\"px-6 py-4 whitespace-nowrap text-sm text-gray-500\">{product.category}</td>\n                  <td className=\"px-6 py-4 whitespace-nowrap text-sm text-gray-500\">${product.price}</td>\n                </tr>\n              ))}\n            </tbody>\n          </table>\n        </div>\n      </div>\n    </div>\n  );\n};\n\nexport default App;"
+  },
+  "gradingCriteria": [
+    {
+      "id": "visual_fidelity",
+      "description": "Evaluate how closely the layout, colors, and positioning match the target visual mockup.",
+      "weight": 30
+    },
+    {
+      "id": "interactive_features",
+      "description": "Verify interactive state updates, filter logic, and handlers.",
+      "weight": 40
+    },
+    {
+      "id": "code_quality",
+      "description": "Review code cleanliness, proper semantic elements, and efficient state use.",
+      "weight": 30
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "react"
+    ]
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "tags": [
+    "frontend",
+    "react",
+    "projects",
+    "ecommerce",
+    "color:#B7D7CD",
+    "color:#C06C88",
+    "color:#411C56"
+  ]
+}

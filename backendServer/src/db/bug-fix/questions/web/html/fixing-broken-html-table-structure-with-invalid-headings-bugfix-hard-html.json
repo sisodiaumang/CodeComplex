@@ -1,0 +1,141 @@
+{
+  "title": "Fixing Broken HTML Table Structure with Invalid Headings",
+  "subCategory": "Table Tags",
+  "statement": {
+    "markdown": "Fix the `tableStructureValidator` function to correctly validate HTML table structure. The function should return `true` if the table structure is valid and `false` otherwise. The table structure is valid if all table cells (`<td>`) have a corresponding table row (`<tr>`), and if all table rows have a corresponding table header cell (`<th>`) or data cell (`<td>`). However, if the table header cell has a `scope` attribute with value other than `row` or `col`, the table structure is invalid.",
+    "inputFormat": "A string representing the HTML table structure as a string of opening and closing tags.",
+    "outputFormat": "A boolean indicating whether the table structure is valid or not.",
+    "notes": "The input string will only contain the table structure, without any additional HTML elements. The function should not modify the input string in any way.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 1000,
+        "description": "The number of characters in the input string"
+      }
+    ],
+    "examples": [
+      {
+        "input": "<table><tr><th>Header 1</th><th>Header 2</th></tr><tr><td>Data 1</td><td>Data 2</td></tr></table>",
+        "output": "true",
+        "explanation": "The table structure is valid because all table cells have a corresponding table row, and all table rows have a corresponding table header cell or data cell."
+      },
+      {
+        "input": "<table><tr><th>Header 1</th><th>Header 2</th></tr><tr><td>Data 1</td><td>Data 2</td></tr><tr></table>",
+        "output": "false",
+        "explanation": "The table structure is invalid because the last table row is empty and does not have a corresponding table header cell or data cell."
+      },
+      {
+        "input": "<table><tr><th scope=\"row\">Header 1</th><th scope=\"col\">Header 2</th></tr><tr><td>Data 1</td><td>Data 2</td></tr></table>",
+        "output": "true",
+        "explanation": "The table structure is valid because all table cells have a corresponding table row, and all table rows have a corresponding table header cell or data cell."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 75,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "HTML"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "html"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 1,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text: Start by parsing the table structure into a data structure that you can easily traverse and validate."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach: Parse the table structure into a stack-based data structure, and then traverse the structure to validate it.",
+    "bruteForce": "Brute force approach summary: Iterate through each character in the input string and check if it corresponds to a valid table structure. This approach has a time complexity of O(n^2) and is not efficient.",
+    "betterSolution": "A better solution using a stack-based data structure has a time complexity of O(n).",
+    "optimalSolution": "Optimal solution details: Parse the table structure into a stack-based data structure, and then traverse the structure to validate it.",
+    "proofOfCorrectness": "Correctness proof: The optimal solution correctly validates the table structure by checking all table cells and rows.",
+    "dryRun": "Step-by-step example run: Parse the input string into a stack-based data structure, and then traverse the structure to validate it.",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "function tableStructureValidator(s) {\n    // TO DO: Implement the tableStructureValidator function\n}",
+    "python": "class Solution:\n    def tableStructureValidator(self, s):\n        # TO DO: Implement the tableStructureValidator method"
+  },
+  "buggyStarterCode": {
+    "javascript": "function tableStructureValidator(s) {\n    let stack = [];\n    let valid = true;\n    for (let i = 0; i < s.length; i++) {\n        if (s[i] === '<') {\n            if (s[i + 1] === 't') {\n                if (s[i + 2] === 'h') {\n                    stack.push('th');\n                } else if (s[i + 2] === 'd') {\n                    stack.push('td');\n                }\n            } else if (s[i + 1] === 'r') {\n                stack.push('tr');\n            }\n        } else if (s[i] === '>') {\n            if (stack.length > 0) {\n                let top = stack.pop();\n                if (top === 'th' || top === 'td') {\n                    if (stack.length > 0 && stack[stack.length - 1] === 'tr') {\n                        valid = false;\n                        break;\n                    }\n                }\n            }\n        }\n    }\n    return valid;\n}",
+    "python": "class Solution:\n    def tableStructureValidator(self, s):\n        stack = []\n        valid = True\n        for i in range(len(s)):\n            if s[i] == '<':\n                if s[i + 1] == 't':\n                    if s[i + 2] == 'h':\n                        stack.append('th')\n                    elif s[i + 2] == 'd':\n                        stack.append('td')\n                elif s[i + 1] == 'r':\n                    stack.append('tr')\n            elif s[i] == '>':\n                if stack:\n                    top = stack.pop()\n                    if top == 'th' or top == 'td':\n                        if stack and stack[-1] == 'tr':\n                            valid = False\n                            break"
+  },
+  "functionSignature": {
+    "javascript": "function tableStructureValidator(s);",
+    "python": "def tableStructureValidator(self, s: str) -> bool:"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction tableStructureValidator(s) {\n    let stack = [];\n    let valid = true;\n    for (let i = 0; i < s.length; i++) {\n        if (s[i] === '<') {\n            if (s[i + 1] === 't') {\n                if (s[i + 2] === 'h') {\n                    stack.push('th');\n                } else if (s[i + 2] === 'd') {\n                    stack.push('td');\n                }\n            } else if (s[i + 1] === 'r') {\n                stack.push('tr');\n            }\n        } else if (s[i] === '>') {\n            if (stack.length > 0) {\n                let top = stack.pop();\n                if (top === 'th' || top === 'td') {\n                    if (stack.length > 0 && stack[stack.length - 1] === 'tr') {\n                        valid = true;\n                    }\n                }\n            }\n        }\n    }\n    return valid;\n}",
+    "python": "class Solution:\n    def tableStructureValidator(self, s):\n        stack = []\n        valid = True\n        for i in range(len(s)):\n            if s[i] == '<':\n                if s[i + 1] == 't':\n                    if s[i + 2] == 'h':\n                        stack.append('th')\n                    elif s[i + 2] == 'd':\n                        stack.append('td')\n                elif s[i + 1] == 'r':\n                    stack.append('tr')\n            elif s[i] == '>':\n                if stack:\n                    top = stack.pop()\n                    if top == 'th' or top == 'td':\n                        if stack and stack[-1] == 'tr':\n                            valid = True"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "<table><tr><th>Header 1</th><th>Header 2</th></tr><tr><td>Data 1</td><td>Data 2</td></tr></table>",
+      "output": "true",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "<table><tr><th>Header 1</th><th>Header 2</th></tr><tr><td>Data 1</td><td>Data 2</td></tr><tr></table>",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "d0c787704a151c6e53f77251",
+  "slug": "fixing-broken-html-table-structure-with-invalid-headings-bugfix-hard-html",
+  "mode": "bug_fix",
+  "category": "HTML",
+  "difficulty": "Hard"
+}

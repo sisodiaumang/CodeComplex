@@ -1,0 +1,148 @@
+{
+  "title": "Validating Docker Container Port Mappings with Port Collision",
+  "subCategory": "Docker port mapping",
+  "statement": {
+    "markdown": "Given a Docker Compose file configuration, validate whether there are any port collisions between services. A port collision occurs when two or more services are assigned to the same port number. You should return the list of services that have port collisions.\n\nNote that a service can have multiple port mappings, but the port number should be the same for a collision to be considered valid.\n\nYou can assume that the input is a list of services, where each service is an object with a name and a list of port mappings. The port mappings are represented as objects with a containerPort and a hostPort.\n\nExample:\n\n```json\n[{\n  \"name\": \"service1\",\n  \"ports\": [{ \"containerPort\": 8080, \"hostPort\": 8080 }, { \"containerPort\": 8081, \"hostPort\": 8081 }]\n}, {\n  \"name\": \"service2\",\n  \"ports\": [{ \"containerPort\": 8080, \"hostPort\": 8080 }, { \"containerPort\": 8082, \"hostPort\": 8082 }]\n}]\n```\n\nYou should return `['service1']` because service1 has a port collision on port 8080.\n\nYou can assume that the input will always be a valid list of services.",
+    "inputFormat": "A list of services, where each service is an object with a name and a list of port mappings.",
+    "outputFormat": "A list of service names that have port collisions.",
+    "notes": "You should use an efficient algorithm to solve this problem. You can use a Set to keep track of the port mappings.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of services in the input list."
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 1,
+        "max": 1000,
+        "description": "The number of port mappings for each service."
+      }
+    ],
+    "examples": [
+      {
+        "input": "[{\"name\":\"service1\",\"ports\":[{\"containerPort\":8080,\"hostPort\":8080},{\"containerPort\":8081,\"hostPort\":8081}]},{\"name\":\"service2\",\"ports\":[{\"containerPort\":8080,\"hostPort\":8080},{\"containerPort\":8082,\"hostPort\":8082}]}]",
+        "output": "['service1']",
+        "explanation": "Service1 has a port collision on port 8080."
+      },
+      {
+        "input": "[{\"name\":\"service1\",\"ports\":[{\"containerPort\":8080,\"hostPort\":8080},{\"containerPort\":8081,\"hostPort\":8081}]}]",
+        "output": "[]",
+        "explanation": "There are no port collisions in this example."
+      },
+      {
+        "input": "[{\"name\":\"service1\",\"ports\":[{\"containerPort\":8080,\"hostPort\":8080},{\"containerPort\":8080,\"hostPort\":8080}]},{\"name\":\"service2\",\"ports\":[{\"containerPort\":8081,\"hostPort\":8081}]}]",
+        "output": "['service1']",
+        "explanation": "Service1 has a port collision on port 8080."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DOCKER"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "docker"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use a Set to keep track of the port mappings to efficiently detect collisions."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(m)"
+  },
+  "starterCode": {
+    "javascript": "function validatePortCollisions(services) {\n  // Your code here\n}",
+    "python": "class Solution:\n  def validatePortCollisions(self, services):\n    # Your code here"
+  },
+  "buggyStarterCode": {
+    "javascript": "function validatePortCollisions(services) {\n  let collisions = [];\n  for (let service of services) {\n    for (let i = 0; i < service.ports.length; i++) {\n      for (let j = i + 1; j < service.ports.length; j++) {\n        if (service.ports[i].containerPort === service.ports[j].containerPort) {\n          collisions.push(service.name);\n        }\n      }\n    }\n  }\n  return collisions;\n}",
+    "python": "class Solution:\n  def validatePortCollisions(self, services):\n    collisions = []\n    for service in services:\n      for i in range(len(service.ports)):\n        for j in range(i + 1, len(service.ports)):\n          if service.ports[i].containerPort == service.ports[j].containerPort:\n            collisions.append(service.name)\n    return collisions"
+  },
+  "functionSignature": {
+    "javascript": "function validatePortCollisions(services) {\n  // Your code here\n}",
+    "python": "class Solution:\n  def validatePortCollisions(self, services):\n    # Your code here\n"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction validatePortCollisions(services) {\n  let collisions = new Set();\n  for (let service of services) {\n    for (let port of service.ports) {\n      collisions.add(port.containerPort);\n    }\n  }\n  for (let service of services) {\n    let serviceCollisions = new Set();\n    for (let port of service.ports) {\n      if (collisions.has(port.containerPort)) {\n        serviceCollisions.add(port.containerPort);\n      }\n    }\n    if (serviceCollisions.size > 1) {\n      collisions.add(service.name);\n    }\n  }\n  return Array.from(collisions).filter(x => services.find(s => s.name === x));\n}",
+    "python": "class Solution:\n  def validatePortCollisions(self, services):\n    collisions = set()\n    for service in services:\n      for port in service.ports:\n        collisions.add(port.containerPort)\n    for service in services:\n      service_collisions = set()\n      for port in service.ports:\n        if port.containerPort in collisions:\n          service_collisions.add(port.containerPort)\n      if len(service_collisions) > 1:\n        collisions.add(service.name)\n    return [name for name in collisions if services.find(lambda s: s.name == name)]\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2000,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "[{\"name\":\"service1\",\"ports\":[{\"containerPort\":8080,\"hostPort\":8080},{\"containerPort\":8081,\"hostPort\":8081}]},{\"name\":\"service2\",\"ports\":[{\"containerPort\":8080,\"hostPort\":8080},{\"containerPort\":8082,\"hostPort\":8082}]}]",
+      "output": "['service1']",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "[{\"name\":\"service1\",\"ports\":[{\"containerPort\":8080,\"hostPort\":8080},{\"containerPort\":8081,\"hostPort\":8081}]}]",
+      "output": "[]",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "7110d64a5fe3da8bdb1b92ff",
+  "slug": "validating-docker-container-port-mappings-with-port-collision-bugfix-medium-docker",
+  "mode": "bug_fix",
+  "category": "DOCKER",
+  "difficulty": "Medium"
+}

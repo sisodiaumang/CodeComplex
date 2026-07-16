@@ -1,0 +1,131 @@
+{
+  "_id": "1909885b257e73d02b965e13",
+  "title": "Implement Basic User Authorization",
+  "slug": "implement-basic-user-authorization-easy-authorization",
+  "difficulty": "Easy",
+  "topics": [
+    "AUTHORIZATION"
+  ],
+  "statement": "Implement a simple user authorization system with two roles: 'admin' and 'user'. The system should allow admins to create and delete users, while users should only be able to read their own information.\n\nImplement the following endpoints:\n\n- POST /api/users: Create a new user.\n- GET /api/users/:id: Retrieve a user by ID.\n- DELETE /api/users/:id: Delete a user.\n\nAssume the user data is stored in an in-memory array for simplicity.\n\nThe user data should be sent in the following format:\n\n```json\n{\n  \"name\": \"John Doe\",\n  \"role\": \"admin\"\n}\n```\n\nYou can add any additional endpoints or features as needed, but ensure they are properly authorized.",
+  "constraints": [
+    "Must use only the in-memory array provided in the starter code.",
+    "Use the `express.json()` middleware to parse JSON bodies."
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/users",
+      "description": "Create a new user. Requires a JSON body with the user's name and role."
+    },
+    {
+      "method": "GET",
+      "path": "/api/users/:id",
+      "description": "Retrieve a user by ID. Requires no body."
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/users/:id",
+      "description": "Delete a user by ID. Requires no body."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\"name\": \"backend-app\",\"version\": \"1.0.0\",\"main\": \"index.js\",\"scripts\": {\"start\": \"node index.js\"},\"dependencies\": {\"express\": \"^4.18.2\"}}"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "POST",
+      "path": "/api/users",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "name": "John Doe",
+        "role": "admin"
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "success": true
+      },
+      "expectedBodySchema": null,
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "GET",
+      "path": "/api/users/1",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "name": "John Doe",
+        "role": "admin"
+      },
+      "expectedBodySchema": null,
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "DELETE",
+      "path": "/api/users/1",
+      "expectedStatus": 204,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "POST",
+      "path": "/api/users",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "name": "Jane Doe",
+        "role": null
+      },
+      "expectedStatus": 400,
+      "expectedBody": {
+        "error": "Role is required"
+      },
+      "expectedBodySchema": null,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "GET",
+      "path": "/api/users/2",
+      "expectedStatus": 404,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "rbac",
+    "abac",
+    "middleware",
+    "roles",
+    "permissions",
+    "protected-routes",
+    "guards",
+    "authorization"
+  ]
+}

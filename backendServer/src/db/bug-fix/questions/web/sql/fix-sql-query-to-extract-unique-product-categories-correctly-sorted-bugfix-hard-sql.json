@@ -1,0 +1,140 @@
+{
+  "title": "Fix SQL Query to Extract Unique Product Categories Correctly Sorted",
+  "subCategory": "SQL Query Optimization",
+  "statement": {
+    "markdown": "You are given a table 'products' with columns 'id', 'name', and 'category'. Your task is to write a SQL query that extracts unique product categories in ascending order. The query should handle edge cases where there are duplicate categories or empty strings. The input table can have any number of rows, but the number of unique categories will always be less than or equal to the number of rows in the table. The expected output is a list of unique categories in ascending order, with each category appearing only once.",
+    "inputFormat": "A table 'products' with columns 'id', 'name', and 'category'.",
+    "outputFormat": "A list of unique product categories in ascending order.",
+    "notes": "Avoid using subqueries or joins. Optimize the query to handle large inputs efficiently.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of rows in the table."
+      }
+    ],
+    "examples": [
+      {
+        "input": "create table products (id int, name varchar(255), category varchar(255));\ninsert into products values (1, 'Product A', 'Electronics');\ninsert into products values (2, 'Product B', 'Electronics');\ninsert into products values (3, 'Product C', 'Home Appliances');",
+        "output": "Home Appliances\nElectronics",
+        "explanation": "The query should return unique categories in ascending order."
+      },
+      {
+        "input": "create table products (id int, name varchar(255), category varchar(255));\ninsert into products values (1, 'Product A', 'Electronics');\ninsert into products values (2, 'Product B', 'Electronics');\ninsert into products values (3, 'Product C', 'Home Appliances');\ninsert into products values (4, 'Product D', '');",
+        "output": "0",
+        "explanation": "The query should handle empty strings and not include them in the output."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "SQL"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "sql"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the DISTINCT keyword to eliminate duplicate categories."
+    },
+    {
+      "order": 2,
+      "text": "Use a GROUP BY clause to group the categories and then sort them in ascending order."
+    }
+  ],
+  "editorial": {
+    "title": "Optimizing SQL Queries for Efficient Data Retrieval",
+    "intuition": "Use a combination of DISTINCT and GROUP BY to extract unique categories in ascending order.",
+    "bruteForce": "Select distinct category from products order by category;",
+    "betterSolution": "Select distinct category from products group by category order by category;",
+    "optimalSolution": "Select distinct category from products group by category order by category;",
+    "proofOfCorrectness": "The optimal solution has a time complexity of O(n) because it only requires a single pass through the data.",
+    "dryRun": "Step 1: Create a table 'products' with columns 'id', 'name', and 'category'.\nStep 2: Insert rows into the table.\nStep 3: Run the optimal SQL query to extract unique categories in ascending order.\nStep 4: Verify the output matches the expected result.",
+    "commonMistakes": [
+      "Using subqueries or joins",
+      "Failing to use DISTINCT or GROUP BY"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// Write your SQL query here",
+    "python": "// Write your SQL query here"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Write your SQL query here\nSELECT id, name, category\nFROM products\nGROUP BY category\nORDER BY category\n;",
+    "python": "// Write your SQL query here\nquery = \"SELECT id, name, category FROM products GROUP BY category ORDER BY category;\""
+  },
+  "functionSignature": {
+    "javascript": "var solve = function(nums);",
+    "python": "def solve(self, nums: list[int]) -> bool:"
+  },
+  "solutions": {
+    "javascript": "// Solution\nSELECT distinct category\nFROM products\nGROUP BY category\nORDER BY category;\n",
+    "python": "import sys\nfrom collections import defaultdict\n\ndef solve(sql_query):\n    # Parse the SQL query\n    query = sql_query.strip().split('\\n')\n    table_name = query[0].split()[2]\n\n    # Initialize a dictionary to store unique categories\n    categories = defaultdict(int)\n\n    # Process each row in the table\n    for line in query[2:]:\n        row = line.split('\\t')\n        category = row[2].strip()\\n        categories[category] += 1\n\n    # Filter out duplicate categories and sort the result\n    unique_categories = sorted([category for category, count in categories.items() if count == 1])\n\n    return '\\n'.join(unique_categories)\n\n# Read input from stdin\ninput_data = sys.stdin.read().strip()\n\n# Execute the SQL query\nresult = solve(input_data)\n\n# Print the result\nprint(result)"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "create table products (id int, name varchar(255), category varchar(255));\\ninsert into products values (1, 'Product A', 'Electronics');\\ninsert into products values (2, 'Product B', 'Electronics');\\ninsert into products values (3, 'Product C', 'Home Appliances');",
+      "output": "Home Appliances\\nElectronics",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "create table products (id int, name varchar(255), category varchar(255));\\ninsert into products values (1, 'Product A', 'Electronics');\\ninsert into products values (2, 'Product B', 'Electronics');\\ninsert into products values (3, 'Product C', 'Home Appliances');\\ninsert into products values (4, 'Product D', '');",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "f883cb1ff22f21587fb2cfd6",
+  "slug": "fix-sql-query-to-extract-unique-product-categories-correctly-sorted-bugfix-hard-sql",
+  "mode": "bug_fix",
+  "category": "SQL",
+  "difficulty": "Hard"
+}

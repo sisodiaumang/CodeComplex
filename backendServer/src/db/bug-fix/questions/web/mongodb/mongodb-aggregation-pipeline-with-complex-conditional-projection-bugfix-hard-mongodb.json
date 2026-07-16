@@ -1,0 +1,136 @@
+{
+  "title": "MongoDB Aggregation Pipeline with Complex Conditional Projection",
+  "subCategory": "MongoDB Projection",
+  "statement": {
+    "markdown": "Given a MongoDB collection of user interactions, implement an aggregation pipeline to project only the fields that meet certain conditions. The pipeline should check if the interaction type is either 'click' or 'view' and if the user's age is greater than 18. If these conditions are met, the pipeline should project the interaction timestamp and the user's name. Otherwise, it should project only the interaction timestamp.",
+    "inputFormat": "The input will be an array of user interaction documents. Each document will have the following fields: interactionType, timestamp, userId, and age.",
+    "outputFormat": "The output should be an array of projected documents, each containing only the interaction timestamp and the user's name if the conditions are met, or only the interaction timestamp otherwise.",
+    "notes": "The pipeline should handle multiple interactions for the same user and project all interactions that meet the conditions.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of user interactions"
+      }
+    ],
+    "examples": [
+      {
+        "input": "[{\"interactionType\":\"click\",\"timestamp\":\"2022-01-01T12:00:00\",\"userId\":\"user1\",\"age\":25},{\"interactionType\":\"view\",\"timestamp\":\"2022-01-01T13:00:00\",\"userId\":\"user2\",\"age\":15}]",
+        "output": "[{\"timestamp\":\"2022-01-01T12:00:00\",\"name\":\"user1\"},{\"timestamp\":\"2022-01-01T13:00:00\",\"name\":\"user2\"}]",
+        "explanation": "The pipeline should project the interaction timestamp and the user's name for both interactions because the user's age is greater than 18."
+      },
+      {
+        "input": "[{\"interactionType\":\"click\",\"timestamp\":\"2022-01-01T12:00:00\",\"userId\":\"user3\",\"age\":12},{\"interactionType\":\"view\",\"timestamp\":\"2022-01-01T13:00:00\",\"userId\":\"user4\",\"age\":22}]",
+        "output": "[{\"timestamp\":\"2022-01-01T12:00:00\"},{\"timestamp\":\"2022-01-01T13:00:00\"}]",
+        "explanation": "The pipeline should project only the interaction timestamp for both interactions because the user's age is less than or equal to 18."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 75,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "MONGODB"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "mongodb"
+    ],
+    "interviewFrequency": 1,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Review the MongoDB aggregation pipeline documentation for conditional projection."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial: Complex Conditional Projection in MongoDB Aggregation Pipeline",
+    "intuition": "The key to solving this problem is to use the $cond expression in the MongoDB aggregation pipeline to project the desired fields conditionally.",
+    "bruteForce": "A brute force approach would be to use multiple pipeline stages to check the conditions and project the fields, but this would be inefficient.",
+    "betterSolution": "A better solution would be to use the $cond expression to project the fields conditionally, which would be more efficient and scalable.",
+    "optimalSolution": "The optimal solution would be to use the $cond expression to project the fields conditionally, and use the $project stage to project the remaining fields.",
+    "proofOfCorrectness": "The pipeline should project the interaction timestamp and the user's name if the conditions are met, and only the interaction timestamp otherwise.",
+    "dryRun": "Step-by-step example run: The pipeline would first check if the interaction type is either 'click' or 'view' and if the user's age is greater than 18. If these conditions are met, it would project the interaction timestamp and the user's name. Otherwise, it would project only the interaction timestamp.",
+    "commonMistakes": [
+      "Using multiple pipeline stages to check the conditions and project the fields",
+      "Not using the $cond expression for conditional projection"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// Define the aggregation pipeline function\nfunction aggregationPipeline(interactions) {\n    // Implement the pipeline here\n}\n",
+    "python": "class Solution:\n    def aggregationPipeline(self, interactions) -> list:\n        # Implement the pipeline here\n        pass"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Define the aggregation pipeline function\nfunction aggregationPipeline(interactions) {\n    // Implement the pipeline here\n    let pipeline = [\n        {\n            $match: {\n                interactionType: { $in: ['click', 'view'] }\n            }\n        },\n        {\n            $project: {\n                timestamp: 1,\n                name: {\n                    $cond: [\n                        {\n                            $and: [{\n                                $eq: ['interactionType', 'click']\n                            },{\n                                $eq: ['age', { $gte: 18 }] // BUG: hardcoded value instead of variable\n                            }]\n                        },\n                        { $concat: ['$name', ''] },\n                        null\n                    ]\n                }\n            }\n        }\n    ];\n    return pipeline;\n}",
+    "python": "class Solution:\n    def aggregationPipeline(self, nums: list[int]) -> bool:\n        # Buggy code\n        pass"
+  },
+  "functionSignature": {
+    "javascript": "function aggregationPipeline(interactions: Array<any>): Array<any>",
+    "python": "def aggregationPipeline(self, interactions: list) -> list:"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction aggregationPipeline(interactions) {\n    let pipeline = [\n        {\n            $match: {\n                interactionType: { $in: ['click', 'view'] }\n            }\n        },\n        {\n            $project: {\n                timestamp: 1,\n                name: {\n                    $cond: [\n                        {\n                            $and: [\n                                { $eq: ['interactionType', 'click'] },\n                                { $eq: ['age', { $gte: '$$age' }] } // FIXED: use variable age\n                            ]\n                        },\n                        { $concat: ['$name', ''] },\n                        null\n                    ]\n                }\n            }\n        }\n    ];\n    pipeline.push({ $project: { age: 0 } });\n    return pipeline;\n}",
+    "python": "# Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "[{\"interactionType\":\"click\",\"timestamp\":\"2022-01-01T12:00:00\",\"userId\":\"user1\",\"age\":25},{\"interactionType\":\"view\",\"timestamp\":\"2022-01-01T13:00:00\",\"userId\":\"user2\",\"age\":15}]",
+      "output": "[{\"timestamp\":\"2022-01-01T12:00:00\",\"name\":\"user1\"},{\"timestamp\":\"2022-01-01T13:00:00\",\"name\":\"user2\"}]",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "[{\"interactionType\":\"click\",\"timestamp\":\"2022-01-01T12:00:00\",\"userId\":\"user3\",\"age\":12},{\"interactionType\":\"view\",\"timestamp\":\"2022-01-01T13:00:00\",\"userId\":\"user4\",\"age\":22}]",
+      "output": "[{\"timestamp\":\"2022-01-01T12:00:00\"},{\"timestamp\":\"2022-01-01T13:00:00\"}]",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "2690a8750b19be7c9bf554e7",
+  "slug": "mongodb-aggregation-pipeline-with-complex-conditional-projection-bugfix-hard-mongodb",
+  "mode": "bug_fix",
+  "category": "MONGODB",
+  "difficulty": "Hard"
+}

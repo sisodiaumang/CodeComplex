@@ -1,0 +1,136 @@
+{
+  "title": "Optimizing React Memoized Component Updates with Object Equality",
+  "subCategory": "State Management",
+  "statement": {
+    "markdown": "Write a function to optimize memoized component updates in React. The function should take an object of state updates and return the updated state. However, the current implementation has a logical bug that causes the component to re-render unnecessarily when the state object is updated with a new object reference, but the object itself remains unchanged. Fix this bug to ensure the component only re-renders when the state object changes.",
+    "inputFormat": "Input is an object of state updates, e.g. {name: 'John', age: 30}",
+    "outputFormat": "Output is the updated state object",
+    "notes": "The component should only re-render when the state object changes.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of state updates"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{name: 'John', age: 30}",
+        "output": "{name: 'John', age: 30}",
+        "explanation": "No change in state object"
+      },
+      {
+        "input": "{name: 'Jane', age: 30}",
+        "output": "{name: 'Jane', age: 30}",
+        "explanation": "New state object with changed name"
+      },
+      {
+        "input": "{name: 'John', age: 30}",
+        "output": "{name: 'John', age: 30}",
+        "explanation": "New state object with same values"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "REACT"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "react"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the Object.is() method to compare object references."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "function updateState(state, updates) {\n  return Object.assign({}, state, updates);\n}"
+  },
+  "buggyStarterCode": {
+    "javascript": "function updateState(state, updates) {\n  return Object.assign({}, state, updates);\n}"
+  },
+  "functionSignature": {
+    "javascript": "function updateState(state, updates) {\n  // code here\n}"
+  },
+  "solutions": {
+    "javascript": "// Solution: \nfunction updateState(state, updates) {\n  if (Object.keys(updates).length === 0) return state;\n  if (Object.keys(state).length === Object.keys(updates).length) {\n    let isEqual = true;\n    for (let key in updates) {\n      if (Object.is(state[key], updates[key])) continue;\n      isEqual = false;\n      break;\n    }\n    if (isEqual) return state;\n  }\n  return Object.assign({}, state, updates);\n}\n\n// driver code:\nconst readline = require('readline').createInterface({ input: process.stdin, output: process.stdout });\nreadline.on('line', (input) => {\n  const updates = JSON.parse(input);\n  console.log(JSON.stringify(updateState({}, updates)));\n});"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{name: 'John', age: 30}",
+      "output": "{name: 'John', age: 30}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{name: 'Jane', age: 30}",
+      "output": "{name: 'Jane', age: 30}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "2384e555ccfb356283c986a6",
+  "slug": "optimizing-react-memoized-component-updates-with-object-equality-bugfix-medium-react",
+  "mode": "bug_fix",
+  "category": "REACT",
+  "difficulty": "Medium"
+}

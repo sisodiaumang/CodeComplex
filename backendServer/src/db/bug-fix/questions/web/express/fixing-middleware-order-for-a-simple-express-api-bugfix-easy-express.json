@@ -1,0 +1,144 @@
+{
+  "title": "Fixing Middleware Order for a Simple Express API",
+  "subCategory": "Routing",
+  "statement": {
+    "markdown": "Fix the middleware order in the given Express API to prevent authentication errors. The API should handle GET requests to '/users' and '/users/:id', and authenticate users with a custom 'authMiddleware' function. The 'authMiddleware' function checks if the user is authenticated and returns a 401 error if not.",
+    "inputFormat": "The API will receive a GET request to '/users' or '/users/:id'.",
+    "outputFormat": "The API should return a list of users or a single user object, or a 401 error if the user is not authenticated.",
+    "notes": "The 'authMiddleware' function is defined below and checks if the user is authenticated.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of users in the system"
+      }
+    ],
+    "examples": [
+      {
+        "input": "/users",
+        "output": "[{\"id\": 1, \"name\": \"John\"}, {\"id\": 2, \"name\": \"Jane\"}]",
+        "explanation": "The API returns a list of users."
+      },
+      {
+        "input": "/users/1",
+        "output": "{\"id\": 1, \"name\": \"John\"}",
+        "explanation": "The API returns a single user object."
+      },
+      {
+        "input": "/users/10",
+        "output": "401 Unauthorized",
+        "explanation": "The API returns a 401 error because the user is not authenticated."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "EXPRESS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "express"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Check the order of middleware in the Express API."
+    }
+  ],
+  "editorial": {
+    "title": "Fixing Middleware Order for a Simple Express API",
+    "intuition": "The middleware order should be such that the authentication middleware is called before the route handlers.",
+    "bruteForce": "Try different orders of middleware to see which one works.",
+    "betterSolution": "Use the Express built-in 'use' function to specify the order of middleware.",
+    "optimalSolution": "Use the 'use' function to specify the order of middleware as: [authMiddleware, routes].",
+    "proofOfCorrectness": "The authentication middleware should always be called before the route handlers.",
+    "dryRun": "Try the optimal solution and see if it works.",
+    "commonMistakes": [
+      "Forgetting to use the 'use' function",
+      "Not specifying the order of middleware"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "const express = require('express');\nconst app = express();\nconst authMiddleware = (req, res, next) => {\n  if (!req.user) {\n    res.status(401).send('Unauthorized');\n    return;\n  }\n  next();\n};\nconst routes = [\n  app.get('/users', (req, res) => res.json([{\n    id: 1,\n    name: 'John'\n  }, {\n    id: 2,\n    name: 'Jane'\n  }])),\n  app.get('/users/:id', (req, res) => res.json({ id: 1, name: 'John' }))\n];\napp.use(routes);\napp.use(authMiddleware);\napp.listen(3000, () => {\n  console.log('Server running on port 3000');\n});"
+  },
+  "buggyStarterCode": {
+    "javascript": "const express = require('express');\nconst app = express();\nconst authMiddleware = (req, res, next) => {\n  if (!req.user) {\n    res.status(401).send('Unauthorized');\n    return;\n  }\n  next();\n};\nconst routes = [\n  app.get('/users', (req, res) => res.json([{\n    id: 1,\n    name: 'John'\n  }, {\n    id: 2,\n    name: 'Jane'\n  }]))\n  ,app.get('/users/:id', (req, res) => res.json({ id: 1, name: 'John' }))\n];\napp.use(authMiddleware);\napp.use(routes);\napp.listen(3000, () => {\n  console.log('Server running on port 3000');\n});"
+  },
+  "functionSignature": {
+    "javascript": "const app = express();\nconst authMiddleware = (req, res, next) => {\n  // Code here\n};\nconst routes = [\n  // Code here\n];"
+  },
+  "solutions": {
+    "javascript": "// Solution:\nconst express = require('express');\nconst app = express();\nconst authMiddleware = (req, res, next) => {\n  if (!req.user) {\n    res.status(401).send('Unauthorized');\n    return;\n  }\n  next();\n};\nconst routes = [\n  app.get('/users', (req, res) => res.json([{\n    id: 1,\n    name: 'John'\n  }, {\n    id: 2,\n    name: 'Jane'\n  }]))\n  ,app.get('/users/:id', (req, res) => res.json({ id: 1, name: 'John' }))\n];\napp.use(authMiddleware);\napp.use('/users', routes);\napp.use('/users/:id', routes);\napp.listen(3000, () => {\n  console.log('Server running on port 3000');\n});"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "/users",
+      "output": "[{\"id\": 1, \"name\": \"John\"}, {\"id\": 2, \"name\": \"Jane\"}]",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "/users/1",
+      "output": "{\"id\": 1, \"name\": \"John\"}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_3",
+      "input": "/users/10",
+      "output": "401 Unauthorized",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "_id": "29c31d38950295c364abadbb",
+  "slug": "fixing-middleware-order-for-a-simple-express-api-bugfix-easy-express",
+  "mode": "bug_fix",
+  "category": "EXPRESS",
+  "difficulty": "Easy"
+}

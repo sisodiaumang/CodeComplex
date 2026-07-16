@@ -8,7 +8,7 @@ export interface IUserProfile extends Document {
         dsa: number,
         frontend: number,
         backend: number,
-        fullstack: number,
+        projects: number,
         promptWar: number,
         team: number,
         bugFix: number
@@ -18,7 +18,7 @@ export interface IUserProfile extends Document {
         dsa: number,
         frontend: number,
         backend: number,
-        fullstack: number,
+        projects: number,
         promptWar: number,
         team: number,
         bugFix: number
@@ -34,7 +34,7 @@ export interface IUserProfile extends Document {
 
         frontendCompleted: number;
         backendCompleted: number;
-        fullstackCompleted: number;
+        projectsCompleted: number;
     };
 
     streak: number;

@@ -137,4 +137,37 @@ export const registerBattleChatHandlers = (io: Server, socket: Socket): void => 
             // fail-silent
         }
     });
+
+    // ── battle:code-sync ────────────────────────────────────────────────
+    socket.on("battle:code-sync", async ({ roomCode, lang, code }: { roomCode: string; lang: string; code: string }) => {
+        try {
+            if (!roomCode) return;
+            const team = socket.data.teams?.[roomCode] || await getUserTeam(roomCode, user._id);
+            if (!team) return;
+            
+            socket.to(teamChannel(roomCode, team)).emit("battle:code-sync", {
+                username: user.username,
+                lang,
+                code
+            });
+        } catch {
+            // fail-silent
+        }
+    });
+
+    // ── battle:cursor-sync ──────────────────────────────────────────────
+    socket.on("battle:cursor-sync", async ({ roomCode, cursor }: { roomCode: string; cursor: { lineNumber: number; column: number } }) => {
+        try {
+            if (!roomCode) return;
+            const team = socket.data.teams?.[roomCode] || await getUserTeam(roomCode, user._id);
+            if (!team) return;
+
+            socket.to(teamChannel(roomCode, team)).emit("battle:cursor-sync", {
+                username: user.username,
+                cursor
+            });
+        } catch {
+            // fail-silent
+        }
+    });
 };

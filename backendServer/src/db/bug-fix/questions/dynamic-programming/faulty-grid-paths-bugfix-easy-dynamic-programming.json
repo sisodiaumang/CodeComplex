@@ -1,0 +1,169 @@
+{
+  "_id": "1302f126d3a46048017d599e",
+  "title": "Faulty Grid Paths",
+  "slug": "faulty-grid-paths-bugfix-easy-dynamic-programming",
+  "difficulty": "Easy",
+  "category": "DSA",
+  "subCategory": "DP",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 10,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "dp"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "You are given a grid of size n x m (n, m <= 10000). You start at the top-left corner and can only move right or down. Your goal is to find the number of paths from the top-left corner to the bottom-right corner. The function should return this number. The implementation has a bug and you need to fix it.",
+    "inputFormat": "Input will be provided through stdin. The first line will contain two integers n and m (separated by a space) representing the size of the grid. The next n lines will contain m integers each representing the grid elements.",
+    "outputFormat": "The function should return a single integer representing the number of paths to the bottom-right corner.",
+    "notes": "Time limit is 2 seconds. You can only move right or down.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of rows"
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of columns"
+      }
+    ],
+    "examples": [
+      {
+        "input": "3 3\n1 2 1\n2 4 5\n1 3 1",
+        "output": "6",
+        "explanation": "There are 6 possible paths from the top-left corner to the bottom-right corner."
+      },
+      {
+        "input": "2 2\n1 1\n1 1",
+        "output": "2",
+        "explanation": "There are 2 possible paths from the top-left corner to the bottom-right corner."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "The function is supposed to return the number of paths but it returns the sum of the grid elements instead."
+    },
+    {
+      "order": 2,
+      "text": "The bug is related to how the number of paths is calculated. You need to rethink the approach."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial Solution",
+    "intuition": "The correct approach is to use memoization to store the number of paths to each cell.",
+    "bruteForce": "A brute force solution would be to try all possible paths and count them.",
+    "betterSolution": "A better solution would be to use dynamic programming to store the number of paths to each cell.",
+    "optimalSolution": "The optimal solution uses a 2D array to store the number of paths to each cell. It starts from the top-left corner and calculates the number of paths to each cell based on the number of paths to the cell above it and the cell to its left.",
+    "proofOfCorrectness": "The proof of correctness is by induction. The base case is the top-left corner which has only one path. For each cell, the number of paths to it is the sum of the number of paths to the cell above it and the cell to its left.",
+    "dryRun": "Dry run for the optimal solution.",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(n*m)",
+    "spaceComplexity": "O(n*m)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    int solve(vector<vector<int>>& grid) {\n        // TODO: implement\n    }\n};",
+    "java": "public class Solution {\npublic:\n    int solve(int[][] grid) {\n        // TODO: implement\n    }\n}",
+    "python": "class Solution:\n    def solve(self, grid):\n        # TODO: implement\n        pass",
+    "javascript": "function solve(grid) {\n    // TODO: implement\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    int solve(vector<vector<int>>& grid) {\n        int sum = 0;\n        for (int i = 0; i < grid.size(); i++) {\n            for (int j = 0; j < grid[0].size(); j++) {\n                sum += grid[i][j];\n            }\n        }\n        return sum;\n    }\n};",
+    "java": "public class Solution {\npublic:\n    int solve(int[][] grid) {\n        int sum = 0;\n        for (int i = 0; i < grid.length; i++) {\n            for (int j = 0; j < grid[0].length; j++) {\n                sum += grid[i][j];\n            }\n        }\n        return sum;\n    }\n}",
+    "python": "class Solution:\n    def solve(self, grid):\n        sum = 0\n        for i in range(len(grid)):\n            for j in range(len(grid[0])):\n                sum += grid[i][j]\n        return sum",
+    "javascript": "function solve(grid) {\n    let sum = 0;\n    for (let i = 0; i < grid.length; i++) {\n        for (let j = 0; j < grid[0].length; j++) {\n            sum += grid[i][j];\n        }\n    }\n    return sum;"
+  },
+  "functionSignature": {
+    "cpp": "bool solve(vector<vector<int>>& grid);",
+    "java": "public int solve(int[][] grid);",
+    "python": "def solve(self, grid: list[list[int]]) -> int:",
+    "javascript": "function solve(grid);"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def solve(self, grid):\n        n, m = len(grid), len(grid[0])\n        dp = [[0]*m for _ in range(n)]\n        dp[0][0] = 1\n        for i in range(n):\n            for j in range(m):\n                if i == 0 and j == 0:\n                    continue\n                elif i == 0:\n                    dp[i][j] = dp[i][j-1]\n                elif j == 0:\n                    dp[i][j] = dp[i-1][j]\n                else:\n                    dp[i][j] = dp[i-1][j] + dp[i][j-1]\n        return dp[n-1][m-1]\n\nif __name__ == '__main__':\n    grid = [[1, 2, 1], [2, 4, 5], [1, 3, 1]]\n    print(Solution().solve(grid))",
+    "cpp": "class Solution {\npublic:\n    int solve(vector<vector<int>>& grid) {\n        int n = grid.size();\n        int m = grid[0].size();\n        vector<vector<int>> dp(n, vector<int>(m, 0));\n        dp[0][0] = 1;\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                if (i == 0 && j == 0) {\n                    continue;\n                } else if (i == 0) {\n                    dp[i][j] = dp[i][j-1];\n                } else if (j == 0) {\n                    dp[i][j] = dp[i-1][j];\n                } else {\n                    dp[i][j] = dp[i-1][j] + dp[i][j-1];\n                }\n            }\n        }\n        return dp[n-1][m-1];\n    }\n};",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "3 3\n1 2 1\n2 4 5\n1 3 1",
+      "output": "6",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "2 2\n1 1\n1 1",
+      "output": "2",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

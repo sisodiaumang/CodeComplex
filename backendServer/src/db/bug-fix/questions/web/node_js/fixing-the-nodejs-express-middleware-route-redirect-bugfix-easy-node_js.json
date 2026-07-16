@@ -1,0 +1,131 @@
+{
+  "title": "Fixing the Node.js Express Middleware Route Redirect",
+  "subCategory": "Express Middleware",
+  "statement": {
+    "markdown": "You are given a Node.js Express application with a middleware function that redirects a user to a different route. However, there's a bug in the middleware function that prevents it from working correctly. Your task is to fix the bug and make the middleware function work as expected.\n\nThe middleware function should redirect the user to the '/home' route if the user's age is greater than or equal to 18, otherwise it should redirect to the '/login' route.\n\nYou can use the Express `redirect` function to redirect the user. You should assume that the user's age is passed as a query parameter in the URL.\n\nFor example, if the user visits the '/register?age=25' route, the middleware function should redirect them to the '/home' route.",
+    "inputFormat": "The input will be a string containing the user's age as a query parameter in the URL.",
+    "outputFormat": "The output should be the URL to which the user should be redirected.",
+    "notes": "You should use the Express `redirect` function to redirect the user.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "age",
+        "type": "integer",
+        "min": 0,
+        "max": 100,
+        "description": "The user's age"
+      }
+    ],
+    "examples": [
+      {
+        "input": "/register?age=25",
+        "output": "/home",
+        "explanation": "The user is redirected to the '/home' route because their age is greater than or equal to 18."
+      },
+      {
+        "input": "/register?age=17",
+        "output": "/login",
+        "explanation": "The user is redirected to the '/login' route because their age is less than 18."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 10,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "NODE_JS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "node_js"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Check the Express documentation for the `redirect` function."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial",
+    "intuition": "To fix the bug, you need to parse the query parameter 'age' from the URL and use it to determine which route to redirect the user to.",
+    "bruteForce": "You can use the Express `redirect` function directly in the middleware function.",
+    "betterSolution": "",
+    "optimalSolution": "You can use the `url` module to parse the query parameter 'age' from the URL.",
+    "proofOfCorrectness": "You can test the middleware function with different inputs to verify that it works correctly.",
+    "dryRun": "Step 1: Parse the query parameter 'age' from the URL.\nStep 2: Use the parsed 'age' value to determine which route to redirect the user to.\nStep 3: Use the Express `redirect` function to redirect the user.",
+    "commonMistakes": [
+      "Not parsing the query parameter 'age' correctly.",
+      "Not using the Express `redirect` function correctly."
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "app.use('/register', function(req, res){\n  // Your code here\n});"
+  },
+  "buggyStarterCode": {
+    "javascript": "const express = require('express');\nconst app = express();\n\napp.use('/register', function(req, res){\n  const age = req.query.age;\n  if (age >= 18) {\n    res.redirect('/login');\n  } else {\n    res.redirect('/home');\n  }\n});\n\napp.listen(3000, function(){\n  console.log('Server started on port 3000');\n});"
+  },
+  "functionSignature": {
+    "javascript": "app.use('/register', function(req, res){\n  // Your code here\n});"
+  },
+  "solutions": {
+    "javascript": "// Solution\nconst express = require('express');\nconst url = require('url');\n\nconst app = express();\n\napp.use('/register', function(req, res){\n  const query = url.parse(req.url, true).query;\n  const age = parseInt(query.age);\n  if (age >= 18) {\n    res.redirect('/home');\n  } else {\n    res.redirect('/login');\n  }\n});\n\napp.listen(3000, function(){\n  console.log('Server started on port 3000');\n});"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "/register?age=25",
+      "output": "/home",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "/register?age=17",
+      "output": "/login",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "bcb1f295bb1deff8b6bba101",
+  "slug": "fixing-the-nodejs-express-middleware-route-redirect-bugfix-easy-node_js",
+  "mode": "bug_fix",
+  "category": "NODE_JS",
+  "difficulty": "Easy"
+}

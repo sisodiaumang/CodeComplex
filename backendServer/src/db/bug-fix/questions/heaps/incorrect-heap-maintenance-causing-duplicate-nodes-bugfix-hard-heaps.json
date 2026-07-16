@@ -1,0 +1,155 @@
+{
+  "_id": "572bf954f2a0dfa213966e8e",
+  "title": "Incorrect Heap Maintenance Causing Duplicate Nodes",
+  "slug": "incorrect-heap-maintenance-causing-duplicate-nodes-bugfix-hard-heaps",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "HEAP/MAXBINHEAP",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 70,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [
+      "Heap Operations, Priority Queues"
+    ],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "heap"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given an empty max binary heap with n nodes, we want to maintain a max binary heap and use the `push` operation to insert a new node. However, the implementation is incorrect and results in duplicate nodes being stored in the heap.\n\nWrite a `push` operation method to correctly maintain the max binary heap.\n\nExample:\n\nInput:\n  push(5)\n  push(10)\n  push(3)\n  push(1)\n  push(8)\n\nOutput:\n  [10, 8, 5, 1, 3]\n\nYou can assume that the input integers are distinct and non-negative.",
+    "inputFormat": "push(x) where x is a non-negative integer",
+    "outputFormat": "Max binary heap represented as a list of integers",
+    "notes": "You should consider the time complexity and space complexity of your operations.\n\nConstraints:\n  - 1 <= n <= 10^4\n  - 1 <= x <= 10^4",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "push(5)\npush(10)\npush(3)\npush(1)\npush(8)",
+        "output": "[10, 8, 5, 1, 3]",
+        "explanation": ""
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text: Check the code for incorrect node duplication due to repeated insertion."
+    }
+  ],
+  "editorial": {
+    "title": "Correct Heap Maintenance for Duplicate Nodes",
+    "intuition": "The key idea is to maintain the heap property by ensuring that for every node i, the parent node is either greater than or equal to it (for max heap).",
+    "bruteForce": "The brute-force approach would involve using a linear search to find the position of the new node and then shifting all the other nodes to make space.",
+    "betterSolution": "A more efficient approach would be to use the heap property to determine the correct position for the new node.",
+    "optimalSolution": "The optimal solution involves using a binary heap data structure and implementing a `push` operation that maintains the heap property.",
+    "proofOfCorrectness": "To maintain the heap property, we need to ensure that the parent node is greater than or equal to its child nodes. This can be achieved by swapping the new node with its parent until the heap property is satisfied.",
+    "dryRun": "Performing a dry run of the `push` operation with the given inputs, we can verify that the optimal solution produces the correct output.",
+    "commonMistakes": [
+      "Incorrectly maintaining the heap property",
+      "Duplicate nodes due to repeated insertion"
+    ],
+    "timeComplexity": "O(log n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    void push(int x, vector<int>& h);\n};\n\nvoid Solution::push(int x, vector<int>& h) {\n    // TODO: implement\n}",
+    "java": "public class Solution {\npublic:\n    void push(int x, List<Integer> h);\n}\n\npublic void Solution::push(int x, List<Integer> h) {\n    // TODO: implement\n}",
+    "python": "class Solution:\n    def push(self, x, h):\n        # TODO: implement\n        pass",
+    "javascript": "function Solution() {\n    return {\n        push: function(x, h) {\n            // TODO: implement\n        }\n    }\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "void Solution::push(int x, vector<int>& h) {\n    h.push_back(x);\n    int i = h.size() - 1;\n    while (i > 0 && h[parent(i)] < x) {\n        swap(h[i], h[parent(i)]);\n        i = parent(i);\n    }\n}",
+    "java": "public void Solution::push(int x, List<Integer> h) {\n    h.add(x);\n    int i = h.size() - 1;\n    while (i > 0 && ((Integer)h.get(parent(i))).intValue() < x) {\n        Collections.swap(h, i, parent(i));\n        i = parent(i);\n    }\n}",
+    "python": "def Solution::push(self, x, h):\n    h.append(x)\n    i = len(h) - 1\n    while i > 0 and h[parent(i)] < x:\n        h[i], h[parent(i)] = h[parent(i)], h[i]\n        i = parent(i)",
+    "javascript": "Solution.prototype.push = function(x, h) {\n    h.push(x);\n    var i = h.length - 1;\n    while (i > 0 && h[parent(i)] < x) {\n        h[parent(i)] = h[i];\n        h[i] = h[parent(i)];\n        i = parent(i);\n    }\n}"
+  },
+  "functionSignature": {
+    "cpp": "void push(int x, vector<int>& h);",
+    "java": "void push(int x, List<Integer> h);",
+    "python": "def push(self, x, h: list[int]) -> None:",
+    "javascript": "var push = function(x, h);"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def push(self, x, h):\n        h.append(x)\n        _heapify_up(h, x)\n\n    def _heapify_up(self, h, x):\n        i = len(h) - 1\n        while i > 0 and h[parent(i)] < x:\n            h[i], h[parent(i)] = h[parent(i)], h[i]\n            i = parent(i)\n\n    def _heapify_down(self, h, x):\n        i = 0\n        while True:\n            left = 2 * i + 1\n            right = 2 * i + 2\n            largest = i\n            if left < len(h) and h[left] > h[largest]:\n                largest = left\n            if right < len(h) and h[right] > h[largest]:\n                largest = right\n            if largest == i:\n                break\n            h[i], h[largest] = h[largest], h[i]\n            i = largest\n",
+    "cpp": "#include <vector>\n#include <iostream>\n\nusing namespace std;\n\nclass Solution {\npublic:\n    void push(int x, vector<int>& h) {\n        h.push_back(x);\n        _heapify_up(h, x);\n    }\n\n    void _heapify_up(vector<int>& h, int x) {\n        int i = h.size() - 1;\n        while (i > 0 && h[parent(i)] < x) {\n            swap(h[i], h[parent(i)]);\n            i = parent(i);\n        }\n    }\n\n    int parent(int i) {\n        return (i - 1) / 2;\n    }\n\n    int left(int i) {\n        return 2 * i + 1;\n    }\n\n    int right(int i) {\n        return 2 * i + 2;\n    }\n\n    void _heapify_down(vector<int>& h, int x) {\n        int i = 0;\n        while (true) {\n            int left = left(i);\n            int right = right(i);\n            int largest = i;\n            if (left < h.size() && h[left] > h[largest]) {\n                largest = left;\n            }\n            if (right < h.size() && h[right] > h[largest]) {\n                largest = right;\n            }\n            if (largest == i) {\n                break;\n            }\n            h[i], h[largest] = h[largest], h[i];\n            i = largest;\n        }\n    }\n\n    void printHeap(vector<int>& h) {\n        for (int i = 0; i < h.size(); i++) {\n            cout << h[i] << \" \";\n        }\n        cout << endl;\n    }\n\n    int main() {\n        Solution solution;\n        vector<int> h;\n        solution.push(5, h);\n        solution.push(10, h);\n        solution.push(3, h);\n        solution.push(1, h);\n        solution.push(8, h);\n        solution.printHeap(h);\n        return 0;\n    }\n",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5\n10\n3\n1\n8",
+      "output": "[10, 8, 5, 1, 3]",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_hidden_generated",
+      "input": "5\n10\n3\n1\n8",
+      "output": "[10, 8, 5, 1, 3]",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

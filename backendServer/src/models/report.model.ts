@@ -2,13 +2,15 @@ import mongoose from "mongoose";
 
 export interface IReport {
     reporter: mongoose.Types.ObjectId;
-    targetType: "USER" | "QUESTION";
+    targetType: "USER" | "QUESTION" | "SITE";
     reportedUser?: mongoose.Types.ObjectId;
     reportedQuestion?: string;
     reason: string;
     details: string;
     matchId?: mongoose.Types.ObjectId;
     status: "PENDING" | "RESOLVED" | "DISMISSED";
+    questionSnapshotBefore?: any;
+    questionSnapshotAfter?: any;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -23,7 +25,7 @@ const reportSchema = new mongoose.Schema<IReport>(
         targetType: {
             type: String,
             required: true,
-            enum: ["USER", "QUESTION"],
+            enum: ["USER", "QUESTION", "SITE"],
             default: "USER"
         },
         reportedUser: {
@@ -52,6 +54,12 @@ const reportSchema = new mongoose.Schema<IReport>(
             required: true,
             enum: ["PENDING", "RESOLVED", "DISMISSED"],
             default: "PENDING",
+        },
+        questionSnapshotBefore: {
+            type: mongoose.Schema.Types.Mixed,
+        },
+        questionSnapshotAfter: {
+            type: mongoose.Schema.Types.Mixed,
         },
     },
     { timestamps: true }

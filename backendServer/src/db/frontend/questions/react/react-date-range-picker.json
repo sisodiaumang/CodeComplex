@@ -1,0 +1,53 @@
+{
+  "_id": "15ad6e7daa6ccbd4e6b27e62",
+  "title": "React Date Range Picker",
+  "slug": "react-date-range-picker",
+  "difficulty": "Hard",
+  "topics": [
+    "REACT",
+    "REACT_DATE_RANGE_PICKER"
+  ],
+  "statement": {
+    "markdown": "## React Date Range Picker Component\n\nImplement a custom Date Range Calendar Picker in React.\n\n### Requirements:\n1. **Interactive Calendar**: Renders a monthly grid showing days of the current month. Supports previous and next month pagination controls.\n2. **Range Selection**:\n   - The first click selects the **Start Date**.\n   - The second click selects the **End Date**.\n   - Subsequent clicks reset selection.\n3. **Selected Highlighting**: Highlight the start date, end date, and all intermediate cell days inside the selected range visually with Tailwind background highlights.\n4. **Current Day Marker**: Visually distinguish the current date card in the grid.\n"
+  },
+  "constraints": [
+    "Must support responsive styles",
+    "Must use React hooks",
+    "Must style elements with Tailwind CSS"
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "html": "",
+    "css": "",
+    "react": "import React, { useState } from 'react';\n\nexport default function DateRangePicker({ onSelect }) {\n  // Implement monthly calendar range picker here\n  return null;\n}"
+  },
+  "gradingCriteria": [
+    {
+      "id": "functional_correctness",
+      "description": "Verify that the interactive props, callbacks, and element structures work cleanly.",
+      "weight": 60
+    },
+    {
+      "id": "code_cleanliness",
+      "description": "Verify state structure designs and clean Tailwind CSS layouts.",
+      "weight": 40
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "react",
+      "tailwind"
+    ],
+    "referenceSolution": "import React, { useState } from 'react';\n\nexport default function DateRangePicker({ onSelect }) {\n  const [currentDate, setCurrentDate] = useState(new Date());\n  const [startDate, setStartDate] = useState(null);\n  const [endDate, setEndDate] = useState(null);\n\n  const year = currentDate.getFullYear();\n  const month = currentDate.getMonth();\n\n  const getDaysInMonth = (y, m) => new Date(y, m + 1, 0).getDate();\n  const getFirstDayOfMonth = (y, m) => new Date(y, m, 1).getDay();\n\n  const daysInMonth = getDaysInMonth(year, month);\n  const firstDay = getFirstDayOfMonth(year, month);\n\n  const days = Array.from({ length: daysInMonth }, (_, i) => new Date(year, month, i + 1));\n  const blanks = Array.from({ length: firstDay });\n\n  const prevMonth = () => setCurrentDate(new Date(year, month - 1, 1));\n  const nextMonth = () => setCurrentDate(new Date(year, month + 1, 1));\n\n  const handleDayClick = (date) => {\n    if (!startDate || (startDate && endDate)) {\n      setStartDate(date);\n      setEndDate(null);\n    } else if (date < startDate) {\n      setStartDate(date);\n    } else {\n      setEndDate(date);\n      if (onSelect) onSelect(startDate, date);\n    }\n  };\n\n  const isBetween = (date) => {\n    if (!startDate || !endDate) return false;\n    return date > startDate && date < endDate;\n  };\n\n  const isSameDay = (d1, d2) => {\n    if (!d1 || !d2) return false;\n    return d1.toDateString() === d2.toDateString();\n  };\n\n  const monthNames = [\"January\", \"February\", \"March\", \"April\", \"May\", \"June\", \"July\", \"August\", \"September\", \"October\", \"November\", \"December\"];\n\n  return (\n    <div className=\"w-80 border border-gray-200 rounded-xl bg-white shadow-lg p-4 select-none font-sans text-sm\">\n      {/* Month Navigation */}\n      <div className=\"flex items-center justify-between mb-4\">\n        <button onClick={prevMonth} className=\"p-1 hover:bg-gray-100 rounded-md\">\n          <svg className=\"w-5 h-5 text-gray-500\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path strokeLinecap=\"round\" strokeLinejoin=\"round\" strokeWidth={2} d=\"M15 19l-7-7 7-7\" /></svg>\n        </button>\n        <span className=\"font-bold text-gray-800\">{monthNames[month]} {year}</span>\n        <button onClick={nextMonth} className=\"p-1 hover:bg-gray-100 rounded-md\">\n          <svg className=\"w-5 h-5 text-gray-500\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path strokeLinecap=\"round\" strokeLinejoin=\"round\" strokeWidth={2} d=\"M9 5l7 7-7 7\" /></svg>\n        </button>\n      </div>\n\n      {/* Weekday headers */}\n      <div className=\"grid grid-cols-7 text-center font-semibold text-gray-400 mb-2\">\n        {[\"Su\", \"Mo\", \"Tu\", \"We\", \"Th\", \"Fr\", \"Sa\"].map(d => <span key={d}>{d}</span>)}\n      </div>\n\n      {/* Days grid */}\n      <div className=\"grid grid-cols-7 text-center gap-y-1\">\n        {blanks.map((_, idx) => <span key={idx} />)}\n        {days.map((day) => {\n          const isStart = isSameDay(day, startDate);\n          const isEnd = isSameDay(day, endDate);\n          const inRange = isBetween(day);\n\n          return (\n            <button\n              key={day.getDate()}\n              onClick={() => handleDayClick(day)}\n              className={`w-10 h-10 flex items-center justify-center rounded-lg font-medium transition ${\n                isStart || isEnd\n                  ? 'bg-purple-600 text-white hover:bg-purple-700'\n                  : inRange\n                  ? 'bg-purple-100 text-purple-800 rounded-none'\n                  : 'text-gray-700 hover:bg-gray-100'\n              }`}\n            >\n              {day.getDate()}\n            </button>\n          );\n        })}\n      </div>\n    </div>\n  );\n}"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

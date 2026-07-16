@@ -1,0 +1,160 @@
+{
+  "_id": "22da7584b6f09ca83160ad4b",
+  "title": "Optimally Merge Intervals from Two Sets under Conflict Constraints",
+  "slug": "optimally-merge-intervals-from-two-sets-under-conflict-constraints-bugfix-hard-greedy-algorithms",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "Two Pointers/GREEDY",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 25,
+    "points": 75,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "greedy"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given two sets of non-overlapping intervals, merge the intervals from both sets in such a way that the conflicting pairs of intervals are minimized. Intervals are defined as [start, end] and conflict with each other if they have overlapping time slots.",
+    "inputFormat": "The first line contains n, the size of the first set of intervals. The next n lines contain the start and end of each interval in the first set. The following line contains m, the size of the second set of intervals. The next m lines contain the start and end of each interval in the second set.",
+    "outputFormat": "The first line contains the total number of non-conflicting pairs of merged intervals. The next line contains the start and end of each merged interval, one interval per line.",
+    "notes": "The order of intervals in the output may vary. Use a greedy approach to minimize conflicts.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of first set of intervals"
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of second set of intervals"
+      }
+    ],
+    "examples": [
+      {
+        "input": "3\n1 3\n4 5\n6 8\n2\n3 5\n7 9\n\n4\n1 3\n3 5\n4 5\n6 8",
+        "output": "3\n1 5\n7 9\n",
+        "explanation": "Merged intervals from both sets are [1, 5] and [7, 9]"
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "The key is to first sort both interval sets by their end points."
+    }
+  ],
+  "editorial": {
+    "title": "Optimal Interval Merging",
+    "intuition": "We use a greedy approach by sorting both interval sets by their end points.",
+    "bruteForce": "We can iterate through each interval in both sets and check for conflicts, but this will result in inefficient time complexity.",
+    "betterSolution": "Sorting both sets by end points will allow us to merge intervals in a more efficient manner.",
+    "optimalSolution": "We iterate through both sorted sets of intervals and choose the one with the smallest end point while minimizing conflicts.",
+    "proofOfCorrectness": "This greedy approach ensures that the total number of non-conflicting pairs of intervals is maximized.",
+    "dryRun": "Example run: [1, 3], [4, 5], [6, 8] and [3, 5], [7, 9] are sorted by end points and merged accordingly.",
+    "commonMistakes": [
+      "Forgetting to sort the intervals by their end points",
+      "Not handling the case where intervals conflict"
+    ],
+    "timeComplexity": "O(n log n + m log m)",
+    "spaceComplexity": "O(n + m)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\nbool compareInterval(const std::pair<int, int>& a, const std::pair<int, int>& b) {\n    return a.second < b.second;\n}\n};",
+    "java": "class Solution {\npublic:\nboolean compareInterval(IntPair a, IntPair b) {\n    return a.second < b.second;\n}\n};",
+    "python": "class Solution:\n    def compare_interval(self, a, b):\n        return a[1] < b[1]\n",
+    "javascript": "function compareInterval(a, b) {\n    return a[1] < b[1];\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\nbool compareInterval(const std::pair<int, int>& a, const std::pair<int, int>& b) {\n    return a.first < b.first; // BUG: Should compare by end points\n}\n};",
+    "java": "class Solution {\npublic:\nboolean compareInterval(IntPair a, IntPair b) {\n    return a.first < b.first; // BUG: Should compare by end points\n}\n};",
+    "python": "class Solution:\n    def compare_interval(self, a, b):\n        return a[0] < b[0]; # BUG: Should compare by end points\n",
+    "javascript": "function compareInterval(a, b) {\n    return a[0] < b[0]; // BUG: Should compare by end points\n}"
+  },
+  "functionSignature": {
+    "cpp": "void mergeIntervals(vector<pair<int, int>>& intervals1, vector<pair<int, int>>& intervals2, int& result) {\n    // to be completed\n}",
+    "java": "void mergeIntervals(IntPair[][] intervals1, IntPair[][] intervals2, int[] result) {\n    // to be completed\n}",
+    "python": "def merge_intervals(self, intervals1, intervals2):\n    # to be completed\n    return result\n",
+    "javascript": "function mergeIntervals(intervals1, intervals2) {\n    // to be completed\n    return result;\n}"
+  },
+  "solutions": {
+    "python": "from sys import stdin\nfrom typing import List\n\n# Read input\nn = int(stdin.readline())\nm = int(stdin.readline())\n\n# Parse intervals\nintervals1 = [(int(x), int(y)) for x, y in (line.split() for _ in range(n))]\n\nintervals2 = [(int(x), int(y)) for x, y in (line.split() for _ in range(m))]\n\n# Sort intervals by end points\nintervals1.sort(key=lambda x: x[1])\nintervals2.sort(key=lambda x: x[1])\n\nclass Solution:\n    def mergeIntervals(self, intervals1, intervals2) -> List[tuple[int, int]]:\n        result = []\n        i, j = 0, 0\n\n        while i < len(intervals1) and j < len(intervals2):\n            # Merge intervals that don't conflict\n            if intervals1[i][1] < intervals2[j][1]:\n                result.append(intervals1[i])\n                i += 1\n            elif intervals2[j][1] < intervals1[i][1]:\n                result.append(intervals2[j])\n                j += 1\n            else:\n                # Merging conflicting intervals\n                merged_start = min(intervals1[i][0], intervals2[j][0])\n                merged_end = max(intervals1[i][1], intervals2[j][1])\n                result.append((merged_start, merged_end))\n                i += 1\n                j += 1\n\n        # Append any remaining intervals\n        while i < len(intervals1):\n            result.append(intervals1[i])\n            i += 1\n        while j < len(intervals2):\n            result.append(intervals2[j])\n            j += 1\n\n        return result\n\nsolution = Solution()\nsolution.mergeIntervals(intervals1, intervals2)\n\n# Print output\nfor pair in solution.mergeIntervals(intervals1, intervals2):\n    print(*pair)",
+    "cpp": "#include <iostream>\n#include <vector>\n\nusing namespace std;\n\nvoid mergeIntervals(vector<pair<int, int>>& intervals1, vector<pair<int, int>>& intervals2, int& result) {\n    // Read input\n    int n = intervals1.size(), m = intervals2.size();\n\n    // Sort intervals by end points\n    sort(intervals1.begin(), intervals1.end(), [](const pair<int, int>& a, const pair<int, int>& b) {\n        return a.second < b.second;\n    });\n    sort(intervals2.begin(), intervals2.end(), [](const pair<int, int>& a, const pair<int, int>& b) {\n        return a.second < b.second;\n    });\n\n    // Merge non-conflicting pairs of intervals\n    int i = 0, j = 0;\n    while (i < n && j < m) {\n        if (intervals1[i].second < intervals2[j].second) {\n            // Append interval without conflict\n            result += 1;\n            cout << intervals1[i].first << ' ' << intervals1[i].second << '\n';\n            i++;\n        } else if (intervals2[j].second < intervals1[i].second) {\n            // Append interval without conflict\n            result += 1;\n            cout << intervals2[j].first << ' ' << intervals2[j].second << '\n';\n            j++;\n        } else {\n            // Merging conflicting intervals\n            int merged_start = min(intervals1[i].first, intervals2[j].first);\n            int merged_end = max(intervals1[i].second, intervals2[j].second);\n            result += 1;\n            cout << merged_start << ' ' << merged_end << '\n';\n            i++;\n            j++;\n        }\n    }\n\n    // Append any remaining intervals\n    while (i < n) {\n        result += 1;\n        cout << intervals1[i].first << ' ' << intervals1[i].second << '\n';\n        i++;\n    }\n    while (j < m) {\n        result += 1;\n        cout << intervals2[j].first << ' ' << intervals2[j].second << '\n';\n        j++;\n    }\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 3,
+    "memoryLimit": 512,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": true
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": true,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 2
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "3\n1 3\n4 5\n6 8\n2\n3 5\n7 9\n\n4\n1 3\n3 5\n4 5\n6 8",
+      "output": "3\n1 5\n7 9\n",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_hidden_generated",
+      "input": "3\n1 3\n4 5\n6 8\n2\n3 5\n7 9\n\n4\n1 3\n3 5\n4 5\n6 8",
+      "output": "3\n1 5\n7 9\n",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

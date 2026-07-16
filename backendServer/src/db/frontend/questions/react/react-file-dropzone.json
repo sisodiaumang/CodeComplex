@@ -1,0 +1,53 @@
+{
+  "_id": "6a113da6a05665e186f5b1b6",
+  "title": "React File Dropzone Uploader",
+  "slug": "react-file-dropzone",
+  "difficulty": "Medium",
+  "topics": [
+    "REACT",
+    "REACT_FILE_DROPZONE"
+  ],
+  "statement": {
+    "markdown": "## React File Dropzone Uploader Component\n\nBuild a fully interactive Drag and Drop File Uploader dropzone in React with upload progress simulation.\n\n### Requirements:\n1. **Drag-and-Drop Area**: Styled wrapper area indicating active borders (highlight) on file drag over.\n2. **File Validation**: Validate that dropped/selected files do not exceed 5MB and match specific image/PDF mime types.\n3. **Simulated Progress**: Adding a file triggers a mock upload progress bar simulating increments from 0% to 100% over 2 seconds.\n4. **Remove Files**: List all uploaded files with dynamic status sizes and a trash can delete icon to remove them.\n"
+  },
+  "constraints": [
+    "Must support mobile responsive layout coordinates",
+    "Must utilize React hooks",
+    "Must use Tailwind CSS"
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "html": "",
+    "css": "",
+    "react": "import React, { useState } from 'react';\n\nexport default function FileDropzone() {\n  // Implement drag & drop uploader dropzone here\n  return null;\n}"
+  },
+  "gradingCriteria": [
+    {
+      "id": "functional_correctness",
+      "description": "Verify that the interactive props, callbacks, and element structures work cleanly.",
+      "weight": 60
+    },
+    {
+      "id": "code_cleanliness",
+      "description": "Verify state structure designs and clean Tailwind CSS layouts.",
+      "weight": 40
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "react",
+      "tailwind"
+    ],
+    "referenceSolution": "import React, { useState, useRef } from 'react';\n\nexport default function FileDropzone() {\n  const [files, setFiles] = useState([]);\n  const [isDragActive, setIsDragActive] = useState(false);\n  const fileInputRef = useRef(null);\n\n  const processFiles = (uploadedFiles) => {\n    Array.from(uploadedFiles).forEach(file => {\n      if (file.size > 5 * 1024 * 1024) {\n        alert(`File ${file.name} exceeds 5MB size limit.`);\n        return;\n      }\n\n      const id = Date.now() + Math.random().toString(36).substring(2, 9);\n      const newFile = { id, name: file.name, size: (file.size / 1024).toFixed(1) + \" KB\", progress: 0, status: \"uploading\" };\n      setFiles(prev => [...prev, newFile]);\n\n      // Mock progress simulation\n      let prog = 0;\n      const interval = setInterval(() => {\n        prog += 20;\n        setFiles(prev => prev.map(f => {\n          if (f.id === id) {\n            return { ...f, progress: prog, status: prog >= 100 ? \"completed\" : \"uploading\" };\n          }\n          return f;\n        }));\n        if (prog >= 100) clearInterval(interval);\n      }, 300);\n    });\n  };\n\n  const handleDrag = (e) => {\n    e.preventDefault();\n    if (e.type === \"dragenter\" || e.type === \"dragover\") {\n      setIsDragActive(true);\n    } else if (e.type === \"dragleave\") {\n      setIsDragActive(false);\n    }\n  };\n\n  const handleDrop = (e) => {\n    e.preventDefault();\n    setIsDragActive(false);\n    if (e.dataTransfer.files) {\n      processFiles(e.dataTransfer.files);\n    }\n  };\n\n  const removeFile = (id) => {\n    setFiles(prev => prev.filter(f => f.id !== id));\n  };\n\n  return (\n    <div className=\"w-full max-w-md mx-auto py-10 font-sans\">\n      <div\n        onDragEnter={handleDrag}\n        onDragOver={handleDrag}\n        onDragLeave={handleDrag}\n        onDrop={handleDrop}\n        onClick={() => fileInputRef.current.click()}\n        className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition focus:outline-none ${\n          isDragActive ? 'border-purple-500 bg-purple-50/50' : 'border-gray-300 hover:border-purple-400 bg-white'\n        }`}\n      >\n        <input ref={fileInputRef} type=\"file\" multiple onChange={(e) => processFiles(e.target.files)} className=\"hidden\" />\n        <svg className=\"w-10 h-10 text-gray-400 mx-auto mb-3\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path strokeLinecap=\"round\" strokeLinejoin=\"round\" strokeWidth={2} d=\"M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12\" /></svg>\n        <p className=\"text-sm font-semibold text-gray-700\">Drag & drop files or <span className=\"text-purple-600\">browse</span></p>\n        <p className=\"text-xs text-gray-400 mt-1\">Image or PDF files up to 5MB</p>\n      </div>\n\n      {files.length > 0 && (\n        <div className=\"mt-6 flex flex-col gap-3\">\n          {files.map(file => (\n            <div key={file.id} className=\"border border-gray-100 rounded-lg p-3 bg-white shadow-xs flex items-center justify-between\">\n              <div className=\"flex-1 mr-4\">\n                <div className=\"flex justify-between text-xs font-semibold text-gray-700 mb-1\">\n                  <span className=\"truncate\">{file.name}</span>\n                  <span>{file.progress}%</span>\n                </div>\n                <div className=\"w-full bg-gray-100 h-1.5 rounded-full overflow-hidden\">\n                  <div className=\"bg-purple-500 h-full transition-all\" style={{ width: `${file.progress}%` }} />\n                </div>\n              </div>\n              <button onClick={() => removeFile(file.id)} className=\"text-gray-400 hover:text-red-500\">\n                <svg className=\"w-5 h-5\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path strokeLinecap=\"round\" strokeLinejoin=\"round\" strokeWidth={2} d=\"M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16\" /></svg>\n              </button>\n            </div>\n          ))}\n        </div>\n      )}\n    </div>\n  );\n}"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

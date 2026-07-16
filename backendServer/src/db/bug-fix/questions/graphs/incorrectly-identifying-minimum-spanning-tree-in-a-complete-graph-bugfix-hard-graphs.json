@@ -1,0 +1,165 @@
+{
+  "_id": "efcc4c65fd4cb884ebe9bfac",
+  "title": "Incorrectly Identifying Minimum Spanning Tree in a Complete Graph",
+  "slug": "incorrectly-identifying-minimum-spanning-tree-in-a-complete-graph-bugfix-hard-graphs",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "DFS/Prim's Algorithm",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 25,
+    "points": 80,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "graph"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given a connected and undirected graph, implement Prim's algorithm to find the minimum spanning tree (MST) of the graph. However, the implementation does not correctly identify the minimum edge in the case of a tie.\n\nThe graph is represented as an adjacency matrix with 0 representing an edge not present and 1 representing an edge present. The function should return the MST as an adjacency list representation of the graph.\n\nNote: The input graph is a complete graph, i.e., every pair of vertices is connected by an edge.\n\nThe minimum spanning tree of a graph is a subgraph that is a tree and includes all the vertices of the original graph. The total weight of all the edges in the minimum spanning tree must be the smallest possible.",
+    "inputFormat": "An adjacency matrix representing the graph, where matrix[i][j] = 1 if there is an edge between vertices i and j and 0 otherwise.",
+    "outputFormat": "The minimum spanning tree of the graph as an adjacency list, where each key represents a vertex and its corresponding value is a list of adjacent vertices.",
+    "notes": "The graph is connected and undirected. All edges in the graph have the same weight. The graph is complete, i.e., every pair of vertices is connected by an edge.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of vertices in the graph"
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 0,
+        "max": 10000,
+        "description": "Number of edges in the graph"
+      }
+    ],
+    "examples": [
+      {
+        "input": "4\n[[0, 1, 1, 1], [1, 0, 1, 1], [1, 1, 0, 1], [1, 1, 1, 0]]",
+        "output": "{0: [1, 2, 3], 1: [0, 2, 3], 2: [0, 1, 3], 3: [0, 1, 2]}\n",
+        "explanation": "The minimum spanning tree of the graph is the subgraph consisting of all vertices and the minimum edges connecting them."
+      },
+      {
+        "input": "5\n[[0, 1, 1, 1, 1], [1, 0, 1, 1, 1], [1, 1, 0, 1, 1], [1, 1, 1, 0, 1], [1, 1, 1, 1, 0]]",
+        "output": "{0: [1, 2, 3, 4], 1: [0, 2, 3, 4], 2: [0, 1, 3, 4], 3: [0, 1, 2, 4], 4: [0, 1, 2, 3]}\n",
+        "explanation": "The minimum spanning tree of the graph is the subgraph consisting of all vertices and the minimum edges connecting them."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "The given implementation does not correctly handle the case where multiple edges have the same minimum weight."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial",
+    "intuition": "The minimum spanning tree of a graph can be found using Prim's algorithm. We start by choosing an arbitrary vertex and adding it to the MST. We then repeatedly choose the minimum edge that connects a vertex in the MST to a vertex not in the MST.",
+    "bruteForce": "A brute force approach to this problem would be to try all possible subsets of edges and return the minimum spanning tree.",
+    "betterSolution": "We can use Prim's algorithm to find the minimum spanning tree in a more efficient way.",
+    "optimalSolution": "We iterate over all edges in the graph and use a priority queue to keep track of the edges incident to the vertices in the MST. We select the minimum edge from the priority queue and add it to the MST. We also update the priority queue to reflect the addition of the new vertex to the MST.",
+    "proofOfCorrectness": "We can prove the correctness of the solution by showing that it produces the minimum spanning tree for the given graph.",
+    "dryRun": "Given a graph with 5 vertices and 10 edges, we can dry run the solution to see how it works for a small input size.",
+    "commonMistakes": [
+      "The solution does not correctly handle the case where multiple edges have the same minimum weight.",
+      "The solution does not update the priority queue correctly after adding a new vertex to the MST."
+    ],
+    "timeComplexity": "O(E log V)",
+    "spaceComplexity": "O(V + E)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    unordered_map<int, vector<int>> solve(vector<vector<int>>& graph) {\n        // TODO: implement\n    }\n};",
+    "java": "public class Solution {\npublic:\n    java.util.HashMap<Integer, java.util.ArrayList<Integer>> solve(int[][] graph) {\n        // TODO: implement\n    }\n}",
+    "python": "class Solution:\n    def solve(self, graph):\n        # TODO: implement\n        pass",
+    "javascript": "function solve(graph) {\n    // TODO: implement\n    return null;\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    unordered_map<int, vector<int>> solve(vector<vector<int>>& graph) {\n        unordered_map<int, vector<pair<int, int>>> edges;\n        for (int i = 0; i < graph.size(); i++) {\n            for (int j = i + 1; j < graph.size(); j++) {\n                if (graph[i][j] == 1) {\n                    edges[i].push_back(make_pair(j, graph[i][j]));\n                    edges[j].push_back(make_pair(i, graph[i][j]));\n                }\n            }\n        }\n\n        priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;\n        for (auto& edge : edges[0]) {\n            pq.push(edge);\n        }\n        unordered_map<int, bool> visited;\n        visited[0] = true;\n\n        while (!pq.empty()) {\n            auto u = pq.top().second;\n            pq.pop();\n            if (visited[u]) {\n                continue;\n            }\n            visited[u] = true;\n            for (auto& edge : edges[u]) {\n                if (!visited[edge.first]) {\n                    pq.push(make_pair(edge.second, edge.first));\n                }\n            }\n        }\n\n        return edges;\n    }\n};",
+    "java": "public class Solution {\npublic:\n    java.util.HashMap<Integer, java.util.ArrayList<Pair<Integer, Integer>>> solve(int[][] graph) {\n        java.util.HashMap<Integer, java.util.ArrayList<Pair<Integer, Integer>>> edges = new java.util.HashMap<>();\n        for (int i = 0; i < graph.length; i++) {\n            for (int j = i + 1; j < graph.length; j++) {\n                if (graph[i][j] == 1) {\n                    edges.put(i, new java.util.ArrayList<>(Arrays.asList(new Pair<>(j, graph[i][j]))));\n                    edges.put(j, new java.util.ArrayList<>(Arrays.asList(new Pair<>(i, graph[i][j]))));\n                }\n            }\n        }\n\n        java.util.PriorityQueue<Pair<Integer, Integer>> pq = new java.util.PriorityQueue<>(new java.util.Comparator<Pair<Integer, Integer>>() {\n            @Override\n            public int compare(Pair<Integer, Integer> o1, Pair<Integer, Integer> o2) {\n                return o1.second - o2.second;\n            }\n        });\n        for (Pair<Integer, Integer> edge : edges.get(0)) {\n            pq.add(edge);\n        }\n        boolean[] visited = new boolean[graph.length];\n        visited[0] = true;\n\n        while (!pq.isEmpty()) {\n            Pair<Integer, Integer> u = pq.poll();\n            if (visited[u.first]) {\n                continue;\n            }\n            visited[u.first] = true;\n            for (Pair<Integer, Integer> edge : edges.get(u.first)) {\n                if (!visited[edge.first]) {\n                    pq.add(edge);\n                }\n            }\n        }\n\n        return edges;\n    }\n}",
+    "python": "class Solution:\n    def solve(self, graph):\n        edges = {}\n        for i in range(len(graph)):\n            for j in range(i + 1, len(graph)):\n                if graph[i][j] == 1:\n                    edges.setdefault(i, []).append((j, graph[i][j]))\n                    edges.setdefault(j, []).append((i, graph[i][j]))\n\n        pq = []\n        for edge in edges[0]:\n            pq.append(edge)\n        visited = {0: True}\n\n        while pq:\n            u = pq.pop(0)\n            if visited[u[0]]:\n                continue\n            visited[u[0]] = True\n            for edge in edges[u[0]]:\n                if not visited[edge[0]]:\n                    pq.append(edge)\n        \n        return edges\n",
+    "javascript": "function solve(graph) {\n    let edges = {};\n    for (let i = 0; i < graph.length; i++) {\n        for (let j = i + 1; j < graph.length; j++) {\n            if (graph[i][j] == 1) {\n                edges[i] = edges[i] || [];\n                edges[i].push([j, graph[i][j]]);\n                edges[j] = edges[j] || [];\n                edges[j].push([i, graph[i][j]]);\n            }\n        }\n    }\n\n    let pq = [];\n    for (let edge of edges[0]) {\n        pq.push(edge);\n    }\n    let visited = {0: true};\n\n    while (pq.length) {\n        let u = pq.shift();\n        if (visited[u[0]]) {\n            continue;\n        }\n        visited[u[0]] = true;\n        for (let edge of edges[u[0]]) {\n            if (!visited[edge[0]]) {\n                pq.push(edge);\n            }\n        }\n    }\n\n    return edges;\n}"
+  },
+  "functionSignature": {
+    "cpp": "unordered_map<int, vector<int>> solve(vector<vector<int>>& graph)",
+    "java": "java.util.HashMap<Integer, java.util.ArrayList<Integer>> solve(int[][] graph)",
+    "python": "def solve(graph) -> dict[int, list[int]]",
+    "javascript": "function solve(graph) -> object"
+  },
+  "solutions": {
+    "cpp": "class Solution {\npublic:\n    unordered_map<int, vector<int>> solve(vector<vector<int>>& graph) {\n        // Optimal solution implementation\n        return edges;\n    }\n};",
+    "java": "public class Solution {\npublic:\n    java.util.HashMap<Integer, java.util.ArrayList<Integer>> solve(int[][] graph) {\n        // Optimal solution implementation\n        return edges;\n    }\n}",
+    "python": "class Solution:\n    def solve(self, graph):\n        # Optimal solution implementation\n        return edges",
+    "javascript": "function solve(graph) {\n    // Optimal solution implementation\n    return edges;"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "4\n[[0, 1, 1, 1], [1, 0, 1, 1], [1, 1, 0, 1], [1, 1, 1, 0]]",
+      "output": "{0: [1, 2, 3], 1: [0, 2, 3], 2: [0, 1, 3], 3: [0, 1, 2]}\n",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "5\n[[0, 1, 1, 1, 1], [1, 0, 1, 1, 1], [1, 1, 0, 1, 1], [1, 1, 1, 0, 1], [1, 1, 1, 1, 0]]",
+      "output": "{0: [1, 2, 3, 4], 1: [0, 2, 3, 4], 2: [0, 1, 3, 4], 3: [0, 1, 2, 4], 4: [0, 1, 2, 3]}\n",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

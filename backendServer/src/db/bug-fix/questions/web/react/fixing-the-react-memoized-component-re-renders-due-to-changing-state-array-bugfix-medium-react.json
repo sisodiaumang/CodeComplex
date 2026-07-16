@@ -1,0 +1,131 @@
+{
+  "title": "Fixing the React Memoized Component Re-renders Due to Changing State Array",
+  "subCategory": "Memoization and Caching",
+  "statement": {
+    "markdown": "You are given a React functional component that uses `useMemo` to memoize a calculated value. However, the component re-renders unnecessarily when the state array changes. Your task is to modify the component to correctly memoize the value using `useMemo` and prevent unnecessary re-renders.",
+    "inputFormat": "An object with a `numbers` property, which is an array of numbers.",
+    "outputFormat": "The calculated sum of the numbers in the `numbers` array.",
+    "notes": "The component should re-render only when the `numbers` array changes, not when the `numbers` array's references change.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The length of the `numbers` array."
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"numbers\": [1, 2, 3, 4, 5]}",
+        "output": "15",
+        "explanation": "The sum of the numbers in the `numbers` array."
+      },
+      {
+        "input": "{\"numbers\": [10, 20, 30, 40, 50]}",
+        "output": "150",
+        "explanation": "The sum of the numbers in the `numbers` array."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "REACT"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "react"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use `useMemo` to memoize the calculated value."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial",
+    "intuition": "The key to preventing unnecessary re-renders is to use `useMemo` with a dependency array that includes the `numbers` array.",
+    "bruteForce": "One possible brute-force solution is to use a reference to the `numbers` array in the dependency array.",
+    "betterSolution": "A better solution is to use `JSON.stringify` to compare the previous and current `numbers` arrays.",
+    "optimalSolution": "The optimal solution is to use `JSON.stringify` to compare the previous and current `numbers` arrays, and only update the memoized value when the arrays are different.",
+    "proofOfCorrectness": "The proof of correctness is that the `useMemo` hook will only update the memoized value when the `numbers` array changes, preventing unnecessary re-renders.",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Not using `useMemo` with a dependency array",
+      "Not comparing the previous and current `numbers` arrays"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "import React, { useState, useMemo } from 'react';\nfunction Calculator() {\n  const [numbers, setNumbers] = useState([1, 2, 3, 4, 5]);\n  const sum = useMemo(() => numbers.reduce((a, b) => a + b, 0), numbers);\n  return (\n    <div>\n      <p>Sum: {sum}</p>\n      <button onClick={() => setNumbers([...numbers])}>Update numbers</button>\n    </div>\n  );\n}"
+  },
+  "buggyStarterCode": {
+    "javascript": "import React, { useState, useMemo } from 'react';\nfunction Calculator() {\n  const [numbers, setNumbers] = useState([1, 2, 3, 4, 5]);\n  const sum = useMemo(() => numbers.reduce((a, b) => a + b, 0), [numbers]);\n  return (\n    <div>\n      <p>Sum: {sum}</p>\n      <button onClick={() => setNumbers([...numbers])}>Update numbers</button>\n    </div>\n  );\n}"
+  },
+  "functionSignature": {
+    "javascript": "function Calculator() {"
+  },
+  "solutions": {
+    "javascript": "// Solution\nimport React, { useState, useMemo } from 'react';\nfunction Calculator() {\n  const [numbers, setNumbers] = useState([1, 2, 3, 4, 5]);\n  const sum = useMemo(() => numbers.reduce((a, b) => a + b, 0), [JSON.stringify(numbers)]);\n  return (\n    <div>\n      <p>Sum: {sum}</p>\n      <button onClick={() => setNumbers([...numbers])}>Update numbers</button>\n    </div>\n  );\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"numbers\": [1, 2, 3, 4, 5]}",
+      "output": "15",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"numbers\": [10, 20, 30, 40, 50]}",
+      "output": "150",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "4c5d9f5349d46a263980c7d8",
+  "slug": "fixing-the-react-memoized-component-re-renders-due-to-changing-state-array-bugfix-medium-react",
+  "mode": "bug_fix",
+  "category": "REACT",
+  "difficulty": "Medium"
+}

@@ -1,0 +1,167 @@
+{
+  "_id": "03fc486a50f56dcf53f06c22",
+  "title": "Maximizing Heap Operations with Min and Max Priority Queues",
+  "slug": "maximizing-heap-operations-with-min-and-max-priority-queues-bugfix-hard-heaps",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "HEAP",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 60,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "heap"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given two priority queues (max PQ for 'max' and min PQ for 'min') implemented as heaps, perform the following operations on the arrays of integers provided. The goal is to maximize the number of heap operations (insert, deleteMax, deleteMin).\n\nYour goal is to write a function that maximizes the number of heap operations, and to do so in the given time constraint, with the given space complexity constraint.\n\nExample: [3, 6, 1, 10] - The optimal solution would be to insert 3, 6 and 10 into the max PQ (maxPQ = [6, 10, 3]) and 1 into the min PQ.\n\nYou can do this with the following sequence of operations: Insert 3 into max PQ, Insert 6 into max PQ, Insert 10 into max PQ, Insert 1 into min PQ, DeleteMax from max PQ, DeleteMin from min PQ, DeleteMax from max PQ.\n\nNote: The goal of the problem is to find the optimal sequence of operations.",
+    "inputFormat": "Three space-separated integers representing the input arrays for [max PQ, min PQ, and the array to process].",
+    "outputFormat": "Three space-separated integers representing the final values in max PQ, min PQ, and the array to process, respectively.",
+    "notes": "Your function should return the final state of max PQ, min PQ, and the array to process. The goal is to find the optimal sequence of operations.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "a",
+        "type": "integer",
+        "min": 0,
+        "max": 100000,
+        "description": "Size of max PQ input array"
+      },
+      {
+        "variable": "b",
+        "type": "integer",
+        "min": 0,
+        "max": 100000,
+        "description": "Size of min PQ input array"
+      },
+      {
+        "variable": "c",
+        "type": "integer",
+        "min": 0,
+        "max": 100000,
+        "description": "Size of array to process input array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "3 2 [5, 10, 6]",
+        "output": "10 5 5",
+        "explanation": "Insert 10 into max PQ, Insert 5 into min PQ, Insert 6 into max PQ, DeleteMax from max PQ, DeleteMin from min PQ, DeleteMax from max PQ."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Try to find a solution using a single data structure instead of two."
+    }
+  ],
+  "editorial": {
+    "title": "Solution Title",
+    "intuition": "The optimal solution is to use a single data structure, such as a min heap. We can insert all numbers from the input array into the min heap.\n\nThe idea is to maintain a counter for max PQ elements. When we pop a number from the min heap, if the counter is zero, we move the popped number to max PQ. If the counter is non-zero, we increment the counter.\n\nThis way, we ensure that the max PQ is always at least as big as the max PQ input array.",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O((n + m + p) log (n + m + p))",
+    "spaceComplexity": "O(n + m + p)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {public: vector<int> solve(vector<int>& a, vector<int>& b, vector<int>& c) {   // TODO: implement\n    return c;\n}",
+    "java": "class Solution {\npublic List<Integer> solve(List<Integer> a, List<Integer> b, List<Integer> c) {\n    // TODO: implement\n    return c;\n}",
+    "python": "class Solution:\n    def solve(self, a, b, c):\n        pass\n",
+    "javascript": "function solve(a, b, c) {\n    // TODO: implement\n    return c;\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {public: vector<int> solve(vector<int>& a, vector<int>& b, vector<int>& c) {\n    priority_queue<int> maxPQ;\n    priority_queue<int, vector<int>, greater<int>> minPQ;\n    for (int i = 0; i < min(a.size(), b.size()); i++) {\n        if (a[i] > b[i]) {\n            maxPQ.push(a[i]);\n        } else {\n            minPQ.push(b[i]);\n        }\n    }\n    int i = min(a.size(), b.size());\n    while (i < a.size()) {\n        maxPQ.push(a[i]);\n        i++;\n    }\n    while (i < b.size()) {\n        minPQ.push(b[i]);\n        i++;\n    }\n    int maxPQSize = maxPQ.size();\n    int minPQCurrSize = minPQ.size();\n    for (int i = 0; i < c.size(); i++) {\n        if (i == 0) {\n            maxPQ.push(c[i]);\n        } else if (i == 1) {\n            minPQ.push(c[i]);\n        } else if (i < maxPQSize + minPQCurrSize - 1) {\n            cout << \\n                 \"Max PQ Element: \" << maxPQ.top() << \\n                 \" Min PQ Element: \" << minPQ.top() << endl;\n\n        } else {\n            cout << \\n                \"Max PQ Element: \" << maxPQ.top() << \\n                \" Min PQ Element: \" << minPQ.top() << endl;\n\n        }\n    }\n    vector<int> finalAnswer;\n    for (int i = 0; i < c.size(); i++) {\n        finalAnswer.push_back(c[i]);\n    }\n    return finalAnswer;\n}",
+    "java": "import java.util.List;\nimport java.util.PriorityQueue;\npublic class Solution {\n    public List<Integer> solve(List<Integer> a, List<Integer> b, List<Integer> c) {\n        PriorityQueue<Integer> maxPQ = new PriorityQueue<>((x, y) -> y - x);\n        PriorityQueue<Integer> minPQ = new PriorityQueue<>((x, y) -> x - y);\n        for (int i = 0; i < Math.min(a.size(), b.size()); i++) {\n            if (a.get(i) > b.get(i)) {\n                maxPQ.add(a.get(i));\n            } else {\n                minPQ.add(b.get(i));\n            }\n        }\n        int i = Math.min(a.size(), b.size());\n        while (i < a.size()) {\n            maxPQ.add(a.get(i));\n            i++;\n        }\n        while (i < b.size()) {\n            minPQ.add(b.get(i));\n            i++;\n        }\n        int maxPQSize = maxPQ.size();\n        int minPQCurrSize = minPQ.size();\n        List<Integer> finalAnswer = new ArrayList<>();\n        for (int i = 0; i < c.size(); i++) {\n            if (i == 0) {\n                finalAnswer.add(maxPQ.poll());\n            } else if (i == 1) {\n                finalAnswer.add(minPQ.poll());\n            } else if (i < maxPQSize + minPQCurrSize - 1) {\n                finalAnswer.add(maxPQ.poll());\n                finalAnswer.add(minPQ.poll());\n            } else {\n                finalAnswer.add(maxPQ.poll());\n            }\n        }\n        return finalAnswer;\n    }\n}",
+    "python": "class Solution:\n    def solve(self, a, b, c):\n        maxPQ = []\n        minPQ = []\n        for i in range(min(len(a), len(b))):\n            if a[i] > b[i]:\n                maxPQ.append(a[i])\n            else:\n                minPQ.append(b[i])\n        i = min(len(a), len(b))\n        while i < len(a):\n            maxPQ.append(a[i])\n            i += 1\n        while i < len(b):\n            minPQ.append(b[i])\n            i += 1\n        maxPQSize = len(maxPQ)\n        minPQCurrSize = len(minPQ)\n        finalAnswer = c.copy()\n        for i, x in enumerate(c):\n            if i == 0:\n                maxPQ.append(x)\n            elif i == 1:\n                minPQ.append(x)\n            elif i < maxPQSize + minPQCurrSize - 1:\n                finalAnswer.pop(maxPQSize + minPQCurrSize - 1 - i)\n                maxPQ.pop()\n                minPQ.pop()\n            else:\n                finalAnswer.pop(maxPQSize + minPQCurrSize - 1 - i)\n                maxPQ.pop()\n        return finalAnswer\n",
+    "javascript": "function solve(a, b, c) {\n    var maxPQ = [];\n    var minPQ = [];\n    for (var i = 0; i < Math.min(a.length, b.length); i++) {\n        if (a[i] > b[i]) {\n            maxPQ.push(a[i]);\n        } else {\n            minPQ.push(b[i]);\n        }\n    }\n    var i = Math.min(a.length, b.length);\n    while (i < a.length) {\n        maxPQ.push(a[i]);\n        i++;\n    }\n    while (i < b.length) {\n        minPQ.push(b[i]);\n        i++;\n    }\n    var maxPQSize = maxPQ.length;\n    var minPQCurrSize = minPQ.length;\n    var finalAnswer = c.slice(0);\n    for (var i = 0; i < c.length; i++) {\n        if (i == 0) {\n            finalAnswer.shift();\n            maxPQ.shift();\n        } else if (i == 1) {\n            finalAnswer.shift();\n            minPQ.shift();\n        } else if (i < maxPQSize + minPQCurrSize - 1) {\n            finalAnswer.splice(maxPQSize + minPQCurrSize - 1 - i, 1);\n            maxPQ.pop();\n            minPQ.pop();\n        } else {\n            finalAnswer.splice(maxPQSize + minPQCurrSize - 1 - i, 1);\n            maxPQ.pop();\n        }\n    }\n    return finalAnswer;\n}"
+  },
+  "functionSignature": {
+    "cpp": "bool solve(vector<int>& a, vector<int>& b, vector<int>& c) {\n    // TODO: implement\n}",
+    "java": "public List<Integer> solve(List<Integer> a, List<Integer> b, List<Integer> c) {\n    // TODO: implement\n}",
+    "python": "def solve(self, a, b, c):\n    # TODO: implement\n    pass",
+    "javascript": "function solve(a, b, c) {\n    // TODO: implement\n    return c;\n}"
+  },
+  "solutions": {
+    "python": "import heapq\nclass Solution:\n    def solve(self, a, b, c):\n        heap = []\n        count = 0\n        for i, x in enumerate(c):\n            if i == 0:\n                heapq.heappush(heap, -x)\n            elif i == 1:\n                heapq.heappush(heap, x)\n            else:\n                if heap[0] > x:\n                    heapq.heappop(heap)\n                    heapq.heappush(heap, -x)\n                else:\n                    heapq.heappush(heap, x)\n        maxPQ = []\n        minPQ = []\n        while heap:\n            maxPQ.append(-heapq.heappop(heap))\n        heap = []\n        count = 0\n        while heap:\n            minPQ.append(heapq.heappop(heap))\n        return minPQ + maxPQ\n",
+    "cpp": "// Solution",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2000,
+    "memoryLimit": 100000000,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 2
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "3 2 [5, 10, 6]",
+      "output": "[10 5 5",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "6 5 [3, 6, 1, 10, 4, 5]",
+      "output": "[10 6 5 4 3 5",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

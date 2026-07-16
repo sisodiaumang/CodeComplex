@@ -1,0 +1,108 @@
+{
+  "_id": "c5c1f3b2f2b362faa0159f53",
+  "title": "Real-Time Stock Updates with WebSockets",
+  "slug": "real-time-stock-updates-with-websockets-medium-websockets",
+  "difficulty": "Medium",
+  "topics": [
+    "WEBSOCKETS"
+  ],
+  "statement": "Design a WebSocket endpoint to broadcast real-time stock updates to all connected clients. \n   Implement the endpoint `/api/stock/{symbol}` to handle WebSocket connections, subscribe clients to stock updates, and broadcast the latest stock price to all connected clients.\n   \n   You will need to handle the following scenarios:\n   \n   - When a client connects to the `/api/stock/{symbol}` endpoint, they subscribe to the stock updates.\n   - When a client disconnects, they unsubscribe from the stock updates.\n   - When the server receives a new stock price for a subscribed stock, it broadcasts the update to all connected clients.\n   \n   You can use a mock stock price data source for testing purposes. The stock price data should be stored in an object and have the following properties: `symbol`, `price`.\n   \n   You can use the `ws` library to create a WebSocket server. The starter code provides a basic setup for the WebSocket endpoint.\n   \n   Ensure that your implementation is robust and handles edge cases. You should also include test cases to verify the correctness of your implementation.",
+  "constraints": [
+    "Must use the `ws` library to create a WebSocket server.",
+    "Must store mock stock price data in an object with `symbol` and `price` properties."
+  ],
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/api/stock/:symbol",
+      "description": "WebSocket endpoint to handle connections, subscriptions, and broadcasts"
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\"name\":\"stock-updates\",\"version\":\"1.0.0\",\"main\":\"index.js\",\"scripts\":{\"start\":\"node index.js\"},\"dependencies\":{\"express\":\"^4.18.2\",\"ws\":\"^8.5.0\"}}",
+    "index.js": "const express = require('express');\nconst WebSocket = require('ws');\nconst app = express();\nconst wss = new WebSocket.Server({ port: 3000 });\n\napp.use(express.json());\n\n// Mock stock price data source\nconst stockPrices = {\n  'AAPL': 150.0,\n  'GOOG': 2500.0\n};\n\n// Handle WebSocket connections\nwss.on('connection', (ws) => {\n  console.log('Client connected');\n});\n\n// Handle WebSocket disconnections\nwss.on('close', () => {\n  console.log('Client disconnected');\n});\n\n// TODO: Implement subscription and broadcast logic\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "GET",
+      "path": "/api/stock/AAPL",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "connection": true
+      },
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "GET",
+      "path": "/api/stock/GOOG",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "connection": true
+      },
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "GET",
+      "path": "/api/stock/AAPL",
+      "expectedStatus": 500,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "GET",
+      "path": "/api/stock/GOOG",
+      "expectedStatus": 500,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "GET",
+      "path": "/api/stock/unknown",
+      "expectedStatus": 404,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "socket.io",
+    "rooms",
+    "namespaces",
+    "events",
+    "real-time-chat",
+    "broadcasting",
+    "websockets",
+    "real-time",
+    "stock-updates"
+  ]
+}

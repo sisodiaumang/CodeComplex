@@ -1,0 +1,143 @@
+{
+  "_id": "b5e687b596966a0fb2dcf38e",
+  "title": "Implementing Invalidation Caching with Time-To-Live (TTL)",
+  "slug": "implementing-invalidation-caching-with-time-to-live-ttl-medium-caching",
+  "difficulty": "Medium",
+  "topics": [
+    "CACHING"
+  ],
+  "statement": "Implement a caching system that utilizes a hash map to store key-value pairs for a limited time. The cache should expire entries after a specified Time-To-Live (TTL) value. Additionally, the cache should support invalidation of entries based on a provided key. Ensure that the cache handles duplicate keys and returns the most recent entry for a given key.\n\nEndpoints:\n\n* `GET /cache` - Retrieves all cached entries.\n* `POST /cache` - Adds a new entry to the cache with the specified TTL.\n* `GET /cache/:key` - Retrieves the cached value for the specified key, or returns null if it does not exist.\n* `DELETE /cache/:key` - Invalidation of the cache entry for the specified key.\n* `GET /health` - A health check endpoint.",
+  "constraints": [
+    "Must use the provided Express server as the base framework.",
+    "Ensure the cache only stores string values and the TTL value is in minutes."
+  ],
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/health",
+      "description": "A health check endpoint. Returns a success message if the server is running properly."
+    },
+    {
+      "method": "GET",
+      "path": "/cache",
+      "description": "Retrieves all cached entries. Returns a JSON object with the cached key-value pairs."
+    },
+    {
+      "method": "POST",
+      "path": "/cache",
+      "description": "Adds a new entry to the cache with the specified TTL. The request body should contain the key and value as JSON properties, with the TTL provided as a query parameter. Returns a success message if the entry is added successfully."
+    },
+    {
+      "method": "GET",
+      "path": "/cache/:key",
+      "description": "Retrieves the cached value for the specified key, or returns null if it does not exist. Returns a JSON object with the cached value."
+    },
+    {
+      "method": "DELETE",
+      "path": "/cache/:key",
+      "description": "Invalidates the cache entry for the specified key. Returns a success message if the entry is invalidated successfully."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\"name\":\"backend-app\",\"version\":\"1.0.0\",\"main\":\"index.js\",\"scripts\":{\"start\":\"node index.js\"},\"dependencies\":{\"express\":\"^4.18.2\"}}",
+    "index.js": "const express = require('express');\nconst app = express();\napp.use(express.json());\nconst cache = new Map();\nconst ttlMap = new Map();\n// TODO: Implement endpoints\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));\napp.get('/health', (req, res) => res.json({ message: 'Server is running.' }));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/health",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "GET",
+      "path": "/cache",
+      "expectedStatus": 200,
+      "expectedBody": {},
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "POST",
+      "path": "/cache",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "key": "value"
+      },
+      "query": {
+        "ttl": "5"
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "message": "Entry added successfully."
+      },
+      "isVisible": true
+    },
+    {
+      "id": "v_tc3",
+      "method": "GET",
+      "path": "/cache/value",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "value": "value"
+      },
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "POST",
+      "path": "/cache",
+      "headers": {},
+      "body": {},
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "GET",
+      "path": "/cache/:key",
+      "query": {
+        "invalidParam": "true"
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "DELETE",
+      "path": "/cache/:key",
+      "expectedStatus": 204,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "redis",
+    "cache-aside",
+    "write-through",
+    "ttl",
+    "invalidation",
+    "memory-cache",
+    "cache",
+    "in-memory-cache"
+  ]
+}

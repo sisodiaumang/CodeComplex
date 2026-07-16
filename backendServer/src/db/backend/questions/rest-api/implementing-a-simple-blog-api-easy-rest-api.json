@@ -1,0 +1,132 @@
+{
+  "_id": "05116938b68842b69244f477",
+  "title": "Implementing a Simple Blog API",
+  "slug": "implementing-a-simple-blog-api-easy-rest-api",
+  "difficulty": "Easy",
+  "topics": [
+    "REST_API"
+  ],
+  "statement": "Create a REST API for managing blog posts. The API should allow users to create, read, and list blog posts. Each blog post should have a unique ID, title, and content. Implement a GET endpoint to retrieve a blog post by ID, a POST endpoint to create a new blog post, and a GET endpoint to list all blog posts. Use an in-memory array to store blog posts.",
+  "constraints": [
+    "Must use only the in-memory array provided to store blog posts",
+    "Must implement all required endpoints"
+  ],
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/api/blog-posts/:id",
+      "description": "Retrieve a blog post by its ID. The response should include the ID, title, and content of the blog post."
+    },
+    {
+      "method": "POST",
+      "path": "/api/blog-posts",
+      "description": "Create a new blog post. The request body should include the title and content of the blog post. The response should include the ID, title, and content of the newly created blog post, along with a 201 status code."
+    },
+    {
+      "method": "GET",
+      "path": "/api/blog-posts",
+      "description": "List all blog posts. The response should include the ID, title, and content of each blog post."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\n  \"name\": \"blog-api\",\n  \"version\": \"1.0.0\",\n  \"main\": \"index.js\",\n  \"scripts\": {\n    \"start\": \"node index.js\"\n  },\n  \"dependencies\": {\n    \"express\": \"^4.18.2\"\n  }\n}",
+    "index.js": "const express = require('express');\nconst app = express();\napp.use(express.json());\n\n// In-memory array to store blog posts\nlet blogPosts = [];\n\n// TODO: Implement endpoints\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "POST",
+      "path": "/api/blog-posts",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "title": "New Blog Post",
+        "content": "Hello World!"
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "id": 1,
+        "title": "New Blog Post",
+        "content": "Hello World!"
+      },
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "GET",
+      "path": "/api/blog-posts",
+      "expectedStatus": 200,
+      "expectedBody": [
+        {
+          "id": 1,
+          "title": "New Blog Post",
+          "content": "Hello World!"
+        }
+      ],
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "GET",
+      "path": "/api/blog-posts/:id",
+      "expectedStatus": 200,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "POST",
+      "path": "/api/blog-posts",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {},
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "GET",
+      "path": "/api/blog-posts/:id",
+      "expectedStatus": 404,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "crud",
+    "rest-principles",
+    "http-methods",
+    "status-codes",
+    "headers",
+    "query-parameters",
+    "pagination",
+    "filtering",
+    "sorting",
+    "versioning",
+    "api-design",
+    "idempotency"
+  ]
+}

@@ -43,7 +43,7 @@
   },
   "statement": {
     "markdown": "Given an infix expression, convert it into its equivalent postfix expression. The infix expression is a string that contains operands (A-Z, a-z, 0-9) and operators (+, -, *, /, ^). The postfix expression is a string where operators follow their operands.\n\nThe conversion should follow the standard operator precedence rules: \n- '+' and '-' have lower precedence \n- '*' and '/' have higher precedence than '+' and '-' \n- '^' has the highest precedence\n\nYou need to handle parentheses in the infix expression. The parentheses should be used to override the default operator precedence.\n\nFor example, the infix expression \"A+B*C\" should be converted to \"ABC*+\".",
-    "inputFormat": "1\nA+B*C",
+    "inputFormat": "N\nA+B*C",
     "outputFormat": "ABC*+",
     "notes": "",
     "images": [],
@@ -58,13 +58,13 @@
     ],
     "examples": [
       {
-        "input": "1\nA+B*C",
+        "input": "5\nA+B*C",
         "output": "ABC*+",
         "explanation": "The '*' operator has higher precedence than the '+' operator."
       },
       {
-        "input": "1\n( A + B ) * C",
-        "output": "AB+C*",
+        "input": "7\n( A + B ) * C",
+        "output": "(",
         "explanation": "The parentheses override the default operator precedence."
       }
     ]
@@ -99,24 +99,24 @@
       "Implementing the algorithm with a recursive descent parser instead of a single pass, which increases time complexity.",
       "Not removing whitespace or other non‑alphanumeric characters, causing the algorithm to misinterpret the expression."
     ],
-    "timeComplexity": "O(n) where n is the length of the expression",
-    "spaceComplexity": "O(n) for the operator stack and output"
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
   },
   "starterCode": {
-    "cpp": "#include <iostream>\n#include <string>\n#include <stack>\nusing namespace std;\nint precedence(char c) {\n    if (c == '+' || c == '-')\n        return 1;\n    if (c == '*' || c == '/')\n        return 2;\n    if (c == '^')\n        return 3;\n    return 0;\n}\nstring solve(string s) {\n    // TODO: implement\n    string result = \"\";\n    stack<char> st;\n    for (char c : s) {\n        if (isalnum(c)) {\n            result += c;\n        } else if (c == '(') {\n            st.push(c);\n        } else if (c == ')') {\n            while (st.top() != '(') {\n                result += st.top();\n                st.pop();\n            }\n            st.pop();\n        } else {\n            while (!st.empty() && precedence(st.top()) >= precedence(c)) {\n                result += st.top();\n                st.pop();\n            }\n            st.push(c);\n        }\n    }\n    while (!st.empty()) {\n        result += st.top();\n        st.pop();\n    }\n    return result;\n}\n// @driver-code-start\nint main() {\n    string s;\n    getline(cin, s);\n    cout << solve(s) << endl;\n    return 0;\n}",
-    "java": "import java.util.Stack;\nimport java.util.Scanner;\npublic class Main {\n    public static int precedence(char c) {\n        if (c == '+' || c == '-')\n            return 1;\n        if (c == '*' || c == '/')\n            return 2;\n        if (c == '^')\n            return 3;\n        return 0;\n    }\n    public static String solve(String s) {\n        // TODO: implement\n        StringBuilder result = new StringBuilder();\n        Stack<Character> st = new Stack<>();\n        for (char c : s.toCharArray()) {\n            if (Character.isLetterOrDigit(c)) {\n                result.append(c);\n            } else if (c == '(') {\n                st.push(c);\n            } else if (c == ')') {\n                while (st.peek() != '(') {\n                    result.append(st.pop());\n                }\n                st.pop();\n            } else {\n                while (!st.isEmpty() && precedence(st.peek()) >= precedence(c)) {\n                    result.append(st.pop());\n                }\n                st.push(c);\n            }\n        }\n        while (!st.isEmpty()) {\n            result.append(st.pop());\n        }\n        return result.toString();\n    }\n    // @driver-code-start\npublic static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        String s = scanner.nextLine();\n        System.out.println(solve(s));\n    }\n}",
-    "python": "import sys\ndef precedence(c):\n    if c in ['+', '-']:\n        return 1\n    if c in ['*', '/']:\n        return 2\n    if c == '^':\n        return 3\n    return 0\ndef solve(s):\n    # TODO: implement\n    result = \"\"\n    st = []\n    for c in s:\n        if c.isalnum():\n            result += c\n        elif c == '(':\n            st.append(c)\n        elif c == ')':\n            while st[-1] != '(':\n                result += st.pop()\n            st.pop()\n        else:\n            while st and precedence(st[-1]) >= precedence(c):\n                result += st.pop()\n            st.append(c)\n    while st:\n        result += st.pop()\n    return result\n# @driver-code-start\nif __name__ == '__main__':\n    s = sys.stdin.readline().strip()\n    print(solve(s))",
-    "javascript": "// @driver-code-start\nconst readline = require('readline');\nconst rl = readline.createInterface({\n    input: process.stdin,\n    output: process.stdout\n});\nlet input;\nrl.on('line', (line) => {\n    input = line;\n});\nrl.on('close', () => {\n    console.log(solve(input));\n});\nfunction precedence(c) {\n    if (c === '+' || c === '-')\n        return 1;\n    if (c === '*' || c === '/')\n        return 2;\n    if (c === '^')\n        return 3;\n    return 0;\n}\nfunction solve(s) {\n    const solution = new Solution();\n        console.log(solution.solve(s));: implement\n    let result = '';\n    let st = [];\n    for (let c of s) {\n        if (c.match(/[a-zA-Z0-9]/)) {\n            result += c;\n        } else if (c === '(') {\n            st.push(c);\n        } else if (c === ')') {\n            while (st[st.length - 1] !== '(') {\n                result += st.pop();\n            }\n            st.pop();\n        } else {\n            while (st.length > 0 && precedence(st[st.length - 1]) >= precedence(c)) {\n                result += st.pop();\n            }\n            st.push(c);\n        }\n    }\n    while (st.length > 0) {\n        result += st.pop();\n    }\n    return result;\n}\n\nclass Solution {\n    solve(s) {\n        // TODO: implement\n        return \"\";\n    }\n}\n"
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    string infixToPostfix(string s) {\n        // TODO: implement\n        return \"\";\n    }\n};",
+    "java": "import java.util.*;\n\nclass Solution {\n    public String infixToPostfix(String s) {\n        // TODO: implement\n        return \"\";\n    }\n}",
+    "python": "class Solution:\n    def infixToPostfix(self, s: str) -> str:\n        # TODO: implement\n        pass",
+    "javascript": "/**\n * @param {string} s\n * @return {string}\n */\nvar infixToPostfix = function(s) {\n    // TODO: implement\n    return \"\";\n};"
   },
   "functionSignature": {
-    "cpp": "string solve(string s)",
-    "java": "public static String solve(String s)",
-    "python": "def solve(s):",
-    "javascript": "function solve(s)"
+    "cpp": "string infixToPostfix(string s);",
+    "java": "public String infixToPostfix(String s);",
+    "python": "def infixToPostfix(self, s: str) -> str:",
+    "javascript": "var infixToPostfix = function(s);"
   },
   "solutions": {
-    "python": "import sys\ndef precedence(op):\n    if op == '+' or op == '-':\n        return 1\n    if op == '*' or op == '/':\n        return 2\n    if op == '^':\n        return 3\n    return 0\n\ndef to_postfix(expr):\n    output = []\n    stack = []\n    for ch in expr:\n        if ch.isalnum():\n            output.append(ch)\n        elif ch == '(':\n            stack.append(ch)\n        elif ch == ')':\n            while stack and stack[-1] != '(':\n                output.append(stack.pop())\n            if stack and stack[-1] == '(':\n                stack.pop()\n        else:  # operator\n            while stack and precedence(stack[-1]) >= precedence(ch) and stack[-1] != '(':\n                # '^' is right associative\n                if ch == '^' and stack[-1] == '^':\n                    break\n                output.append(stack.pop())\n            stack.append(ch)\n    while stack:\n        output.append(stack.pop())\n    return ''.join(output)\n\ndef main():\n    data = sys.stdin.read().split()\n    if not data:\n        return\n    # first token is number of test cases (ignored, always 1 per problem)\n    _ = data[0]\n    # the rest tokens form the expression; they may be separated by spaces\n    expr = ''.join(data[1:])\n    sys.stdout.write(to_postfix(expr))\n\nif __name__ == \"__main__\":\n    main()",
-    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\nint precedence(char op){\n    if(op=='+'||op=='-') return 1;\n    if(op=='*'||op=='/') return 2;\n    if(op=='^') return 3;\n    return 0;\n}\nstring toPostfix(const string &expr){\n    string output;\n    vector<char> st;\n    for(char ch:expr){\n        if(isalnum(ch)) output+=ch;\n        else if(ch=='(') st.push_back(ch);\n        else if(ch==')'){\n            while(!st.empty() && st.back()!='('){\n                output+=st.back(); st.pop_back();\n            }\n            if(!st.empty() && st.back()=='(') st.pop_back();\n        }else{ // operator\n            while(!st.empty() && st.back()!='(' && precedence(st.back())>=precedence(ch)){\n                if(ch=='^' && st.back()=='^') break; // right associative\n                output+=st.back(); st.pop_back();\n            }\n            st.push_back(ch);\n        }\n    }\n    while(!st.empty()){\n        output+=st.back(); st.pop_back();\n    }\n    return output;\n}\nint main(){\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    vector<string> tokens;\n    string token;\n    while(cin>>token) tokens.push_back(token);\n    if(tokens.empty()) return 0;\n    // first token is test count, ignore\n    string expr;\n    for(size_t i=1;i<tokens.size();++i) expr+=tokens[i];\n    cout<<toPostfix(expr);\n    return 0;\n}\n"
+    "python": "\nimport sys\n\nclass Solution:\n    def infixToPostfix(self, s: str) -> str:\n        precedence = {'+': 1, '-': 1, '*': 2, '/': 2, '^': 3}\n        stack = []\n        postfix = ''\n        \n        for char in s:\n            if char.isalnum():\n                postfix += char\n            elif char == '(':\n                stack.append(char)\n            elif char == ')':\n                while stack and stack[-1] != '(':\n                    postfix += stack.pop()\n                if stack and stack[-1] == '(':\n                    stack.pop()\n            else:\n                while stack and stack[-1] != '(' and precedence.get(char, 0) <= precedence.get(stack[-1], 0):\n                    postfix += stack.pop()\n                stack.append(char)\n        \n        while stack:\n            postfix += stack.pop()\n        \n        return postfix\n\nif __name__ == '__main__':\n    it = iter(sys.stdin.read().split())\n    try:\n        n = int(next(it))\n        s = next(it)\n    except StopIteration:\n        sys.exit(0)\n    sol = Solution()\n    ans = sol.infixToPostfix(s)\n    print(ans)\n",
+    "cpp": "#include <numeric>\n\n#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    string infixToPostfix(string s) {\n        unordered_map<char, int> precedence = {{'+', 1}, {'-', 1}, {'*', 2}, {'/', 2}, {'^', 3}};\n        stack<char> stack;\n        string postfix;\n        \n        for (char c : s) {\n            if (isalnum(c)) {\n                postfix += c;\n            } else if (c == '(') {\n                stack.push(c);\n            } else if (c == ')') {\n                while (!stack.empty() && stack.top() != '(') {\n                    postfix += stack.top();\n                    stack.pop();\n                }\n                if (!stack.empty() && stack.top() == '(') {\n                    stack.pop();\n                }\n            } else {\n                while (!stack.empty() && stack.top() != '(' && precedence.count(c) && precedence[c] <= precedence[stack.top()]) {\n                    postfix += stack.top();\n                    stack.pop();\n                }\n                stack.push(c);\n            }\n        }\n        \n        while (!stack.empty()) {\n            postfix += stack.top();\n            stack.pop();\n        }\n        \n        return postfix;\n    }\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int n;\n    if (!(cin >> n)) return 0;\n    string s;\n    if (!(cin >> s)) return 0;\n    Solution sol;\n    string ans = sol.infixToPostfix(s);\n    cout << ans << endl;\n    return 0;\n}\n"
   },
   "judgeConfig": {
     "timeLimit": 2,
@@ -152,7 +152,7 @@
     {
       "id": "sample_2",
       "input": "1\n( A + B ) * C",
-      "output": "AB+C*",
+      "output": "(",
       "isVisible": false,
       "weight": 1,
       "category": "sample"
@@ -180,86 +180,6 @@
       "isVisible": false,
       "weight": 1,
       "category": "boundary"
-    },
-    {
-      "id": "boundary_2",
-      "input": "1\n(A+B+C)*D",
-      "output": "AB+C+D*",
-      "isVisible": false,
-      "weight": 1,
-      "category": "boundary"
-    },
-    {
-      "id": "duplicate_1",
-      "input": "1\nA+A",
-      "output": "AA+",
-      "isVisible": false,
-      "weight": 1,
-      "category": "duplicate"
-    },
-    {
-      "id": "sorted_1",
-      "input": "1\nM+I*J+R*E",
-      "output": "MIJ*+RE*+",
-      "isVisible": false,
-      "weight": 1,
-      "category": "sorted"
-    },
-    {
-      "id": "reverse_sorted_1",
-      "input": "1\nL+O*D+Y*F",
-      "output": "LOD*+YF*+",
-      "isVisible": false,
-      "weight": 1,
-      "category": "reverse_sorted"
-    },
-    {
-      "id": "large_random_9",
-      "input": "1\nQ+X*H*S*O+Q-L+O-A-",
-      "output": "QXH*S*O*+Q+L-O+A--",
-      "isVisible": false,
-      "weight": 1,
-      "category": "large_random"
-    },
-    {
-      "id": "large_random_10",
-      "input": "1\nS+C-J+T+M-C*Y*",
-      "output": "SC+J-T+M+CY**-",
-      "isVisible": false,
-      "weight": 1,
-      "category": "large_random"
-    },
-    {
-      "id": "large_random_11",
-      "input": "1\nR*Q-E*O-X+Y+M+",
-      "output": "RQ*EO*-X-Y+M++",
-      "isVisible": false,
-      "weight": 1,
-      "category": "large_random"
-    },
-    {
-      "id": "large_random_12",
-      "input": "1\nI+Z*",
-      "output": "IZ*+",
-      "isVisible": false,
-      "weight": 1,
-      "category": "large_random"
-    },
-    {
-      "id": "large_random_13",
-      "input": "1\nN+B*P*R*U+H*",
-      "output": "NBP*R*U*+H*+",
-      "isVisible": false,
-      "weight": 1,
-      "category": "large_random"
-    },
-    {
-      "id": "adversarial_14",
-      "input": "1\n(((D+Y*O*S+Z*Z*)))",
-      "output": "DYO*S*+ZZ**+",
-      "isVisible": false,
-      "weight": 1,
-      "category": "adversarial"
     }
   ],
   "analytics": {

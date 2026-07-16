@@ -1,0 +1,165 @@
+{
+  "_id": "6566867e2ed87d5c8cacbc3a",
+  "title": "Incorrect Memoization in Coin Change",
+  "slug": "incorrect-memoization-in-coin-change-bugfix-medium-dynamic-programming-1",
+  "difficulty": "Medium",
+  "category": "DSA",
+  "subCategory": "Dynamic Programming",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "dp"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "You are given an array of integers `coins` representing coins in a currency and an integer `amount` to make. Each number in `coins` may be used any number of times to make `amount`. Return the minimum number of coins needed to make `amount`. If it is impossible to make `amount`, return -1.",
+    "inputFormat": "The input will contain two lines: the first line will contain an integer `n`, the number of coins in `coins`, and the second line will contain `n` space-separated integers representing the coins. The third line will contain `amount`, the amount to make.",
+    "outputFormat": "The output will be a single integer representing the minimum number of coins needed to make `amount`. If it is impossible to make `amount`, the output will be -1.",
+    "notes": "The input will always be valid.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of coins"
+      },
+      {
+        "variable": "amount",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Amount to make"
+      }
+    ],
+    "examples": [
+      {
+        "input": "3\n1 2 5\n11",
+        "output": "3",
+        "explanation": "The minimum number of coins to make 11 is 11/1 = 1 + 11/2 = 1 + 11/5 = 3."
+      },
+      {
+        "input": "1\n3\n7",
+        "output": "-1",
+        "explanation": "It is impossible to make 7 with a single coin of value 3."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "The key to this problem is to use dynamic programming to build up a table of minimum number of coins needed for each amount from 0 to the target amount."
+    }
+  ],
+  "editorial": {
+    "title": "The Correct Approach",
+    "intuition": "The idea is to create a table where the ith entry is the minimum number of coins needed to make i. We initialize the table by setting the first entry to 0 (since we need 0 coins to make 0), and the rest of the entries to infinity (since we can't make any positive amount with a negative number of coins). We then iterate over each coin, and for each coin, we update the table by setting the entry at i (if it's less than infinity) to the minimum of its current value and 1 plus the entry at i minus the value of the coin.",
+    "bruteForce": "brute Force details.",
+    "betterSolution": "",
+    "optimalSolution": "The optimal solution is to use dynamic programming to build up the table. We initialize the table by setting the first entry to 0, and the rest of the entries to infinity. We then iterate over each coin, and for each coin, we update the table by setting the entry at i (if it's less than infinity) to the minimum of its current value and 1 plus the entry at i minus the value of the coin. Finally, we return the entry for the target amount, or -1 if it's still infinity.",
+    "proofOfCorrectness": "The proof of correctness for this solution is by induction on the target amount. We know the base case is correct (since we set the first entry to 0), and for the inductive step, we need to show that if the subproblem for the target amount minus the value of the coin has a solution, then so does the subproblem for the target amount.",
+    "dryRun": "Let's consider an example: the coins are [1, 2, 5] and the target amount is 11. We initialize the table as follows: [inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf]. We then iterate over each coin, and for each coin, we update the table as follows: [inf, inf, inf, 1, inf, inf, inf, inf, inf, inf, inf] (for coin 1), [inf, inf, inf, 1, inf, 2, inf, inf, inf, inf, inf] (for coin 2), and [inf, inf, inf, 1, inf, 2, inf, 3, inf, inf, inf] (for coin 5). Finally, we return the entry for 11, which is 3.",
+    "commonMistakes": [
+      "Not initializing the table correctly",
+      "Not updating the table correctly"
+    ],
+    "timeComplexity": "O(n * m)",
+    "spaceComplexity": "O(m)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    int coinChange(vector<int>& coins, int amount) {\n        // TODO: implement\n    }\n};\n",
+    "java": "public class Solution {\npublic:\n    int coinChange(int[] coins, int amount) {\n        // TODO: implement\n    }\n}\n",
+    "python": "class Solution:\n    def coinChange(self, coins, amount) -> int:\n        pass\n",
+    "javascript": "class Solution {\n    coinChange(coins, amount) {\n        // TODO: implement\n    }\n};\n"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    int coinChange(vector<int>& coins, int amount) {\n        if (amount == 0)\n            return 0;\n        int dp[amount + 1] = {0};// dp[amount] = 0;\n        for (auto coin : coins)\n            for (int i = coin; i <= amount; i++)\n                dp[i] = min(dp[i], dp[i - coin] + 1);\n        return dp[amount];\n    }\n};\n",
+    "java": "public class Solution {\npublic:\n    int coinChange(int[] coins, int amount) {\n        if (amount == 0)\n            return 0;\n        int[] dp = new int[amount + 1];\ndp[0] = 0;\n        for (int coin : coins)\n            for (int i = coin; i <= amount; i++)\n                dp[i] = Math.min(dp[i], dp[i - coin] + 1);\n        return dp[amount];\n    }\n}\n",
+    "python": "class Solution:\n    def coinChange(self, coins, amount) -> int:\n        if amount == 0:\n            return 0;\n        dp = [0] * (amount + 1);\ndp[0] = 0;\n        for coin in coins:\n            for i in range(coin, amount + 1):\n                dp[i] = min(dp[i], dp[i - coin] + 1);\n        return dp[amount];\n",
+    "javascript": "class Solution {\n    coinChange(coins, amount) {\n        if (amount == 0)\n            return 0;\n        let dp = new Array(amount + 1).fill(Infinity);\ndp[0] = 0;\n        for (let coin of coins)\n            for (let i = coin; i <= amount; i++)\n                dp[i] = Math.min(dp[i], dp[i - coin] + 1);\n        return dp[amount];\n    }\n};\n"
+  },
+  "functionSignature": {
+    "cpp": "bool solve(vector<int>& nums);",
+    "java": "public boolean solve(int[] nums);",
+    "python": "def solve(self, nums: list[int]) -> bool:",
+    "javascript": "var solve = function(nums);"
+  },
+  "solutions": {
+    "cpp": "class Solution {\npublic:\n    int coinChange(vector<int>& coins, int amount) {\n        if (amount == 0)\n            return 0;\n        vector<int> dp(amount + 1, amount);\ndp[0] = 0;\n        for (auto coin : coins)\n            for (int i = coin; i <= amount; i++)\n                dp[i] = min(dp[i], dp[i - coin] + 1);\n        return dp[amount] == amount ? -1 : dp[amount];\n    }\n};\n",
+    "python": "class Solution:\n    def coinChange(self, coins, amount) -> int:\n        if amount == 0:\n            return 0;\n        dp = [amount] * (amount + 1);\ndp[0] = 0;\n        for coin in coins:\n            for i in range(coin, amount + 1):\n                dp[i] = min(dp[i], dp[i - coin] + 1);\n        return dp[amount] == amount ? -1 : dp[amount];\n",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "3\n1 2 5\n11",
+      "output": "3",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "1\n3\n7",
+      "output": "-1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

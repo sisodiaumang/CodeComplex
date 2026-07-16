@@ -1,18 +1,86 @@
 import { Request, Response, NextFunction } from "express";
+import ts from "typescript";
+import vm from "vm";
 
 import Match from "../models/match.model.js";
 import Submission from "../models/submission.model.js";
+import Question from "../models/question.model.js";
 import { computeEndsAt } from "../services/match.service.js";
 import {
     createAndJudge,
     judgeSubmission,
     SubmissionServiceError,
 } from "../services/submission.service.js";
+import { runLocally } from "../services/localRunner.service.js";
+import * as judgeService from "../services/judge.service.js";
 
-const SUPPORTED_LANGUAGES = ["CPP", "JAVA", "PYTHON", "JAVASCRIPT", "TYPESCRIPT"];
+const SUPPORTED_LANGUAGES = ["CPP", "JAVA", "PYTHON", "JAVASCRIPT", "TYPESCRIPT", "HTML", "CSS", "REACT"];
 
 function normalizeLanguage(language: string): string {
     return language.trim().toUpperCase();
+}
+
+async function ensureDriverCode(language: string, code: string, questionSlug: string): Promise<string> {
+    const lang = language.toLowerCase();
+    
+    // Check if code already contains the main entry point
+    let hasMain = false;
+    if (lang === "cpp" || lang === "c++") {
+        hasMain = code.includes("int main(") || code.includes("int main (");
+    } else if (lang === "java") {
+        hasMain = code.includes("public static void main");
+    } else if (lang === "python" || lang === "python3") {
+        hasMain = code.includes("def main(") || code.includes("if __name__ ==");
+    } else if (lang === "javascript" || lang === "js") {
+        hasMain = code.includes("console.log") || code.includes("main(");
+    }
+
+    if (hasMain) {
+        return code;
+    }
+
+    try {
+        const question = await Question.findOne({ slug: questionSlug });
+        if (question && question.solutions) {
+            const solutionCode = (question.solutions as any)[lang === "c++" ? "cpp" : lang === "python3" ? "python" : lang === "js" ? "javascript" : lang];
+            if (solutionCode) {
+                let hiddenCode = "";
+                let splitType: "before" | "after" | "none" = "none";
+                
+                if (lang === "cpp" || lang === "c++") {
+                    const mainIndex = solutionCode.indexOf("int main(");
+                    if (mainIndex !== -1) {
+                        hiddenCode = solutionCode.substring(mainIndex);
+                        splitType = "after";
+                    }
+                } else if (lang === "java") {
+                    const mainIndex = solutionCode.indexOf("public static void main(");
+                    if (mainIndex !== -1) {
+                        hiddenCode = solutionCode.substring(mainIndex);
+                        splitType = "after";
+                    }
+                } else if (lang === "python" || lang === "python3") {
+                    let mainIndex = solutionCode.indexOf("def main():");
+                    if (mainIndex === -1) {
+                        mainIndex = solutionCode.indexOf("if __name__ ==");
+                    }
+                    if (mainIndex !== -1) {
+                        hiddenCode = solutionCode.substring(mainIndex);
+                        splitType = "after";
+                    }
+                }
+
+                if (hiddenCode && splitType === "after") {
+                    const delimiter = (lang === "python" || lang === "python3") ? "# @driver-code-start" : "// @driver-code-start";
+                    return code.trim() + "\n\n" + delimiter + "\n" + hiddenCode;
+                }
+            }
+        }
+    } catch (e) {
+        console.error("[SubmissionController] Error adding driver code fallback:", e);
+    }
+
+    return code;
 }
 
 // ─────────────────────────────────────────────
@@ -118,7 +186,7 @@ export const submitCode = async (req: Request, res: Response, next: NextFunction
             battleType: match.battleType,
             battleRoomId: match.battleRoomId,
             language: normalizedLanguage as "CPP" | "JAVA" | "PYTHON" | "JAVASCRIPT" | "TYPESCRIPT",
-            sourceCode: code,
+            sourceCode: await ensureDriverCode(normalizedLanguage, code, match.questionSlug),
         });
 
         res.status(201).json({
@@ -134,6 +202,159 @@ export const submitCode = async (req: Request, res: Response, next: NextFunction
             res.status(err.statusCode).json({ success: false, message: err.message });
             return;
         }
+        next(err);
+    }
+};
+
+// ─────────────────────────────────────────────
+// POST /api/v1/submission/compile
+// ─────────────────────────────────────────────
+export const compileCode = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { matchId, language, code } = req.body;
+
+        if (!matchId || !language || typeof code !== "string") {
+            res.status(400).json({
+                success: false,
+                message: "matchId, language, and code are required"
+            });
+            return;
+        }
+
+        const normalizedLanguage = normalizeLanguage(language);
+
+        // Fetch match to determine battle type
+        const match = await Match.findById(matchId);
+        if (!match) {
+            res.status(404).json({ success: false, message: "Match not found" });
+            return;
+        }
+
+        const battleType = match.battleType;
+
+        let compiled = true;
+        let error: string | null = null;
+
+        if (battleType === "DSA" || battleType === "BUG_FIX") {
+            const driverCombinedCode = await ensureDriverCode(normalizedLanguage, code, match.questionSlug);
+            const forceLocal = process.env.JUDGE_MODE === "local";
+            if (forceLocal) {
+                try {
+                    const localResult = await runLocally(
+                        normalizedLanguage,
+                        driverCombinedCode,
+                        [{ input: "", expectedOutput: "" }]
+                    );
+                    if (localResult.lastResult.status.id === 6) { // Compilation Error
+                        compiled = false;
+                        error = localResult.lastResult.compile_output || localResult.lastResult.status.description;
+                    } else if (localResult.lastResult.status.id === 11) { // Runtime Error
+                        error = localResult.lastResult.stderr || "Runtime Error";
+                    }
+                } catch (e: any) {
+                    compiled = false;
+                    error = e.message || String(e);
+                }
+            } else {
+                try {
+                    const judgeRes = await judgeService.compile(
+                        normalizedLanguage as judgeService.SubmissionLanguage,
+                        driverCombinedCode
+                    );
+                    if (judgeRes.status.id === 6) { // Compilation Error
+                        compiled = false;
+                        error = judgeRes.compile_output || judgeRes.stderr || "Compilation Error";
+                    } else if (judgeRes.status.id === 11) { // Runtime Error
+                        error = judgeRes.stderr || "Runtime Error";
+                    }
+                } catch (e: any) {
+                    // Fallback to local runner
+                    try {
+                        const localResult = await runLocally(
+                            normalizedLanguage,
+                            driverCombinedCode,
+                            [{ input: "", expectedOutput: "" }]
+                        );
+                        if (localResult.lastResult.status.id === 6) {
+                            compiled = false;
+                            error = localResult.lastResult.compile_output || localResult.lastResult.status.description;
+                        } else if (localResult.lastResult.status.id === 11) {
+                            error = localResult.lastResult.stderr || "Runtime Error";
+                        }
+                    } catch (localErr: any) {
+                        compiled = false;
+                        error = `Judge0 offline and local fallback failed: ${e.message}. Local: ${localErr.message}`;
+                    }
+                }
+            }
+        } else if (battleType === "BACKEND" || battleType === "FRONTEND" || battleType === "PROJECTS") {
+            let fileMap: Record<string, string> = {};
+            try {
+                fileMap = JSON.parse(code);
+            } catch {
+                const ext = normalizedLanguage === "PYTHON" ? ".py" : (normalizedLanguage === "TYPESCRIPT" || normalizedLanguage === "REACT") ? ".tsx" : ".js";
+                fileMap = { [`main${ext}`]: code };
+            }
+
+            const errorLines: string[] = [];
+
+            for (const [filename, fileContent] of Object.entries(fileMap)) {
+                const lowerFilename = filename.toLowerCase();
+                if (lowerFilename.endsWith(".js")) {
+                    try {
+                        new vm.Script(fileContent, { filename });
+                    } catch (e: any) {
+                        errorLines.push(`[${filename}] Syntax Error: ${e.message}`);
+                    }
+                } else if (lowerFilename.endsWith(".ts") || lowerFilename.endsWith(".tsx") || lowerFilename.endsWith(".jsx")) {
+                    try {
+                        const result = ts.transpileModule(fileContent, {
+                            compilerOptions: {
+                                jsx: ts.JsxEmit.React,
+                                module: ts.ModuleKind.CommonJS,
+                                target: ts.ScriptTarget.ES2020
+                            },
+                            reportDiagnostics: true
+                        });
+                        if (result.diagnostics && result.diagnostics.length > 0) {
+                            result.diagnostics.forEach((d) => {
+                                const message = typeof d.messageText === "string" ? d.messageText : d.messageText.messageText;
+                                errorLines.push(`[${filename}] ${message}`);
+                            });
+                        }
+                    } catch (e: any) {
+                        errorLines.push(`[${filename}] Parse Error: ${e.message}`);
+                    }
+                } else if (lowerFilename.endsWith(".py")) {
+                    const quotes = (fileContent.match(/['"]/g) || []).length;
+                    if (quotes % 2 !== 0) {
+                        errorLines.push(`[${filename}] Warning: Possible unmatched quotes.`);
+                    }
+                    const parens = (fileContent.match(/\(/g) || []).length;
+                    const closeParens = (fileContent.match(/\)/g) || []).length;
+                    if (parens !== closeParens) {
+                        errorLines.push(`[${filename}] Warning: Unmatched parentheses.`);
+                    }
+                }
+            }
+
+            if (errorLines.length > 0) {
+                compiled = false;
+                error = errorLines.join("\n");
+            }
+        } else if (battleType === "PROMPT_WAR") {
+            compiled = true;
+            error = null;
+        }
+
+        res.status(200).json({
+            success: true,
+            data: {
+                compiled,
+                error
+            }
+        });
+    } catch (err) {
         next(err);
     }
 };

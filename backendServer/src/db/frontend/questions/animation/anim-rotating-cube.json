@@ -1,0 +1,54 @@
+{
+  "_id": "864af0c3ac86db2084ee5d83",
+  "title": "Rotating Cube",
+  "slug": "anim-rotating-cube",
+  "difficulty": "Medium",
+  "topics": [
+    "ANIMATION"
+  ],
+  "statement": {
+    "markdown": "markdown: ## Rotating Cube Animation\nCreate a 3D rotating cube animation using HTML, CSS, and JavaScript. The cube should rotate around its central point and change colors periodically.\nrequirements\n1. Use HTML5 for structure and CSS for styling.\n2. Implement JavaScript for dynamic rotation and color changes.\n3. Ensure the animation runs smoothly on different browser sizes and devices.\n4. Include at least three different colors for the cube's faces."
+  },
+  "constraints": [
+    "Use Tailwind CSS classes for styling.",
+    "Write the code within the given starter files.",
+    "Avoid using any external libraries.",
+    "Cube's size should be at least 200x200px."
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "html": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Roting Cube</title>\n    <link rel=\"stylesheet\" href=\"styles.css\">\n</head>\n<body>\n    <div class=\"cube\"></div>\n    <script src=\"script.js\"></script>\n</body>\n</html>",
+    "css": ".cube {\n    width: 200px;\n    height: 200px;\n    transform-style: preserve-3d;\n}\n.face {\n    position: absolute;\n    width: 200px;\n    height: 200px;\n    border: 2px solid black;\n}\n",
+    "javascript": "// Initialize cube and rotation variables here\nvar cube = document.querySelector('.cube');\nvar rotation = 0;\n"
+  },
+  "gradingCriteria": [
+    {
+      "id": "functional_correctness",
+      "description": "Implementation works as specified",
+      "weight": 60
+    },
+    {
+      "id": "code_quality",
+      "description": "Clean, readable code structure",
+      "weight": 40
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "html",
+      "css",
+      "javascript"
+    ],
+    "referenceSolution": "html: <!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Roting Cube</title>\n    <link rel=\"stylesheet\" href=\"styles.css\">\n</head>\n<body>\n    <div class=\"relative overflow-hidden flex justify-center items-center h-screen\">\n        <div class=\"cube relative\"></div>\n        <script src=\"script.js\"></script>\n    </div>\n</body>\n</html>\n\ncss: .cube {\n    width: 200px;\n    height: 200px;\n    transform-style: preserve-3d;\n    transition: transform 0.5s;\n}\n.face {\n    position: absolute;\n    width: 200px;\n    height: 200px;\n    border: 2px solid black;\n    background-color: #333;\n}\n\n.red { background-color: #ff0000; }\n.green { background-color: #00ff00; }\n.blue { background-color: #0000ff; }\n\n.rotation {\n    transform: rotateX(45deg) rotateY(45deg);\n}\n\njs: var cube = document.querySelector('.cube');\nvar rotation = 0;\nvar interval = null;\n\n// Add faces to the cube\nfor (let i = 0; i < 6; i++) {\n    var face = document.createElement('div');\n    face.classList.add('face');\n    face.style.transform = getFaceTransform(i);\n    cube.appendChild(face);\n}\n\n// Function to get face transform\nfunction getFaceTransform(face) {\n    var transform = 'rotateY(' + (face * 90) + 'deg) rotateX(90deg) translateZ(100px)';\n    return transform;\n}\n\n// Function to rotate the cube\nfunction rotateCube() {\n    rotation += 1;\n    cube.classList.add('rotation');\n    interval = setTimeout(function() {\n        cube.classList.remove('rotation');\n        rotateCube();\n    }, 500);\n}\n\n// Change the cube's color periodically\nfunction changeColor() {\n    var color = getRandomColor();\n\n    // Change the color\n    cube.children[0].classList.remove('red', 'green', 'blue');\n    cube.children[0].classList.add(color);\n\n    // Get a random color\n    function getRandomColor() {\n        var random = Math.floor(Math.random() * 3);\n        if (random == 0) {\n            return 'red';\n        } else if (random == 1) {\n            return 'green';\n        } else {\n            return 'blue';\n        }\n    }\n}\n\n// Start the rotation and color change intervals\nrotateCube();\nsetInterval(changeColor, 2000);\n\ncriteria\n{\"id\":1,\"description\":\"The 3D cube animation works as expected.\",\"weight\":30}\n{\"id\":2,\"description\":\"The cube's faces change colors periodically.\",\"weight\":20}\n{\"id\":3,\"description\":\"The animation runs smoothly on different browser sizes and devices.\",\"weight\":20}\n{\"id\":4,\"description\":\"The code is well-organized and follows best practices.\",\"weight\":30}"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

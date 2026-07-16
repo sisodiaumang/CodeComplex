@@ -1,0 +1,132 @@
+{
+  "_id": "4765cff326cbca8380723551",
+  "title": "Implementing Fixed Window Rate Limiting for a Public API",
+  "slug": "implementing-fixed-window-rate-limiting-for-a-public-api-medium-rate-limiting",
+  "difficulty": "Medium",
+  "topics": [
+    "RATE_LIMITING"
+  ],
+  "statement": "Implement a Fixed Window rate limiter for a public API. This API allows users to make requests to the following endpoints:\n\nCreate a new resource: `POST /api/resource`\nGet all resources: `GET /api/resource`\nDelete a resource: `DELETE /api/resource/{id}`\n\nThe API should enforce a rate limit of 10 requests per second for each user. Implement a solution that uses the `express-rate-limit` package to handle rate limiting.\n\nPlease ensure that your implementation includes proper error handling and returns a suitable response to the user.\n\nVisible endpoints should be exposed, while hidden endpoints should be used for testing the rate limiter's functionality and edge cases.\n\nUse the provided `express-rate-limit` package to handle rate limiting. You can assume that user IDs are passed as a query parameter in the request.\n",
+  "constraints": [
+    "Must use the `express-rate-limit` package to handle rate limiting.",
+    "Must use the `express.json()` middleware to parse request bodies."
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/resource",
+      "description": "Creates a new resource."
+    },
+    {
+      "method": "GET",
+      "path": "/api/resource",
+      "description": "Returns a list of all resources."
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/resource/{id}",
+      "description": "Deletes a resource by ID."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": {
+      "name": "backend-app",
+      "version": "1.0.0",
+      "main": "index.js",
+      "scripts": {
+        "start": "node index.js"
+      },
+      "dependencies": {
+        "express": "^4.18.2",
+        "express-rate-limit": "^5.2.0"
+      }
+    },
+    "index.js": "const express = require('express');\nconst rateLimit = require('express-rate-limit');\nconst app = express();\napp.use(express.json());\n\nconst limiter = rateLimit({\n    windowMs: 1000,\n    max: 10 // 10 requests per second\n});\n\napp.use(limiter);\n\n// TODO: Implement endpoints\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "POST",
+      "path": "/api/resource",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "key": "value"
+      },
+      "expectedStatus": 201,
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "GET",
+      "path": "/api/resource",
+      "expectedStatus": 200,
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "POST",
+      "path": "/api/resource",
+      "query": {
+        "userId": "12345"
+      },
+      "expectedStatus": 429,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "GET",
+      "path": "/api/resource",
+      "query": {
+        "userId": "12345"
+      },
+      "expectedStatus": 200,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "DELETE",
+      "path": "/api/resource/{id}",
+      "query": {
+        "userId": "12345"
+      },
+      "expectedStatus": 200,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "sliding-window",
+    "token-bucket",
+    "fixed-window",
+    "leaky-bucket",
+    "redis",
+    "express-rate-limit",
+    "rate-limiting",
+    "express",
+    "rate-limiter"
+  ]
+}

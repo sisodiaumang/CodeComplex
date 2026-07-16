@@ -1,0 +1,153 @@
+{
+  "_id": "1243d158ca637ea716c8e78d",
+  "title": "Detecting Cycles in an Undirected Graph",
+  "slug": "detecting-cycles-in-an-undirected-graph-bugfix-medium-graphs",
+  "difficulty": "Medium",
+  "category": "DSA",
+  "subCategory": "DFS",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "graph"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given an adjacency matrix representing an undirected graph, determine whether the graph contains any cycles.",
+    "inputFormat": "An adjacency matrix [[1, 2, 0], [0, 0, 3], [4, 0, 0]] where the value at each index [i][j] represents the presence of an edge between vertices i and j.",
+    "outputFormat": "A boolean indicating whether the graph contains any cycles.",
+    "notes": "The graph is represented as an adjacency matrix. You do not need to construct an adjacency list or any other data structure. The graph has a maximum of 10000 vertices.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of adjacency matrix"
+      }
+    ],
+    "examples": [
+      {
+        "input": "[[1, 2, 0], [0, 0, 3], [4, 0, 0]]",
+        "output": "true",
+        "explanation": ""
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "When using a union-find data structure for finding cycles, ensure that you update the parent of a node correctly."
+    }
+  ],
+  "editorial": {
+    "title": "Detecting Cycles in an Undirected Graph",
+    "intuition": "intuition details.",
+    "bruteForce": "brute Force details.",
+    "betterSolution": "",
+    "optimalSolution": "Use a union-find data structure to keep track of the parent of each node and the rank. When merging two nodes, update the parent and rank accordingly. If two nodes have the same parent, a cycle is detected.",
+    "proofOfCorrectness": "proof Of Correctness details.",
+    "dryRun": "dry Run details.",
+    "commonMistakes": [
+      "Incorrectly updating the parent node",
+      "Forgetting to update the rank"
+    ],
+    "timeComplexity": "O(E*α(n))",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "class Solution { public: bool solve(vector<vector<int>>& matrix); };",
+    "java": "public class Solution { public boolean solve(int[][] matrix); }",
+    "python": "class Solution: def solve(self, matrix): pass",
+    "javascript": "function solve(matrix) { }"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution { public: bool solve(vector<vector<int>>& matrix) { vector<int> parent(matrix.size(), 0); parent[0] = -1; for (int i = 0; i < matrix.size(); i++) { for (int j = 0; j < matrix.size(); j++) { if (matrix[i][j] === 1) { parent[i] = j; } } } for (int i = 0; i < matrix.size(); i++) { if (parent[i] === i) { return false; } } return true; } }",
+    "java": "public class Solution { public boolean solve(int[][] matrix) { int[] parent = new int[matrix.length]; parent[0] = -1; for (int i = 0; i < matrix.length; i++) { for (int j = 0; j < matrix.length; j++) { if (matrix[i][j] == 1) { parent[i] = j; } } } for (int i = 0; i < matrix.length; i++) { if (parent[i] == i) { return false; } } return true; } }",
+    "python": "class Solution: def solve(self, matrix): parent = [0] * len(matrix); parent[0] = -1; for i in range(len(matrix)): for j in range(len(matrix)): if matrix[i][j] == 1: parent[i] = j; return False not in (x == i for x in parent)",
+    "javascript": "function solve(matrix) { var parent = new Array(matrix.length); parent[0] = -1; for (var i = 0; i < matrix.length; i++) { for (var j = 0; j < matrix.length; j++) { if (matrix[i][j] === 1) { parent[i] = j; } } } for (var i = 0; i < matrix.length; i++) { if (parent[i] === i) { return false; } } return true; }"
+  },
+  "functionSignature": {
+    "cpp": "bool solve(vector<vector<int>>& matrix);",
+    "java": "boolean solve(int[][] matrix);",
+    "python": "def solve(self, matrix: list[list[int]]) -> bool:",
+    "javascript": "function solve(matrix);"
+  },
+  "solutions": {
+    "cpp": "class Solution { public: bool solve(vector<vector<int>>& matrix) { vector<int> parent(matrix.size(), 0); parent[0] = -1; for (int i = 0; i < matrix.size(); i++) { for (int j = 0; j < matrix.size(); j++) { if (matrix[i][j] === 1) { parent[i] = j; } } } for (int i = 0; i < matrix.size(); i++) { if (find(parent, i) === i) { return false; } } return true; } int find(vector<int>& parent, int x) { if (parent[x] != x) { return find(parent, parent[x]); } return x; } }",
+    "java": "public class Solution { public boolean solve(int[][] matrix) { int[] parent = new int[matrix.length]; parent[0] = -1; for (int i = 0; i < matrix.length; i++) { for (int j = 0; j < matrix.length; j++) { if (matrix[i][j] == 1) { parent[i] = j; } } } for (int i = 0; i < matrix.length; i++) { if (find(parent, i) == i) { return false; } } return true; } int find(int[] parent, int x) { if (parent[x] != x) { return find(parent, parent[x]); } return x; } }",
+    "python": "class Solution: def solve(self, matrix): parent = [0] * len(matrix); parent[0] = -1; for i in range(len(matrix)): for j in range(len(matrix)): if matrix[i][j] == 1: parent[i] = j; def find(x, parent): if parent[x] != x: return find(parent[x], parent); return x; return False not in (find(x, parent) == x for x in range(len(matrix)))",
+    "javascript": "function solve(matrix) { var parent = new Array(matrix.length); parent[0] = -1; for (var i = 0; i < matrix.length; i++) { for (var j = 0; j < matrix.length; j++) { if (matrix[i][j] === 1) { parent[i] = j; } } } function find(x, parent) { if (parent[x] !== x) { return find(parent[x], parent); } return x; } return !Array.from({length: matrix.length}, (_, i) => find(i, parent)).includes(i); }"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "2\n1 2\n0 1 0\n0 0 1",
+      "output": "true",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "3\n0 1 1\n1 0 1\n1 1 0",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

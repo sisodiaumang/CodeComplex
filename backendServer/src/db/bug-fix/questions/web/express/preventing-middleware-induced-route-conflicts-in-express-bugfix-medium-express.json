@@ -1,0 +1,162 @@
+{
+  "title": "Preventing Middleware-Induced Route Conflicts in Express",
+  "subCategory": "Routing",
+  "statement": {
+    "markdown": "In this task, you are given a simple Express API with several routes. However, the middleware ordering is incorrect, causing conflicts between routes. Your task is to fix the middleware ordering to prevent conflicts and ensure that the API works as expected.\n\nHere's the buggy code:\n```javascript\nconst express = require('express');\nconst app = express();\n\napp.use('/api', (req, res) => {\n  res.json({ message: 'Hello, World!' });\n});\n\napp.use('/api/user', (req, res) => {\n  res.json({ message: 'User endpoint' });\n});\n\napp.use('/api/user/:id', (req, res) => {\n  res.json({ message: `User ${req.params.id}` });\n});\n\napp.use('/api/product', (req, res) => {\n  res.json({ message: 'Product endpoint' });\n});\n\napp.listen(3000, () => {\n  console.log('Server listening on port 3000');\n});\n```\n\nThis code should be fixed to prevent middleware-induced route conflicts.\n",
+    "inputFormat": "The input format is not applicable for this task.",
+    "outputFormat": "The output format is not applicable for this task.",
+    "notes": "The API should respond to GET requests for /api, /api/user, /api/user/:id, and /api/product. The middleware ordering should be corrected to prevent conflicts.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "No constraints apply"
+      }
+    ],
+    "examples": [
+      {
+        "input": "GET /api HTTP/1.1\r\nHost: localhost:3000\r\n\r\n",
+        "output": "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\n\r\n{\"message\":\"Hello, World!\"}\r\n",
+        "explanation": "The API responds to a GET request for /api."
+      },
+      {
+        "input": "GET /api/user HTTP/1.1\r\nHost: localhost:3000\r\n\r\n",
+        "output": "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\n\r\n{\"message\":\"User endpoint\"}\r\n",
+        "explanation": "The API responds to a GET request for /api/user."
+      },
+      {
+        "input": "GET /api/user/123 HTTP/1.1\r\nHost: localhost:3000\r\n\r\n",
+        "output": "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\n\r\n{\"message\":\"User 123\"}\r\n",
+        "explanation": "The API responds to a GET request for /api/user/:id."
+      },
+      {
+        "input": "GET /api/product HTTP/1.1\r\nHost: localhost:3000\r\n\r\n",
+        "output": "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\n\r\n{\"message\":\"Product endpoint\"}\r\n",
+        "explanation": "The API responds to a GET request for /api/product."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 60,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "EXPRESS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "express"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "The middleware ordering should be corrected to prevent conflicts between routes."
+    }
+  ],
+  "editorial": {
+    "title": "Preventing Middleware-Induced Route Conflicts in Express",
+    "intuition": "The middleware ordering should be corrected to prevent conflicts between routes. The correct order should ensure that the more specific routes are handled before the less specific routes.",
+    "bruteForce": "The brute force approach would be to try all possible middleware orderings and see which one works.",
+    "betterSolution": "",
+    "optimalSolution": "The optimal solution is to use the Express Router to handle the routes. This will ensure that the more specific routes are handled before the less specific routes.",
+    "proofOfCorrectness": "The proof of correctness is that the API responds to all the expected requests without any middleware-induced route conflicts.",
+    "dryRun": "Here's an example dry run of the corrected code:\n```javascript\nconst express = require('express');\nconst app = express();\n\nconst userRouter = express.Router();\nuserRouter.get('/:id', (req, res) => {\n  res.json({ message: `User ${req.params.id}` });\n});\n\napp.use('/api', (req, res) => {\n  res.json({ message: 'Hello, World!' });\n});\n\napp.use('/api/user', userRouter);\n\napp.use('/api/product', (req, res) => {\n  res.json({ message: 'Product endpoint' });\n});\n\napp.listen(3000, () => {\n  console.log('Server listening on port 3000');\n});\n```\n",
+    "commonMistakes": [
+      "Not using the Express Router",
+      "Not correcting the middleware ordering"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "// Create an Express app\nconst express = require('express');\nconst app = express();\n\n// Create a user router\nconst userRouter = express.Router();\nuserRouter.get('/:id', (req, res) => {\n  // Handle user requests\n});\n\n// Use the user router\napp.use('/api/user', userRouter);\n\n// Handle other requests\napp.use('/api', (req, res) => {\n  res.json({ message: 'Hello, World!' });\n});\n\n// Start the server\napp.listen(3000, () => {\n  console.log('Server listening on port 3000');\n});\n",
+    "python": "// Create an Express app\ndef create_app():\n    app = express()\n    return app\n\n# Create a user router\nuser_router = express.Router()\nuser_router.get('/:id', (req, res) => {\n    # Handle user requests\n})\n\n# Use the user router\napp.use('/api/user', user_router)\n\n# Handle other requests\napp.use('/api', (req, res) => {\n    res.json({ message: 'Hello, World!' })\n})\n\n# Start the server\nif __name__ == '__main__':\n    app = create_app()\n    app.listen(3000, lambda: print('Server listening on port 3000'))\n"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Create an Express app\nconst express = require('express');\nconst app = express();\n\n// Create a user router\nconst userRouter = express.Router();\nuserRouter.get('/:id', (req, res) => {\n  res.json({ message: `User ${req.params.id}` });\n});\n\n// Use the user router\napp.use('/api/user', userRouter);\n\n// Handle other requests\napp.use('/api', (req, res) => {\n  res.json({ message: 'Hello, World!' });\n});\n\n// Handle product requests\napp.use('/api/product', (req, res) => {\n  res.json({ message: 'Product endpoint' });\n});\n\n// Start the server\napp.listen(3000, () => {\n  console.log('Server listening on port 3000');\n});\n",
+    "python": "// Create an Express app\ndef create_app():\n    app = express()\n    return app\n\n# Create a user router\nuser_router = express.Router()\nuser_router.get('/:id', (req, res) => {\n    res.json({ message: f'User {req.params.id}' })\n})\n\n# Use the user router\napp.use('/api/user', user_router)\n\n# Handle other requests\napp.use('/api', (req, res) => {\n    res.json({ message: 'Hello, World!' })\n})\n\n# Handle product requests\napp.use('/api/product', (req, res) => {\n    res.json({ message: 'Product endpoint' })\n})\n\n# Start the server\nif __name__ == '__main__':\n    app = create_app()\n    app.listen(3000, lambda: print('Server listening on port 3000'))\n"
+  },
+  "functionSignature": {
+    "javascript": "// No function signature needed",
+    "python": "// No function signature needed"
+  },
+  "solutions": {
+    "javascript": "// Corrected code:\nconst express = require('express');\nconst app = express();\n\nconst userRouter = express.Router();\nuserRouter.get('/:id', (req, res) => {\n  res.json({ message: `User ${req.params.id}` });\n});\n\napp.use('/api', (req, res) => {\n  res.json({ message: 'Hello, World!' });\n});\n\napp.use('/api/user', userRouter);\n\napp.use('/api/product', (req, res) => {\n  res.json({ message: 'Product endpoint' });\n});\n\napp.listen(3000, () => {\n  console.log('Server listening on port 3000');\n});\n",
+    "python": "// Corrected code:\ndef create_app():\n    app = express()\n    return app\n\nuser_router = express.Router()\nuser_router.get('/:id', (req, res) => {\n    res.json({ message: f'User {req.params.id}' })\n})\n\napp.use('/api', (req, res) => {\n    res.json({ message: 'Hello, World!' })\n})\n\napp.use('/api/user', user_router)\n\napp.use('/api/product', (req, res) => {\n    res.json({ message: 'Product endpoint' })\n})\n\nif __name__ == '__main__':\n    app = create_app()\n    app.listen(3000, lambda: print('Server listening on port 3000'))\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "GET /api HTTP/1.1\r\nHost: localhost:3000\r\n\r\n",
+      "output": "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\n\r\n{\"message\":\"Hello, World!\"}\r\n",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "GET /api/user HTTP/1.1\r\nHost: localhost:3000\r\n\r\n",
+      "output": "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\n\r\n{\"message\":\"User endpoint\"}\r\n",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_3",
+      "input": "GET /api/user/123 HTTP/1.1\r\nHost: localhost:3000\r\n\r\n",
+      "output": "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\n\r\n{\"message\":\"User 123\"}\r\n",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_4",
+      "input": "GET /api/product HTTP/1.1\r\nHost: localhost:3000\r\n\r\n",
+      "output": "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\n\r\n{\"message\":\"Product endpoint\"}\r\n",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "_id": "4f1fae53c475f68f85bd47cc",
+  "slug": "preventing-middleware-induced-route-conflicts-in-express-bugfix-medium-express",
+  "mode": "bug_fix",
+  "category": "EXPRESS",
+  "difficulty": "Medium"
+}

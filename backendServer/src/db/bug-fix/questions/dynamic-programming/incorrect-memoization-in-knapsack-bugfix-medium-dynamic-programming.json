@@ -1,0 +1,158 @@
+{
+  "_id": "1dd2da143c884c2fcc961daf",
+  "title": "Incorrect Memoization in Knapsack",
+  "slug": "incorrect-memoization-in-knapsack-bugfix-medium-dynamic-programming",
+  "difficulty": "Medium",
+  "category": "DSA",
+  "subCategory": "DP/0-1 Knapsack",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "dp"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Solve the problem and fix the bugs.",
+    "inputFormat": "The first line contains two space-separated integers, n and w, where n is the number of items and w is the maximum weight capacity of the knapsack. The next n lines contain two space-separated integers, w_i and p_i, where w_i is the weight of the ith item and p_i is the price of the ith item.\n\n",
+    "outputFormat": "Output the maximum value that can be put in a knapsack of capacity w.\n\n",
+    "notes": "The items can be either included or excluded from the knapsack.\n\n",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "2 10\n5 15\n5 10\n",
+        "output": "15\n",
+        "explanation": ""
+      },
+      {
+        "input": "3 12\n2 6\n2 6\n5 8\n",
+        "output": "12\n",
+        "explanation": ""
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Check the order of the for loop"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(n*w)",
+    "spaceComplexity": "O(n*w)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\nbool solve(vector<int>& n, int w);\n};\n\n",
+    "java": "public class Solution {\npublic:\nboolean solve(int[] n, int w);\n};\n\n",
+    "python": "class Solution:\n\tpass\n\n",
+    "javascript": "class Solution {\n\tsolve(nums);\n}\n\n"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\nbool solve(vector<int>& n, int w) {\n\tint N = n.size();\n\tif (w <= 0) return false;\n\tint** dp = new int*[N];\n\tfor (int i = 0; i < N; i++) {\n\t\tif (i == 0) dp[i] = new int[w + 1];\n\t\telse dp[i] = dp[i - 1];\n\t}\n\tfor (int i = 1; i < N; i++)\n\t\tfor (int j = 1; j <= w; j++)\n\t\t\tif (j >= n[i]) dp[i][j] = max(dp[i - 1][j], dp[i - 1][j - n[i]] + n[i]);\n\t\telse dp[i][j] = dp[i - 1][j];\n\treturn dp[N - 1][w];\n}\n};\n\n",
+    "java": "public class Solution {\npublic boolean solve(int[] n, int w) {\n\tint N = n.length;\n\tif (w <= 0) return false;\n\tint[][] dp = new int[N + 1][w + 1];\n\tfor (int i = 1; i <= N; i++)\n\t\tfor (int j = 1; j <= w; j++)\n\t\t\tif (j >= n[i - 1]) dp[i][j] = Math.max(dp[i - 1][j], dp[i - 1][j - n[i - 1]] + n[i - 1]);\n\t\telse dp[i][j] = dp[i - 1][j];\n\treturn dp[N][w];\n}\n}\n\n",
+    "python": "class Solution:\n\tdef solve(self, n, w):\n\t\tN = len(n)\n\t\tif w <= 0:return False\n\t\tmemo = [[0] * (w + 1) for _ in range(N + 1)]\n\t\tfor i in range(1, N + 1):\n\t\t\tfor j in range(1, w + 1):\n\t\t\t\tif j >= n[i - 1]:\n\t\t\t\t\tmemo[i][j] = max(memo[i - 1][j], memo[i - 1][j - n[i - 1]] + n[i - 1])\n\t\t\t\telse:\n\t\t\t\t\tmemo[i][j] = memo[i - 1][j]\n\t\treturn memo[N][w]\n\n",
+    "javascript": "class Solution {\n\tsolve(nums, w) {\n\t\tlet N = nums.length;\n\t\tif (w <= 0) return false;\n\t\tlet dp = Array.from({length: N + 1}, () => Array(w + 1).fill(0));\n\t\tfor (let i = 1; i <= N; i++)\n\t\t\tfor (let j = 1; j <= w; j++)\n\t\t\t\tif (j >= nums[i - 1]) dp[i][j] = Math.max(dp[i - 1][j], dp[i - 1][j - nums[i - 1]] + nums[i - 1]);\n\t\t\telse dp[i][j] = dp[i - 1][j];\n\t\treturn dp[N][w];\n\t}\n};\n\n"
+  },
+  "functionSignature": {
+    "cpp": "bool solve(vector<int>& nums, int w);",
+    "java": "boolean solve(int[] nums, int w);",
+    "python": "def solve(self, nums: list[int], w: int) -> bool:",
+    "javascript": "var solve = function(nums, w);"
+  },
+  "solutions": {
+    "python": "import sys\nfrom typing import List\n\nclass Solution:\n\tdef read_input(self):\n\t\tn, w = map(int, input().split())\n\t\treturn n, w, [int(i) for i in input().split()],\n\t\t[int(i) for i in input().split()]\n\n\tdef solve(self, n, w, items, prices):\n\t\tN = len(items)\n\t\tmemo = [[0] * (w + 1) for _ in range(N + 1)]\n\t\tfor i in range(1, N + 1):\n\t\t\tfor j in range(1, w + 1):\n\t\t\t\tif j >= items[i - 1]:\n\t\t\t\t\tmemo[i][j] = max(memo[i - 1][j], memo[i - 1][j - items[i - 1]] + prices[i - 1])\n\t\t\t\telse:\n\t\t\t\t\tmemo[i][j] = memo[i - 1][j]\n\t\treturn memo[N][w]\n\n\tdef main(self):\n\t\tn, w, items, prices = self.read_input()\n\t\tprint(self.solve(n, w, items, prices))\n\nif __name__ == '__main__':\n\tSolution().main()\n",
+    "cpp": "#include <bits/stdc++.h>\n\nusing namespace std;\n\nclass Solution {\npublic:\n\tint solve(vector<int>& n, int w) {\n\t\tint N = n.size();\n\t\tvector<vector<int>> dp(N + 1, vector<int>(w + 1));\n\t\tfor (int i = 1; i <= N; i++)\n\t\t\tfor (int j = 1; j <= w; j++)\n\t\t\t\tif (j >= n[i - 1]) dp[i][j] = max(dp[i - 1][j], dp[i - 1][j - n[i - 1]] + n[i - 1]);\n\t\t\telse dp[i][j] = dp[i - 1][j];\n\t\treturn dp[N][w];\n\t}\n};\n\nint main() {\n\tios_base::sync_with_stdio(false); cin.tie(0);\n\tint N, W;\n\tcin >> N >> W;\n\tvector<int> items(N);\n\tvector<int> prices(N);\n\tfor (int i = 0; i < N; i++)\n\t\tcin >> items[i] >> prices[i];\n\tSolution solution;\n\tcout << solution.solve(items, W) << endl;\n\treturn 0;\n}\n",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 1,
+    "memoryLimit": 128,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "2 10\n5 15\n5 10\n",
+      "output": "15\n",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "3 12\n2 6\n2 6\n5 8\n",
+      "output": "12\n",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

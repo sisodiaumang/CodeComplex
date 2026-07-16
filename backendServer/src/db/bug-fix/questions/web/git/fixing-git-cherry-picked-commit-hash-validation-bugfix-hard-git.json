@@ -1,0 +1,143 @@
+{
+  "title": "Fixing GIT Cherry-Picked Commit Hash Validation",
+  "subCategory": "Git diff tool",
+  "statement": {
+    "markdown": "Given a list of commit hashes and a target hash, write a function that validates whether the target hash can be reached by cherry-picking a subset of the given hashes in any order. The function should return `true` if the target hash can be reached and `false` otherwise. Note that the hash validation should consider both the hash length (40 characters) and the hash characters themselves.\n\nThe input is a string of space-separated commit hashes. The target hash is the last hash in the string. If the input string is empty, the function should return `false`. The function may assume that all input hashes are valid Git commit hashes.",
+    "inputFormat": "a string of space-separated commit hashes",
+    "outputFormat": "a boolean value indicating whether the target hash can be reached",
+    "notes": "The function should not consider the order of the hashes in the input string. The function should not use any external libraries or Git commands.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of commit hashes"
+      },
+      {
+        "variable": "target",
+        "type": "string",
+        "minLength": 40,
+        "maxLength": 40,
+        "description": "Target commit hash"
+      }
+    ],
+    "examples": [
+      {
+        "input": "abc123 def456 ghi789 jkl012 mno345",
+        "output": "true",
+        "explanation": "The target hash 'mno345' can be reached by cherry-picking the hashes 'ghi789', 'jkl012', and 'mno345' in any order."
+      },
+      {
+        "input": "abc123 def456 ghi789 jkl012",
+        "output": "false",
+        "explanation": "The target hash 'mno345' is not present in the input string."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "GIT"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "git"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use a set data structure to store the given hashes and the target hash."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial: Fixing GIT Cherry-Picked Commit Hash Validation",
+    "intuition": "The key insight is to use a set data structure to store the given hashes and the target hash. This allows us to efficiently check whether the target hash is present in the set.",
+    "bruteForce": "A brute-force approach would involve generating all possible subsets of the given hashes and checking whether the target hash is present in each subset.",
+    "betterSolution": "We can use a set data structure to store the given hashes and the target hash. Then, we can use a depth-first search algorithm to check whether the target hash can be reached by cherry-picking a subset of the given hashes.",
+    "optimalSolution": "The optimal solution is to use a set data structure to store the given hashes and the target hash. Then, we can use a depth-first search algorithm to check whether the target hash can be reached by cherry-picking a subset of the given hashes.",
+    "proofOfCorrectness": "The correctness proof involves showing that the set data structure and the depth-first search algorithm correctly implement the cherry-picking logic.",
+    "dryRun": "A dry run involves testing the function with a small input string and verifying that the output is correct.",
+    "commonMistakes": [
+      "Failing to use a set data structure",
+      "Incorrectly implementing the depth-first search algorithm"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "function solve(input) {\n    // Your solution here\n}",
+    "python": "class Solution:\n    def solve(self, input):\n        # Your solution here"
+  },
+  "buggyStarterCode": {
+    "javascript": "function solve(input) {\n    let hashes = input.split(' ');\n    let target = hashes[hashes.length - 1];\n    let reachable = false;\n\n    for (let i = 0; i < hashes.length - 1; i++) {\n        if (hashes[i].length === 40 && target.length === 40) {\n            if (hashes[i] === target) {\n                reachable = true;\n                break;\n            }\n        }\n    }\n\n    return reachable;\n}",
+    "python": "class Solution:\n    def solve(self, input):\n        hashes = input.split(' ')\n        target = hashes[-1]\n        reachable = False\n\n        for i in range(len(hashes) - 1):\n            if len(hashes[i]) == 40 and len(target) == 40:\n                if hashes[i] == target:\n                    reachable = True\n                    break\n\n        return reachable"
+  },
+  "functionSignature": {
+    "javascript": "var solve = function(input) {\n    // Your solution here\n}",
+    "python": "def solve(self, input):\n    # Your solution here"
+  },
+  "solutions": {
+    "javascript": "// Corrected solution\nfunction solve(input) {\n    let hashes = input.split(' ');\n    let target = hashes[hashes.length - 1];\n    let reachable = false;\n\n    let set = new Set(hashes);\n\n    for (let i = 0; i < hashes.length - 1; i++) {\n        if (hashes[i].length === 40 && target.length === 40) {\n            if (hashes[i] === target) {\n                reachable = true;\n                break;\n            }\n        }\n    }\n\n    if (set.has(target)) {\n        reachable = true;\n    }\n\n    return reachable;\n}",
+    "python": "class Solution:\n    def solve(self, input):\n        hashes = input.split(' ')\n        target = hashes[-1]\n        reachable = False\n\n        set = set(hashes)\n\n        for i in range(len(hashes) - 1):\n            if len(hashes[i]) == 40 and len(target) == 40:\n                if hashes[i] == target:\n                    reachable = True\n                    break\n\n        if target in set:\n            reachable = True\n\n        return reachable"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "abc123 def456 ghi789 jkl012 mno345",
+      "output": "true",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "abc123 def456 ghi789 jkl012",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "06e8a2c89479765abb542c57",
+  "slug": "fixing-git-cherry-picked-commit-hash-validation-bugfix-hard-git",
+  "mode": "bug_fix",
+  "category": "GIT",
+  "difficulty": "Hard"
+}

@@ -1,0 +1,158 @@
+{
+  "_id": "cd780898717a00fbb04ffa4c",
+  "title": "Invalid Queue Node Removal",
+  "slug": "invalid-queue-node-removal-bugfix-hard-stack-queue",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "QUEUE/DEQUE",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 60,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "queue"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given a doubly ended queue, remove the node at the front of the queue when the queue is not empty, but remove the node at the end of the queue when the queue is empty. Implement the method to handle this edge case.",
+    "inputFormat": "A doubly ended queue is implemented as a doubly linked list with head and tail pointers.",
+    "outputFormat": "Remove the front node from the queue.",
+    "notes": "You must handle the queue edge cases where it is empty.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "1\n1 2 3 4 5\n",
+        "output": "2 3 4 5\n",
+        "explanation": "Remove the front node from the queue"
+      },
+      {
+        "input": "1\n",
+        "output": "0",
+        "explanation": "Queue is empty"
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use a doubly linked list to implement the queue."
+    }
+  ],
+  "editorial": {
+    "title": "Queue Node Removal",
+    "intuition": "Implement a doubly linked list to manage the nodes in the queue.",
+    "bruteForce": "Use a separate data structure to keep track of the front and rear nodes.",
+    "betterSolution": "",
+    "optimalSolution": "Use a doubly linked list to remove the front node.",
+    "proofOfCorrectness": "Check the time and space complexity of the solution.",
+    "dryRun": "Test the solution with small inputs.",
+    "commonMistakes": [
+      "Removing the wrong node",
+      "Not handling the edge case"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    bool isEmpty();\n    Node* head;\n    Node* tail;\n};\n",
+    "java": "public class Solution {\n    public boolean isEmpty();\n    Node head;\n    Node tail;\n}\n",
+    "python": "class Solution:\n    def isEmpty(self):\n        pass\n    head = None\n    tail = None\n",
+    "javascript": "class Solution {\n    isEmpty() {}\n    head = null;\n    tail = null;\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    bool isEmpty();\n    Node* head;\n    Node* tail;\n};\nbool Solution::isEmpty(){\n    if (head == tail) return true;\n    return false;\n};\nvoid Solution::removeFront(){\n    if (isEmpty()) head = tail = new Node(1);\n    else head = head->next;\n};\n",
+    "java": "public class Solution {\n    public boolean isEmpty();\n    Node head;\n    Node tail;\n}\npublic boolean Solution::isEmpty(){\n    if (head == tail) return true;\n    return false;\n};\npublic void Solution::removeFront(){\n    if (isEmpty()) head = tail = new Node(1);\n    else head = head.next;\n};\n",
+    "python": "class Solution:\n    def isEmpty(self):\n        if self.head == self.tail: return True\n        return False\n    def removeFront(self):\n        if self.isEmpty(): self.head = self.tail = Node(1)\n        else self.head = self.head.next\n",
+    "javascript": "class Solution {\n    isEmpty() {\n        if (this.head == this.tail) return true;\n        return false;\n    }\n    removeFront(){\n        if (this.isEmpty()) this.head = this.tail = new Node(1);\n        else this.head = this.head.next;\n    }\n}"
+  },
+  "functionSignature": {
+    "cpp": "void solve(vector<Node*>& nodes);\n",
+    "java": "void solve(Node[] nodes);",
+    "python": "def solve(self, nodes: list[Node]):\n    pass\n",
+    "javascript": "void solve(Node[] nodes)"
+  },
+  "solutions": {
+    "python": "import sys\nfrom collections import deque\n\nclass Node:\n    def __init__(self, value):\n        self.value = value\n        self.next = self.prev = None\n\nclass Solution:\n    def __init__(self):\n        self.queue = deque()\n\n    def isEmpty(self):\n        return self.queue.empty()\n\n    def removeFront(self):\n        if self.isEmpty(): return\n        node = self.queue.popleft()\n        del node\n\n    def solve(self):\n        nodes = [Node(i) for i in range(1, 6)]\n        for node in nodes:\n            self.queue.append(node)\n        self.removeFront()\n\n        for node in self.queue:\n            print(node.value, end=' ')\n\n\n\nif __name__ == '__main__':\n    solution = Solution()\n    solution.solve()\n",
+    "cpp": "#include <iostream>\n#include <vector>\n#include <deque>\n\nclass Node {\npublic:\n    int value;\n    Node* next;\n    Node* prev;\n\n    Node(int value = 0) : value(value), next(nullptr), prev(nullptr) {}\n};\n\nclass Solution {\npublic:\n    std::deque<Node*> queue;\n\n    bool isEmpty() {\n        return queue.empty();\n    }\n\n    void removeFront() {\n        if (isEmpty()) return;\n        Node* node = queue.front();\n        queue.pop_front();\n        delete node;\n    }\n\n    void solve() {\n        for (int i = 1; i <= 5; ++i) {\n            Node* node = new Node(i);\n            queue.push_back(node);\n        }\n\n        removeFront();\n\n        for (const auto& node : queue) {\n            std::cout << node->value << ' ';\n        }\n    }\n};\n\nint main() {\n    Solution solution;\n    solution.solve();\n\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "1\n1 2 3 4 5\n",
+      "output": "2 3 4 5\n",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "1\n",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

@@ -1,0 +1,136 @@
+{
+  "title": "Validating Docker Compose Network Port Exclusion",
+  "subCategory": "Docker Network Port Exclusion",
+  "statement": {
+    "markdown": "You are given a Docker Compose configuration as a string. The configuration has multiple services defined, each with a set of exposed ports. You need to validate that each service's exposed ports do not conflict with the ports specified in the network port exclusion list. The network port exclusion list is a list of port ranges, where each range is defined as a string in the format 'start-port-end-port'. If a port range is specified as 'start-port-', it means the port range starts from 'start-port' and goes up to 'start-port + 65535'. You need to return a boolean value indicating whether the configuration is valid or not.",
+    "inputFormat": "A string representing the Docker Compose configuration.",
+    "outputFormat": "A boolean value indicating whether the configuration is valid or not.",
+    "notes": "Time and space complexity should be O(n), where n is the total number of ports in the configuration.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The total number of ports in the configuration."
+      }
+    ],
+    "examples": [
+      {
+        "input": "version: '3'\nservices:\n  db: \n    image: postgres\n    environment:\n      - POSTGRES_USER=myuser\n      - POSTGRES_PASSWORD=mypassword\n    ports: \n      - 5432:5432\n  web: \n    image: web\n    environment:\n      - PORT=3000\n    ports: \n      - 3000-3005\n    depends_on: \n      - db\nnetworks: \n  default: \n    external: true\nexpose:\n  - 3000-3005\n  - 3006-\n",
+        "output": "false",
+        "explanation": "The port range 3000-3005 is specified in the 'web' service and also in the 'expose' list, which is not allowed."
+      },
+      {
+        "input": "version: '3'\nservices:\n  db: \n    image: postgres\n    environment:\n      - POSTGRES_USER=myuser\n      - POSTGRES_PASSWORD=mypassword\n    ports: \n      - 5432:5432\n  web: \n    image: web\n    environment:\n      - PORT=3000\n    ports: \n      - 3000\n    depends_on: \n      - db\nnetworks: \n  default: \n    external: true\nexpose:\n  - 3000\n  - 3006-\n",
+        "output": "true",
+        "explanation": "The port range 3000 is not specified in the 'expose' list, so it is allowed."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 75,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DOCKER"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "docker"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// This function should validate the Docker Compose configuration.\nfunction validateComposeConfig(config) {\n  // TO DO: implement the validation logic here\n}",
+    "python": "class Solution:\n    def validate_compose_config(self, config) -> bool:\n        # TO DO: implement the validation logic here\n        pass"
+  },
+  "buggyStarterCode": {
+    "javascript": "// This function should validate the Docker Compose configuration.\nfunction validateComposeConfig(config) {\n  const services = config.match(/services:(.*?)expose/g)[0].match(/services:(.*?)ports/g)[0];\n  const exposedPorts = services.match(/ports:(.*?)depends_on/g)[0].match(/ports:(.*?)environment/g)[0];\n  const excludePorts = config.match(/expose:(.*?)networks/g)[0].match(/expose:(.*?)environment/g)[0];\n  const uniquePorts = new Set();\n  for (const port of exposedPorts.split(/[,-]/)) {\n    uniquePorts.add(port);\n  }\n  for (const port of excludePorts.split(/[,-]/)) {\n    uniquePorts.delete(port);\n  }\n  return uniquePorts.size === 0;\n}",
+    "python": "class Solution:\n    def validate_compose_config(self, config) -> bool:\n        services = config.split('services:')[1].split('expose:')[0].split('ports:')[0]\n        exposedPorts = services.split('depends_on:')[0].split('environment:')[0]\n        excludePorts = config.split('expose:')[1].split('networks:')[0]\n        uniquePorts = set()\n        for port in exposedPorts.split(/[,-]/):\n            uniquePorts.add(port)\n        for port in excludePorts.split(/[,-]/):\n            uniquePorts.discard(port)\n        return len(uniquePorts) == 0"
+  },
+  "functionSignature": {
+    "javascript": "function validateComposeConfig(config) {\n}",
+    "python": "def validate_compose_config(self, config) -> bool:"
+  },
+  "solutions": {
+    "javascript": "// Corrected solution\nfunction validateComposeConfig(config) {\n  const services = config.match(/services:(.*?)expose/g)[0].match(/services:(.*?)ports/g)[0];\n  const exposedPorts = services.substring(services.indexOf('ports:')).split(/[,-]/).map(port => port.trim());\n  const excludePorts = config.match(/expose:(.*?)networks/g)[0].split(/[,-]/).map(port => port.trim());\n  const uniquePorts = new Set();\n  for (const port of exposedPorts) {\n    if (excludePorts.includes(port)) {\n      return false;\n    }\n    uniquePorts.add(port);\n  }\n  return true;\n}",
+    "python": "class Solution:\n    def validate_compose_config(self, config) -> bool:\n        services = config.split('services:')[1].split('expose:')[0].split('ports:')[1]\n        exposedPorts = services.split('depends_on:')[0].split('environment:')[0].split(/[,-]/)\n        excludePorts = config.split('expose:')[1].split('networks:')[0].split(/[,-]/)\n        uniquePorts = set()\n        for port in exposedPorts:\n            if port in excludePorts:\n                return False\n            uniquePorts.add(port)\n        return True"
+  },
+  "judgeConfig": {
+    "timeLimit": 5,
+    "memoryLimit": 128,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "version: '3'\nservices:\n  db: \n    image: postgres\n    environment:\n      - POSTGRES_USER=myuser\n      - POSTGRES_PASSWORD=mypassword\n    ports: \n      - 5432:5432\n  web: \n    image: web\n    environment:\n      - PORT=3000\n    ports: \n      - 3000-3005\n    depends_on: \n      - db\nnetworks: \n  default: \n    external: true\nexpose:\n  - 3000-3005\n  - 3006-\n",
+      "output": "false",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "version: '3'\nservices:\n  db: \n    image: postgres\n    environment:\n      - POSTGRES_USER=myuser\n      - POSTGRES_PASSWORD=mypassword\n    ports: \n      - 5432:5432\n  web: \n    image: web\n    environment:\n      - PORT=3000\n    ports: \n      - 3000\n    depends_on: \n      - db\nnetworks: \n  default: \n    external: true\nexpose:\n  - 3000\n  - 3006-\n",
+      "output": "true",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "0040764907e48842fc380adf",
+  "slug": "validating-docker-compose-network-port-exclusion-bugfix-medium-docker",
+  "mode": "bug_fix",
+  "category": "DOCKER",
+  "difficulty": "Medium"
+}

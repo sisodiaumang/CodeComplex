@@ -1,0 +1,153 @@
+{
+  "title": "Preventing Express Route Parameter Validation Issues",
+  "subCategory": "Route Parameter Validation",
+  "statement": {
+    "markdown": "Given an Express.js application with a route for retrieving a user by ID, fix the bug that prevents parameter validation. The application should handle cases where the user ID is not a valid integer or is missing from the URL.\n\n**Task:** Implement parameter validation for the `/users/:id` route to ensure that the user ID is a positive integer.",
+    "inputFormat": "The input will be a URL query string containing user ID in the format `/users/<user_id>`. The user ID will be a string.",
+    "outputFormat": "The application should return a JSON response with the user's details or an error message if the user ID is invalid.",
+    "notes": "The application uses the `express-validator` middleware for validation.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "id",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Valid user ID range"
+      }
+    ],
+    "examples": [
+      {
+        "input": "/users/123",
+        "output": "{\"id\": 123, \"name\": \"John Doe\"}",
+        "explanation": "Valid user ID"
+      },
+      {
+        "input": "/users/",
+        "output": "{\"error\": \"User not found\"}",
+        "explanation": "Missing user ID"
+      },
+      {
+        "input": "/users/-1",
+        "output": "{\"error\": \"Invalid user ID\"}",
+        "explanation": "Invalid user ID"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 60,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "EXPRESS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "express"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the `express-validator` middleware to validate the user ID."
+    },
+    {
+      "order": 2,
+      "text": "Implement a custom middleware function to check if the user ID is a positive integer."
+    }
+  ],
+  "editorial": {
+    "title": "Preventing Express Route Parameter Validation Issues",
+    "intuition": "Use the `express-validator` middleware to validate the user ID. Implement a custom middleware function to check if the user ID is a positive integer.",
+    "bruteForce": "Validate the user ID by parsing it as an integer and checking if it's within the valid range.",
+    "betterSolution": "Use the `express-validator` middleware to validate the user ID and implement a custom middleware function to check if the user ID is a positive integer.",
+    "optimalSolution": "Use the `express-validator` middleware to validate the user ID and implement a custom middleware function to check if the user ID is a positive integer. Handle cases where the user ID is not a valid integer or is missing from the URL.",
+    "proofOfCorrectness": "The application should return a JSON response with the user's details or an error message if the user ID is invalid.",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Not using the `express-validator` middleware",
+      "Not implementing a custom middleware function to check if the user ID is a positive integer"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "// Import express and express-validator modules\nconst express = require('express');\nconst { check, validationResult } = require('express-validator');\n\n// Define the route for retrieving a user by ID\nconst router = express.Router();\nrouter.get('/:id', [check('id', 'User ID must be a positive integer').isInt()], (req, res) => {\n    // TO DO: Implement parameter validation and return user details or error message\n});\n\nmodule.exports = router;",
+    "python": "// Import express module\nfrom flask import Flask, request\n\napp = Flask(__name__)\n\n@app.route('/users/<int:user_id>', methods=['GET'])\ndef get_user(user_id):\n    # TO DO: Implement parameter validation and return user details or error message\npass\n\nif __name__ == '__main__':\n    app.run(debug=True)"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Import express and express-validator modules\nconst express = require('express');\nconst { check, validationResult } = require('express-validator');\n\n// Define the route for retrieving a user by ID\nconst router = express.Router();\nrouter.get('/:id', [check('id', 'User ID must be a positive integer').isInt()], (req, res) => {\n    const userId = parseInt(req.params.id);\n    if (userId > 0) {\n        // Return user details\n        res.json({ id: userId, name: 'John Doe' });\n    } else {\n        // Return error message\n        res.status(400).json({ error: 'Invalid user ID' });\n    }\n});\n\nmodule.exports = router;",
+    "python": "// Import express module\nfrom flask import Flask, request\n\napp = Flask(__name__)\n\n@app.route('/users/<int:user_id>', methods=['GET'])\ndef get_user(user_id):\n    # Return user details if user ID is positive\n    if user_id > 0:\n        return {'id': user_id, 'name': 'John Doe'}\n    # Return error message if user ID is not positive\n    else:\n        return {'error': 'Invalid user ID'}\n\nif __name__ == '__main__':\n    app.run(debug=True)"
+  },
+  "functionSignature": {
+    "javascript": "var router = require('./router');",
+    "python": "from router import app"
+  },
+  "solutions": {
+    "javascript": "// Import express and express-validator modules\nconst express = require('express');\nconst { check, validationResult } = require('express-validator');\n\n// Define the route for retrieving a user by ID\nconst router = express.Router();\nrouter.get('/:id', [check('id', 'User ID must be a positive integer').isInt()], async (req, res) => {\n    const userId = parseInt(req.params.id);\n    if (userId <= 0) {\n        return res.status(400).json({ error: 'Invalid user ID' });\n    }\n    // Return user details\n    res.json({ id: userId, name: 'John Doe' });\n});\n\nmodule.exports = router;",
+    "python": "// Import express module\nfrom flask import Flask, request\n\napp = Flask(__name__)\n\n@app.route('/users/<int:user_id>', methods=['GET'])\ndef get_user(user_id):\n    # Check if user ID is positive\n    if user_id <= 0:\n        # Return error message\n        return {'error': 'Invalid user ID'}\n    # Return user details\n    return {'id': user_id, 'name': 'John Doe'}\n\nif __name__ == '__main__':\n    app.run(debug=True)"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "/users/123",
+      "output": "{\"id\": 123, \"name\": \"John Doe\"}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "/users/",
+      "output": "{\"error\": \"Invalid user ID\"}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    },
+    {
+      "id": "tc_3",
+      "input": "/users/-1",
+      "output": "{\"error\": \"Invalid user ID\"}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "85b53096d64a87f00be648e1",
+  "slug": "preventing-express-route-parameter-validation-issues-bugfix-hard-express",
+  "mode": "bug_fix",
+  "category": "EXPRESS",
+  "difficulty": "Hard"
+}

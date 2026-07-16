@@ -1,0 +1,152 @@
+{
+  "_id": "78bef5af4f256c0a7c53a60b",
+  "title": "Fixed N-Queens Backtracking Problem",
+  "slug": "fixed-n-queens-backtracking-problem-bugfix-easy-recursion",
+  "difficulty": "Easy",
+  "category": "DSA",
+  "subCategory": "BACKTRACKING",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "backtracking"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "The n-queens puzzle is the problem of placing `n` queens on an `n x n` chessboard such that no two queens attack each other. Given the value `n,` return the total number of distinct solutions.",
+    "inputFormat": "Input is a positive integer `n` representing the size of the chessboard.",
+    "outputFormat": "The function should return an integer representing the total number of distinct solutions.",
+    "notes": "A valid placement of queens is defined as any arrangement of queens on the board such that no two queens attack each other.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of chessboard"
+      }
+    ],
+    "examples": [
+      {
+        "input": "4",
+        "output": "2",
+        "explanation": "Explanation:  The output is the total number of distinct solutions for placing 4 queens on a 4x4 chessboard."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Check if a given queen is under attack from any other queen"
+    }
+  ],
+  "editorial": {
+    "title": "N-Queens Backtracking Problem Editorial",
+    "intuition": "The problem can be solved by using backtracking, where we try to place each queen on the board and remove it when a conflict is detected.",
+    "bruteForce": "A brute force approach would involve trying all possible placements of queens on the board and checking if they are valid.",
+    "betterSolution": "",
+    "optimalSolution": "The optimal solution involves using backtracking to try all possible placements of queens on the board and removing it when a conflict is detected.",
+    "proofOfCorrectness": "The correctness of the solution can be proven by showing that all possible valid placements of queens on the board are covered by the backtracking approach.",
+    "dryRun": "Dry run of the optimal solution",
+    "commonMistakes": [
+      "Inadequate backtracking"
+    ],
+    "timeComplexity": "O(n!)",
+    "spaceComplexity": "O(n^(n/2))"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    bool isValid(vector<int> queens, int row, int col, int n) {\n        for (int i = 0; i < row; i++) {\n            if (queens[i] == col) return false;\n            if (abs(queens[i] - col) == abs(i - row)) return false;\n        }\n        return true;\n    }\n    int totalNQueens(int n) {\n        // TODO: implement\n    }\n};",
+    "java": "public class Solution {\npublic:\n    boolean isValid(int[] queens, int row, int col, int n) {\n        for (int i = 0; i < row; i++) {\n            if (queens[i] == col) return false;\n            if (Math.abs(queens[i] - col) == Math.abs(i - row)) return false;\n        }\n        return true;\n    }\n    public int totalNQueens(int n) {\n        // TODO: implement\n    }\n}",
+    "python": "class Solution:\n    def isValid(self, queens, row, col, n):\n        for i in range(row):\n            if queens[i] == col: return False\n            if abs(queens[i] - col) == abs(i - row): return False\n        return True\n    def totalNQueens(self, n):\n        # TODO: implement\n        pass",
+    "javascript": "function isValid(queens, row, col, n) {\n        for (var i = 0; i < row; i++) {\n            if (queens[i] == col) return false;\n            if (Math.abs(queens[i] - col) == Math.abs(i - row)) return false;\n        }\n        return true;\n    }\n    function totalNQueens(n) {\n        // TODO: implement\n    }"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    bool isValid(vector<int> queens, int row, int col, int n) {\n        for (int i = 0; i < row; i++) {\n            if (queens[i] == col) return false;\n            if (abs(queens[i] - col) == abs(i - row)) return false;\n        }\n        return true;\n    }\n    int totalNQueens(int n) {\n        vector<vector<int>> ans;\n        // Create a 2D array and then place the queens one by one\n        for (int i = 0; i < n; i++) {\n            vector<int> row(n);\n            int col = 0;\n            while (col < n) {\n                // Place the queen at col position\n                row[col] = 1;\n                for (int j = 0; j < i; j++) {\n                    // Check if the queen is under attack by any of previously placed queens\n                    if (isValid(row, j, col, n)) {\n                        // If not under attack, place it there and add it to our answer set\n                        ans.push_back(row);\n                    }\n                    // If the queen is under attack, place the queen in the same column\n                    col++;\n                }\n                // Reset the row after all queens have been tried\n                col = 0;\n            }\n        }\n        return ans.size();\n    }\n};",
+    "java": "public class Solution {\npublic:\n    boolean isValid(int[] queens, int row, int col, int n) {\n        for (int i = 0; i < row; i++) {\n            if (queens[i] == col) return false;\n            if (Math.abs(queens[i] - col) == Math.abs(i - row)) return false;\n        }\n        return true;\n    }\n    public int totalNQueens(int n) {\n        List<List<Integer>> ans = new ArrayList<>();\n        // Create a 2D array and then place the queens one by one\n        for (int i = 0; i < n; i++) {\n            List<Integer> row = new ArrayList<>(Collections.nCopies(n, 0));\n            int col = 0;\n            while (col < n) {\n                // Place the queen at col position\n                row.set(col, 1);\n                for (int j = 0; j < i; j++) {\n                    // Check if the queen is under attack by any of previously placed queens\n                    if (isValid(row, j, col, n)) {\n                        // If not under attack, place it there and add it to our answer set\n                        ans.add(new ArrayList<>(row));\n                    }\n                    // If the queen is under attack, place the queen in the same column\n                    col++;\n                }\n                // Reset the row after all queens have been tried\n                col = 0;\n            }\n        }\n        return ans.size();\n    }\n}",
+    "python": "class Solution:\n    def isValid(self, queens, row, col, n):\n        for i in range(row):\n            if queens[i] == col: return False\n            if abs(queens[i] - col) == abs(i - row): return False\n        return True\n    def totalNQueens(self, n):\n        ans = []\n        # Create a 2D array and then place the queens one by one\n        for i in range(n):\n            row = [0] * n\n            col = 0\n            while col < n:\n                # Place the queen at col position\n                row[col] = 1\n                for j in range(i):\n                    # Check if the queen is under attack by any of previously placed queens\n                    if self.isValid(row, j, col, n):\n                        # If not under attack, place it there and add it to our answer set\n                        ans.append(row[:])\n                    # If the queen is under attack, place the queen in the same column\n                    col++\n                # Reset the row after all queens have been tried\n                col = 0\n        return len(ans)\n",
+    "javascript": "function isValid(queens, row, col, n) {\n        for (var i = 0; i < row; i++) {\n            if (queens[i] == col) return false;\n            if (Math.abs(queens[i] - col) == Math.abs(i - row)) return false;\n        }\n        return true;\n    }\n    function totalNQueens(n) {\n        var ans = [];\n        // Create a 2D array and then place the queens one by one\n        for (var i = 0; i < n; i++) {\n            var row = new Array(n);\n            var col = 0;\n            while (col < n) {\n                // Place the queen at col position\n                row[col] = 1;\n                for (var j = 0; j < i; j++) {\n                    // Check if the queen is under attack by any of previously placed queens\n                    if (isValid(row, j, col, n)) {\n                        // If not under attack, place it there and add it to our answer set\n                        ans.push(row.slice());\n                    }\n                    // If the queen is under attack, place the queen in the same column\n                    col++;\n                }\n                // Reset the row after all queens have been tried\n                col = 0;\n            }\n        }\n        return ans.length;\n    }"
+  },
+  "functionSignature": {
+    "cpp": "int totalNQueens(int n);",
+    "java": "public int totalNQueens(int n);",
+    "python": "def totalNQueens(self, n: int) -> int:",
+    "javascript": "function totalNQueens(n);"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def isValid(self, queens, row, col, n):\n        for i in range(row):\n            if queens[i] == col: return False\n            if abs(queens[i] - col) == abs(i - row): return False\n        return True\n    def totalNQueens(self, n):\n        ans = []\n        # Create a 2D array and then place the queens one by one\n        for i in range(n):\n            row = [0] * n\n            col = 0\n            while col < n:\n                # Place the queen at col position\n                row[col] = 1\n                for j in range(i):\n                    # Check if the queen is under attack by any of previously placed queens\n                    if self.isValid(row, j, col, n):\n                        # If not under attack, place it there and add it to our answer set\n                        ans.append(row[:])\n                    # If the queen is under attack, place the queen in the same column\n                    col++\n                # Reset the row after all queens have been tried\n                col = 0\n        return len(ans)\n\n\nimport sys\n\nif __name__ == '__main__':\n    input_n = int(input())\n    s = Solution()\n    result = s.totalNQueens(input_n)\n    print(result)\n",
+    "cpp": "class Solution {\npublic:\n    bool isValid(std::vector<int> queens, int row, int col, int n) {\n        for (int i = 0; i < row; i++) {\n            if (queens[i] == col) return false;\n            if (abs(queens[i] - col) == abs(i - row)) return false;\n        }\n        return true;\n    }\n    int totalNQueens(int n) {\n        std::vector<std::vector<int>> ans;\n        // Create a 2D array and then place the queens one by one\n        for (int i = 0; i < n; i++) {\n            std::vector<int> row(n);\n            int col = 0;\n            while (col < n) {\n                // Place the queen at col position\n                row[col] = 1;\n                for (int j = 0; j < i; j++) {\n                    // Check if the queen is under attack by any of previously placed queens\n                    if (isValid(row, j, col, n)) {\n                        // If not under attack, place it there and add it to our answer set\n                        ans.push_back(row);\n                    }\n                    // If the queen is under attack, place the queen in the same column\n                    col++;\n                }\n                // Reset the row after all queens have been tried\n                col = 0;\n            }\n        }\n        return ans.size();\n    }\n};\n\nint main() {\n    int n;\n    std::cin >> n;\n    Solution s;\n    int result = s.totalNQueens(n);\n    std::cout << result << std::endl;\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2000,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "4\n",
+      "output": "2\n",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_hidden_generated",
+      "input": "4\n",
+      "output": "2\n",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

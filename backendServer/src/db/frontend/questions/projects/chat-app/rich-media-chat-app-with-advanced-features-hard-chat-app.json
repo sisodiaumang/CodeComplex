@@ -1,0 +1,68 @@
+{
+  "_id": "a872f96fe463d94e713f98ad",
+  "title": "Rich Media Chat App with Advanced Features",
+  "slug": "rich-media-chat-app-with-advanced-features-hard-chat-app",
+  "difficulty": "Hard",
+  "topics": [
+    "CHAT_APP"
+  ],
+  "statement": {
+    "markdown": "## Projects Challenge: Rich Media Chat App with Advanced Features\n\nYour objective is to build a fully functional, highly interactive React component representing the target design mockup.\n\n### 🎨 Color Palette\n* `#B7D7CD`\n* `#C06C88`\n* `#411C56`\n* `#E8E8E8`\n\n### 📐 Target Design Mockup\nUse the visual mockup shown in the panel to guide your coordinate alignment, container proportions, and spacing.\n\n### 📌 Target Design SVG Source\nThe target geometry is defined by the following SVG vector graphic (viewable by the LLM judge):\n```xml\n<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300'>\n   <rect x='10' y='10' rx='10' width='380' height='280' fill='#090a0f'/>\n   <rect x='20' y='20' rx='10' width='160' height='220' fill='#B7D7CD'/>\n   <rect x='200' y='20' rx='10' width='160' height='220' fill='#C06C88'/>\n   <rect x='20' y='250' rx='10' width='360' height='40' fill='#C06C88'/>\n   <text x='50' y='100' fill='#FFFFFF' font-size='24'>Room 1</text>\n   <text x='220' y='100' fill='#FFFFFF' font-size='24'>Room 2</text>\n   <text x='50' y='280' fill='#FFFFFF' font-size='20'>Typing...</text>\n   <g x='100' y='150'>\n   <circle r='20' fill='#E8E8E8'/>\n   <rect x='-10' y='20' rx='10' width='40' height='20' fill='#411C56'/>\n   <text x='10' y='40' fill='#FFFFFF' font-size='18'>John Doe</text>\n   </g>\n   <g x='250' y='150'>\n   <circle r='20' fill='#E8E8E8'/>\n   <rect x='-10' y='20' rx='10' width='40' height='20' fill='#411C56'/>\n   <text x='10' y='40' fill='#FFFFFF' font-size='18'>Jane Doe</text>\n   </g>\n   </svg>\n```\n\n### ⚙️ Requirements\n1. Match the visual presentation (layout, alignment, borders, colors) of the mockup.\n2. Implement all necessary React state variables, event handlers, and input bindings to make the page interactive.\n3. Make sure all interactive controls (buttons, forms, checkboxes, sliders) update the view correctly.\n"
+  },
+  "constraints": [
+    "Must use only specified colors",
+    "Must be fully interactive with state updates",
+    "Must support multiple rooms with typing indicators"
+  ],
+  "referenceAssets": [
+    {
+      "url": "http://localhost:8000/public/mockups/rich-media-chat-app-with-advanced-features-hard-chat-app.svg",
+      "caption": "Recreate target design: Rich Media Chat App with Advanced Features"
+    }
+  ],
+  "starterCode": {
+    "react": "import React, { useState, useEffect } from 'react';\n   import { v4 as uuidv4 } from 'uuid';\n\n   const App = () => {\n   const [rooms, setRooms] = useState([{ id: uuidv4(), messages: [] }]);\n   const [activeRoom, setActiveRoom] = useState(rooms[0].id);\n   const [username, setUsername] = useState('');\n\n   useEffect(() => {\n   const interval = setInterval(() => {\n   const newMessage = { id: uuidv4(), text: `New message from ${username}` };\n   const activeRoomIndex = rooms.findIndex(room => room.id === activeRoom);\n   if (activeRoomIndex !== -1) {\n   rooms[activeRoomIndex].messages.push(newMessage);\n   }\n   setRooms([...rooms]);\n   }, 1000);\n   return () => clearInterval(interval);\n   }, []);\n\n   const handleSendMessage = (room) => {\n   const newMessage = { id: uuidv4(), text: `Message from ${username}` };\n   const activeRoomIndex = rooms.findIndex(r => r.id === room);\n   if (activeRoomIndex !== -1) {\n   rooms[activeRoomIndex].messages.push(newMessage);\n   }\n   setRooms([...rooms]);\n   };\n\n   return (\n   <div className=\"min-h-screen bg-[#090a0f] text-white p-4 flex items-center justify-center\">\n   <div className=\"flex items-center justify-between w-full\">\n   <input\n   type=\"text\"\n   value={username}\n   onChange={e => setUsername(e.target.value)}\n   className=\"p-2 rounded-lg outline-none text-white border-2 border-[#B7D7CD] w-full sm:w-1/2\"\n   />\n   <button\n   className=\"bg-[#C06C88] text-white px-4 rounded-lg hover:bg-[#C06C88] hover:scale-110 active:bg-[#C06C88] active:scale-95 transition-all duration-300\"\n   onClick={() => handleSendMessage(activeRoom)}\n   >\n   Send\n   </button>\n   </div>\n   <div className=\"flex flex-col justify-between w-full sm:w-1/2\">\n   <div className=\"flex items-center justify-between w-full\">\n   <button\n   className=\"bg-[#C06C88] text-white px-4 rounded-lg hover:bg-[#C06C88] hover:scale-110 active:bg-[#C06C88] active:scale-95 transition-all duration-300\"\n   onClick={() => setActiveRoom(rooms[0].id)}\n   >\n   Room 1\n   </button>\n   <button\n   className=\"bg-[#C06C88] text-white px-4 rounded-lg hover:bg-[#C06C88] hover:scale-110 active:bg-[#C06C88] active:scale-95 transition-all duration-300\"\n   onClick={() => setActiveRoom(rooms[1].id)}\n   >\n   Room 2\n   </button>\n   </div>\n   <div className=\"flex flex-col justify-between w-full\">\n   {rooms.map(room => (\n   <div key={room.id} className=\"bg-[#B7D7CD] p-4 w-full sm:w-1/2\">\n   <h2 className=\"text-lg font-bold mb-2\">{room.id}</h2>\n   {room.messages.map(message => (\n   <div key={message.id} className=\"bg-[#E8E8E8] p-2 mb-2\">\n   <p className=\"text-sm\">{message.text}</p>\n   </div>\n   ))}\n   </div>\n   ))}\n   </div>\n   </div>\n   </div>\n   );\n   };\n\n   export default App;"
+  },
+  "gradingCriteria": [
+    {
+      "id": "visual_fidelity",
+      "description": "Evaluate how closely the layout, colors, and positioning match the target visual mockup.",
+      "weight": 30
+    },
+    {
+      "id": "interactive_features",
+      "description": "Verify interactive state updates, form logic, active selections, and handlers.",
+      "weight": 45
+    },
+    {
+      "id": "code_quality",
+      "description": "Review code cleanliness, proper semantic elements, and efficient state use.",
+      "weight": 25
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "react"
+    ]
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "tags": [
+    "frontend",
+    "react",
+    "projects",
+    "chat-app",
+    "color:#B7D7CD",
+    "color:#C06C88",
+    "color:#411C56",
+    "color:#E8E8E8"
+  ]
+}

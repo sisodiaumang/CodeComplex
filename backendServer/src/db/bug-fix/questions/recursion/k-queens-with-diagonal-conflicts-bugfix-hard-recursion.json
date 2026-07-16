@@ -1,0 +1,167 @@
+{
+  "_id": "aa6888933c8510aedbbc6c22",
+  "title": "K-Queens with Diagonal Conflicts",
+  "slug": "k-queens-with-diagonal-conflicts-bugfix-hard-recursion",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "BACKTRACKING/Knights",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 80,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard",
+      "k-queens",
+      "backtracking"
+    ],
+    "keywords": [
+      "bug-fix",
+      "backtracking"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "The [N-Queens Puzzle](https://en.wikipedia.org/wiki/N-queens_problem) is a classic problem. In this variation, we consider a **K-Queens** problem, where we need to place `K` queens on an `n x n` chessboard such that no two queens attack each other.\n\nA queen can attack horizontally, vertically, or diagonally. We define two positions as attacking if they share the same row, column, or diagonal.\n\nWrite a function to solve this variation of the N-Queens puzzle. Return `true` if the board can be configured with `K` queens such that no two queens attack each other, and `false` otherwise. For simplicity, you can assume that `K <= n`.",
+    "inputFormat": "Input format: integer `n`, an integer array of indices to place queens `indices` and an integer `K` where `0 <= indices.length <= K <= n`.",
+    "outputFormat": "Return `true` if it is possible to place `K` queens such that no two queens attack, and `false` otherwise.",
+    "notes": "* You can assume that there are no conflicts if no queens have been placed yet.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of chessboard"
+      },
+      {
+        "variable": "K",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of queens to place"
+      }
+    ],
+    "examples": [
+      {
+        "input": "3, [], 1",
+        "output": "true",
+        "explanation": "There is a unique way to place one (1,1) queen on a 3x3 board."
+      },
+      {
+        "input": "4, [0, 2], 2",
+        "output": "false",
+        "explanation": "No two queens can be placed on a 4x4 board such that they don't attack each other if they are placed at positions (0,0) and (2,2) respectively."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Start by placing the queens from left to right"
+    }
+  ],
+  "editorial": {
+    "title": "K-Queens Editorial",
+    "intuition": "The correct approach is to place the queens in the order of the indices given. We must check diagonal conflicts after placing each queen.",
+    "bruteForce": "brute Force details.",
+    "betterSolution": "",
+    "optimalSolution": "To ensure that a queen doesn't attack any already placed queens, after placing each queen we must ensure that we are not placing her in a position which is in the conflict zone of the previously placed queen. This can be achieved using bitmasks.",
+    "proofOfCorrectness": "When we place a queen at an index, we need to ensure that there are no other queens attacking her. This can be achieved by checking the positions of other queens in terms of rows, columns and diagonals.",
+    "dryRun": "Step-by-step example run with the provided inputs.",
+    "commonMistakes": [
+      "Inadequate handling of diagonal conflicts",
+      "Failure to check for attacks from diagonally adjacent queens"
+    ],
+    "timeComplexity": "O(n * 2^(K-1)) ",
+    "spaceComplexity": "O(n * 2^(K-1))"
+  },
+  "starterCode": {
+    "cpp": "// TODO: implement K-Queens solution",
+    "java": "// TODO: implement K-Queens solution",
+    "python": "def solve(n, indices, k):",
+    "javascript": "function solve(n, indices, k) {"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\nbool kqueens(int n, std::vector<int>& indices, int k){\nbool result = true;\nfor(auto& i : indices){\nresult &= (abs(i % n - 0) + abs(i / n - 0)) <= (n-1);\n}\nreturn result;\n}\n};\n",
+    "java": "public class Solution {\npublic:\nboolean kqueens(int n, int[] indices, int k){\nboolean result = true;\nfor (int i : indices) {\nresult &= (Math.abs(i % n - 0) + Math.abs(i / n - 0)) <= (n-1);\n}\nreturn result;\n}\n}",
+    "python": "def solve(n, indices, k):\n    result = True\n    for i in indices:\n        result &= (abs(i % n - 0) + abs(i / n - 0)) <= (n-1)\n    return result",
+    "javascript": "function kqueens(n, indices, k){\n    var result = true;\n    for (var i in indices) {\n        result &= (Math.abs(indices[i] % n - 0) + Math.abs(indices[i] / n - 0)) <= (n-1);\n    }\n    return result;\n}"
+  },
+  "functionSignature": {
+    "cpp": "bool kqueens(int n, std::vector<int>& indices, int k);",
+    "java": "boolean kqueens(int n, int[] indices, int k);",
+    "python": "def kqueens(n, indices: list[int], k: int) -> bool:",
+    "javascript": "function kqueens(n, indices, k) {"
+  },
+  "solutions": {
+    "python": "from functools import lru_cache\nfrom sys import stdin, stdout\n\nn, k, indices = map(int, stdin.readline().split())\nindices = list(map(int, stdin.readline().split()))\n\n@lru_cache(None)\ndef solve(i, remaining):  # 0 <= i < n\n    if not remaining:        \n        return True\n\n    result = False\n    for queen in range(n):\n        if not is_conflicting(i, queen, remaining-1):\n            if solve(queen, remaining-1):\n                result = True\n                break\n    return result\n\n    def is_conflicting(i, queen, other_ks):\n        return i == queen or abs(i // n - queen // n) == abs(i % n - queen % n)\n\nresult = solve(0, k)\nstdout.write('true' if result else 'false')\n",
+    "cpp": "#include <bits/stdc++.h>\n#include <bits/stdc++.h>\n\nusing namespace std;\n\n#define int long long\n\nint32_t main() {\n    ios_base::sync_with_stdio(false);\n    cin.tie(NULL);\n\n    int n, k;\n    cin>>n>>k;\n    int indices[k];\n    for (int i = 0; i < k; ++i) cin>>indices[i];\n\n    function<bool(int, int)> solve = [&](int current, int other_ks) {\n        if (!other_ks) return true;\n\n        bool result = false;\n        for (int i = 0; i < n; ++i) {\n            if (!is_conflicting(current, i, other_ks - 1))\n                result = result || solve(i, other_ks - 1);\n        }\n        return result;\n    };\n\n    function<bool(int, int)> is_conflicting = [&](int i, int queen, int other_ks) {\n        return i == queen || abs(i / n - queen / n) == abs(i % n - queen % n);\n    };\n\n    bool result = solve(0, k);\n    cout<<(result ? 'true' : 'false')<<'\n';\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 5,
+    "memoryLimit": 65536,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": false,
+    "ratingEnabled": false,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "3\n[]\n1",
+      "output": "true",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "4\n[0, 2]\n2",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

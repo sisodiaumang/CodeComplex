@@ -1,0 +1,157 @@
+{
+  "_id": "292bba9194aafd25f8cf0d96",
+  "title": "Finding Strongly Connected Components in a Graph using Kosaraju's Algorithm with DFS",
+  "slug": "finding-strongly-connected-components-in-a-graph-using-kosarajus-algorithm-with-dfs-bugfix-hard-graphs",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "DFS",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "graph"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given a graph represented as an adjacency list, find the strongly connected components in the graph using Kosaraju's algorithm. You may assume that the graph is represented as a list of nodes where each node is a list of its neighbors.",
+    "inputFormat": "The input will be provided as a graph represented as an adjacency list of integers.",
+    "outputFormat": "The output should be a list of the strongly connected components in the graph, where each component is a list of integers.",
+    "notes": "You should use Kosaraju's algorithm to find the strongly connected components.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "4\n1 0\n1 2\n2 0\n2 3\n",
+        "output": "[0, 2, 3, 1]",
+        "explanation": "The strongly connected components in the graph are [0, 2], [3, 1] and they are not connected to each other so its [0, 2, 3, 1]"
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use Kosaraju's algorithm to find the strongly connected components."
+    },
+    {
+      "order": 2,
+      "text": "Use a temporary stack to keep track of nodes that have been visited in the first DFS."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial for Kosaraju's Algorithm",
+    "intuition": "The idea is to perform two DFS traversals over the graph. In the first DFS, we visit each node and store it in a temporary stack.",
+    "bruteForce": "The brute force approach would be to use the first DFS to find all strongly connected components and then check if they are strongly connected by checking if there is a path between all pairs of nodes in each component.",
+    "betterSolution": "Kosaraju's algorithm provides a better approach by using a temporary stack to keep track of nodes that have been visited in the first DFS.",
+    "optimalSolution": "The optimal solution is to use Kosaraju's algorithm to find the strongly connected components in the graph.",
+    "proofOfCorrectness": "The correctness of the algorithm can be proved by showing that if there is a path from node A to node B, then there must also be a path from node B to node A. This is because in the first DFS, we visit each node and store it in a temporary stack, and in the second DFS, we visit the nodes in the reverse order of their finishing times.",
+    "dryRun": "Step-by-step example run of the algorithm can be found in the solutions section.",
+    "commonMistakes": [
+      "Not using the temporary stack to keep track of nodes that have been visited in the first DFS.",
+      "Not performing two DFS traversals over the graph."
+    ],
+    "timeComplexity": "O(V + E)",
+    "spaceComplexity": "O(V)"
+  },
+  "starterCode": {
+    "cpp": "class Solution { public: vector<vector<int>> solve(vector<vector<int>>& graph); };",
+    "java": "public class Solution { public List<List<Integer>> solve(List<List<Integer>> graph); }",
+    "python": "class Solution: def solve(self, graph: List[List[int]]) -> List[List[int]]:",
+    "javascript": "var solve = function(graph) {\n    // TO DO: implement Kosaraju's algorithm to find strongly connected components\n};"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution { public: vector<vector<int>> solve(vector<vector<int>>& graph) { vector<vector<int>> SCC; vector<int> visited(graph.size(), 0); for (int i = 0; i < graph.size(); i++) { if (!visited[i]) { DFS(graph, i, visited, SCC); } } return SCC; } void DFS(vector<vector<int>>& graph, int node, vector<int>& visited, vector<vector<int>>& SCC) { visited[node] = 1; for (int neighbor : graph[node]) { if (!visited[neighbor]) { DFS(graph, neighbor, visited, SCC); } } } };",
+    "java": "public class Solution { public List<List<Integer>> solve(List<List<Integer>> graph) { List<List<Integer>> SCC = new ArrayList<>(); int[] visited = new int[graph.size()]; for (int i = 0; i < graph.size(); i++) { if (visited[i] == 0) { DFS(graph, i, visited, SCC); } } return SCC; } void DFS(List<List<Integer>> graph, int node, int[] visited, List<List<Integer>> SCC) { visited[node] = 1; for (Integer neighbor : graph.get(node)) { if (visited[neighbor] == 0) { DFS(graph, neighbor, visited, SCC); } } } }",
+    "python": "class Solution: def solve(self, graph: List[List[int]]) -> List[List[int]]: visited = [0] * len(graph) SCC = [] for i in range(len(graph)): if visited[i] == 0: self.DFS(graph, i, visited, SCC) return SCC def DFS(self, graph, node, visited, SCC): visited[node] = 1 for neighbor in graph[node]: if visited[neighbor] == 0: self.DFS(graph, neighbor, visited, SCC)",
+    "javascript": "var solve = function(graph) {\n    var visited = new Array(graph.length).fill(0); var SCC = []; for (var i = 0; i < graph.length; i++) {\n        if (visited[i] === 0) {\n            DFS(graph, i, visited, SCC);\n        }\n    }\n    return SCC;\n};\n\nfunction DFS(graph, node, visited, SCC) {\n    visited[node] = 1; for (var neighbor of graph[node]) {\n        if (visited[neighbor] === 0) {\n            DFS(graph, neighbor, visited, SCC);\n        }\n    }\n}"
+  },
+  "functionSignature": {
+    "cpp": "vector<vector<int>> solve(vector<vector<int>>& graph);",
+    "java": "List<List<Integer>> solve(List<List<Integer>> graph);",
+    "python": "def solve(self, graph: List[List[int]]) -> List[List[int]]:",
+    "javascript": "solve = function(graph)"
+  },
+  "solutions": {
+    "python": "class Solution: def solve(self, graph: List[List[int]]) -> List[List[int]]: visited = [0] * len(graph) SCC = [] for i in range(len(graph)): if visited[i] == 0: self.DFS(graph, i, visited, SCC) return SCC def DFS(self, graph, node, visited, SCC): visited[node] = 1 for neighbor in graph[node]: if visited[neighbor] == 0: self.DFS(graph, neighbor, visited, SCC) SCC.append([node]) return SCC\n\ndef main():\n    graph = [[1, 2], [0, 3], [0, 3], []]\n    result = Solution().solve(graph)\n    print(result)\n\nif __name__ == '__main__':\n    main()\n",
+    "cpp": "#include <iostream>\n#include <vector>\nusing namespace std;\nclass Solution { public: vector<vector<int>> solve(vector<vector<int>>& graph) { vector<vector<int>> SCC; vector<int> visited(graph.size(), 0); for (int i = 0; i < graph.size(); i++) { if (!visited[i]) { DFS(graph, i, visited, SCC); } } return SCC; } void DFS(vector<vector<int>>& graph, int node, vector<int>& visited, vector<vector<int>>& SCC) { visited[node] = 1; for (int neighbor : graph[node]) { if (!visited[neighbor]) { DFS(graph, neighbor, visited, SCC); } } SCC.push_back({node}); } };\n\nint main() {\n    vector<vector<int>> graph = {{1, 2}, {0, 3}, {0, 3}, {}};\n    Solution solver;\n    vector<vector<int>> result = solver.solve(graph);\n    for (auto component : result) {\n        for (int node : component) {\n            cout << node << ' '; \n        }\n        cout << endl;\n    }\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "4\n1 0\n1 2\n2 0\n2 3\n",
+      "output": "[0, 2, 3, 1]",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "5\n1 0\n1 2\n2 0\n2 3\n3 4\n",
+      "output": "[0, 2, 3, 1, 4]",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

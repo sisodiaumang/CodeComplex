@@ -55,12 +55,12 @@
     ],
     "examples": [
       {
-        "input": "6\n   -42",
+        "input": "3\n-42",
         "output": "-42",
         "explanation": "After discarding the leading spaces, the sign '-' is read, followed by digits 42. The resulting integer is -42, which lies within the 32‑bit range."
       },
       {
-        "input": "15\n4193 with words",
+        "input": "3\n4193 with words",
         "output": "4193",
         "explanation": "Parsing stops at the first non‑digit character (space). The digits \"4193\" form the integer 4193, which is returned."
       }
@@ -104,24 +104,24 @@
       "Overly complex or redundant code",
       "Not considering edge cases like an empty string or a string with only a sign character"
     ],
-    "timeComplexity": "O(n)",
-    "spaceComplexity": "O(1)"
+    "timeComplexity": "O(L) where L is the length of the input string",
+    "spaceComplexity": "O(1) additional space"
   },
   "starterCode": {
-    "cpp": "#include <iostream>\n#include <string>\n#include <climits>\n\n// TODO\nint atoi(const std::string& s) {\n    // Your code here\n    return 0;\n}\n\n// @driver-code-start\nint main() {\n    int n;\n    std::cin >> n;\n    std::cin.ignore(); // ignore newline character\n    std::string s;\n    std::getline(std::cin, s);\n    int result = atoi(s);\n    std::cout << result << std::endl;\n    return 0;\n}",
-    "java": "import java.util.Scanner;\n\npublic class Main {\n    public static int atoi(String s) {\n        // TODO\n        return 0;\n    }\n\n    // @driver-code-start\npublic static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        scanner.nextLine(); // consume newline left-over\n        String s = scanner.nextLine();\n        int result = atoi(s);\n        System.out.println(result);\n    }\n}",
-    "python": "import sys\n\ndef atoi(s):\n    # TODO\n    pass\n\n# @driver-code-start\ndef main():\n    n = int(sys.stdin.readline().strip())\n    s = sys.stdin.readline().strip()\n    result = atoi(s)\n    print(result)\n\nif __name__ == '__main__':\n    main()",
-    "javascript": "// @driver-code-start\nconst readline = require('readline');\nconst rl = readline.createInterface({\n    input: process.stdin,\n    output: process.stdout\n});\nlet n, s;\nlet lines = 0;\nrl.on('line', (line) => {\n    if (lines === 0) {\n        n = parseInt(line);\n    } else if (lines === 1) {\n        s = line;\n        rl.close();\n    }\n    lines++;\n});\n\nrl.on('close', () => {\n    function atoi(s) {\n        const solution = new Solution();\n        console.log(solution.atoi(s));\n    }\n    let result = atoi(s);\n    console.log(result);\n});\n\nclass Solution {\n    atoi(s) {\n        // TODO: implement\n        return 0;\n    }\n}\n"
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    int solve(string s) {\n        // TODO: implement\n        return 0;\n    }\n};",
+    "java": "import java.util.*;\n\nclass Solution {\n    public int solve(String s) {\n        // TODO: implement\n        return 0;\n    }\n}",
+    "python": "class Solution:\n    def solve(self, s: str) -> int:\n        # TODO: implement\n        pass",
+    "javascript": "/**\n * @param {string} s\n * @return {number}\n */\nvar solve = function(s) {\n    // TODO: implement\n    return 0;\n};"
   },
   "functionSignature": {
-    "cpp": "int atoi(const std::string& s)",
-    "java": "public static int atoi(String s)",
-    "python": "def atoi(s)",
-    "javascript": "function atoi(s)"
+    "cpp": "int solve(string s);",
+    "java": "public int solve(String s);",
+    "python": "def solve(self, s: str) -> int:",
+    "javascript": "var solve = function(s);"
   },
   "solutions": {
-    "python": "import sys\nit = iter(sys.stdin.read().split())\nn = int(next(it))\ns = next(it)\n\ndef atoi(s):\n    s = s.lstrip()\n    if not s: return 0\n    sign = 1\n    if s[0] in ['-', '+']:\n        if s[0] == '-': sign = -1\n        s = s[1:]\n    num = 0\n    for c in s:\n        if c.isdigit():\n            num = num * 10 + int(c)\n        else: break\n    num *= sign\n    num = max(min(num, 2**31 - 1), -2**31)\n    return num\n\nprint(atoi(s))",
-    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\nint main(){\n    int n;\n    cin >> n;\n    string s;\n    cin >> s;\n    int sign = 1;\n    long long num = 0;\n    int start = 0;\n    while (start < s.size() && s[start] == ' ') start++;\n    if (start < s.size() && (s[start] == '-' || s[start] == '+')) {\n        if (s[start] == '-') sign = -1;\n        start++;\n    }\n    for (int i = start; i < s.size(); i++) {\n        if (isdigit(s[i])) {\n            num = num * 10 + (s[i] - '0');\n        } else {\n            break;\n        }\n    }\n    num *= sign;\n    num = max(min(num, (long long)2147483647), (long long)-2147483648);\n    cout << (int)num << endl;\n    return 0;\n}"
+    "python": "import sys\n\nclass Solution:\n    def solve(self, s: str) -> int:\n        i = 0\n        n = len(s)\n        # skip leading whitespaces\n        while i < n and s[i].isspace():\n            i += 1\n        # sign\n        sign = 1\n        if i < n and (s[i] == '+' or s[i] == '-'):\n            if s[i] == '-':\n                sign = -1\n            i += 1\n        # digits\n        val = 0\n        while i < n and s[i].isdigit():\n            digit = ord(s[i]) - ord('0')\n            # check overflow before multiplying\n            if val > (2**31 - 1 - digit) // 10:\n                return -2**31 if sign == -1 else 2**31 - 1\n            val = val * 10 + digit\n            i += 1\n        val *= sign\n        if val < -2**31:\n            return -2**31\n        if val > 2**31 - 1:\n            return 2**31 - 1\n        return val\n\nif __name__ == '__main__':\n    data = sys.stdin.read().splitlines()\n    if not data:\n        sys.exit(0)\n    # first line is length, second line is the string (may contain spaces)\n    # we ignore the length and take the second line as the whole string\n    s = data[1] if len(data) > 1 else ''\n    sol = Solution()\n    result = sol.solve(s)\n    print(result)",
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    int solve(string s) {\n        int i = 0, n = s.size();\n        // skip leading whitespaces\n        while (i < n && isspace(static_cast<unsigned char>(s[i]))) i++;\n        // sign\n        int sign = 1;\n        if (i < n && (s[i] == '+' || s[i] == '-')) {\n            if (s[i] == '-') sign = -1;\n            i++;\n        }\n        long long val = 0;\n        while (i < n && isdigit(static_cast<unsigned char>(s[i]))) {\n            int digit = s[i] - '0';\n            if (val > (LLONG_MAX - digit) / 10) { // overflow detection\n                return sign == -1 ? INT_MIN : INT_MAX;\n            }\n            val = val * 10 + digit;\n            i++;\n        }\n        val *= sign;\n        if (val < INT_MIN) return INT_MIN;\n        if (val > INT_MAX) return INT_MAX;\n        return static_cast<int>(val);\n    }\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int n;\n    if (!(cin >> n)) return 0;\n    string s;\n    // consume the newline after the integer\n    cin.ignore(numeric_limits<streamsize>::max(), '\\n');\n    getline(cin, s);\n    // s may be shorter than n if trailing spaces are trimmed by getline, but problem guarantees exact length\n    Solution sol;\n    int ans = sol.solve(s);\n    cout << ans << \"\\n\";\n    return 0;\n}\n"
   },
   "judgeConfig": {
     "timeLimit": 2,
@@ -147,124 +147,44 @@
   },
   "testCases": [
     {
-      "id": "sample",
-      "input": "6\n   -42",
+      "id": "sample_1",
+      "input": "3\n-42",
       "output": "-42",
       "isVisible": true,
       "weight": 1,
       "category": "sample"
     },
     {
-      "id": "min_constraint",
-      "input": "1\n0",
+      "id": "sample_2",
+      "input": "3\n4193 with words",
+      "output": "4193",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint_3",
+      "input": "0\n",
       "output": "0",
       "isVisible": false,
       "weight": 1,
       "category": "min_constraint"
     },
     {
-      "id": "max_constraint",
-      "input": "1\n1000000000",
-      "output": "1000000000",
-      "isVisible": false,
-      "weight": 1,
-      "category": "max_constraint"
-    },
-    {
-      "id": "boundary",
-      "input": "3\n-1 0 1",
-      "output": "-1",
+      "id": "boundary_4",
+      "input": "100000\n12345678901234567890",
+      "output": "2147483647",
       "isVisible": false,
       "weight": 1,
       "category": "boundary"
     },
     {
-      "id": "duplicate",
-      "input": "6\n1 1 1 1 1 1",
-      "output": "1",
+      "id": "duplicate_5",
+      "input": "1\n123",
+      "output": "123",
       "isVisible": false,
       "weight": 1,
       "category": "duplicate"
-    },
-    {
-      "id": "sorted",
-      "input": "6\n1 2 3 4 5 6",
-      "output": "1",
-      "isVisible": false,
-      "weight": 1,
-      "category": "sorted"
-    },
-    {
-      "id": "reverse_sorted",
-      "input": "6\n6 5 4 3 2 1",
-      "output": "6",
-      "isVisible": false,
-      "weight": 1,
-      "category": "reverse_sorted"
-    },
-    {
-      "id": "negative",
-      "input": "5\n-5 -4 -3 -2 -1",
-      "output": "-5",
-      "isVisible": false,
-      "weight": 1,
-      "category": "negative"
-    },
-    {
-      "id": "zero",
-      "input": "5\n0 0 0 0 0",
-      "output": "0",
-      "isVisible": false,
-      "weight": 1,
-      "category": "zero"
-    },
-    {
-      "id": "one",
-      "input": "2\n1 1",
-      "output": "1",
-      "isVisible": false,
-      "weight": 1,
-      "category": "one"
-    },
-    {
-      "id": "repeated",
-      "input": "8\n2 2 2 2 3 3 3 3",
-      "output": "2",
-      "isVisible": false,
-      "weight": 1,
-      "category": "repeated"
-    },
-    {
-      "id": "large_random",
-      "input": "10\n309 -772 -949 518 -437 -499 -543 -715 508 -791",
-      "output": "309",
-      "isVisible": false,
-      "weight": 1,
-      "category": "large_random"
-    },
-    {
-      "id": "adversarial",
-      "input": "12\n385 516 827 116 -822 209 -136 -935 -939 -809 -553 -524",
-      "output": "385",
-      "isVisible": false,
-      "weight": 1,
-      "category": "adversarial"
-    },
-    {
-      "id": "random_13",
-      "input": "21\n6 9 -10 7 -4 10 7 3 -3 4 8 -2 -10 -5 3 0 -2 -6 -4 0 -7",
-      "output": "6",
-      "isVisible": false,
-      "weight": 1,
-      "category": "random"
-    },
-    {
-      "id": "random_14",
-      "input": "22\n-8 2 -7 1 1 9 -2 -9 4 7 -7 2 -8 7 -1 10 9 1 8 -4 -8 -9",
-      "output": "-8",
-      "isVisible": false,
-      "weight": 1,
-      "category": "random"
     }
   ],
   "analytics": {

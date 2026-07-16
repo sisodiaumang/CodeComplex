@@ -1,0 +1,163 @@
+{
+  "_id": "218c471f108aa9fff9d7d5f9",
+  "title": "Minimum Length Substring with Unique Characters and K Swaps",
+  "slug": "minimum-length-substring-with-unique-characters-and-k-swaps-bugfix-hard-strings",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "Greedy/Sliding Window",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "string"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given a string s and an integer k, find the minimum length of a substring that contains all unique characters from s, which can be made unique by at most k swaps (replacing one character with another one).",
+    "inputFormat": "The input will contain a string s and an integer k, separated by a space.",
+    "outputFormat": "The output will be the minimum length of a substring with all unique characters that can be made unique by at most k swaps.",
+    "notes": "The swaps can only be done within the substring, not outside it.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "s",
+        "type": "string",
+        "description": "The input string"
+      },
+      {
+        "variable": "k",
+        "type": "integer",
+        "min": 0,
+        "max": 10000,
+        "description": "The number of swaps allowed"
+      }
+    ],
+    "examples": [
+      {
+        "input": "abcabcabc 2",
+        "output": "3",
+        "explanation": "One possible substring is 'abc'"
+      },
+      {
+        "input": "aabcccccaaa 2",
+        "output": "3",
+        "explanation": "One possible substring is 'abc'"
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "// TODO: implement",
+    "java": "// TODO: implement",
+    "python": "class Solution:\n    def solve(self, s, k):\n        pass\n",
+    "javascript": "function solve(s, k) {\n    // TODO: implement\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "int minLen(int n, string& s, int k) {\n    int res = n + 1;\n    for (int i = 0; i < n; ++i) {\n        for (int j = i + 1; j < n; ++j) {\n            if (s[i] == s[j]) {\n                int tmp = k + 1;\n                for (int x = 0; x < n; ++x) {\n                    if (s[x] == s[i]) tmp--;\n                    if (tmp == 0) break;\n                }\n                if (tmp <= 0) res = min(res, j - i + 1);\n            }\n        }\n    }\n    return res;\n}",
+    "java": "public int minLen(int n, String s, int k) {\n    int res = n + 1;\n    for (int i = 0; i < n; ++i) {\n        for (int j = i + 1; j < n; ++j) {\n            if (s.charAt(i) == s.charAt(j)) {\n                int tmp = k + 1;\n                for (int x = 0; x < n; ++x) {\n                    if (s.charAt(x) == s.charAt(i)) tmp--;\n                    if (tmp == 0) break;\n                }\n                if (tmp <= 0) res = Math.min(res, j - i + 1);\n            }\n        }\n    }\n    return res;\n}",
+    "python": "class Solution:\n    def solve(self, s, k):\n        n = len(s)\n        res = n + 1\n        for i in range(n):\n            for j in range(i + 1, n):\n                if s[i] == s[j]:\n                    tmp = k + 1\n                    for x in range(n):\n                        if s[x] == s[i]:\n                            tmp -= 1\n                        if tmp == 0:\n                            break\n                    if tmp <= 0:\n                        res = min(res, j - i + 1)\n        return res",
+    "javascript": "function solve(s, k) {\n    var n = s.length;\n    var res = n + 1;\n    for (var i = 0; i < n; ++i) {\n        for (var j = i + 1; j < n; ++j) {\n            if (s[i] == s[j]) {\n                var tmp = k + 1;\n                for (var x = 0; x < n; ++x) {\n                    if (s[x] == s[i]) tmp--;\n                    if (tmp == 0) break;\n                }\n                if (tmp <= 0) res = Math.min(res, j - i + 1);\n            }\n        }\n    }\n    return res;\n}"
+  },
+  "functionSignature": {
+    "cpp": "int minLen(int n, string& s, int k);",
+    "java": "public int minLen(int n, String s, int k);",
+    "python": "def solve(self, s: str, k: int) -> int:",
+    "javascript": "function solve(s, k);"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def solve(self, s, k):\n        n = len(s)\n        res = n + 1\n        i, j = 0, 0\n        char_counts = {}\n        unique_chars = set()\n        k_used = 0\n        while j < n:\n            while j < n and k_used < k:\n                if s[j] not in unique_chars:\n                    unique_chars.add(s[j])\n                    char_counts[s[j]] = 1\n                else:\n                    char_counts[s[j]] += 1\n                    if char_counts[s[j]] > 1:\n                        k_used += 1\n                j += 1\n            if j == n:\n                res = min(res, n - i)\n                break\n            while k_used > k and i < j:\n                if char_counts[s[i]] > 1:\n                    char_counts[s[i]] -= 1\n                    if char_counts[s[i]] == 1:\n                        k_used -= 1\n                elif s[i] in unique_chars:\n                    unique_chars.remove(s[i])\n                i += 1\n            i += 1\n        return res",
+    "cpp": "int minLen(int n, string& s, int k) {\n    int res = n + 1;\n    int i = 0, j = 0;\n    unordered_map<char, int> char_counts;\n    set<char> unique_chars;\n    int k_used = 0;\n    while (j < n) {\n        while (j < n && k_used < k) {\n            if (unique_chars.find(s[j]) == unique_chars.end()) {\n                unique_chars.insert(s[j]);\n                char_counts[s[j]] = 1;\n            } else {\n                char_counts[s[j]]++;\n                if (char_counts[s[j]] > 1)\n                    k_used++;\n            }\n            j++;\n        }\n        if (j == n)\n            res = min(res, n - i);\n        break;\n        while (k_used > k && i < j) {\n            if (char_counts[s[i]] > 1) {\n                char_counts[s[i]]--;\n                if (char_counts[s[i]] == 1)\n                    k_used--;\n            } else if (unique_chars.find(s[i]) != unique_chars.end()) {\n                unique_chars.erase(s[i]);\n            }\n            i++;\n        }\n        i++;\n    }\n    return res;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "abcabcabc 2\n5",
+      "output": "3",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "aabcccccaaa 2\n8",
+      "output": "3",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

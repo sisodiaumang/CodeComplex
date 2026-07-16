@@ -1,0 +1,52 @@
+{
+  "_id": "711aa93fccb1bc4d865fe15b",
+  "title": "Interactive Star Rating",
+  "slug": "js-star-rating",
+  "difficulty": "Easy",
+  "topics": [
+    "JAVASCRIPT"
+  ],
+  "statement": {
+    "markdown": "## Interactive Star Rating Component\n\nBuild a 5-star interactive rating component.\n\n### Requirements:\n1. **Hover State**: Hovering over a star should temporarily highlight it and all preceding stars (e.g. adding a class `text-yellow-400`).\n2. **Click Selection**: Clicking a star selects that rating and updates the visual display text container.\n3. **Mouse Leave**: Moving the mouse out of the stars container should restore the highlight to the last selected rating (or 0 if none has been clicked)."
+  },
+  "constraints": [
+    "Must track the state of both selected rating and current hovered index",
+    "Must use mouse event handlers (mouseover, click, mouseleave)"
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "html": "<div class=\"p-6 bg-slate-800 rounded-xl max-w-sm mx-auto text-center text-white border border-slate-700 shadow-md\">\n  <h3 class=\"mb-3 font-semibold text-lg\">Rate this product</h3>\n  <div id=\"stars-container\" class=\"flex justify-center gap-2 text-3xl cursor-pointer\">\n    <span class=\"star text-slate-600\" data-value=\"1\">★</span>\n    <span class=\"star text-slate-600\" data-value=\"2\">★</span>\n    <span class=\"star text-slate-600\" data-value=\"3\">★</span>\n    <span class=\"star text-slate-600\" data-value=\"4\">★</span>\n    <span class=\"star text-slate-600\" data-value=\"5\">★</span>\n  </div>\n  <div class=\"mt-4 text-slate-400\">Rating Selected: <span id=\"rating-val\" class=\"text-white font-bold\">0</span>/5</div>\n</div>",
+    "css": "",
+    "javascript": "const starsContainer = document.getElementById('stars-container');\nconst stars = Array.from(starsContainer.querySelectorAll('.star'));\nconst ratingVal = document.getElementById('rating-val');\n\n// Implement star rating state updates, hovering effects, and selections here\n"
+  },
+  "gradingCriteria": [
+    {
+      "id": "selection_correctness",
+      "description": "Verify rating updates cleanly upon click events.",
+      "weight": 50
+    },
+    {
+      "id": "hover_effects",
+      "description": "Verify dynamic highlight updates on hover and resets properly on mouseleave.",
+      "weight": 50
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "html",
+      "css",
+      "javascript"
+    ],
+    "referenceSolution": "const starsContainer = document.getElementById('stars-container');\nconst stars = Array.from(starsContainer.querySelectorAll('.star'));\nconst ratingVal = document.getElementById('rating-val');\nlet selectedRating = 0;\n\nfunction renderStars(rating) {\n  stars.forEach((star, index) => {\n    if (index < rating) {\n      star.classList.add('text-yellow-400');\n      star.classList.remove('text-slate-600');\n    } else {\n      star.classList.remove('text-yellow-400');\n      star.classList.add('text-slate-600');\n    }\n  });\n}\n\nstars.forEach(star => {\n  star.addEventListener('mouseover', () => {\n    const rating = parseInt(star.getAttribute('data-value'), 10);\n    renderStars(rating);\n  });\n  star.addEventListener('click', () => {\n    selectedRating = parseInt(star.getAttribute('data-value'), 10);\n    ratingVal.textContent = selectedRating;\n    renderStars(selectedRating);\n  });\n});\n\nstarsContainer.addEventListener('mouseleave', () => {\n  renderStars(selectedRating);\n});"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

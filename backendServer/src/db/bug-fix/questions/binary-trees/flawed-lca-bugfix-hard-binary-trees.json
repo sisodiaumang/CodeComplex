@@ -1,0 +1,154 @@
+{
+  "_id": "d12c9f55579fd0948b357bd7",
+  "title": "Flawed LCA",
+  "slug": "flawed-lca-bugfix-hard-binary-trees",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "Lowest Common Ancestor",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "tree",
+      "lca"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Solve the problem and fix the bugs.",
+    "inputFormat": "",
+    "outputFormat": "",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 2,
+        "max": 100000,
+        "description": "Number of nodes in tree"
+      }
+    ],
+    "examples": [
+      {
+        "input": "0",
+        "output": "0",
+        "explanation": "",
+        "isHidden": false
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint for the buggy code"
+    }
+  ],
+  "editorial": {
+    "title": "Finding the LCA",
+    "intuition": "Correct approach for LCA with segment tree",
+    "bruteForce": "Brute force implementation is O(n^2) and will TLE",
+    "betterSolution": "",
+    "optimalSolution": "optimal Solution details.",
+    "proofOfCorrectness": "proof Of Correctness details.",
+    "dryRun": "dry Run details.",
+    "commonMistakes": [
+      "Mistake 1: Inefficient implementation will cause TLE"
+    ],
+    "timeComplexity": "O(log n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    bool solve(vector<int>& nums) {\n        // TODO: implement\n        return false;\n    }\n};",
+    "java": "class Solution {\n    public boolean solve(int[] nums) {\n        // TODO: implement\n        return false;\n    }\n}",
+    "python": "class Solution:\n    def solve(self, nums: list[int]) -> bool:\n        # TODO: implement\n        pass",
+    "javascript": "var solve = function(nums) {\n    // TODO: implement\n    return false;\n};"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    int lca(int x, int y, vector<vector<int>>& adj) {\n        return find(x, y, 0, -1, adj);\n    }\n    int find(int x, int y, int p, int par, vector<vector<int>>& adj) {\n        if (x == p) return par;\n        for (int i = 0; i < adj[x].size(); i++) {\n            if (adj[x][i] != par) {\n                return find(adj[x][i], y, x, par, adj);\n            }\n        }\n        return -1;\n    }\n};",
+    "java": "class Solution {\npublic:\n    int lca(int x, int y, int[][] adj) {\n        return find(x, y, 0, -1, adj);\n    }\n    int find(int x, int y, int p, int par, int[][] adj) {\n        if (x == p) return par;\n        for (int i = 0; i < adj[x].length; i++) {\n            if (adj[x][i] != par) {\n                return find(adj[x][i], y, x, par, adj);\n            }\n        }\n        return -1;\n    }\n}",
+    "python": "class Solution:\n    def solve(self, nums: list[int]) -> bool:\n        # Buggy code\n        pass",
+    "javascript": "function lca(x, y, adj) {\n    return find(x, y, 0, -1, adj);\n}\nfunction find(x, y, p, par, adj) {\n    if (x == p) return par;\n    for (var i = 0; i < adj[x].length; i++) {\n        if (adj[x][i] != par) {\n            return find(adj[x][i], y, x, par, adj);\n        }\n    }\n    return -1;\n}"
+  },
+  "functionSignature": {
+    "cpp": "bool solve(vector<int>& nums);",
+    "java": "public boolean solve(int[] nums);",
+    "python": "def solve(self, nums: list[int]) -> bool:",
+    "javascript": "var solve = function(nums);"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def lca(self, adj, q):\n        def dfs(node):\n            children = 0\n            for i in adj[node]:\n                if i != -1:\n                    children += 1\n                    dfs(i)\n            if children > 1:\n                ans[node] = -1\n        ans = {}\n        dfs(0)\n        node1, node2 = map(int, q[0].split())\n        if node1 == node2:\n            return node1\n        if ans[node1] == -1 or ans[node2] == -1:\n            return -1\n        if node1 in adj[node2] or node2 in adj[node1]:\n            return node1\n        return -1\n    \nif __name__ == '__main__':\n    import sys\n    T = int(input())\n    for test in range(T):\n        n, q = input().split()\n        n = int(n)\n        adj = [[-1 for _ in range(n)] for _ in range(n)]\n        for i in range(n - 1):\n            u, v = map(int, input().split())\n            adj[u][v] = adj[v][u] = i\n        print(self.lca(adj, [q]))\n",
+    "cpp": "class Solution {\npublic:\n    int lca(int n, std::vector<std::vector<int>> adj, std::string q) {\n        bool visited[n] = {false};\n        int node1, node2;\n        std::istringstream iss(q);\n        iss >> node1 >> node2;\n        visited[0] = true;\n        return find(node1, node2, adj);\n    }\n    int find(int node1, int node2, std::vector<std::vector<int>> adj) {\n        if (node1 == node2) return node1;\n        for (int i = 0; i < adj[node1].size(); i++) {\n            if (adj[node1][i] != -1 && !visited[adj[node1][i]]) {\n                visited[adj[node1][i]] = true;\n                if (adj[adj[node1][i]].size() > 1 || adj[node2].size() > 1) {\n                    return -1;\n                }\n                if (find(adj[node1][i], node2, adj) != -1) return adj[node1][i];\n            }\n        }\n        return -2;\n    }\n};\n\nint main() {\n    int T = 1;\n    while (T--) {\n        int n;\n        std::vector<std::vector<int>> adj;\n        std::string q;\n        std::cin >> n;\n        for (int i = 0; i < n; i++) {\n            adj.push_back(std::vector<int>(n, -1));\n        }\n        for (int i = 0; i < n - 1; i++) {\n            int u, v;\n            std::cin >> u >> v;\n            adj[u][v] = adj[v][u] = i;\n        }\n        std::cin >> q;\n        Solution solution;\n        int ans = solution.lca(n, adj, q);\n        if (ans != -2) {\n            std::cout << ans << std::endl;\n        } else {\n            std::cout << -1 << std::endl;\n        }\n    }\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 5,
+    "memoryLimit": 64,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "0",
+      "output": "0",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_hidden_generated",
+      "input": "0",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

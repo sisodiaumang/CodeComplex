@@ -1,0 +1,147 @@
+{
+  "title": "Fixing Node.js Express Middleware Route Parameter Validation",
+  "subCategory": "Route Parameter Validation",
+  "statement": {
+    "markdown": "Implement a middleware that validates route parameters for a user's profile page in a Node.js Express application. The middleware should accept `id` as a route parameter and return an error response if the `id` is not a positive integer. Otherwise, it should continue to the next middleware. The middleware should be reusable and support multiple routes with different parameters. ",
+    "inputFormat": "The input will be an object with a `req` property containing the request object and a `res` property containing the response object.",
+    "outputFormat": "The output should be a boolean indicating whether the middleware should continue to the next middleware.",
+    "notes": "The middleware should be able to handle multiple routes with different parameters. The `req` object will contain the route parameter as a property.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Route parameter value"
+      },
+      {
+        "variable": "id",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Route parameter id"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"req\":{\"params\":{\"id\":1}},\"res\":{\"status\":200}}",
+        "output": "{\"status\":200}",
+        "explanation": "The middleware should continue to the next middleware because the `id` is a positive integer."
+      },
+      {
+        "input": "{\"req\":{\"params\":{\"id\":\"-1\"}},\"res\":{\"status\":200}}",
+        "output": "{\"status\":400,\"message\":\"Invalid route parameter\"}",
+        "explanation": "The middleware should return an error response because the `id` is not a positive integer."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "NODE_JS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "node_js"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use a regular expression to validate the route parameter."
+    },
+    {
+      "order": 2,
+      "text": "Use a middleware function to validate the route parameter."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial",
+    "intuition": "The middleware should use a regular expression to validate the route parameter.",
+    "bruteForce": "The middleware can use a brute force approach to validate the route parameter.",
+    "betterSolution": "The middleware can use a middleware function to validate the route parameter.",
+    "optimalSolution": "The middleware should use a regular expression to validate the route parameter and return an error response if the `id` is not a positive integer.",
+    "proofOfCorrectness": "The middleware should return an error response if the `id` is not a positive integer.",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Not handling edge cases",
+      "Not using a regular expression to validate the route parameter"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "function validateParamMiddleware(req, res, next) {\n    // your code here\n}\n",
+    "python": "class ValidateParamMiddleware:\n    def __init__(self):\n        self.next = None\n    def __call__(self, req, res):\n        # your code here\n"
+  },
+  "buggyStarterCode": {
+    "javascript": "function validateParamMiddleware(req, res, next) {\n    if (req.params.id >= 0 && req.params.id !== parseInt(req.params.id)) {\n        return res.status(400).send({ message: 'Invalid route parameter' });\n    }\n    next();\n}\n",
+    "python": "class ValidateParamMiddleware:\n    def __init__(self):\n        self.next = None\n    def __call__(self, req, res):\n        if req.params.id >= 0 and req.params.id != int(req.params.id):\n            return res.status(400).send({ 'message': 'Invalid route parameter' })\n        self.next(req, res)"
+  },
+  "functionSignature": {
+    "javascript": "function validateParamMiddleware(req, res, next) {\n    // your code here\n}",
+    "python": "class ValidateParamMiddleware:\n    def __call__(self, req, res):\n        # your code here"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction validateParamMiddleware(req, res, next) {\n    if (req.params.id && !Number.isInteger(req.params.id) || req.params.id <= 0) {\n        return res.status(400).send({ message: 'Invalid route parameter' });\n    }\n    next();\n}\n",
+    "python": "class ValidateParamMiddleware:\n    def __call__(self, req, res):\n        if not req.params.id or not isinstance(req.params.id, int) or req.params.id <= 0:\n            return res.status(400).send({ 'message': 'Invalid route parameter' })\n        self.next(req, res)"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"req\":{\"params\":{\"id\":1}},\"res\":{\"status\":200}}",
+      "output": "{\"status\":200}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"req\":{\"params\":{\"id\":\"-1\"}},\"res\":{\"status\":200}}",
+      "output": "{\"status\":400,\"message\":\"Invalid route parameter\"}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "2c909e60e5d58004c6d75ee3",
+  "slug": "fixing-nodejs-express-middleware-route-parameter-validation-bugfix-hard-node_js",
+  "mode": "bug_fix",
+  "category": "NODE_JS",
+  "difficulty": "Hard"
+}

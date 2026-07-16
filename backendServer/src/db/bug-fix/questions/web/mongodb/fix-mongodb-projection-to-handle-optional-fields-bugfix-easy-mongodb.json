@@ -1,0 +1,138 @@
+{
+  "title": "Fix MongoDB Projection to Handle Optional Fields",
+  "subCategory": "MongoDB Projection",
+  "statement": {
+    "markdown": "Write a function `mongo_projection` that takes an object `document` and an object `projection`. The function should return a new object that contains the fields specified in `projection`. If a field is not specified, it should be included in the output object only if its value in `document` is not null. If the field does not exist in `document`, it should not be included in the output object. The function should handle cases where `projection` contains optional fields with null or undefined values.",
+    "inputFormat": "document: object, projection: object",
+    "outputFormat": "object",
+    "notes": "Time complexity: O(n), where n is the number of fields in the document.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of fields in the document"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{'name': 'John', 'age': 30, 'city': 'New York'}",
+        "projection": "{'name': 1, 'age': 1, 'city': 1}",
+        "output": "{'name': 'John', 'age': 30, 'city': 'New York'}"
+      },
+      {
+        "input": "{'name': 'Jane', 'age': 25}",
+        "projection": "{'name': 1, 'city': { $ifNull: [ 'city', 'New York' ] }}",
+        "output": "{'name': 'Jane', 'city': 'New York'}"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "MONGODB"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "mongodb"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the `$ifNull` operator to handle cases where a field is not specified in `projection` but has a non-null value in `document`."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial Solution",
+    "intuition": "The function should use the `$ifNull` operator to handle cases where a field is not specified in `projection` but has a non-null value in `document`.",
+    "bruteForce": "One possible solution is to use a loop to iterate over the fields in `document` and include them in the output object only if they are specified in `projection` or have a non-null value.",
+    "betterSolution": "A better solution is to use the `$ifNull` operator to handle cases where a field is not specified in `projection` but has a non-null value in `document`.",
+    "optimalSolution": "The optimal solution is to use the `$ifNull` operator and a loop to iterate over the fields in `projection` and include them in the output object only if they are specified or have a non-null value.",
+    "proofOfCorrectness": "The function should return a new object that contains the fields specified in `projection` and includes fields with non-null values in `document` that are not specified in `projection`.",
+    "dryRun": "Example run of the function with the following input: `{'name': 'John', 'age': 30, 'city': 'New York'}` and `{'name': 1, 'age': 1, 'city': 1}`",
+    "commonMistakes": [
+      "Including fields with null values in the output object",
+      "Not handling cases where a field is not specified in `projection` but has a non-null value in `document`"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// Function to fix MongoDB projection\nfunction mongo_projection(document, projection) {\n  // Your code here\n}\n",
+    "python": "class Solution:\n  def mongo_projection(self, document, projection):\n    # Your code here\n    pass"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Function to fix MongoDB projection\nfunction mongo_projection(document, projection) {\n  let result = {};\n  for (let field in document) {\n    if (projection[field]) {\n      result[field] = document[field];\n    }\n  }\n  return result;\n}",
+    "python": "class Solution:\n  def mongo_projection(self, document, projection):\n    result = {}\n    for field in document:\n      if field in projection:\n        result[field] = document[field]\n    return result"
+  },
+  "functionSignature": {
+    "javascript": "function mongo_projection(document, projection)",
+    "python": "def mongo_projection(self, document, projection)"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction mongo_projection(document, projection) {\n  let result = {};\n  for (let field in document) {\n    if (projection[field] === 1 || projection[field] === undefined && document[field] !== null) {\n      result[field] = document[field];\n    }\n  }\n  return result;\n}",
+    "python": "class Solution:\n  def mongo_projection(self, document, projection):\n    result = {}\n    for field in document:\n      if field in projection and projection[field] != 0 or field not in projection and document[field] is not None:\n        result[field] = document[field]\n    return result"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{'name': 'John', 'age': 30, 'city': 'New York'}",
+      "projection": "{'name': 1, 'age': 1, 'city': 1}",
+      "output": "{'name': 'John', 'age': 30, 'city': 'New York'}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{'name': 'Jane', 'age': 25}",
+      "projection": "{'name': 1, 'city': { $ifNull: [ 'city', 'New York' ] }}",
+      "output": "{'name': 'Jane', 'city': 'New York'}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "23ff71e78e99fed48e364679",
+  "slug": "fix-mongodb-projection-to-handle-optional-fields-bugfix-easy-mongodb",
+  "mode": "bug_fix",
+  "category": "MONGODB",
+  "difficulty": "Easy"
+}

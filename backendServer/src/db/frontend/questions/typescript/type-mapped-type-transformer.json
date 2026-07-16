@@ -1,0 +1,59 @@
+{
+  "_id": "b49ca5a010e13b604b3d9785",
+  "title": "Mapped Type Transformer",
+  "slug": "type-mapped-type-transformer",
+  "difficulty": "Medium",
+  "topics": [
+    "TYPESCRIPT"
+  ],
+  "statement": {
+    "markdown": "# Mapped Type Transformer\nYou are given a type `P` and a set of types `A` and you need to create a new type `U` that takes a `P` and returns an object with `A` types.\n### Requirements\n1. Create a mapped type transformer called `Transform<U>` that takes a type `P` and returns an object with types `A`.\n2. The type `U` should have the same shape as the original `P` type.\n3. You should use the mapped type `P[A]` to create a new property in `U`.\n4. You should use the `keyof P` type to get the possible keys of the object `P`."
+  },
+  "constraints": [
+    "Use mapped type transformation.",
+    "Preserve the shape of the original type.",
+    "Use keyof P to get possible keys of P."
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "typescript": "type Transform<U> = {\n  [P in keyof P]:\n    ...\n};"
+  },
+  "gradingCriteria": [
+    {
+      "id": "1",
+      "description": "Mapped type transformer creates a new type with shape of the original type",
+      "weight": 40
+    },
+    {
+      "id": "2",
+      "description": "The type transformer takes a type P and returns an object with types A",
+      "weight": 30
+    },
+    {
+      "id": "3",
+      "description": "The mapped type 'P[A]' is used to create a new property in the type transformer",
+      "weight": 15
+    },
+    {
+      "id": "4",
+      "description": "The 'keyof P' type is used to get the possible keys of the object P",
+      "weight": 15
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "typescript"
+    ],
+    "referenceSolution": "type Transform<U, P> = {\n  [P in keyof P]: P extends infer T ? T extends A ? T : never : never,\n  [P in keyof P]: P extends A ? P : never\n}\n\n// Example usage:\ninterface User{\n  id: number,\n  name: string,\n  age: number\n}\n\ntype UserTransform = Transform<User, User>\n// UserTransform = {\n//   id: number,\n//   name: string,\n//   age: number\n//}\n"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

@@ -1,0 +1,161 @@
+{
+  "_id": "e151e0dbea9bddf745496ef4",
+  "title": "Optimally Assign Jobs to Workers under Resource Constraints with Overlapping Durations",
+  "slug": "optimally-assign-jobs-to-workers-under-resource-constraints-with-overlapping-durations-bugfix-hard-greedy-algorithms",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "GREEDY",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 100,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "greedy",
+      "optimal assignment"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given a list of job requirements and a list of workers' resource constraints, assign jobs to workers such that each worker's total resource usage does not exceed their constraint. The goal is to maximize the number of assigned jobs.",
+    "inputFormat": "The input consists of two space-separated integers, n and m, representing the number of jobs and workers, respectively. Followed by n lines, each containing three space-separated integers: the job's resource requirement, the job's deadline, and the job's reward. Then, m lines, each containing a single integer representing a worker's resource constraint.",
+    "outputFormat": "Output a single line containing the maximum number of assigned jobs.",
+    "notes": "The resource requirement, deadline, and reward of each job are non-negative integers.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of jobs"
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of workers"
+      }
+    ],
+    "examples": [
+      {
+        "input": "5 3\n1 1 1\n2 2 2\n3 3 3\n4 4 4\n5 5 5\n6 6 6\n7 7 7",
+        "output": "5",
+        "explanation": "The optimal assignment is: Job 1 to Worker 1, Job 2 to Worker 2, Job 3 to Worker 3, Job 4 to Worker 1, Job 5 to Worker 2"
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use a greedy approach to prioritize jobs based on their deadlines."
+    }
+  ],
+  "editorial": {
+    "title": "Optimal Job Assignment",
+    "intuition": "The key insight is to prioritize jobs with earlier deadlines to maximize the number of assigned jobs.",
+    "bruteForce": "This approach has a time complexity of O(n^2 * m), where n is the number of jobs and m is the number of workers.",
+    "betterSolution": "Use a greedy approach to prioritize jobs based on their deadlines.",
+    "optimalSolution": "The optimal solution uses a greedy approach to prioritize jobs based on their deadlines.",
+    "proofOfCorrectness": "The correctness of the greedy approach can be proven using a proof by contradiction.",
+    "dryRun": "Step 1: Sort the jobs by their deadlines.\nStep 2: Iterate through the sorted jobs and assign each job to the worker with the earliest deadline that has sufficient resources.",
+    "commonMistakes": [
+      "Assigning jobs based on their rewards instead of deadlines.",
+      "Failing to consider the resource constraints of workers."
+    ],
+    "timeComplexity": "O(n log n + n * m)",
+    "spaceComplexity": "O(n + m)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    int solve(vector<vector<int>> jobs, vector<int> workers);\n};",
+    "java": "public class Solution {\npublic:\n    int solve(int[][] jobs, int[] workers);\n}",
+    "python": "class Solution:\n    def solve(self, jobs: List[List[int]], workers: List[int]) -> int:\n        # TODO: implement",
+    "javascript": "function solve(jobs, workers) {\n    # TODO: implement\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "int Solution::solve(vector<vector<int>> jobs, vector<int> workers) {\n    int count = 0;\n    for (int i = 0; i < jobs.size(); i++) {\n        for (int j = 0; j < workers.size(); j++) {\n            if (jobs[i][0] <= workers[j]) {\n                count++;\n                workers[j] -= jobs[i][0];\n                break;\n            }\n        }\n    }\n    return count;\n}",
+    "java": "int Solution.solve(int[][] jobs, int[] workers) {\n    int count = 0;\n    for (int i = 0; i < jobs.length; i++) {\n        for (int j = 0; j < workers.length; j++) {\n            if (jobs[i][0] <= workers[j]) {\n                count++;\n                workers[j] -= jobs[i][0];\n                break;\n            }\n        }\n    }\n    return count;\n}",
+    "python": "class Solution:\n    def solve(self, jobs: List[List[int]], workers: List[int]) -> int:\n        count = 0\n        for job in jobs:\n            for i, worker in enumerate(workers):\n                if job[0] <= worker:\n                    count += 1\n                    workers[i] -= job[0]\n                    break\n        return count",
+    "javascript": "function solve(jobs, workers) {\n    let count = 0;\n    for (let job of jobs) {\n        for (let i = 0; i < workers.length; i++) {\n            if (job[0] <= workers[i]) {\n                count++;\n                workers[i] -= job[0];\n                break;\n            }\n        }\n    }\n    return count;\n}"
+  },
+  "functionSignature": {
+    "cpp": "int solve(vector<vector<int>> jobs, vector<int> workers);",
+    "java": "int solve(int[][] jobs, int[] workers);",
+    "python": "def solve(self, jobs: List[List[int]], workers: List[int]) -> int:",
+    "javascript": "function solve(jobs, workers):"
+  },
+  "solutions": {
+    "python": "import sys\nfrom typing import List\n\nclass Solution:\n    def solve(self, jobs: List[List[int]], workers: List[int]) -> int:\n        jobs.sort(key=lambda x: x[1])\n        workers.sort()\n        count = 0\n        for job in jobs:\n            while workers and workers[0] < job[0]:\n                workers.pop(0)\n            if workers:                workers[0] -= job[0]\n                count += 1\n                workers.sort()\n        return count\n\nif __name__ == '__main__':\n    jobs = [[1, 1, 1], [2, 2, 2], [3, 3, 3], [4, 4, 4], [5, 5, 5]]\n    workers = [6, 6, 6]\n    solution = Solution()\n    print(solution.solve(jobs, workers))",
+    "cpp": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nclass Solution {\npublic:\n    int solve(vector<vector<int>> jobs, vector<int> workers) {\n        sort(jobs.begin(), jobs.end(), [](const vector<int>& a, const vector<int>& b) {\n            return a[1] < b[1];\n        });\n        sort(workers.begin(), workers.end());\n        int count = 0;\n        for (int i = 0; i < jobs.size(); i++) {\n            while (workers.size() && workers[0] < jobs[i][0]) {\n                workers.erase(workers.begin());\n            }\n            if (workers.size()) {\n                workers[0] -= jobs[i][0];\n                count++;\n                sort(workers.begin(), workers.end());\n            }\n        }\n        return count;\n    }\n};\n\nint main() {\n    vector<vector<int>> jobs = {{1, 1, 1}, {2, 2, 2}, {3, 3, 3}, {4, 4, 4}, {5, 5, 5}};\n    vector<int> workers = {6, 6, 6};\n    Solution solution;\n    cout << solution.solve(jobs, workers) << endl;\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5 3\n1 1 1\n2 2 2\n3 3 3\n4 4 4\n5 5 5\n6 6 6",
+      "output": "5",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "3 2\n1 1 1\n2 2 2\n3 3 3\n4 4 4",
+      "output": "2",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

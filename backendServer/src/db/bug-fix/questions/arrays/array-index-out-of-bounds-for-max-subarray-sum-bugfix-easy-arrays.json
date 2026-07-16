@@ -1,0 +1,153 @@
+{
+  "_id": "affc80ca78e9702443878047",
+  "title": "Array Index Out of Bounds for Max Subarray Sum",
+  "slug": "array-index-out-of-bounds-for-max-subarray-sum-bugfix-easy-arrays",
+  "difficulty": "Easy",
+  "category": "DSA",
+  "subCategory": "Prefix Sum",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "array"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "You are given an array of integers. Your task is to find the maximum sum of a subarray within the given array.\n\nHowever, the implementation in the starter code has an ArrayIndexOutOfBoundsException, and you need to fix it.\n\nExample Input:\n5\n-2 -3 4 -1 -2\n\nExample Output:\n5",
+    "inputFormat": "First line represents the size of the array. The second line contains the array elements separated by a space.\nInput guarantees that the array size will be at least 1.",
+    "outputFormat": "Print the maximum sum of a subarray.\nThere should be no leading/trailing whitespaces.",
+    "notes": "You should aim to solve this with a time complexity of O(n) and a space complexity of O(n)",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "Example input (matching the stdin format that main wrapper expects)5\n-2 -3 4 -1 -2",
+        "output": "5",
+        "explanation": "The maximum sum of subarray is -2 -3 4 -1 -2 = 1, -2 -3 4 = 1, 4 = 4, -2 -3 4 = 5. The maximum sum is 5."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "The logic behind the starter code is mostly correct, but it has an ArrayIndexOutOfBoundsException. Try to identify it and fix it."
+    }
+  ],
+  "editorial": {
+    "title": "Max Subarray Sum",
+    "intuition": "We can use Kadane's algorithm to solve this problem. The idea is to find the maximum sum of contiguous subarray within a one-dimensional array of numbers.",
+    "bruteForce": "We can try all possible subarrays and calculate their sums, but this approach has a high time complexity of O(n^2).",
+    "betterSolution": "We can use Kadane's algorithm, which uses a dynamic programming approach to solve this problem efficiently.",
+    "optimalSolution": "The optimal solution uses Kadane's algorithm, with a time complexity of O(n). The algorithm iterates through the array and keeps track of the maximum sum seen so far and the maximum sum ending at the current position.",
+    "proofOfCorrectness": "The proof of correctness for Kadane's algorithm is straightforward. At each step, we either update our maximum sum or keep it the same if the sum ending at the current position is smaller. This ensures that we never miss any maximum sum subarray.",
+    "dryRun": "Let's run the algorithm with a sample input to see how it works. Suppose we have the following array: -2, -3, 4, -1, -2. The algorithm starts at the first position: max sum seen so far is -2, and the sum ending at the first position is -2. It then moves to the next position: max sum seen so far is still -2, and the sum ending at the second position is -2 - 3 = -5. It continues until it reaches the end of the array.",
+    "commonMistakes": [
+      "Not handling edge cases properly",
+      "Not using Kadane's algorithm effectively"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    int maxSubArray(vector<int>& nums) {\n        int n = nums.size();\n        int max_sum = nums[0];\n        int current_sum = nums[0];\n        for (int i = 1; i < n - 1; i++) {\n            current_sum += nums[i];\n            if (current_sum > max_sum) max_sum = current_sum;\n            else if (current_sum < 0) current_sum = 0;\n        }\n        return max_sum;\n    }\n};",
+    "java": "class Solution {\npublic:\n    int maxSubArray(int[] nums) {\n        int n = nums.length;\n        int max_sum = nums[0];\n        int current_sum = nums[0];\n        for (int i = 1; i < n - 1; i++) {\n            current_sum += nums[i];\n            if (current_sum > max_sum) max_sum = current_sum;\n            else if (current_sum < 0) current_sum = 0;\n        }\n        return max_sum;\n    }\n};",
+    "python": "class Solution:\n    def maxSubArray(self, nums: list[int]) -> int:\n        n = len(nums)\n        max_sum = nums[0]\n        current_sum = nums[0]\n        for i in range(1, n - 1):\n            current_sum += nums[i]\n            if current_sum > max_sum:\n                max_sum = current_sum\n            else if current_sum < 0:\n                current_sum = 0\n        return max_sum",
+    "javascript": "var solve = function(nums) {\n    var n = nums.length;\n    var max_sum = nums[0];\n    var current_sum = nums[0];\n    for (var i = 1; i < n - 1; i++) {\n        current_sum += nums[i];\n        if (current_sum > max_sum) max_sum = current_sum;\n        else if (current_sum < 0) current_sum = 0;\n    }\n    return max_sum;\n};"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    int maxSubArray(vector<int>& nums) {\n        int n = nums.size();\n        int max_sum = nums[0];\n        int current_sum = -1;\n        for (int i = 1; i < n; i++) {\n            if (i > 0) current_sum += nums[i];\n            if (current_sum > max_sum) max_sum = current_sum;\n            else if (current_sum < 0) current_sum = 0;\n        }\n        return max_sum;\n    }\n};",
+    "java": "class Solution {\npublic:\n    int maxSubArray(int[] nums) {\n        int n = nums.length;\n        int max_sum = nums[0];\n        int current_sum = -1;\n        for (int i = 1; i < n; i++) {\n            if (i > 0) current_sum += nums[i];\n            if (current_sum > max_sum) max_sum = current_sum;\n            else if (current_sum < 0) current_sum = 0;\n        }\n        return max_sum;\n    }\n};",
+    "python": "class Solution:\n    def maxSubArray(self, nums: list[int]) -> int:\n        n = len(nums)\n        max_sum = nums[0]\n        current_sum = -1\n        for i in range(1, n):\n            if i > 0: current_sum += nums[i]\n            if current_sum > max_sum:\n                max_sum = current_sum\n            else if current_sum < 0:\n                current_sum = 0\n        return max_sum",
+    "javascript": "var solve = function(nums) {\n    var n = nums.length;\n    var max_sum = nums[0];\n    var current_sum = -1;\n    for (var i = 1; i < n; i++) {\n        if (i > 0) current_sum += nums[i];\n        if (current_sum > max_sum) max_sum = current_sum;\n        else if (current_sum < 0) current_sum = 0;\n    }\n    return max_sum;\n};"
+  },
+  "functionSignature": {
+    "cpp": "int maxSubArray(vector<int>& nums);",
+    "java": "int maxSubArray(int[] nums);",
+    "python": "def maxSubArray(self, nums: list[int]) -> int:",
+    "javascript": "var solve = function(nums);"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def maxSubArray(self, nums: list[int]) -> int:\n        n = len(nums)\n        max_sum = nums[0]\n        current_sum = nums[0]\n        for i in range(1, n):\n            if current_sum < 0: current_sum = nums[i]\n            else: current_sum += nums[i]\n            if current_sum > max_sum: max_sum = current_sum\n        return max_sum",
+    "cpp": "class Solution {\npublic:\n    int maxSubArray(vector<int>& nums) {\n        int n = nums.size();\n        int max_sum = nums[0];\n        int current_sum = nums[0];\n        for (int i = 1; i < n; i++) {\n            if (current_sum < 0) current_sum = nums[i];\n            else current_sum += nums[i];\n            if (current_sum > max_sum) max_sum = current_sum;\n        }\n        return max_sum;\n    }\n};",
+    "javascript": "var solve = function(nums) {\n    var n = nums.length;\n    var max_sum = nums[0];\n    var current_sum = nums[0];\n    for (var i = 1; i < n; i++) {\n        if (current_sum < 0) current_sum = nums[i];\n        else current_sum += nums[i];\n        if (current_sum > max_sum) max_sum = current_sum;\n    }\n    return max_sum;\n};",
+    "java": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 1,
+    "memoryLimit": 128,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5\n-2 -3 4 -1 -2",
+      "output": "5",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "3\n1 3 -1",
+      "output": "5",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

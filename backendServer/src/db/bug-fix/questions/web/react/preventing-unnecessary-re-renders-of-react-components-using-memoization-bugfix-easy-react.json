@@ -1,0 +1,151 @@
+{
+  "title": "Preventing Unnecessary Re-renders of React Components using Memoization",
+  "subCategory": "Memoization and Optimization",
+  "statement": {
+    "markdown": "The `memoizedComponent` is a React component that should not re-render when the `name` or `age` props change. However, it is currently re-rendering unnecessarily due to a logical bug in the memoization implementation.",
+    "inputFormat": "The `memoizedComponent` accepts `name` and `age` as props and returns a JSX element.",
+    "outputFormat": "The output should be a JSX element only when the `name` or `age` props change.",
+    "notes": "The component should only re-render when the `person` object reference changes.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 100,
+        "description": "Number of times the component is rendered"
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 1,
+        "max": 100,
+        "description": "Number of times the component is re-rendered due to unnecessary props change"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{'name': 'John', 'age': 30}",
+        "output": "<div>Hello, John!</div>",
+        "explanation": "The component should only re-render when the input changes."
+      },
+      {
+        "input": "{'name': 'Jane', 'age': 30}",
+        "output": "<div>Hello, Jane!</div>",
+        "explanation": "The component should only re-render when the input changes."
+      },
+      {
+        "input": "{'name': 'John', 'age': 31}",
+        "output": "<div>Hello, John!</div>",
+        "explanation": "The component should not re-render when the age changes."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 10,
+    "points": 30,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "REACT"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "react"
+    ],
+    "interviewFrequency": 1,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Check the `useMemo` hook implementation."
+    }
+  ],
+  "editorial": {
+    "title": "Memoized Component Optimization",
+    "intuition": "Use `useMemo` to cache the result of expensive computations.",
+    "bruteForce": "Re-render the component on every prop change.",
+    "betterSolution": "Use `useMemo` with a dependency array to memoize the result.",
+    "optimalSolution": "Use `useCallback` to memoize the callback function.",
+    "proofOfCorrectness": "The component should only re-render when the `person` object reference changes.",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Not using `useMemo`",
+      "Not memoizing the callback function"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "function memoizedComponent({name, age}) {\n  // Use useMemo to memoize the result\n  return <div>Hello, {name}!</div>\n}"
+  },
+  "buggyStarterCode": {
+    "javascript": "function memoizedComponent({name, age}) {\n  const [person, setPerson] = useState({name, age});\n  const [count, setCount] = useState(0);\n  useEffect(() => {\n    setCount(count + 1);\n  }, [name, age]);\n  return <div>Hello, {name}!</div>\n}"
+  },
+  "functionSignature": {
+    "javascript": "function memoizedComponent({name, age}) {"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction memoizedComponent({name, age}) {\n  const person = {name, age};\n  const memoizedCallback = useCallback(() => {\n    return <div>Hello, {name}!</div>\n  }, [name]);\n  return memoizedCallback();\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{'name': 'John', 'age': 30}",
+      "output": "<div>Hello, John!</div>",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{'name': 'Jane', 'age': 30}",
+      "output": "<div>Hello, Jane!</div>",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_3",
+      "input": "{'name': 'John', 'age': 31}",
+      "output": "<div>Hello, John!</div>",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "_id": "9531e3f872bcbe30fee7f477",
+  "slug": "preventing-unnecessary-re-renders-of-react-components-using-memoization-bugfix-easy-react",
+  "mode": "bug_fix",
+  "category": "REACT",
+  "difficulty": "Easy"
+}

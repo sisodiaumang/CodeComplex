@@ -1,0 +1,151 @@
+{
+  "title": "Fixing a Memoized React Function Component with Inconsistent Array Updates",
+  "subCategory": "React Memo",
+  "statement": {
+    "markdown": "In this problem, you are given a memoized React function component called `useMemoizedArray`. This component is designed to memoize an array and update it when a specific dependency array changes. However, there is a subtle logical bug in the implementation that causes the array to be updated incorrectly when the dependency array is replaced with a new array containing the same elements. Your task is to fix this bug and make the component work correctly.",
+    "inputFormat": "The `useMemoizedArray` component will be passed an initial array and a dependency array as arguments.",
+    "outputFormat": "The component should return the memoized array and a function that updates the memoized array.",
+    "notes": "The component should handle the case where the dependency array is replaced with a new array containing the same elements.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of the initial array"
+      },
+      {
+        "variable": "k",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of the dependency array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "[1, 2, 3], [1, 2, 3]",
+        "output": "[1, 2, 3]",
+        "explanation": "The initial array and dependency array are the same, so the memoized array should not be updated."
+      },
+      {
+        "input": "[1, 2, 3], [1, 2, 3, 4]",
+        "output": "[1, 2, 3]",
+        "explanation": "The dependency array is replaced with a new array containing the same elements, so the memoized array should not be updated."
+      },
+      {
+        "input": "[1, 2, 3], [4, 5, 6]",
+        "output": "[4, 5, 6]",
+        "explanation": "The dependency array is replaced with a new array containing different elements, so the memoized array should be updated."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 60,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "REACT"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "react"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Review the implementation of the `useMemoizedArray` component to identify the logical bug."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial",
+    "intuition": "The logical bug in the `useMemoizedArray` component is caused by the incorrect use of the `===` operator to compare arrays. This operator checks for reference equality, not deep equality. To fix this bug, we need to use a library function that checks for deep equality, such as `JSON.stringify()`.",
+    "bruteForce": "One possible solution is to use a brute force approach and recalculate the memoized array every time the dependency array changes.",
+    "betterSolution": "",
+    "optimalSolution": "The optimal solution is to use a library function that checks for deep equality, such as `JSON.stringify()`, to compare the dependency arrays and update the memoized array correctly.",
+    "proofOfCorrectness": "The optimal solution is correct because it correctly updates the memoized array when the dependency array is replaced with a new array containing the same elements.",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1: Using the `===` operator to compare arrays.",
+      "Mistake 2: Not using a library function to check for deep equality."
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "function useMemoizedArray(initialArray, dependencyArray) {\n  const memoizedArray = useRef(initialArray);\n  const updateMemoizedArray = useCallback((newDependencyArray) => {\n    if (JSON.stringify(memoizedArray.current) === JSON.stringify(newDependencyArray)) {\n      return;\n    }\n    memoizedArray.current = newDependencyArray;\n  }, []);\n  return [memoizedArray.current, updateMemoizedArray];\n}"
+  },
+  "buggyStarterCode": {
+    "javascript": "function useMemoizedArray(initialArray, dependencyArray) {\n  const memoizedArray = useRef(initialArray);\n  const updateMemoizedArray = useCallback((newDependencyArray) => {\n    if (JSON.stringify(memoizedArray.current) === JSON.stringify(newDependencyArray)) {\n      // BUG: This line should return, but it doesn't because of the incorrect use of the `===` operator.\n      console.log('Arrays are the same');\n    }\n    memoizedArray.current = newDependencyArray;\n  }, []);\n  return [memoizedArray.current, updateMemoizedArray];\n}"
+  },
+  "functionSignature": {
+    "javascript": "function useMemoizedArray(initialArray, dependencyArray)"
+  },
+  "solutions": {
+    "javascript": "// Solution: Use a library function to check for deep equality, such as `JSON.stringify()`"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "[1, 2, 3], [1, 2, 3]",
+      "output": "[1, 2, 3]",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "[1, 2, 3], [1, 2, 3, 4]",
+      "output": "[1, 2, 3]",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    },
+    {
+      "id": "tc_3",
+      "input": "[1, 2, 3], [4, 5, 6]",
+      "output": "[4, 5, 6]",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "_id": "fbd9c6590e8101e8536c83cc",
+  "slug": "fixing-a-memoized-react-function-component-with-inconsistent-array-updates-bugfix-hard-react",
+  "mode": "bug_fix",
+  "category": "REACT",
+  "difficulty": "Hard"
+}

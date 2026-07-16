@@ -1,0 +1,194 @@
+{
+  "_id": "postorder-using-2-stacks",
+  "title": "Postorder using 2 Stacks",
+  "slug": "postorder-using-2-stacks",
+  "difficulty": "Easy",
+  "category": "TREE",
+  "subCategory": "Traversals",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 10,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "BINARY TREES",
+      "STACK"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "EASY",
+      "BINARY TREE"
+    ],
+    "keywords": [
+      "POSTORDER",
+      "STACKS",
+      "BINARY TREE TRAVERSAL"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given the root of a binary tree, return the postorder traversal of its nodes' values. (i.e., from left to right, then right to left). For example, given a binary tree:       1      / \\     2   3     / \\   4   5  Return [4, 5, 2, 3, 1]. You must use two stacks to achieve this.",
+    "inputFormat": "The first line contains a single integer N, the number of nodes in the binary tree. The next N lines contain three integers each, representing the value of the node, and the left and right child nodes (or -1 if the child does not exist).",
+    "outputFormat": "The postorder traversal of the binary tree, with each node's value on a separate line.",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "N",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of nodes in the binary tree."
+      },
+      {
+        "variable": "node value",
+        "type": "integer",
+        "min": -10000,
+        "max": 10000,
+        "description": "The value of each node in the binary tree."
+      }
+    ],
+    "examples": [
+      {
+        "input": "5\n1 2 3\n2 4 5\n3 -1 -1\n4 -1 -1\n5 -1 -1",
+        "output": "4\r\n5\r\n2\r\n4\r\n2\r\n3\r\n1",
+        "explanation": "Postorder traversal of the binary tree:       1      / \\     2   3     / \\   4   5  is [4, 5, 2, 3, 1]."
+      },
+      {
+        "input": "3\n1 2 3\n2 -1 -1\n3 -1 -1",
+        "output": "2\r\n3\r\n2\r\n3\r\n1",
+        "explanation": "Postorder traversal of the binary tree:     1    /   2     \\      3  is [2, 3, 1]."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Start by understanding the postorder traversal requirement, which means visiting the left subtree, then the right subtree, and finally the root node. Consider how stacks can be used to reverse the order of node visits."
+    },
+    {
+      "order": 2,
+      "text": "To achieve postorder traversal using two stacks, think about pushing the root node onto the first stack. Then, consider how to use the second stack to store the nodes in the correct postorder sequence. You might need to pop nodes from the first stack, push them onto the second stack after visiting their children."
+    },
+    {
+      "order": 3,
+      "text": "The key insight is to use the first stack to store nodes to be visited and the second stack to store the visited nodes in the reverse order of their visitation. When a node is popped from the first stack, its children should be pushed onto the first stack before it is pushed onto the second stack. This ensures that nodes are visited in postorder and stored in the correct order on the second stack."
+    }
+  ],
+  "editorial": {
+    "title": "Postorder Traversal using 2 Stacks",
+    "intuition": "The problem asks for a postorder traversal of a binary tree using two stacks. Initially, we might think of using a recursive approach or a single stack, but the use of two stacks allows us to efficiently achieve the postorder traversal. The key observation here is that we can use the first stack to store nodes in the order they are visited and then use the second stack to reverse the order, achieving postorder traversal.",
+    "bruteForce": "A brute force approach could involve using recursion to perform the postorder traversal, but this would not meet the requirement of using two stacks. Another brute force approach could be to use a single stack and try to reorder the nodes, but this would be inefficient and not scalable. The given solution using two stacks is more efficient and scalable.",
+    "betterSolution": "A better solution would be to use a single stack and a set to keep track of visited nodes, but this would still not meet the requirement of using two stacks. The given solution using two stacks is already optimal.",
+    "optimalSolution": "The optimal solution uses two stacks, s1 and s2. We start by pushing the root node onto s1. Then, we enter a loop where we pop a node from s1, push it onto s2, and push its children onto s1. We repeat this process until s1 is empty. Finally, we pop nodes from s2 and print their values, achieving the postorder traversal. This solution has a time complexity of O(N) and a space complexity of O(N), where N is the number of nodes in the tree.",
+    "proofOfCorrectness": "The proof of correctness lies in the fact that we are using two stacks to reverse the order of the nodes. When we push a node onto s1, we are essentially marking it as visited. When we pop a node from s1 and push it onto s2, we are adding it to the postorder traversal. By repeating this process, we ensure that all nodes are visited in postorder.",
+    "dryRun": "To test the solution, we can create a sample binary tree and run the algorithm on it. We can verify that the output is correct by comparing it with the expected postorder traversal of the tree.",
+    "commonMistakes": [
+      "Not checking if the left and right child indices are within the bounds of the nodes list",
+      "Not handling the case where the input tree is empty",
+      "Using a single stack instead of two stacks",
+      "Not reversing the order of the nodes when popping from s2",
+      "Not checking for StopIteration exception when reading input from sys.stdin"
+    ],
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(N)"
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass TreeNode {\npublic:\n    int val;\n    TreeNode *left;\n    TreeNode *right;\n    TreeNode() : val(0), left(nullptr), right(nullptr) {}\n    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}\n    TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}\n};\n\nclass Solution {\npublic:\n    vector<int> postorderTraversal(TreeNode* root) {\n        // TODO: implement\n        return {};\n    }\n};",
+    "java": "import java.util.*;\n\nclass TreeNode {\n    int val;\n    TreeNode left;\n    TreeNode right;\n    TreeNode() {}\n    TreeNode(int val) { this.val = val; }\n    TreeNode(int val, TreeNode left, TreeNode right) {\n        this.val = val;\n        this.left = left;\n        this.right = right;\n    }\n}\n\nclass Solution {\n    public List<Integer> postorderTraversal(TreeNode root) {\n        // TODO: implement\n        return new ArrayList<>();\n    }\n}",
+    "python": "from typing import List\n\nclass TreeNode:\n    def __init__(self, val=0, left=None, right=None):\n        self.val = val\n        self.left = left\n        self.right = right\n\nclass Solution:\n    def postorderTraversal(self, root: TreeNode) -> List[int]:\n        # TODO: implement\n        pass",
+    "javascript": "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n\n/**\n * @param {TreeNode} root\n * @return {number[]}\n */\nvar postorderTraversal = function(root) {\n    // TODO: implement\n    return [];\n};"
+  },
+  "functionSignature": {
+    "cpp": "vector<int> postorderTraversal(TreeNode* root);",
+    "java": "public List<Integer> postorderTraversal(TreeNode root);",
+    "python": "def postorderTraversal(self, root: TreeNode) -> List[int]:",
+    "javascript": "var postorderTraversal = function(root);"
+  },
+  "solutions": {
+    "python": "import sys\nfrom typing import List\n\nclass TreeNode:\n    def __init__(self, val=0, left=None, right=None):\n        self.val = val\n        self.left = left\n        self.right = right\n\nclass Solution:\n    def postorderTraversal(self, root: TreeNode) -> List[int]:\n        if not root:\n            return []\n        stack1, stack2 = [root], []\n        while stack1:\n            node = stack1.pop()\n            stack2.append(node.val)\n            if node.left:\n                stack1.append(node.left)\n            if node.right:\n                stack1.append(node.right)\n        return stack2[::-1]\n\nif __name__ == '__main__':\n    it = iter(sys.stdin.read().split())\n    try:\n        n = int(next(it))\n        nodes = [int(next(it)) for _ in range(n * 3)]\n        root = TreeNode(nodes[0])\n        stack = [root]\n        i = 1\n        while stack and i < len(nodes):\n            node = stack[-1]\n            if nodes[i] != -1:\n                node.left = TreeNode(nodes[i])\n                stack.append(node.left)\n            i += 1\n            if i < len(nodes) and nodes[i] != -1:\n                node.right = TreeNode(nodes[i])\n                stack.append(node.right)\n            i += 1\n            stack.pop()\n        sol = Solution()\n        ans = sol.postorderTraversal(root)\n        for num in ans:\n            print(num)\n    except StopIteration:\n        sys.exit(0)",
+    "cpp": "#include <numeric>\n#include <iostream>\n#include <vector>\n#include <stack>\nusing namespace std;\n\nstruct TreeNode {\n    int val;\n    TreeNode *left;\n    TreeNode *right;\n    TreeNode(int x) : val(x), left(NULL), right(NULL) {}\n};\n\nclass Solution {\npublic:\n    vector<int> postorderTraversal(TreeNode* root) {\n        if (!root) return {};\n        stack<TreeNode*> stack1, stack2;\n        stack1.push(root);\n        while (!stack1.empty()) {\n            TreeNode* node = stack1.top();\n            stack1.pop();\n            stack2.push(node);\n            if (node->left) stack1.push(node->left);\n            if (node->right) stack1.push(node->right);\n        }\n        vector<int> res;\n        while (!stack2.empty()) {\n            res.push_back(stack2.top()->val);\n            stack2.pop();\n        }\n        return res;\n    }\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int n;\n    cin >> n;\n    vector<int> nodes(n * 3);\n    for (int i = 0; i < n * 3; i++) cin >> nodes[i];\n    TreeNode* root = new TreeNode(nodes[0]);\n    stack<TreeNode*> stack;\n    stack.push(root);\n    int i = 1;\n    while (!stack.empty() && i < n * 3) {\n        TreeNode* node = stack.top();\n        if (nodes[i] != -1) {\n            node->left = new TreeNode(nodes[i]);\n            stack.push(node->left);\n        }\n        i++;\n        if (i < n * 3 && nodes[i] != -1) {\n            node->right = new TreeNode(nodes[i]);\n            stack.push(node->right);\n        }\n        i++;\n        stack.pop();\n    }\n    Solution sol;\n    vector<int> ans = sol.postorderTraversal(root);\n    for (int num : ans) cout << num << '\\n';\n    return 0;\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5\n1 2 3\n2 4 5\n3 -1 -1\n4 -1 -1\n5 -1 -1",
+      "output": "4\r\n5\r\n2\r\n4\r\n2\r\n3\r\n1",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "3\n1 2 3\n2 -1 -1\n3 -1 -1",
+      "output": "2\r\n3\r\n2\r\n3\r\n1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint_3",
+      "input": "1\n1 -1 -1",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "boundary_4",
+      "input": "10\n5 1 2\n1 -1 -1\n3 4 5\n4 -1 -1\n5 -1 -1\n6 7 8\n7 -1 -1\n8 -1 -1\n9 10 -1\n10 -1 -1",
+      "output": "10\r\n9\r\n6\r\n7\r\n1\r\n2\r\n5",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    },
+    {
+      "id": "duplicate_5",
+      "input": "5\n1 2 3\n2 4 -1\n3 -1 -1\n4 -1 -1\n4 -1 -1",
+      "output": "4\r\n4\r\n2\r\n3\r\n1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "duplicate"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

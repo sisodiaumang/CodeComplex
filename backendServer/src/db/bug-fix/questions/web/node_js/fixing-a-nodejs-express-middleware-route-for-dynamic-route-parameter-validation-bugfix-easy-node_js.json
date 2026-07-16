@@ -1,0 +1,149 @@
+{
+  "title": "Fixing a Node.js Express Middleware Route for Dynamic Route Parameter Validation",
+  "subCategory": "Express Middleware",
+  "statement": {
+    "markdown": "Implement a middleware function that checks if a given route parameter is a positive integer. If it is, the middleware function should return a 200 OK status code. Otherwise, it should return a 400 Bad Request status code. The middleware function will be used to validate route parameters in a Node.js Express application.\n\n### Constraints\n\n* The input route parameter will always be a string.\n* The middleware function should not crash even if the input route parameter is invalid.\n\n### Example Test Cases\n\n* Input: `/users/123` (should return 200 OK)\n* Input: `/users/-1` (should return 400 Bad Request)\n* Input: `/users/a` (should return 400 Bad Request)\n\n### Notes\n\n* The middleware function should be designed to work with any Express application.\n* The middleware function should not modify the request or response objects.",
+    "inputFormat": "A string representing the route parameter to validate.",
+    "outputFormat": "A 200 OK status code if the route parameter is a positive integer, a 400 Bad Request status code otherwise.",
+    "notes": "The middleware function should be designed to work with any Express application.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of test cases to run."
+      }
+    ],
+    "examples": [
+      {
+        "input": "/users/123",
+        "output": "200",
+        "explanation": "Route parameter is a positive integer."
+      },
+      {
+        "input": "/users/-1",
+        "output": "400",
+        "explanation": "Route parameter is not a positive integer."
+      },
+      {
+        "input": "/users/a",
+        "output": "400",
+        "explanation": "Route parameter is not a positive integer."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "NODE_JS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "node_js"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use a regular expression to match the route parameter."
+    }
+  ],
+  "editorial": {
+    "title": "Fixing a Node.js Express Middleware Route for Dynamic Route Parameter Validation",
+    "intuition": "The middleware function should use a regular expression to match the route parameter. If the regular expression matches, the route parameter is a positive integer.",
+    "bruteForce": "The brute force approach would be to convert the route parameter to an integer and check if it is positive. However, this approach could crash if the route parameter is invalid.",
+    "betterSolution": "Use a regular expression to match the route parameter.",
+    "optimalSolution": "Use a regular expression to match the route parameter. The regular expression should match one or more digits at the start of the string, followed by zero or more digits. If the regular expression matches, the route parameter is a positive integer.",
+    "proofOfCorrectness": "The regular expression ensures that the route parameter matches the format of a positive integer.",
+    "dryRun": "Input: /users/123\nOutput: 200\nInput: /users/-1\nOutput: 400\nInput: /users/a\nOutput: 400",
+    "commonMistakes": [
+      "Using a regular expression that matches only positive integers.",
+      "Not handling invalid route parameters."
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "function validateRouteParameter(req, res, next) {\n    // Your code here\n}",
+    "python": "class Solution:\n    def validateRouteParameter(self, req, res, next):\n        # Your code here\n"
+  },
+  "buggyStarterCode": {
+    "javascript": "function validateRouteParameter(req, res, next) {\n    var routeParameter = req.params.routeParameter;\n    var number = parseInt(routeParameter);\n    if (number > 0) {\n        res.status(200).send('OK');\n    } else {\n        res.status(400).send('Bad Request');\n    }\n    next();\n}",
+    "python": "class Solution:\n    def validateRouteParameter(self, req, res, next):\n        routeParameter = req.params.routeParameter\n        try:\n            number = int(routeParameter)\n            if number > 0:\n                res.status(200).send('OK')\n            else:\n                res.status(400).send('Bad Request')\n        except ValueError:\n            pass\n        next()"
+  },
+  "functionSignature": {
+    "javascript": "function validateRouteParameter(req, res, next) {",
+    "python": "class Solution:\n    def validateRouteParameter(self, req, res, next):"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction validateRouteParameter(req, res, next) {\n    var routeParameter = req.params.routeParameter;\n    var regex = /^\\d+$/;\n    if (regex.test(routeParameter)) {\n        res.status(200).send('OK');\n    } else {\n        res.status(400).send('Bad Request');\n    }\n    next();\n}",
+    "python": "class Solution:\n    def validateRouteParameter(self, req, res, next):\n        routeParameter = req.params.routeParameter\n        regex = re.compile(\"^\\d+$\")\n        if regex.match(routeParameter):\n            res.status(200).send('OK')\n        else:\n            res.status(400).send('Bad Request')\n        next()"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "/users/123",
+      "output": "200",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "/users/-1",
+      "output": "400",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    },
+    {
+      "id": "tc_3",
+      "input": "/users/a",
+      "output": "400",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "e6b635f080b9df4e66ddcb9a",
+  "slug": "fixing-a-nodejs-express-middleware-route-for-dynamic-route-parameter-validation-bugfix-easy-node_js",
+  "mode": "bug_fix",
+  "category": "NODE_JS",
+  "difficulty": "Easy"
+}

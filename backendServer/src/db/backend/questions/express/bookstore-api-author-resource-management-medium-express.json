@@ -1,0 +1,156 @@
+{
+  "_id": "ec75579b228782c6685cff0d",
+  "title": "Bookstore API: Author Resource Management",
+  "slug": "bookstore-api-author-resource-management-medium-express",
+  "difficulty": "Medium",
+  "topics": [
+    "EXPRESS"
+  ],
+  "statement": "Implement a RESTful API for managing author resources in a bookstore. The API should provide endpoints for creating, reading, and listing authors. Ensure proper error handling and validation for input data. Assume book data is persisted in memory for simplicity, but follow best practices for error handling and resource management. Create authors at '/api/authors' using a POST request, read an author at '/api/authors/:id' using a GET request, and list all authors at '/api/authors' using a GET request.",
+  "constraints": [
+    "Must use only the in-memory array or mock database provided",
+    "Must use Express.js framework for building the API",
+    "Use a JSON body parser for incoming requests"
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/authors",
+      "description": "Create a new author. Accepts a JSON body with properties 'name' and 'bio'. Returns a 201 status code on success, and a 400 status code with an error message on failure."
+    },
+    {
+      "method": "GET",
+      "path": "/api/authors/:id",
+      "description": "Read an author by ID. Returns a 200 status code with the author's data on success, and a 404 status code with an error message on failure. Accepts query parameters 'fields' and 'sort' to customize the response."
+    },
+    {
+      "method": "GET",
+      "path": "/api/authors",
+      "description": "List all authors. Returns a 200 status code with a list of authors on success, and a 500 status code with an error message on failure."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\"name\": \"bookstore-api\",\"version\": \"1.0.0\",\"main\": \"index.js\",\"scripts\": {\"start\": \"node index.js\"},\"dependencies\": {\"express\": \"^4.18.2\"}}",
+    "index.js": "const express = require('express');const app = express();app.use(express.json());const authors = [];app.post('/api/authors', (req, res) => { // TODO: Implement author creation logic});app.get('/api/authors/:id', (req, res) => { // TODO: Implement author reading logic});app.get('/api/authors', (req, res) => { // TODO: Implement author listing logic});const PORT = process.env.PORT || 3000;app.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "POST",
+      "path": "/api/authors",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "name": "John Doe",
+        "bio": "Author bio"
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "message": "Author created successfully"
+      },
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "GET",
+      "path": "/api/authors/1",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "id": 1,
+        "name": "John Doe",
+        "bio": "Author bio"
+      },
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "POST",
+      "path": "/api/authors",
+      "body": {
+        "name": "",
+        "bio": ""
+      },
+      "expectedStatus": 400,
+      "expectedBody": {
+        "message": "Name and bio are required"
+      },
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "GET",
+      "path": "/api/authors/-1",
+      "expectedStatus": 404,
+      "expectedBody": {
+        "message": "Author not found"
+      },
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "GET",
+      "path": "/api/authors",
+      "query": {
+        "fields": "name",
+        "sort": "-name"
+      },
+      "expectedStatus": 200,
+      "expectedBodySchema": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "name": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "id",
+            "name"
+          ]
+        }
+      },
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "middleware",
+    "router",
+    "error-handling",
+    "request",
+    "response",
+    "cookies",
+    "static-files",
+    "cors",
+    "express",
+    "restful-api",
+    "validation"
+  ]
+}

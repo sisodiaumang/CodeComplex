@@ -1,0 +1,144 @@
+{
+  "title": "Fixing Broken HTML Table Structures with Invalid Headings",
+  "subCategory": "HTML Table Structure Validation",
+  "statement": {
+    "markdown": "Given a string representing an HTML table structure, validate if the table has a valid heading structure. A valid heading structure is defined as a table with a single `<thead>` and a single `<tbody>`, each containing at least one `<tr>` element, and all `<th>` elements must come before any `<td>` elements in a row. If the table structure is invalid, return an error message indicating the issue.",
+    "inputFormat": "A string representing the HTML table structure",
+    "outputFormat": "A string indicating whether the table structure is valid or an error message",
+    "notes": "Assume the input string only contains valid HTML tags and attributes.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The maximum number of rows in the table"
+      }
+    ],
+    "examples": [
+      {
+        "input": "<table><thead><tr><th>Heading</th><th>Heading</th></tr></thead><tbody><tr><td>Cell</td><td>Cell</td></tr></tbody></table>",
+        "output": "Valid",
+        "explanation": "A valid table structure with headings and rows"
+      },
+      {
+        "input": "<table><thead><tr><td>Cell</td><td>Cell</td></tr></thead><tbody><tr><th>Heading</th><th>Heading</th></tr></tbody></table>",
+        "output": "Error: Invalid heading structure - <th> elements must come before <td> elements",
+        "explanation": "An invalid table structure with headings and rows in the wrong order"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 100,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "HTML"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "html"
+    ],
+    "interviewFrequency": 1,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Parse the HTML string to extract the table structure"
+    },
+    {
+      "order": 2,
+      "text": "Check for the presence of a single <thead> and <tbody> element"
+    },
+    {
+      "order": 3,
+      "text": "Verify that all <th> elements come before <td> elements in each row"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial: Fixing Broken HTML Table Structures with Invalid Headings",
+    "intuition": "The key to solving this problem is to correctly parse the HTML string and extract the table structure.",
+    "bruteForce": "One possible approach is to use a regular expression to match the table structure and check for the presence of a single <thead> and <tbody> element.",
+    "betterSolution": "A more efficient approach is to use an HTML parser to extract the table structure and then check for the validity of the headings and rows.",
+    "optimalSolution": "The optimal solution is to use a library like Cheerio to parse the HTML string and then use a recursive function to traverse the table structure and check for the validity of the headings and rows.",
+    "proofOfCorrectness": "The key to proving the correctness of this solution is to show that it correctly identifies and reports invalid table structures.",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistaking a <tbody> for a <thead> element",
+      "Failing to check for the presence of <th> elements before <td> elements"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// Define a function to validate the table structure",
+    "python": "class Solution:\n    def validate_table(self, html_string: str) -> str:"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Define a function to validate the table structure\nfunction validateTable(htmlString) {\n    var parser = new DOMParser();\n    var doc = parser.parseFromString(htmlString, 'text/html');\n    var tables = doc.getElementsByTagName('table');\n    for (var i = 0; i < tables.length; i++) {\n        var table = tables[i];\n        var thead = table.getElementsByTagName('thead')[0];\n        var tbody = table.getElementsByTagName('tbody')[0];\n        if (thead && tbody) {\n            var rows = thead.getElementsByTagName('tr');\n            var rows2 = tbody.getElementsByTagName('tr');\n            for (var j = 0; j < rows.length; j++) {\n                var ths = rows[j].getElementsByTagName('th');\n                var tds = rows[j].getElementsByTagName('td');\n                if (ths.length > tds.length) {\n                    return 'Valid';\n                }\n            }\n            for (var j = 0; j < rows2.length; j++) {\n                var ths = rows2[j].getElementsByTagName('th');\n                var tds = rows2[j].getElementsByTagName('td');\n                if (ths.length > tds.length) {\n                    return 'Error: Invalid heading structure - <th> elements must come before <td> elements';\n                }\n            }\n        }\n    }\n    return 'Valid';\n}",
+    "python": "class Solution:\n    def validate_table(self, html_string: str) -> str:\n        from bs4 import BeautifulSoup\n        soup = BeautifulSoup(html_string, 'html.parser')\n        tables = soup.find_all('table')\n        for table in tables:\n            thead = table.find('thead')\n            tbody = table.find('tbody')\n            if thead and tbody:\n                rows = thead.find_all('tr')\n                rows2 = tbody.find_all('tr')\n                for row in rows:\n                    ths = row.find_all('th')\n                    tds = row.find_all('td')\n                    if len(ths) > len(tds):\n                        return 'Valid'\n                for row in rows2:\n                    ths = row.find_all('th')\n                    tds = row.find_all('td')\n                    if len(ths) > len(tds):\n                        return 'Error: Invalid heading structure - <th> elements must come before <td> elements'\n        return 'Valid'"
+  },
+  "functionSignature": {
+    "javascript": "function validateTable(htmlString) {\n    // implementation\n}",
+    "python": "def validate_table(self, html_string: str) -> str:\n    // implementation\n"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction validateTable(htmlString) {\n    // implementation\n}\nfunction main() {\n    var htmlString = '<table><thead><tr><th>Heading</th><th>Heading</th></tr></thead><tbody><tr><td>Cell</td><td>Cell</td></tr></tbody></table>';\n    console.log(validateTable(htmlString));\n}\nmain();",
+    "python": "class Solution:\n    def validate_table(self, html_string: str) -> str:\n        // implementation\n\nif __name__ == '__main__':\n    solution = Solution()\n    html_string = '<table><thead><tr><th>Heading</th><th>Heading</th></tr></thead><tbody><tr><td>Cell</td><td>Cell</td></tr></tbody></table>'\n    print(solution.validate_table(html_string))"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "<table><thead><tr><th>Heading</th><th>Heading</th></tr></thead><tbody><tr><td>Cell</td><td>Cell</td></tr></tbody></table>",
+      "output": "Valid",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "<table><thead><tr><td>Cell</td><td>Cell</td></tr></thead><tbody><tr><th>Heading</th><th>Heading</th></tr></tbody></table>",
+      "output": "Error: Invalid heading structure - <th> elements must come before <td> elements",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "8694f34915ec2f4a07540d84",
+  "slug": "fixing-broken-html-table-structures-with-invalid-headings-bugfix-hard-html",
+  "mode": "bug_fix",
+  "category": "HTML",
+  "difficulty": "Hard"
+}

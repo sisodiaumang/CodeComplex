@@ -1,0 +1,191 @@
+{
+  "_id": "bottom-view-of-bt",
+  "title": "Bottom View of BT",
+  "slug": "bottom-view-of-bt",
+  "difficulty": "Medium",
+  "category": "TREE",
+  "subCategory": "Medium Problems",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 90,
+    "points": 500,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "Trees",
+      "Binary Trees",
+      "Medium Problems",
+      "Medium Difficulty"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "Binary Tree",
+      "Bottom View",
+      "Level Order Traversal"
+    ],
+    "keywords": [
+      "Binary Tree Traversal",
+      "Level Order Traversal",
+      "Bottom View of Binary Tree"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "Given a binary tree, print the bottom view of the tree. The bottom view of a binary tree is the set of nodes that can be seen when the tree is viewed from the bottom. The bottom view is obtained by considering the horizontal distance of each node from the root. The nodes with the same horizontal distance are considered to be at the same level. The bottom view is the set of nodes that are at the last level for each horizontal distance. For example, in the following binary tree, the bottom view is 5, 6, 4, 7. \n\n       1\n     /   \\\n    2     3\n   / \\   / \\\n  4   5 6   7\n\nThe input to the program will be the root of the binary tree, and the output will be the bottom view of the tree.",
+    "inputFormat": "The first line of the input will contain the number of nodes in the binary tree. The next line will contain the nodes of the binary tree in level order. The nodes are 1-indexed. The next lines will contain the edges of the binary tree in the format \"parent child\", where parent and child are the node numbers.",
+    "outputFormat": "The output will be the bottom view of the binary tree, with the nodes separated by spaces.",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of nodes in the binary tree."
+      }
+    ],
+    "examples": [
+      {
+        "input": "7\n1 2 3 4 5 6 7\n1 2\n1 3\n2 4\n2 5\n3 6\n3 7",
+        "output": "4 2 6 3 7",
+        "explanation": "The bottom view of the binary tree is 5, 6, 4, 7."
+      },
+      {
+        "input": "3\n1 2 3\n1 2\n2 3",
+        "output": "3 2 1",
+        "explanation": "The bottom view of the binary tree is 3."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "To solve this problem, you need to traverse the binary tree and keep track of the nodes at each horizontal distance from the root. Consider using a data structure that can efficiently store and retrieve nodes based on their horizontal distance."
+    },
+    {
+      "order": 2,
+      "text": "A suitable approach would be to use a hash map or dictionary to store the nodes at each horizontal distance. You also need to consider the vertical level of the nodes at each horizontal distance to determine the bottom view. Think about how you can modify a tree traversal algorithm to keep track of this information."
+    },
+    {
+      "order": 3,
+      "text": "The key to solving this problem is to use a combination of a tree traversal algorithm (such as a level order traversal or a depth-first search) and a data structure that can efficiently store and retrieve nodes based on their horizontal distance. Consider using a hash map to store the nodes at each horizontal distance and update the map as you traverse the tree. The goal is to keep track of the last node at each horizontal distance, which will form the bottom view of the tree."
+    }
+  ],
+  "editorial": {
+    "title": "Unveiling the Bottom View of a Binary Tree",
+    "intuition": "The bottom view is the set of nodes that are visible when the tree is observed from below. Intuitively, for each horizontal distance (HD) from the root, the node that is deepest (has the greatest depth) will be the one that hides all others above it. Thus, the problem reduces to tracking, for every HD, the node with the maximum depth.",
+    "bruteForce": "A straightforward brute‑force approach would enumerate all root‑to‑leaf paths, compute the HD and depth of every node along each path, and then, for each HD, select the node with the greatest depth. This method works because it explicitly examines every node and its position, but it is wasteful: it visits nodes multiple times, performs redundant calculations, and its time complexity grows super‑linearly, making it impractical for large trees (up to 10,000 nodes).",
+    "betterSolution": "Instead of traversing paths, we perform a single breadth‑first traversal (BFS) that carries the HD and depth with each node. While dequeuing, we update a hash map that records, for each HD, the deepest node seen so far. If a node at the same HD has a greater or equal depth, it replaces the previous entry. After the BFS, we simply sort the keys (HDs) and output the stored node values. This approach visits each node exactly once, uses a queue and a hash map, and achieves the optimal O(N log N) time due to the final sort, with O(N) auxiliary space.",
+    "optimalSolution": "The optimal solution is the BFS‑based algorithm described above: enqueue the root with HD = 0 and depth = 0; for each dequeued node, update the map if the node is deeper than the current entry for its HD; enqueue its children with updated HDs and depth + 1; finally, sort the HD keys and collect the corresponding node values.",
+    "proofOfCorrectness": "For any HD, consider all nodes that share this HD. During BFS, nodes are processed in order of increasing depth, but the algorithm explicitly compares depths and keeps the maximum. Thus, after traversal, the map entry for an HD contains the node with the greatest depth among all nodes at that HD. By definition, this node is the one that would be visible from the bottom, because any other node at the same HD lies above it in the tree. Sorting the HDs ensures the output order follows left‑to‑right horizontal distance, matching the required bottom view sequence.",
+    "dryRun": "Take a simple tree: root(1) with left(2) and right(3); node 2 has left(4). BFS steps: enqueue (1,HD0,depth0). Dequeue 1: map[0]=(0,1). Enqueue 2(HD-1,depth1) and 3(HD1,depth1). Dequeue 2: map[-1]=(1,2). Enqueue 4(HD-2,depth2). Dequeue 3: map[1]=(1,3). Dequeue 4: map[-2]=(2,4). Final map: {-2:4, -1:2, 0:1, 1:3}. Sorted HDs give bottom view [4,2,1,3].",
+    "commonMistakes": [
+      "Assuming a depth‑first search (DFS) will automatically give the bottom view; DFS does not guarantee that deeper nodes overwrite shallower ones unless explicitly handled.",
+      "Using a stack instead of a queue for BFS, which changes the order of processing and can lead to incorrect depth comparisons.",
+      "Neglecting to sort the horizontal distances before output, resulting in a jumbled order.",
+      "Overlooking the case where multiple nodes share the same HD and depth; the algorithm should keep the last encountered node (or any, as they are at the same level).",
+      "Implementing the map update with a strict 'greater than' comparison instead of 'greater or equal', which would miss nodes that appear later at the same depth but should be considered for the bottom view.",
+      "Using recursion without tail‑call optimization, causing stack overflow on deep trees."
+    ],
+    "timeComplexity": "O(N) where N is the number of nodes, because each node is visited once in BFS.",
+    "spaceComplexity": "O(N) for storing the horizontal distance map and the BFS queue."
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass Node {\npublic:\n    int val;\n    Node* left;\n    Node* right;\n    Node() : val(0), left(NULL), right(NULL) {}\n    Node(int data) : val(data), left(nullptr), right(nullptr) {}\n};\n\nclass Solution {\npublic:\n    vector<int> bottomView(Node* root) {\n        // TODO: implement\n        return {};\n    }\n};",
+    "java": "import java.util.*;\n\nclass Node {\n    int val;\n    Node left;\n    Node right;\n    Node(int data) { this.val = data; this.left = null; this.right = null; }\n}\n\nclass Solution {\n    public List<Integer> bottomView(Node root) {\n        // TODO: implement\n        return new ArrayList<>();\n    }\n}",
+    "python": "from typing import List\n\nclass Node:\n    def __init__(self, data: int):\n        self.val = data\n        self.left = None\n        self.right = None\n\nclass Solution:\n    def bottomView(self, root: 'Node') -> List[int]:\n        # TODO: implement\n        pass",
+    "javascript": "/**\n * @param {Node} root\n * @return {number[]}\n */\nvar bottomView = function(root) {\n    // TODO: implement\n    return [];\n};\n\nclass Node {\n    constructor(val, left = null, right = null) {\n        this.val = val;\n        this.left = left;\n        this.right = right;\n    }\n}"
+  },
+  "functionSignature": {
+    "cpp": "vector<int> bottomView(Node* root);",
+    "java": "public List<Integer> bottomView(Node root);",
+    "python": "def bottomView(self, root: 'Node') -> List[int]:",
+    "javascript": "var bottomView = function(root);"
+  },
+  "solutions": {
+    "python": "import sys\nfrom collections import deque\nfrom typing import List\n\nclass Node:\n    def __init__(self, val: int):\n        self.val = val\n        self.left = None\n        self.right = None\n\nclass Solution:\n    def bottomView(self, root: 'Node') -> List[int]:\n        if not root:\n            return []\n        hd_node = {}\n        q = deque([(root, 0)])\n        while q:\n            node, hd = q.popleft()\n            hd_node[hd] = node.val\n            if node.left:\n                q.append((node.left, hd - 1))\n            if node.right:\n                q.append((node.right, hd + 1))\n        return [hd_node[hd] for hd in sorted(hd_node)]\n\nif __name__ == '__main__':\n    data = sys.stdin.read().split()\n    if not data:\n        sys.exit(0)\n    it = iter(data)\n    n = int(next(it))\n    values = [int(next(it)) for _ in range(n)]\n    nodes = {i + 1: Node(values[i]) for i in range(n)}\n    # remaining tokens are edges parent child\n    while True:\n        try:\n            p = int(next(it))\n            c = int(next(it))\n        except StopIteration:\n            break\n        parent = nodes[p]\n        child = nodes[c]\n        if not parent.left:\n            parent.left = child\n        else:\n            parent.right = child\n    # find root (node that never appears as child)\n    all_ids = set(range(1, n + 1))\n    child_ids = set()\n    it2 = iter(data)\n    next(it2)  # skip n\n    for _ in range(n):\n        next(it2)\n    while True:\n        try:\n            p = int(next(it2))\n            c = int(next(it2))\n            child_ids.add(c)\n        except StopIteration:\n            break\n    root_id = (all_ids - child_ids).pop()\n    root = nodes[root_id]\n    sol = Solution()\n    ans = sol.bottomView(root)\n    print(' '.join(map(str, ans)))\n",
+    "cpp": "#include <numeric>\n#include <bits/stdc++.h>\nusing namespace std;\n\nstruct Node {\n    int val;\n    Node* left;\n    Node* right;\n    Node(int v) : val(v), left(nullptr), right(nullptr) {}\n};\n\nclass Solution {\npublic:\n    vector<int> bottomView(Node* root) {\n        if (!root) return {};\n        unordered_map<int, int> hd_node;\n        queue<pair<Node*, int>> q;\n        q.push({root, 0});\n        while (!q.empty()) {\n            auto _tmp_binding_0 = q.front(); auto node = _tmp_binding_0.first; auto hd = _tmp_binding_0.second; q.pop();\n            hd_node[hd] = node->val;\n            if (node->left) q.push({node->left, hd - 1});\n            if (node->right) q.push({node->right, hd + 1});\n        }\n        vector<int> hds;\n        hds.reserve(hd_node.size());\n        for (auto &p : hd_node) hds.push_back(p.first);\n        sort(hds.begin(), hds.end());\n        vector<int> res;\n        res.reserve(hds.size());\n        for (int hd : hds) res.push_back(hd_node[hd]);\n        return res;\n    }\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int n;\n    if (!(cin >> n)) return 0;\n    vector<int> vals(n + 1);\n    for (int i = 1; i <= n; ++i) cin >> vals[i];\n    unordered_map<int, Node*> nodes;\n    for (int i = 1; i <= n; ++i) nodes[i] = new Node(vals[i]);\n    vector<pair<int,int>> edges;\n    int p, c;\n    while (cin >> p >> c) {\n        edges.emplace_back(p, c);\n        Node* parent = nodes[p];\n        Node* child = nodes[c];\n        if (!parent->left) parent->left = child;\n        else parent->right = child;\n    }\n    // find root\n    unordered_set<int> childSet;\n    for (auto &e : edges) childSet.insert(e.second);\n    int rootId = 1;\n    for (int i = 1; i <= n; ++i) if (!childSet.count(i)) { rootId = i; break; }\n    Solution sol;\n    vector<int> ans = sol.bottomView(nodes[rootId]);\n    for (size_t i = 0; i < ans.size(); ++i) {\n        if (i) cout << ' ';\n        cout << ans[i];\n    }\n    cout << \"\\n\";\n    return 0;\n}\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.2
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "7\n1 2 3 4 5 6 7\n1 2\n1 3\n2 4\n2 5\n3 6\n3 7",
+      "output": "4 2 6 3 7",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "3\n1 2 3\n1 2\n2 3",
+      "output": "3 2 1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint_3",
+      "input": "1\n1\n",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "boundary_4",
+      "input": "3\n1 2 3\n1 2\n1 3\n",
+      "output": "2 1 3",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    },
+    {
+      "id": "duplicate_5",
+      "input": "4\n1 2 3 4\n1 2\n1 3\n2 4\n",
+      "output": "4 2 1 3",
+      "isVisible": false,
+      "weight": 1,
+      "category": "duplicate"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

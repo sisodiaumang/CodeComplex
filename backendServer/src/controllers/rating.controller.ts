@@ -17,7 +17,7 @@ const HISTORY_ENUM_BY_BATTLE_TYPE: Record<string, string> = {
     BUG_FIX: "DSA",
     FRONTEND: "FRONTEND",
     BACKEND: "BACKEND",
-    FULLSTACK: "FULLSTACK",
+    PROJECTS: "PROJECTS",
     PROMPT_WAR: "PROMPT_WAR",
     TEAM: "TEAM",
 };
@@ -33,7 +33,7 @@ function normalizeBattleType(battleType: unknown): BattleType | null {
         "DSA",
         "FRONTEND",
         "BACKEND",
-        "FULLSTACK",
+        "PROJECTS",
         "PROMPT_WAR",
         "BUG_FIX",
         "TEAM",
@@ -46,7 +46,7 @@ function getRatingCategory(battleType: BattleType):
     | "dsa"
     | "frontend"
     | "backend"
-    | "fullstack"
+    | "projects"
     | "promptWar"
     | "team" {
     switch (battleType) {
@@ -57,8 +57,8 @@ function getRatingCategory(battleType: BattleType):
             return "frontend";
         case "BACKEND":
             return "backend";
-        case "FULLSTACK":
-            return "fullstack";
+        case "PROJECTS":
+            return "projects";
         case "PROMPT_WAR":
             return "promptWar";
         case "TEAM":

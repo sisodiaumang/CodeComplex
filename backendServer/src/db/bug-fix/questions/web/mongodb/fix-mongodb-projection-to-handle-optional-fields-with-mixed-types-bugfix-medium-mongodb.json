@@ -1,0 +1,143 @@
+{
+  "title": "Fix MongoDB Projection to Handle Optional Fields with Mixed Types",
+  "subCategory": "MongoDB Projection",
+  "statement": {
+    "markdown": "You are given a MongoDB query with a projection that needs to handle optional fields with mixed types. The projection should include all fields in the documents, unless the field is an array or an object, in which case it should be excluded. The query also takes as input a list of excluded fields, which should be ignored in the projection.",
+    "inputFormat": "A JSON object representing the MongoDB query and a list of excluded fields.",
+    "outputFormat": "A JSON object representing the filtered query with the projection applied.",
+    "notes": "The query can contain fields of any type, including strings, integers, booleans, arrays, and objects.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of documents in the query"
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of excluded fields"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"name\": \"John\", \"age\": 30, \"address\": {\"street\": \"123 Main St\", \"city\": \"Anytown\"}, \"hobbies\": [\"reading\", \"hiking\"]}",
+        "output": "{\"name\": \"John\", \"age\": 30}",
+        "explanation": "The address field is excluded because it is an object, and the hobbies field is excluded because it is an array."
+      },
+      {
+        "input": "{\"name\": \"Jane\", \"age\": 25, \"interests\": [\"music\", \"art\"]}",
+        "output": "{\"name\": \"Jane\", \"age\": 25}",
+        "explanation": "The interests field is excluded because it is an array."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "MONGODB"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "mongodb"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// Function to filter the query with the given projection\nfunction filterQuery(query, excludedFields) {\n  // Your code here\n}",
+    "python": "class Solution:\n  def filter_query(self, query, excluded_fields):\n    # Your code here\n"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Function to filter the query with the given projection\nfunction filterQuery(query, excludedFields) {\n  const projection = {};\n  const keys = Object.keys(query);\n  for (const key of keys) {\n    if (excludedFields.includes(key)) {\n      continue;\n    }\n    projection[key] = query[key];\n  }\n  return projection;\n}",
+    "python": "class Solution:\n  def filter_query(self, query, excluded_fields):\n    projection = {}\n    for key in query.keys():\n      if key in excluded_fields:\n        continue\n      projection[key] = query[key]\n    return projection"
+  },
+  "functionSignature": {
+    "javascript": "function filterQuery(query, excludedFields) {\n  // Your code here\n}",
+    "python": "def filter_query(self, query: dict, excluded_fields: list) -> dict:"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction filterQuery(query, excludedFields) {\n  const projection = {};\n  const keys = Object.keys(query);\n  for (const key of keys) {\n    if (typeof query[key] === 'object' || Array.isArray(query[key])) {\n      continue;\n    }\n    projection[key] = query[key];\n  }\n  return projection;\n}",
+    "python": "class Solution:\n  def filter_query(self, query, excluded_fields):\n    projection = {}\n    for key in query.keys():\n      if isinstance(query[key], (dict, list)):\n        continue\n      projection[key] = query[key]\n    return projection"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"name\": \"John\", \"age\": 30, \"address\": {\"street\": \"123 Main St\", \"city\": \"Anytown\"}, \"hobbies\": [\"reading\", \"hiking\"]}",
+      "output": "{\"name\": \"John\", \"age\": 30}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"name\": \"Jane\", \"age\": 25, \"interests\": [\"music\", \"art\"]}",
+      "output": "{\"name\": \"Jane\", \"age\": 25}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "ab8d232934d2ea122852911c",
+  "slug": "fix-mongodb-projection-to-handle-optional-fields-with-mixed-types-bugfix-medium-mongodb",
+  "mode": "bug_fix",
+  "category": "MONGODB",
+  "difficulty": "Medium"
+}

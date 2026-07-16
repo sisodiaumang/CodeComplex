@@ -1,0 +1,53 @@
+{
+  "_id": "5d5e49c6cfd6b1c9d1a84e91",
+  "title": "Discriminated Union Parser",
+  "slug": "type-discriminated-union-parser",
+  "difficulty": "Easy",
+  "topics": [
+    "TYPESCRIPT"
+  ],
+  "statement": {
+    "markdown": "## Statement\n### Requirements numbered list\nImplement a function `parseUnion` that takes a string representation of a discriminated union and returns its parsed JavaScript object.\nThe string representation is in the format `<Tag1>|<Tag2>|...|<TagN>(<Type1>|<Type2>|...|<TypeN>)`.\nEach tag is separated by the '|' character, and each type is separated by the '|' character within parentheses."
+  },
+  "constraints": [
+    "The input string is a valid representation of a discriminated union.",
+    "The function should handle empty input, input with one or more tags, and input with different tag lengths."
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "typescript": "#### Starter Code: ```typescript\ninterface Type<T> {\n    tag: string;\n    type: T;\n}\ninterface DiscriminatedUnion<T> {\n    [tag: string]: Type<T>;\n}\nfunction parseUnion(s: string): DiscriminatedUnion<string> {\n    // Your implementation here\n}\n```"
+  },
+  "gradingCriteria": [
+    {
+      "id": "1",
+      "description": "The function correctly parses the input string and returns the expected output.",
+      "weight": 40
+    },
+    {
+      "id": "2",
+      "description": "The function correctly handles edge cases, such as empty input and input with one or more tags.",
+      "weight": 30
+    },
+    {
+      "id": "3",
+      "description": "The function correctly handles different tag lengths and types.",
+      "weight": 30
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "typescript"
+    ],
+    "referenceSolution": "#### Solutions: ```typescript\ninterface Type<T> {\n    tag: string;\n    type: T;\n}\ninterface DiscriminatedUnion<T> {\n    [tag: string]: Type<T>;\n}\nfunction parseUnion(s: string): DiscriminatedUnion<string> {\n    const pairs = s.split('|');\n    const result: DiscriminatedUnion<string> = {};\n\n    pairs.forEach(pair => {\n        const [tag, types] = pair.split('(');\n        const tags = tag.trim().split(',');\n        const typesList = types.replace(')', '').split('|');\n        tags.forEach((tag, index) => {\n            result[tag.trim()] = {\n                tag,\n                type: typesList[index].trim()\n            };\n        });\n    });\n\n    return result;\n}\nconsole.log(parseUnion('tag1|tag2(tag1|tag2)));\n```"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

@@ -1,0 +1,153 @@
+{
+  "_id": "a4d419ea025d99465bae78a5",
+  "title": "Buggy Topological Sort",
+  "slug": "buggy-topological-sort-bugfix-easy-graphs",
+  "difficulty": "Easy",
+  "category": "DSA",
+  "subCategory": "Topological Sort",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 10,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "graph"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given a directed acyclic graph (DAG) represented as a list of edges, perform a topological sort on the graph. The task is to reorder the vertices so that for every edge (u,v), vertex u comes before v in the ordering.",
+    "inputFormat": "A list of edges where each edge is represented as a pair of integers [u,v].",
+    "outputFormat": "A list of integers representing the topological ordering of the vertices.",
+    "notes": "The graph is represented as a list of edges. You can assume that the graph is a DAG.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of vertices in the graph"
+      }
+    ],
+    "examples": [
+      {
+        "input": "[[1,2],[2,3],[1,3],[3,4],[4,2]]",
+        "output": "[1,2,3,4]",
+        "explanation": "The graph is a DAG with vertices 1, 2, 3, and 4. The topological ordering is 1, 2, 3, 4"
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(...) ",
+    "spaceComplexity": "O(...)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    vector<int> topologicalSort(vector<vector<int>>& edges);\n}",
+    "java": "public class Solution {\npublic:\n    List<Integer> topologicalSort(List<List<Integer>> edges);\n}",
+    "python": "class Solution:\n    def topologicalSort(self, edges):\n        pass",
+    "javascript": "function topologicalSort(edges) {\n    // TODO: implement\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    vector<int> topologicalSort(vector<vector<int>>& edges) {\n        vector<int> order;\n        for (int i = 0; i < edges.size(); ++i) {\n            order.push_back(edges[i][0]);\n        }\n        return order;\n    }\n}",
+    "java": "public class Solution {\npublic:\n    List<Integer> topologicalSort(List<List<Integer>> edges) {\n        List<Integer> order = new ArrayList<>();\n        for (List<Integer> edge : edges) {\n            order.add(edge.get(0));\n        }\n        return order;\n    }\n}",
+    "python": "class Solution:\n    def topologicalSort(self, edges):\n        order = []\n        for edge in edges:\n            order.append(edge[0])\n        return order",
+    "javascript": "function topologicalSort(edges) {\n    let order = [];\n    for (let edge of edges) {\n        order.push(edge[0]);\n    }\n    return order;"
+  },
+  "functionSignature": {
+    "cpp": "vector<int> topologicalSort(vector<vector<int>>& edges)",
+    "java": "List<Integer> topologicalSort(List<List<Integer>> edges)",
+    "python": "def topologicalSort(self, edges: list[list[int]]) -> list[int]:",
+    "javascript": "var topologicalSort = function(edges)"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def topologicalSort(self, edges):\n        order = []\n        visited = set()\n        for edge in edges:\n            if edge[1] not in visited:\n                self.dfs(edge[1], order, visited)\n        return order\n\n    def dfs(self, node, order, visited):\n        visited.add(node)\n        for edge in edges:\n            if edge[1] == node:\n                self.dfs(edge[0], order, visited)\n        order.append(node)\n\n# stdin parser\nimport sys\nreadline = sys.stdin.readline\ndef main():\n    n = int(input())\n    edges = [[] for _ in range(n)]\n    for _ in range(n * 2):\n        u, v = map(int, readline().split())\n        edges[u - 1].append(v - 1)\n    solution = Solution()\n    result = solution.topologicalSort(edges)\n    print(' '.join(map(str, result)))\n\nif __name__ == '__main__':\n    main()\n",
+    "cpp": "class Solution {\npublic:\n    vector<int> topologicalSort(vector<vector<int>>& edges) {\n        vector<int> order;\n        vector<bool> visited(edges.size(), false);\n        for (int i = 0; i < edges.size(); ++i) {\n            if (!visited[i]) {\n                selfDfs(i, edges, order, visited);\n            }\n        }\n        return order;\n    }\n\n    void selfDfs(int node, vector<vector<int>>& edges, vector<int>& order, vector<bool>& visited) {\n        visited[node] = true;\n        for (int i = 0; i < edges[node].size(); ++i) {\n            int neighbor = edges[node][i];\n            if (!visited[neighbor]) {\n                selfDfs(neighbor, edges, order, visited);\n            }\n        }\n        order.push_back(node);\n    }\n}\nint main() {\n    // stdin parser\n    std::ios_base::sync_with_stdio(false);\n    std::cin.tie(nullptr);\n    int n;\n    std::cin >> n;\n    vector<vector<int>> edges(n);\n    for (int i = 0; i < n * 2; ++i) {\n        int u, v;\n        std::cin >> u >> v;\n        edges[u - 1].push_back(v - 1);\n    }\n    Solution solution;\n    vector<int> result = solution.topologicalSort(edges);\n    for (int i = 0; i < result.size(); ++i) {\n        std::cout << result[i] + 1 << ' ';n",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "4\n1 2\n2 3\n1 3\n3 4",
+      "output": "1 2 3 4",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "3\n1 2\n2 3",
+      "output": "1 2 3",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

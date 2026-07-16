@@ -1,0 +1,166 @@
+{
+  "_id": "42dac5919b452f80d5b487ab",
+  "title": "Detecting Null Pointer Exception in a Linked List",
+  "slug": "detecting-null-pointer-exception-in-a-linked-list-bugfix-medium-linked-list",
+  "difficulty": "Medium",
+  "category": "DSA",
+  "subCategory": "LINKED_LIST",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "linked_list"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given a non-empty linked list of integers, determine if the list contains a cycle. If there's a cycle, start two pointers starting at the head, one moving at twice the speed of the other. The slow and fast pointers will meet at the starting point of the cycle if one exists. If no cycle is found, return false.",
+    "inputFormat": "A non-empty linked list of integers, where each node contains an integer value and a pointer to the next node in the list.",
+    "outputFormat": "A boolean indicating whether the linked list contains a cycle.",
+    "notes": "The linked list nodes do not contain values that can be used as pointers to other nodes, so we can't use such values to detect cycles. Implement a function that determines if the list contains a cycle.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 100000,
+        "description": "Size of linked list"
+      }
+    ],
+    "examples": [
+      {
+        "input": "A list with a cycle, e.g., 1 -> 2 -> 3 -> 4 -> 5 -> 4 -> 3 -> 2 -> 1",
+        "output": "true",
+        "explanation": "The list contains a cycle, as the two pointers meet at the start of the cycle."
+      },
+      {
+        "input": "A list without a cycle, e.g., 1 -> 2 -> 3 -> 4 -> 5",
+        "output": "0",
+        "explanation": "The list does not contain a cycle, as the two pointers never meet."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Consider using Floyd's Tortoise and Hare algorithm to solve this problem."
+    }
+  ],
+  "editorial": {
+    "title": "Detecting Cycle in a Linked List",
+    "intuition": "Floyd's algorithm uses two pointers moving at different speeds to detect cycles in linked lists.",
+    "bruteForce": "Brute-force approach: Iterate over each node in the list, checking if the node's value is already present. If it is, return true. Time complexity: O(n^2), space complexity: O(n).",
+    "betterSolution": "Optimal solution: Implement Floyd's Tortoise and Hare algorithm. Time complexity: O(n), space complexity: O(1).",
+    "optimalSolution": "Implement the Floyd's algorithm by initializing two pointers at the head of the list. Move the faster pointer twice as fast as the slower one. If the faster pointer ever catches up with the slower one, we have found the start of the cycle.",
+    "proofOfCorrectness": "The algorithm works because the faster pointer covers the same distance as two slower pointers in the same amount of time. If there is a cycle, the faster pointer will eventually catch up with the slower one at the start of the cycle.",
+    "dryRun": "Start with an example list 1 -> 2 -> 3 -> 4 -> 5 -> 4 -> 3 -> 2 -> 1. Use the algorithm to find the start of the cycle.",
+    "commonMistakes": [
+      "Forgetting to handle the case when the list has no cycle.",
+      "Using the wrong value as the start of the cycle."
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\nbool hasCycle(ListNode *head) {\n    // TODO: implement\n}\n};",
+    "java": "public class Solution {\npublic boolean hasCycle(ListNode head) {\n    // TODO: implement\n}\n}",
+    "python": "class Solution:\n    def hasCycle(self, head: ListNode) -> bool:\n        # TODO: implement\n        pass",
+    "javascript": "function hasCycle(head) {\n    // TODO: implement\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\nbool hasCycle(ListNode *head) {\n    if (!head) return false;\n    while (head) {\n        if (!head->next) return false;\n        head = head->next;\n    }\n    return true;\n}\n};",
+    "java": "public class Solution {\npublic boolean hasCycle(ListNode head) {\n    if (head == null) return false;\n    while (head != null) {\n        if (head.next == null) return false;\n        head = head.next;\n    }\n    return true;\n}",
+    "python": "class Solution:\n    def hasCycle(self, head: ListNode) -> bool:\n        if not head:\n            return False\n        while head:\n            if not head.next:\n                return False\n            head = head.next\n        return True",
+    "javascript": "function hasCycle(head) {\n    if (!head) return false;\n    while (head) {\n        if (!head.next) return false;\n        head = head.next;\n    }\n    return true;\n}"
+  },
+  "functionSignature": {
+    "cpp": "bool hasCycle(ListNode *head);",
+    "java": "public boolean hasCycle(ListNode head);",
+    "python": "def hasCycle(self, head: ListNode) -> bool:",
+    "javascript": "function hasCycle(head);"
+  },
+  "solutions": {
+    "python": "import sys\nfrom typing import List\n\nclass ListNode:\n    def __init__(self, x):\n        self.val = x\n        self.next = None\n\nclass Solution:\n    def hasCycle(self, head: ListNode) -> bool:\n        slow = fast = head\n        while fast and fast.next:\n            slow = slow.next\n            fast = fast.next.next\n            if slow == fast:\n                return True\n        return False\n\ndef read_ints():\n    return [int(x) for x in sys.stdin.readline().split()]\n\ndef read_list():\n    return list(map(int, sys.stdin.readline().split()))\n\ndef main():\n    t = int(sys.stdin.readline())\n    for _ in range(t):\n        n = int(sys.stdin.readline())\n        head = ListNode(0)\n        for x in read_list():\n            head.next = ListNode(x)\n            head = head.next\n        head = head.next\n        print(Solution().hasCycle(head))\n\nmain()\n",
+    "cpp": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nstruct ListNode {\n    int val;\n    ListNode *next;\n    ListNode(int x) : val(x), next(NULL) {}\n};\n\nclass Solution {\npublic:\n    bool hasCycle(ListNode *head) {\n        ListNode *slow = head;\n        ListNode *fast = head;\n        while (fast && fast->next) {\n            slow = slow->next;\n            fast = fast->next->next;\n            if (slow == fast) return true;\n        }\n        return false;\n    }\n};\n\nint main() {\n    ios_base::sync_with_stdio(false);\n    cin.tie(NULL);\n    int t;\n    cin >> t;\n    while (t--) {\n        int n;\n        cin >> n;\n        ListNode head(0);\n        for (int i = 0; i < n; i++) {\n            int x;\n            cin >> x;\n            ListNode node(x);\n            head.next = &node;\n            head = head.next;\n        }\n        head = head.next;\n        cout << (Solution().hasCycle(&head) ? '1' : '0') << endl;\n    }\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2000,
+    "memoryLimit": 65536,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "4\n1 2 3 4",
+      "output": "1",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "5\n1 2 3 4 5",
+      "output": "0",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_1",
+      "input": "4\n1 2 3 4",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

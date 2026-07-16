@@ -1,0 +1,162 @@
+{
+  "_id": "8bf4606a5b9c97750701a503",
+  "title": "Implement a Least Frequently Used (LFU) Cache",
+  "slug": "implement-a-least-frequently-used-lfu-cache-medium-caching",
+  "difficulty": "Medium",
+  "topics": [
+    "CACHING"
+  ],
+  "statement": "Design a caching system with a Least Frequently Used (LFU) eviction strategy. The system should support the following endpoints:\n\n### POST /api/cache\n\nCreate a new cache with a specified capacity. The request body should contain the capacity.\n\n### POST /api/cache/:cacheId/put/:key/:value\n\nAdd or update an item in the cache. The request body should contain the key and value.\n\n### GET /api/cache/:cacheId/get/:key\n\nRetrieve an item from the cache. If the item is not found, return a 404 status code.\n\n### GET /api/cache/:cacheId/stats\n\nRetrieve statistics about the cache, including the number of items, the number of items that have been evicted, and a list of the most frequently accessed items.\n\n### DELETE /api/cache/:cacheId\n\nDelete the cache.\n\nYou must use the in-memory array provided in the starter code. You should not store the cache data in a database or use an external caching system.\n\n#### Constraints\n\n- The cache should use an LFU eviction strategy.\n- The cache should support a maximum capacity.\n- The cache should support GET, PUT, and DELETE operations.\n- The cache should support retrieval of statistics.\n- The cache should be case-sensitive.\n- The cache should handle edge cases, such as trying to put an item into a cache that is at capacity.",
+  "constraints": [
+    "Must use only the in-memory array provided in the starter code.",
+    "Cache should use an LFU eviction strategy."
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/cache",
+      "description": "Create a new cache with a specified capacity. The request body should contain the capacity.",
+      "body": {
+        "capacity": "[integer]"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/cache/:cacheId/put/:key",
+      "description": "Add or update an item in the cache. The request body should contain the key and value.",
+      "body": {
+        "value": "[string]"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/cache/:cacheId/get/:key",
+      "description": "Retrieve an item from the cache. If the item is not found, return a 404 status code."
+    },
+    {
+      "method": "GET",
+      "path": "/api/cache/:cacheId/stats",
+      "description": "Retrieve statistics about the cache, including the number of items, the number of items that have been evicted, and a list of the most frequently accessed items."
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/cache/:cacheId",
+      "description": "Delete the cache."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\"name\": \"caching-app\",\"version\": \"1.0.0\",\"main\": \"index.js\",\"scripts\": {\"start\": \"node index.js\"},\"dependencies\": {\"express\": \"^4.18.2\"}}",
+    "index.js": "const express = require('express');\nconst app = express();\napp.use(express.json());\n\n// In-memory cache store\nconst cacheStore = {};\n\n// API endpoints\n\napp.post('/api/cache', (req, res) => {\n    // TODO: Create a new cache with a specified capacity\n});\n\napp.post('/api/cache/:cacheId/put/:key', (req, res) => {\n    // TODO: Add or update an item in the cache\n});\n\napp.get('/api/cache/:cacheId/get/:key', (req, res) => {\n    // TODO: Retrieve an item from the cache\n});\n\napp.get('/api/cache/:cacheId/stats', (req, res) => {\n    // TODO: Retrieve statistics about the cache\n});\n\napp.delete('/api/cache/:cacheId', (req, res) => {\n    // TODO: Delete the cache\n});\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "POST",
+      "path": "/api/cache",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "capacity": 10
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "cacheId": "[integer]"
+      },
+      "expectedBodySchema": null,
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "POST",
+      "path": "/api/cache/999/put/key",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "value": "value"
+      },
+      "expectedStatus": 500,
+      "expectedBody": {
+        "error": "Cache not found"
+      },
+      "expectedBodySchema": null,
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "POST",
+      "path": "/api/cache/999/put/key",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "value": ""
+      },
+      "expectedStatus": 400,
+      "expectedBody": {
+        "error": "Value cannot be empty"
+      },
+      "expectedBodySchema": null,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "GET",
+      "path": "/api/cache/999/get/key",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "expectedStatus": 404,
+      "expectedBody": {
+        "error": "Key not found"
+      },
+      "expectedBodySchema": null,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "DELETE",
+      "path": "/api/cache/999",
+      "expectedStatus": 404,
+      "expectedBody": {
+        "error": "Cache not found"
+      },
+      "expectedBodySchema": null,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "redis",
+    "cache-aside",
+    "write-through",
+    "ttl",
+    "invalidation",
+    "memory-cache",
+    "cache",
+    "lfu"
+  ]
+}

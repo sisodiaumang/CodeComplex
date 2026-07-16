@@ -1,0 +1,159 @@
+{
+  "title": "Fix MongoDB Projection to Handle Nested Fields with Optional Keys",
+  "subCategory": "MongoDB Projection",
+  "statement": {
+    "markdown": "Implement a MongoDB projection method that handles nested fields with optional keys. Given a MongoDB collection and a projection object, project the fields from the collection based on the projection object. The projection object can have nested fields with optional keys. For example, if the projection object has a key 'a.b', the method should project the field 'b' from the document if the field 'a' exists and the field 'a.b' exists. If the field 'a' exists but the field 'a.b' does not exist, the method should project an empty object for the field 'a'. If the field 'a' does not exist, the method should not project any field for 'a'.\n\nThe method should handle the following edge cases:\n- The projection object can have nested fields with optional keys.\n- The projection object can have fields with null values.\n- The collection can have documents with missing fields.\n- The collection can have documents with nested fields with missing keys.",
+    "inputFormat": "The input will be an array of documents and a projection object.",
+    "outputFormat": "The output will be an array of projected documents.",
+    "notes": "The method should handle the edge cases mentioned above.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 1000,
+        "description": "The number of documents in the collection"
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 1,
+        "max": 100,
+        "description": "The number of fields in the projection object"
+      },
+      {
+        "variable": "d",
+        "type": "integer",
+        "min": 1,
+        "max": 1000,
+        "description": "The maximum depth of nested fields in the projection object"
+      }
+    ],
+    "examples": [
+      {
+        "input": "[{\"a\":{\"b\":1}},{\"a\":{\"b\":2,\"c\":3}}]",
+        "output": "[{\"a\":{\"b\":1}},{\"a\":{\"b\":2,\"c\":3}}]",
+        "explanation": "The projection object has two fields: 'a.b' and 'a.b.c'. The method should project the fields 'b' and 'c' from the documents."
+      },
+      {
+        "input": "[{\"a\":{\"b\":{\"d\":1}}},{\"a\":{\"b\":{\"e\":2,\"f\":3}}}]",
+        "output": "[{\"a\":{\"b\":{\"d\":1}}},{\"a\":{\"b\":{\"e\":2,\"f\":3}}}]",
+        "explanation": "The projection object has a nested field 'a.b.c'. The method should project the field 'c' from the documents."
+      },
+      {
+        "input": "[{\"a\":{\"b\":null}},{\"a\":{\"b\":{\"c\":1}}}]",
+        "output": "[{\"a\":{\"b\":null}},{\"a\":{\"b\":{\"c\":1}}}]",
+        "explanation": "The projection object has a field 'a.b' with a null value. The method should project the field 'b' from the documents."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 100,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "MONGODB"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "mongodb"
+    ],
+    "interviewFrequency": 1,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text: Handle the edge case where the projection object has a field with a null value."
+    },
+    {
+      "order": 2,
+      "text": "Second hint text: Handle the edge case where the collection has a document with a nested field with a missing key."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title: Fix MongoDB Projection to Handle Nested Fields with Optional Keys",
+    "intuition": "Explanation of the correct approach: The method should iterate through the projection object and project the fields from the documents based on the projection object.",
+    "bruteForce": "Brute force approach summary: The method can use a recursive function to iterate through the projection object and project the fields from the documents.",
+    "betterSolution": "Better solution approach: The method can use a stack to iterate through the projection object and project the fields from the documents.",
+    "optimalSolution": "Optimal solution details: The method can use a stack to iterate through the projection object and project the fields from the documents. The method should handle the edge cases mentioned above.",
+    "proofOfCorrectness": "Correctness proof: The method should project the fields from the documents based on the projection object.",
+    "dryRun": "Step-by-step example run: The method should iterate through the projection object and project the fields from the documents based on the projection object.",
+    "commonMistakes": [
+      "Mistake 1: Not handling the edge case where the projection object has a field with a null value.",
+      "Mistake 2: Not handling the edge case where the collection has a document with a nested field with a missing key."
+    ],
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "function projectDocuments(collection, projection) {\n    // Your code here\n}\nreturn collection;",
+    "python": "class Solution:\n    def projectDocuments(self, collection, projection):\n        # Your code here\n        return collection"
+  },
+  "buggyStarterCode": {
+    "javascript": "function projectDocuments(collection, projection) {\n    var result = [];\n    collection.forEach(function(doc) {\n        var projectedDoc = {};\n        for (var key in projection) {\n            if (projection[key] !== null) {\n                projectedDoc[key] = doc[key];\n            }\n        }\n        result.push(projectedDoc);\n    });\n    return result;\n}",
+    "python": "class Solution:\n    def projectDocuments(self, collection, projection):\n        result = []\n        for doc in collection:\n            projectedDoc = {}\n            for key in projection:\n                if projection[key] is not None:\n                    projectedDoc[key] = doc[key]\n            result.append(projectedDoc)\n        return result"
+  },
+  "functionSignature": {
+    "javascript": "var projectDocuments = function(collection, projection) {",
+    "python": "def projectDocuments(self, collection, projection):"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction projectDocuments(collection, projection) {\n    var result = [];\n    collection.forEach(function(doc) {\n        var projectedDoc = {};\n        for (var key in projection) {\n            var parts = key.split('.');\n            var currentDoc = doc;\n            for (var i = 0; i < parts.length; i++) {\n                if (currentDoc[parts[i]] !== undefined) {\n                    currentDoc = currentDoc[parts[i]];\n                } else {\n                    break;\n                }\n            }\n            if (currentDoc !== undefined) {\n                projectedDoc[key] = currentDoc;\n            }\n        }\n        result.push(projectedDoc);\n    });\n    return result;\n}\n",
+    "python": "class Solution:\n    def projectDocuments(self, collection, projection):\n        result = []\n        for doc in collection:\n            projectedDoc = {}\n            for key in projection:\n                parts = key.split('.')\n                currentDoc = doc\n                for i in range(len(parts)):\n                    if parts[i] in currentDoc:\n                        currentDoc = currentDoc[parts[i]]\n                    else:\n                        break\n                if currentDoc is not None:\n                    projectedDoc[key] = currentDoc\n            result.append(projectedDoc)\n        return result"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "[{\"a\":{\"b\":1}},{\"a\":{\"b\":2,\"c\":3}}]",
+      "output": "[{\"a\":{\"b\":1}},{\"a\":{\"b\":2,\"c\":3}}]",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "[{\"a\":{\"b\":{\"d\":1}}},{\"a\":{\"b\":{\"e\":2,\"f\":3}}}]",
+      "output": "[{\"a\":{\"b\":{\"d\":1}}},{\"a\":{\"b\":{\"e\":2,\"f\":3}}}]",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "ee48fadb7c45d873a35d937e",
+  "slug": "fix-mongodb-projection-to-handle-nested-fields-with-optional-keys-bugfix-hard-mongodb",
+  "mode": "bug_fix",
+  "category": "MONGODB",
+  "difficulty": "Hard"
+}

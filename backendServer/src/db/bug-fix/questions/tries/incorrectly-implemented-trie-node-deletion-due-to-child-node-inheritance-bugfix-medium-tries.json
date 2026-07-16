@@ -1,0 +1,146 @@
+{
+  "_id": "dcfd8065ce240c5aeb91e851",
+  "title": "Incorrectly Implemented Trie Node Deletion Due to Child Node Inheritance",
+  "slug": "incorrectly-implemented-trie-node-deletion-due-to-child-node-inheritance-bugfix-medium-tries",
+  "difficulty": "Medium",
+  "category": "DSA",
+  "subCategory": "TRIE",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 60,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "trie"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given a Trie data structure, implement a function to delete a word from the Trie. The function should recursively traverse the Trie and remove all nodes associated with the word.\n\nThe code provided attempts to delete a word by setting the child pointer of each node to null. However, this approach fails when the word to be deleted has multiple child nodes. In such cases, the node should be removed and its parent node should be updated to point to the next child node.\n\nThe provided code contains a bug in the logic of deleting a node. Identify and fix the bug to complete the implementation.",
+    "inputFormat": "The function takes two parameters: the root node of the Trie and the word to be deleted.",
+    "outputFormat": "The function should delete the word from the Trie and return True if the deletion is successful. Otherwise, return False.",
+    "notes": "You may assume that the input word only contains lowercase English letters.",
+    "images": [],
+    "constraints": [],
+    "examples": [
+      {
+        "input": "Example input: root = [\"trie\", \"node\", \"child\"]\nword = \"trie\"\nOutput: true",
+        "output": "The word \"trie\" is successfully deleted from the Trie.",
+        "explanation": "The function should return true indicating that the deletion is successful."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text: Check the logic of deleting a node in the provided code."
+    }
+  ],
+  "editorial": {
+    "title": "Correct Implementation for Trie Node Deletion",
+    "intuition": "To delete a word from the Trie, we need to recursively traverse the Trie and remove all nodes associated with the word. This involves checking the last node of the word and removing it if it has no other children.",
+    "bruteForce": "The brute-force approach would involve checking all nodes in the Trie, which leads to a time complexity of O(n).",
+    "betterSolution": "We can improve the time complexity by using a recursive approach to traverse the Trie.",
+    "optimalSolution": "The optimal solution is to use a recursive approach to delete the word from the Trie. We traverse the Trie and remove nodes as we go, ensuring that the node to be removed has no other children.",
+    "proofOfCorrectness": "The provided code is corrected by changing the logic of deleting a node. We check if the node has any children and only remove it if it has no children.",
+    "dryRun": "To test the code, we can use a sample Trie and word, then verify that the deletion is successful.",
+    "commonMistakes": [
+      "Forgetting to remove a node's parent pointer",
+      "Not handling the case where the node has no children",
+      "Incorrectly deleting nodes with multiple children"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {public:\nbool deleteWord(Node* root, string word) {    // TODO: implement\n}",
+    "java": "class Solution {\n    public boolean deleteWord(int[] nums) {\n        // TODO: implement\n        return false;\n    }\n}",
+    "python": "class Solution:\n    def deleteWord(self, nums: list[int]) -> bool:\n        # TODO: implement\n        pass",
+    "javascript": "var deleteWord = function(nums) {\n    // TODO: implement\n    return false;\n};"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {public:\nbool deleteWord(Node* root, string word) {\n    if (!root) return false;\n    if (word[0] != root->ch) return false;\n    if (word.size() == 1) {\n        delete root;\n        return true;\n    }\n    return deleteWord(root->next, word.substr(1));\n}};",
+    "java": "public class Solution {public boolean deleteWord(Node root, String word) {    // TODO: implement\n}",
+    "python": "class Solution:\n    def deleteWord(self, root, word):\n        # TODO: implement\n        pass",
+    "javascript": "class Solution {\n    deleteWord(root, word) {\n        // TODO: implement\n    }\n}"
+  },
+  "functionSignature": {
+    "cpp": "bool deleteWord(Node* root, string word);",
+    "java": "public boolean deleteWord(Node root, String word);",
+    "python": "def deleteWord(self, root: 'Node', word: str) -> bool:",
+    "javascript": "deleteWord(root, word);"
+  },
+  "solutions": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass Node {\npublic:\n    char ch;\n    Node* next;\n};\n\nclass Solution {\npublic:\nbool deleteWord(Node* root, string word) {\n    if (!root) return false;\n\n    if (word[0] != root->ch) return false;\n\n    if (word.size() == 1) {\n        delete root;\n        root = NULL;\n        return true;\n    }\n\n    bool res = deleteWord(root->next, word.substr(1));\n\n    if (!root->next) {\n        delete root;\n        root = NULL;\n    }\n\n    return res;\n}\n};\n\nint main() {\n    Solution solution;\n    Node* root = new Node();\n    root->ch = 'a';\n\n    return 0;\n}",
+    "python": "class Node:\n    def __init__(self):\n        self.ch = None\n        self.next = None\n\nclass Solution:\n    def deleteWord(self, root, word):\n        if not root:\n            return False\n\n        if word[0] != root.ch:\n            return False\n\n        if len(word) == 1:\n            root.next = None\n            return True\n\n        res = self.deleteWord(root.next, word[1:])\n\n        if not root.next:\n            del root\n        \n        return res\n\nroot = Node()\nroot.ch = 'a'\nprint(solution.deleteWord(root, 'a'))",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "First line count, second line elements (stdin match)\nword = \"trie\"\nOutput: true",
+      "output": "The word \"trie\" is successfully deleted from the Trie.",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_hidden_generated",
+      "input": "First line count, second line elements (stdin match)\nword = \"trie\"\nOutput: true",
+      "output": "The word \"trie\" is successfully deleted from the Trie.",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

@@ -1,0 +1,136 @@
+{
+  "title": "Fix MongoDB Query to Handle Missing Fields in Projection",
+  "subCategory": "Query Projection",
+  "statement": {
+    "markdown": "You are given a MongoDB query that uses the `$project` aggregation stage to select specific fields from a collection. However, the query fails when the field specified in the projection is missing from the document. Your task is to fix the query to handle missing fields correctly.",
+    "inputFormat": "A JSON object representing the MongoDB collection",
+    "outputFormat": "The modified query that handles missing fields",
+    "notes": "The query should only return the specified fields from the document, even if they are missing.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of documents in the collection"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"name\": \"John\", \"age\": 30, \"city\": \"New York\"}",
+        "output": "{\"name\": \"John\", \"age\": 30}",
+        "explanation": "The query should return only the specified fields, even though \"city\" is missing"
+      },
+      {
+        "input": "{\"name\": \"Jane\", \"age\": null, \"city\": \"Los Angeles\"}",
+        "output": "{\"name\": \"Jane\", \"age\": null}",
+        "explanation": "The query should return only the specified fields, even though \"age\" is null"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 100,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "MONGODB"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "mongodb"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the `$ifNull` aggregation operator to handle missing fields"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial: Handling Missing Fields in MongoDB Query",
+    "intuition": "The `$project` stage should use the `$ifNull` operator to handle missing fields",
+    "bruteForce": "Brute force solution: use the `$ifNull` operator to handle missing fields",
+    "betterSolution": "Use the `$ifNull` operator with the `$project` stage",
+    "optimalSolution": "Optimal solution: use the `$ifNull` operator with the `$project` stage to handle missing fields",
+    "proofOfCorrectness": "The `$ifNull` operator returns the specified value if the field is missing",
+    "dryRun": "Step-by-step example run: handle missing fields with `$ifNull`",
+    "commonMistakes": [
+      "Not using the `$ifNull` operator",
+      "Not handling missing fields correctly"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// Define the MongoDB query using the $project aggregation stage",
+    "python": "class Solution:\n\tdef query(self, collection):\n\t\t# Implement the query using the $project aggregation stage"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Define the MongoDB query using the $project aggregation stage\n// BUG: does not handle missing fields correctly\nvar query = [\n\t{\n\t\t$project: {\n\t\t\tname: 1,\n\t\t\tage: 1\n\t\t}\n\t}\n];",
+    "python": "class Solution:\n\tdef query(self, collection):\n\t\t# Implement the query using the $project aggregation stage\n\t\t# BUG: does not handle missing fields correctly\n\t\tquery = [\n\t\t\t{'$project': {'name': 1, 'age': 1}}\n\t\t]"
+  },
+  "functionSignature": {
+    "javascript": "var solve = function(collection) {",
+    "python": "def solve(self, collection: dict) -> dict:"
+  },
+  "solutions": {
+    "javascript": "// Solution\nvar query = [\n\t{\n\t\t$project: {\n\t\t\tname: 1,\n\t\t\tage: {\n\t\t\t\t$ifNull: ['$age', null]\n\t\t\t}\n\t\t}\n\t}\n];",
+    "python": "class Solution:\n\tdef query(self, collection):\n\t\t# Implement the query using the $project aggregation stage\n\t\t# Solution\n\t\tquery = [\n\t\t\t{'$project': {'name': 1, 'age': {'$ifNull': ['$age', None]}}}\n\t\t]"
+  },
+  "judgeConfig": {
+    "timeLimit": 5,
+    "memoryLimit": 1024,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 2
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"name\": \"John\", \"age\": 30, \"city\": \"New York\"}",
+      "output": "{\"name\": \"John\", \"age\": 30}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"name\": \"Jane\", \"age\": null, \"city\": \"Los Angeles\"}",
+      "output": "{\"name\": \"Jane\", \"age\": null}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "8eea0b8aceb13f5554ad469b",
+  "slug": "fix-mongodb-query-to-handle-missing-fields-in-projection-bugfix-hard-mongodb",
+  "mode": "bug_fix",
+  "category": "MONGODB",
+  "difficulty": "Hard"
+}

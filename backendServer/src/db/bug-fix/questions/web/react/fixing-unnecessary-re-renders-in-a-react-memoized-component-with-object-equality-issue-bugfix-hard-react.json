@@ -1,0 +1,142 @@
+{
+  "title": "Fixing Unnecessary Re-renders in a React Memoized Component with Object Equality Issue",
+  "subCategory": "State Management",
+  "statement": {
+    "markdown": "Write a function to fix the unnecessary re-renders in a React memoized component. The component's state is an object with a nested array of objects. The component re-renders unnecessarily when the array of objects changes due to changing object references. Your function should return a corrected version of the `useMemo` hook that properly handles object equality.",
+    "inputFormat": "The function takes an object with a nested array of objects as an argument.",
+    "outputFormat": "The function returns a corrected version of the `useMemo` hook.",
+    "notes": "The function should work in the context of a React component, and the `useMemo` hook should be used to memoize the result of a function that depends on the component's state.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of objects in the nested array"
+      },
+      {
+        "variable": "depth",
+        "type": "integer",
+        "min": 1,
+        "max": 10,
+        "description": "Nested depth of the array of objects"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"name\":\"John\",\"age\":30,\"address\":{\"street\":\"123 Main St\",\"city\":\"Anytown\",\"state\":\"CA\"}}",
+        "output": "Corrected useMemo hook",
+        "explanation": "The corrected useMemo hook should return the same value when the array of objects is updated with the same objects, but with different references."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 60,
+    "premium": true,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "REACT"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "react"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the `JSON.stringify` method to compare objects for equality"
+    },
+    {
+      "order": 2,
+      "text": "Use a recursive function to compare nested objects for equality"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial: Fixing Unnecessary Re-renders in a React Memoized Component",
+    "intuition": "The `useMemo` hook should be used to memoize the result of a function that depends on the component's state. The function should return the same value when the array of objects is updated with the same objects, but with different references.",
+    "bruteForce": "One approach is to use the `JSON.stringify` method to compare objects for equality. However, this approach may not work correctly for nested objects.",
+    "betterSolution": "A better approach is to use a recursive function to compare nested objects for equality.",
+    "optimalSolution": "The optimal solution is to use the `deepEqual` function from the `lodash` library to compare objects for equality.",
+    "proofOfCorrectness": "The proof of correctness is that the function returns the same value when the array of objects is updated with the same objects, but with different references.",
+    "dryRun": "Example usage of the corrected useMemo hook",
+    "commonMistakes": [
+      "Failing to use the `useMemo` hook to memoize the result of a function that depends on the component's state",
+      "Failing to compare objects for equality correctly"
+    ],
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "import React, { useMemo } from 'react';\nconst CorrectedUseMemo = (state) => {\n  const dependencies = useMemo(() => [\n    state\n  ], []);\n  return dependencies;\n};\nexport default CorrectedUseMemo;",
+    "python": "import json\nfrom functools import lru_cache\n\n\nclass CorrectedUseMemo:\n    def __init__(self, state):\n        pass\n\n    @lru_cache(maxsize=None)\n    def _deep_equal(self, a, b):\n        if isinstance(a, dict) and isinstance(b, dict):\n            return all(self._deep_equal(a.get(k), b.get(k)) for k in a)\n        elif isinstance(a, list) and isinstance(b, list):\n            return all(self._deep_equal(a[i], b[i]) for i in range(len(a)))\n        else:\n            return a == b\n\n    def correct_use_memo(self, state):\n        return self._deep_equal(state, state)"
+  },
+  "buggyStarterCode": {
+    "javascript": "import React, { useMemo } from 'react';\nconst BuggyUseMemo = (state) => {\n  const dependencies = useMemo(() => [\n    state.name\n  ], []);\n  return dependencies;\n};\nexport default BuggyUseMemo;",
+    "python": "import json\nfrom functools import lru_cache\n\n\nclass BuggyUseMemo:\n    def __init__(self, state):\n        pass\n\n    @lru_cache(maxsize=None)\n    def _deep_equal(self, a, b):\n        if isinstance(a, dict) and isinstance(b, dict):\n            return all(self._deep_equal(a.get(k), b.get(k)) for k in a)\n        elif isinstance(a, list) and isinstance(b, list):\n            return all(self._deep_equal(a[i], b[i]) for i in range(len(a)))\n        else:\n            return a == b\n\n    def buggy_use_memo(self, state):\n        return self._deep_equal(state.name, state.name)"
+  },
+  "functionSignature": {
+    "javascript": "const CorrectedUseMemo = (state) => {\n  const dependencies = useMemo(() => [\n    state\n  ], []);\n  return dependencies;\n};",
+    "python": "class CorrectedUseMemo:\n    def __init__(self, state):\n        pass\n\n    def correct_use_memo(self, state):\n        return self._deep_equal(state, state)"
+  },
+  "solutions": {
+    "javascript": "// Solution\nimport React, { useMemo } from 'react';\nconst CorrectedUseMemo = (state) => {\n  const dependencies = useMemo(() => [\n    state\n  ], [JSON.stringify(state)]);\n  return dependencies;\n};\nexport default CorrectedUseMemo;",
+    "python": "import json\nfrom functools import lru_cache\n\n\nclass CorrectedUseMemo:\n    def __init__(self, state):\n        pass\n\n    @lru_cache(maxsize=None)\n    def _deep_equal(self, a, b):\n        if isinstance(a, dict) and isinstance(b, dict):\n            return all(self._deep_equal(a.get(k), b.get(k)) for k in a)\n        elif isinstance(a, list) and isinstance(b, list):\n            return all(self._deep_equal(a[i], b[i]) for i in range(len(a)))\n        else:\n            return a == b\n\n    def correct_use_memo(self, state):\n        return self._deep_equal(state, state)\n\nif __name__ == '__main__':\n    state = json.loads(input())\n    corrected_use_memo = CorrectedUseMemo(state)\n    print(corrected_use_memo.correct_use_memo(state))"
+  },
+  "judgeConfig": {
+    "timeLimit": 2.5,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 2
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"name\":\"John\",\"age\":30,\"address\":{\"street\":\"123 Main St\",\"city\":\"Anytown\",\"state\":\"CA\"}}",
+      "output": "Corrected useMemo hook",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_hidden_generated",
+      "input": "{\"name\":\"John\",\"age\":30,\"address\":{\"street\":\"123 Main St\",\"city\":\"Anytown\",\"state\":\"CA\"}}",
+      "output": "Corrected useMemo hook",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "1a4bddde105cc8f3ac8174ea",
+  "slug": "fixing-unnecessary-re-renders-in-a-react-memoized-component-with-object-equality-issue-bugfix-hard-react",
+  "mode": "bug_fix",
+  "category": "REACT",
+  "difficulty": "Hard"
+}

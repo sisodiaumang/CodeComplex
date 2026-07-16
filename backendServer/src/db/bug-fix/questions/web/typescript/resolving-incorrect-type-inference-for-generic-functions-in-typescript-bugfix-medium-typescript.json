@@ -1,0 +1,150 @@
+{
+  "title": "Resolving Incorrect Type Inference for Generic Functions in TypeScript",
+  "subCategory": "Generic Functions",
+  "statement": {
+    "markdown": "You're given a generic function `mapValues` that takes an object and a function as arguments. The function should return a new object with the same keys as the input object, but with transformed values. However, the current implementation contains a subtle bug that causes incorrect type inference. Your task is to fix the bug and make the function work correctly with different types of input objects and functions.",
+    "inputFormat": "The input will be an object with string keys and values of any type (e.g., numbers, booleans, strings, arrays, objects). The function argument will be a function that takes a value and returns a new value of the same type.",
+    "outputFormat": "The output should be a new object with the same keys as the input object, but with transformed values. The values should be of the same type as the original values, but with the transformations applied.",
+    "notes": "You can assume that the input object is not null or undefined, and that the function argument is a valid function.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 1000,
+        "description": "The number of entries in the input object"
+      },
+      {
+        "variable": "key",
+        "type": "string",
+        "description": "A key in the input object"
+      },
+      {
+        "variable": "value",
+        "type": "any",
+        "description": "A value in the input object"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"a\": 1, \"b\": 2, \"c\": 3}",
+        "output": "{\"a\": 1, \"b\": 2, \"c\": 3}",
+        "explanation": "No transformation is applied to the values"
+      },
+      {
+        "input": "{\"a\": 1, \"b\": 2, \"c\": 3}",
+        "output": "{\"a\": 4, \"b\": 5, \"c\": 6}",
+        "explanation": "The values are doubled"
+      },
+      {
+        "input": "{\"a\": \"hello\", \"b\": \"world\"}",
+        "output": "{\"a\": \"hello\", \"b\": \"world\"}",
+        "explanation": "No transformation is applied to the string values"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "TYPESCRIPT"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "typescript"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Pay attention to the type annotations in the function signature"
+    },
+    {
+      "order": 2,
+      "text": "Think about how to express the type of the output object"
+    }
+  ],
+  "editorial": {
+    "title": "Resolving Incorrect Type Inference for Generic Functions",
+    "intuition": "The key insight is to use the ` mapped<T>()` method to specify the type of the output object.",
+    "bruteForce": "The brute force approach would be to use a loop to iterate over the entries of the input object and apply the transformation to each value.",
+    "betterSolution": "A better solution would be to use the `Object.entries()` method to get an array of key-value pairs and then use the `map()` method to apply the transformation to each value.",
+    "optimalSolution": "The optimal solution is to use the `mapValues` function with the correct type annotations to specify the type of the output object.",
+    "proofOfCorrectness": "The proof of correctness is to show that the output object has the correct type and that the values are correctly transformed.",
+    "dryRun": "Example usage: `console.log(mapValues({ a: 1, b: 2, c: 3 }, x => x * 2));`",
+    "commonMistakes": [
+      "Incorrect type annotations",
+      "Not using `mapped<T>()` method"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// Define a generic function mapValues that takes an object and a function as arguments\nfunction mapValues<T>(obj: { [key: string]: T }, fn: (value: T) => T): { [key: string]: T } {\n  // Fix the bug here\n  return {};\n}"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Define a generic function mapValues that takes an object and a function as arguments\nfunction mapValues<T>(obj: { [key: string]: any }, fn: (value: any) => any): { [key: string]: any } {\n  // Return a new object with the same keys as the input object\n  return Object.keys(obj).reduce((acc, key) => {\n    // Apply the transformation to each value\n    acc[key] = fn(obj[key]);\n    return acc;\n  }, {});\n}"
+  },
+  "functionSignature": {
+    "javascript": "function mapValues<T>(obj: { [key: string]: T }, fn: (value: T) => T): { [key: string]: T }"
+  },
+  "solutions": {
+    "javascript": "// Define a generic function mapValues that takes an object and a function as arguments\nfunction mapValues<T>(obj: { [key: string]: T }, fn: (value: T) => T): { [key: string]: T } {\n  // Return a new object with the same keys as the input object\n  return Object.keys(obj).reduce((acc, key) => {\n    // Apply the transformation to each value and specify the type of the output object\n    acc[key] = fn(obj[key]) as T;\n    return acc;\n  }, {} as { [key in keyof typeof obj]: T });\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"a\": 1, \"b\": 2, \"c\": 3}",
+      "output": "{\"a\": 1, \"b\": 2, \"c\": 3}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"a\": 1, \"b\": 2, \"c\": 3}",
+      "output": "{\"a\": 4, \"b\": 5, \"c\": 6}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "844bbd8495791ad91b37ac86",
+  "slug": "resolving-incorrect-type-inference-for-generic-functions-in-typescript-bugfix-medium-typescript",
+  "mode": "bug_fix",
+  "category": "TYPESCRIPT",
+  "difficulty": "Medium"
+}

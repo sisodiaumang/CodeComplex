@@ -1,0 +1,222 @@
+{
+  "_id": "find-mst-weight-kruskals",
+  "title": "Find MST Weight (Kruskal's)",
+  "slug": "find-mst-weight-kruskals",
+  "difficulty": "Hard",
+  "category": "GRAPH",
+  "subCategory": "MST / Disjoint Set",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 45,
+    "points": 500,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "Graphs",
+      "Disjoint Set",
+      "MST"
+    ],
+    "patterns": [
+      "Kruskal's",
+      "MST",
+      "Minimum Spanning Tree"
+    ],
+    "prerequisites": [
+      "Dijkstra's Algorithm",
+      "Bellman-Ford Algorithm",
+      "Union-Find"
+    ],
+    "variants": [],
+    "tags": [
+      "Greedy Algorithm",
+      "Graph Traversal",
+      "Disjoint Sets"
+    ],
+    "keywords": [
+      "Minimum Spanning Tree",
+      "Kruskal's Algorithm",
+      "Union-Find",
+      "Graph",
+      "Greedy"
+    ],
+    "interviewFrequency": 4,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "You are given an undirected weighted graph with N vertices numbered from 1 to N and M edges. Your task is to compute the total weight of a Minimum Spanning Tree (MST) of the graph using Kruskal's algorithm. If the graph is disconnected and no spanning tree exists, output the string \"IMPOSSIBLE\".\n\nThe graph may contain multiple edges between the same pair of vertices and self‑loops; self‑loops should be ignored because they can never belong to a spanning tree. The MST weight is the sum of the weights of the edges selected by Kruskal's algorithm (i.e., the minimum possible total weight among all spanning trees).",
+    "inputFormat": "The first line contains two integers N and M — the number of vertices and edges respectively.\nThe next M lines each contain three integers u, v, w describing an undirected edge between vertices u and v with weight w.\nConstraints guarantee 1 ≤ u, v ≤ N and 0 ≤ w ≤ 10^9.",
+    "outputFormat": "If the graph is connected, output a single integer — the total weight of its Minimum Spanning Tree.\nIf the graph is disconnected, output the word IMPOSSIBLE (without quotes).",
+    "notes": "Kruskal's algorithm sorts all edges by weight and adds them one by one, using a Disjoint Set Union (DSU) to avoid cycles. The solution must run in O(M log M) time due to sorting, which fits the constraints.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "N",
+        "type": "integer",
+        "min": 1,
+        "max": 100000,
+        "description": "Number of vertices"
+      },
+      {
+        "variable": "M",
+        "type": "integer",
+        "min": 0,
+        "max": 200000,
+        "description": "Number of edges"
+      },
+      {
+        "variable": "w",
+        "type": "integer",
+        "min": 0,
+        "max": 1000000000,
+        "description": "Edge weight"
+      }
+    ],
+    "examples": [
+      {
+        "input": "4 5\n1 2 3\n2 3 4\n3 4 5\n4 1 6\n1 3 2",
+        "output": "10",
+        "explanation": "The MST consists of edges (1,3,2), (1,2,3) and (2,3,4) with total weight 2+3+4=9."
+      },
+      {
+        "input": "3 1\n1 2 10",
+        "output": "IMPOSSIBLE",
+        "explanation": "Vertex 3 is isolated, so the graph is disconnected and no spanning tree exists."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Start by sorting all the edges of the graph in non-decreasing order of their weights."
+    },
+    {
+      "order": 2,
+      "text": "Since Kruskal's algorithm selects the minimum-weight edge that does not form a cycle, ignore self-loops and consider only distinct edges between pairs of vertices."
+    },
+    {
+      "order": 3,
+      "text": "To detect cycles and ensure the correctness of the MST, use a disjoint-set data structure to keep track of the connected components in the graph."
+    },
+    {
+      "order": 4,
+      "text": "When processing each edge, check if adding it to the MST would create a cycle by querying the disjoint-set data structure; if it does, skip the edge."
+    },
+    {
+      "order": 5,
+      "text": "The final MST weight is the sum of the weights of the edges selected by Kruskal's algorithm, excluding any edges that would have formed a cycle."
+    }
+  ],
+  "editorial": {
+    "title": "Why Kruskal’s Algorithm is the Right Tool for the Job",
+    "intuition": "The problem asks for the total weight of a minimum spanning tree in a weighted graph. A brute force enumeration of all spanning trees is astronomically expensive, but the structure of the graph—edges with independent weights—allows a greedy strategy that always picks the cheapest edge that does not create a cycle. This greedy choice is safe because any optimal solution can be transformed into one that respects the same ordering of edges.",
+    "bruteForce": "A naive approach would generate every possible subset of edges that connects all vertices, compute its total weight, and keep the minimum. Even for modest graphs this blows up: the number of spanning trees can be exponential in the number of vertices, and checking connectivity for each subset is itself costly. Thus the brute force method is correct in principle but infeasible for the given limits (up to 100 000 vertices and 200 000 edges).",
+    "betterSolution": "The key observation is that the cheapest edge that connects two previously disconnected components can never be part of a heavier optimal solution. This leads to a greedy algorithm: sort all edges by weight and add them one by one, skipping any that would form a cycle. The cycle detection is efficiently handled by a Union‑Find (Disjoint Set Union) data structure. This approach runs in O(M log M) time due to sorting and O(N + M) space for the edge list and DSU arrays.",
+    "optimalSolution": "The algorithm described above is Kruskal’s algorithm. It processes edges in non‑decreasing order of weight, uses Union‑Find to maintain connectivity, and stops after n‑1 edges have been added. If fewer than n‑1 edges are added, the graph is disconnected and no spanning tree exists, which is reported as IMPOSSIBLE.",
+    "proofOfCorrectness": "Assume the algorithm has processed the first k edges and has built a forest F that is a minimum‑weight spanning forest for the vertices seen so far. When the next edge e=(u,v) is considered, if u and v are already connected in F, adding e would create a cycle, so any spanning tree containing e can be replaced by a tree that uses a lighter edge from the cycle, contradicting the minimality of e. If u and v are in different components, adding e keeps the forest acyclic and reduces the number of components by one. By induction, after all edges are processed, the resulting tree has the minimum possible total weight. The Union‑Find guarantees that cycle detection is correct and efficient.",
+    "dryRun": "Consider a triangle graph with vertices 1,2,3 and edges (1,2,1), (2,3,2), (1,3,3). Edges are sorted: 1–2, 2–3, 1–3. The algorithm adds 1–2 (components {1,2} and {3}). Next it adds 2–3 (components {1,2,3}). The third edge would create a cycle, so it is skipped. The resulting tree has weight 3, which is optimal.",
+    "commonMistakes": [
+      "Assuming that sorting edges alone guarantees optimality without cycle detection; ignoring the need for Union‑Find.",
+      "Using a recursive DFS for cycle detection, which can exceed recursion limits for large graphs.",
+      "Treating self‑loops as valid edges; they must be discarded before processing.",
+      "Failing to handle disconnected graphs and thus returning a number instead of IMPOSSIBLE.",
+      "Implementing Union‑Find without path compression or union by rank, leading to near‑linear time in the worst case.",
+      "Miscounting vertices (off‑by‑one errors) when initializing DSU arrays for 1‑based input."
+    ],
+    "timeComplexity": "O(M log M)",
+    "spaceComplexity": "O(N + M)"
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    long long solve(int n, vector<vector<long long>>& edges) {\n        // TODO: implement Kruskal's algorithm\n        return 0LL;\n    }\n};",
+    "java": "import java.util.*;\n\nclass Solution {\n    public long solve(int n, int[][] edges) {\n        // TODO: implement Kruskal's algorithm\n        return 0L;\n    }\n}",
+    "python": "class Solution:\n    def solve(self, n: int, edges: list[list[int]]) -> int:\n        # TODO: implement Kruskal's algorithm\n        return 0\n",
+    "javascript": "/**\n * @param {number} n\n * @param {number[][]} edges\n * @return {number}\n */\nvar solve = function(n, edges) {\n    // TODO: implement Kruskal's algorithm\n    return 0;\n};"
+  },
+  "functionSignature": {
+    "cpp": "long long solve(int n, vector<vector<long long>>& edges);",
+    "java": "public long solve(int n, int[][] edges);",
+    "python": "def solve(self, n: int, edges: list[list[int]]) -> int:",
+    "javascript": "var solve = function(n, edges);"
+  },
+  "solutions": {
+    "python": "import sys\nclass Solution:\n    def solve(self, n: int, edges: list[list[int]]) -> int:\n        # Kruskal's algorithm\n        parent = list(range(n + 1))\n        rank = [0] * (n + 1)\n        def find(x):\n            while parent[x] != x:\n                parent[x] = parent[parent[x]]\n                x = parent[x]\n            return x\n        def union(x, y):\n            rx, ry = find(x), find(y)\n            if rx == ry:\n                return False\n            if rank[rx] < rank[ry]:\n                parent[rx] = ry\n            elif rank[rx] > rank[ry]:\n                parent[ry] = rx\n            else:\n                parent[ry] = rx\n                rank[rx] += 1\n            return True\n        # filter out self-loops\n        filtered = [e for e in edges if e[0] != e[1]]\n        filtered.sort(key=lambda x: x[2])\n        total = 0\n        edges_used = 0\n        for u, v, w in filtered:\n            if union(u, v):\n                total += w\n                edges_used += 1\n                if edges_used == n - 1:\n                    break\n        if n == 1:\n            return 0\n        if edges_used != n - 1:\n            # signal impossible via raising\n            raise ValueError(\"IMPOSSIBLE\")\n        return total\nif __name__ == '__main__':\n    data = sys.stdin.read().split()\n    if not data:\n        sys.exit(0)\n    it = iter(data)\n    n = int(next(it))\n    m = int(next(it))\n    edges = []\n    for _ in range(m):\n        u = int(next(it)); v = int(next(it)); w = int(next(it))\n        edges.append([u, v, w])\n    sol = Solution()\n    try:\n        ans = sol.solve(n, edges)\n        print(ans)\n    except ValueError as e:\n        print(e.args[0])\n",
+    "cpp": "#include <numeric>\n#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    long long solve(int n, vector<vector<long long>>& edges) {\n        struct DSU {\n            vector<int> p, r;\n            DSU(int n): p(n+1), r(n+1,0) { iota(p.begin(), p.end(), 0); }\n            int find(int x){ return p[x]==x?x:p[x]=find(p[x]); }\n            bool unite(int a,int b){\n                a=find(a); b=find(b);\n                if(a==b) return false;\n                if(r[a]<r[b]) swap(a,b);\n                p[b]=a;\n                if(r[a]==r[b]) r[a]++;\n                return true;\n            }\n        } dsu(n);\n        vector<array<long long,3>> es;\n        es.reserve(edges.size());\n        for(auto &e: edges){\n            if(e[0]==e[1]) continue; // ignore self-loop\n            es.push_back({e[2], e[0], e[1]}); // weight first for sorting\n        }\n        sort(es.begin(), es.end(), [](auto &a, auto &b){ return a[0] < b[0]; });\n        long long total = 0;\n        int used = 0;\n        for(auto &e: es){\n            long long w = e[0]; int u = (int)e[1]; int v = (int)e[2];\n            if(dsu.unite(u,v)){\n                total += w;\n                used++;\n                if(used == n-1) break;\n            }\n        }\n        if(n==1) return 0;\n        if(used != n-1) return -1; // indicate impossible\n        return total;\n    }\n};\n\nint main(){\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int n,m;\n    if(!(cin>>n>>m)) return 0;\n    vector<vector<long long>> edges(m, vector<long long>(3));\n    for(int i=0;i<m;i++){\n        cin>>edges[i][0]>>edges[i][1]>>edges[i][2];\n    }\n    Solution sol;\n    long long ans = sol.solve(n, edges);\n    if(ans==-1) cout<<\"IMPOSSIBLE\\n\";\n    else cout<<ans<<\"\\n\";\n    return 0;\n}\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.5
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "4 5\n1 2 3\n2 3 4\n3 4 5\n4 1 6\n1 3 2",
+      "output": "10",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "3 1\n1 2 10",
+      "output": "IMPOSSIBLE",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint_3",
+      "input": "3 2\n1 2 1\n2 3 1",
+      "output": "2",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "boundary_4",
+      "input": "4 4\n1 2 0\n2 3 0\n3 4 0\n1 4 0",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    },
+    {
+      "id": "duplicate_5",
+      "input": "4 5\n1 2 1\n2 3 1\n3 4 1\n1 2 1\n2 3 1",
+      "output": "3",
+      "isVisible": false,
+      "weight": 1,
+      "category": "duplicate"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

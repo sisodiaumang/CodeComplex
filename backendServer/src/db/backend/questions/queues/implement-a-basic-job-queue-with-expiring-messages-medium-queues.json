@@ -1,0 +1,183 @@
+{
+  "_id": "33ccabc24a6d5f70d2977368",
+  "title": "Implement a Basic Job Queue with Expiring Messages",
+  "slug": "implement-a-basic-job-queue-with-expiring-messages-medium-queues",
+  "difficulty": "Medium",
+  "topics": [
+    "QUEUES"
+  ],
+  "statement": "Design and implement a simple job queue API with message expirations. The queue should store jobs with an expiration time, and when a job expires, it should be automatically deleted. The API should provide endpoints for adding jobs, retrieving jobs, and checking the queue's status.\n\nThe queue should store jobs in memory, and the expiration time should be set in minutes. The API should also handle cases where the queue is empty.\n\n**Endpoints**\n\n* `POST /api/jobs`: Add a new job to the queue. The request body should contain `data` and `expiresIn` fields.\n* `GET /api/jobs`: Retrieve all jobs in the queue. If the queue is empty, return an empty list.\n* `GET /api/queue/status`: Check the queue's status, including the number of jobs and the oldest job's expiration time.\n\n**Constraints**\n\n* The queue should be implemented using a simple in-memory data structure (e.g., an array).\n* The expiration time should be set in minutes.\n* The API should handle cases where the queue is empty.\n\n**visibleApiTestCases**\n\n* `v_tc1`: Add a new job to the queue and verify its presence.\n* `v_tc2`: Retrieve all jobs in the queue and verify their presence.\n* `v_tc3`: Check the queue's status and verify the number of jobs and the oldest job's expiration time.\n\n**hiddenApiTestCases**\n\n* `h_tc1`: Attempt to add a job with an expiration time in the past and verify that it is not added to the queue.\n* `h_tc2`: Retrieve an empty queue and verify that an empty list is returned.\n* `h_tc3`: Check the queue's status when it is empty and verify that the expected values are returned.\n* `h_tc4`: Attempt to retrieve a job that does not exist and verify that a 404 status code is returned.\n* `h_tc5`: Attempt to add a job with invalid data and verify that a 400 status code is returned.",
+  "constraints": [
+    "Must use only the in-memory data structure provided",
+    "The expiration time must be set in minutes"
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/jobs",
+      "description": "Add a new job to the queue. Request body: `data` and `expiresIn` fields."
+    },
+    {
+      "method": "GET",
+      "path": "/api/jobs",
+      "description": "Retrieve all jobs in the queue."
+    },
+    {
+      "method": "GET",
+      "path": "/api/queue/status",
+      "description": "Check the queue's status, including the number of jobs and the oldest job's expiration time."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": {
+      "name": "job-queue-app",
+      "version": "1.0.0",
+      "main": "index.js",
+      "scripts": {
+        "start": "node index.js"
+      },
+      "dependencies": {
+        "express": "^4.18.2"
+      }
+    },
+    "index.js": "const express = require('express');\nconst app = express();\napp.use(express.json());\n\n// In-memory queue data structure\nconst queue = [];\n\n// TODO: Implement endpoints\n// TODO: Add job to queue\n// TODO: Retrieve jobs from queue\n// TODO: Get queue status\n\napp.listen(3000, () => console.log('Server running on port 3000'));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "POST",
+      "path": "/api/jobs",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "data": "job data",
+        "expiresIn": 10
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "success": true
+      },
+      "expectedBodySchema": null,
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "GET",
+      "path": "/api/jobs",
+      "expectedStatus": 200,
+      "expectedBody": [
+        {
+          "data": "job data",
+          "expiresIn": 10
+        }
+      ],
+      "expectedBodySchema": null,
+      "isVisible": true
+    },
+    {
+      "id": "v_tc3",
+      "method": "GET",
+      "path": "/api/queue/status",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "numJobs": 1,
+        "oldestExpiration": 10
+      },
+      "expectedBodySchema": null,
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "POST",
+      "path": "/api/jobs",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "data": "job data",
+        "expiresIn": -10
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "GET",
+      "path": "/api/jobs",
+      "expectedStatus": 200,
+      "expectedBody": [],
+      "expectedBodySchema": null,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "GET",
+      "path": "/api/queue/status",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "numJobs": 0,
+        "oldestExpiration": null
+      },
+      "expectedBodySchema": null,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc4",
+      "method": "GET",
+      "path": "/api/jobs/999",
+      "expectedStatus": 404,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc5",
+      "method": "POST",
+      "path": "/api/jobs",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "data": null,
+        "expiresIn": 10
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "bullmq",
+    "rabbitmq",
+    "kafka",
+    "background-jobs",
+    "workers",
+    "retry",
+    "delayed-jobs",
+    "queues",
+    "job-queue",
+    "message-expiration",
+    "expiry"
+  ]
+}

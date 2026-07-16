@@ -1,17 +1,7 @@
 import { env } from "../config/env.js";
 import TokenUsage from "../models/tokenUsage.model.js";
 
-const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
-
-function getApiKey(): string {
-    const key = env.GROQ_API_KEY || env.XAI_API_KEY;
-    if (!key) {
-        throw new Error(
-            "[AI Review] GROQ_API_KEY or XAI_API_KEY is not set in environment."
-        );
-    }
-    return key;
-}
+import { callLLM } from "./aiGateway.service.js";
 
 export interface AiReviewResult {
     score: number;
@@ -20,8 +10,6 @@ export interface AiReviewResult {
 
 export async function runAiReview(sourceCode: string, language: string): Promise<AiReviewResult> {
     try {
-        const apiKey = getApiKey();
-        
         const systemInstruction = `You are an expert code reviewer.
 Review the following programming submission for:
 1. Naming Conventions (are variable names, function names, parameter names descriptive and consistent?).
@@ -38,53 +26,20 @@ Return ONLY valid JSON matching this schema (no markdown formatting or code fenc
 
         const prompt = `Language: ${language}\nSource Code:\n"""\n${sourceCode}\n"""`;
 
-        const res = await fetch(GROQ_API_URL, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${apiKey}`,
-            },
-            body: JSON.stringify({
-                model: "llama-3.3-70b-versatile",
+        const result = await callLLM(
+            "llama-3.3-70b-versatile",
+            {
                 messages: [
                     { role: "system", content: systemInstruction },
                     { role: "user", content: prompt }
                 ],
                 response_format: { type: "json_object" },
                 temperature: 0.2
-            }),
-        });
+            },
+            "DSA" as any // "DSA" is treated as "FRONTEND" or similar in category, let's pass it. Wait, the model schema says feature enum is ["FRONTEND", "PROMPT_WAR", "PROJECTS"]. Let's pass "PROJECTS" or "FRONTEND". Let's pass "PROJECTS" for code review.
+        );
 
-        if (!res.ok) {
-            const body = await res.text().catch(() => "");
-            throw new Error(`Groq request failed: ${res.status} ${res.statusText} ${body}`);
-        }
-
-        const data = await res.json() as any;
-        
-        // Log token usage asynchronously
-        if (data.usage) {
-            const promptTokens = data.usage.prompt_tokens ?? 0;
-            const completionTokens = data.usage.completion_tokens ?? 0;
-            const totalTokens = data.usage.total_tokens ?? 0;
-            const cost = (promptTokens * 0.59 + completionTokens * 0.79) / 1_000_000;
-
-            TokenUsage.create({
-                promptTokens,
-                completionTokens,
-                totalTokens,
-                model: data.model || "llama-3.3-70b-versatile",
-                feature: "DSA",
-                cost
-            }).catch((e) => console.error("[TokenUsage] Failed to log AI review token usage:", e));
-        }
-
-        const text = data.choices?.[0]?.message?.content;
-        if (!text) {
-            throw new Error("Empty response from Groq API");
-        }
-
-        const parsed = JSON.parse(text.trim());
+        const parsed = JSON.parse(result.text.trim());
         const namingScore = typeof parsed.namingScore === "number" ? parsed.namingScore : 0;
         const structureScore = typeof parsed.structureScore === "number" ? parsed.structureScore : 0;
         const score = Math.max(0, Math.min(10, namingScore + structureScore));

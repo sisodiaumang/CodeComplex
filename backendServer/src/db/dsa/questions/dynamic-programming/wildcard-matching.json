@@ -1,0 +1,224 @@
+{
+  "_id": "wildcard-matching",
+  "title": "Wildcard Matching",
+  "slug": "wildcard-matching",
+  "difficulty": "Hard",
+  "category": "DP",
+  "subCategory": "DP on Strings",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 500,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "Dynamic Programming",
+      "Strings"
+    ],
+    "patterns": [],
+    "prerequisites": [
+      "KMP Algorithm",
+      "Substring Matching"
+    ],
+    "variants": [],
+    "tags": [
+      "Dynamic Programming",
+      "String Matching",
+      "Backtracking",
+      "Memoization"
+    ],
+    "keywords": [
+      "Wildcard Matching",
+      "Dynamic Programming",
+      "String Matching",
+      "KMP Algorithm",
+      "Memoization",
+      "Backtracking",
+      "Substring Matching",
+      "Regex",
+      "String Algorithms"
+    ],
+    "interviewFrequency": 4,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "Implement wildcard pattern matching with support for '?' and '*' where:\n\n- '?' Matches any single character.\n- '*' Matches any sequence of characters (including the empty sequence).\n\nThe matching should cover the entire string (not partial).\n\nThe function to implement is:\n\n`bool isMatch(const char *s, const char *p);`\n\nSome examples:\n\n- `isMatch(\"aa\",\"a\")` → false\n- `isMatch(\"aa\",\"*\")` → true\n- `isMatch(\"cb\",\"?a\")` → false\n- `isMatch(\"adceb\",\"*a*b\")` → true",
+    "inputFormat": "s\np",
+    "outputFormat": "true/false",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "s",
+        "type": "string",
+        "min": 0,
+        "max": 1000,
+        "description": "The string to match."
+      },
+      {
+        "variable": "p",
+        "type": "string",
+        "min": 0,
+        "max": 1000,
+        "description": "The pattern to match against."
+      }
+    ],
+    "examples": [
+      {
+        "input": "aa\na",
+        "output": "false",
+        "explanation": "The string 'aa' does not match the pattern 'a' because 'a' only matches one character."
+      },
+      {
+        "input": "aa\n*",
+        "output": "true",
+        "explanation": "The string 'aa' matches the pattern '*' because '*' can match any sequence of characters."
+      },
+      {
+        "input": "cb\n?a",
+        "output": "false",
+        "explanation": "The string 'cb' does not match the pattern '?a' because '?' can only match one character."
+      },
+      {
+        "input": "adceb\n*a*b",
+        "output": "true",
+        "explanation": "The string 'adceb' matches the pattern '*a*b' because '*' can match 'adc' and 'b' can match 'b'."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "The problem involves string matching with special characters '?' and '*'. Think about how these characters affect the matching process."
+    },
+    {
+      "order": 2,
+      "text": "The '?' character can match any single character in the string, while the '*' character can match any sequence of characters, including an empty sequence. Consider using dynamic programming to track matches."
+    },
+    {
+      "order": 3,
+      "text": "A 2D array or matrix can be used to store the dynamic programming state, where one dimension corresponds to the string and the other to the pattern. The state at each cell can represent whether the substring up to that point matches the subpattern."
+    },
+    {
+      "order": 4,
+      "text": "When encountering a '*', consider two possibilities: the '*' matches zero characters or it matches one or more characters. This will help in filling up the dynamic programming table."
+    },
+    {
+      "order": 5,
+      "text": "The core technique here is dynamic programming with a 2D table, where dp[i][j] represents if the first i characters in the string match the first j characters in the pattern. The '*' character will be handled by considering it as a match for zero or more characters, and '?' as a match for any single character."
+    }
+  ],
+  "editorial": {
+    "title": "Wildcard Matching: A Dynamic Programming Approach",
+    "intuition": "The problem requires finding a match between a given string and a pattern that may contain wildcard characters. The key observation is that the problem can be solved using dynamic programming, where the state dp[i][j] represents whether the first i characters in the string match the first j characters in the pattern.",
+    "bruteForce": "A brute force approach would involve generating all possible combinations of characters that the wildcard characters in the pattern could match, and then checking each combination against the string. This approach is correct but slow, with an exponential time complexity, because it does not take advantage of the structure of the problem.",
+    "betterSolution": "The optimal approach is to use dynamic programming to build up a 2D table, dp, where dp[i][j] is True if the first i characters in the string match the first j characters in the pattern.",
+    "optimalSolution": "The dynamic programming approach starts by initializing the dp table with False values, except for dp[-1][-1] which is set to True, because an empty string matches an empty pattern. Then, it fills in the table in a bottom-up manner, using the recurrence relation: if the current character in the pattern is '*', then dp[i][j] is True if either the '*' matches zero characters in the string (dp[i][j + 1]) or the '*' matches one or more characters in the string (dp[i + 1][j]); otherwise, dp[i][j] is True if the current character in the string matches the current character in the pattern (or the pattern character is '?') and the remaining characters in the string match the remaining characters in the pattern (dp[i + 1][j + 1]).",
+    "proofOfCorrectness": "The correctness of the dynamic programming approach can be proved by induction on the length of the string and the pattern. The base case is dp[-1][-1] = True, which is correct because an empty string matches an empty pattern. For the inductive step, assume that dp[i + 1][j + 1] is correct for all i and j; then, we can show that dp[i][j] is correct by considering the two cases: (1) the current character in the pattern is '*', and (2) the current character in the pattern is not '*'. In both cases, the recurrence relation ensures that dp[i][j] is True if and only if the first i characters in the string match the first j characters in the pattern.",
+    "dryRun": "For example, given the string 'aa' and the pattern 'a*', the dynamic programming approach would fill in the dp table as follows: dp[2][2] = True because 'a*' matches 'aa'; dp[2][1] = False because 'a' does not match 'aa'; dp[1][2] = True because '*' matches zero characters in 'aa'; and so on.",
+    "commonMistakes": [
+      "Not initializing the dp table correctly",
+      "Not handling the '*' character correctly",
+      "Not considering the base case correctly",
+      "Not filling in the dp table in a bottom-up manner",
+      "Not checking the boundary conditions correctly",
+      "Not returning the correct value for dp[0][0]"
+    ],
+    "timeComplexity": "O(len(s) * len(p))",
+    "spaceComplexity": "O(len(s) * len(p))"
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    bool isMatch(const char *s, const char *p) {\n        // TODO: implement\n        return false;\n    }\n};",
+    "java": "import java.util.*;\n\nclass Solution {\n    public boolean isMatch(String s, String p) {\n        // TODO: implement\n        return false;\n    }\n}",
+    "python": "class Solution:\n    def isMatch(self, s: str, p: str) -> bool:\n        # TODO: implement\n        pass",
+    "javascript": "/**\n * @param {string} s\n * @param {string} p\n * @return {boolean}\n */\nvar isMatch = function(s, p) {\n    // TODO: implement\n    return false;\n};"
+  },
+  "functionSignature": {
+    "cpp": "bool isMatch(const char *s, const char *p);",
+    "java": "public boolean isMatch(String s, String p);",
+    "python": "def isMatch(self, s: str, p: str) -> bool:",
+    "javascript": "var isMatch = function(s, p);"
+  },
+  "solutions": {
+    "python": "import sys\n\nclass Solution:\n    def isMatch(self, s: str, p: str) -> bool:\n        dp = [[False] * (len(p) + 1) for _ in range(len(s) + 1)]\n        dp[-1][-1] = True\n        for i in range(len(s), -1, -1):\n            for j in range(len(p) - 1, -1, -1):\n                match = i < len(s) and (p[j] == s[i] or p[j] == '?')\n                if p[j] == '*':\n                    dp[i][j] = dp[i][j + 1] or (i < len(s) and dp[i + 1][j])\n                else:\n                    dp[i][j] = match and dp[i + 1][j + 1]\n        return dp[0][0]\n\nif __name__ == '__main__':\n    s = sys.stdin.readline().strip()\n    p = sys.stdin.readline().strip()\n    sol = Solution()\n    print('true' if sol.isMatch(s, p) else 'false')",
+    "cpp": "#include <numeric>\n#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    bool isMatch(const char *s, const char *p) {\n        int sLen = strlen(s);\n        int pLen = strlen(p);\n        vector<vector<bool>> dp(sLen + 1, vector<bool>(pLen + 1, false));\n        dp[sLen][pLen] = true;\n        for (int i = sLen; i >= 0; i--) {\n            for (int j = pLen - 1; j >= 0; j--) {\n                bool match = i < sLen && (p[j] == s[i] || p[j] == '?');\n                if (p[j] == '*') {\n                    dp[i][j] = dp[i][j + 1] || (i < sLen && dp[i + 1][j]);\n                } else {\n                    dp[i][j] = match && dp[i + 1][j + 1];\n                }\n            }\n        }\n        return dp[0][0];\n    }\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    string s, p;\n    getline(cin, s);\n    getline(cin, p);\n    Solution sol;\n    cout << (sol.isMatch(s.c_str(), p.c_str()) ? \"true\" : \"false\") << \"\\n\";\n    return 0;\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.5
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "aa\na",
+      "output": "false",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "aa\n*",
+      "output": "true",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_3",
+      "input": "cb\n?a",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_4",
+      "input": "adceb\n*a*b",
+      "output": "true",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint_5",
+      "input": "a\n",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

@@ -1,0 +1,188 @@
+{
+  "_id": "c475f3976611692986667bb2",
+  "title": "Implementing a Payment Gateway",
+  "slug": "implementing-a-payment-gateway-medium-payment",
+  "difficulty": "Medium",
+  "topics": [
+    "PAYMENT"
+  ],
+  "statement": "Design a payment gateway API that allows users to create new payments, retrieve existing payments, and cancel payments. Implement the following endpoints according to the provided specification. Note that the database storing the payments is in-memory and for demonstration purposes only.\n\n**Endpoints**\n\n### Create Payment\n\n* **POST /api/payments**\nCreate a new payment with the given details. The request body should contain `amount`, `currency`, and `description`. The payment ID will be generated and returned in the response.\n\n### Get Payment\n\n* **GET /api/payments/:id**\nRetrieve a payment by its ID. The response should include the payment details if the payment exists, otherwise it should return a 404 error.\n\n### Cancel Payment\n\n* **DELETE /api/payments/:id**\nCancel a payment by its ID. The response should return a 204 status code if the payment is successfully cancelled, otherwise it should return a 404 error.\n\n**Constraints**\n\n* The `amount` field in the request body should be a positive number.\n* The `currency` field in the request body should be a valid ISO 4217 currency code (e.g. USD, EUR, INR).\n* Payments can only be cancelled if they are in the 'pending' or 'processing' state.",
+  "constraints": [
+    "Use the in-memory array provided to store payments.",
+    "Use the provided endpoint specification to implement the API."
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/payments",
+      "description": "Create a new payment with the given details."
+    },
+    {
+      "method": "GET",
+      "path": "/api/payments/:id",
+      "description": "Retrieve a payment by its ID."
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/payments/:id",
+      "description": "Cancel a payment by its ID."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\n  \"name\": \"payment-api\",\n  \"version\": \"1.0.0\",\n  \"main\": \"index.js\",\n  \"scripts\": {\n    \"start\": \"node index.js\"\n  },\n  \"dependencies\": {\n    \"express\": \"^4.18.2\"\n  }\n}",
+    "index.js": "const express = require('express');\nconst app = express();\napp.use(express.json());\n\nconst payments = [\n  // TODO: Implement create payment logic here\n];\n\n// TODO: Implement get payment logic here\n\n// TODO: Implement cancel payment logic here\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "POST",
+      "path": "/api/payments",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "amount": 100,
+        "currency": "USD",
+        "description": "Test payment"
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "id": "\\d+",
+        "amount": 100,
+        "currency": "USD",
+        "description": "Test payment"
+      },
+      "expectedBodySchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^\\d+$"
+          },
+          "amount": {
+            "type": "number",
+            "minimum": 0
+          },
+          "currency": {
+            "type": "string",
+            "pattern": "^USD$"
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "amount",
+          "currency",
+          "description"
+        ]
+      },
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "GET",
+      "path": "/api/payments/1",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "id": "1",
+        "amount": 100,
+        "currency": "USD",
+        "description": "Test payment"
+      },
+      "expectedBodySchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^\\d+$"
+          },
+          "amount": {
+            "type": "number",
+            "minimum": 0
+          },
+          "currency": {
+            "type": "string",
+            "pattern": "^USD$"
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "amount",
+          "currency",
+          "description"
+        ]
+      },
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "DELETE",
+      "path": "/api/payments/1",
+      "expectedStatus": 204,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "GET",
+      "path": "/api/payments/2",
+      "expectedStatus": 404,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "POST",
+      "path": "/api/payments",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "amount": -100,
+        "currency": "USD",
+        "description": "Test payment"
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "stripe",
+    "razorpay",
+    "webhooks",
+    "checkout",
+    "refunds",
+    "subscriptions",
+    "payment",
+    "gateway",
+    "api",
+    "express",
+    "node"
+  ]
+}

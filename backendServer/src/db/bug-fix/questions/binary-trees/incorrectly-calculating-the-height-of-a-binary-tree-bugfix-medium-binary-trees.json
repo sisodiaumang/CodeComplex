@@ -1,0 +1,164 @@
+{
+  "_id": "6f635fe71c8787d6006082df",
+  "title": "Incorrectly Calculating the Height of a Binary Tree",
+  "slug": "incorrectly-calculating-the-height-of-a-binary-tree-bugfix-medium-binary-trees",
+  "difficulty": "Medium",
+  "category": "DSA",
+  "subCategory": "TREE",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 25,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "tree"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Solve the problem and fix the bugs.",
+    "inputFormat": "Input to function solve(Node root) will be a tree root. Root will be a null pointer (for empty tree) or a Node object with value, left and right child pointers.",
+    "outputFormat": "Output to function solve(Node root) should be the maximum sum of a path in a binary tree.",
+    "notes": "Your solution must not use iterative methods to traverse the tree, and should handle the case where the tree is empty (root is null).",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "root",
+        "type": "Node",
+        "description": "tree root"
+      }
+    ],
+    "examples": [
+      {
+        "input": "null",
+        "output": "0",
+        "explanation": ""
+      },
+      {
+        "input": "[1,2,3]",
+        "output": "6",
+        "explanation": ""
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Remember to use depth-first traversal techniques in your solution."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(N) ",
+    "spaceComplexity": "O(h) where h is the height of the tree"
+  },
+  "starterCode": {
+    "cpp": "class Solution { public: int solve(Node* root) { // TODO: implement } }",
+    "java": "public class Solution { public int solve(Node root) { // TODO: implement return 0; } }",
+    "python": "class Solution: def solve(self, root: 'Node') -> int: # TODO: implement return 0",
+    "javascript": "function solve(root) { // TODO: implement return 0; }"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution { public: int solve(Node* root) { if (root) return 1 + std::max(solve(root->left), solve(root->right)); else return 0; } }",
+    "java": "public class Solution { public int solve(Node root) { if (root) return 1 + Math.max(solve(root.left), solve(root.right)); else return 0; } }",
+    "python": "class Solution: def solve(self, root: 'Node') -> int: if root: return 1 + max(self.solve(root.left), self.solve(root.right)); else: return 0",
+    "javascript": "function solve(root) { if (root) return 1 + Math.max(solve(root.left), solve(root.right)); else return 0; }"
+  },
+  "functionSignature": {
+    "cpp": "int solve(Node* root);",
+    "java": "int solve(Node root);",
+    "python": "def solve(self, root: 'Node') -> int:",
+    "javascript": "int solve(Node root);"
+  },
+  "solutions": {
+    "python": "class Solution: def solve(self, root: 'Node') -> int:\n    if root is None:\n        return 0\n    max_sum = max(self.solve(root.left), self.solve(root.right))\n    return max(root.val, root.val + max_sum)\n\n# Read from sys.stdin and print to sys.stdout\nimport sys\ndef main():\n    input = sys.stdin.readline\n    root = Node.from_input(input)\n    solution = Solution()\n    print(solution.solve(root))\nif __name__ == '__main__':\n    main()\n\nclass Node:\n    def __init__(self, val, left=None, right=None):\n        self.val = val\n        self.left = left\n        self.right = right\n\n    @classmethod\n    def from_input(cls, input_):\n        values = [int(x) for x in input_.strip().split()]\n        values.pop(0)\n        stack = [(None, None, 0)]\n        for val in values:\n            node, parent, is_left = stack.pop()\n            if parent is None:\n                stack.append((val, None, False))\n                continue\n            if is_left:\n                parent.left = cls(val)\n            else:\n                parent.right = cls(val)\n            stack.append((val, parent, False))\n        return values[0] if values else None",
+    "cpp": "#include <iostream>\n#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nclass Node {\npublic:\n    int val;\n    Node* left;\n    Node* right;\n\n    Node(int val, Node* left = nullptr, Node* right = nullptr)\n        : val(val), left(left), right(right) {}\n\n    static Node* from_input(istream& in) {\n        vector<int> values;\n        string s;\n        while (in >> s) values.push_back(stoi(s));\n        if (values.empty()) return nullptr;\n        Node* root = new Node(values[0]);\n        for (int i = 1; i < values.size(); ++i) {\n            Node* node = new Node(values[i]);\n            if (values[i - 1] == 0) root->left = node;\n            else root->right = node;\n        }\n        return root;\n    }\n};\n\nclass Solution {\npublic:\n    int solve(Node* root) {\n        if (root == nullptr) return 0;\n        int max_sum = max(solve(root->left), solve(root->right));\n        return max(root->val, root->val + max_sum);\n    }\n};\n\nint main() {\n    istream& in = cin;\n    Node* root = Node::from_input(in);\n    Solution solution;\n    cout << solution.solve(root) << endl;\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "0\n",
+      "output": "0\n",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "3\n1 2 3\n",
+      "output": "6\n",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "7\n7 5 2 1 9 3 4\n",
+      "output": "16\n",
+      "isVisible": false,
+      "weight": 2,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

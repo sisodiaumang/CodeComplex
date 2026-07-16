@@ -1,0 +1,158 @@
+{
+  "_id": "19b5cb48839421ff2e7d5b34",
+  "title": "Correcting a Faulty Binary Exponentiation",
+  "slug": "correcting-a-faulty-binary-exponentiation-bugfix-hard-sorting-2",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "Number Theory",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 100,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "math"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "You are given a function `binaryExponentiation` that calculates `(x * x * ... * x)` `n` times, where `n` is the power. However, there is a logical bug in the function. You need to correct it to make it return the correct result.",
+    "inputFormat": "Input a single number `x`, and another number `n` as the power.",
+    "outputFormat": "Return `x` raised to the power of `n`.",
+    "notes": "You can assume `x` and `n` are integers, and `n` is non-negative.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 0,
+        "max": 2147483647,
+        "description": "The power to which `x` is raised."
+      }
+    ],
+    "examples": [
+      {
+        "input": "5 2",
+        "output": "25",
+        "explanation": ""
+      },
+      {
+        "input": "2 10",
+        "output": "1024",
+        "explanation": ""
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Think about how you can use bitwise operations to efficiently calculate `x` raised to the power of `n`."
+    }
+  ],
+  "editorial": {
+    "title": "Correcting a Faulty Binary Exponentiation",
+    "intuition": "intuition details.",
+    "bruteForce": "Brute force approach would be to use a loop to multiply `x` with itself `n` times, but this approach has a time complexity of O(n).",
+    "betterSolution": "A better solution would be to use the property of binary exponentiation that `x^n = (x^(n/2))^2` if `n` is even, and `x^n = x * (x^((n-1)/2))^2` if `n` is odd.",
+    "optimalSolution": "The optimal solution is to use a loop to divide `n` by 2 and calculate `x` raised to the power of half of `n` at each iteration. This approach has a time complexity of O(log n).",
+    "proofOfCorrectness": "proof Of Correctness details.",
+    "dryRun": "dry Run details.",
+    "commonMistakes": [
+      "Using a brute force approach with a loop to multiply `x` with itself `n` times.",
+      "Not handling the case when `n` is 0."
+    ],
+    "timeComplexity": "O(log n)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\n  public:\n    long long binaryExponentiation(long long x, int n);\n  };",
+    "java": "public class Solution {\n  public:\n    long binaryExponentiation(long x, int n);\n  }",
+    "python": "class Solution:\n  def binaryExponentiation(self, x: int, n: int) -> int:\n    pass",
+    "javascript": "function binaryExponentiation(x, n) {\n  return ;\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\n  public:\n    long long binaryExponentiation(long long x, int n) {\n      long long result = 1;\n      while (n > 0) {\n        long long k = 1;\n        while (n > 0 && k <= n) {\n          result *= x;\n          n -= k;\n        }\n        k *= 2;\n      }\n      return result;\n    }\n  };",
+    "java": "public class Solution {\n  public:\n    long binaryExponentiation(long x, int n) {\n      long long result = 1;\n      while (n > 0) {\n        long long k = 1;\n        while (n > 0 && k <= n) {\n          result *= x;\n          n -= k;\n        }\n        k *= 2;\n      }\n      return result;\n    }\n  }",
+    "python": "class Solution:\n  def binaryExponentiation(self, x: int, n: int) -> int:\n    result = 1\n    while n > 0:\n      k = 1\n      while n > 0 and k <= n:\n        result *= x\n        n -= k\n      k *= 2\n    return result",
+    "javascript": "function binaryExponentiation(x, n) {\n  var result = 1;\n  while (n > 0) {\n    var k = 1;\n    while (n > 0 && k <= n) {\n      result *= x;\n      n -= k;\n    }\n    k *= 2;\n  }\n  return result;\n}"
+  },
+  "functionSignature": {
+    "cpp": "long long binaryExponentiation(long long x, int n);",
+    "java": "long binaryExponentiation(long x, int n);",
+    "python": "def binaryExponentiation(self, x: int, n: int) -> int:",
+    "javascript": "var binaryExponentiation = function(x, n) {"
+  },
+  "solutions": {
+    "python": "class Solution:\n  def binaryExponentiation(self, x: int, n: int) -> int:\n    if n == 0:\n      return 1\n    temp = self.binaryExponentiation(x, n // 2)\n    if n % 2 == 0:\n      return temp * temp\n    else:\n      return x * temp * temp\n\ns = Solution()\nprint(s.binaryExponentiation(5, 2))\nprint(s.binaryExponentiation(2, 10))",
+    "cpp": "#include <iostream>\n\nclass Solution {\n public:\n  long long binaryExponentiation(long long x, int n) {\n    if (n == 0)\n      return 1;\n    long long temp = binaryExponentiation(x, n / 2);\n    if (n % 2 == 0)\n      return temp * temp;\n    else\n      return x * temp * temp;\n  }\n};\n\nint main() {\n  Solution s;\n  std::cout << s.binaryExponentiation(5, 2) << std::endl;\n  std::cout << s.binaryExponentiation(2, 10) << std::endl;\n  return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2000,
+    "memoryLimit": 102400,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5 2",
+      "output": "25",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "2 10",
+      "output": "1024",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

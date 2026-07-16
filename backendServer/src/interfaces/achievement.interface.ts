@@ -16,6 +16,13 @@ export type Rarity =
     | "LEGENDARY";
 
 
+export interface IMascotReward {
+    name: string;
+    icon: string;
+    description: string;
+}
+
+
 export interface IAchievement extends Document {
 
     name: string;
@@ -31,6 +38,8 @@ export interface IAchievement extends Document {
     requirement: number;
 
     xpReward: number;
+
+    mascotReward?: IMascotReward;
 
     createdAt: Date;
     updatedAt: Date;

@@ -1,0 +1,138 @@
+{
+  "title": "Fixing CSS Media Query Priority with Inconsistent Feature Ordering",
+  "subCategory": "CSS Media Query Priority",
+  "statement": {
+    "markdown": "Given a CSS stylesheet with multiple media queries, fix the buggy implementation that incorrectly prioritizes media queries based on their feature ordering. The goal is to correctly apply the styles based on the media query conditions.",
+    "inputFormat": "A string containing CSS stylesheets with multiple media queries.",
+    "outputFormat": "A string containing the corrected CSS stylesheet with correct media query priority.",
+    "notes": "The implementation should correctly handle multiple media queries with different feature ordering.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 100,
+        "description": "Number of media queries in the stylesheet."
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 1,
+        "max": 10,
+        "description": "Number of features in each media query."
+      }
+    ],
+    "examples": [
+      {
+        "input": "body { width: 100px; }\n@media (max-width: 800px) and (orientation: landscape) { width: 200px; }\n@media (max-width: 600px) and (orientation: portrait) { width: 300px; }\n@media (max-width: 400px) and (orientation: landscape) { width: 400px; }",
+        "output": "body { width: 100px; }\n@media (max-width: 800px) and (orientation: landscape) { width: 200px; }\n@media (max-width: 600px) and (orientation: portrait) { width: 300px; }\n@media (max-width: 800px) and (orientation: portrait) { width: 400px; }",
+        "explanation": "The corrected media query priority is based on the maximum feature value."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "CSS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "css"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Analyze the media query conditions and their ordering."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(n*m)",
+    "spaceComplexity": "O(n*m)"
+  },
+  "starterCode": {
+    "javascript": "function fixMediaQueries(css) { // fix the media queries here }",
+    "python": "class Solution:\n  def fix_media_queries(self, css: str) -> str: // fix the media queries here"
+  },
+  "buggyStarterCode": {
+    "javascript": "function fixMediaQueries(css) { let queries = css.split('@media'); for (let query of queries) { let features = query.split(' and '); let maxFeature = Math.max(...features.map(f => f.trim().split(':')[0])); } return css; }",
+    "python": "class Solution:\n  def fix_media_queries(self, css: str) -> str: queries = css.split('@media'); for query in queries: features = query.split(' and '); max_feature = max(f.strip().split(':')[0] for f in features); return css;"
+  },
+  "functionSignature": {
+    "javascript": "var fixMediaQueries = function(css);",
+    "python": "def fix_media_queries(self, css: str) -> str:"
+  },
+  "solutions": {
+    "javascript": "// Solution",
+    "python": "class Solution:\n  def fix_media_queries(self, css: str) -> str: queries = css.split('@media'); queries.sort(key=lambda q: max(f.strip().split(':')[0] for f in q.split(' and '))); return '@media' + ''.join(queries[1:])\n\n\nvar css = 'body { width: 100px; }\n@media (max-width: 800px) and (orientation: landscape) { width: 200px; }\n@media (max-width: 600px) and (orientation: portrait) { width: 300px; }\n@media (max-width: 400px) and (orientation: landscape) { width: 400px; }';\n\nvar result = fixMediaQueries(css);\nconsole.log(result);"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "body { width: 100px; }\n@media (max-width: 800px) and (orientation: landscape) { width: 200px; }\n@media (max-width: 600px) and (orientation: portrait) { width: 300px; }\n@media (max-width: 400px) and (orientation: landscape) { width: 400px; }",
+      "output": "body { width: 100px; }\n@media (max-width: 800px) and (orientation: landscape) { width: 200px; }\n@media (max-width: 600px) and (orientation: portrait) { width: 300px; }\n@media (max-width: 800px) and (orientation: portrait) { width: 400px; }",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "body { width: 100px; }\n@media (max-width: 500px) and (orientation: landscape) { width: 200px; }\n@media (max-width: 700px) and (orientation: portrait) { width: 300px; }\n@media (max-width: 900px) and (orientation: landscape) { width: 400px; }",
+      "output": "body { width: 100px; }\n@media (max-width: 900px) and (orientation: landscape) { width: 400px; }\n@media (max-width: 700px) and (orientation: portrait) { width: 300px; }\n@media (max-width: 500px) and (orientation: landscape) { width: 200px; }",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "a3d44d1f21646dc2209f99c1",
+  "slug": "fixing-css-media-query-priority-with-inconsistent-feature-ordering-bugfix-medium-css",
+  "mode": "bug_fix",
+  "category": "CSS",
+  "difficulty": "Medium"
+}

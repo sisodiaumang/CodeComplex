@@ -1,0 +1,149 @@
+{
+  "title": "DOCKER Container Port Mapping Validation Bug Fixer",
+  "subCategory": "Docker Port Mapping",
+  "statement": {
+    "markdown": "Write a function that validates the port mappings in a Docker Compose file. The function should take a string representing the Docker Compose file and return `True` if the port mappings are valid and `False` otherwise. Port mappings are valid if each port is a positive integer and no two ports are mapped to the same host port.",
+    "inputFormat": "A string representing the Docker Compose file.",
+    "outputFormat": "A boolean indicating whether the port mappings are valid.",
+    "notes": "The Docker Compose file is in JSON format.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Maximum number of port mappings"
+      }
+    ],
+    "examples": [
+      {
+        "input": "version: '3'\n services:\n  web:\n    ports:\n      - 8080:80\n      - 8081:81",
+        "output": "true",
+        "explanation": "Port mappings are valid"
+      },
+      {
+        "input": "version: '3'\n services:\n  web:\n    ports:\n      - 8080:80\n      - 8080:81",
+        "output": "false",
+        "explanation": "Port 8080 is mapped to two different host ports"
+      },
+      {
+        "input": "version: '3'\n services:\n  web:\n    ports:\n      - 8080:80\n      - a:81",
+        "output": "false",
+        "explanation": "Port 'a' is not a positive integer"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 100,
+    "premium": true,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DOCKER"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "docker"
+    ],
+    "interviewFrequency": 1,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text: Parse the Docker Compose file and extract the port mappings."
+    },
+    {
+      "order": 2,
+      "text": "Second hint text: Validate each port to ensure it is a positive integer."
+    },
+    {
+      "order": 3,
+      "text": "Third hint text: Check if any two ports are mapped to the same host port."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "function validatePortMappings(composeFile) {\n  // TO DO: implement the function\n}",
+    "python": "class Solution:\n  def validate_port_mappings(self, compose_file: str) -> bool:\n    # TO DO: implement the function"
+  },
+  "buggyStarterCode": {
+    "javascript": "function validatePortMappings(composeFile) {\n  try {\n    const ports = JSON.parse(composeFile).services.web.ports;\n    for (const port of ports) {\n      const [containerPort, hostPort] = port.split(':');\n      if (!isNaN(containerPort) && !isNaN(hostPort)) {\n        return true;\n      }\n    }\n    return false;\n  } catch (e) {\n    return false;\n  }\n}",
+    "python": "class Solution:\n  def validate_port_mappings(self, compose_file: str) -> bool:\n    try:\n      ports = JSON.parse(compose_file)['services']['web']['ports']\n      for port in ports:\n        container_port, host_port = port.split(':')\n        if container_port.isnumeric() and host_port.isnumeric():\n          return True\n      return False\n    except Exception as e:\n      return False"
+  },
+  "functionSignature": {
+    "javascript": "function validatePortMappings(composeFile: string): boolean;",
+    "python": "def validate_port_mappings(self, compose_file: str) -> bool:"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction validatePortMappings(composeFile) {\n  try {\n    const compose = JSON.parse(composeFile);\n    const ports = compose.services.web.ports;\n    const hostPorts = new Set();\n    for (const port of ports) {\n      const [containerPort, hostPort] = port.split(':');\n      if (isNaN(containerPort) || isNaN(hostPort)) {\n        return false;\n      }\n      if (hostPorts.has(hostPort)) {\n        return false;\n      }\n      hostPorts.add(hostPort);\n    }\n    return true;\n  } catch (e) {\n    return false;\n  }\n}",
+    "python": "class Solution:\n  def validate_port_mappings(self, compose_file: str) -> bool:\n    try:\n      compose = JSON.parse(compose_file)\n      ports = compose['services']['web']['ports']\n      host_ports = set()\n      for port in ports:\n        container_port, host_port = port.split(':')\n        if not container_port.isnumeric() or not host_port.isnumeric():\n          return False\n        if host_port in host_ports:\n          return False\n        host_ports.add(host_port)\n      return True\n    except Exception as e:\n      return False"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "version: '3'\n services:\n  web:\n    ports:\n      - 8080:80\n      - 8081:81",
+      "output": "true",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "version: '3'\n services:\n  web:\n    ports:\n      - 8080:80\n      - 8080:81",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "_id": "293fa914e87bdf972f9159e4",
+  "slug": "docker-container-port-mapping-validation-bug-fixer-bugfix-hard-docker",
+  "mode": "bug_fix",
+  "category": "DOCKER",
+  "difficulty": "Hard"
+}

@@ -1,0 +1,217 @@
+{
+  "_id": "kth-largest-element-in-array",
+  "title": "Kth Largest Element in Array",
+  "slug": "kth-largest-element-in-array",
+  "difficulty": "Medium",
+  "category": "ARRAY",
+  "subCategory": "Medium Problems",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 500,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "ARRAY",
+      "HEAPS"
+    ],
+    "patterns": [
+      "Kth largest",
+      "Heap"
+    ],
+    "prerequisites": [
+      "Heap Basics"
+    ],
+    "variants": [],
+    "tags": [
+      "Kth largest",
+      "Heap",
+      "Priority Queue"
+    ],
+    "keywords": [
+      "Heapify",
+      "Priority Queue",
+      "Max Heap",
+      "Min Heap"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "Given an integer array `nums` and an integer `k`, return the kth largest element in the array. Note that it is the kth largest element in the sorted order, not the kth distinct element. You must write an algorithm with an average-case time complexity of O(n).",
+    "inputFormat": "The first line contains an integer n, the number of elements in the array.\nThe second line contains n integers representing the array elements.\nThe third line contains an integer k, the position of the largest element to find.",
+    "outputFormat": "The kth largest element in the array.",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 5000,
+        "description": "The number of elements in the array."
+      },
+      {
+        "variable": "k",
+        "type": "integer",
+        "min": 1,
+        "max": "n",
+        "description": "The position of the largest element to find."
+      },
+      {
+        "variable": "nums",
+        "type": "integer",
+        "min": "-10^4",
+        "max": "10^4",
+        "description": "The array elements."
+      }
+    ],
+    "examples": [
+      {
+        "input": "5\n3 2 1 5 6\n2",
+        "output": "5",
+        "explanation": "The kth largest element is the second largest element in the sorted array [6, 5, 3, 2, 1]."
+      },
+      {
+        "input": "4\n10 4 5 8\n3",
+        "output": "5",
+        "explanation": "The kth largest element is the third largest element in the sorted array [10, 8, 5, 4]."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Start by sorting the array, but realize that sorting the entire array will take O(n log n) time, which is not acceptable for this problem."
+    },
+    {
+      "order": 2,
+      "text": "Think about using a data structure that allows you to find the kth largest element in O(n) time, such as a max heap or a priority queue."
+    },
+    {
+      "order": 3,
+      "text": "Consider using the QuickSelect algorithm, which is a variant of the QuickSort algorithm that can find the kth smallest (or largest) element in O(n) time on average."
+    },
+    {
+      "order": 4,
+      "text": "Realize that the QuickSelect algorithm works by selecting a pivot element from the array and partitioning the other elements into two sub-arrays, such that all elements less than the pivot are on the left and all elements greater than the pivot are on the right."
+    },
+    {
+      "order": 5,
+      "text": "Understand that the key to the QuickSelect algorithm is to choose the pivot element carefully, so that the partitioning step takes O(n) time on average."
+    }
+  ],
+  "editorial": {
+    "title": "Kth Largest Element in Array: From Brute Force to Quickselect",
+    "intuition": "The problem boils down to ordering the array without fully sorting it. If we could locate the element that would sit at position k when the array is sorted in descending order, we would be done. The naive approach sorts the whole array, which is overkill because we only need one position. The key observation is that the kth largest is the same as the (n‑k)th smallest in 0‑based indexing. This allows us to use a selection algorithm that partitions the array around a pivot, discarding half of the elements in each step. The classic Quickselect does exactly that, achieving linear expected time by repeatedly narrowing the search interval until the pivot lands on the target index.",
+    "bruteForce": "A straightforward solution is to sort the array in descending order and return the element at index k‑1. Sorting takes O(n log n) time and uses O(1) extra space if an in‑place sort is employed. While this is correct, it spends unnecessary work reordering elements that are irrelevant to the kth position, making it slower than necessary for large n.",
+    "betterSolution": "The optimal approach is Quickselect, a selection algorithm that partitions the array around a randomly chosen pivot. Each partition step places the pivot in its final sorted position and discards either the left or right half of the array, depending on where the target index lies. Repeating this process reduces the problem size geometrically, yielding an average‑case linear time complexity. The implementation uses only the input array for storage, so the extra space remains O(1).",
+    "optimalSolution": "Implement Quickselect with a helper partition function that moves all elements ≤ pivot to the left and all > pivot to the right. Randomly pick a pivot to avoid pathological cases. After partitioning, if the pivot index equals the target (n‑k), return that element; otherwise recurse (or iterate) on the appropriate subarray. This algorithm runs in expected O(n) time and uses constant extra space.",
+    "proofOfCorrectness": "Let target = n‑k. The partition function guarantees that after each call, the pivot is in its correct sorted position and all elements to its left are ≤ pivot while all to its right are > pivot. If pivot index = target, the pivot is exactly the element that would occupy that index in a fully sorted array, so it is the kth largest. If pivot index < target, the kth largest must lie in the right subarray; if pivot index > target, it lies in the left subarray. By repeatedly applying this argument, the algorithm converges to the correct element. Since the pivot is chosen uniformly at random, the expected number of elements examined in each step halves, leading to an expected linear number of operations. Thus the algorithm is correct and efficient.",
+    "dryRun": "Consider nums=[3,2,1,5,6,4] and k=2. target=6‑2=4. First pivot (say 4) partitions array to [3,2,1,4,6,5]. Pivot index=3 < target, so search right subarray [6,5]. Next pivot 5 partitions to [3,2,1,4,5,6]; pivot index=5 > target, so search left subarray [6]. Now l==r, return 6, which is the 2nd largest.",
+    "commonMistakes": [
+      "Choosing a fixed pivot (e.g., always the last element) can lead to quadratic time on already sorted inputs; use randomization.",
+      "Confusing 0‑based and 1‑based indices for k; remember target = n‑k for 0‑based indexing.",
+      "Implementing partition incorrectly, swapping elements in the wrong order, which breaks the invariant.",
+      "Using recursion without tail‑recursion optimization, causing stack overflow for large n.",
+      "Not updating the search bounds correctly after partition, leading to infinite loops.",
+      "Ignoring the fact that Quickselect only guarantees expected linear time; for worst‑case guarantees, a median‑of‑medians approach is needed."
+    ],
+    "timeComplexity": "O(n log k)",
+    "spaceComplexity": "O(k)"
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    int findKthLargest(vector<int>& nums, int k) {\n        // TODO: implement\n        return 0;\n    }\n};",
+    "java": "import java.util.*;\n\nclass Solution {\n    public int findKthLargest(int[] nums, int k) {\n        // TODO: implement\n        return 0;\n    }\n}",
+    "python": "class Solution:\n    def findKthLargest(self, nums: List[int], k: int) -> int:\n        # TODO: implement\n        pass",
+    "javascript": "/**\n * @param {number[]} nums\n * @param {number} k\n * @return {number}\n */\nvar findKthLargest = function(nums, k) {\n    // TODO: implement\n    return 0;\n};"
+  },
+  "functionSignature": {
+    "cpp": "int findKthLargest(vector<int>& nums, int k);",
+    "java": "public int findKthLargest(int[] nums, int k);",
+    "python": "def findKthLargest(self, nums: List[int], k: int) -> int:",
+    "javascript": "var findKthLargest = function(nums, k);"
+  },
+  "solutions": {
+    "python": "import sys\nimport heapq\nfrom typing import List\n\nclass Solution:\n    def findKthLargest(self, nums: List[int], k: int) -> int:\n        return heapq.nlargest(k, nums)[-1]\n\nif __name__ == '__main__':\n    it = iter(sys.stdin.read().splitlines())\n    try:\n        n = int(next(it))\n        nums = list(map(int, next(it).split()))\n        k = int(next(it))\n    except StopIteration:\n        sys.exit(0)\n    sol = Solution()\n    ans = sol.findKthLargest(nums, k)\n    print(ans)",
+    "cpp": "#include <numeric>\n#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    int findKthLargest(vector<int>& nums, int k) {\n        sort(nums.rbegin(), nums.rend());\n        return nums[k-1];\n    }\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int n;\n    if (!(cin >> n)) return 0;\n    vector<int> nums(n);\n    for (int i = 0; i < n; i++) cin >> nums[i];\n    int k;\n    if (!(cin >> k)) return 0;\n    Solution sol;\n    int ans = sol.findKthLargest(nums, k);\n    cout << ans << \"\\n\";\n    return 0;\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.2
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5\n3 2 1 5 6\n2",
+      "output": "5",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "4\n10 4 5 8\n3",
+      "output": "5",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint_3",
+      "input": "1\n1\n1",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "boundary_4",
+      "input": "5000\n-1000 1000 0 -1000 1000\n1",
+      "output": "1000",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    },
+    {
+      "id": "duplicate_5",
+      "input": "5\n10 10 5 5 5\n3",
+      "output": "5",
+      "isVisible": false,
+      "weight": 1,
+      "category": "duplicate"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

@@ -1,0 +1,155 @@
+{
+  "title": "Fixing the React Memoized Component Update Bug",
+  "subCategory": "React Hooks",
+  "statement": {
+    "markdown": "A memoized React component is supposed to prevent unnecessary re-renders by caching the component's props. However, the `useMemo` hook is not being updated correctly when the props change. Fix the bug in the `useMemo` hook to ensure the component is updated correctly when the props change.",
+    "inputFormat": "The input will be an object with props",
+    "outputFormat": "The output should be the updated memoized value",
+    "notes": "The memoized value should be updated when the props change.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 100,
+        "description": "Number of props"
+      },
+      {
+        "variable": "prop1",
+        "type": "string",
+        "min": 0,
+        "max": 100,
+        "description": "Prop 1"
+      },
+      {
+        "variable": "prop2",
+        "type": "number",
+        "min": 0,
+        "max": 100,
+        "description": "Prop 2"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"prop1\": \"hello\", \"prop2\": 42}",
+        "output": "{\"value\": \"hello\"}",
+        "explanation": "Initial render"
+      },
+      {
+        "input": "{\"prop1\": \"hello\", \"prop2\": 42}",
+        "output": "{\"value\": \"hello\"}",
+        "explanation": "No props changed"
+      },
+      {
+        "input": "{\"prop1\": \"world\", \"prop2\": 42}",
+        "output": "{\"value\": \"world\"}",
+        "explanation": "Props changed"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "REACT"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "react"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Check the `useMemo` hook"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial: Fixing the Memoized Component Update Bug",
+    "intuition": "The `useMemo` hook is not being updated correctly. Check the dependencies.",
+    "bruteForce": "Check the code and try to fix the bug manually.",
+    "betterSolution": "",
+    "optimalSolution": "The `useMemo` hook should depend on the props.",
+    "proofOfCorrectness": "The memoized value should be updated when the props change.",
+    "dryRun": "Check the code with the given examples.",
+    "commonMistakes": [
+      "Not updating the memoized value when the props change",
+      "Not using the correct dependency"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "// A memoized React component\nimport { useState, useMemo } from 'react';\n\nfunction MemoizedComponent({ props }) {\n  const [value, setValue] = useState(null);\n  const memoizedValue = useMemo(() => {\n    // TO DO: implement the memoized value calculation\n  }, []);\n  return <div>Value: {memoizedValue}</div>;\n}\n\nexport default MemoizedComponent;",
+    "python": "from typing import Dict\nfrom functools import lru_cache\n\nclass MemoizedComponent:\n    def __init__(self, props: Dict):\n        self.props = props\n        self.value = None\n\n    def calculate_memoized_value(self) -> str:\n        # TO DO: implement the memoized value calculation\n        pass\n\n    def render(self) -> str:\n        return f\"Value: {self.calculate_memoized_value()}\">\n\nclass Solution:\n    def solve(self, props: Dict) -> str:\n        component = MemoizedComponent(props)\n        return component.render()\n\nsolution = Solution()\n\nimport sys\n\nif __name__ == \"__main__\":\n    props = eval(input())\n    print(solution.solve(props))"
+  },
+  "buggyStarterCode": {
+    "javascript": "// A memoized React component\nimport { useState, useMemo } from 'react';\n\nfunction MemoizedComponent({ props }) {\n  const [value, setValue] = useState(null);\n  // BUG: incorrect dependency\n  const memoizedValue = useMemo(() => {\n    return props.prop1;\n  }, []);\n  return <div>Value: {memoizedValue}</div>;\n}\n\nexport default MemoizedComponent;",
+    "python": "from typing import Dict\nfrom functools import lru_cache\n\nclass MemoizedComponent:\n    def __init__(self, props: Dict):\n        self.props = props\n        self.value = None\n\n    def calculate_memoized_value(self) -> str:\n        # TO DO: implement the memoized value calculation\n        pass\n\n    def render(self) -> str:\n        return f\"Value: {self.calculate_memoized_value()}\">\n\nclass Solution:\n    def solve(self, props: Dict) -> str:\n        component = MemoizedComponent(props)\n        return component.render()\n\nsolution = Solution()\n\nimport sys\n\nif __name__ == \"__main__\":\n    props = eval(input())\n    print(solution.solve(props))\n\n# BUG: incorrect dependency\nclass MemoizedComponent:\n    def __init__(self, props: Dict):\n        self.props = props\n        self.value = None\n\n    def calculate_memoized_value(self) -> str:\n        # BUG: no update when props change\n        return self.props['prop1']"
+  },
+  "functionSignature": {
+    "javascript": "function MemoizedComponent({ props }) { ... }",
+    "python": "class MemoizedComponent:\n    def __init__(self, props: Dict) -> None: ... \n    def render(self) -> str: ..."
+  },
+  "solutions": {
+    "javascript": "// A memoized React component\nimport { useState, useMemo } from 'react';\n\nfunction MemoizedComponent({ props }) {\n  const [value, setValue] = useState(null);\n  // Fix: correct dependency\n  const memoizedValue = useMemo(() => {\n    return props.prop1;\n  }, [props]);\n  return <div>Value: {memoizedValue}</div>;\n}\n\nexport default MemoizedComponent;",
+    "python": "from typing import Dict\nfrom functools import lru_cache\n\nclass MemoizedComponent:\n    def __init__(self, props: Dict):\n        self.props = props\n        self.value = None\n\n    def calculate_memoized_value(self) -> str:\n        # Fix: correct dependency\n        return self.props['prop1']\n\n    def render(self) -> str:\n        return f\"Value: {self.calculate_memoized_value()}\">\n\nclass Solution:\n    def solve(self, props: Dict) -> str:\n        component = MemoizedComponent(props)\n        return component.render()\n\nsolution = Solution()\n\nimport sys\n\nif __name__ == \"__main__\":\n    props = eval(input())\n    print(solution.solve(props))"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"prop1\": \"hello\", \"prop2\": 42}",
+      "output": "{\"value\": \"hello\"}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"prop1\": \"hello\", \"prop2\": 42}",
+      "output": "{\"value\": \"hello\"}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "882738e0cfa0e21ccccb878c",
+  "slug": "fixing-the-react-memoized-component-update-bug-bugfix-easy-react",
+  "mode": "bug_fix",
+  "category": "REACT",
+  "difficulty": "Easy"
+}

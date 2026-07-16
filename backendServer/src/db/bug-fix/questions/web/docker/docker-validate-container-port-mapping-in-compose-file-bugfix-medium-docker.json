@@ -1,0 +1,143 @@
+{
+  "title": "DOCKER Validate Container Port Mapping in Compose File",
+  "subCategory": "Docker Port Mapping",
+  "statement": {
+    "markdown": "Given a Docker Compose file, write a function to validate the port mappings. The function should check if the port mappings are valid (i.e., the host port is not already in use by another service), and if the container port is within the valid range (0-65535).",
+    "inputFormat": "An object representing the Docker Compose file, with services and their corresponding port mappings.",
+    "outputFormat": "A boolean indicating whether the port mappings are valid.",
+    "notes": "The function should not modify the original Compose file.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of services in the Compose file"
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of port mappings per service"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"services\": {\"web\": {\"port\": [8000, 8080]}, \"db\": {\"port\": [5432]}}}",
+        "output": "true",
+        "explanation": "The port mappings are valid for both services."
+      },
+      {
+        "input": "{\"services\": {\"web\": {\"port\": [8000, 8080]}, \"db\": {\"port\": [8000]}}}",
+        "output": "false",
+        "explanation": "The port 8000 is already in use by the web service, so the port mappings are invalid."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DOCKER"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "docker"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Check the port mappings for each service separately."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(n*m)",
+    "spaceComplexity": "O(n*m)"
+  },
+  "starterCode": {
+    "javascript": "function validatePortMappings(composeFile) {\n  // TO DO: implement the logic to validate the port mappings\n}\nreturn composeFile;",
+    "python": "class Solution:\n  def validate_port_mappings(self, compose_file) -> bool:\n    # TO DO: implement the logic to validate the port mappings\n    return False"
+  },
+  "buggyStarterCode": {
+    "javascript": "function validatePortMappings(composeFile) {\n  const services = composeFile.services;\n  for (const service in services) {\n    if (services[service].port.length > 0) {\n      const hostPort = services[service].port[0];\n      if (hostPort < 0 || hostPort > 65535) {\n        return false;\n      }\n    }\n  }\n  return true;\n}\nreturn composeFile;",
+    "python": "class Solution:\n  def validate_port_mappings(self, compose_file) -> bool:\n    services = compose_file.services\n    for service in services:\n      if service.port:\n        host_port = service.port[0]\n        if host_port < 0 or host_port > 65535:\n          return False\n    return True\n    return False"
+  },
+  "functionSignature": {
+    "javascript": "function validatePortMappings(composeFile) {\n  return composeFile;\n}",
+    "python": "class Solution:\n  def validate_port_mappings(self, compose_file) -> bool:\n    return False"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction validatePortMappings(composeFile) {\n  const services = composeFile.services;\n  const hostPorts = new Set();\n  for (const service in services) {\n    for (const port of services[service].port) {\n      if (port < 0 || port > 65535) {\n        return false;\n      }\n      if (hostPorts.has(port)) {\n        return false;\n      }\n      hostPorts.add(port);\n    }\n  }\n  return true;\n}\nreturn composeFile;",
+    "python": "class Solution:\n  def validate_port_mappings(self, compose_file) -> bool:\n    services = compose_file.services\n    host_ports = set()\n    for service in services:\n      for port in service.port:\n        if port < 0 or port > 65535:\n          return False\n        if port in host_ports:\n          return False\n        host_ports.add(port)\n    return True\n    return False"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"services\": {\"web\": {\"port\": [8000, 8080]}, \"db\": {\"port\": [5432]}}}",
+      "output": "true",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"services\": {\"web\": {\"port\": [8000, 8080]}, \"db\": {\"port\": [8000]}}}",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "83d4cb4f85340098ac26d644",
+  "slug": "docker-validate-container-port-mapping-in-compose-file-bugfix-medium-docker",
+  "mode": "bug_fix",
+  "category": "DOCKER",
+  "difficulty": "Medium"
+}

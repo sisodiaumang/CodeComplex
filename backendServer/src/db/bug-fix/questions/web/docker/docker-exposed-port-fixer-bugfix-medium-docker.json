@@ -1,0 +1,135 @@
+{
+  "title": "Docker Exposed Port Fixer",
+  "subCategory": "Docker Port Mapping",
+  "statement": {
+    "markdown": "Given a Docker container with exposed ports, write a function to check if all exposed ports are properly mapped to the host machine. The function should return `true` if all ports are mapped, and `false` otherwise. The function should handle cases where the Docker container has no exposed ports, and the host machine has no available ports. The input will be a dictionary containing the Docker container's exposed ports and the host machine's available ports.\n\nExample:\n\n```\nInput: { 'docker_ports': [ '80:8080', '22:22' ], 'host_ports': [ 8080, 22 ] }\nOutput: true\n\n```\n\n**Constraints:**\n\n* `docker_ports` and `host_ports` are lists.\n* `docker_ports` contains port mappings in the format `host_port:container_port`.\n* `host_ports` contains available port numbers.\n* `docker_ports` and `host_ports` have the same length.\n* `docker_ports` has no duplicate port mappings.\n\n**Notes:*\n\n* You can assume that the input is valid, i.e., there are no invalid port numbers.\n* You can use any programming language you prefer.",
+    "inputFormat": "A dictionary containing the Docker container's exposed ports and the host machine's available ports.",
+    "outputFormat": "A boolean value indicating whether all exposed ports are properly mapped to the host machine.",
+    "notes": "Assume that the input is valid, i.e., there are no invalid port numbers.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 100,
+        "description": "Length of docker_ports and host_ports"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{ 'docker_ports': [ '80:8080', '22:22' ], 'host_ports': [ 8080, 22 ] }",
+        "output": "true",
+        "explanation": "All exposed ports are properly mapped to the host machine."
+      },
+      {
+        "input": "{ 'docker_ports': [ '80:8080' ], 'host_ports': [ 8080, 22, 33 ] }",
+        "output": "false",
+        "explanation": "Port 22 is not mapped to the host machine."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DOCKER"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "docker"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Check if the number of exposed ports matches the number of available ports."
+    },
+    {
+      "order": 2,
+      "text": "Verify that each exposed port is mapped to an available port."
+    }
+  ],
+  "editorial": {
+    "title": "Docker Exposed Port Fixer",
+    "intuition": "The key to solving this problem is to iterate over the exposed ports and check if each one is mapped to an available port.",
+    "bruteForce": "You can use a brute force approach to check each exposed port individually.",
+    "betterSolution": "You can use a more efficient approach by checking if the number of exposed ports matches the number of available ports.",
+    "optimalSolution": "The optimal solution is to iterate over the exposed ports and check if each one is mapped to an available port. You can use a single loop to achieve this.",
+    "proofOfCorrectness": "The proof of correctness is based on the fact that each exposed port is mapped to an available port.",
+    "dryRun": "Dry run the function with the input { 'docker_ports': [ '80:8080', '22:22' ], 'host_ports': [ 8080, 22 ] }.",
+    "commonMistakes": [
+      "forgetting to check for duplicate port mappings",
+      "assuming that the input is always valid"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "function isExposedPortMapped(dockerPorts, hostPorts) {\n  // Your code here\n}"
+  },
+  "buggyStarterCode": {
+    "javascript": "function isExposedPortMapped(dockerPorts, hostPorts) {\n  if (dockerPorts.length !== hostPorts.length) {\n    return false;\n  }\n  for (let i = 0; i < dockerPorts.length; i++) {\n    let [hostPort, containerPort] = dockerPorts[i].split(':');\n    if (!hostPorts.includes(parseInt(hostPort))) {\n      return false;\n    }\n  }\n  return true;\n}"
+  },
+  "functionSignature": {
+    "javascript": "function isExposedPortMapped(dockerPorts, hostPorts) {\n}"
+  },
+  "solutions": {
+    "javascript": "function isExposedPortMapped(dockerPorts, hostPorts) {\n  if (dockerPorts.length !== hostPorts.length) {\n    return false;\n  }\n  for (let i = 0; i < dockerPorts.length; i++) {\n    let [hostPort, containerPort] = dockerPorts[i].split(':');\n    if (hostPorts.indexOf(parseInt(hostPort)) === -1) {\n      return false;\n    }\n  }\n  return true;\n}\n\nvar input = JSON.parse(process.stdin.readFileSync(0, 'utf-8'));\nvar dockerPorts = input.docker_ports;\nvar hostPorts = input.host_ports;\nprocess.stdout.write(isExposedPortMapped(dockerPorts, hostPorts) + '\\n');"
+  },
+  "judgeConfig": {
+    "timeLimit": 1000,
+    "memoryLimit": 65536,
+    "supportedLanguages": [
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{ 'docker_ports': [ '80:8080', '22:22' ], 'host_ports': [ 8080, 22 ] }",
+      "output": "true",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{ 'docker_ports': [ '80:8080' ], 'host_ports': [ 8080, 22, 33 ] }",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "106eece99c1124ae7e3d0a10",
+  "slug": "docker-exposed-port-fixer-bugfix-medium-docker",
+  "mode": "bug_fix",
+  "category": "DOCKER",
+  "difficulty": "Medium"
+}

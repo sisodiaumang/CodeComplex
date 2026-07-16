@@ -1,0 +1,141 @@
+{
+  "title": "Fixing Middleware Order for a Basic Express API",
+  "subCategory": "Routing",
+  "statement": {
+    "markdown": "You are given a simple Express API with two routes, one for GET and one for POST. However, the order of the middleware is incorrect, causing the POST route to be executed before the GET route. Your task is to fix the middleware order to ensure that the correct routes are executed.",
+    "inputFormat": "The input will be the URL path as a string.",
+    "outputFormat": "The output will be the response from the API, which will be either a JSON object or a string.",
+    "notes": "Note that you should not use any external dependencies or libraries.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The maximum number of requests"
+      }
+    ],
+    "examples": [
+      {
+        "input": "/users",
+        "output": "{\"message\": \"GET request received\"}",
+        "explanation": "The GET request is received and the message is returned as JSON"
+      },
+      {
+        "input": "/users",
+        "output": "{\"error\": \"Invalid request\"}",
+        "explanation": "The GET request is received but the API returns an error because it is not expecting a GET request"
+      },
+      {
+        "input": "/users",
+        "output": "{\"message\": \"POST request received\"}",
+        "explanation": "The POST request is received and the message is returned as JSON"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "EXPRESS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "express"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Check the middleware order to ensure that the correct routes are executed"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial",
+    "intuition": "The middleware order is critical in determining which routes are executed. You should prioritize routes that are not expecting requests over those that are.",
+    "bruteForce": "You can try different middleware orders to see which one works correctly.",
+    "betterSolution": "",
+    "optimalSolution": "The optimal solution is to prioritize routes that are not expecting requests over those that are.",
+    "proofOfCorrectness": "To prove the correctness of the solution, you can test it with different inputs and verify that it returns the expected output.",
+    "dryRun": "Here is a step-by-step example of how the solution works:",
+    "commonMistakes": [
+      "Incorrect middleware order",
+      "Not prioritizing routes"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "// Define the Express app\nvar express = require('express');\nvar app = express();\n// Define the GET route\napp.get('/users', function(req, res) {\n  res.json({ message: 'GET request received' });\n});\n// Define the POST route\napp.post('/users', function(req, res) {\n  // Fix this line to return the correct response\n  res.json({ message: 'POST request received' });\n});\n// Start the server\napp.listen(3000, function() {\n  console.log('Server started on port 3000');\n});",
+    "python": "class Solution:\n  def __init__(self):\n    # Create an Express app\n    self.app = express()\n  def get_users(self):\n    # Define the GET route\n    self.app.get('/users', lambda req, res: res.json({ 'message': 'GET request received' }))\n  def post_users(self):\n    # Define the POST route\n    self.app.post('/users', lambda req, res: res.json({ 'message': 'POST request received' }))\n# Initialize the Solution\nsolution = Solution()\n# Start the server\nsolution.app.listen(3000, lambda: print('Server started on port 3000'))"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Define the Express app\nvar express = require('express');\nvar app = express();\n// Define the POST route\napp.post('/users', function(req, res) {\n  // Fix this line to return the correct response\n  res.json({ message: 'POST request received' });\n});\n// Define the GET route\napp.get('/users', function(req, res) {\n  res.json({ message: 'GET request received' });\n});\n// Start the server\napp.listen(3000, function() {\n  console.log('Server started on port 3000');\n});",
+    "python": "class Solution:\n  def __init__(self):\n    # Create an Express app\n    self.app = express()\n  def post_users(self):\n    # Define the POST route\n    self.app.post('/users', lambda req, res: res.json({ 'message': 'POST request received' }))\n  def get_users(self):\n    # Define the GET route\n    self.app.get('/users', lambda req, res: res.json({ 'message': 'GET request received' }))\n# Initialize the Solution\nsolution = Solution()\n# Start the server\nsolution.app.listen(3000, lambda: print('Server started on port 3000'))"
+  },
+  "functionSignature": {
+    "javascript": "var solve = function() {\n  // Fix the middleware order to ensure that the correct routes are executed\n};",
+    "python": "def solve(self):\n  # Fix the middleware order to ensure that the correct routes are executed\n"
+  },
+  "solutions": {
+    "javascript": "// Fix the middleware order\napp.get('/users', function(req, res) {\n  res.json({ message: 'GET request received' });\n});\n// The POST route should be executed before the GET route\napp.post('/users', function(req, res) {\n  res.json({ message: 'POST request received' });\n});",
+    "python": "class Solution:\n  def __init__(self):\n    # Create an Express app\n    self.app = express()\n  def post_users(self):\n    # The POST route should be executed before the GET route\n    self.app.post('/users', lambda req, res: res.json({ 'message': 'POST request received' }))\n  def get_users(self):\n    # Define the GET route\n    self.app.get('/users', lambda req, res: res.json({ 'message': 'GET request received' }))\n# Initialize the Solution\nsolution = Solution()\n# Start the server and fix the middleware order\nsolution.app.listen(3000, lambda: print('Server started on port 3000'))"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "/users",
+      "output": "{\"message\": \"GET request received\"}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "/users",
+      "output": "{\"error\": \"Invalid request\"}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "85b3dda6f6907fc8e3ddb56a",
+  "slug": "fixing-middleware-order-for-a-basic-express-api-bugfix-easy-express",
+  "mode": "bug_fix",
+  "category": "EXPRESS",
+  "difficulty": "Easy"
+}

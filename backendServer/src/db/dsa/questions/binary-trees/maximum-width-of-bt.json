@@ -1,0 +1,204 @@
+{
+  "_id": "maximum-width-of-bt",
+  "title": "Maximum Width of BT",
+  "slug": "maximum-width-of-bt",
+  "difficulty": "Medium",
+  "category": "TREE",
+  "subCategory": "Hard Problems",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 400,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "BINARY TREES",
+      "TREE"
+    ],
+    "patterns": [
+      "BINARY TREE",
+      "WIDTH",
+      "LEVEL ORDER"
+    ],
+    "prerequisites": [
+      "BINARY TREE TRAVERSALS"
+    ],
+    "variants": [],
+    "tags": [
+      "BINARY TREE",
+      "TREE",
+      "LEVEL ORDER TRAVERSAL",
+      "WIDTH OF BT"
+    ],
+    "keywords": [
+      "BINARY TREE",
+      "LEVEL ORDER",
+      "WIDTH",
+      "TREE"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "The maximum width of a binary tree is the largest width among all levels. The width of a level is defined as the number of nodes in that level. Given the root of a binary tree, return the maximum width of the binary tree. The maximum width is the largest of the following: The number of nodes in the root level. The number of nodes in any non-leaf level. For example, given a binary tree with nodes [1, 3, 2, 5, 3, null, 9], the maximum width is 4 (occuring at the 2nd level).",
+    "inputFormat": "1\nroot node value\nroot left child node value\nroot right child node value",
+    "outputFormat": "single integer representing maximum width",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "nodes",
+        "type": "integer",
+        "min": 0,
+        "max": 1000,
+        "description": "The number of nodes in the tree."
+      },
+      {
+        "variable": "node values",
+        "type": "integer",
+        "min": "-10^5",
+        "max": "10^5",
+        "description": "The values of the nodes in the tree."
+      }
+    ],
+    "examples": [
+      {
+        "input": "1\n3\n2\n5\n3\nnull\n9",
+        "output": "3",
+        "explanation": "The maximum width is 4 (occuring at the 2nd level)."
+      },
+      {
+        "input": "1",
+        "output": "1",
+        "explanation": "The maximum width is 1 (occuring at the root level)."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "To find the maximum width of a binary tree, you should first understand the structure of a binary tree and how to traverse it level by level."
+    },
+    {
+      "order": 2,
+      "text": "The problem can be solved by using a level order traversal (BFS) approach, where you process all nodes at a given depth level before moving on to the next depth level."
+    },
+    {
+      "order": 3,
+      "text": "As you traverse the tree level by level, keep track of the number of nodes at each level and update the maximum width if the current level's width is greater than the maximum width found so far."
+    }
+  ],
+  "editorial": {
+    "title": "Maximum Width of a Binary Tree: From Brute Force to Optimal Breadth‑First Search",
+    "intuition": "The width of a level is simply the number of nodes that actually exist at that depth.  A naïve approach would enumerate every possible depth and count nodes, but that repeats work and is unnecessary.  The key insight is that a single level‑by‑level traversal already gives us the counts we need, and the queue naturally holds exactly the nodes of the current level.",
+    "bruteForce": "A brute‑force solution might first build an array of all nodes per depth by recursively traversing the tree, then iterate over that array to find the maximum length.  This would still visit each node once, but the extra data structure and the two passes over the tree add constant‑factor overhead and complicate the code.  Moreover, if the tree is skewed, the recursion depth could reach O(N), risking stack overflow.",
+    "betterSolution": "The optimal solution uses a breadth‑first search (BFS).  By enqueuing children level by level, the queue always contains exactly the nodes of the current depth.  Taking the queue size at the start of each level gives the width of that level in O(1) time.  Updating a running maximum yields the answer after a single pass.",
+    "optimalSolution": "Perform a standard BFS: start with the root in a queue.  While the queue is not empty, record its current size as the width of the current level, update the maximum width, then dequeue all nodes of that level, enqueuing their non‑null children.  Repeat until the queue empties.  This visits each node once and uses only the queue for storage.",
+    "proofOfCorrectness": "At any moment during BFS, the queue contains exactly the nodes at the current depth because we first enqueue all children of the previous depth before moving on.  Therefore, the size of the queue at the start of the loop equals the number of nodes at that depth, i.e., the width.  Since we examine every depth exactly once and keep the maximum, the algorithm returns the maximum width of the tree.",
+    "dryRun": "Consider the tree: 1 → left 2, right 3; 2 → left 4; 3 → right 5.  Queue starts [1]; size=1 → max=1.  Process 1, enqueue 2,3 → queue [2,3]; size=2 → max=2.  Process 2,3, enqueue 4,5 → queue [4,5]; size=2 → max stays 2.  Process 4,5, no children → queue empty.  Result 2.",
+    "commonMistakes": [
+      "Assuming the queue size after enqueuing children gives the width, but it actually gives the width of the next level; the correct width is the size before processing the level.",
+      "Using recursion and storing all nodes per depth, which can lead to stack overflow on deep trees.",
+      "Mixing up left/right children order when building the tree from input, causing incorrect structure.",
+      "Neglecting to handle null nodes in the input, leading to missing children in the BFS.",
+      "Using a list instead of a deque for the queue, which makes pop(0) O(N) and degrades performance.",
+      "Returning the width of the last processed level instead of the maximum across all levels."
+    ],
+    "timeComplexity": "O(N) where N is the number of nodes, since each node is visited once during BFS.",
+    "spaceComplexity": "O(W) for the queue, where W is the maximum width of the tree (worst-case O(N))."
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass TreeNode {\npublic:\n    int val;\n    TreeNode* left;\n    TreeNode* right;\n    TreeNode() : val(0), left(NULL), right(NULL) {}\n    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}\n};\n\nclass Solution {\npublic:\n    int solve(TreeNode* root) {\n        // TODO: implement\n        return 0;\n    }\n};",
+    "java": "import java.util.*;\n\nclass TreeNode {\n    int val;\n    TreeNode left;\n    TreeNode right;\n    TreeNode(int x) { this.val = x; }\n}\n\nclass Solution {\n    public int solve(TreeNode root) {\n        // TODO: implement\n        return 0;\n    }\n}",
+    "python": "from typing import Optional, List\n\nclass TreeNode:\n    def __init__(self, val: int):\n        self.val = val\n        self.left: Optional['TreeNode'] = None\n        self.right: Optional['TreeNode'] = None\n\nclass Solution:\n    def solve(self, root: Optional[TreeNode]) -> int:\n        # TODO: implement\n        return 0",
+    "javascript": "/**\n * @param {TreeNode} root\n * @return {number}\n */\nvar solve = function(root) {\n    // TODO: implement\n    return 0;\n};"
+  },
+  "functionSignature": {
+    "cpp": "int solve(TreeNode* root);",
+    "java": "public int solve(TreeNode root);",
+    "python": "def solve(self, root: Optional[TreeNode]) -> int:",
+    "javascript": "var solve = function(root);"
+  },
+  "solutions": {
+    "python": "import sys\nfrom collections import deque\n\nclass TreeNode:\n    def __init__(self, val):\n        self.val = val\n        self.left = None\n        self.right = None\n\nclass Solution:\n    def solve(self, root: TreeNode) -> int:\n        if not root:\n            return 0\n        max_width = 0\n        q = deque([root])\n        while q:\n            level_size = len(q)\n            max_width = max(max_width, level_size)\n            for _ in range(level_size):\n                node = q.popleft()\n                if node.left:\n                    q.append(node.left)\n                if node.right:\n                    q.append(node.right)\n        return max_width\n\nif __name__ == '__main__':\n    data = sys.stdin.read().split()\n    if not data:\n        sys.exit(0)\n    # build tree from level order where \"null\" denotes missing node\n    vals = data\n    # first value is root\n    root_val = vals[0]\n    if root_val == 'null':\n        print(0)\n        sys.exit(0)\n    root = TreeNode(int(root_val))\n    q = deque([root])\n    i = 1\n    while q and i < len(vals):\n        node = q.popleft()\n        # left child\n        if i < len(vals):\n            val = vals[i]\n            i += 1\n            if val != 'null':\n                node.left = TreeNode(int(val))\n                q.append(node.left)\n        # right child\n        if i < len(vals):\n            val = vals[i]\n            i += 1\n            if val != 'null':\n                node.right = TreeNode(int(val))\n                q.append(node.right)\n    sol = Solution()\n    print(sol.solve(root))\n",
+    "cpp": "#include <numeric>\n#include <bits/stdc++.h>\nusing namespace std;\n\nstruct TreeNode {\n    int val;\n    TreeNode *left;\n    TreeNode *right;\n    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}\n};\n\nclass Solution {\npublic:\n    int solve(TreeNode* root) {\n        if (!root) return 0;\n        int maxWidth = 0;\n        queue<TreeNode*> q;\n        q.push(root);\n        while (!q.empty()) {\n            int sz = q.size();\n            maxWidth = max(maxWidth, sz);\n            for (int i = 0; i < sz; ++i) {\n                TreeNode* node = q.front(); q.pop();\n                if (node->left) q.push(node->left);\n                if (node->right) q.push(node->right);\n            }\n        }\n        return maxWidth;\n    }\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    vector<string> vals;\n    string token;\n    while (cin >> token) {\n        vals.push_back(token);\n    }\n    if (vals.empty()) return 0;\n    // build tree from level order, \"null\" means no node\n    if (vals[0] == \"null\") {\n        cout << 0 << \"\\n\";\n        return 0;\n    }\n    TreeNode* root = new TreeNode(stoi(vals[0]));\n    queue<TreeNode*> q;\n    q.push(root);\n    size_t i = 1;\n    while (!q.empty() && i < vals.size()) {\n        TreeNode* node = q.front(); q.pop();\n        // left child\n        if (i < vals.size()) {\n            if (vals[i] != \"null\") {\n                TreeNode* left = new TreeNode(stoi(vals[i]));\n                node->left = left;\n                q.push(left);\n            }\n            ++i;\n        }\n        // right child\n        if (i < vals.size()) {\n            if (vals[i] != \"null\") {\n                TreeNode* right = new TreeNode(stoi(vals[i]));\n                node->right = right;\n                q.push(right);\n            }\n            ++i;\n        }\n    }\n    Solution sol;\n    cout << sol.solve(root) << \"\\n\";\n    return 0;\n}\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.2
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "1\n3\n2\n5\n3\nnull\n9",
+      "output": "3",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "1",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint_3",
+      "input": "1\n-100000\n-100000\n-100000",
+      "output": "2",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "boundary_4",
+      "input": "1\n-100000\n-100000",
+      "output": "2",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    },
+    {
+      "id": "duplicate_5",
+      "input": "1\n1\n1",
+      "output": "2",
+      "isVisible": false,
+      "weight": 1,
+      "category": "duplicate"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

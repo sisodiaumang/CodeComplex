@@ -1,0 +1,158 @@
+{
+  "_id": "f94f4cfceaf9e734bc900401",
+  "title": "Incorrectly Identifying Bridges in a Graph with Cycle Detection",
+  "slug": "incorrectly-identifying-bridges-in-a-graph-with-cycle-detection-bugfix-hard-graphs-1",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "BFS/Dijkstra/Bridge Detection",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 45,
+    "points": 100,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "graph"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Solve the problem and fix the bugs.",
+    "inputFormat": "Two lines. The first line contains the number of vertices n, the second line contains n space-separated edge pairs in the form u v.",
+    "outputFormat": "If the graph contains a cycle, the output should be 'Cycle detected'. If the graph has no cycle, print the number of bridges in the graph.",
+    "notes": "Implement Breadth-First Search to detect bridges in a graph.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "4\n1 2\n 2 3\n 3 4\n 1 3",
+        "output": "1",
+        "explanation": "The graph contains a bridge between vertices 3 and 4."
+      },
+      {
+        "input": "5\n1 2\n 2 3\n 3 4\n 4 5\n 1 3",
+        "output": "0",
+        "explanation": "The graph does not contain a bridge."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(...) ",
+    "spaceComplexity": "O(...)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    string findBridges(int n, vector<vector<int>>& edges);\n};",
+    "java": "public class Solution {\npublic:\n    String findBridges(int n, int[][] edges);\n}",
+    "python": "class Solution:\n    def findBridges(self, n: int, edges: list[list[int]]) -> str:\n        pass",
+    "javascript": "function findBridges(n, edges) {\n    // TODO: implement\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    string findBridges(int n, vector<vector<int>>& edges) {\n        int count = 0;\n        for (int i = 0; i < n; i++) {\n            for (int j = i + 1; j < n; j++) {\n                if (edges[i][j] == 1) count++;\n            }\n        }\n        return to_string(count);\n    }\n};",
+    "java": "public class Solution {\npublic:\n    String findBridges(int n, int[][] edges) {\n        int count = 0;\n        for (int i = 0; i < n; i++) {\n            for (int j = i + 1; j < n; j++) {\n                if (edges[i][j] == 1) count++;\n            }\n        }\n        return String.valueOf(count);\n    }\n}",
+    "python": "class Solution:\n    def findBridges(self, n: int, edges: list[list[int]]) -> str:\n        count = 0\n        for i in range(n):\n            for j in range(i + 1, n):\n                if edges[i][j] == 1:\n                    count++\n        return str(count)",
+    "javascript": "function findBridges(n, edges) {\n    let count = 0;\n    for (let i = 0; i < n; i++) {\n        for (let j = i + 1; j < n; j++) {\n            if (edges[i][j] == 1) count++;\n        }\n    }\n    return count.toString();\n}"
+  },
+  "functionSignature": {
+    "cpp": "string findBridges(int n, vector<vector<int>>& edges);",
+    "java": "String findBridges(int n, int[][] edges);",
+    "python": "def findBridges(self, n: int, edges: list[list[int]]) -> str:",
+    "javascript": "function findBridges(n, edges);"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def findBridges(self, n: int, edges: list[list[int]]) -> str:\n        graph = [[] for _ in range(n)]\n        low = [n for _ in range(n)]\n        disc = [n for _ in range(n)]\n        parent = [-1 for _ in range(n)]\n        time = 0\n\n        def dfs(v):\n            disc[v] = time\n            low[v] = time\n            time += 1\n            for u in graph[v]:\n                if disc[u] == n:\n                    parent[u] = v\n                    dfs(u)\n                    low[v] = min(low[v], low[u])\n                elif parent[v] != u:\n                    low[v] = min(low[v], disc[u])\n\n        for u, v in edges:\n            graph[u].append(v)\n            graph[v].append(u)\n\n        for i in range(n):\n            if parent[i] == -1: dfs(i)\n\n        bridges = 0\n        for i in range(n):\n            if low[i] == disc[i]: bridges += 1\n\n        if any(disc[i] < n for i in range(n)):\n            return 'Cycle detected'\n        return str(bridges)\n\n# stdin parser\nimport sys\nn = int(sys.stdin.readline())\nedges = [[int(x) - 1 for x in line.split()] for line in sys.stdin.readlines()]\ns = Solution()\nprint(s.findBridges(n, edges))",
+    "cpp": "class Solution {\npublic:\n    string findBridges(int n, vector<vector<int>>& edges) {\n        vector<vector<int>> graph(n);\n        vector<int> low(n, n);\n        vector<int> disc(n, n);\n        vector<int> parent(n, -1);\n        int time = 0;\n\n        function<void(int)> dfs = [&](int v) {\n            disc[v] = time;\n            low[v] = time;\n            ++time;\n            for (int u : graph[v]) {\n                if (disc[u] == n) {\n                    parent[u] = v;\n                    dfs(u);\n                    low[v] = min(low[v], low[u]);\n                } else if (parent[v] != u) {\n                    low[v] = min(low[v], disc[u]);\n                }\n            }\n        };\n\n        for (auto& edge : edges) {\n            graph[edge[0]].push_back(edge[1]);\n            graph[edge[1]].push_back(edge[0]);\n        }\n\n        for (int i = 0; i < n; ++i) {\n            if (parent[i] == -1) dfs(i);\n        }\n\n        int bridges = 0;\n        for (int i = 0; i < n; ++i) {\n            if (low[i] == disc[i]) bridges++;\n        }\n\n        if (any(disc[i] < n for int i : 0 ... n)) return \"Cycle detected\";\n        return to_string(bridges);\n    }\n};\nint main() {\n    int n; cin >> n;\n    vector<vector<int>> edges(n);\n    for (int i = 0; i < n; ++i) {\n        int u, v; cin >> u >> v; --u; --v;\n        edges[u].push_back(v);\n        edges[v].push_back(u);\n    }\n    Solution s;\n    cout << s.findBridges(n, edges) << endl;\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "4\n1 2\n 2 3\n 3 4\n 1 3",
+      "output": "1",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "5\n1 2\n 2 3\n 3 4\n 4 5\n 1 3",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

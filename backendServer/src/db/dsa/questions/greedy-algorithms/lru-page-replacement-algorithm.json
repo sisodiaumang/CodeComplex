@@ -38,10 +38,10 @@
     "contestEligible": true
   },
   "statement": {
-    "markdown": "Implement a Least Recently Used (LRU) cache data structure that uses a combination of a doubly linked list and a hash map to achieve O(1) time complexity for get and put operations. The LRU Cache is initialized with a positive integer capacity. When the cache reached its capacity, it should invalidate the least recently used item before inserting a new item. The cache also has a get method that returns the value of the key if the key exists in the cache, otherwise it returns -1. The put method inserts or updates the value of the key if the key is already present. If the key does not exist, it inserts the key-value pair. When the cache reaches its capacity, it removes the least recently used item before inserting a new one.",
-    "inputFormat": "The first line contains two integers, capacity and the number of operations. The next lines contain the operations, each operation is either 'get key' or 'put key value'.",
-    "outputFormat": "For each 'get' operation, print the value of the key if it exists in the cache, otherwise print -1. There is no output for 'put' operations.",
-    "notes": "The cache is initially empty.",
+    "markdown": "Design a Least Recently Used (LRU) Cache. The cache is initialized with a positive capacity. Implement the following operations:\n- 'put key value': Update the value of the key if the key exists. Otherwise, add the key-value pair to the cache. If the number of keys exceeds the capacity from this operation, evict the least recently used key.\n- 'get key': Return the value of the key if the key exists, otherwise return -1.",
+    "inputFormat": "The first line contains two integers: capacity and Q (the number of queries).\nEach of the next Q lines contains a query: either 'put key value' or 'get key'.",
+    "outputFormat": "For each 'get' query, print the returned value on a new line.",
+    "notes": "",
     "images": [],
     "constraints": [
       {
@@ -49,40 +49,26 @@
         "type": "integer",
         "min": 1,
         "max": 1000,
-        "description": "The capacity of the cache."
+        "description": "Capacity of the cache"
       },
       {
-        "variable": "number of operations",
+        "variable": "Q",
         "type": "integer",
         "min": 1,
         "max": 1000,
-        "description": "The number of operations."
-      },
-      {
-        "variable": "key",
-        "type": "integer",
-        "min": 0,
-        "max": 10000,
-        "description": "The key to be accessed."
-      },
-      {
-        "variable": "value",
-        "type": "integer",
-        "min": 0,
-        "max": 10000,
-        "description": "The value to be inserted."
+        "description": "Number of queries"
       }
     ],
     "examples": [
       {
-        "input": "2 5\nget 1\nget 2\nput 1 1\nput 2 1\nget 1",
-        "output": "-1\r\n-1\r\n1",
-        "explanation": "Initially the cache is empty. When we try to get key 1 and 2, we get cache miss. When we put key 1 and 2, they are added to the cache. When we get key 1 again, we get a hit."
+        "input": "2 7\nput 1 1\nput 2 2\nget 1\nput 3 3\nget 2\nput 4 4\nget 1",
+        "output": "1\r\n-1\r\n-1",
+        "explanation": "put 1 1: {1:1}\nput 2 2: {1:1, 2:2}\nget 1: returns 1, LRU becomes 2\nput 3 3: evicts 2, {1:1, 3:3}\nget 2: returns -1\nput 4 4: evicts 1, {3:3, 4:4}\nget 1: returns -1"
       },
       {
-        "input": "1 3\nget 1\nput 2 1\nget 2",
-        "output": "-1\r\n1",
-        "explanation": "Initially the cache is empty. When we try to get key 1, we get cache miss. When we put key 2, it is added to the cache. When we get key 2, we get a hit."
+        "input": "2 4\nget 1\nput 1 10\nget 1\nget 2",
+        "output": "-1\r\n10\r\n-1",
+        "explanation": "get 1: returns -1\nput 1 10: {1:10}\nget 1: returns 10\nget 2: returns -1"
       }
     ]
   },
@@ -127,20 +113,20 @@
     "spaceComplexity": "O(capacity)"
   },
   "starterCode": {
-    "cpp": "#include <iostream>\n#include <list>\n#include <unordered_map>\nusing namespace std;\nclass LRUCache {\nprivate:\n    list<pair<int, int>> cache;\n    unordered_map<int, list<pair<int, int>>::iterator> map;\n    int cap;\npublic:\n    LRUCache(int capacity) {\n        cap = capacity;\n    }\n    int get(int key) {\n        // TODO: implement\n        return -1;\n    }\n    void put(int key, int value) {\n        // TODO: implement\n    }\n};\n// @driver-code-start\nint main() {\n    ios_base::sync_with_stdio(false);\n    cin.tie(NULL);\n    int capacity, n;\n    cin >> capacity >> n;\n    LRUCache cache(capacity);\n    for (int i = 0; i < n; i++) {\n        string op;\n        cin >> op;\n        if (op == \"get\") {\n            int key;\n            cin >> key;\n            cout << cache.get(key) << endl;\n        } else {\n            int key, value;\n            cin >> key >> value;\n            cache.put(key, value);\n        }\n    }\n    return 0;\n}",
-    "java": "import java.util.Scanner;\nimport java.util.HashMap;\nimport java.util.Map;\nclass Node {\n    int key, value;\n    Node prev, next;\n    public Node(int key, int value) {\n        this.key = key;\n        this.value = value;\n    }\n}\npublic class LRUCache {\n    private Map<Integer, Node> map;\n    private Node head, tail;\n    private int cap;\n    public LRUCache(int capacity) {\n        cap = capacity;\n        map = new HashMap<>();\n        head = new Node(0, 0);\n        tail = new Node(0, 0);\n        head.next = tail;\n        tail.prev = head;\n    }\n    public int get(int key) {\n        // TODO: implement\n        return -1;\n    }\n    public void put(int key, int value) {\n        // TODO: implement\n    }\n    // @driver-code-start\npublic static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int capacity = sc.nextInt(), n = sc.nextInt();\n        LRUCache cache = new LRUCache(capacity);\n        for (int i = 0; i < n; i++) {\n            String op = sc.next();\n            if (op.equals(\"get\")) {\n                int key = sc.nextInt();\n                System.out.println(cache.get(key));\n            } else {\n                int key = sc.nextInt(), value = sc.nextInt();\n                cache.put(key, value);\n            }\n        }\n    }\n}",
-    "python": "from collections import OrderedDict\nclass LRUCache:\n    def __init__(self, capacity: int):\n        self.cap = capacity\n        self.cache = OrderedDict()\n    def get(self, key: int) -> int:\n        # TODO: implement\n        pass\n    def put(self, key: int, value: int) -> None:\n        # TODO: implement\n        pass\n# @driver-code-start\nif __name__ == '__main__':\n    import sys\n    input = sys.stdin.readline\n    capacity, n = map(int, input().split())\n    cache = LRUCache(capacity)\n    for _ in range(n):\n        op = input().split()\n        if op[0] == 'get':\n            key = int(op[1])\n            print(cache.get(key))\n        else:\n            key, value = int(op[1]), int(op[2])\n            cache.put(key, value)",
-    "javascript": "class LRUCache {\n    constructor(capacity) {\n        this.cap = capacity;\n        this.cache = new Map();\n    }\n    get(key) {\n        // TODO: implement\n        return -1;\n    }\n    put(key, value) {\n        // TODO: implement\n    }\n}\n// @driver-code-start\nconst readline = require('readline');\nconst rl = readline.createInterface({\n    input: process.stdin,\n    output: process.stdout\n});\nlet lines = [];\nrl.on('line', line => {\n    lines.push(line);\n});\nrl.on('close', () => {\n    let [capacity, n, ...operations] = lines;\n    capacity = parseInt(capacity);\n    n = parseInt(n);\n    let cache = new LRUCache(capacity);\n    for (let i = 0; i < n; i++) {\n        let [op, key, value] = operations[i].split(' ');\n        if (op === 'get') {\n            key = parseInt(key);\n            console.log(cache.get(key));\n        } else {\n            key = parseInt(key);\n            value = parseInt(value);\n            cache.put(key, value);\n        }\n    }\n});"
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass LRUCache {\nprivate:\n    int capacity;\n    list<pair<int, int>> cache;\n    unordered_map<int, list<pair<int, int>>::iterator> map;\npublic:\n    LRUCache(int capacity) {\n        this->capacity = capacity;\n    }\n    int get(int key) {\n        // TODO: implement\n        return -1;\n    }\n    void put(int key, int value) {\n        // TODO: implement\n    }\n};",
+    "java": "import java.util.*;\n\nclass LRUCache {\n    private int capacity;\n    private LinkedList<int[]> cache;\n    private HashMap<Integer, int[]> map;\n    public LRUCache(int capacity) {\n        this.capacity = capacity;\n        cache = new LinkedList<>();\n        map = new HashMap<>();\n    }\n    public int get(int key) {\n        // TODO: implement\n        return -1;\n    }\n    public void put(int key, int value) {\n        // TODO: implement\n    }\n}",
+    "python": "from collections import OrderedDict\n\nclass LRUCache:\n    def __init__(self, capacity: int):\n        self.capacity = capacity\n        self.cache = OrderedDict()\n\n    def get(self, key: int) -> int:\n        # TODO: implement\n        return -1\n\n    def put(self, key: int, value: int) -> None:\n        # TODO: implement\n        pass",
+    "javascript": "class LRUCache {\n    constructor(capacity) {\n        this.capacity = capacity;\n        this.cache = new Map();\n    }\n    get(key) {\n        // TODO: implement\n        return -1;\n    }\n    put(key, value) {\n        // TODO: implement\n    }\n}"
   },
   "functionSignature": {
-    "cpp": "class LRUCache {\nprivate:\n    list<pair<int, int>> cache;\n    unordered_map<int, list<pair<int, int>>::iterator> map;\n    int cap;\npublic:\n    LRUCache(int capacity);\n    int get(int key);\n    void put(int key, int value);\n};",
+    "cpp": "class LRUCache {\npublic:\n    LRUCache(int capacity);\n    int get(int key);\n    void put(int key, int value);\n};",
     "java": "public class LRUCache {\n    public LRUCache(int capacity) {}\n    public int get(int key) {}\n    public void put(int key, int value) {}\n}",
-    "python": "class LRUCache:\n    def __init__(self, capacity: int):\n    def get(self, key: int) -> int:\n    def put(self, key: int, value: int) -> None:",
-    "javascript": "class LRUCache {\n    constructor(capacity) {}\n    get(key) {}\n    put(key, value) {}\n}"
+    "python": "class LRUCache:\n    def __init__(self, capacity: int) -> None:\n    def get(self, key: int) -> int:\n    def put(self, key: int, value: int) -> None:",
+    "javascript": "var LRUCache = function(capacity) {}\nfunction get(key) {}\nfunction put(key, value) {}"
   },
   "solutions": {
-    "python": "import sys\nit = iter(sys.stdin.read().split())\ncache_size = int(next(it))\noperations = int(next(it))\nhead = {'key': None, 'value': None, 'prev': None, 'next': None}\ntail = {'key': None, 'value': None, 'prev': head, 'next': None}\nhead['next'] = tail\ncache = {}\nfor _ in range(operations):\n    op = next(it)\n    if op == 'get':\n        key = int(next(it))\n        if key in cache:\n            node = cache[key]\n            node['prev']['next'] = node['next']\n            node['next']['prev'] = node['prev']\n            node['prev'] = head\n            node['next'] = head['next']\n            head['next']['prev'] = node\n            head['next'] = node\n            print(node['value'])\n        else:\n            print(-1)\n    elif op == 'put':\n        key = int(next(it))\n        value = int(next(it))\n        if key in cache:\n            node = cache[key]\n            node['value'] = value\n            node['prev']['next'] = node['next']\n            node['next']['prev'] = node['prev']\n            node['prev'] = head\n            node['next'] = head['next']\n            head['next']['prev'] = node\n            head['next'] = node\n        else:\n            if len(cache) == cache_size:\n                lru_node = tail['prev']\n                lru_node['prev']['next'] = tail\n                tail['prev'] = lru_node['prev']\n                del cache[lru_node['key']]\n            node = {'key': key, 'value': value, 'prev': head, 'next': head['next']}\n            head['next']['prev'] = node\n            head['next'] = node\n            cache[key] = node",
-    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\nstruct Node {\n    int key, value;\n    Node* prev;\n    Node* next;\n    Node(int k, int v) : key(k), value(v), prev(nullptr), next(nullptr) {}\n};\nclass LRUCache {\nprivate:\n    int capacity;\n    unordered_map<int, Node*> cache;\n    Node* head;\n    Node* tail;\npublic:\n    LRUCache(int capacity) : capacity(capacity) {\n        head = new Node(0, 0);\n        tail = new Node(0, 0);\n        head->next = tail;\n        tail->prev = head;\n    }\n    ~LRUCache() {\n        while (head->next != tail) {\n            Node* node = head->next;\n            head->next = node->next;\n            node->next->prev = head;\n            delete node;\n        }\n        delete head;\n        delete tail;\n    }\n    int get(int key) {\n        if (cache.find(key) != cache.end()) {\n            Node* node = cache[key];\n            remove(node);\n            add(node);\n            return node->value;\n        }\n        return -1;\n    }\n    void put(int key, int value) {\n        if (cache.find(key) != cache.end()) {\n            Node* node = cache[key];\n            node->value = value;\n            remove(node);\n            add(node);\n        } else {\n            if (cache.size() == capacity) {\n                Node* lru = tail->prev;\n                remove(lru);\n                cache.erase(lru->key);\n                delete lru;\n            }\n            Node* node = new Node(key, value);\n            add(node);\n            cache[key] = node;\n        }\n    }\n    void remove(Node* node) {\n        node->prev->next = node->next;\n        node->next->prev = node->prev;\n    }\n    void add(Node* node) {\n        node->prev = head;\n        node->next = head->next;\n        head->next->prev = node;\n        head->next = node;\n    }\n};\nint main() {\n    int capacity, operations;\n    cin >> capacity >> operations;\n    LRUCache cache(capacity);\n    for (int i = 0; i < operations; i++) {\n        string op;\n        cin >> op;\n        if (op == \"get\") {\n            int key;\n            cin >> key;\n            cout << cache.get(key) << endl;\n        } else if (op == \"put\") {\n            int key, value;\n            cin >> key >> value;\n            cache.put(key, value);\n        }\n    }\n    return 0;\n}"
+    "python": "import sys\nfrom collections import OrderedDict\n\nclass LRUCache:\n    def __init__(self, capacity: int) -> None:\n        self.capacity = capacity\n        self.cache = OrderedDict()\n\n    def get(self, key: int) -> int:\n        if key in self.cache:\n            value = self.cache.pop(key)\n            self.cache[key] = value\n            return value\n        return -1\n\n    def put(self, key: int, value: int) -> None:\n        if key in self.cache:\n            self.cache.pop(key)\n        elif len(self.cache) >= self.capacity:\n            self.cache.popitem(last=False)\n        self.cache[key] = value\n\nif __name__ == '__main__':\n    it = iter(sys.stdin.read().split())\n    try:\n        capacity, Q = int(next(it)), int(next(it))\n        sol = LRUCache(capacity)\n        for _ in range(Q):\n            query = next(it)\n            if query == 'put':\n                key, value = int(next(it)), int(next(it))\n                sol.put(key, value)\n            elif query == 'get':\n                key = int(next(it))\n                print(sol.get(key))\n    except StopIteration:\n        sys.exit(0)",
+    "cpp": "#include <numeric>\n#include <bits/stdc++.h>\nusing namespace std;\n\nclass LRUCache {\nprivate:\n    int capacity;\n    list<pair<int, int>> lru;\n    unordered_map<int, list<pair<int, int>>::iterator> cache;\n\npublic:\n    LRUCache(int capacity) {\n        this->capacity = capacity;\n    }\n\n    int get(int key) {\n        if (cache.find(key) != cache.end()) {\n            auto it = cache[key];\n            lru.splice(lru.end(), lru, it);\n            return it->second;\n        }\n        return -1;\n    }\n\n    void put(int key, int value) {\n        if (cache.find(key) != cache.end()) {\n            lru.erase(cache[key]);\n        } else if (lru.size() >= capacity) {\n            cache.erase(lru.front().first);\n            lru.pop_front();\n        }\n        lru.push_back({key, value});\n        cache[key] = --lru.end();\n    }\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int capacity, Q;\n    if (!(cin >> capacity >> Q)) return 0;\n    LRUCache sol(capacity);\n    for (int i = 0; i < Q; i++) {\n        string query;\n        cin >> query;\n        if (query == \"put\") {\n            int key, value;\n            if (!(cin >> key >> value)) return 0;\n            sol.put(key, value);\n        } else if (query == \"get\") {\n            int key;\n            if (!(cin >> key)) return 0;\n            cout << sol.get(key) << \"\\n\";\n        }\n    }\n    return 0;\n}"
   },
   "judgeConfig": {
     "timeLimit": 2,
@@ -167,123 +153,43 @@
   "testCases": [
     {
       "id": "sample_1",
-      "input": "2 5\nget 1\nget 2\nput 1 1\nput 2 1\nget 1",
-      "output": "-1\r\n-1\r\n1",
+      "input": "2 7\nput 1 1\nput 2 2\nget 1\nput 3 3\nget 2\nput 4 4\nget 1",
+      "output": "1\r\n-1\r\n-1",
       "isVisible": true,
       "weight": 1,
       "category": "sample"
     },
     {
       "id": "sample_2",
-      "input": "1 3\nget 1\nput 2 1\nget 2",
-      "output": "-1\r\n1",
+      "input": "2 4\nget 1\nput 1 10\nget 1\nget 2",
+      "output": "-1\r\n10\r\n-1",
       "isVisible": false,
       "weight": 1,
       "category": "sample"
     },
     {
       "id": "min_constraint_3",
-      "input": "1 3\nput 0 0\nget 0\nput 1 1",
-      "output": "0",
+      "input": "1 2\nget 1\nput 1 5",
+      "output": "-1",
       "isVisible": false,
       "weight": 1,
       "category": "min_constraint"
     },
     {
       "id": "boundary_4",
-      "input": "1000 2\nput 999 999\nget 999",
-      "output": "999",
+      "input": "5 6\nput 1 10\nput 2 20\nput 3 30\nput 4 40\nput 5 50\nget 1",
+      "output": "10",
       "isVisible": false,
       "weight": 1,
       "category": "boundary"
     },
     {
       "id": "duplicate_5",
-      "input": "2 4\nput 1 1\nput 2 2\nget 1\nput 1 3",
-      "output": "1",
+      "input": "2 5\nput 1 10\nput 1 20\nget 1\nput 2 30\nget 1",
+      "output": "20\r\n20",
       "isVisible": false,
       "weight": 1,
       "category": "duplicate"
-    },
-    {
-      "id": "random_medium_6",
-      "input": "5 6\nput 1 10\nput 2 20\nget 1\nput 3 30\nget 2\nput 4 40",
-      "output": "10\r\n20",
-      "isVisible": false,
-      "weight": 1,
-      "category": "random_medium"
-    },
-    {
-      "id": "sorted_7",
-      "input": "2 5\nget 1\nput 1 1\nget 2\nput 2 2\nget 3",
-      "output": "-1\r\n-1\r\n-1",
-      "isVisible": false,
-      "weight": 1,
-      "category": "sorted"
-    },
-    {
-      "id": "reverse_sorted_8",
-      "input": "3 5\nget 3\nput 3 3\nget 2\nput 2 2\nget 1",
-      "output": "-1\r\n-1\r\n-1",
-      "isVisible": false,
-      "weight": 1,
-      "category": "reverse_sorted"
-    },
-    {
-      "id": "repeated_9",
-      "input": "2 6\nput 1 1\nput 2 2\nget 1\nget 2\nget 1\nput 3 3",
-      "output": "1\r\n2\r\n1",
-      "isVisible": false,
-      "weight": 1,
-      "category": "repeated"
-    },
-    {
-      "id": "random_medium_10",
-      "input": "4 7\nput 1 10\nget 2\nput 3 30\nget 1\nput 2 20\nget 3\nput 4 40",
-      "output": "-1\r\n10\r\n30",
-      "isVisible": false,
-      "weight": 1,
-      "category": "random_medium"
-    },
-    {
-      "id": "zero_11",
-      "input": "1 3\nget 0\nput 0 0\nget 0",
-      "output": "-1\r\n0",
-      "isVisible": false,
-      "weight": 1,
-      "category": "zero"
-    },
-    {
-      "id": "one_12",
-      "input": "1 2\nput 0 0\nget 0",
-      "output": "0",
-      "isVisible": false,
-      "weight": 1,
-      "category": "one"
-    },
-    {
-      "id": "negative_13",
-      "input": "1 2\nput -1 1\nget -1",
-      "output": "1",
-      "isVisible": false,
-      "weight": 1,
-      "category": "negative"
-    },
-    {
-      "id": "random_medium_14",
-      "input": "2 7\nput 1 1\nput 2 2\nget 1\nput 3 3\nget 2\nget 3\nput 4 4",
-      "output": "1\r\n-1\r\n3",
-      "isVisible": false,
-      "weight": 1,
-      "category": "random_medium"
-    },
-    {
-      "id": "large_random_15",
-      "input": "10 15\nget 1\nput 2 3\nget 2\nput 4 5\nget 1\nput 6 7\nget 3\nput 8 9\nget 4\nput 10 11\nget 5\nput 12 13\nget 6\nput 14 15\nget 7",
-      "output": "-1\r\n3\r\n-1\r\n-1\r\n5\r\n-1\r\n7\r\n-1",
-      "isVisible": false,
-      "weight": 1,
-      "category": "large_random"
     }
   ],
   "analytics": {

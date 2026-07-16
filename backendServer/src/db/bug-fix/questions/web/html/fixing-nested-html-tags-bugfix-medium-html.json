@@ -1,0 +1,152 @@
+{
+  "title": "Fixing Nested HTML Tags",
+  "subCategory": "HTML Tag Validation",
+  "statement": {
+    "markdown": "Write a function that validates the structure of nested HTML tags. The function should take a string of HTML tags as input, and return true if the tags are valid, and false otherwise. A valid structure is one where every opening tag has a corresponding closing tag, and the closing tags are in the reverse order of the opening tags. For example, the string '<a><b></b></a>' is valid, but the string '<a><b></a></b>' is not. Ignore any tags that are not nested.",
+    "inputFormat": "A string of HTML tags, where each tag is enclosed in angle brackets '<' and '>'.",
+    "outputFormat": "true if the HTML tags are valid, false otherwise.",
+    "notes": "This is a medium difficulty problem. You can use a stack data structure to solve it.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of HTML tags in the input string."
+      }
+    ],
+    "examples": [
+      {
+        "input": "<a><b></b></a>",
+        "output": "true",
+        "explanation": "The tags are valid because every opening tag has a corresponding closing tag, and the closing tags are in the reverse order of the opening tags."
+      },
+      {
+        "input": "<a><b></a></b>",
+        "output": "false",
+        "explanation": "The tags are not valid because the closing tag '</a>' comes before the closing tag '</b>'."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "HTML"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "html"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use a stack data structure to keep track of the opening tags."
+    },
+    {
+      "order": 2,
+      "text": "When you encounter a closing tag, check if the top of the stack matches the closing tag."
+    },
+    {
+      "order": 3,
+      "text": "If the stack is empty when you encounter a closing tag, or if the top of the stack does not match the closing tag, return false."
+    }
+  ],
+  "editorial": {
+    "title": "HTML Tag Validation",
+    "intuition": "The intuition behind this problem is to use a stack data structure to keep track of the opening tags. When you encounter a closing tag, check if the top of the stack matches the closing tag.",
+    "bruteForce": "One way to solve this problem is to use a brute force approach and manually check each tag. However, this approach is inefficient because it has a time complexity of O(n^2), where n is the number of tags.",
+    "betterSolution": "A better solution is to use a stack data structure to keep track of the opening tags. When you encounter a closing tag, check if the top of the stack matches the closing tag.",
+    "optimalSolution": "The optimal solution is to use a stack data structure to keep track of the opening tags. When you encounter a closing tag, check if the top of the stack matches the closing tag. If the stack is empty when you encounter a closing tag, or if the top of the stack does not match the closing tag, return false.",
+    "proofOfCorrectness": "The proof of correctness is that the stack data structure keeps track of the opening tags, and the closing tags are in the reverse order of the opening tags.",
+    "dryRun": "Here is a dry run of the solution:",
+    "commonMistakes": [
+      "Not using a stack data structure",
+      "Not checking if the stack is empty when encountering a closing tag"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// Write a function that validates the structure of nested HTML tags.\n// The function should take a string of HTML tags as input, and return true if the tags are valid, and false otherwise.\nfunction isValidHTML(s) {\n    // Your code here\n}",
+    "python": "class Solution:\n    def isValidHTML(self, s: str) -> bool:\n        # Your code here\n        pass"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Write a function that validates the structure of nested HTML tags.\n// The function should take a string of HTML tags as input, and return true if the tags are valid, and false otherwise.\nfunction isValidHTML(s) {\n    let stack = [];\n    for (let i = 0; i < s.length; i++) {\n        if (s[i] === '<') {\n            stack.push(s[i + 1]);\n        } else if (s[i] === '>') {\n            // Do nothing\n        }\n    }\n    return stack.length === 0;\n}",
+    "python": "class Solution:\n    def isValidHTML(self, s: str) -> bool:\n        stack = []\n        for i in range(len(s)):\n            if s[i] == '<':\n                stack.append(s[i + 1])\n            elif s[i] == '>':\n                # Do nothing\n        return len(stack) == 0"
+  },
+  "functionSignature": {
+    "javascript": "function isValidHTML(s) {\n",
+    "python": "def isValidHTML(self, s: str) -> bool:"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction isValidHTML(s) {\n    let stack = [];\n    let i = 0;\n    while (i < s.length) {\n        if (s[i] === '<') {\n            let j = s.indexOf('>', i);\n            if (j === -1) {\n                return false;\n            }\n            let tag = s.substring(i + 1, j);\n            if (tag[0] === '/') {\n                if (stack.length === 0 || stack.pop() !== tag.substring(1)) {\n                    return false;\n                }\n            } else {\n                stack.push(tag);\n            }\n            i = j + 1;\n        } else {\n            i++;\n        }\n    }\n    return stack.length === 0;\n}",
+    "python": "class Solution:\n    def isValidHTML(self, s: str) -> bool:\n        stack = []\n        i = 0\n        while i < len(s):\n            if s[i] == '<':\n                j = s.find('>', i)\n                if j == -1:\n                    return False\n                tag = s[i + 1:j]\n                if tag[0] == '/':\n                    if not stack or stack.pop() != tag[1:]:\n                        return False\n                else:\n                    stack.append(tag)\n                i = j + 1\n            else:\n                i += 1\n        return len(stack) == 0"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "<a><b></b></a>",
+      "output": "true",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "<a><b></a></b>",
+      "output": "false",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_3",
+      "input": "<a></a>",
+      "output": "true",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "_id": "4aeab3fc9e15b1f15b330a3f",
+  "slug": "fixing-nested-html-tags-bugfix-medium-html",
+  "mode": "bug_fix",
+  "category": "HTML",
+  "difficulty": "Medium"
+}

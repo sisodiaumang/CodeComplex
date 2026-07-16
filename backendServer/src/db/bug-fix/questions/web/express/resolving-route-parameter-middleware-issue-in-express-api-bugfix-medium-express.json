@@ -1,0 +1,140 @@
+{
+  "title": "Resolving Route Parameter Middleware Issue in Express API",
+  "subCategory": "Routing and Middleware",
+  "statement": {
+    "markdown": "Implement a simple Express API endpoint `/users/:id` that retrieves a user by their ID. The API endpoint should use a custom middleware function `authUser` to authenticate the user before retrieving their details. However, the current implementation has a logical bug that prevents it from working as expected. Your task is to fix this bug and ensure the API endpoint returns the user details correctly when a valid user ID is passed in the request.",
+    "inputFormat": "The API endpoint will receive a GET request with a user ID as a path parameter.",
+    "outputFormat": "The API endpoint should return the user details in JSON format.",
+    "notes": "Time complexity should be O(1) since we are dealing with a simple API endpoint. The solution should handle both valid and invalid user IDs correctly.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "id",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "User ID passed in the request"
+      }
+    ],
+    "examples": [
+      {
+        "input": "GET /users/123 HTTP/1.1\r\nHost: example.com\r\n\r\n",
+        "output": "{\"name\":\"John Doe\",\"email\":\"john@example.com\"}\r\n",
+        "explanation": "Valid user ID returned with user details"
+      },
+      {
+        "input": "GET /users/abc HTTP/1.1\r\nHost: example.com\r\n\r\n",
+        "output": "{\"error\":\"User not found\"}\r\n",
+        "explanation": "Invalid user ID returned with an error message"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 60,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "EXPRESS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "express"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Check the order of middleware functions and their functionality"
+    },
+    {
+      "order": 2,
+      "text": "Understand the difference between `express.Router()` and `app` instances"
+    },
+    {
+      "order": 3,
+      "text": "Verify user ID validation and error handling"
+    }
+  ],
+  "editorial": {
+    "title": "Resolving Route Parameter Middleware Issue in Express API",
+    "intuition": "The correct approach involves understanding the middleware function order and its impact on API endpoint functionality.",
+    "bruteForce": "One possible solution is to use a separate middleware function to handle user ID validation and error handling.",
+    "betterSolution": "A better solution would be to use a single middleware function to handle both user ID validation and error handling.",
+    "optimalSolution": "The optimal solution would be to use a single middleware function with a try-catch block to handle user ID validation and error handling.",
+    "proofOfCorrectness": "This solution ensures that the API endpoint returns the user details correctly when a valid user ID is passed in the request.",
+    "dryRun": "Sample dry run with user ID 123: `/users/123` -> User details returned in JSON format",
+    "commonMistakes": [
+      "Mistaking middleware function order",
+      "Failing to validate user ID",
+      "Not handling errors correctly"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "const express = require('express');\nconst app = express();\n\napp.use((req, res, next) => {\n  // TODO: Implement authUser middleware function\n});\n\napp.get('/users/:id', (req, res) => {\n  // TODO: Implement route handler to retrieve user details\n});\n\napp.listen(3000, () => {\n  console.log('Server listening on port 3000');\n});"
+  },
+  "buggyStarterCode": {
+    "javascript": "const express = require('express');\nconst app = express();\n\napp.use('/users/:id', (req, res, next) => {\n  const id = req.params.id;\n  if (isNaN(id)) {\n    res.status(400).send({ error: 'Invalid user ID' });\n    return;\n  }\n  next();\n});\n\napp.get('/users/:id', (req, res) => {\n  const id = req.params.id;\n  // TO DO: This is the bug - the user details are not retrieved correctly\n  res.send({ name: 'John Doe', email: 'john@example.com' });\n});\n\napp.listen(3000, () => {\n  console.log('Server listening on port 3000');\n});"
+  },
+  "functionSignature": {
+    "javascript": "app.use((req, res, next) => {\n  // TODO: Implement authUser middleware function\n});\n\napp.get('/users/:id', (req, res) => {\n  // TODO: Implement route handler to retrieve user details\n});"
+  },
+  "solutions": {
+    "javascript": "// Solution\nconst express = require('express');\nconst app = express();\n\napp.use((req, res, next) => {\n  const id = req.params.id;\n  if (isNaN(id)) {\n    res.status(400).send({ error: 'Invalid user ID' });\n    return;\n  }\n  // Call the next middleware function in the chain\n  next();\n});\n\napp.get('/users/:id', (req, res) => {\n  const id = req.params.id;\n  // Retrieve user details from the database\n  const user = { name: 'John Doe', email: 'john@example.com' };\n  res.json(user);\n});\n\napp.listen(3000, () => {\n  console.log('Server listening on port 3000');\n});"
+  },
+  "judgeConfig": {
+    "timeLimit": 1000,
+    "memoryLimit": 64,
+    "supportedLanguages": [
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "GET /users/123 HTTP/1.1\r\nHost: example.com\r\n\r\n",
+      "output": "{\"name\":\"John Doe\",\"email\":\"john@example.com\"}\r\n",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "GET /users/abc HTTP/1.1\r\nHost: example.com\r\n\r\n",
+      "output": "{\"error\":\"User not found\"}\r\n",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "d26a0fcf85825d1cc5c7cc1d",
+  "slug": "resolving-route-parameter-middleware-issue-in-express-api-bugfix-medium-express",
+  "mode": "bug_fix",
+  "category": "EXPRESS",
+  "difficulty": "Medium"
+}

@@ -1,0 +1,53 @@
+{
+  "_id": "661b91c9f97edfcbe9786c9d",
+  "title": "React Double Range Slider",
+  "slug": "react-range-slider",
+  "difficulty": "Medium",
+  "topics": [
+    "REACT",
+    "REACT_RANGE_SLIDER"
+  ],
+  "statement": {
+    "markdown": "## React Double Range Slider Component\n\nBuild a double-ended Slider component that selects a price/value range (Min & Max value range handles).\n\n### Requirements:\n1. **Double Handles**: Render two slider handle elements along the track representing the minimum and maximum ranges.\n2. **Min/Max Constraints**: Ensure that the minimum handle coordinate cannot exceed the maximum handle coordinate, preserving their range bounds.\n3. **Track Highlight**: Style a colored background overlay filling the slider track area between the active handles.\n4. **Drag listeners**: Implement drag events smoothly using cursor events or native input range properties.\n"
+  },
+  "constraints": [
+    "Must support responsive styles",
+    "Must use React hooks",
+    "Must style elements with Tailwind CSS"
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "html": "",
+    "css": "",
+    "react": "import React, { useState } from 'react';\n\nexport default function RangeSlider({ min = 0, max = 100, step = 1, onChange }) {\n  // Implement double handle range slider here\n  return null;\n}"
+  },
+  "gradingCriteria": [
+    {
+      "id": "functional_correctness",
+      "description": "Verify that the interactive props, callbacks, and element structures work cleanly.",
+      "weight": 60
+    },
+    {
+      "id": "code_cleanliness",
+      "description": "Verify state structure designs and clean Tailwind CSS layouts.",
+      "weight": 40
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "react",
+      "tailwind"
+    ],
+    "referenceSolution": "import React, { useState, useEffect, useRef } from 'react';\n\nexport default function RangeSlider({ min = 0, max = 100, step = 1, onChange }) {\n  const [minVal, setMinVal] = useState(min);\n  const [maxVal, setMaxVal] = useState(max);\n  \n  const minValRef = useRef(min);\n  const maxValRef = useRef(max);\n  const rangeRef = useRef(null);\n\n  // Get percentage coordinates\n  const getPercent = (value) => Math.round(((value - min) / (max - min)) * 100);\n\n  // Update track fill style\n  useEffect(() => {\n    if (rangeRef.current) {\n      const minPercent = getPercent(minVal);\n      const maxPercent = getPercent(maxValRef.current);\n\n      rangeRef.current.style.left = `${minPercent}%`;\n      rangeRef.current.style.width = `${maxPercent - minPercent}%`;\n    }\n  }, [minVal, min, max]);\n\n  useEffect(() => {\n    if (rangeRef.current) {\n      const minPercent = getPercent(minValRef.current);\n      const maxPercent = getPercent(maxVal);\n\n      rangeRef.current.style.width = `${maxPercent - minPercent}%`;\n    }\n  }, [maxVal, min, max]);\n\n  const handleMinChange = (e) => {\n    const value = Math.min(Number(e.target.value), maxVal - step);\n    setMinVal(value);\n    minValRef.current = value;\n    if (onChange) onChange({ min: value, max: maxVal });\n  };\n\n  const handleMaxChange = (e) => {\n    const value = Math.max(Number(e.target.value), minVal + step);\n    setMaxVal(value);\n    maxValRef.current = value;\n    if (onChange) onChange({ min: minVal, max: value });\n  };\n\n  return (\n    <div className=\"flex items-center justify-center flex-col w-80 relative py-6\">\n      {/* Real Multi Range Inputs Overlay */}\n      <input\n        type=\"range\"\n        min={min}\n        max={max}\n        step={step}\n        value={minVal}\n        onChange={handleMinChange}\n        className=\"thumb pointer-events-none absolute z-30 h-0 w-80 outline-none\"\n      />\n      <input\n        type=\"range\"\n        min={min}\n        max={max}\n        step={step}\n        value={maxVal}\n        onChange={handleMaxChange}\n        className=\"thumb pointer-events-none absolute z-40 h-0 w-80 outline-none\"\n      />\n\n      {/* Styled Slider Track */}\n      <div className=\"relative w-full h-1.5 bg-gray-200 rounded-md\">\n        <div ref={rangeRef} className=\"absolute h-full bg-purple-500 rounded-md\" />\n      </div>\n\n      {/* Value Displays */}\n      <div className=\"flex justify-between w-full mt-4 text-sm font-semibold text-gray-600\">\n        <span>Min: ${minVal}</span>\n        <span>Max: ${maxVal}</span>\n      </div>\n\n      <style>{`\n        .thumb,\n        .thumb::-webkit-slider-thumb {\n          -webkit-appearance: none;\n          -webkit-tap-highlight-color: transparent;\n        }\n        .thumb::-webkit-slider-thumb {\n          background-color: #a855f7;\n          border: none;\n          border-radius: 50%;\n          box-shadow: 0 0 1px 1px #ced4da;\n          cursor: pointer;\n          height: 18px;\n          width: 18px;\n          margin-top: 4px;\n          pointer-events: all;\n          position: relative;\n        }\n      `}</style>\n    </div>\n  );\n}"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

@@ -35,6 +35,7 @@ export interface Me {
     type: string;
     color: string;
   };
+  banner?: string;
 }
 
 export interface UserProfileData {
@@ -63,6 +64,7 @@ export interface PublicUser {
     type: string;
     color: string;
   };
+  banner?: string;
 }
 
 export type Difficulty = "EASY" | "MEDIUM" | "HARD";
@@ -116,7 +118,7 @@ export interface RatingsMap {
   dsa: number;
   frontend: number;
   backend: number;
-  fullstack: number;
+  projects: number;
   promptWar: number;
   team: number;
 }
@@ -129,7 +131,7 @@ export interface ProfileStats {
   dsaSolved?: number;
   frontendCompleted?: number;
   backendCompleted?: number;
-  fullstackCompleted?: number;
+  projectsCompleted?: number;
 }
 
 export interface LeaderboardPlayer {
@@ -182,6 +184,14 @@ export interface Achievement {
   requirement?: number;
   xpReward?: number;
   unlockedAt?: string;
+  unlocked?: boolean;
+  mascotReward?: {
+    name: string;
+    icon: string;
+    description: string;
+    type: string;
+    rarity: string;
+  };
 }
 
 export type FriendshipStatus = "PENDING" | "ACCEPTED" | "REJECTED" | "BLOCKED";

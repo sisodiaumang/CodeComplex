@@ -1,0 +1,153 @@
+{
+  "_id": "7630582c0a361ed1bbbfa4c4",
+  "title": "Detecting Cycles in an Undirected Graph: Finding the Root",
+  "slug": "detecting-cycles-in-an-undirected-graph-finding-the-root-bugfix-medium-graphs",
+  "difficulty": "Medium",
+  "category": "DSA",
+  "subCategory": "DFS/BFS",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "graph"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given an undirected graph with a specified root vertex, detect whether there's a cycle in the graph. If a cycle exists, print the root vertex as the starting point. If not, print 'No cycle'.",
+    "inputFormat": "The first line of input contains an integer n representing the number of nodes in the graph. The next n lines contain space-separated edge connections.",
+    "outputFormat": "If a cycle exists, print the root vertex; otherwise, print 'No cycle'.",
+    "notes": "This task requires you to implement a graph cycle detection algorithm using DFS or BFS. You must also identify the root vertex of the graph.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "4\n1 2\n2 3\n3 1\n4\n5\n6\n7",
+        "output": "1",
+        "explanation": "A cycle exists in the graph, starting at vertex 1."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Check if the current node has been visited before in the DFS/BFS traversal."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial: Cycle Detection in Undirected Graph",
+    "intuition": "The key to detecting cycles in a graph is to keep track of visited nodes and edges traversed during the DFS/BFS traversal.",
+    "bruteForce": "Perform a brute-force traversal of the entire graph, checking for cycles at each step.",
+    "betterSolution": "Use a visited set to keep track of nodes and edges encountered during traversal.",
+    "optimalSolution": "Identify the root vertex and perform a depth-first search (DFS) or breadth-first search (BFS) traversal to detect cycles.",
+    "proofOfCorrectness": "The optimal solution is proven correct by demonstrating that it identifies all cycles in the graph without false positives.",
+    "dryRun": "Example usage of the optimal solution on a sample graph.",
+    "commonMistakes": [
+      "Not keeping track of visited nodes",
+      "Not identifying the root vertex"
+    ],
+    "timeComplexity": "O(n + m)",
+    "spaceComplexity": "O(n + m)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:    void solve(vector& edges);\n};",
+    "java": "public class Solution {    public void solve(int[] edges);\n}",
+    "python": "class Solution:\n    def solve(self, edges: list):",
+    "javascript": "function solve(edges) {    // TODO: implement}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:    void solve(vector& edges) {\n        for (int i = 0; i < edges.size(); i++) {\n            for (int j = i + 1; j < edges.size(); j++) {\n                if (edges[i] == edges[j]) {\n                    cout  1; return;\n                }\n            }\n        }\n        cout  No cycle;\n    }\n};",
+    "java": "public class Solution {    public void solve(int[] edges) {\n        for (int i = 0; i < edges.length; i++) {\n            for (int j = i + 1; j < edges.length; j++) {\n                if (edges[i] == edges[j]) {\n                    System.out.println(1); return;\n                }\n            }\n        }\n        System.out.println(\"No cycle\");\n    }\n}",
+    "python": "class Solution:\n    def solve(self, edges: list):\n        for i in range(len(edges)):\n            for j in range(i + 1, len(edges)):\n                if edges[i] == edges[j]:\n                    print(1); return\n        print('No cycle');",
+    "javascript": "function solve(edges) {\n    for (var i = 0; i < edges.length; i++) {\n        for (var j = i + 1; j < edges.length; j++) {\n            if (edges[i] == edges[j]) {\n                console.log(1); return;\n            }\n        }\n    }\n    console.log('No cycle');"
+  },
+  "functionSignature": {
+    "cpp": "void solve(vector& edges);",
+    "java": "void solve(int[] edges);",
+    "python": "def solve(self, edges: list):",
+    "javascript": "function solve(edges):"
+  },
+  "solutions": {
+    "python": "import sys\r\nclass Solution:\n    def solve(self, edges: list):\n        def dfs(node, parent):\n            visited.add(node)\n            for child in graph[node]:\n                if child in visited and child != parent:\n                    return True\n                if child not in visited:\n                    if dfs(child, node):\n                        return True\n            return False\n        graph = [[] for _ in range(len(edges))]\n        visited = set()\n        for i in range(len(edges) // 2):\n            graph[edges[2 * i] - 1].append(edges[2 * i + 1] - 1)\n        roots = [i for i in range(len(edges)) if i not in [e // 2 for e in edges if e % 2 == 0]]\n        for root in roots:\n            if dfs(root, -1):\n                print(root + 1)\n                return\n        print('No cycle')\n        return\n\r\nif __name__ == '__main__':\n    T = int(sys.stdin.readline())\n    for _ in range(T):\n        n = int(sys.stdin.readline())\n        edges = list(map(int, sys.stdin.readline().split()))\n        solution = Solution()\n        solution.solve(edges)\n",
+    "cpp": "#include <iostream>  #include <vector>\nusing namespace std;\n\r\nclass Solution {\npublic:\n        void solve(vector& edges) {\n            int n = edges.size();\n            vector<vector<int>> graph(n);\n            bool visited[n];\n            for (int i = 0; i < n; i++) {\n                visited[i] = false;\n            }\n            int roots[n];\n            for (int i = 0; i < n; i++) {\n                roots[i] = i;\n            }\n            for (int i = 0; i < edges.size(); i += 2) {\n                graph[edges[i] - 1].push_back(edges[i + 1] - 1);\n                graph[edges[i + 1] - 1].push_back(edges[i] - 1);\n            }\n            for (int i = 0; i < n; i++) {\n                if (!visited[i] && dfs(i, -1)) {\n                    cout  i + 1;\n                    return;\n                }\n            }\n            cout  No cycle;\n        }\n\n        bool dfs(int node, int parent) {\n            visited[node] = true;\n            for (int child : graph[node]) {\n                if (visited[child] && child != parent) {\n                    return true;\n                }\n                if (!visited[child]) {\n                    if (dfs(child, node)) {\n                        return true;\n                    }\n                }\n            }\n            return false;\n        }\n};\n\r\nint main() {\n    int T;\n    cin >> T;\n    while (T--)\n    {\n        int n;\n        cin >> n;\n        vector temp;\n        for (int i = 0; i < n; i++)\n        {\n            int a;\n            cin >> a;\n            temp.push_back(a);\n        }\n        Solution obj;\n        obj.solve(temp);\n    }\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "4\n1 2\n2 3\n3 1\n4\n5\n6\n7",
+      "output": "1",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_hidden_generated",
+      "input": "4\n1 2\n2 3\n3 1\n4\n5\n6\n7",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

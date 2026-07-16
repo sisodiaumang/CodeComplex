@@ -1,0 +1,52 @@
+{
+  "_id": "dff934df7548b94d5c8d0de4",
+  "title": "Accessible Tabbed Navigation",
+  "slug": "acc-tabs",
+  "difficulty": "Medium",
+  "topics": [
+    "ACCESSIBILITY"
+  ],
+  "statement": {
+    "markdown": "## Aria Tabbed Navigation Component\n\nBuild an accessible Tab component resolving tab selection states.\n\n### Requirements:\n1. **Aria Guidelines**: Apply role structural tags: `role=\"tablist\"`, `role=\"tab\"`, `aria-selected` properties.\n2. **Arrow Key Switching**: Horizontal navigation switching tabs focus selections with `ArrowRight` and `ArrowLeft` keys.\n3. **Content panels toggling**: Ensure clicking a tab updates active state selectors, displaying only matched panels."
+  },
+  "constraints": [
+    "Must correctly sync selected states with visible panel containers",
+    "Active tab item should receive explicit focused states"
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "html": "<div class=\"max-w-md mx-auto p-6 bg-slate-800 rounded-xl border border-slate-700 text-white font-sans\">\n  <div role=\"tablist\" aria-label=\"Content Tabs\" class=\"flex border-b border-slate-700 mb-4\">\n    <button role=\"tab\" aria-selected=\"true\" aria-controls=\"panel-1\" id=\"tab-1\" tabindex=\"0\" class=\"flex-1 py-2 font-bold text-center border-b-2 border-indigo-500 focus:outline-none\">Details</button>\n    <button role=\"tab\" aria-selected=\"false\" aria-controls=\"panel-2\" id=\"tab-2\" tabindex=\"-1\" class=\"flex-1 py-2 font-semibold text-slate-400 text-center border-b-2 border-transparent focus:outline-none\">History</button>\n  </div>\n  <div>\n    <div id=\"panel-1\" role=\"tabpanel\" aria-labelledby=\"tab-1\" class=\"tab-panel\">\n      <p class=\"text-sm\">Main Tab Panel details contents.</p>\n    </div>\n    <div id=\"panel-2\" role=\"tabpanel\" aria-labelledby=\"tab-2\" class=\"tab-panel hidden\">\n      <p class=\"text-sm\">History details contents.</p>\n    </div>\n  </div>\n</div>",
+    "css": "",
+    "javascript": "const tabs = Array.from(document.querySelectorAll('[role=\"tab\"]'));\nconst panels = Array.from(document.querySelectorAll('[role=\"tabpanel\"]'));\n\n// Implement tabs clicking updates, panels toggles, and ArrowRight/ArrowLeft navigation here\n"
+  },
+  "gradingCriteria": [
+    {
+      "id": "aria_tablist_sync",
+      "description": "Verify tabpanel toggles and aria-selected state properties match active selections.",
+      "weight": 50
+    },
+    {
+      "id": "keyboard_switches",
+      "description": "Verify horizontal Left/Right arrows switch tab focus indices smoothly.",
+      "weight": 50
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "html",
+      "css",
+      "javascript"
+    ],
+    "referenceSolution": "const tabs = Array.from(document.querySelectorAll('[role=\"tab\"]'));\nconst panels = Array.from(document.querySelectorAll('[role=\"tabpanel\"]'));\n\nlet activeIndex = 0;\n\nfunction selectTab(index) {\n  activeIndex = index;\n  tabs.forEach((tab, idx) => {\n    const isSelected = idx === index;\n    tab.setAttribute('aria-selected', isSelected.toString());\n    tab.setAttribute('tabindex', isSelected ? '0' : '-1');\n    tab.className = isSelected \n      ? 'flex-1 py-2 font-bold text-center border-b-2 border-indigo-500 focus:outline-none'\n      : 'flex-1 py-2 font-semibold text-slate-400 text-center border-b-2 border-transparent focus:outline-none';\n    if (isSelected) tab.focus();\n  });\n\n  panels.forEach((panel, idx) => {\n    panel.classList.toggle('hidden', idx !== index);\n  });\n}\n\ntabs.forEach((tab, index) => {\n  tab.addEventListener('click', () => selectTab(index));\n  \n  tab.addEventListener('keydown', (e) => {\n    if (e.key === 'ArrowRight') {\n      const nextIdx = (index + 1) % tabs.length;\n      selectTab(nextIdx);\n    } else if (e.key === 'ArrowLeft') {\n      const prevIdx = (index - 1 + tabs.length) % tabs.length;\n      selectTab(prevIdx);\n    }\n  });\n});"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

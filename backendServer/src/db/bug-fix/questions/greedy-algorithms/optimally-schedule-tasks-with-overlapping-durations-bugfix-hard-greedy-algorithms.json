@@ -1,0 +1,161 @@
+{
+  "_id": "245523c3831e54f89249d2f8",
+  "title": "Optimally Schedule Tasks with Overlapping Durations",
+  "slug": "optimally-schedule-tasks-with-overlapping-durations-bugfix-hard-greedy-algorithms",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "Two Pointers/Interval Scheduling",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 60,
+    "points": 100,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "greedy"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "You are given a list of tasks where each task is represented by its start time and duration. The tasks are given in no particular order. Your task is to find the optimal schedule for these tasks such that no two overlapping tasks are scheduled at the same time. The schedule should be represented as a list of tuples containing the task index and the end time of the task. If it is not possible to schedule the tasks, return an empty list.",
+    "inputFormat": "The first line contains the number of tasks. The next n lines each contain two space-separated integers representing the start time and duration of a task.",
+    "outputFormat": "The output should be a list of tuples representing the scheduled tasks and their end times.",
+    "notes": "The tasks are 1-indexed.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of tasks"
+      }
+    ],
+    "examples": [
+      {
+        "input": "3\n1 10\n2 5\n3 8",
+        "output": "[[1, 10], [2, 7], [3, 11]]",
+        "explanation": "The optimal schedule is to schedule task 1 from 1-10, task 2 from 2-7 and task 3 from 3-11."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(nlogn) ",
+    "spaceComplexity": "O(n) "
+  },
+  "starterCode": {
+    "cpp": "class Solution { public: \nvector<pair<int, int>> schedule(vector<vector<int>>& tasks);}",
+    "java": "public class Solution {\npublic List<List<Integer>> schedule(int[][] tasks) {\n\t// TODO: implement\n}",
+    "python": "class Solution:\n\ndef schedule(self, tasks: list[list[int]]) -> list[tuple[int, int]]:\n\t# TODO: implement\n return []",
+    "javascript": "function schedule(tasks) {\n\t// TODO: implement\n\treturn [];\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution { public:\nvector<pair<int, int>> schedule(vector<vector<int>>& tasks) {\n\tsort(tasks.begin(), tasks.end());\n\tvector<pair<int, int>> result;\n\tfor (auto task : tasks) {\n\t\t// BUG: Incorrect logic here\n\t\tresult.push_back({task[0], task[0] + task[1]});\n\t}\n\treturn result;\n}\n}",
+    "java": "public class Solution {\npublic List<List<Integer>> schedule(int[][] tasks) {\n\tCollections.sort(Arrays.asList(tasks));\n\tList<List<Integer>> result = new ArrayList<>();\n\tfor (int[] task : tasks) {\n\t\t// BUG: Incorrect logic here\n\t\tresult.add(Arrays.asList(task[0], task[0] + task[1]));\n\t}\n\treturn result;\n}",
+    "python": "class Solution:\n\ndef schedule(self, tasks: list[list[int]]) -> list[tuple[int, int]]:\n\tsorted_tasks = sorted(tasks, key=lambda x: x[0]);\n\tresult = [];\n\tfor task in sorted_tasks:\n\t\t# BUG: Incorrect logic here\n\t\trresult.append((task[0], task[0] + task[1]));\n\treturn result;",
+    "javascript": "function schedule(tasks) {\n\ttasks.sort((a, b) => a[0] - b[0]);\n\tlet result = [];\n\tfor (let task of tasks) {\n\t\t// BUG: Incorrect logic here\n\t\tresult.push([task[0], task[0] + task[1]]);\n\t}\n\treturn result;\n}"
+  },
+  "functionSignature": {
+    "cpp": "vector<pair<int, int>> schedule(vector<vector<int>>& tasks);",
+    "java": "List<List<Integer>> schedule(int[][] tasks);",
+    "python": "def schedule(self, tasks: list[list[int]]) -> list[tuple[int, int]]:",
+    "javascript": "function schedule(tasks)"
+  },
+  "solutions": {
+    "python": "import sys\n\nclass Solution:\n\tdef schedule(self, tasks: list[list[int]]) -> list[tuple[int, int]]:\n\t\tsorted_tasks = sorted(tasks, key=lambda x: x[0]);\n\t\tresult = [];\n\t\tend_time = -sys.maxsize;\n\t\tfor task in sorted_tasks:\n\t\t\tif task[0] >= end_time:\n\t\t\t\tresult.append((task[0], task[0] + task[1]));\n\t\t\t\tend_time = task[0] + task[1];\n\t\treturn result;\n\nif __name__ == '__main__':\n\ttasks = [[1, 10], [2, 5], [3, 8]];\n\tsol = Solution();\n\tprint(sol.schedule(tasks));",
+    "cpp": "#include <iostream>\n\nusing namespace std;\n\nvoid solve(vector<int>& tasks, vector<pair<int, int>>& result) {\n\tsort(tasks.begin(), tasks.end());\n\tint end_time = -2147483648;\n\tfor (int i = 0; i < tasks.size(); i++) {\n\t\tif (tasks[i] >= end_time) {\n\t\t\tresult.push_back(make_pair(tasks[i], tasks[i] + 1));\n\t\t\tend_time = tasks[i] + 1;\n\t\t}\n\t}\n}\n\nint main() {\n\tvector<int> tasks = {1, 2, 3};\n\tvector<pair<int, int>> result;\n\tsolve(tasks, result);\n\tfor (auto task : result) {\n\t\tcout << task.first << ' ' << task.second << endl;\n\t}\n\treturn 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "3\n1 10\n2 5\n3 8",
+      "output": "[[1, 10], [2, 7], [3, 11]]",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "5\n1 10\n2 5\n3 8\n4 12\n5 9",
+      "output": "[[1, 10], [4, 16], [5, 14]]",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    },
+    {
+      "id": "tc_3",
+      "input": "2\n1 10\n2 20",
+      "output": "[[1, 10], [2, 22]]",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

@@ -1,0 +1,153 @@
+{
+  "title": "Validating and Normalizing HTML Anchor Link Attributes",
+  "subCategory": "HTML Validation",
+  "statement": {
+    "markdown": "Write a function to validate and normalize HTML anchor link attributes. The function should take a string representing the anchor element and return an object with the valid attributes. The function should handle cases where the anchor element is missing the 'href' attribute, and cases where the 'target' attribute is set to an invalid value. Normalization of attributes should be applied as per the following rules:\n\n* If the 'href' attribute is present, it should be normalized to lowercase and stripped of leading/trailing whitespace.\n* If the 'target' attribute is present, it should be normalized to lowercase and set to '_blank' if it is not one of '_blank', '_self', '_parent', or '_top'.\n* If the 'title' attribute is present, it should be normalized to lowercase and stripped of leading/trailing whitespace.\n\nExample:\n\nInput: `<a href=\"/path/to/resource\" target=\"_blank\" title=\"example\">Link</a>`\n\nOutput: `{href: \"/path/to/resource\", target: \"_blank\", title: \"example\"}`\n\nNote: The function should ignore any other attributes present in the anchor element.",
+    "inputFormat": "A string representing the anchor element",
+    "outputFormat": "An object with the valid attributes",
+    "notes": "Normalization of attributes should be applied as per the given rules.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The input string is at most 10,000 characters long"
+      },
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 0,
+        "max": 10,
+        "description": "The anchor element has at most 10 attributes"
+      }
+    ],
+    "examples": [
+      {
+        "input": "<a href=\"/path/to/resource\" target=\"_blank\" title=\"example\">Link</a>",
+        "output": "{\"href\": \"/path/to/resource\", \"target\": \"_blank\", \"title\": \"example\"}",
+        "explanation": "Normalization of attributes is applied as per the given rules"
+      },
+      {
+        "input": "<a href=\"/path/to/resource\" target=\"_invalid\" title=\"example\">Link</a>",
+        "output": "{\"href\": \"/path/to/resource\", \"target\": \"_blank\", \"title\": \"example\"}",
+        "explanation": "The 'target' attribute is normalized to '_blank' since it is not one of '_blank', '_self', '_parent', or '_top'"
+      },
+      {
+        "input": "<a href=\"/path/to/resource\">Link</a>",
+        "output": "{\"href\": \"/path/to/resource\"}",
+        "explanation": "The 'href' attribute is present and is normalized to lowercase and stripped of leading/trailing whitespace"
+      },
+      {
+        "input": "<a target=\"_blank\">Link</a>",
+        "output": "{\"target\": \"_blank\"}",
+        "explanation": "The 'target' attribute is present and is normalized to lowercase and set to '_blank' since it is not one of '_blank', '_self', '_parent', or '_top'"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "HTML"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "html"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(...) ",
+    "spaceComplexity": "O(...)"
+  },
+  "starterCode": {
+    "javascript": "function solve(s) { /* implementation */ }\n\n// Do not modify the following code\nfunction parseHTML(s) { /* implementation */ }\n\nreturn solve(parseHTML(s));",
+    "python": "class Solution:\n    def solve(self, s: str) -> dict:\n        /* implementation */\n\n# Do not modify the following code\ndef parse_html(s):\n    /* implementation */\n\nreturn Solution().solve(parse_html(s))"
+  },
+  "buggyStarterCode": {
+    "javascript": "function solve(s) {\n  const attributes = s.match(/[^=]*/g).map(attr => attr.trim());\n  const result = {};\n\n  for (const attr of attributes) {\n    if (attr.startsWith('href')) {\n      result.href = attr.trim().toLowerCase();\n    } else if (attr.startsWith('target')) {\n      result.target = attr.trim().toLowerCase();\n    } else if (attr.startsWith('title')) {\n      result.title = attr.trim().toLowerCase();\n    }\n  }\n\n  return result;\n}\n\n// Do not modify the following code\nfunction parseHTML(s) { /* implementation */ }\n\nreturn solve(parseHTML(s));",
+    "python": "class Solution:\n    def solve(self, s: str) -> dict:\n        attributes = s.split()  # This is the bug\n        result = {}\n\n        for attr in attributes:\n            if attr.startswith('href'):\n                result['href'] = attr.strip().lower()\n            elif attr.startswith('target'):\n                result['target'] = attr.strip().lower()\n            elif attr.startswith('title'):\n                result['title'] = attr.strip().lower()\n        return result\n\n# Do not modify the following code\ndef parse_html(s):\n    /* implementation */\n\nreturn Solution().solve(parse_html(s))"
+  },
+  "functionSignature": {
+    "javascript": "function solve(s) { /* implementation */ }",
+    "python": "class Solution:\n    def solve(self, s: str) -> dict: /* implementation */"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction solve(s) {\n  const attributes = s.match(/[^=]*/g).map(attr => attr.trim());\n  const result = {};\n\n  for (const attr of attributes) {\n    if (attr.startsWith('href')) {\n      result.href = attr.trim().toLowerCase();\n    } else if (attr.startsWith('target')) {\n      if (attr.trim().toLowerCase() !== '_blank' && attr.trim().toLowerCase() !== '_self' && attr.trim().toLowerCase() !== '_parent' && attr.trim().toLowerCase() !== '_top') {\n        result.target = '_blank';\n      }\n    } else if (attr.startsWith('title')) {\n      result.title = attr.trim().toLowerCase();\n    }\n  }\n\n  return result;\n}\n\n// Do not modify the following code\nfunction parseHTML(s) { /* implementation */ }\n\nreturn solve(parseHTML(s));",
+    "python": "class Solution:\n    def solve(self, s: str) -> dict:\n        attributes = s.split()\n        result = {}\n\n        for attr in attributes:\n            if attr.startswith('href'):\n                result['href'] = attr.strip().lower()\n            elif attr.startswith('target'):\n                if attr.strip().lower() not in ['_blank', '_self', '_parent', '_top']:\n                    result['target'] = '_blank'\n            elif attr.startswith('title'):\n                result['title'] = attr.strip().lower()\n        return result\n\n# Do not modify the following code\ndef parse_html(s):\n    return s\n\nreturn Solution().solve(parse_html(s))"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "<a href=\"/path/to/resource\" target=\"_blank\" title=\"example\">Link</a>",
+      "output": "{\"href\": \"/path/to/resource\", \"target\": \"_blank\", \"title\": \"example\"}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "<a href=\"/path/to/resource\" target=\"_invalid\" title=\"example\">Link</a>",
+      "output": "{\"href\": \"/path/to/resource\", \"target\": \"_blank\", \"title\": \"example\"}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "d22cedea7aa0781e3e10f446",
+  "slug": "validating-and-normalizing-html-anchor-link-attributes-bugfix-medium-html",
+  "mode": "bug_fix",
+  "category": "HTML",
+  "difficulty": "Medium"
+}

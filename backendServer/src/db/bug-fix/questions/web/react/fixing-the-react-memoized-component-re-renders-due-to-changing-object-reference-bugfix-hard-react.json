@@ -1,0 +1,156 @@
+{
+  "title": "Fixing the React Memoized Component Re-renders Due to Changing Object Reference",
+  "subCategory": "Memoization and Optimization",
+  "statement": {
+    "markdown": "You are given a React memoized component that is intended to optimize performance by minimizing unnecessary re-renders. However, the component is currently re-rendering when the object properties change, rather than when the object reference changes. Fix the bug to make the component only re-render when the object reference changes.",
+    "inputFormat": "The input will be an object with key-value pairs, where each key is a string and each value is an object.",
+    "outputFormat": "The output should be the updated object with the correct React memoization behavior.",
+    "notes": "The component should not re-render when the object properties change, but should re-render when the object reference changes.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of key-value pairs in the input object."
+      },
+      {
+        "variable": "k",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of key-value pairs in the input object."
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"a\":{\"b\":1,\"c\":2},\"d\":{\"e\":3,\"f\":4}}",
+        "output": "{\"a\":{\"b\":1,\"c\":2},\"d\":{\"e\":3,\"f\":4}}",
+        "explanation": "The object reference has not changed, so the component should not re-render."
+      },
+      {
+        "input": "{\"a\":{\"b\":1,\"c\":2},\"d\":{\"e\":3,\"f\":4}}",
+        "output": "{\"a\":{\"b\":2,\"c\":2},\"d\":{\"e\":3,\"f\":4}}",
+        "explanation": "The object properties have changed, but the object reference has not changed, so the component should not re-render."
+      },
+      {
+        "input": "{\"a\":{\"b\":1,\"c\":2},\"d\":{\"e\":3,\"f\":4}}",
+        "output": "{\"e\":{\"b\":1,\"c\":2},\"f\":{\"e\":3,\"f\":4}}",
+        "explanation": "The object reference has changed, so the component should re-render."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "REACT"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "react"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the `useCallback` hook to memoize the function that depends on the object reference."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial: Fixing the React Memoized Component Re-renders Due to Changing Object Reference",
+    "intuition": "To fix this bug, we need to use React's memoization features to ensure that the component only re-renders when the object reference changes. We can use the `useCallback` hook to memoize the function that depends on the object reference.",
+    "bruteForce": "One possible solution is to use a library like `lodash` to create a deep copy of the object and compare the references.",
+    "betterSolution": "A better solution is to use React's built-in memoization features.",
+    "optimalSolution": "The optimal solution is to use the `useCallback` hook to memoize the function that depends on the object reference.",
+    "proofOfCorrectness": "To prove the correctness of this solution, we can use a debugger or a testing library to verify that the component only re-renders when the object reference changes.",
+    "dryRun": "A dry run of this solution would involve creating a simple React component that uses the `useCallback` hook to memoize a function that depends on an object reference, and then testing it with different inputs to verify that it only re-renders when the object reference changes.",
+    "commonMistakes": [
+      "Not using memoization",
+      "Not using the `useCallback` hook"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "function useObjectReference(obj) { /* implementation */ }",
+    "python": "class Solution: def use_object_reference(self, obj) { /* implementation */ }"
+  },
+  "buggyStarterCode": {
+    "javascript": "function useObjectReference(obj) { return JSON.stringify(obj); }",
+    "python": "class Solution: def use_object_reference(self, obj) { return str(obj); }"
+  },
+  "functionSignature": {
+    "javascript": "function useObjectReference(obj) { /* implementation */ }",
+    "python": "class Solution: def use_object_reference(self, obj) { /* implementation */ }"
+  },
+  "solutions": {
+    "javascript": "// Create a new function that depends on the object reference\nvar useObjectReference = useCallback(() => JSON.stringify(obj), [obj]);",
+    "python": "class Solution:\n    def use_object_reference(self, obj):\n        # Create a new function that depends on the object reference\n        self.use_object_reference = functools.partial(self.create_function, obj)\n    def create_function(self, obj):\n        return str(obj)"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"a\":{\"b\":1,\"c\":2},\"d\":{\"e\":3,\"f\":4}}",
+      "output": "{\"a\":{\"b\":1,\"c\":2},\"d\":{\"e\":3,\"f\":4}}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"a\":{\"b\":1,\"c\":2},\"d\":{\"e\":3,\"f\":4}}",
+      "output": "{\"a\":{\"b\":2,\"c\":2},\"d\":{\"e\":3,\"f\":4}}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    },
+    {
+      "id": "tc_3",
+      "input": "{\"a\":{\"b\":1,\"c\":2},\"d\":{\"e\":3,\"f\":4}}",
+      "output": "{\"e\":{\"b\":1,\"c\":2},\"f\":{\"e\":3,\"f\":4}}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "c23e9130ca18299d8794a40b",
+  "slug": "fixing-the-react-memoized-component-re-renders-due-to-changing-object-reference-bugfix-hard-react",
+  "mode": "bug_fix",
+  "category": "REACT",
+  "difficulty": "Hard"
+}

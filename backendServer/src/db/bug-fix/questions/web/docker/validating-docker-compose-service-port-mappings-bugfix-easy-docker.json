@@ -1,0 +1,134 @@
+{
+  "title": "Validating Docker Compose Service Port Mappings",
+  "subCategory": "Docker port mapping",
+  "statement": {
+    "markdown": "Write a function `validatePortMappings` that takes a JSON object representing a Docker Compose service and validates its port mappings. The function should check that all exposed ports are within the range 1024-65535 and that there are no duplicate ports. The function should return `true` if the port mappings are valid, `false` otherwise.",
+    "inputFormat": "A JSON object with a `ports` key containing an array of integers, e.g. `{'ports': [8080, 8081, 8082]}`",
+    "outputFormat": "A boolean indicating whether the port mappings are valid",
+    "notes": "The function should be able to handle services with multiple ports.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 100
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"ports\": [8080, 8081, 8082]}\n{\"ports\": [1024, 30000, 65535]}\n{\"ports\": [8080, 8080, 8082]}\n{\"ports\": [123456, 123456, 123456]}\n{\"ports\": [8080, 8081, 8082, -1]}\n",
+        "output": "true\ntrue\nfalse\nfalse\nfalse\n",
+        "explanation": "The first and second inputs are valid, the third has a duplicate port, the fourth has a port outside the valid range, and the fifth has a negative port."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 10,
+    "points": 25,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DOCKER"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "docker"
+    ],
+    "interviewFrequency": 1,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Check the range of each port"
+    },
+    {
+      "order": 2,
+      "text": "Check for duplicate ports"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "function validatePortMappings(service) {\n    // Your code here\n}",
+    "python": "class Solution:\n    def validatePortMappings(self, service: dict) -> bool:\n        # Your code here\n"
+  },
+  "buggyStarterCode": {
+    "javascript": "function validatePortMappings(service) {\n    if (service.ports.length === 0) return true;\n    for (let port of service.ports) {\n        if (port < 0 || port > 1024) return false;\n    }\n    return true;\n}",
+    "python": "class Solution:\n    def validatePortMappings(self, service: dict) -> bool:\n        if len(service['ports']) == 0: return True\n        for port in service['ports']:\n            if port < 0 or port > 1024: return False\n        return True\n"
+  },
+  "functionSignature": {
+    "javascript": "function validatePortMappings(service) {\n    return true/false;\n}",
+    "python": "def validatePortMappings(self, service: dict) -> bool:"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction validatePortMappings(service) {\n    if (service.ports.length === 0) return true;\n    let portSet = new Set();\n    for (let port of service.ports) {\n        if (port < 1024 || port > 65535) return false;\n        if (portSet.has(port)) return false;\n        portSet.add(port);\n    }\n    return true;\n}",
+    "python": "class Solution:\n    def validatePortMappings(self, service: dict) -> bool:\n        if len(service['ports']) == 0: return True\n        portSet = set()\n        for port in service['ports']:\n            if port < 1024 or port > 65535: return False\n            if port in portSet: return False\n            portSet.add(port)\n        return True\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 1.5,
+    "memoryLimit": 128,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": false,
+    "ratingEnabled": false,
+    "timeBonus": false,
+    "maxBattleScore": 0,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"ports\": [8080, 8081, 8082]}\n{\"ports\": [1024, 30000, 65535]}\n{\"ports\": [8080, 8080, 8082]}\n{\"ports\": [123456, 123456, 123456]}\n{\"ports\": [8080, 8081, 8082, -1]}\n",
+      "output": "true\ntrue\nfalse\nfalse\nfalse\n",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_hidden_generated",
+      "input": "{\"ports\": [8080, 8081, 8082]}\n{\"ports\": [1024, 30000, 65535]}\n{\"ports\": [8080, 8080, 8082]}\n{\"ports\": [123456, 123456, 123456]}\n{\"ports\": [8080, 8081, 8082, -1]}\n",
+      "output": "true\ntrue\nfalse\nfalse\nfalse\n",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "30200fdc55d142b5c1e252b5",
+  "slug": "validating-docker-compose-service-port-mappings-bugfix-easy-docker",
+  "mode": "bug_fix",
+  "category": "DOCKER",
+  "difficulty": "Easy"
+}

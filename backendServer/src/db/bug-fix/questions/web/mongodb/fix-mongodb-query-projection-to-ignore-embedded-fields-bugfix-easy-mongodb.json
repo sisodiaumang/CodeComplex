@@ -1,0 +1,149 @@
+{
+  "title": "Fix MongoDB Query Projection to Ignore Embedded Fields",
+  "subCategory": "Query Projection",
+  "statement": {
+    "markdown": "Write a MongoDB query projection function that ignores embedded fields in the `person` collection. The function should take a string `fieldPath` as input and return the projected query document. If the field path is empty, return an empty object.",
+    "inputFormat": "A string representing the field path, e.g. \"person.name\" or \"\".",
+    "outputFormat": "A MongoDB query document with the projected fields.",
+    "notes": "You can assume the input field path is a string in the format 'collection.field1.field2' or an empty string.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "No constraints on the number of fields"
+      }
+    ],
+    "examples": [
+      {
+        "input": "\"\"",
+        "output": "{}",
+        "explanation": "No projection when field path is empty"
+      },
+      {
+        "input": "person",
+        "output": "{\"person\": 1}",
+        "explanation": "Project the 'person' field"
+      },
+      {
+        "input": "person.name",
+        "output": "{\"name\": 1, \"person\": { \"name\": 1, \"address\": 1 }}",
+        "explanation": "Project the 'name' field within the 'person' field"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "MONGODB"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "mongodb"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(1) ",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "// function getProjectedQuery(fieldPath) {",
+    "python": "class Solution:\n    def getProjectedQuery(self, fieldPath: str) -> dict:"
+  },
+  "buggyStarterCode": {
+    "javascript": "// function getProjectedQuery(fieldPath) {\n//   if (fieldPath === '') return {}; // BUGGY CODE: should not ignore all fields\n//   const fields = fieldPath.split('.').map(f => f.trim());\n//   const projectedQuery = {};\n//   fields.forEach(f => projectedQuery[f] = 1);\n//   return projectedQuery;\n}",
+    "python": "class Solution:\n    def getProjectedQuery(self, fieldPath: str) -> dict:\n        if fieldPath == '':\n            return {'person': 1}  # BUGGY CODE: should not ignore all fields\n        fields = fieldPath.split('.')\n        projectedQuery = {}\n        for f in fields:\n            projectedQuery[f] = 1\n        return projectedQuery"
+  },
+  "functionSignature": {
+    "javascript": "function getProjectedQuery(fieldPath: string): { [key: string]: number }",
+    "python": "def getProjectedQuery(self, fieldPath: str) -> dict"
+  },
+  "solutions": {
+    "javascript": "// function getProjectedQuery(fieldPath) {\n//   if (fieldPath === '') return {};\n//   const fields = fieldPath.split('.').map(f => f.trim());\n//   const projectedQuery = {};\n//   fields.forEach(f => {\n//     if (f !== '') {\n//       projectedQuery[f] = 1;\n//     }\n//   });\n//   return projectedQuery;\n}",
+    "python": "class Solution:\n    def getProjectedQuery(self, fieldPath: str) -> dict:\n        if fieldPath == '':\n            return {}\n        fields = fieldPath.split('.')\n        projectedQuery = {}\n        for f in fields:\n            if f != '':\n                projectedQuery[f] = 1\n        return projectedQuery"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "\"\"",
+      "output": "{}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "person",
+      "output": "{\"person\": 1}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_3",
+      "input": "person.name",
+      "output": "{\"name\": 1, \"person\": { \"name\": 1, \"address\": 1 }}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "_id": "bfb208ce1c26ef183043a7ce",
+  "slug": "fix-mongodb-query-projection-to-ignore-embedded-fields-bugfix-easy-mongodb",
+  "mode": "bug_fix",
+  "category": "MONGODB",
+  "difficulty": "Easy"
+}

@@ -1,0 +1,59 @@
+{
+  "_id": "15bad4e0c9982a56b42fc153",
+  "title": "Middleware Pipeline",
+  "slug": "type-middleware-pipeline",
+  "difficulty": "Hard",
+  "topics": [
+    "TYPESCRIPT"
+  ],
+  "statement": {
+    "markdown": "## Problem Description\nImplement a middleware pipeline in TypeScript that can handle both synchronous and asynchronous functions.\n\n### Requirements\n1. The pipeline should be able to handle multiple functions of different types.\n2. The pipeline should be able to handle functions that return promises.\n3. The pipeline should be able to handle functions that throw errors.\n4. The pipeline should be able to handle functions that return multiple values."
+  },
+  "constraints": [
+    "Use TypeScript only.",
+    "Use classes and objects to implement the pipeline.",
+    "Handle both synchronous and asynchronous functions."
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "typescript": "class MiddlewarePipeline {\n  private middleware: Function[] = [];\n\n  public addMiddleware(middleware: Function) {\n    // Add middleware function to the pipeline\n  }\n\n  public run(data: any) {\n    // Run the pipeline with the given data, passing the result of\n    // each middleware function into the next\n  }\n}\n"
+  },
+  "gradingCriteria": [
+    {
+      "id": "1",
+      "description": "The pipeline can handle synchronous functions",
+      "weight": 30
+    },
+    {
+      "id": "2",
+      "description": "The pipeline can handle asynchronous functions",
+      "weight": 30
+    },
+    {
+      "id": "3",
+      "description": "The pipeline can handle functions that throw errors",
+      "weight": 20
+    },
+    {
+      "id": "4",
+      "description": "The pipeline can handle functions that return multiple values",
+      "weight": 20
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "typescript"
+    ],
+    "referenceSolution": "class MiddlewarePipeline {\n  private middleware: Function[] = [];\n  private result: any = null;\n\n  public addMiddleware(middleware: Function) {\n    this.middleware.push(middleware);\n  }\n\n  public run(data: any) {\n    let promise = Promise.resolve(data);\n    for (const middleware of this.middleware) {\n      promise = promise.then(result => {\n        return new Promise(resolve => {\n          middleware(result, (err, result) => {\n            if (err) {\n              resolve({ error: err });\n            } else {\n              resolve(result);\n            }\n          });\n        });\n      });\n    }\n    return promise;\n  }\n}\n\nclass SynchronousMiddleware {\n  public exec(data: any) {\n    return data.toUpperCase();\n  }\n}\n\nclass AsynchronousMiddleware {\n  public exec(data: any) {\n    return new Promise((resolve, reject) => {\n      setTimeout(() => {\n        resolve(data.toUpperCase());\n      }, 1000);\n    });\n  }\n}\n\nconst pipeline = new MiddlewarePipeline();\nconst synchronousMiddleware = new SynchronousMiddleware();\nconst asynchronousMiddleware = new AsynchronousMiddleware();\n\npipeline.addMiddleware(synchronousMiddleware.exec);\npipeline.addMiddleware(asynchronousMiddleware.exec);\n\nconst result = pipeline.run('hello').then(data => data);\nresult.then((data) => console.log(data)).catch((error) => console.error(error));\n\nlanguage: typescript"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

@@ -1,0 +1,140 @@
+{
+  "title": "Fixing CSS Media Query Priority with Inconsistent Feature Ordering",
+  "subCategory": "Media Query Priority",
+  "statement": {
+    "markdown": "You are tasked with implementing a CSS media query parser. The parser should correctly determine the priority of the media queries based on the feature ordering. However, the existing implementation contains a logical bug that causes incorrect priority ordering. Your task is to fix this bug and provide a correct implementation.",
+    "inputFormat": "The input will be a list of media queries in the format 'feature1: value1, feature2: value2, ...'",
+    "outputFormat": "The output should be a list of media queries with their priority ordering corrected",
+    "notes": "Note that the feature ordering is critical in determining the correct priority. The features with higher values should have higher priority.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of media queries"
+      }
+    ],
+    "examples": [
+      {
+        "input": "max-width: 1024px, max-height: 768px, min-width: 320px",
+        "output": "[{ query: 'max-width: 1024px, max-height: 768px, min-width: 320px', priority: 3 }, { query: 'min-width: 320px', priority: 2 }, { query: 'max-width: 1024px, max-height: 768px', priority: 1 }]",
+        "explanation": "The correct priority ordering is based on the feature values. The media query with the highest value has the highest priority."
+      },
+      {
+        "input": "min-width: 320px, max-width: 1024px, max-height: 768px",
+        "output": "[{ query: 'max-width: 1024px, max-height: 768px, min-width: 320px', priority: 3 }, { query: 'min-width: 320px', priority: 2 }, { query: 'max-width: 1024px', priority: 1 }]",
+        "explanation": "The correct priority ordering is based on the feature values. The media query with the highest value has the highest priority."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 100,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "CSS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "css"
+    ],
+    "interviewFrequency": 1,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text: The priority ordering is based on the feature values. The media query with the highest value has the highest priority."
+    },
+    {
+      "order": 2,
+      "text": "Second hint text: The media queries with the same feature values should have the same priority."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach: Sort the media queries based on the feature values.",
+    "bruteForce": "Brute force approach summary: Iterate through the media queries and compare their feature values.",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details: Use a sorting algorithm to sort the media queries based on their feature values.",
+    "proofOfCorrectness": "Correctness proof: The sorting algorithm ensures that the media queries with the highest values have the highest priority.",
+    "dryRun": "Step-by-step example run: Sort the media queries based on their feature values.",
+    "commonMistakes": [
+      "Mistake 1: Incorrect priority ordering",
+      "Mistake 2: Failure to handle media queries with the same feature values"
+    ],
+    "timeComplexity": "O(n log n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "function parseMediaQueries(mediaQueries) {\n  // Implement the media query parser here\n  return mediaQueries;\n}",
+    "python": "class Solution:\n  def parseMediaQueries(self, media_queries):\n    # Implement the media query parser here\n    return media_queries;"
+  },
+  "buggyStarterCode": {
+    "javascript": "function parseMediaQueries(mediaQueries) {\n  let parsedQueries = [];\n  for (let query of mediaQueries) {\n    let features = query.split(',');\n    let priority = 0;\n    for (let feature of features) {\n      let [key, value] = feature.split(':');\n      priority += parseInt(value);\n    }\n    parsedQueries.push({ query, priority });\n  }\n  return parsedQueries;\n}",
+    "python": "class Solution:\n  def parseMediaQueries(self, media_queries):\n    parsed_queries = []\n    for query in media_queries:\n      features = query.split(',')\n      priority = 0\n      for feature in features:\n        key, value = feature.split(':')\n        priority += int(value)\n      parsed_queries.append({ 'query': query, 'priority': priority })\n    return parsed_queries;"
+  },
+  "functionSignature": {
+    "javascript": "function parseMediaQueries(mediaQueries);",
+    "python": "def parseMediaQueries(self, media_queries: list[str]) -> list[dict[str, int]]:"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction parseMediaQueries(mediaQueries) {\n  let parsedQueries = [];\n  for (let query of mediaQueries) {\n    let features = query.split(',');\n    let priority = features.length;\n    parsedQueries.push({ query, priority });\n  }\n  return parsedQueries.sort((a, b) => b.priority - a.priority);\n}",
+    "python": "class Solution:\n  def parseMediaQueries(self, media_queries):\n    parsed_queries = []\n    for query in media_queries:\n      features = query.split(',')\n      priority = features.count(',') + 1\n      parsed_queries.append({ 'query': query, 'priority': priority })\n    return sorted(parsed_queries, key=lambda x: x['priority'], reverse=True)"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "max-width: 1024px, max-height: 768px, min-width: 320px",
+      "output": "[{ query: 'max-width: 1024px, max-height: 768px, min-width: 320px', priority: 3 }, { query: 'min-width: 320px', priority: 2 }, { query: 'max-width: 1024px, max-height: 768px', priority: 1 }]",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "min-width: 320px, max-width: 1024px, max-height: 768px",
+      "output": "[{ query: 'max-width: 1024px, max-height: 768px, min-width: 320px', priority: 3 }, { query: 'min-width: 320px', priority: 2 }, { query: 'max-width: 1024px', priority: 1 }]",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "3415ea8f2e615d011118e578",
+  "slug": "fixing-css-media-query-priority-with-inconsistent-feature-ordering-bugfix-hard-css",
+  "mode": "bug_fix",
+  "category": "CSS",
+  "difficulty": "Hard"
+}

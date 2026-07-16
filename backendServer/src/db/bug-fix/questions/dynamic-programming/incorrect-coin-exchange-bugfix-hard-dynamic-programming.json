@@ -1,0 +1,172 @@
+{
+  "_id": "0852492b910b0559db724607",
+  "title": "Incorrect Coin Exchange",
+  "slug": "incorrect-coin-exchange-bugfix-hard-dynamic-programming",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "DP",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "dp"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "You are given a target amount of change and an unlimited number of coin denominations, and you need to find the minimum number of coins needed.\n",
+    "inputFormat": "The first line contains the number of test cases. The first line of test case contains two numbers n and c separated by a space. The second line of test case contains coins separated by spaces.\n",
+    "outputFormat": "Print the minimum number of coins of each denomination used to make the change in separate lines.\n",
+    "notes": "This problem has a constraint that the number of coins of each denomination should be non-negative.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Target amount"
+      },
+      {
+        "variable": "c",
+        "type": "integer",
+        "min": 2,
+        "max": 10000,
+        "description": "Number of coin denominations"
+      },
+      {
+        "variable": "coins",
+        "type": "list",
+        "min": 1,
+        "max": 10000,
+        "description": "List of coin denominations"
+      }
+    ],
+    "examples": [
+      {
+        "input": "1 2\n1 2",
+        "output": "1\n0",
+        "explanation": "Minimum number of coins to make 2 with 2 denominations (1,2) is 1(2) and 0(1)"
+      },
+      {
+        "input": "2 3\n1 2",
+        "output": "1\n1",
+        "explanation": "Minimum number of coins to make 3 with 2 denominations (1,2) is 1(2) and 1(1)"
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use dynamic programming to solve the problem."
+    }
+  ],
+  "editorial": {
+    "title": "Coin Exchange Problem",
+    "intuition": "The problem can be solved by using dynamic programming. For each coin denomination, we calculate the minimum number of coins needed to make the change.",
+    "bruteForce": "Brute force approach is not feasible as it takes O(n*c) time complexity. We should consider using dynamic programming to solve the problem.",
+    "betterSolution": "We can use a 2D array to store the minimum number of coins needed to make each amount.",
+    "optimalSolution": "The optimal solution has a time complexity of O(n*c), where n is the target amount and c is the number of coin denominations.",
+    "proofOfCorrectness": "The correctness of the solution can be proved using mathematical induction.",
+    "dryRun": "We can start the dry run by considering the base case where the target amount is 0.",
+    "commonMistakes": [
+      "Not considering the base cases",
+      "Not handling negative numbers"
+    ],
+    "timeComplexity": "O(n*c)",
+    "spaceComplexity": "O(n*c)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\nint minCoins(vector<int>& coins, int n, int c) {\n    \n}\n};",
+    "java": "class Solution {\npublic:\nint minCoins(int[] coins, int n, int c) {\n    \n}\n};",
+    "python": "class Solution:\n    def minCoins(self, coins, n, c):\n        \n",
+    "javascript": "function minCoins(coins, n, c) {\n    \n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\nint minCoins(vector<int>& coins, int n, int c) {\n    int dp[c+1][n+1];\n    for (int i=0; i<=c; i++) {\n        for (int j=0; j<=n; j++) {\n            dp[i][j] = -1;\n        }\n    }\n    return dp[c][n];\n}\n};",
+    "java": "class Solution {\npublic:\nint minCoins(int[] coins, int n, int c) {\n    int[][] dp = new int[c+1][n+1];\n    for (int i=0; i<=c; i++) {\n        for (int j=0; j<=n; j++) {\n            dp[i][j] = -1;\n        }\n    }\n    return dp[c][n];\n}\n};",
+    "python": "class Solution:\n    def minCoins(self, coins, n, c):\n        dp = [[-1 for _ in range(c+1)] for _ in range(n+1)]\n        for i in range(c+1):\n            for j in range(n+1):\n                dp[i][j] = -1\n        return dp[c][n]",
+    "javascript": "function minCoins(coins, n, c) {\n    let dp = Array.from({length: c+1}, () => Array.from({length: n+1}, () => -1));\n    for (let i=0; i<=c; i++) {\n        for (let j=0; j<=n; j++) {\n            dp[i][j] = -1;\n        }\n    }\n    return dp[c][n];\n}"
+  },
+  "functionSignature": {
+    "cpp": "int minCoins(vector<int>& coins, int n, int c);",
+    "java": "int minCoins(int[] coins, int n, int c);",
+    "python": "def minCoins(self, coins: list[int], n: int, c: int) -> int:",
+    "javascript": "function minCoins(coins, n, c);"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def minCoins(self, coins, n, c):\n        dp = [[float('inf') for _ in range(n+1)] for _ in range(c+1)]\n        dp[0][0] = 0\n        for i in range(1, c+1):\n            for j in range(1, n+1):\n                if coins[i-1] <= j:\n                    dp[i][j] = min(dp[i-1][j], dp[i][j-coins[i-1]] + 1)\n                else:\n                    dp[i][j] = dp[i-1][j]\n        return dp[c][n]",
+    "cpp": "class Solution {\npublic:\nint minCoins(vector<int>& coins, int n, int c) {\n    int dp[c+1][n+1];\n    for (int i=0; i<=c; i++) {\n        for (int j=0; j<=n; j++) {\n            dp[i][j] = (coins[i] <= j) ? min(dp[i-1][j], dp[i][j-coins[i]] + 1) : dp[i-1][j];\n        }\n    }\n    return dp[c][n];\n}\n};",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "1\n2\n1 2\n3",
+      "output": "1\n0",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "2\n3\n1 2\n5\n3",
+      "output": "1\n1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

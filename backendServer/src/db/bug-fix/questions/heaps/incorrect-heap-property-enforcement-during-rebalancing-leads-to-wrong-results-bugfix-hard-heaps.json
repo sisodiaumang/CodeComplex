@@ -1,0 +1,170 @@
+{
+  "_id": "1f5b83a4739f7ae8a51ce6a1",
+  "title": "Incorrect Heap Property Enforcement During Rebalancing Leads to Wrong Results",
+  "slug": "incorrect-heap-property-enforcement-during-rebalancing-leads-to-wrong-results-bugfix-hard-heaps",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "BINARY HEAP",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "heap"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Solve the problem and fix the bugs.",
+    "inputFormat": "An array of integers representing elements to be inserted into a binary max heap.",
+    "outputFormat": "True if the binary max heap is valid, False otherwise.",
+    "notes": "Note that the binary max heap must satisfy the heap property, i.e., the parent node is greater than or equal to its child node for all nodes.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 100000,
+        "description": "Size of array"
+      },
+      {
+        "variable": "max_val",
+        "type": "integer",
+        "min": 0,
+        "max": 2147483647,
+        "description": "Maximum allowed value in the array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "4\n3 5 8 2",
+        "output": "True",
+        "explanation": "The array 3 5 8 2 is a valid binary max heap."
+      },
+      {
+        "input": "5\n2 3 5 7 1",
+        "output": "False",
+        "explanation": "The array 2 3 5 7 1 is not a valid binary max heap because the parent node 3 is not greater than its child node 2."
+      },
+      {
+        "input": "1\n1",
+        "output": "True",
+        "explanation": "The array [1] is a valid binary max heap."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Understand the heap property and how to enforce it during rebalancing."
+    }
+  ],
+  "editorial": {
+    "title": "Incorrect Heap Property Enforcement During Rebalancing Leads to Wrong Results",
+    "intuition": "To enforce the heap property, we need to ensure that the parent node is greater than or equal to its child node for all nodes. This can be achieved by performing a bottom-up heapify operation after rebalancing the heap.",
+    "bruteForce": "Checking the heap property for each node individually, resulting in a time complexity of O(n^2).",
+    "betterSolution": "",
+    "optimalSolution": "We can enforce the heap property during rebalancing by performing a bottom-up heapify operation, resulting in a time complexity of O(n log n) due to the heapify operation.",
+    "proofOfCorrectness": "The optimal solution is correct because it ensures that the heap property is enforced during rebalancing, resulting in a valid binary max heap.",
+    "dryRun": "Step-by-step example run of the optimal solution.",
+    "commonMistakes": [
+      "Incorrectly implementing the heapify operation",
+      "Failing to enforce the heap property during rebalancing"
+    ],
+    "timeComplexity": "O(n log n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "class Solution { public: bool solve(vectorint>& nums); };",
+    "java": "public class Solution { public boolean solve(int[] nums); }",
+    "python": "class Solution: def solve(self, nums: list[int]) -> bool:",
+    "javascript": "function solve(nums) {"
+  },
+  "buggyStarterCode": {
+    "cpp": "#include <iostream>\n#include <vector>\n\nclass Solution {\npublic:\n    bool solve(std::vector<int>& nums) {\n        for (int i = nums.size() - 1; i >= 0; --i) {\n            int largest = i;\n            for (int j = 2 * i + 1; j < nums.size(); ++j) {\n                if (nums[j] > nums[largest]) {\n                    largest = j;\n                }\n            }\n            if (i != largest) {\n                // This is where the bug is\n                std::swap(nums[i], nums[i - 1]);\n                // Fix this to std::swap(nums[i], nums[largest]);\n            }\n        }\n        return true;\n    }\n};",
+    "java": "import java.util.Scanner;\n\npublic class Solution {\npublic boolean solve(int[] nums) {\n    for (int i = nums.length - 1; i >= 0; --i) {\n        int largest = i;\n        for (int j = 2 * i + 1; j < nums.length; ++j) {\n            if (nums[j] > nums[largest]) {\n                largest = j;\n            }\n        }\n        if (i != largest) {\n            // This is where the bug is\n            int temp = nums[i];\n            nums[i] = nums[i - 1];\n            nums[i - 1] = temp;\n            // Fix this to nums[i] = nums[largest];\n        }\n    }\n    return true;\n}\n}",
+    "python": "class Solution:\n    def solve(self, nums: list[int]) -> bool:\n        for i in range(len(nums) - 1, -1, -1):\n            largest = i\n            for j in range(2 * i + 1, len(nums)):\n                if nums[j] > nums[largest]:\n                    largest = j\n            if i != largest:\n                # This is where the bug is\n                nums[i], nums[i - 1] = nums[i - 1], nums[i]\n                # Fix this to nums[i] = nums[largest];\n        return True;",
+    "javascript": "function solve(nums) {\n    for (let i = nums.length - 1; i >= 0; --i) {\n        let largest = i;\n        for (let j = 2 * i + 1; j < nums.length; ++j) {\n            if (nums[j] > nums[largest]) {\n                largest = j;\n            }\n        }\n        if (i != largest) {\n            // This is where the bug is\n            let temp = nums[i];\n            nums[i] = nums[i - 1];\n            nums[i - 1] = temp;\n            // Fix this to nums[i] = nums[largest];\n        }\n    }\n    return true;\n}"
+  },
+  "functionSignature": {
+    "cpp": "bool solve(std::vector<int>& nums);",
+    "java": "public boolean solve(int[] nums);",
+    "python": "def solve(self, nums: list[int]) -> bool:",
+    "javascript": "function solve(nums);"
+  },
+  "solutions": {
+    "python": "def solve(nums):\n    def heapify(nums, n, i):\n        largest = i\n        left = 2 * i + 1\n        right = 2 * i + 2\n\n        if left < n and nums[left] > nums[largest]:\n            largest = left\n\n        if right < n and nums[right] > nums[largest]:\n            largest = right\n\n        if largest != i:\n            nums[i], nums[largest] = nums[largest], nums[i]\n            heapify(nums, n, largest)\n\n    n = len(nums)\n\n    for i in range(n // 2 - 1, -1, -1):\n        heapify(nums, n, i)\n\n    return True",
+    "cpp": "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nclass Solution {\npublic:\n    bool solve(std::vector<int>& nums) {\n        int n = nums.size();\n\n        for (int i = n / 2 - 1; i >= 0; --i) {\n            heapify(nums, n, i);\n        }\n\n        return true;\n    }\n\n    void heapify(std::vector<int>& nums, int n, int i) {\n        int largest = i;\n        int left = 2 * i + 1;\n        int right = 2 * i + 2;\n\n        if (left < n && nums[left] > nums[largest]) {\n            largest = left;\n        }\n\n        if (right < n && nums[right] > nums[largest]) {\n            largest = right;\n        }\n\n        if (largest != i) {\n            std::swap(nums[i], nums[largest]);\n            heapify(nums, n, largest);\n        }\n\n        return;\n    }\n};",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "4\n3 5 8 2",
+      "output": "True",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "5\n2 3 5 7 1",
+      "output": "False",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

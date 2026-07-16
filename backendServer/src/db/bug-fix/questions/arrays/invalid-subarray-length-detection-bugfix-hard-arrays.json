@@ -1,0 +1,165 @@
+{
+  "_id": "592c295e6cb3628c4d5d6eda",
+  "title": "Invalid Subarray Length Detection",
+  "slug": "invalid-subarray-length-detection-bugfix-hard-arrays",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "Two Pointers",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 60,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "array",
+      "two point"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given an array of integers and an integer target, return the length of the shortest subarray whose sum is greater than or equal to the target. If no such subarray exists, return 0. However, the function is incorrectly assuming the minimum length of the subarray is always achievable if the array sum at the current two-pointer positions exceeds the target. Fix the bug to handle this edge case correctly.",
+    "inputFormat": "Input array of integers (nums) and target integer (k)",
+    "outputFormat": "The minimum length of the shortest subarray whose sum is greater than or equal to the target",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      },
+      {
+        "variable": "k",
+        "type": "integer",
+        "min": 0,
+        "max": 100000000,
+        "description": "Target sum"
+      }
+    ],
+    "examples": [
+      {
+        "input": "nums = [2, 3, 1, 2, 4, 3], k = 7\nOutput: 2\nExplanation: The shortest subarray with a sum greater than or equal to 7 is [2, 3, 2] which has a length of 3, but there's a shorter subarray [4, 3] with length 2",
+        "output": "2",
+        "explanation": "The corrected minimum length should be 2"
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "The current implementation always finds a subarray if it exceeds the target, but this is incorrect. Think about the edge cases where the array sum at the current two-pointer positions exceeds the target"
+    },
+    {
+      "order": 2,
+      "text": "Use a two-pointer approach to handle both expanding and shrinking the subarray"
+    }
+  ],
+  "editorial": {
+    "title": "Invalid Subarray Length Detection",
+    "intuition": "We should utilize a two-pointer approach to efficiently find the shortest subarray. However, we must correctly handle the edge case where the array sum exceeds the target without necessarily finding the minimum length subarray",
+    "bruteForce": "We can brute-force all possible subarray lengths but this is inefficient and unnecessary",
+    "betterSolution": "Maintain two pointers to expand and shrink the subarray efficiently. However, we must account for the edge case where the array sum exceeds the target",
+    "optimalSolution": "Use a two-pointer approach to expand and shrink the subarray. If the sum at the current positions exceeds the target, we must correctly update the result and move the pointers accordingly. If the sum at the current positions is less than the target, we must try expanding the subarray by moving the right pointer and update the result accordingly.",
+    "proofOfCorrectness": "We can prove the correctness of our solution by considering all possible subarray lengths and edge cases",
+    "dryRun": "Consider an example to dry-run the solution and ensure it behaves correctly",
+    "commonMistakes": [
+      "Always finding a subarray if it exceeds the target",
+      "Not accounting for edge cases where the array sum exceeds the target"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\nint minSubArrayLen(int k, vector<int>& nums) {\n    int res = INT_MAX;\n    for (int i = 0; i < nums.size(); ++i) {\n        int sum = 0;\n        for (int j = i; j < nums.size(); ++j) {\n            sum += nums[j];\n            if (sum >= k) res = min(res, j - i + 1);\n        }\n    }\n    return res == INT_MAX ? 0 : res;\n}",
+    "java": "public class Solution {\n    public int minSubArrayLen(int k, int[] nums) {\n        int res = Integer.MAX_VALUE;\n        for (int i = 0; i < nums.length; i++) {\n            int sum = 0;\n            for (int j = i; j < nums.length; j++) {\n                sum += nums[j];\n                if (sum >= k) res = Math.min(res, j - i + 1);\n            }\n        }\n        return res == Integer.MAX_VALUE ? 0 : res;\n    }\n}",
+    "python": "class Solution:\n    def minSubArrayLen(self, k, nums) -> int:\n        res = float('inf')\n        for i in range(len(nums)):\n            total = 0\n            for j in range(i, len(nums)):\n                total += nums[j]\n                if total >= k:\n                    res = min(res, j - i + 1)\n        return res if res != float('inf') else 0",
+    "javascript": "function minSubArrayLen(k, nums) {\n    let res = Infinity;\n    for (let i = 0; i < nums.length; i++) {\n        let sum = 0;\n        for (let j = i; j < nums.length; j++) {\n            sum += nums[j];\n            if (sum >= k) res = Math.min(res, j - i + 1);\n        }\n    }\n    return res == Infinity ? 0 : res;\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\nint minSubArrayLen(int k, vector<int>& nums) {\n    int res = INT_MAX;\n    for (int i = 0; i < nums.size(); ++i) {\n        int sum = 0;\n        for (int j = i; j < nums.size(); ++j) {\n            sum += nums[j];\n            if (sum > k) res = min(res, j - i);\n        }\n    }\n    return res == INT_MAX ? 0 : res;\n}",
+    "java": "public class Solution {\n    public int minSubArrayLen(int k, int[] nums) {\n        int res = Integer.MAX_VALUE;\n        for (int i = 0; i < nums.length; i++) {\n            int sum = 0;\n            for (int j = i; j < nums.length; j++) {\n                sum += nums[j];\n                if (sum > k) res = Math.min(res, j - i);\n            }\n        }\n        return res == Integer.MAX_VALUE ? 0 : res;\n    }\n}",
+    "python": "class Solution:\n    def minSubArrayLen(self, k, nums) -> int:\n        res = float('inf')\n        for i in range(len(nums)):\n            total = 0\n            for j in range(i, len(nums)):\n                total += nums[j]\n                if total > k:\n                    res = min(res, j - i)\n        return res if res != float('inf') else 0",
+    "javascript": "function minSubArrayLen(k, nums) {\n    let res = Infinity;\n    for (let i = 0; i < nums.length; i++) {\n        let sum = 0;\n        for (let j = i; j < nums.length; j++) {\n            sum += nums[j];\n            if (sum > k) res = Math.min(res, j - i);\n        }\n    }\n    return res == Infinity ? 0 : res;\n}"
+  },
+  "functionSignature": {
+    "cpp": "bool isSubsequence(vector<int>& nums1, vector<int>& nums2);",
+    "java": "boolean isSubsequence(int[] nums1, int[] nums2);",
+    "python": "def isSubsequence(self, nums1: list[int], nums2: list[int]) -> bool:",
+    "javascript": "function isSubsequence(nums1, nums2);"
+  },
+  "solutions": {
+    "python": "import sys\n\nclass Solution:\n    def minSubArrayLen(self, k, nums) -> int:\n        res = float('inf')\n        for i in range(len(nums)):\n            total = 0\n            for j in range(i, len(nums)):\n                total += nums[j]\n                if total >= k:\n                    res = min(res, j - i + 1)\n        return res if res != float('inf') else 0\n\nif __name__ == '__main__':\n    nums = [2, 3, 1, 2, 4, 3]\n    k = 7\n    s = Solution()\n    print(s.minSubArrayLen(k, nums))",
+    "cpp": "#include <iostream>\n#include <vector>\n#include <limits>\n\nusing namespace std;\n\nclass Solution {\npublic:\nint minSubArrayLen(int k, const vector<int>& nums) {\n    int res = numeric_limits<int>::max();\n    for (int i = 0; i < nums.size(); ++i) {\n        int sum = 0;\n        for (int j = i; j < nums.size(); ++j) {\n            sum += nums[j];\n            if (sum >= k) res = min(res, j - i + 1);\n        }\n    }\n    return res == numeric_limits<int>::max() ? 0 : res;\n}\n};\n\ntmain() {\n    int k = 7;\n    vector<int> nums = {2, 3, 1, 2, 4, 3};\n    Solution s;\n    cout << s.minSubArrayLen(k, nums) << endl;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "nums = [2, 3, 1, 2, 4, 3], k = 7\n",
+      "output": "2\n",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_3",
+      "input": "nums = [1, 4, 4], k = 4",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

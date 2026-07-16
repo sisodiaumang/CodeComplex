@@ -1,0 +1,158 @@
+{
+  "_id": "9b090fa7a6ad2401256bf473",
+  "title": "Incorrectly Calculating the Tree Height",
+  "slug": "incorrectly-calculating-the-tree-height-bugfix-medium-binary-trees-1",
+  "difficulty": "Medium",
+  "category": "DSA",
+  "subCategory": "DFS/BFS",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 25,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "tree"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given the root of a binary tree and the reference of a node, find the level of that node in the tree. In a binary tree, the root node is at level 0, and children of each depth are at the next higher depth. If the node is not in the tree, return -1.",
+    "inputFormat": "The input will consist of a tree with a root node and a reference node.",
+    "outputFormat": "The function should return the level of the reference node in the tree. If the node is not in the tree, return -1.",
+    "notes": "Note that a node can have multiple parents if it is present in a multi-rooted tree. However, for the purpose of this problem, we assume that all nodes have a unique parent.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "Example input (matching the stdin format that main wrapper expects):\n5\n3 0 1 4 2\n3\n1",
+        "output": "2",
+        "explanation": ""
+      },
+      {
+        "input": "Example input (matching the stdin format that main wrapper expects):\n5\n3 0 1\n3\n5",
+        "output": "-1",
+        "explanation": ""
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Recall that a binary tree node has a value, a left child, and a right child, which can be null."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(...) ",
+    "spaceComplexity": "O(...)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    int height(Node* root, int target)\n    {\n        // TODO: implement\n    }\n};",
+    "java": "public class Solution {\n    public int height(Node root, int target)\n    {\n        // TODO: implement\n        return -1;\n    }\n}",
+    "python": "class Solution:\n    def height(self, root, target):\n        pass",
+    "javascript": "function height(root, target) {}\n"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    int height(Node* root, int target)\n    {\n        if (root == nullptr || (root->val == target))\n            return -1;\n        return 1 + max(height(root->left, target), height(root->right, target));\n    }\n};",
+    "java": "public class Solution {\n    public int height(Node root, int target)\n    {\n        if (root == null || (root.val == target))\n            return -1;\n        return 1 + Math.max(height(root.left, target), height(root.right, target));\n    }\n}",
+    "python": "class Solution:\n    def height(self, root, target):\n        if root is None or (root.val == target):\n            return -1\n        return 1 + max(self.height(root.left, target), self.height(root.right, target))",
+    "javascript": "function height(root, target) {\n    if (root === null || (root.val === target))\n        return -1;\n    return 1 + Math.max(height(root.left, target), height(root.right, target));\n}"
+  },
+  "functionSignature": {
+    "cpp": "int height(Node* root, int target);",
+    "java": "int height(Node root, int target);",
+    "python": "def height(self, root, target: int) -> int:",
+    "javascript": "int height(Node root, int target)"
+  },
+  "solutions": {
+    "python": "import sys\nfrom collections import deque\n\nclass Solution:\n    def height(self, root, target):\n        if root is None or (root.val == target):\n            return -1\n        queue = deque([(root, 0)])\n        seen = set()\n        while queue:\n            node, level = queue.popleft()\n            if node in seen:\n                continue\n            if node.val == target:\n                return level\n            seen.add(node)\n            if node.left:\n                queue.append((node.left, level + 1))\n            if node.right:\n                queue.append((node.right, level + 1))\n        return -1\n\nn = int(sys.stdin.readline())\nvals = list(map(int, sys.stdin.readline().split()))\nroot = None\nfor i in range(n):\n    if vals[i] == -1:\n        root = None\n    else:\n        val = vals[i]\n        if root is None:\n            root = Node(val)\n        else:\n            self.insert(root, val)\n\ndef insert(self, root, val):\n    if root is None:\n        return Node(val)\n    if val < root.val:\n        root.left = self.insert(root.left, val)\n    else:\n        root.right = self.insert(root.right, val)\n    return root\n\ntarget = int(sys.stdin.readline())\nprint(self.height(root, target))",
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    int height(Node* root, int target) {\n        if (root == nullptr || (root->val == target))\n            return -1;\n        if (root->val == target)\n            return 0;\n        int left = height(root->left, target);\n        if (left != -1)\n            return left + 1;\n        return height(root->right, target) + 1;\n    }\n};\n\nint main() {\n    ios_base::sync_with_stdio(false);\ncin.tie(nullptr);\ncout.tie(nullptr);\n\n    Node* root = nullptr;\n    int n;\n    cin >> n;\n    int vals[n];\n    for (int i = 0; i < n; i++) {\n        cin >> vals[i];\n        if (vals[i] == -1)\n            root = nullptr;\n        else {\n            if (root == nullptr)\n                root = new Node(vals[i]);\n            else\n                insert(root, vals[i]);\n        }\n    }\n\n    int target;\n    cin >> target;\n    cout << height(root, target) << endl;\n\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "First line count, second line elements (stdin match):\n5\n3 0 1 4 2\n3\n1",
+      "output": "2",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "Example 2 input (matching the stdin format that main wrapper expects): \n5\n3 0 1\n3\n5",
+      "output": "-1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

@@ -1,0 +1,147 @@
+{
+  "title": "Fixing React Memoized Component Re-renders Due to Changing Object References",
+  "subCategory": "State Management",
+  "statement": {
+    "markdown": "Write a React memoized component that renders a list of items. The component accepts an array of objects with a unique identifier and a name. The component should render the list of items, but it should only re-render when the array of objects or the object references within the array change.",
+    "inputFormat": "An array of objects with a unique identifier and a name.",
+    "outputFormat": "A list of rendered items.",
+    "notes": "The component should only re-render when the array of objects or the object references within the array change.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 1000,
+        "description": "The number of items in the array."
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 1,
+        "max": 1000,
+        "description": "The number of unique identifiers in the array."
+      }
+    ],
+    "examples": [
+      {
+        "input": "[{ id: 1, name: 'Item 1' }, { id: 2, name: 'Item 2' }, { id: 3, name: 'Item 3' }]",
+        "output": "[<div>Item 1</div>, <div>Item 2</div>, <div>Item 3</div>]",
+        "explanation": "The component should re-render when the array of objects changes."
+      },
+      {
+        "input": "[{ id: 1, name: 'Item 1' }, { id: 2, name: 'Item 2' }, { id: 3, name: 'Item 3' }]",
+        "output": "[<div>Item 1</div>, <div>Item 2</div>, <div>Item 3</div>]",
+        "explanation": "The component should not re-render when the object references within the array do not change."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "REACT"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "react"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the `useMemo` hook to memoize the array of objects."
+    },
+    {
+      "order": 2,
+      "text": "Compare the memoized array with the new array to determine if the component should re-render."
+    }
+  ],
+  "editorial": {
+    "title": "Fixing React Memoized Component Re-renders Due to Changing Object References",
+    "intuition": "The component should only re-render when the array of objects or the object references within the array change.",
+    "bruteForce": "Compare the entire array of objects on every render to determine if the component should re-render.",
+    "betterSolution": "Use the `useMemo` hook to memoize the array of objects and compare it with the new array to determine if the component should re-render.",
+    "optimalSolution": "Use the `useMemo` hook with a custom comparison function to memoize the array of objects and compare it with the new array to determine if the component should re-render.",
+    "proofOfCorrectness": "The component should only re-render when the array of objects or the object references within the array change.",
+    "dryRun": "Step-by-step example run to test the correct implementation.",
+    "commonMistakes": [
+      "Not using the `useMemo` hook to memoize the array of objects.",
+      "Not comparing the memoized array with the new array to determine if the component should re-render."
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// Import the React hook for memoization\nimport { useMemo } from 'react';\n\n// Define the memoized component\nconst MemoizedComponent = ({ items }) => {\n  // Use the useMemo hook to memoize the array of objects\n  const memoizedItems = useMemo(() => items, []);\n  // Render the list of items\n  return items.map((item) => <div>{item.name}</div>);\n};\n\n// Export the memoized component\nexport default MemoizedComponent;",
+    "python": "// Import the React hook for memoization\nfrom react import useMemo\n\n// Define the memoized component\nclass MemoizedComponent:\n  def __init__(self, props):\n    # Import the React components\n    import React\n    # Use the useMemo hook to memoize the array of objects\n    self.memoized_items = useMemo(lambda: props.items, [])\n  # Render the list of items\n  def render(self):\n    return [React.createElement('div', {}, props.item.name) for props.item in self.props.items]\n\n# Export the memoized component\nfrom react import Component\nComponent.register(MemoizedComponent)"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Import the React hook for memoization\nimport { useMemo } from 'react';\n\n// Define the memoized component\nconst MemoizedComponent = ({ items }) => {\n  // Use the useMemo hook to memoize the array of objects\n  const memoizedItems = useMemo(() => items.slice(), []);\n  // Render the list of items\n  return items.map((item) => <div>{item.name}</div>);\n};\n\n// Export the memoized component\nexport default MemoizedComponent;",
+    "python": "// Import the React hook for memoization\nfrom react import useMemo\n\n// Define the memoized component\nclass MemoizedComponent:\n  def __init__(self, props):\n    # Import the React components\n    import React\n    # Use the useMemo hook to memoize the array of objects\n    self.memoized_items = useMemo(lambda: props.items[:], [])\n  # Render the list of items\n  def render(self):\n    return [React.createElement('div', {}, props.item.name) for props.item in self.props.items]\n\n# Export the memoized component\nfrom react import Component\nComponent.register(MemoizedComponent)"
+  },
+  "functionSignature": {
+    "javascript": "const MemoizedComponent = ({ items }) => { ... };",
+    "python": "class MemoizedComponent:\n  def __init__(self, props):\n    ...\n  def render(self):\n    ..."
+  },
+  "solutions": {
+    "javascript": "// Import the React hook for memoization\nimport { useMemo } from 'react';\n\n// Define the memoized component\nconst MemoizedComponent = ({ items }) => {\n  // Use the useMemo hook to memoize the array of objects\n  const memoizedItems = useMemo(() => items, items);\n  // Render the list of items\n  return items.map((item) => <div>{item.name}</div>);\n};\n\n// Export the memoized component\nexport default MemoizedComponent;",
+    "python": "// Import the React hook for memoization\nfrom react import useMemo\n\n// Define the memoized component\nclass MemoizedComponent:\n  def __init__(self, props):\n    # Import the React components\n    import React\n    # Use the useMemo hook to memoize the array of objects\n    self.memoized_items = useMemo(lambda: props.items, props.items)\n  # Render the list of items\n  def render(self):\n    return [React.createElement('div', {}, props.item.name) for props.item in self.props.items]\n\n# Export the memoized component\nfrom react import Component\nComponent.register(MemoizedComponent)"
+  },
+  "judgeConfig": {
+    "timeLimit": 2000,
+    "memoryLimit": 16777216,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "[{ id: 1, name: 'Item 1' }, { id: 2, name: 'Item 2' }, { id: 3, name: 'Item 3' }]",
+      "output": "[<div>Item 1</div>, <div>Item 2</div>, <div>Item 3</div>]",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "[{ id: 1, name: 'Item 1' }, { id: 2, name: 'Item 2' }, { id: 3, name: 'Item 3' }]",
+      "output": "[<div>Item 1</div>, <div>Item 2</div>, <div>Item 3</div>]",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "05d25270b6525831bbc0af47",
+  "slug": "fixing-react-memoized-component-re-renders-due-to-changing-object-references-bugfix-medium-react",
+  "mode": "bug_fix",
+  "category": "REACT",
+  "difficulty": "Medium"
+}

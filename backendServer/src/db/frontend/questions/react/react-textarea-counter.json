@@ -1,0 +1,53 @@
+{
+  "_id": "f3000996116d79ba9cf8b67c",
+  "title": "React Textarea Character Counter",
+  "slug": "react-textarea-counter",
+  "difficulty": "Easy",
+  "topics": [
+    "REACT",
+    "REACT_TEXTAREA_COUNTER"
+  ],
+  "statement": {
+    "markdown": "## React Textarea Character Counter\n\nCreate a TextArea component displaying remaining character counts.\n\n### Requirements:\n1. **Real-time Counter**: Display `character count / maxLength` (e.g. `120 / 250`) updated instantly on keypress.\n2. **Borders on Limit**: Apply warning red colors on input border and count text when characters reach or exceed the limit.\n3. **Auto-resize**: Automatically resize the height of the textarea based on the amount of content typed to avoid scrolling bars.\n"
+  },
+  "constraints": [
+    "Must support responsive styles",
+    "Must use React hooks",
+    "Must style elements with Tailwind CSS"
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "html": "",
+    "css": "",
+    "react": "import React, { useState, useRef } from 'react';\n\nexport default function TextareaCounter({ maxLength = 200 }) {\n  // Implement auto-resizing textarea with character count here\n  return null;\n}"
+  },
+  "gradingCriteria": [
+    {
+      "id": "functional_correctness",
+      "description": "Verify that the interactive props, callbacks, and element structures work cleanly.",
+      "weight": 60
+    },
+    {
+      "id": "code_cleanliness",
+      "description": "Verify state structure designs and clean Tailwind CSS layouts.",
+      "weight": 40
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "react",
+      "tailwind"
+    ],
+    "referenceSolution": "import React, { useState, useRef, useEffect } from 'react';\n\nexport default function TextareaCounter({ maxLength = 200 }) {\n  const [text, setText] = useState(\"\");\n  const textareaRef = useRef(null);\n\n  const length = text.length;\n  const isNearLimit = length >= maxLength * 0.9;\n  const isOverLimit = length > maxLength;\n\n  // Auto-resize height handler\n  useEffect(() => {\n    if (textareaRef.current) {\n      textareaRef.current.style.height = \"auto\";\n      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;\n    }\n  }, [text]);\n\n  const handleChange = (e) => {\n    setText(e.target.value);\n  };\n\n  return (\n    <div className=\"w-full max-w-md\">\n      <textarea\n        ref={textareaRef}\n        rows={3}\n        value={text}\n        onChange={handleChange}\n        className={`w-full p-4 border-2 rounded-xl text-sm text-gray-700 bg-white outline-none resize-none transition focus:ring-2 ${\n          isOverLimit\n            ? 'border-red-400 focus:ring-red-200 focus:border-red-400'\n            : isNearLimit\n            ? 'border-yellow-400 focus:ring-yellow-200 focus:border-yellow-400'\n            : 'border-gray-200 focus:ring-purple-200 focus:border-purple-500'\n        }`}\n        placeholder=\"Type something...\"\n      />\n      <div className=\"flex justify-end mt-1.5\">\n        <span className={`text-xs font-semibold ${\n          isOverLimit ? 'text-red-500' : isNearLimit ? 'text-yellow-500' : 'text-gray-400'\n        }`}>\n          {length} / {maxLength}\n        </span>\n      </div>\n    </div>\n  );\n}"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

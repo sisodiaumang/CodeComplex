@@ -1,0 +1,173 @@
+{
+  "title": "DOCKER Container Port Mapping Validator with Incorrect Port Range",
+  "subCategory": "Docker port mapping",
+  "statement": {
+    "markdown": "Write a function to validate if a given Docker container port mapping is correct. A port mapping is correct if the exposed port is between 1 and 65535 and the published port is between 1 and 65535. However, the published port should also be greater than the exposed port. If the mapping is correct, return the string 'Valid' otherwise return the string 'Invalid'.",
+    "inputFormat": "A string containing the Docker container port mapping in the format 'ExposedPort:PublishedPort'. For example, '80:8080'.",
+    "outputFormat": "A string containing the result of the validation. It will be either 'Valid' or 'Invalid'.",
+    "notes": "The function should handle cases where the input string is empty or the ports are not in the correct format.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 1000,
+        "description": "Input string length"
+      },
+      {
+        "variable": "exposedPort",
+        "type": "integer",
+        "min": 1,
+        "max": 65535,
+        "description": "Exposed port number"
+      },
+      {
+        "variable": "publishedPort",
+        "type": "integer",
+        "min": 1,
+        "max": 65535,
+        "description": "Published port number"
+      }
+    ],
+    "examples": [
+      {
+        "input": "80:8080",
+        "output": "Valid",
+        "explanation": "Exposed port is 80 and published port is 8080. Both ports are valid and published port is greater than exposed port."
+      },
+      {
+        "input": "8080:",
+        "output": "Invalid",
+        "explanation": "Published port is empty. Input string is not in the correct format."
+      },
+      {
+        "input": ":8080",
+        "output": "Invalid",
+        "explanation": "Exposed port is empty. Input string is not in the correct format."
+      },
+      {
+        "input": "65536:8080",
+        "output": "Invalid",
+        "explanation": "Exposed port is greater than 65535. Input string is in the correct format but exposed port is invalid."
+      },
+      {
+        "input": "80:65536",
+        "output": "Invalid",
+        "explanation": "Published port is greater than 65535. Input string is in the correct format but published port is invalid."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DOCKER"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "docker"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text. Check if the input string is in the correct format."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(...) ",
+    "spaceComplexity": "O(...)"
+  },
+  "starterCode": {
+    "javascript": "function validatePortMapping(portMapping) {\n    // Your code here\n}",
+    "python": "class Solution:\n    def validatePortMapping(self, portMapping: str) -> str:\n        # Your code here\n"
+  },
+  "buggyStarterCode": {
+    "javascript": "function validatePortMapping(portMapping) {\n    if (!portMapping) {\n        return 'Valid';\n    }\n    var parts = portMapping.split(':');\n    if (parts.length !== 2) {\n        return 'Invalid';\n    }\n    var exposedPort = parseInt(parts[0]);\n    var publishedPort = parseInt(parts[1]);\n    if (isNaN(exposedPort) || isNaN(publishedPort)) {\n        return 'Invalid';\n    }\n    if (exposedPort > 65535) {\n        return 'Invalid';\n    }\n    if (publishedPort > 65535) {\n        return 'Invalid';\n    }\n    return 'Valid';\n}",
+    "python": "class Solution:\n    def validatePortMapping(self, portMapping: str) -> str:\n        if not portMapping:\n            return 'Valid'\n        parts = portMapping.split(':')\n        if len(parts) != 2:\n            return 'Invalid'\n        exposedPort = int(parts[0])\n        publishedPort = int(parts[1])\n        if not exposedPort or not publishedPort:\n            return 'Invalid'\n        if exposedPort > 65535:\n            return 'Invalid'\n        if publishedPort > 65535:\n            return 'Invalid'\n        return 'Valid'"
+  },
+  "functionSignature": {
+    "javascript": "function validatePortMapping(portMapping: string): string;",
+    "python": "def validatePortMapping(self, portMapping: str) -> str:"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction validatePortMapping(portMapping) {\n    if (!portMapping) {\n        return 'Invalid';\n    }\n    var parts = portMapping.split(':');\n    if (parts.length !== 2) {\n        return 'Invalid';\n    }\n    var exposedPort = parseInt(parts[0]);\n    var publishedPort = parseInt(parts[1]);\n    if (isNaN(exposedPort) || isNaN(publishedPort)) {\n        return 'Invalid';\n    }\n    if (publishedPort <= exposedPort) {\n        return 'Invalid';\n    }\n    if (exposedPort > 65535 || publishedPort > 65535) {\n        return 'Invalid';\n    }\n    return 'Valid';\n}",
+    "python": "class Solution:\n    def validatePortMapping(self, portMapping: str) -> str:\n        if not portMapping:\n            return 'Invalid'\n        parts = portMapping.split(':')\n        if len(parts) != 2:\n            return 'Invalid'\n        exposedPort = int(parts[0])\n        publishedPort = int(parts[1])\n        if not exposedPort or not publishedPort:\n            return 'Invalid'\n        if exposedPort > 65535 or publishedPort > 65535:\n            return 'Invalid'\n        if publishedPort <= exposedPort:\n            return 'Invalid'\n        return 'Valid'"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "80:8080",
+      "output": "Valid",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "8080:",
+      "output": "Invalid",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    },
+    {
+      "id": "tc_3",
+      "input": ":8080",
+      "output": "Invalid",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "1c2ec549779ec8823f389a85",
+  "slug": "docker-container-port-mapping-validator-with-incorrect-port-range-bugfix-medium-docker",
+  "mode": "bug_fix",
+  "category": "DOCKER",
+  "difficulty": "Medium"
+}

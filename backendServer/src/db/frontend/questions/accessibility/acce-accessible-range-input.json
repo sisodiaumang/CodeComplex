@@ -1,0 +1,58 @@
+{
+  "_id": "12c82d190551fd59845305f0",
+  "title": "Accessible Range Input",
+  "slug": "acce-accessible-range-input",
+  "difficulty": "Hard",
+  "topics": [
+    "ACCESSIBILITY"
+  ],
+  "statement": {
+    "markdown": "Create an accessible range input field with dynamic label and error message. The range input should be controlled by two separate text inputs and have an associated error message displayed below it. The error message should be hidden when the range input values are valid.\ntype: ### Requirements"
+  },
+  "constraints": [
+    "{\"type\":\"UI\",\"value\":\"The range input should be controlled by two separate text inputs\"}",
+    "{\"type\":\"UI\",\"value\":\"The range input should have an associated error message displayed below it\"}",
+    "{\"type\":\"Accessibility\",\"value\":\"The error message should be hidden when the range input values are valid\"}"
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "html": "\n   <input id=\"minInput\" type=\"number\" value=\"0\">\n   <input id=\"maxInput\" type=\"number\" value=\"100\">\n   <label for=\"rangeInput\">Range Input:</label>\n   <input id=\"rangeInput\" type=\"range\" min=\"0\" max=\"100\" value=\"0\">\n   <span id=\"error\">Error message</span>\n   ",
+    "css": "#error {\n                  display: block;\n                  text-align: center;\n                  color: red;\n                  }\n                  ",
+    "javascript": "\n   (function() {\n              const minInput = document.getElementById('minInput');\n              const maxInput = document.getElementById('maxInput');\n              const rangeInput = document.getElementById('rangeInput');\n              const error = document.getElementById('error');\n              \n              minInput.addEventListener('input', () => {\n                  rangeInput.min = minInput.value;\n              });\n              \n              maxInput.addEventListener('input', () => {\n                  rangeInput.max = maxInput.value;\n              });\n              \n              rangeInput.addEventListener('input', () => {\n                  const rangeValue = parseInt(rangeInput.value);\n                  if (rangeValue < parseInt(minInput.value) || rangeValue > parseInt(maxInput.value)) {\n                      error.textContent = 'Invalid range';\n                  } else {\n                      error.textContent = '';\n                  }\n              });\n              })();\n   "
+  },
+  "gradingCriteria": [
+    {
+      "id": "1",
+      "description": "The range input is controlled by two separate text inputs",
+      "weight": 30
+    },
+    {
+      "id": "2",
+      "description": "The range input has an associated error message displayed below it",
+      "weight": 20
+    },
+    {
+      "id": "3",
+      "description": "The error message is hidden when the range input values are valid",
+      "weight": 50
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "html",
+      "css",
+      "javascript"
+    ],
+    "referenceSolution": "\n   (function() {\n              const minInput = document.getElementById('minInput');\n              const maxInput = document.getElementById('maxInput');\n              const rangeInput = document.getElementById('rangeInput');\n              const error = document.getElementById('error');\n              const label = document.getElementById('rangeLabel');\n              \n              minInput.addEventListener('input', () => {\n                  rangeInput.min = minInput.value;\n                  label.textContent = `Range: ${minInput.value} - ${maxInput.value}`;\n              });\n              \n              maxInput.addEventListener('input', () => {\n                  rangeInput.max = maxInput.value;\n                  label.textContent = `Range: ${minInput.value} - ${maxInput.value}`;\n              });\n              \n              rangeInput.addEventListener('input', () => {\n                  const rangeValue = parseInt(rangeInput.value);\n                  const minRange = parseInt(minInput.value);\n                  const maxRange = parseInt(maxInput.value);\n                  if (rangeValue < minRange || rangeValue > maxRange) {\n                      error.textContent = 'Invalid range';\n                  } else {\n                      error.style.display = 'none';\n                  }\n              });\n              \n              const updateLabel = () => {\n                  label.textContent = `Range: ${minInput.value} - ${maxInput.value}`;\n              };\n              \n              minInput.addEventListener('input', updateLabel);\n              maxInput.addEventListener('input', updateLabel);\n              })();\n   "
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

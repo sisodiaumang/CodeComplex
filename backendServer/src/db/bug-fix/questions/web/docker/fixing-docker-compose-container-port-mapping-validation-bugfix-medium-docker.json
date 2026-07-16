@@ -1,0 +1,136 @@
+{
+  "title": "Fixing Docker Compose Container Port Mapping Validation",
+  "subCategory": "Docker port mapping",
+  "statement": {
+    "markdown": "Given a Docker Compose configuration as a string, validate that the container port mappings are correctly defined and do not have duplicate ports. You should return an empty string if the configuration is valid, otherwise return an error message describing the issue.\n\nExample: If the input configuration is \n\nversion: '3'\n\nservices:\n\tservice1:\n\t\tpublish: 8080:80\n\tservice2:\n\t\tpublish: 8081:81\n\nThen the output should be an empty string.\n\nBut if the input configuration is \n\nversion: '3'\n\nservices:\n\tservice1:\n\t\tpublish: 8080:80\n\tservice2:\n\t\tpublish: 8080:81\n\nThen the output should be a string describing the duplicate port: Duplicate port 8080 found.",
+    "inputFormat": "Docker Compose configuration as a string",
+    "outputFormat": "Empty string if valid, otherwise an error message",
+    "notes": "You can assume that the input configuration is a valid Docker Compose syntax",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Maximum number of services in the configuration"
+      }
+    ],
+    "examples": [
+      {
+        "input": "version: '3'\nservices:\n\tservice1:\n\t\tpublish: 8080:80\n\tservice2:\n\t\tpublish: 8081:81",
+        "output": "0",
+        "explanation": "Valid configuration"
+      },
+      {
+        "input": "version: '3'\nservices:\n\tservice1:\n\t\tpublish: 8080:80\n\tservice2:\n\t\tpublish: 8080:81",
+        "output": "Duplicate port 8080 found.",
+        "explanation": "Invalid configuration with duplicate port"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DOCKER"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "docker"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text: Parse the Docker Compose configuration using a library like `docker-compose-parser` to create a JSON object representation of the configuration."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(...) ",
+    "spaceComplexity": "O(...)"
+  },
+  "starterCode": {
+    "javascript": "function validateDockerComposeConfiguration(configStr) {\n\t// Your code here\n}",
+    "python": "class Solution:\n\tsolution(self, config_str: str) -> str:\n\t\t# Your code here\n"
+  },
+  "buggyStarterCode": {
+    "javascript": "function validateDockerComposeConfiguration(configStr) {\n\tconst config = JSON.parse(configStr); // Potential bug: does not handle configStr being invalid JSON\n\tconst services = config.services; // Potential bug: does not handle services being missing or not an array\n\tconst portMap = new Map();\n\tfor (const service of services) {\n\t\tconst publish = service.publish;\n\t\tif (publish) {\n\t\t\tconst [containerPort, hostPort] = publish.split(':');\n\t\t\tif (portMap.has(containerPort)) {\n\t\t\t\treturn 'Duplicate port ' + containerPort + ' found.';\n\t\t\t}\n\t\t\tportMap.set(containerPort, hostPort);\n\t\t}\n\t}\n\treturn '';\n}",
+    "python": "class Solution:\n\tsolution(self, config_str: str) -> str:\n\t\tconfig = json.loads(config_str) # Potential bug: does not handle config_str being invalid JSON\n\t\tservices = config.get('services', []) # Potential bug: does not handle services being missing or not a list\n\t\tport_map = {}\n\t\tfor service in services:\n\t\t\tpublish = service.get('publish')\n\t\t\tif publish:\n\t\t\t\tcontainer_port, host_port = publish.split(':')\n\t\t\t\tif container_port in port_map:\n\t\t\t\t\treturn f'Duplicate port {container_port} found.'\n\t\t\t\tport_map[container_port] = host_port\n\t\treturn ''"
+  },
+  "functionSignature": {
+    "javascript": "function validateDockerComposeConfiguration(configStr: string): string",
+    "python": "class Solution:\n\tsolution(self, config_str: str) -> str"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction validateDockerComposeConfiguration(configStr) {\n\tconst config = JSON.parse(configStr);\n\tconst services = config.services;\n\tconst portMap = new Map();\n\tfor (const service of services) {\n\t\tconst publish = service.publish;\n\t\tif (publish) {\n\t\t\tconst [containerPort, hostPort] = publish.split(':');\n\t\t\tif (portMap.has(containerPort)) {\n\t\t\t\treturn 'Duplicate port ' + containerPort + ' found.';\n\t\t\t}\n\t\t\tportMap.set(containerPort, hostPort);\n\t\t}\n\t}\n\treturn '';\n}",
+    "python": "class Solution:\n\tsolution(self, config_str: str) -> str:\n\t\tconfig = json.loads(config_str)\n\t\tservices = config.get('services', [])\n\t\tport_map = {}\n\t\tfor service in services:\n\t\t\tpublish = service.get('publish')\n\t\t\tif publish:\n\t\t\t\tcontainer_port, host_port = publish.split(':')\n\t\t\t\tif container_port in port_map:\n\t\t\t\t\treturn f\"Duplicate port {container_port} found.\"\n\t\t\t\tport_map[container_port] = host_port\n\t\treturn ''"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "version: '3'\nservices:\n\tservice1:\n\t\tpublish: 8080:80\n\tservice2:\n\t\tpublish: 8081:81",
+      "output": "0",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "version: '3'\nservices:\n\tservice1:\n\t\tpublish: 8080:80\n\tservice2:\n\t\tpublish: 8080:81",
+      "output": "Duplicate port 8080 found.",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "646340bbb02191dac8908f7b",
+  "slug": "fixing-docker-compose-container-port-mapping-validation-bugfix-medium-docker",
+  "mode": "bug_fix",
+  "category": "DOCKER",
+  "difficulty": "Medium"
+}

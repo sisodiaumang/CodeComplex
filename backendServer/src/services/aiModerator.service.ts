@@ -5,82 +5,23 @@ import BackendQuestion from "../models/backendQuestion.model.js";
 import PromptWarScenario from "../models/promptWarScenerio.model.js";
 import TokenUsage from "../models/tokenUsage.model.js";
 
-const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
-
-function getApiKey(): string {
-    const key = process.env.GROQ_API_KEY || process.env.XAI_API_KEY;
-    if (!key) {
-        throw new Error("[AI Moderator] Missing GROQ_API_KEY or XAI_API_KEY in environment variables");
-    }
-    return key;
-}
-
-interface GrokResponse {
-    choices: {
-        message: { content: string };
-        finish_reason: string;
-    }[];
-    usage?: {
-        prompt_tokens?: number;
-        completion_tokens?: number;
-        total_tokens?: number;
-    };
-    model?: string;
-    error?: { message: string };
-}
+import { callLLM } from "./aiGateway.service.js";
 
 async function callGrokJson(prompt: string, systemInstruction: string): Promise<any> {
-    const apiKey = getApiKey();
-    const res = await fetch(GROQ_API_URL, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${apiKey}`
-        },
-        body: JSON.stringify({
-            model: "llama-3.3-70b-versatile",
+    const result = await callLLM(
+        "llama-3.3-70b-versatile",
+        {
             messages: [
                 { role: "system", content: systemInstruction },
                 { role: "user", content: prompt }
             ],
             response_format: { type: "json_object" },
             temperature: 0.1
-        })
-    });
+        },
+        "FRONTEND"
+    );
 
-    if (!res.ok) {
-        const text = await res.text();
-        throw new Error(`[AI Moderator] Groq API call failed: ${res.status} - ${text}`);
-    }
-
-    const data = (await res.json()) as GrokResponse;
-    if (data.error) {
-        throw new Error(`[AI Moderator] Groq API error: ${data.error.message}`);
-    }
-
-    // Log token usage
-    if (data.usage) {
-        const promptTokens = data.usage.prompt_tokens ?? 0;
-        const completionTokens = data.usage.completion_tokens ?? 0;
-        const totalTokens = data.usage.total_tokens ?? 0;
-        const cost = (promptTokens * 0.59 + completionTokens * 0.79) / 1_000_000;
-
-        TokenUsage.create({
-            promptTokens,
-            completionTokens,
-            totalTokens,
-            model: data.model || "llama-3.3-70b-versatile",
-            feature: "FRONTEND",
-            cost
-        }).catch((e) => console.error("[AI Moderator] Failed to log token usage:", e));
-    }
-
-    const text = data.choices?.[0]?.message?.content;
-    if (!text) {
-        throw new Error("[AI Moderator] Empty response from xAI API");
-    }
-
-    return JSON.parse(text);
+    return JSON.parse(result.text);
 }
 
 export interface ModerationAuditLog {
@@ -158,15 +99,35 @@ export async function runAIModeratorAgent(): Promise<ModerationAuditLog[]> {
             audit.questionTitle = questionDoc.title || questionDoc.scenarioName || "Untitled";
 
             // 2. Perform legitimacy check with LLM
-            const statement = questionDoc.statement || {};
+            const hasStatementString = typeof questionDoc.statement === "string";
+            const hasScenarioString = typeof questionDoc.scenario === "string";
+            
+            let markdown = "";
+            let inputFormat = "";
+            let outputFormat = "";
+            let notes = "";
+            
+            if (hasStatementString) {
+                markdown = questionDoc.statement;
+            } else if (hasScenarioString) {
+                markdown = questionDoc.scenario;
+            } else if (questionDoc.statement) {
+                markdown = questionDoc.statement.markdown || "";
+                inputFormat = questionDoc.statement.inputFormat || "";
+                outputFormat = questionDoc.statement.outputFormat || "";
+                notes = questionDoc.statement.notes || "";
+            }
+
+            const constraints = questionDoc.constraints || (questionDoc.statement && questionDoc.statement.constraints) || [];
+
             const qDetails = {
                 title: audit.questionTitle,
-                markdown: statement.markdown || "",
-                inputFormat: statement.inputFormat || "",
-                outputFormat: statement.outputFormat || "",
-                notes: statement.notes || "",
-                examples: statement.examples || [],
-                constraints: statement.constraints || [],
+                markdown,
+                inputFormat,
+                outputFormat,
+                notes,
+                examples: questionDoc.statement ? (questionDoc.statement.examples || []) : [],
+                constraints,
                 starterCode: questionDoc.templates || questionDoc.starterCode || {}
             };
 
@@ -194,6 +155,12 @@ Determine if the report is valid (legit). Output a JSON object containing:
             audit.analysis = checkResult.analysis;
 
             if (checkResult.isLegit && checkResult.confidence >= 0.6) {
+                const snapshotBefore = {
+                    title: questionDoc.title || questionDoc.scenarioName || "Untitled",
+                    statement: JSON.parse(JSON.stringify(questionDoc.statement || {})),
+                    templates: JSON.parse(JSON.stringify(questionDoc.templates || questionDoc.starterCode || {})),
+                };
+
                 // 3. Make the question offline (isPublished = false)
                 if (questionDoc.metadata) {
                     questionDoc.metadata.isPublished = false;
@@ -234,10 +201,16 @@ Correct the designated field of the question according to the issue details and 
                         questionDoc.starterCode = correctResult.correctedValue;
                     }
                 } else if (["markdown", "inputFormat", "outputFormat", "notes"].includes(field)) {
-                    if (!questionDoc.statement) {
-                        questionDoc.statement = {};
+                    if (hasStatementString) {
+                        questionDoc.statement = correctResult.correctedValue;
+                    } else if (hasScenarioString) {
+                        questionDoc.scenario = correctResult.correctedValue;
+                    } else {
+                        if (!questionDoc.statement) {
+                            questionDoc.statement = {};
+                        }
+                        questionDoc.statement[field] = correctResult.correctedValue;
                     }
-                    questionDoc.statement[field] = correctResult.correctedValue;
                 }
 
                 // 5. Make the question online again (isPublished = true)
@@ -255,7 +228,15 @@ Correct the designated field of the question according to the issue details and 
 
                 await questionDoc.save();
 
+                const snapshotAfter = {
+                    title: questionDoc.title || questionDoc.scenarioName || "Untitled",
+                    statement: JSON.parse(JSON.stringify(questionDoc.statement || {})),
+                    templates: JSON.parse(JSON.stringify(questionDoc.templates || questionDoc.starterCode || {})),
+                };
+
                 // Mark report as resolved
+                report.questionSnapshotBefore = snapshotBefore;
+                report.questionSnapshotAfter = snapshotAfter;
                 report.status = "RESOLVED";
                 await report.save();
 

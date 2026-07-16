@@ -1,0 +1,131 @@
+{
+  "title": "Fixing CSS Margin Collapse on Flex Containers",
+  "subCategory": "CSS Utilities",
+  "statement": {
+    "markdown": "Write a JavaScript function to fix the margin collapse issue on flex containers in CSS. Given the CSS string, modify the margin values to prevent collapse and return the updated CSS string. The input CSS string is a single line string where all CSS properties are separated by semicolons. The function should handle both margin-top and margin-bottom properties.",
+    "inputFormat": "A single line string of CSS properties separated by semicolons",
+    "outputFormat": "The updated CSS string with fixed margin values",
+    "notes": "The function should handle both margin-top and margin-bottom properties. The input CSS string may contain other properties as well.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 100,
+        "description": "Number of CSS properties"
+      }
+    ],
+    "examples": [
+      {
+        "input": "display: flex; margin-top: 10px; margin-bottom: 20px;",
+        "output": "display: flex; margin-top: 10px; margin-bottom: 40px;",
+        "explanation": "Fixed margin-bottom value to prevent collapse"
+      },
+      {
+        "input": "margin-top: 5px; margin-bottom: 15px;",
+        "output": "margin-top: 5px; margin-bottom: 30px;",
+        "explanation": "Fixed margin-bottom value to prevent collapse"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 10,
+    "points": 30,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "CSS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "css"
+    ],
+    "interviewFrequency": 1,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "The margin collapse issue occurs when two or more elements share a common parent and have adjacent margins."
+    }
+  ],
+  "editorial": {
+    "title": "Fixing Margins on Flex Containers",
+    "intuition": "To fix the margin collapse issue, we need to set the margin-bottom value to a minimum of the sum of the margin-top and margin-bottom values of adjacent elements.",
+    "bruteForce": "Brute force approach involves parsing the CSS string, identifying the margin properties, and manually updating the values.",
+    "betterSolution": "A better solution involves using regular expressions to extract the margin properties and update the values accordingly.",
+    "optimalSolution": "The optimal solution involves using a CSS parser library to parse the CSS string and update the margin properties programmatically.",
+    "proofOfCorrectness": "The corrected CSS string should prevent margin collapse and render correctly in the browser.",
+    "dryRun": "Step-by-step example run of the optimal solution",
+    "commonMistakes": [
+      "Not handling both margin-top and margin-bottom properties",
+      "Not checking for adjacent margins"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// define a function to fix margin collapse\nvar fixMarginCollapse = function(cssString) {\n    // return the updated CSS string\n};"
+  },
+  "buggyStarterCode": {
+    "javascript": "// define a function to fix margin collapse\nvar fixMarginCollapse = function(cssString) {\n    var properties = cssString.split(';');\n    for (var i = 0; i < properties.length; i++) {\n        var property = properties[i].trim();\n        if (property.startsWith('margin-top:')) {\n            var marginTop = parseInt(property.split(':')[1]);\n            if (marginTop > 0) {\n                properties[i] = 'margin-top: ' + marginTop + ';';\n            }\n        } else if (property.startsWith('margin-bottom:')) {\n            var marginBottom = parseInt(property.split(':')[1]);\n            if (marginBottom > 0) {\n                properties[i] = 'margin-bottom: ' + marginBottom + ';';\n            }\n        }\n    }\n    return properties.join(';');\n};"
+  },
+  "functionSignature": {
+    "javascript": "var fixMarginCollapse = function(cssString) {"
+  },
+  "solutions": {
+    "javascript": "// define a function to fix margin collapse\nvar fixMarginCollapse = function(cssString) {\n    var properties = cssString.split(';');\n    for (var i = 0; i < properties.length; i++) {\n        var property = properties[i].trim();\n        if (property.startsWith('margin-top:')) {\n            var marginTop = parseInt(property.split(':')[1]);\n            var marginBottom = parseInt(property.split(':')[1]);\n            properties[i] = 'margin-top: ' + marginTop + '; margin-bottom: ' + (marginTop + marginBottom) + ';';\n        } else if (property.startsWith('margin-bottom:')) {\n            var marginBottom = parseInt(property.split(':')[1]);\n            var marginTop = parseInt(property.split(':')[1]);\n            for (var j = 0; j < properties.length; j++) {\n                if (properties[j].startsWith('margin-top:')) {\n                    var marginTopValue = parseInt(properties[j].split(':')[1]);\n                    properties[j] = 'margin-top: ' + marginTopValue + ';';\n                }\n            }\n            properties[i] = 'margin-bottom: ' + (marginTop + marginBottom) + ';';\n        }\n    }\n    return properties.join(';');\n};"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "display: flex; margin-top: 10px; margin-bottom: 20px;",
+      "output": "display: flex; margin-top: 10px; margin-bottom: 40px;",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "margin-top: 5px; margin-bottom: 15px;",
+      "output": "margin-top: 5px; margin-bottom: 30px;",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "_id": "f74a5c906a5babba15c834cb",
+  "slug": "fixing-css-margin-collapse-on-flex-containers-bugfix-easy-css",
+  "mode": "bug_fix",
+  "category": "CSS",
+  "difficulty": "Easy"
+}

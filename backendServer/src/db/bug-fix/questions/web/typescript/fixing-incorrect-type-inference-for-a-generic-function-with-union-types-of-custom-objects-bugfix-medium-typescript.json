@@ -1,0 +1,136 @@
+{
+  "title": "Fixing Incorrect Type Inference for a Generic Function with Union Types of Custom Objects",
+  "subCategory": "Type Inference",
+  "statement": {
+    "markdown": "Write a function called `mergeObjects` that takes two objects as arguments and returns a new object containing all properties from both objects. However, the function should only include properties of type `string` from the first object. For example, if you call `mergeObjects({ a: 'hello', b: 123 }, { c: 'world', d: 'foo' })`, the function should return `{ a: 'hello', c: 'world' }`. However, the current implementation has a bug and produces incorrect results. Your task is to fix the bug and make the function work correctly.",
+    "inputFormat": "Two object literals as strings, e.g. `{ a: 'hello', b: 123 }` and `{ c: 'world', d: 'foo' }`",
+    "outputFormat": "A new object literal containing properties from both input objects, but only string properties from the first object",
+    "notes": "The function should be generic and work with any custom object types.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 1000,
+        "description": "Number of properties in the first object"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"a\": 'hello', \"b\": 123} {c: 'world', d: 'foo'}",
+        "output": "{\"a\": 'hello', \"c\": 'world'}",
+        "explanation": "Only string properties from the first object are included"
+      },
+      {
+        "input": "{\"x\": 123, \"y\": [1, 2, 3]} {a: 'hello', b: 'world', c: true}",
+        "output": "{\"a\": 'hello', \"b\": 'world'}",
+        "explanation": "No properties of type number or array are included"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "TYPESCRIPT"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "typescript"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the `in` operator to check if a property exists in the first object"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial for Fixing Incorrect Type Inference for a Generic Function with Union Types of Custom Objects",
+    "intuition": "The key to this problem is to use the `in` operator to check if a property exists in the first object, and then use the `typeof` operator to check if the property is of type `string`.",
+    "bruteForce": "One possible solution is to create a new object and iterate over the properties of the first object, adding them to the new object if they exist and are of type `string`.",
+    "betterSolution": "",
+    "optimalSolution": "Use the `in` operator and `typeof` operator to check properties, and use the spread operator to create a new object.",
+    "proofOfCorrectness": "The solution correctly merges properties from both objects and only includes string properties from the first object.",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Not using the `in` operator to check properties",
+      "Not using `typeof` to check property type"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "function mergeObjects<T, U>(a: T, b: U): T & U {\n  return {\n    ...a,\n    ...b\n  };\n}",
+    "python": "class Solution:\n    def mergeObjects(self, a: dict, b: dict) -> dict:\n        pass"
+  },
+  "buggyStarterCode": {
+    "javascript": "function mergeObjects<T, U>(a: T, b: U): T & U {\n  return {\n    ...a,\n    ...b,\n    ...Object.keys(b).map(k => ({ [k]: b[k] }))\n  };\n}",
+    "python": "class Solution:\n    def mergeObjects(self, a: dict, b: dict) -> dict:\n        return {**a, **b, **{k: v for k, v in b.items()}}"
+  },
+  "functionSignature": {
+    "javascript": "function mergeObjects<T, U>(a: T, b: U): T & U",
+    "python": "def mergeObjects(self, a: dict, b: dict) -> dict:"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction mergeObjects<T, U>(a: T, b: U): T & U {\n  return {\n    ...Object.keys(a).filter(k => typeof a[k] === 'string').map(k => ({ [k]: a[k] })),\n    ...Object.keys(b).map(k => ({ [k]: b[k] }))\n  };\n}",
+    "python": "class Solution:\n    def mergeObjects(self, a: dict, b: dict) -> dict:\n        return {**{k: v for k, v in a.items() if isinstance(v, str)}, **{k: v for k, v in b.items()}}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"a\": 'hello', \"b\": 123} {c: 'world', d: 'foo'}",
+      "output": "{\"a\": 'hello', \"c\": 'world'}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"x\": 123, \"y\": [1, 2, 3]} {a: 'hello', b: 'world', c: true}",
+      "output": "{\"a\": 'hello', \"b\": 'world'}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "537fd8f10866dd2d7c3ddc0c",
+  "slug": "fixing-incorrect-type-inference-for-a-generic-function-with-union-types-of-custom-objects-bugfix-medium-typescript",
+  "mode": "bug_fix",
+  "category": "TYPESCRIPT",
+  "difficulty": "Medium"
+}

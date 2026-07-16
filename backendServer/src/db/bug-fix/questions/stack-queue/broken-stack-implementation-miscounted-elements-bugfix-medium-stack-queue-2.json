@@ -1,0 +1,162 @@
+{
+  "_id": "044fed6e660bdc79e3c6a600",
+  "title": "Broken Stack Implementation: Miscounted Elements",
+  "slug": "broken-stack-implementation-miscounted-elements-bugfix-medium-stack-queue-2",
+  "difficulty": "Medium",
+  "category": "DSA",
+  "subCategory": "STACK",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "stack"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given an array of integers, implement a function that checks if an element is a duplicate in the array using a stack. The function should return true if the element is a duplicate, false otherwise.\n\n**Instructions:*\n\n1. Initialize an empty stack.\n2. Iterate through the array and for each element,\n   a. Push the element onto the stack.\n   b. Check if the stack's current top element is the same as the element we just pushed (i.e., duplicate).\n3. Return true if a duplicate is found, false otherwise.\n\n**Notes:**\n\n* The stack must be used.\n* No other data structures (e.g., set, hash table) are allowed.\n* Time complexity: O(n), where n is the size of the array.",
+    "inputFormat": "An array of integers.",
+    "outputFormat": "A boolean indicating whether the element is a duplicate.",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "[1, 2, 3, 2, 4, 5]\n1",
+        "output": "True",
+        "explanation": ""
+      },
+      {
+        "input": "[1, 2, 3, 4, 5]\n6",
+        "output": "False",
+        "explanation": ""
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Remember to check each new element against the top of the stack."
+    },
+    {
+      "order": 2,
+      "text": "Make sure to correctly handle the case when the stack is empty."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial Solution for Miscounted Elements",
+    "intuition": "The key insight here is to use a stack to keep track of the elements we've seen so far. When we find a new element that's already in the stack, we know it's a duplicate.",
+    "bruteForce": "A brute-force approach would be to simply iterate through the array and check each element against the rest of the array. However, this would have a time complexity of O(n^2), making it much slower than our stack-based approach.",
+    "betterSolution": "Instead of using a brute-force approach, we can use a stack to keep track of the elements we've seen so far. This way, we can check each new element against the top of the stack in O(1) time.",
+    "optimalSolution": "Here's the optimal solution: iterate through the array, pushing each element onto the stack and checking against the top element. If we find a match, return True. If we reach the end of the array without finding a match, return False.",
+    "proofOfCorrectness": "Let's prove that this solution is correct. Suppose we find a duplicate element in the array. Since we're pushing each element onto the stack, we'll eventually find the duplicate element at the top of the stack. At this point, we return True, indicating that the element is indeed a duplicate. If we reach the end of the array without finding a duplicate, we return False, indicating that the element is not a duplicate.",
+    "dryRun": "Suppose we have the following array: `[1, 2, 3, 2, 4, 5]`. We'll iterate through the array, pushing each element onto the stack and checking against the top element. Here's the step-by-step process:\n\n* Push `1` onto the stack (stack: `[1]`).\n* Push `2` onto the stack (stack: `[1, 2]`).\n* Push `3` onto the stack (stack: `[1, 2, 3]`).\n* Push `2` onto the stack (stack: `[1, 2, 3, 2]`). Since `2` is already on the stack, we return True, indicating that `2` is a duplicate.\n\nIf we reach the end of the array without finding a duplicate, we return False.",
+    "commonMistakes": [
+      "Forgetting to check against the top of the stack.",
+      "Not handling the case when the stack is empty."
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    bool solve(vector<int>& nums, int n) {\n        // TODO: implement\n    }\n};",
+    "java": "class Solution {\npublic boolean solve(int[] nums, int n) {\n    // TODO: implement\n    return false;\n}\n};",
+    "python": "class Solution:\n    def solve(self, nums: list[int], n: int) -> bool:\n        # TODO: implement\n        return False",
+    "javascript": "function solve(nums, n) {\n    // TODO: implement\n    return false;"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    bool solve(vector<int>& nums, int n) {\n        stack<int> s;\n        for (int i = 0; i < n; ++i) {\n            s.push(nums[i]);\n            // FIX: BUG INTRODUCED HERE\n            if (i < n - 1 && nums[i] == nums[i + 1]) return true;\n            if (s.size() > 1 && s.top() == nums[i]) return true;\n        }\n        return false;\n    }\n};",
+    "java": "class Solution {\npublic boolean solve(int[] nums, int n) {\n    LinkedList<Integer> s = new LinkedList<>();\n    for (int i = 0; i < n; ++i) {\n        s.add(nums[i]);\n        // FIX: BUG INTRODUCED HERE\n        if (i < n - 1 && nums[i] == nums[i + 1]) return true;\n        if (s.size() > 1 && s.get(0) == nums[i]) return true;\n    }\n    return false;\n}\n};",
+    "python": "class Solution:\n    def solve(self, nums: list[int], n: int) -> bool:\n        s = [];  # stack\n        for i in range(n):\n            s.append(nums[i]);\n            # FIX: BUG INTRODUCED HERE\n            if i < n - 1 and nums[i] == nums[i + 1]: return True;\n            if len(s) > 1 and s[-1] == nums[i]: return True;\n        return False;",
+    "javascript": "function solve(nums, n) {\n    var s = [];  // stack\n    for (var i = 0; i < n; ++i) {\n        s.push(nums[i]);\n        // FIX: BUG INTRODUCED HERE\n        if (i < n - 1 && nums[i] == nums[i + 1]) return true;\n        if (s.length > 1 && s[s.length - 1] == nums[i]) return true;\n    }\n    return false;"
+  },
+  "functionSignature": {
+    "cpp": "bool solve(vector<int>& nums, int n);",
+    "java": "boolean solve(int[] nums, int n);",
+    "python": "def solve(self, nums: list[int], n: int) -> bool;",
+    "javascript": "function solve(nums, n) {"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def solve(self, nums: list[int], n: int) -> bool:\n        s = []  # stack\n        for i in range(n):\n            s.append(nums[i])\n            if i < n - 1 and nums[i] == nums[i + 1]: return True\n            if len(s) > 1 and s[-1] == nums[i]: return True\n        return False\n\n# Driver code\nif __name__ == '__main__':\n    s = Solution()\n    nums = [1, 2, 3, 2, 4, 5]\n    n = len(nums)\n    if s.solve(nums, n): print('Duplicate found')\n    else: print('No duplicate found')\n\n",
+    "cpp": "// Driver code\n#include <iostream>\n#include <vector>\n#include <stack>\n\nclass Solution {\npublic:\n    bool solve(std::vector<int>& nums, int n) {\n        std::stack<int> s;\n        for (int i = 0; i < n; ++i) {\n            s.push(nums[i]);\n            if (i < n - 1 && nums[i] == nums[i + 1]) return true;\n            if (s.size() > 1 && s.top() == nums[i]) return true;\n        }\n        return false;\n    }\n};\n\nint main() {\n    Solution s;\n    std::vector<int> nums = {1, 2, 3, 2, 4, 5};\n    int n = nums.size();\n    if (s.solve(nums, n)) std::cout << 'Duplicate found'\n    else std::cout << 'No duplicate found'\n    return 0;\n\n",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "[1, 2, 3, 2, 4, 5]\n1",
+      "output": "True",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "[1, 2, 3, 4, 5]\n6",
+      "output": "False",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

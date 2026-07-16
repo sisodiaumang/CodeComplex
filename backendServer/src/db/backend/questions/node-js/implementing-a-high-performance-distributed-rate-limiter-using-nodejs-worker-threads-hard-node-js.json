@@ -1,0 +1,141 @@
+{
+  "_id": "687b1a631ca883deda2f7dc2",
+  "title": "Implementing a High-Performance, Distributed Rate Limiter using Node.js Worker Threads",
+  "slug": "implementing-a-high-performance-distributed-rate-limiter-using-nodejs-worker-threads-hard-node-js",
+  "difficulty": "Hard",
+  "topics": [
+    "NODE_JS"
+  ],
+  "statement": "Design a high-concurrency, distributed rate limiter using Node.js worker threads. The rate limiter should allow up to 10 requests per minute from a given IP address. Implement this system in a Node.js Express API. The server should be able to handle 100 concurrent requests and respond within 50ms.\n\nYou will need to utilize the `worker_threads` module to offload the rate limiting logic to a separate thread for high concurrency. Implement a cache to store the request counts for each IP address.\n\nYour API should support the following endpoints:\n\n### Get Remaining Requests\n\n`GET /api/rate-limiter/remaining-requests`\n\n*   Returns the number of remaining requests for the given IP address.\n*   The response should include the IP address and the remaining requests.\n\n### Increment Request Count\n\n`POST /api/rate-limiter/increment`\n\n*   Increments the request count for the given IP address.\n*   If the request count exceeds the limit (10 requests per minute), returns a `429 Too Many Requests` status code.\n*   The response should include the updated request count and the IP address.\n\nYou can use a mock database to store the request counts. Make sure to handle error cases such as IP addresses not being present in the cache.\n\nYou can use the following mock database:\n\n```javascript\nconst mockDatabase = {\n  '192.168.1.1': 0,\n  '192.168.1.2': 0,\n  '192.168.1.3': 0,\n  // Add more IP addresses as needed\n};\n```\nIn your implementation, ensure you handle concurrent updates to the cache to prevent data inconsistency.\n\nNote: This is a high-concurrency scenario, so focus on implementing an efficient rate limiting system that can handle multiple requests concurrently.\n\nThe starter code provides a basic Express server setup with the required dependencies. You can find the starter code in the `starterCode` section below.\n\n### Starter Code\n\n```javascript\nconst express = require('express');\nconst app = express();\napp.use(express.json());\nconst { Worker } = require('worker_threads');\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));\n\n// TODO: Implement the rate limiter using worker threads\n// TODO: Implement the GET /api/rate-limiter/remaining-requests endpoint\n// TODO: Implement the POST /api/rate-limiter/increment endpoint\n```\n",
+  "constraints": [
+    "Must use the worker_threads module to offload the rate limiting logic.",
+    "Must utilize a mock database to store the request counts.",
+    "Must handle concurrent updates to the cache to prevent data inconsistency.",
+    "Must respond within 50ms for 100 concurrent requests."
+  ],
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/api/rate-limiter/remaining-requests",
+      "description": "Returns the number of remaining requests for the given IP address."
+    },
+    {
+      "method": "POST",
+      "path": "/api/rate-limiter/increment",
+      "description": "Increments the request count for the given IP address."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\n  \"name\": \"rate-limiter\",\n  \"version\": \"1.0.0\",\n  \"main\": \"index.js\",\n  \"scripts\": {\n    \"start\": \"node index.js\"\n  },\n  \"dependencies\": {\n    \"express\": \"^4.18.2\",\n    \"worker_threads\": \"^1.1.3\"\n  }\n}",
+    "index.js": "const express = require('express');\nconst app = express();\napp.use(express.json());\nconst { Worker } = require('worker_threads');\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));\n\n// TODO: Implement the rate limiter using worker threads\n// TODO: Implement the GET /api/rate-limiter/remaining-requests endpoint\n// TODO: Implement the POST /api/rate-limiter/increment endpoint\n"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/api/health-check",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "GET",
+      "path": "/api/rate-limiter/remaining-requests",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {},
+      "expectedStatus": 200,
+      "expectedBody": {
+        "ipAddress": "192.168.1.1",
+        "remainingRequests": 9
+      },
+      "expectedBodySchema": null,
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "POST",
+      "path": "/api/rate-limiter/increment",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "ipAddress": "192.168.1.1"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "ipAddress": "192.168.1.1",
+        "remainingRequests": 8
+      },
+      "expectedBodySchema": null,
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "POST",
+      "path": "/api/rate-limiter/increment",
+      "body": {
+        "ipAddress": "192.168.1.1"
+      },
+      "expectedStatus": 429,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "POST",
+      "path": "/api/rate-limiter/increment",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "ipAddress": "192.168.1.1"
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "GET",
+      "path": "/api/rate-limiter/remaining-requests",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {},
+      "expectedStatus": 400,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "event-loop",
+    "streams",
+    "buffers",
+    "file-system",
+    "process",
+    "child-process",
+    "worker-threads",
+    "cluster",
+    "timers",
+    "node",
+    "javascript",
+    "rate-limiting",
+    "concurrency",
+    "express"
+  ]
+}

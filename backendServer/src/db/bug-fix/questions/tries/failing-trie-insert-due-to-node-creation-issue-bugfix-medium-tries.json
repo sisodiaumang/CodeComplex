@@ -1,0 +1,153 @@
+{
+  "_id": "c5dbfff79819b660f31f3c70",
+  "title": "Failing Trie Insert Due to Node Creation Issue",
+  "slug": "failing-trie-insert-due-to-node-creation-issue-bugfix-medium-tries",
+  "difficulty": "Medium",
+  "category": "DSA",
+  "subCategory": "TRIE",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "trie"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Solve the problem and fix the bugs.",
+    "inputFormat": "Input will be provided in the following format:\nFirst line: Number of elements to insert\nSecond line: Space-separated element values",
+    "outputFormat": "For each inserted element, print \"Inserted\" on a separate line, followed by the inserted element's value.",
+    "notes": "Use a 26-way Trie with 0-based index for letters 'a' to 'z'.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of elements to insert"
+      }
+    ],
+    "examples": [
+      {
+        "input": "1\nhello",
+        "output": "Inserted hello",
+        "explanation": "Insert the word 'hello' into the Trie"
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use a separate Node class to encapsulate child nodes and the character at each position."
+    }
+  ],
+  "editorial": {
+    "title": "Correcting Trie Insert Failure",
+    "intuition": "Create a new node for each character in the input string and append it to the corresponding child node in the Trie.",
+    "bruteForce": "Brute force approach summary: Create a new node for each character in the input string and recursively update all child nodes.",
+    "betterSolution": "Use a Node class to encapsulate child nodes and the character at each position. This will simplify the process of adding new nodes to the Trie.",
+    "optimalSolution": "Optimal solution: Use a Node class to encapsulate child nodes and the character at each position. Create a new node for each character in the input string and append it to the corresponding child node in the Trie.",
+    "proofOfCorrectness": "Correctness proof: The Node class correctly encapsulates child nodes and the character at each position. The Trie implementation correctly inserts new nodes and characters.",
+    "dryRun": "Step-by-step example run: Insert the word 'hello' into the Trie using the Node class and Trie implementation.",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "class TrieNode {\n    // TODO: implement child nodes and character\n};\n\nclass Solution {\npublic:\n    // TODO: implement Trie nodes and character\n};",
+    "java": "class TrieNode {\n    // TODO: implement child nodes and character\n}\nclass Solution {\n    // TODO: implement Trie nodes and character\n}",
+    "python": "class TrieNode:\n    # TODO: implement child nodes and character\n\nclass Solution:\n    # TODO: implement Trie nodes and character\n    pass",
+    "javascript": "// TODO: implement Trie node class\n// TODO: implement Trie method"
+  },
+  "buggyStarterCode": {
+    "cpp": "class TrieNode {\n    TrieNode* child[26];\n    TrieNode* parent;\n    bool endOfWord;\n\n    TrieNode() {\n        for (int i = 0; i < 26; i++)\n            child[i] = nullptr;\n\n        endOfWord = false;\n    }\n};\n\nclass Solution {\npublic:\n    void insertWord(TrieNode* node, int index, const std::string& word) {\n        if (index == word.length()) {\n            node->endOfWord = true;\n            return;\n        }\n\n        char ch = word[index];\n        int idx = ch - 'a';\n\n        if (node->child[idx] == nullptr)\n            node->child[idx] = new TrieNode();\n\n        insertWord(node->child[idx], index + 1, word);\n    }\n\n    void insert(const std::string& word) {\n        TrieNode* root = new TrieNode();\n        insertWord(root, 0, word);\n    }\n};",
+    "java": "class TrieNode {\n    TrieNode[] child;\n    TrieNode parent;\n    boolean endOfWord;\n\n    TrieNode() {\n        child = new TrieNode[26];\n\n        for (int i = 0; i < 26; i++)\n            child[i] = null;\n\n        endOfWord = false;\n    }\n};\nclass Solution {\npublic:\n    void insertWord(TrieNode node, int index, String word) {\n        if (index == word.length()) {\n            node.endOfWord = true;\n            return;\n        }\n\n        char ch = word.charAt(index);\n        int idx = ch - 'a';\n\n        if (node.child[idx] == null)\n            node.child[idx] = new TrieNode();\n\n        insertWord(node.child[idx], index + 1, word);\n    }\n\n    void insert(String word) {\n        TrieNode root = new TrieNode();\n        insertWord(root, 0, word);\n    }\n}",
+    "python": "class TrieNode:\n    def __init__(self):\n        self.child = [None]*26\n        self.parent = None\n        self.endOfWord = False\n\n    def insert(self, node, index, word):\n        if index == len(word):\n            node.endOfWord = True\n            return\n\n        ch = word[index]\n        idx = ord(ch) - ord('a')\n\n        if node.child[idx] is None:\n            node.child[idx] = TrieNode()\n\n        node.child[idx].insert(node.child[idx], index + 1, word)\n\n    def insert(self, word):\n        root = TrieNode()\n        self.insert(root, 0, word)\n",
+    "javascript": "class TrieNode {\n    constructor() {\n        this.child = new Array(26).fill(null);\n        this.parent = null;\n        this.endOfWord = false;\n    }\n\n    insert(node, index, word) {\n        if (index === word.length) {\n            node.endOfWord = true;\n            return;\n        }\n\n        const ch = word[index];\n        const idx = ch.charCodeAt(0) - 'a'.charCodeAt(0);\n\n        if (!node.child[idx])\n            node.child[idx] = new TrieNode();\n\n        node.child[idx].insert(node.child[idx], index + 1, word);\n    }\n\n    insert(word) {\n        const root = new TrieNode();\n        this.insert(root, 0, word);\n    }\n}"
+  },
+  "functionSignature": {
+    "cpp": "void insert(TrieNode* node, int index, const std::string& word);\nvoid insert(const std::string& word);",
+    "java": "void insertWord(TrieNode node, int index, String word);\nvoid insert(String word);",
+    "python": "def insert(self, node, index, word):\n    pass\ndef insert(self, word):\n    pass",
+    "javascript": "function insert(node, index, word) {\n    }\nfunction insert(word) {\n    }"
+  },
+  "solutions": {
+    "cpp": "class TrieNode {\n    TrieNode* child[26];\n    bool endOfWord;\n\n    TrieNode() {\n        for (int i = 0; i < 26; i++)\n            child[i] = nullptr;\n\n        endOfWord = false;\n    }\n};\n\nclass Solution {\npublic:\n    void insertWord(TrieNode* node, int index, const std::string& word) {\n        if (index == word.length()) {\n            node->endOfWord = true;\n            return;\n        }\n\n        char ch = word[index];\n        int idx = ch - 'a';\n\n        if (node->child[idx] == nullptr)\n            node->child[idx] = new TrieNode();\n\n        node->child[idx]->parent = node;\n        insertWord(node->child[idx], index + 1, word);\n    }\n\n    void insert(const std::string& word) {\n        TrieNode* root = new TrieNode();\n        insertWord(root, 0, word);\n    }\n};\n\nint main() {\n    Solution s;\n    int n;\n    cin >> n;\n    string word;\n    for (int i = 0; i < n; i++) {\n        cin >> word;\n        s.insert(word);\n    }\n    return 0;\n}",
+    "java": "class TrieNode {\n    TrieNode[] child;\n    boolean endOfWord;\n\n    TrieNode() {\n        child = new TrieNode[26];\n\n        for (int i = 0; i < 26; i++)\n            child[i] = null;\n\n        endOfWord = false;\n    }\n};\nclass Solution {\npublic:\n    void insertWord(TrieNode node, int index, String word) {\n        if (index == word.length()) {\n            node.endOfWord = true;\n            return;\n        }\n\n        char ch = word.charAt(index);\n        int idx = ch - 'a';\n\n        if (node.child[idx] == null)\n            node.child[idx] = new TrieNode();\n\n        node.child[idx].parent = node;\n        insertWord(node.child[idx], index + 1, word);\n    }\n\n    void insert(String word) {\n        TrieNode root = new TrieNode();\n        insertWord(root, 0, word);\n    }\n}\nclass Main {\npublic static void main(String[] args) {\n    Scanner sc = new Scanner(System.in);\n    Solution s = new Solution();\n    int n = sc.nextInt();\n    String word = sc.next();\n    for (int i = 0; i < n; i++) {\n        word = sc.next();\n        s.insert(word);\n    }\n}}",
+    "python": "class TrieNode:\n    def __init__(self):\n        self.child = [None]*26\n        self.endOfWord = False\n\n    def insert(self, node, index, word):\n        if index == len(word):\n            node.endOfWord = True\n            return\n\n        ch = word[index]\n        idx = ord(ch) - ord('a')\n\n        if node.child[idx] is None:\n            node.child[idx] = TrieNode()\n\n        node.child[idx].parent = node\n        node.child[idx].insert(node.child[idx], index + 1, word)\n\n    def insert(self, word):\n        root = TrieNode()\n        self.insert(root, 0, word)\n\n    def main(self):\n        n = int(input())\n        word = input().strip()\n        for _ in range(n):\n            word = input().strip()\n            self.insert(word)\n\nif __name__ == '__main__':\n    s = Solution()\n    s.main()\n",
+    "javascript": "class TrieNode {\n    constructor() {\n        this.child = new Array(26).fill(null);\n        this.parent = null;\n        this.endOfWord = false;\n    }\n\n    insert(node, index, word) {\n        if (index === word.length) {\n            node.endOfWord = true;\n            return;\n        }\n\n        const ch = word[index];\n        const idx = ch.charCodeAt(0) - 'a'.charCodeAt(0);\n\n        if (!node.child[idx])\n            node.child[idx] = new TrieNode();\n\n        node.child[idx].parent = node;\n        node.child[idx].insert(node.child[idx], index + 1, word);\n    }\n\n    insert(word) {\n        const root = new TrieNode();\n        this.insert(root, 0, word);\n    }\n}\nclass Solution {\n    constructor() {\n        this.main();\n    }\n\n    main() {\n        const readline = require('readline').createInterface({\n            input: process.stdin,\n            output: process.stdout\n        });\n\n        let n;\n        readline.question('', n => {\n            const words = [];\n            readline.on('line', word => {\n                words.push(word);\n            });\n            readline.on('close', () => {\n                const s = new TrieNode();\n                words.forEach(word => s.insert(word));\n            });\n        });\n    }\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "1\nhello",
+      "output": "Inserted hello",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "2\nworld\nfoo",
+      "output": "Inserted world\nInserted foo",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

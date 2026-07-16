@@ -22,7 +22,7 @@ const battleRoomSchema =
                     "DSA",
                     "FRONTEND",
                     "BACKEND",
-                    "FULLSTACK",
+                    "PROJECTS",
                     "PROMPT_WAR",
                     "BUG_FIX"
                 ],
@@ -104,7 +104,7 @@ const battleRoomSchema =
 
 // FIX: Require difficulty for battle types where it is meaningful.
 battleRoomSchema.pre("validate", function () {
-    const requiresDifficulty = ["DSA", "FRONTEND", "BACKEND", "FULLSTACK", "BUG_FIX"];
+    const requiresDifficulty = ["DSA", "FRONTEND", "BACKEND", "PROJECTS", "BUG_FIX"];
 
     if (requiresDifficulty.includes(this.battleType) && !this.difficulty) {
         throw  (
@@ -138,6 +138,57 @@ battleRoomSchema.pre("save", function () {
 battleRoomSchema.index({ roomCode: 1 });
 battleRoomSchema.index({ status: 1 });
 battleRoomSchema.index({ battleType: 1 });
+
+// Dynamic websocket active room notification on save
+battleRoomSchema.post("save", function (doc) {
+    if (!doc) return;
+    import("../index.js").then(({ io }) => {
+        if (!io) return;
+        const userIds = [
+            doc.host?.toString(),
+            ...(doc.teams?.teamA?.map((id: any) => id.toString()) ?? []),
+            ...(doc.teams?.teamB?.map((id: any) => id.toString()) ?? [])
+        ].filter(Boolean);
+        const uniqueUserIds = [...new Set(userIds)];
+        uniqueUserIds.forEach(id => {
+            io.to(`user:${id}`).emit("battle:active_room_update");
+        });
+    }).catch(() => {});
+});
+
+// Dynamic websocket active room notification on findOneAndUpdate
+battleRoomSchema.post("findOneAndUpdate", function (doc) {
+    if (!doc) return;
+    import("../index.js").then(({ io }) => {
+        if (!io) return;
+        const userIds = [
+            doc.host?.toString(),
+            ...(doc.teams?.teamA?.map((id: any) => id.toString()) ?? []),
+            ...(doc.teams?.teamB?.map((id: any) => id.toString()) ?? [])
+        ].filter(Boolean);
+        const uniqueUserIds = [...new Set(userIds)];
+        uniqueUserIds.forEach(id => {
+            io.to(`user:${id}`).emit("battle:active_room_update");
+        });
+    }).catch(() => {});
+});
+
+// Dynamic websocket active room notification on findOneAndDelete
+battleRoomSchema.post("findOneAndDelete", function (doc) {
+    if (!doc) return;
+    import("../index.js").then(({ io }) => {
+        if (!io) return;
+        const userIds = [
+            doc.host?.toString(),
+            ...(doc.teams?.teamA?.map((id: any) => id.toString()) ?? []),
+            ...(doc.teams?.teamB?.map((id: any) => id.toString()) ?? [])
+        ].filter(Boolean);
+        const uniqueUserIds = [...new Set(userIds)];
+        uniqueUserIds.forEach(id => {
+            io.to(`user:${id}`).emit("battle:active_room_update");
+        });
+    }).catch(() => {});
+});
 
 
 // FIX (I6): defense-in-depth helper for any future findOneAndUpdate-based

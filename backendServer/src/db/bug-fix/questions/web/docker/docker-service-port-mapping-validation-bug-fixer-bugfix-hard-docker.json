@@ -1,0 +1,144 @@
+{
+  "title": "DOCKER Service Port Mapping Validation Bug Fixer",
+  "subCategory": "Docker Port Mapping",
+  "statement": {
+    "markdown": "Given a Docker Compose file, validate that each service has a unique port mapping. A port mapping is invalid if it's either a duplicate port number or a duplicate service name with a different port number. You need to write a function that takes a Docker Compose file as a string and returns a list of invalid port mappings.\n\nExample:\n\nservice1:\n  image: image1\n  ports:\n    - '80:80'\n  name: service1\n\nservice2:\n  image: image2\n  ports:\n    - '80:80'\n  name: service2\n\n\nThis Compose file is invalid because service1 and service2 both have the same port mapping ('80:80'). However, they have different service names.\n\nservice3:\n  image: image3\n  ports:\n    - '81:81'\n  name: service3\n\n\nThis Compose file is invalid because service1 and service3 both have port number '80' (not in the ports section, but the image port is set to 80), but service1 uses port 80 and service3 uses port 81. However service1 name and service3 name are different.",
+    "inputFormat": "* Docker Compose file as a string",
+    "outputFormat": "* List of invalid port mappings as a list of strings",
+    "notes": "Note that the image port is used if it is not set in the ports section",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "maxPorts",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Maximum number of ports"
+      }
+    ],
+    "examples": [
+      {
+        "input": "service1:\n  image: image1\n  ports:\n    - '80:80'\n  name: service1\n\nservice2:\n  image: image2\n  ports:\n    - '80:80'\n  name: service2\n",
+        "output": "['service1:80', 'service2:80']",
+        "explanation": "Two services have the same port mapping '80:80'"
+      },
+      {
+        "input": "service1:\n  image: image1\n  ports:\n    - '80:80'\n  name: service1\n\nservice3:\n  image: image3\n  ports:\n    - '81:81'\n  name: service3\n",
+        "output": "['service1:80', 'service3:80', 'service1:80']",
+        "explanation": "Service1 and Service3 both have port number '80', however port 80 is set on service1 and port 81 is set on service3. Service1 name and service3 name are different."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 100,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DOCKER"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "docker"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text: You can split the Compose file into services and then check each service's port mapping."
+    },
+    {
+      "order": 2,
+      "text": "Second hint text: You need to keep track of the port mappings for each service."
+    },
+    {
+      "order": 3,
+      "text": "Third hint text: You can use a set to store the port mappings for each service."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach: Split the Compose file into services, then check each service's port mapping. Keep track of the port mappings for each service, and use a set to store them.",
+    "bruteForce": "Brute force approach summary: You can split the Compose file into services and then check each service's port mapping. However, this approach may be inefficient.",
+    "betterSolution": "Better solution: You can use a set to store the port mappings for each service.",
+    "optimalSolution": "Optimal solution details: You can split the Compose file into services, then check each service's port mapping. Use a set to store the port mappings for each service.",
+    "proofOfCorrectness": "Correctness proof: The optimal solution is correct because it splits the Compose file into services, then checks each service's port mapping, and uses a set to store the port mappings for each service.",
+    "dryRun": "Step-by-step example run: Split the Compose file into services, then check each service's port mapping. Use a set to store the port mappings for each service.",
+    "commonMistakes": [
+      "Not splitting the Compose file into services",
+      "Not using a set to store the port mappings for each service"
+    ],
+    "timeComplexity": "O(n*m)",
+    "spaceComplexity": "O(n*m)"
+  },
+  "starterCode": {
+    "javascript": "function validateComposeFile(composeFile) {\n  // Your code here\n}\n",
+    "python": "class Solution:\n  def validate_compose_file(self, compose_file):\n    # Your code here\n    return []"
+  },
+  "buggyStarterCode": {
+    "javascript": "function validateComposeFile(composeFile) {\n  let services = composeFile.split('\\n\\n');\n  let portMappings = {};\n\n  for (let service of services) {\n    let serviceName = service.split('\\n')[0].trim();\n    let ports = service.split('\\n').filter(line => line.startsWith('ports:')).map(line => line.split(' ').pop().trim());\n\n    for (let port of ports) {\n      let [localPort, containerPort] = port.split(':').map(Number);\n\n      if (portMappings[serviceName] && portMappings[serviceName].includes(containerPort)) {\n        return [`${serviceName}:${containerPort}`];\n      }\n\n      if (!portMappings[serviceName]) {\n        portMappings[serviceName] = [];\n      }\n      portMappings[serviceName].push(containerPort);\n    }\n  }\n\n  let invalidPortMappings = [];\n\n  for (let service in portMappings) {\n    if (portMappings[service].length > 1) {\n      for (let port of portMappings[service]) {\n        if (port === 80) {\n          invalidPortMappings.push(`${service}:${port}`);\n        }\n      }\n    }\n  }\n\n  return invalidPortMappings;\n}",
+    "python": "class Solution:\n  def validate_compose_file(self, compose_file):\n    lines = compose_file.split('\\n');\n    services = {};\\n\n    for line in lines:\n      if line.startswith('service'):\n        serviceName = line.split(':')[1].split('\\n')[0].strip();\\n        service = {};\n        services[serviceName] = service;\n      elif line.startswith('ports'):\n        ports = line.split(' ').pop().split(':');\n        containerPort = int(ports.pop());\\n        service['ports'] = [containerPort];\\n    \\n    invalidPortMappings = [];\n    for serviceName, service in services.items():\n      if len(service['ports']) > 1:\n        for port in service['ports']:\n          if port == 80:\n            invalidPortMappings.append(f\"{serviceName}:{port}\");\n    \\n    return invalidPortMappings;"
+  },
+  "functionSignature": {
+    "javascript": "function validateComposeFile(composeFile) {\n  // Your code here\n}",
+    "python": "class Solution:\n  def validate_compose_file(self, compose_file) -> list[str]:\n    # Your code here\n    return []"
+  },
+  "solutions": {
+    "javascript": "// Solution\n// Your code here\n",
+    "python": "from typing import List\n\nclass Solution:\n  def validate_compose_file(self, compose_file: str) -> List[str]:\n    # Your code here\n    return []"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "service1:\n  image: image1\n  ports:\n    - '80:80'\n  name: service1\n\nservice2:\n  image: image2\n  ports:\n    - '80:80'\n  name: service2\n",
+      "output": "['service1:80', 'service2:80']",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "service1:\n  image: image1\n  ports:\n    - '80:80'\n  name: service1\n\nservice3:\n  image: image3\n  ports:\n    - '81:81'\n  name: service3\n",
+      "output": "['service1:80', 'service3:80', 'service1:80']",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "e8b32ab00bd729b40db320b4",
+  "slug": "docker-service-port-mapping-validation-bug-fixer-bugfix-hard-docker",
+  "mode": "bug_fix",
+  "category": "DOCKER",
+  "difficulty": "Hard"
+}

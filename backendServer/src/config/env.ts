@@ -64,6 +64,7 @@ export const env = {
   APP_NAME: z.string().min(1).default("CodeComplex").parse(getEnv("APP_NAME")),
   EMAIL_USER: z.string().min(1).optional().parse(getEnv("EMAIL_USER")),
   EMAIL_PASS: z.string().min(1).optional().parse(getEnv("EMAIL_PASS")),
+  OWNER_EMAIL: z.string().min(1).optional().parse(getEnv("OWNER_EMAIL")),
 
   CLOUDINARY_CLOUD_NAME: z.string().min(1).optional().parse(getEnv("CLOUDINARY_CLOUD_NAME")),
   CLOUDINARY_API_KEY: z.string().min(1).optional().parse(getEnv("CLOUDINARY_API_KEY")),

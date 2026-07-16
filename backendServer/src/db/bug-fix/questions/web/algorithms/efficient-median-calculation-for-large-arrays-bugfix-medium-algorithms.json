@@ -1,0 +1,151 @@
+{
+  "title": "Efficient Median Calculation for Large Arrays",
+  "subCategory": "Data Analysis and Statistics",
+  "statement": {
+    "markdown": "Given a large array of integers, write a function to calculate and return the median of the array. The function should handle both even and odd-sized arrays, and it should be efficient for large arrays.",
+    "inputFormat": "The input will be a list of integers.",
+    "outputFormat": "The output should be a single number, the median of the input array.",
+    "notes": "The function should handle large arrays efficiently, and it should be able to handle both even and odd-sized arrays.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 100000,
+        "description": "The size of the input array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "[1, 3, 5, 2, 4]",
+        "output": "3",
+        "explanation": "The median of this array is 3"
+      },
+      {
+        "input": "[1, 2, 3, 4]",
+        "output": "2.5",
+        "explanation": "The median of this array is 2.5"
+      },
+      {
+        "input": "[5, 10, 15, 20]",
+        "output": "12.5",
+        "explanation": "The median of this array is 12.5"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "ALGORITHMS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "algorithms"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the QuickSelect algorithm to find the median in O(n) time"
+    }
+  ],
+  "editorial": {
+    "title": "Efficient Median Calculation using QuickSelect",
+    "intuition": "The QuickSelect algorithm is a variant of the QuickSort algorithm that can find the k-th smallest element in an array in O(n) time.",
+    "bruteForce": "The brute force approach would be to sort the entire array and then find the median.",
+    "betterSolution": "The QuickSelect algorithm can be used to find the median in O(n) time.",
+    "optimalSolution": "The optimal solution is to use the QuickSelect algorithm to find the median in O(n) time.",
+    "proofOfCorrectness": "The QuickSelect algorithm is correct because it always finds the k-th smallest element in an array in O(n) time.",
+    "dryRun": "Let's consider an example array [1, 3, 5, 2, 4]. The median of this array is 3.",
+    "commonMistakes": [
+      "Not using the QuickSelect algorithm",
+      "Not handling even-sized arrays correctly"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "cpp": "bool quickselect(int* arr, int n, int k) {\n    // TO DO: implement QuickSelect algorithm\n}",
+    "java": "boolean quickselect(int[] arr, int n, int k) {\n    // TO DO: implement QuickSelect algorithm\n}",
+    "python": "class Solution:\n    def quickselect(self, arr, n, k):\n        # TO DO: implement QuickSelect algorithm\n        pass",
+    "javascript": "function quickselect(arr, n, k) {\n    // TO DO: implement QuickSelect algorithm\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "bool quickselect(int* arr, int n, int k) {\n    if (k < 1 || k > n) return false;\n    sort(arr, arr + n);\n    if (k & 1) return arr[k - 1]; // BUG: incorrect handling of even-sized arrays\n    return (arr[k - 1] + arr[k]) / 2;\n}",
+    "java": "boolean quickselect(int[] arr, int n, int k) {\n    if (k < 1 || k > n) return false;\n    Arrays.sort(arr);\n    if (k & 1) return arr[k - 1]; // BUG: incorrect handling of even-sized arrays\n    return (arr[k - 1] + arr[k]) / 2;\n}",
+    "python": "class Solution:\n    def quickselect(self, arr, n, k):\n        if k < 1 or k > n:\n            return False\n        arr.sort()\n        if k & 1:\n            return arr[k - 1] # BUG: incorrect handling of even-sized arrays\n        return (arr[k - 1] + arr[k]) / 2",
+    "javascript": "function quickselect(arr, n, k) {\n    if (k < 1 || k > n) return false;\n    arr.sort(function(a, b) {\n        return a - b;\n    });\n    if (k & 1) return arr[k - 1]; // BUG: incorrect handling of even-sized arrays\n    return (arr[k - 1] + arr[k]) / 2;\n}"
+  },
+  "functionSignature": {
+    "cpp": "bool quickselect(int* arr, int n, int k);",
+    "java": "boolean quickselect(int[] arr, int n, int k);",
+    "python": "bool quickselect(self, arr: List[int], n: int, k: int) -> bool:",
+    "javascript": "bool quickselect(arr: number[], n: number, k: number);"
+  },
+  "solutions": {
+    "cpp": "bool quickselect(int* arr, int n, int k) {\n    if (k < 1 || k > n) return false;\n    int* pivot = quickselect(arr, n, k, 0, n - 1);\n    return *pivot;\n}\n\nint* quickselect(int* arr, int n, int k, int left, int right) {\n    if (left == right) return &arr[left];\n    int pivot = partition(arr, left, right);\n    if (k == pivot) return &arr[k];\n    else if (k < pivot) return quickselect(arr, n, k, left, pivot - 1);\n    else return quickselect(arr, n, k, pivot + 1, right);\n}\n\nint partition(int* arr, int left, int right) {\n    int pivot = arr[right];\n    int i = left - 1;\n    for (int j = left; j < right; j++) {\n        if (arr[j] < pivot) {\n            i++;\n            swap(arr[i], arr[j]);\n        }\n    }\n    swap(arr[i + 1], arr[right]);\n    return i + 1;\n}\n\nvoid swap(int* a, int* b) {\n    int temp = *a;\n    *a = *b;\n    *b = temp;\n}",
+    "java": "import java.util.Arrays;\npublic boolean quickselect(int[] arr, int n, int k) {\n    if (k < 1 || k > n) return false;\n    int[] pivot = quickselect(arr, n, k, 0, n - 1);\n    return pivot[k - 1];\n}\n\nint[] quickselect(int[] arr, int n, int k, int left, int right) {\n    if (left == right) return arr;\n    int pivot = partition(arr, left, right);\n    if (k == pivot) return arr;\n    else if (k < pivot) return quickselect(arr, n, k, left, pivot - 1);\n    else return quickselect(arr, n, k, pivot + 1, right);\n}\n\nint partition(int[] arr, int left, int right) {\n    int pivot = arr[right];\n    int i = left - 1;\n    for (int j = left; j < right; j++) {\n        if (arr[j] < pivot) {\n            i++;\n            Arrays.sort(arr, left, i + 1);\n            Arrays.sort(arr, i + 1, left);\n            int temp = arr[i + 1];\n            arr[i + 1] = arr[j];\n            arr[j] = temp;\n        }\n    }\n    int temp = arr[i + 1];\n    arr[i + 1] = arr[right];\n    arr[right] = temp;\n    return i + 1;\n}",
+    "python": "class Solution:\n    def quickselect(self, arr, n, k):\n        if k < 1 or k > n:\n            return False\n        pivot = self.quickselect(arr, n, k, 0, n - 1)\n        return pivot[k - 1]\n\n    def quickselect(self, arr, n, k, left, right):\n        if left == right:\n            return arr[left]\n        pivot = self.partition(arr, left, right)\n        if k == pivot:\n            return arr[k]\n        elif k < pivot:\n            return self.quickselect(arr, n, k, left, pivot - 1)\n        else:\n            return self.quickselect(arr, n, k, pivot + 1, right)\n\n    def partition(self, arr, left, right):\n        pivot = arr[right]\n        i = left - 1\n        for j in range(left, right):\n            if arr[j] < pivot:\n                i += 1\n                arr[i], arr[j] = arr[j], arr[i]\n        arr[i + 1], arr[right] = arr[right], arr[i + 1]\n        return i + 1",
+    "javascript": "function quickselect(arr, n, k) {\n    if (k < 1 || k > n) return false;\n    let pivot = quickselect(arr, n, k, 0, n - 1);\n    return pivot[k - 1];\n}\n\nfunction quickselect(arr, n, k, left, right) {\n    if (left == right) return arr[left];\n    let pivot = partition(arr, left, right);\n    if (k == pivot) return arr[k];\n    else if (k < pivot) return quickselect(arr, n, k, left, pivot - 1);\n    else return quickselect(arr, n, k, pivot + 1, right);\n}\n\nfunction partition(arr, left, right) {\n    let pivot = arr[right];\n    let i = left - 1;\n    for (let j = left; j < right; j++) {\n        if (arr[j] < pivot) {\n            i++;\n            [arr[i], arr[j]] = [arr[j], arr[i]];\n        }\n    }\n    [arr[i + 1], arr[right]] = [arr[right], arr[i + 1]];\n    return i + 1;\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5 1 3 5 2 4",
+      "output": "3",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "5 1 2 3 4 5",
+      "output": "3",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "19fc37afe63c205832b565ea",
+  "slug": "efficient-median-calculation-for-large-arrays-bugfix-medium-algorithms",
+  "mode": "bug_fix",
+  "category": "ALGORITHMS",
+  "difficulty": "Medium"
+}

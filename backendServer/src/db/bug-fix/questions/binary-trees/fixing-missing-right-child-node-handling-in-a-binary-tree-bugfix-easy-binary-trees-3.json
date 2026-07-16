@@ -1,0 +1,153 @@
+{
+  "_id": "094c1a3f0e08c2e97f699a2f",
+  "title": "Fixing Missing Right Child Node Handling in a Binary Tree",
+  "slug": "fixing-missing-right-child-node-handling-in-a-binary-tree-bugfix-easy-binary-trees-3",
+  "difficulty": "Easy",
+  "category": "DSA",
+  "subCategory": "TREE/Traversal",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "tree"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given the root node of a binary tree, write a function to traverse the tree in preorder and count the number of nodes with a right child. If a node has no right child, mark it with a special character '-' and add it to the result string.",
+    "inputFormat": "The input will be a binary tree node class with int values and left and right child pointers.",
+    "outputFormat": "The function should return a string where each node with a right child is represented by its value, and each node without a right child is marked with a '-'.",
+    "notes": "The tree nodes are not null and the tree is not empty.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "Example input (matching the stdin format that main wrapper expects)",
+        "output": "Expected stdout output",
+        "explanation": "Brief explanation"
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(h)"
+  },
+  "starterCode": {
+    "cpp": "class Solution { public: string solve(TreeNode* root); };",
+    "java": "public class Solution { public String solve(TreeNode root); }",
+    "python": "class Solution: def solve(self, root: TreeNode) -> str:",
+    "javascript": "var solve = function(root){ };"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution { public: string solve(TreeNode* root) { string result = ''; if (root == nullptr) return ''; result += to_string(root->val); if (root->left != nullptr) result += ' L'; if (root->right != nullptr) result += ' R'; return result; } };",
+    "java": "public class Solution { public String solve(TreeNode root) { if (root == null) return ''; StringBuilder result = new StringBuilder(); result.append(root.val); if (root.left != null) result.append(' L'); if (root.right != null) result.append(' R'); return result.toString(); } }",
+    "python": "class Solution: def solve(self, root: TreeNode) -> str: if not root: return '' result = str(root.val) if root.left: result += ' L' if root.right: result += ' R' return result",
+    "javascript": "var solve = function(root){ if(!root) return ''; var result = '' + root.val; if(root.left) result += ' L'; if(root.right) result += ' R'; return result; };"
+  },
+  "functionSignature": {
+    "cpp": "string solve(TreeNode* root);",
+    "java": "String solve(TreeNode root);",
+    "python": "def solve(self, root: TreeNode) -> str:",
+    "javascript": "var solve = function(root){ };"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def solve(self, root: TreeNode) -> str:\n        result = ''\n        def dfs(node):\n            if not node: return\n            result += str(node.val)\n            dfs(node.left)\n            dfs(node.right)\n        dfs(root)\n        return result.replace(' ', '- ')\n\n# Read input\nimport sys\nfrom collections import deque\n\ndef read_input():\n    n = int(sys.stdin.readline())\n    root = TreeNode(1)\n    queue = deque([(root, 0)])\n    level = 0\n    i = 2\n    while i <= n:\n        val = int(sys.stdin.readline())\n        if queue:\n            node, level = queue.popleft()\n            if level < n:\n                node.left = TreeNode(val)\n                queue.append((node.left, level + 1))\n                i += 1\n            if level < n and i <= n:\n                node.right = TreeNode(int(sys.stdin.readline()))\n                queue.append((node.right, level + 1))\n                i += 1\n    return root\n\n# Driver code\ndef main():\n    root = read_input()\n    sol = Solution()\n    print(sol.solve(root))\n\n# Start\nif __name__ == '__main__':\n    main()\n",
+    "cpp": "class Solution {\npublic:\n    string solve(TreeNode* root) {\n        string result = '';\n        void dfs(TreeNode* node) {\n            if (!node) return;\n            result += to_string(node->val);\n            dfs(node->left);\n            dfs(node->right);\n        }\n        dfs(root);\n        // replace space with '-'\n        string res = result;\n        for (int i = 0; i < res.length(); i++) {\n            if (res[i] == ' ') res[i] = '-';\n        }\n        return res;\n    }\n};\n\n// Read input\n#include <iostream>\n#include <cstdio>\n\nusing namespace std;\n\nvoid read_input(TreeNode*& root) {\n    int n;\n    cin >> n;\n    root = new TreeNode(1);\n    queue<TreeNode*> q;\n    q.push(root);\n    int i = 2;\n    while (i <= n) {\n        int val;\n        cin >> val;\n        if (!q.empty()) {\n            TreeNode* node = q.front(); q.pop();\n            if (i <= n) {\n                node->left = new TreeNode(val);\n                q.push(node->left);\n                i++;\n            }\n            if (i <= n) {\n                node->right = new TreeNode(0);\n                q.push(node->right);\n                i++;\n            }\n        }\n    }\n}\n\n// Driver code\nint main() {\n    TreeNode* root;\n    read_input(root);\n    Solution sol;\n    cout << sol.solve(root) << endl;\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5\n1\n2\n3\n4\n5",
+      "output": "1 2  L 3  R ",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "6\n1\n2\n3\n4\n5\n6",
+      "output": "1 2  L 3  R 4  L 5  R 6 ",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

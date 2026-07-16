@@ -1,0 +1,163 @@
+{
+  "_id": "4eedbd93f33445bcc0d7cd32",
+  "title": "Incorrect Trie Node Traversal on Deletion",
+  "slug": "incorrect-trie-node-traversal-on-deletion-bugfix-medium-tries",
+  "difficulty": "Medium",
+  "category": "DSA",
+  "subCategory": "Trie",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 75,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "trie"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given a Trie data structure, implement a function to delete a word from the Trie. The function should return `True` if the word is deleted successfully, and `False` otherwise. If the word is not present in the Trie, return `True` (since no operations were performed).",
+    "inputFormat": "The function will be called multiple times with the following input formats: `char` and the `root` pointer of the Trie.",
+    "outputFormat": "The function should return `True` or `False` as mentioned above.",
+    "notes": "The Trie data structure is represented as a node with a value and a dictionary mapping characters to child nodes. When deleting a word, ensure that all nodes along the path from the root to the leaf node are properly updated.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10,
+        "description": "Number of nodes in the Trie"
+      }
+    ],
+    "examples": [
+      {
+        "input": "char c = 'a'; root = nullptr;",
+        "output": "True",
+        "explanation": "Deleting a character from an empty Trie results in no operation, so the function returns True."
+      },
+      {
+        "input": "char c = 'a'; root = delete('a', root);",
+        "output": "True",
+        "explanation": "Deleting the word 'a' from a Trie containing only one node returns True, indicating success."
+      },
+      {
+        "input": "char c = 'b'; root = delete('b', root);",
+        "output": "False",
+        "explanation": "Deleting a non-existent word from the Trie returns False, indicating failure."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Ensure that all nodes along the path from the root to the leaf node are properly updated when deleting a word."
+    }
+  ],
+  "editorial": {
+    "title": "Deleting Words from a Trie",
+    "intuition": "To delete a word from the Trie, recursively traverse the Trie nodes until you reach the end of the word. When deleting a node, update its parent node to null or delete it if it's a leaf node.",
+    "bruteForce": "A brute-force approach involves manually updating the Trie nodes for the given word.",
+    "betterSolution": "A better solution involves implementing a recursive function to traverse the Trie nodes and update them accordingly.",
+    "optimalSolution": "The optimal solution involves checking if the given word exists in the Trie and then deleting it by updating the parent nodes and removing the leaf nodes.",
+    "proofOfCorrectness": "The proof of correctness involves showing that the function correctly deletes a word from the Trie and returns the appropriate result.",
+    "dryRun": "A dry run of the function should be performed to ensure that it behaves as expected for different inputs.",
+    "commonMistakes": [
+      "Failing to update parent nodes when deleting a child node",
+      "Deleting a non-existent word from the Trie"
+    ],
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(H)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\nbool delete(char c, TreeNode* root) {\n\t// TODO: implement deletion logic\n\treturn true;\n}\n};",
+    "java": "public class Solution {\npublic boolean delete(char c, TreeNode root) {\n\t// TODO: implement deletion logic\n\treturn true;\n}\n}",
+    "python": "class Solution:\n    def delete(self, c: str, root: TreeNode) -> bool:\n        # TODO: implement deletion logic\n        return True",
+    "javascript": "function delete(c, root) {\n\t// TODO: implement deletion logic\n\treturn true;\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\nbool delete(char c, TreeNode* root) {\n\tif (root == nullptr) return true;\n\tif (c != root->value) return delete(c, root->left);\n\t// Bug: Failing to update parent node when deleting a child node\n\treturn true;\n}\n};",
+    "java": "public class Solution {\npublic boolean delete(char c, TreeNode root) {\n\tif (root == null) return true;\n\tif (c != root.value) return delete(c, root.left);\n\t// Bug: Failing to update parent node when deleting a child node\n\treturn true;\n}\n}",
+    "python": "class Solution:\n    def delete(self, c: str, root: TreeNode) -> bool:\n        if root is None: return True\n        if c != root.value: return self.delete(c, root.left)\n        # Bug: Failing to update parent node when deleting a child node\n        return True",
+    "javascript": "function delete(c, root) {\n\tif (root === null) return true;\n\tif (c !== root.value) return delete(c, root.left);\n\t// Bug: Failing to update parent node when deleting a child node\n\treturn true;\n}"
+  },
+  "functionSignature": {
+    "cpp": "bool delete(char c, TreeNode* root);",
+    "java": "public boolean delete(char c, TreeNode root);",
+    "python": "def delete(self, c: str, root: TreeNode) -> bool:",
+    "javascript": "bool delete(c, root)"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def delete(self, c: str, root: TreeNode) -> bool:\n        if root is None: return True\n        if c != root.value: return self.delete(c, root.left)\n        if root.left is None and root.right is None: return True\n        if root.left is None: root.value = root.right.value\n        if root.right is None: root.value = root.left.value\n        return self.delete(c, root.left) or self.delete(c, root.right) or True\n\nif __name__ == '__main__':\n    root = TreeNode('a')\n    root.left = TreeNode('b')\n    root.right = TreeNode('c')\n    print(Solution().delete('a', root))",
+    "cpp": "class Solution {\npublic:\nbool delete(char c, TreeNode* root) {\n\tif (root == nullptr) return true;\n\tif (c != root->value) return delete(c, root->left);\n\tif (root->left == nullptr && root->right == nullptr) return true;\n\tif (root->left == nullptr) root->value = root->right->value;\n\tif (root->right == nullptr) root->value = root->left->value;\n\treturn delete(c, root->left) || delete(c, root->right) || true;\n}\n};\nint main() {\n\tSolution solution;\n\tTreeNode* root = new TreeNode('a');\n\troot->left = new TreeNode('b');\n\troot->right = new TreeNode('c');\n\tstd::cout << (solution.delete('a', root) ? \"True\" : \"False\") << std::endl;\n\treturn 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "First line count, second line elements (stdin match)",
+      "output": "Expected output string",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "Example 2 input",
+      "output": "Example 2 output",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

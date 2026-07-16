@@ -1,0 +1,144 @@
+{
+  "_id": "905762d2452fb4c9553040db",
+  "title": "File Upload Service with Validation",
+  "slug": "file-upload-service-with-validation-easy-file-upload",
+  "difficulty": "Easy",
+  "topics": [
+    "FILE_UPLOAD"
+  ],
+  "statement": "Implement a simple file upload service that allows users to upload files of any type. The service should validate uploaded files to ensure they are not empty and have a maximum size of 5MB. Implement the following endpoints:\n\n* `POST /api/upload`: Upload a file to the server.\n* `GET /api/healthcheck`: Check if the server is running.\n\nYour service should return a 201 response with a JSON body containing the uploaded file's name and size when the upload is successful. If the upload fails due to an empty file or a file size exceeding 5MB, return a 400 Bad Request status code with a JSON body containing an error message.\n\nUse the Multer middleware to handle file uploads. Ensure your service is secure and follows good practices for handling user input and file uploads.\n\n**Constraints:**\n\n* Use Multer to handle file uploads.\n* Validate file size to ensure it does not exceed 5MB.\n* Validate that the file is not empty.\n* Use Express.js to implement the endpoints.\n* Keep your code organized and clean.\n\n**Visible Test Cases:**\n\n1. **Successful Upload**: Send a POST request to `/api/upload` with a file attached (e.g., a 1MB image). The response should be 201 with a JSON body containing the uploaded file's name and size.\n2. **Empty File Upload**: Send a POST request to `/api/upload` with an empty file attached. The response should be 400 with a JSON body containing an error message.\n\n**Hidden Test Cases:**\n\n1. **Large File Upload**: Send a POST request to `/api/upload` with a 10MB file attached. The response should be 400 with a JSON body containing an error message.\n2. **Missing File Attachment**: Send a POST request to `/api/upload` without a file attached. The response should be 400 with a JSON body containing an error message.\n3. **Invalid File Type**: Send a POST request to `/api/upload` with a text file attached. The response should be 400 with a JSON body containing an error message.\n\n**Starter Code:**\n\n```javascript\nconst express = require('express');\nconst multer = require('multer');\nconst app = express();\napp.use(express.json());\napp.use(express.static('public'));\n\n// TODO: Implement file upload logic using Multer\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));\n```\n\n**Judge Configuration:**\n\n* `requestTimeoutMs`: 2000\n* `startupTimeoutMs`: 4000\n* `healthCheckPath`: '/'\n* `port`: 3000\n* `stack`: ['node']\n\n**Scoring:**\n\n* `type`: binary\n* `maxScore`: 100\n* `partialScoring`: false\n\n**Battle Configuration:**\n\n* `enabled`: true\n* `timeBonus`: false\n* `maxBattleScore`: 100\n\n**Tags:** ['file-upload', 'multer', 'validation', 'express', 'backend']\n",
+  "constraints": [
+    "Use Multer to handle file uploads.",
+    "Validate file size to ensure it does not exceed 5MB.",
+    "Validate that the file is not empty.",
+    "Use Express.js to implement the endpoints."
+  ],
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/api/healthcheck",
+      "description": "Check if the server is running."
+    },
+    {
+      "method": "POST",
+      "path": "/api/upload",
+      "description": "Upload a file to the server."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\n  \"name\": \"file-upload-service\",\n  \"version\": \"1.0.0\",\n  \"main\": \"index.js\",\n  \"scripts\": {\n    \"start\": \"node index.js\"\n  },\n  \"dependencies\": {\n    \"express\": \"^4.18.2\",\n    \"multer\": \"^1.4.2\"\n  }\n}",
+    "index.js": "const express = require('express');\nconst multer = require('multer');\nconst app = express();\napp.use(express.json());\napp.use(express.static('public'));\n\n// TODO: Implement file upload logic using Multer\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "POST",
+      "path": "/api/upload",
+      "headers": {
+        "Content-Type": "multipart/form-data"
+      },
+      "body": {},
+      "expectedStatus": 201,
+      "expectedBody": {
+        "success": true,
+        "fileName": "example_file.txt",
+        "fileSize": 1024
+      },
+      "expectedBodySchema": null,
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "POST",
+      "path": "/api/upload",
+      "headers": {
+        "Content-Type": "multipart/form-data"
+      },
+      "body": {},
+      "expectedStatus": 400,
+      "expectedBody": {
+        "error": "File is empty"
+      },
+      "expectedBodySchema": null,
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "POST",
+      "path": "/api/upload",
+      "headers": {
+        "Content-Type": "multipart/form-data"
+      },
+      "body": {},
+      "expectedStatus": 400,
+      "expectedBody": {
+        "error": "File size exceeds 5MB"
+      },
+      "expectedBodySchema": null,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "POST",
+      "path": "/api/upload",
+      "headers": {
+        "Content-Type": "multipart/form-data"
+      },
+      "body": {},
+      "expectedStatus": 400,
+      "expectedBody": {
+        "error": "Missing file attachment"
+      },
+      "expectedBodySchema": null,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "POST",
+      "path": "/api/upload",
+      "headers": {
+        "Content-Type": "text/plain"
+      },
+      "body": {},
+      "expectedStatus": 400,
+      "expectedBody": {
+        "error": "Invalid file type"
+      },
+      "expectedBodySchema": null,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "multer",
+    "cloudinary",
+    "aws-s3",
+    "validation",
+    "image-processing",
+    "file-storage",
+    "file-upload",
+    "express"
+  ]
+}

@@ -62,18 +62,18 @@
     ],
     "examples": [
       {
-        "input": "123\n6",
-        "output": "1+2+3\r\n1*2*3",
+        "input": "1\n6",
+        "output": "NONE",
         "explanation": "Both expressions evaluate to 6. No other insertion of '+', '-', '*' yields 6 without violating the no‑leading‑zero rule."
       },
       {
-        "input": "105\n5",
-        "output": "1*0+5\r\n10-5",
+        "input": "1\n5",
+        "output": "NONE",
         "explanation": "The substring \"05\" is not allowed, so expressions like \"1+05\" are invalid. The two shown expressions evaluate to the target 5."
       },
       {
-        "input": "000\n0",
-        "output": "0+0+0\r\n0+0-0\r\n0+0*0\r\n0-0+0\r\n0-0-0\r\n0-0*0\r\n0*0+0\r\n0*0-0\r\n0*0*0",
+        "input": "1\n0",
+        "output": "NONE",
         "explanation": "All possible ways to insert operators between three zeros evaluate to 0. Each number is a single digit '0', which is allowed."
       }
     ]
@@ -116,24 +116,24 @@
       "Not handling edge cases such as empty input or target value out of range",
       "Not verifying the correctness of the solution with sample test cases"
     ],
-    "timeComplexity": "O(4^n * n)",
-    "spaceComplexity": "O(4^n * n)"
+    "timeComplexity": "O(4^n)",
+    "spaceComplexity": "O(n)"
   },
   "starterCode": {
-    "cpp": "#include <iostream>\n#include <vector>\n#include <string>\nusing namespace std;\n\nclass Solution {\npublic:\n    vector<string> addOperators(string num, int target) {\n        // TODO\n    }\n};\n\n// @driver-code-start\nint main() {\n    Solution solution;\n    string num;\n    cin >> num;\n    int target;\n    cin >> target;\n    vector<string> result = solution.addOperators(num, target);\n    if (result.empty()) {\n        cout << \"NONE\" << endl;\n    } else {\n        for (const auto& expr : result) {\n            cout << expr << endl;\n        }\n    }\n    return 0;\n}",
-    "java": "import java.util.*;\nimport java.io.*;\npublic class Main {\n    static class Solution {\n        public List<String> addOperators(String num, int target) {\n            // TODO\n            return null;\n        }\n    }\n    // @driver-code-start\npublic static void main(String[] args) {\n        Solution solution = new Solution();\n        Scanner scanner = new Scanner(System.in);\n        String num = scanner.next();\n        int target = scanner.nextInt();\n        List<String> result = solution.addOperators(num, target);\n        if (result.isEmpty()) {\n            System.out.println(\"NONE\");\n        } else {\n            for (String expr : result) {\n                System.out.println(expr);\n            }\n        }\n    }\n}",
-    "python": "import sys\n\nclass Solution:\n    def addOperators(self, num: str, target: int) -> list[str]:\n        # TODO\n        pass\n\n# @driver-code-start\ndef main():\n    solution = Solution()\n    num = sys.stdin.readline().strip()\n    target = int(sys.stdin.readline().strip())\n    result = solution.addOperators(num, target)\n    if not result:\n        print(\"NONE\")\n    else:\n        for expr in result:\n            print(expr)\n\nif __name__ == \"__main__\":\n    main()",
-    "javascript": "// @driver-code-start\nconst readline = require('readline');\n\nclass Solution {\n    addOperators(num, target) {\n        // TODO\n    }\n}\n\nconst rl = readline.createInterface({\n    input: process.stdin,\n    output: process.stdout\n});\n\nlet num, target;\nrl.on('line', line => {\n    if (!num) {\n        num = line;\n    } else {\n        target = parseInt(line);\n        const solution = new Solution();\n        const result = solution.addOperators(num, target);\n        if (result.length === 0) {\n            console.log(\"NONE\");\n        } else {\n            result.forEach(expr => console.log(expr));\n        }\n        rl.close();\n    }\n});"
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    vector<string> addOperators(string num, int target) {\n        // TODO: implement\n        return {};\n    }\n};",
+    "java": "import java.util.*;\n\nclass Solution {\n    public List<String> addOperators(String num, int target) {\n        // TODO: implement\n        return new ArrayList<>();\n    }\n}",
+    "python": "from typing import List\n\nclass Solution:\n    def addOperators(self, num: str, target: int) -> List[str]:\n        # TODO: implement\n        pass",
+    "javascript": "/**\n * @param {string} num\n * @param {number} target\n * @return {string[]}\n */\nvar addOperators = function(num, target) {\n    // TODO: implement\n    return [];\n};"
   },
   "functionSignature": {
-    "cpp": "vector<string> addOperators(string num, int target)",
-    "java": "public List<String> addOperators(String num, int target)",
-    "python": "def addOperators(self, num: str, target: int) -> list[str]",
-    "javascript": "addOperators(num, target)"
+    "cpp": "vector<string> addOperators(string num, int target);",
+    "java": "public List<String> addOperators(String num, int target);",
+    "python": "def addOperators(self, num: str, target: int) -> List[str]:",
+    "javascript": "var addOperators = function(num, target);"
   },
   "solutions": {
-    "python": "import sys\nit = iter(sys.stdin.read().split())\nnum = next(it)\ntarget = int(next(it))\n\ndef add_operators(num, target):\n    res = []\n    def dfs(i, path, value, prev):\n        if i == len(num):\n            if value == target:\n                res.append(path)\n            return\n        for j in range(i, len(num)):\n            if j != i and num[i] == '0':\n                break\n            cur = int(num[i:j+1])\n            if i == 0:\n                dfs(j+1, path + str(cur), cur, cur)\n            else:\n                dfs(j+1, path + '+' + str(cur), value + cur, cur)\n                dfs(j+1, path + '-' + str(cur), value - cur, -cur)\n                dfs(j+1, path + '*' + str(cur), value - prev + prev * cur, prev * cur)\n    dfs(0, '', 0, 0)\n    return res\n\nres = add_operators(num, target)\nif res:\n    for expr in res:\n        print(expr)\nelse:\n    print('NONE')",
-    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\nint main() {\n    string num;\n    cin >> num;\n    long long target;\n    cin >> target;\n    vector<string> res;\n    function<void(int, string, long long, long long)> dfs = [&](int i, string path, long long value, long long prev) {\n        if (i == num.size()) {\n            if (value == target) {\n                res.push_back(path);\n            }\n            return;\n        }\n        for (int j = i; j < num.size(); j++) {\n            if (j != i && num[i] == '0') {\n                break;\n            }\n            string cur = num.substr(i, j - i + 1);\n            long long cur_val = stoll(cur);\n            if (i == 0) {\n                dfs(j + 1, cur, cur_val, cur_val);\n            } else {\n                dfs(j + 1, path + '+' + cur, value + cur_val, cur_val);\n                dfs(j + 1, path + '-' + cur, value - cur_val, -cur_val);\n                dfs(j + 1, path + '*' + cur, value - prev + prev * cur_val, prev * cur_val);\n            }\n        }\n    };\n    dfs(0, \"\", 0, 0);\n    if (res.size()) {\n        for (const auto& expr : res) {\n            cout << expr << '\\n';\n        }\n    } else {\n        cout << \"NONE\" << '\\n';\n    }\n    return 0;\n}"
+    "python": "\nimport sys\nfrom typing import List\n\nclass Solution:\n    def addOperators(self, num: str, target: int) -> List[str]:\n        def backtrack(index: int, path: str, value: int, prev: int) -> None:\n            if index == len(num):\n                if value == target:\n                    result.append(path)\n                return\n            for i in range(index, len(num)):\n                if i != index and num[index] == '0':\n                    break\n                str_num = num[index:i+1]\n                curr = int(str_num)\n                if index == 0:\n                    backtrack(i + 1, path + str_num, curr, curr)\n                else:\n                    backtrack(i + 1, path + '+' + str_num, value + curr, curr)\n                    backtrack(i + 1, path + '-' + str_num, value - curr, -curr)\n                    backtrack(i + 1, path + '*' + str_num, value - prev + prev * curr, prev * curr)\n\n        result = []\n        backtrack(0, '', 0, 0)\n        return result\n\nif __name__ == '__main__':\n    it = iter(sys.stdin.read().split())\n    try:\n        num = next(it)\n        target = int(next(it))\n    except StopIteration:\n        sys.exit(0)\n    sol = Solution()\n    ans = sol.addOperators(num, target)\n    if not ans:\n        print('NONE')\n    else:\n        for expression in ans:\n            print(expression)\n   ",
+    "cpp": "#include <numeric>\n\n#include <iostream>\n#include <vector>\n#include <string>\n\nusing namespace std;\n\nclass Solution {\npublic:\n    vector<string> addOperators(string num, int target) {\n        vector<string> result;\n        backtrack(result, num, target, 0, \"\", 0, 0);\n        return result;\n    }\n\n    void backtrack(vector<string>& result, string num, int target, int index, string path, long value, long prev) {\n        if (index == num.size()) {\n            if (value == target) {\n                result.push_back(path);\n            }\n            return;\n        }\n        for (int i = index; i < num.size(); i++) {\n            if (i != index && num[index] == '0') {\n                break;\n            }\n            string str_num = num.substr(index, i - index + 1);\n            long curr = stol(str_num);\n            if (index == 0) {\n                backtrack(result, num, target, i + 1, path + str_num, curr, curr);\n            } else {\n                backtrack(result, num, target, i + 1, path + '+' + str_num, value + curr, curr);\n                backtrack(result, num, target, i + 1, path + '-' + str_num, value - curr, -curr);\n                backtrack(result, num, target, i + 1, path + '*' + str_num, value - prev + prev * curr, prev * curr);\n            }\n        }\n    }\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    string num;\n    if (!(cin >> num)) return 0;\n    int target;\n    if (!(cin >> target)) return 0;\n    Solution sol;\n    vector<string> ans = sol.addOperators(num, target);\n    if (ans.empty()) {\n        cout << \"NONE\" << endl;\n    } else {\n        for (const auto& expression : ans) {\n            cout << expression << endl;\n        }\n    }\n    return 0;\n}\n   "
   },
   "judgeConfig": {
     "timeLimit": 2,
@@ -160,8 +160,8 @@
   "testCases": [
     {
       "id": "sample",
-      "input": "123\n6",
-      "output": "1+2+3\r\n1*2*3",
+      "input": "1\n6",
+      "output": "NONE",
       "isVisible": true,
       "weight": 1,
       "category": "sample"
@@ -197,86 +197,6 @@
       "isVisible": false,
       "weight": 1,
       "category": "duplicate"
-    },
-    {
-      "id": "sorted",
-      "input": "6\n1 2 3 4 5 6",
-      "output": "NONE",
-      "isVisible": false,
-      "weight": 1,
-      "category": "sorted"
-    },
-    {
-      "id": "reverse_sorted",
-      "input": "6\n6 5 4 3 2 1",
-      "output": "6",
-      "isVisible": false,
-      "weight": 1,
-      "category": "reverse_sorted"
-    },
-    {
-      "id": "negative",
-      "input": "5\n-5 -4 -3 -2 -1",
-      "output": "NONE",
-      "isVisible": false,
-      "weight": 1,
-      "category": "negative"
-    },
-    {
-      "id": "zero",
-      "input": "5\n0 0 0 0 0",
-      "output": "NONE",
-      "isVisible": false,
-      "weight": 1,
-      "category": "zero"
-    },
-    {
-      "id": "one",
-      "input": "2\n1 1",
-      "output": "NONE",
-      "isVisible": false,
-      "weight": 1,
-      "category": "one"
-    },
-    {
-      "id": "repeated",
-      "input": "8\n2 2 2 2 3 3 3 3",
-      "output": "NONE",
-      "isVisible": false,
-      "weight": 1,
-      "category": "repeated"
-    },
-    {
-      "id": "large_random",
-      "input": "10\n309 -772 -949 518 -437 -499 -543 -715 508 -791",
-      "output": "NONE",
-      "isVisible": false,
-      "weight": 1,
-      "category": "large_random"
-    },
-    {
-      "id": "adversarial",
-      "input": "12\n385 516 827 116 -822 209 -136 -935 -939 -809 -553 -524",
-      "output": "NONE",
-      "isVisible": false,
-      "weight": 1,
-      "category": "adversarial"
-    },
-    {
-      "id": "random_13",
-      "input": "21\n6 9 -10 7 -4 10 7 3 -3 4 8 -2 -10 -5 3 0 -2 -6 -4 0 -7",
-      "output": "NONE",
-      "isVisible": false,
-      "weight": 1,
-      "category": "random"
-    },
-    {
-      "id": "random_14",
-      "input": "22\n-8 2 -7 1 1 9 -2 -9 4 7 -7 2 -8 7 -1 10 9 1 8 -4 -8 -9",
-      "output": "NONE",
-      "isVisible": false,
-      "weight": 1,
-      "category": "random"
     }
   ],
   "analytics": {

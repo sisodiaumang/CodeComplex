@@ -26,6 +26,7 @@ const judgeConfigSchema = new mongoose.Schema(
     {
         judgeModel: { type: String, required: true },
         stack: { type: [String], required: true, default: [] },
+        referenceSolution: { type: String },
     },
     { _id: false }
 );
@@ -70,7 +71,9 @@ const frontendQuestionSchema = new mongoose.Schema<IFrontendQuestion>(
 
         topics: { type: [String], default: [] },
 
-        statement: { type: String, required: true },
+        statement: {
+            markdown: { type: String, required: true },
+        },
 
         constraints: { type: [String], default: [] },
 

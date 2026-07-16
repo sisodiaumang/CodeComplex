@@ -1,0 +1,137 @@
+{
+  "_id": "c4eb15df28a0bb94a186ca87",
+  "title": "Easy Redis Caching: Implement a Simple Key-Value Store",
+  "slug": "easy-redis-caching-implement-a-simple-key-value-store-easy-redis",
+  "difficulty": "Easy",
+  "topics": [
+    "REDIS"
+  ],
+  "statement": "Implement a caching layer using Redis that stores and retrieves key-value pairs. The server should expose a single endpoint for storing and retrieving values. The application should use the Redis client library in Node.js. Your task is to fill in the TODO sections with the correct code. The caching layer should store values in Redis with a TTL (time to live) of 60 seconds.\n\n### API Endpoints\n\n#### Store a value in Redis\n\n* HTTP Method: `POST`\n* Path: `/api/cache`\n* Request Body: `key` and `value` as JSON object\n* Response: `200 OK` with `success` and `message` as JSON object\n\n#### Retrieve a value from Redis\n\n* HTTP Method: `GET`\n* Path: `/api/cache/:key`\n* Response: `200 OK` with `value` and `ttl` as JSON object if key exists, otherwise `404 Not Found`",
+  "constraints": [
+    "Must use the Redis client library in Node.js",
+    "Must store values in Redis with a TTL of 60 seconds",
+    "Must handle cases when a key is not found"
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/cache",
+      "description": "Store a value in Redis"
+    },
+    {
+      "method": "GET",
+      "path": "/api/cache/:key",
+      "description": "Retrieve a value from Redis"
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\"name\": \"redis-cache\",\n  \"version\": \"1.0.0\",\n  \"main\": \"index.js\",\n  \"scripts\": {\n    \"start\": \"node index.js\"\n  },\n  \"dependencies\": {\n    \"express\": \"^4.18.2\",\n    \"redis\": \"^3.1.2\"\n  }\n}",
+    "index.js": "const express = require('express');\nconst redis = require('redis');\nconst client = redis.createClient();\nconst app = express();\napp.use(express.json());\n\n// Connect to Redis\nclient.on('connect', () => {\n  console.log('Connected to Redis');\n});\n\n// TODO: Implement endpoint to store a value in Redis\napp.post('/api/cache', (req, res) => {\n  // TODO: Store value in Redis with a TTL of 60 seconds\n  res.send({ success: true, message: 'Value stored successfully' });\n});\n\n// TODO: Implement endpoint to retrieve a value from Redis\napp.get('/api/cache/:key', (req, res) => {\n  // TODO: Retrieve value from Redis and send response with TTL\n  res.send({ value: 'Not Found', ttl: 0 });\n});\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "POST",
+      "path": "/api/cache",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "key": "my_key",
+        "value": "Hello, World!"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "success": true,
+        "message": "Value stored successfully"
+      },
+      "expectedBodySchema": null,
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "GET",
+      "path": "/api/cache/my_key",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "value": "Hello, World!",
+        "ttl": 60
+      },
+      "expectedBodySchema": null,
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "POST",
+      "path": "/api/cache",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "key": "my_key",
+        "value": ""
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "GET",
+      "path": "/api/cache/not_found",
+      "expectedStatus": 404,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "GET",
+      "path": "/api/cache/my_key",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "value": "Hello, World!",
+        "ttl": 58
+      },
+      "expectedBodySchema": null,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "pub/sub",
+    "cache",
+    "sessions",
+    "rate-limiting",
+    "leaderboard",
+    "streams",
+    "redis",
+    "easy",
+    "select",
+    "appropriate",
+    "tags",
+    "from",
+    "topic",
+    "tag",
+    "list"
+  ]
+}

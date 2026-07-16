@@ -1,0 +1,137 @@
+{
+  "_id": "5235c59bbea8163cd65c3dcf",
+  "title": "Implementing Role-Based Access Control (RBAC) in a Music Festival API",
+  "slug": "implementing-role-based-access-control-rbac-in-a-music-festival-api-medium-authorization",
+  "difficulty": "Medium",
+  "topics": [
+    "AUTHORIZATION"
+  ],
+  "statement": "Create a backend API for a music festival that manages artists, venues, and access control for festival attendees. The API should enforce role-based access control (RBAC) for users based on their assigned roles. Implement the following endpoints:\n\n- **GET /api/venues**: Returns a list of all venues in the festival.\n- **GET /api/artists**: Returns a list of all artists performing in the festival.\n- **POST /api/artists/{artistId}/performances**: Creates a new performance for an artist, requiring the user to have the 'admin' role.\n- **GET /api/my-performances**: Returns a list of performances by artists that the current user has permission to access, based on their role.\n\n**Assumptions**:\n\n- Users are assigned roles upon registration (admin, organizer, or attendee).\n- The API uses JSON Web Tokens (JWT) for authentication and authorization.\n\n**Constraints**:\n\n- Use a mock database to store data (e.g., in-memory arrays).\n- Enforce RBAC using middleware.\n- Validate user input for the POST endpoint.\n- Handle missing or invalid JWT tokens.\n\n**Hint**: Use the `express-jwt` package to verify JWT tokens.\n\nYou can use the provided starter code as a base for your implementation. Make sure to complete the implementation and handle all error cases.",
+  "constraints": [
+    "Must use only the in-memory array or mock database provided",
+    "Enforce RBAC using middleware"
+  ],
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/api/venues",
+      "description": "Returns a list of all venues in the festival."
+    },
+    {
+      "method": "GET",
+      "path": "/api/artists",
+      "description": "Returns a list of all artists performing in the festival."
+    },
+    {
+      "method": "POST",
+      "path": "/api/artists/:artistId/performances",
+      "description": "Creates a new performance for an artist, requiring the user to have the 'admin' role."
+    },
+    {
+      "method": "GET",
+      "path": "/api/my-performances",
+      "description": "Returns a list of performances by artists that the current user has permission to access, based on their role."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\"name\": \"music-festival-api\",\"version\": \"1.0.0\",\"main\": \"index.js\",\"scripts\": {\"start\": \"node index.js\"},\"dependencies\": {\"express\": \"^4.18.2\",\"express-jwt\": \"^8.3.0\"}}",
+    "index.js": "const express = require('express');const jwt = require('express-jwt');const app = express();app.use(express.json());const users = [  { id: 1, username: 'admin', password: 'password', role: 'admin' },  { id: 2, username: 'organizer', password: 'password', role: 'organizer' },  { id: 3, username: 'attendee', password: 'password', role: 'attendee' }];const venues = [  { id: 1, name: 'Main Stage' },  { id: 2, name: 'Secondary Stage' }];const artists = [  { id: 1, name: 'Artist 1' },  { id: 2, name: 'Artist 2' }];// TODO: Implement RBAC using middlewareconst authMiddleware = jwt({ secret: 'secret-key', algorithms: ['HS256'] });app.use('/api', authMiddleware);app.get('/api/venues', (req, res) => {  res.json(venues);});app.get('/api/artists', (req, res) => {  res.json(artists);});app.post('/api/artists/:artistId/performances', (req, res) => {  // TODO: Validate user input and enforce RBAC});app.get('/api/my-performances', (req, res) => {  // TODO: Return list of performances based on user's role});const PORT = process.env.PORT || 3000;app.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "GET",
+      "path": "/api/venues",
+      "headers": {
+        "Authorization": "Bearer valid-jwt-token"
+      },
+      "expectedStatus": 200,
+      "expectedBody": "{ \"venues\": [ { \"id\": 1, \"name\": \"Main Stage\" }, { \"id\": 2, \"name\": \"Secondary Stage\" } ] }",
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "POST",
+      "path": "/api/artists/1/performances",
+      "headers": {
+        "Authorization": "Bearer admin-jwt-token",
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "date": "2024-03-20",
+        "venue": "Main Stage"
+      },
+      "expectedStatus": 201,
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "GET",
+      "path": "/api/artists",
+      "expectedStatus": 200,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "POST",
+      "path": "/api/artists/1/performances",
+      "headers": {
+        "Authorization": "Bearer invalid-jwt-token",
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "date": "2024-03-20",
+        "venue": "Main Stage"
+      },
+      "expectedStatus": 401,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "GET",
+      "path": "/api/my-performances",
+      "headers": {
+        "Authorization": "Bearer attendee-jwt-token"
+      },
+      "expectedStatus": 401,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "rbac",
+    "abac",
+    "middleware",
+    "roles",
+    "permissions",
+    "protected-routes",
+    "guards",
+    "RBAC",
+    "Middleware",
+    "Roles",
+    "Permissions",
+    "Protected Routes"
+  ]
+}

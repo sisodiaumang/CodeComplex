@@ -1,0 +1,153 @@
+{
+  "_id": "0a281b76dc103890a6dcf621",
+  "title": "Incorrectly Implemented Trie Node Creation Due to Missing Child Node Copy",
+  "slug": "incorrectly-implemented-trie-node-creation-due-to-missing-child-node-copy-bugfix-medium-tries",
+  "difficulty": "Medium",
+  "category": "DSA",
+  "subCategory": "TRIE",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "trie"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given a Trie data structure, implement a method to insert a word into the Trie. However, the `TrieNode` creation is incorrect, leading to incorrect child node references.",
+    "inputFormat": "A string array representing the words to insert into the Trie",
+    "outputFormat": "The modified Trie",
+    "notes": "Time and space complexity should be O(n), where n is the total number of characters in all words.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "[\"apple\", \"app\", \"application\"]",
+        "output": "The modified Trie would have the word \"apple\" as the root, followed by \"app\", and then \"application\"",
+        "explanation": ""
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text: Check the `TrieNode` creation for correct child node references."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "class TrieNode {\n    public:\n        TrieNode* children[26];\n        TrieNode() {\n            for (int i = 0; i < 26; i++) {\n                children[i] = nullptr;\n            }\n        }\n    };",
+    "java": "class TrieNode {\n    public:\n        TrieNode[] children = new TrieNode[26];\n        TrieNode() {\n            for (int i = 0; i < 26; i++) {\n                children[i] = null;\n            }\n        }\n    };\n",
+    "python": "class TrieNode:\n    def __init__(self):\n        self.children = [None]*26",
+    "javascript": "class TrieNode {\n    constructor() {\n        this.children = Array(26).fill(null);\n    }\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "void insert(TrieNode* root, char c) {\n    if (root == nullptr) {\n        root = new TrieNode();\n    }\n    root->children[c - 'a'] = root; // BUG: incorrect child node reference\n}",
+    "java": "void insert(TrieNode root, char c) {\n    if (root == null) {\n        root = new TrieNode();\n    }\n    root.children[c - 'a'] = root;  // BUG: incorrect child node reference\n}",
+    "python": "def insert(self, root, c):\n    if root is None:\n        root = TrieNode()\n    root.children[c - 'a'] = root  # BUG: incorrect child node reference",
+    "javascript": "function insert(root, c) {\n    if (root === null) {\n        root = new TrieNode();\n    }\n    root.children[c.charCodeAt(0) - 'a'.charCodeAt(0)] = root;  // BUG: incorrect child node reference\n}"
+  },
+  "functionSignature": {
+    "cpp": "void insert(TrieNode* root, string words);",
+    "java": "void insert(TrieNode root, String words);",
+    "python": "def insert(self, root, words: list[str]) -> None;",
+    "javascript": "function insert(root, words);"
+  },
+  "solutions": {
+    "python": "class Trie:\n    def __init__(self):\n        self.children = [None]*26\n\n    def insert(self, word):\n        root = self\n        for c in word:\n            if root.children[ord(c) - ord('a')] is None:\n                root.children[ord(c) - ord('a')] = Trie()\n            root = root.children[ord(c) - ord('a')]\n\nclass Solution:\n    def insert(self, root, words):\n        trie = Trie()\n        for word in words:\n            trie.insert(word)\n",
+    "cpp": "class Trie {\n    public:\n        TrieNode* children[26];\n\n        Trie() {\n            for (int i = 0; i < 26; i++) {\n                children[i] = nullptr;\n            }\n        }\n\n        void insert(string word) {\n            TrieNode* root = this;\n            for (char c : word) {\n                if (root->children[c - 'a'] == nullptr) {\n                    root->children[c - 'a'] = new TrieNode();\n                }\n                root = root->children[c - 'a'];\n            }\n        }\n\n};\n\nvoid Solution::insert(Trie* root, vector<string>& words) {\n    Trie trie;\n    for (const string& word : words) {\n        trie.insert(word);\n    }\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "First line count, second line elements (stdin match)",
+      "output": "Expected output string",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "Example 2 input",
+      "output": "Example 2 output",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

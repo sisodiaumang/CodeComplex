@@ -1,0 +1,130 @@
+{
+  "_id": "6de60168a249ec071f9acb56",
+  "title": "Implementing Fixed-Window Rate Limiting for API Requests",
+  "slug": "implementing-fixed-window-rate-limiting-for-api-requests-easy-rate-limiting",
+  "difficulty": "Easy",
+  "topics": [
+    "RATE_LIMITING"
+  ],
+  "statement": "Implement a rate limiting mechanism using a fixed window of 10 seconds to limit API requests to 5 requests per client. The API has two endpoints: `GET /api/resource` and `POST /api/resource`. Implement the rate limiting logic in the Express server. The server should respond with a success message when the request is within the allowed limit and a 429 Too Many Requests error when the limit is exceeded. The rate limiting should be per client based on their IP address. You will need to store the request timestamps in a way that supports efficient lookup.",
+  "constraints": [
+    "Must use a Node.js in-memory solution, like a hash map, to store client IP addresses and their request timestamps.",
+    "Must use the Express framework for building the API."
+  ],
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/api/resource",
+      "description": "Returns a success message when the request is within the allowed limit and a 429 Too Many Requests error when the limit is exceeded.",
+      "parameters": []
+    },
+    {
+      "method": "POST",
+      "path": "/api/resource",
+      "description": "Creates a new resource and returns it when the request is within the allowed limit and a 429 Too Many Requests error when the limit is exceeded.",
+      "parameters": []
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": {
+      "name": "backend-app",
+      "version": "1.0.0",
+      "main": "index.js",
+      "scripts": {
+        "start": "node index.js"
+      },
+      "dependencies": {
+        "express": "^4.18.2",
+        "lodash": "^4.17.21"
+      }
+    },
+    "index.js": "const express = require('express');\nconst app = express();\nconst _ = require('lodash');\nposLimit = 5;\nposWindow = 10 * 1000;\nrequestCounts = {};\n\napp.use(express.json());\n\nfunction isWithinLimit(ip) {\n    // TODO: Implement rate limiting logic\n}\n\napp.get('/api/resource', (req, res) => {\n    // TODO: Implement GET endpoint\n});\n\napp.post('/api/resource', (req, res) => {\n    // TODO: Implement POST endpoint\n});\n\napp.listen(PORT, () => console.log('Server running on port ' + PORT));\nconst PORT = process.env.PORT || 3000;"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "GET",
+      "path": "/api/resource",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {},
+      "expectedStatus": 200,
+      "expectedBody": {
+        "success": true
+      },
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "POST",
+      "path": "/api/resource",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "key": "value"
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "success": true
+      },
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "GET",
+      "path": "/api/resource",
+      "expectedStatus": 429,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "POST",
+      "path": "/api/resource",
+      "expectedStatus": 429,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "GET",
+      "path": "/api/resource",
+      "expectedStatus": 429,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "sliding-window",
+    "token-bucket",
+    "fixed-window",
+    "leaky-bucket",
+    "redis",
+    "express-rate-limit",
+    "rate-limiting",
+    "express",
+    "nodejs"
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "_id": "5913b0c7bb706683595f5fb8",
+  "title": "Multi-Step Wizard Form",
+  "slug": "js-multi-step-form",
+  "difficulty": "Hard",
+  "topics": [
+    "JAVASCRIPT"
+  ],
+  "statement": {
+    "markdown": "## Multi-Step Wizard Form with Progress Tracker\n\nBuild an interactive 3-step wizard registration form with step navigation and progress indicators.\n\n### Requirements:\n1. **Step Switching**: Render only the active step container card at any given time (hide inactive steps with `hidden` class).\n2. **Navigation Buttons**: Clicking `Next` advances to the next step. Clicking `Back` returns to the previous step. The first step should hide the `Back` button, and the final step must display a `Submit` button instead of `Next`.\n3. **Progress Indicator**: Update a visual step indicators track header to highlight the active step index dynamically.\n4. **Basic validation**: Before advancing to Step 2, ensure the text input in Step 1 is not empty. Display a red border if validation fails."
+  },
+  "constraints": [
+    "Must manage active step state index dynamically in JavaScript",
+    "Must prevent advancing if current step validation fails"
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "html": "<div class=\"flex flex-col items-center justify-center min-h-[340px] bg-slate-900 font-sans p-4\">\n  <div class=\"w-full max-w-sm p-6 bg-slate-800 rounded-2xl border border-slate-700 shadow-xl\">\n    \n    {/* Steps Header Track */}\n    <div class=\"flex items-center justify-between mb-6 text-xs text-slate-400 font-semibold\">\n      <span id=\"step-head-1\" class=\"px-2.5 py-1 rounded-full border border-indigo-500 text-indigo-500 font-bold bg-indigo-500/10\">1. Details</span>\n      <span id=\"step-head-2\" class=\"px-2.5 py-1 rounded-full border border-slate-700 bg-slate-900\">2. Account</span>\n      <span id=\"step-head-3\" class=\"px-2.5 py-1 rounded-full border border-slate-700 bg-slate-900\">3. Success</span>\n    </div>\n\n    {/* Form Wizard Step Contents */}\n    <form id=\"wizard-form\" class=\"space-y-4\">\n      {/* Step 1 */}\n      <div id=\"step-card-1\" class=\"step-card space-y-3\">\n        <label class=\"block text-xs font-semibold text-slate-400 uppercase tracking-wider\">Full Name</label>\n        <input type=\"text\" id=\"full-name\" class=\"w-full px-3 py-2 bg-slate-950 text-white border border-slate-700 rounded-lg focus:outline-none focus:border-indigo-500 text-sm\" placeholder=\"John Doe\" />\n      </div>\n\n      {/* Step 2 */}\n      <div id=\"step-card-2\" class=\"step-card space-y-3 hidden\">\n        <label class=\"block text-xs font-semibold text-slate-400 uppercase tracking-wider\">Enter Email</label>\n        <input type=\"text\" id=\"email-field\" class=\"w-full px-3 py-2 bg-slate-950 text-white border border-slate-700 rounded-lg focus:outline-none focus:border-indigo-500 text-sm\" placeholder=\"john@example.com\" />\n      </div>\n\n      {/* Step 3 */}\n      <div id=\"step-card-3\" class=\"step-card space-y-2 hidden text-center py-4\">\n        <h4 class=\"text-md font-bold text-white mb-1\">All Done!</h4>\n        <p class=\"text-xs text-slate-400\">Click submit to finish your registration.</p>\n      </div>\n\n      {/* Control Buttons */}\n      <div class=\"flex justify-between gap-3 pt-4 border-t border-slate-700 mt-4\">\n        <button type=\"button\" id=\"back-btn\" class=\"px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 hover:text-white font-semibold rounded-lg text-sm transition-colors hidden\">Back</button>\n        <button type=\"button\" id=\"next-btn\" class=\"px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg text-sm transition-colors ml-auto\">Next</button>\n      </div>\n    </form>\n  </div>\n</div>",
+    "css": "",
+    "javascript": "const backBtn = document.getElementById('back-btn');\nconst nextBtn = document.getElementById('next-btn');\nconst wizardForm = document.getElementById('wizard-form');\n\n// Implement step switcher state index increment/decrement with simple validation here\n"
+  },
+  "gradingCriteria": [
+    {
+      "id": "functional_correctness",
+      "description": "Verify step visibility, correct navigation and button state changes (Next/Back/Submit), progress highlights, and basic validation blocks.",
+      "weight": 60
+    },
+    {
+      "id": "code_cleanliness",
+      "description": "Verify clean DOM selection, correct event preventDefault handling, and modular wizard step transitions.",
+      "weight": 40
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "html",
+      "css",
+      "javascript"
+    ],
+    "referenceSolution": "const backBtn = document.getElementById('back-btn');\nconst nextBtn = document.getElementById('next-btn');\nconst wizardForm = document.getElementById('wizard-form');\nconst fullName = document.getElementById('full-name');\n\nlet currentStep = 1;\n\nfunction updateUI() {\n  // Toggle step cards visibility\n  for (let i = 1; i <= 3; i++) {\n    const card = document.getElementById(`step-card-${i}`);\n    const header = document.getElementById(`step-head-${i}`);\n    if (i === currentStep) {\n      card.classList.remove('hidden');\n      header.className = 'px-2.5 py-1 rounded-full border border-indigo-500 text-indigo-500 font-bold bg-indigo-500/10';\n    } else {\n      card.classList.add('hidden');\n      header.className = 'px-2.5 py-1 rounded-full border border-slate-700 bg-slate-900';\n    }\n  }\n\n  // Control buttons visibility/text\n  if (currentStep === 1) {\n    backBtn.classList.add('hidden');\n  } else {\n    backBtn.classList.remove('hidden');\n  }\n\n  if (currentStep === 3) {\n    nextBtn.textContent = 'Submit';\n  } else {\n    nextBtn.textContent = 'Next';\n  }\n}\n\nbackBtn.addEventListener('click', () => {\n  if (currentStep > 1) {\n    currentStep--;\n    updateUI();\n  }\n});\n\nnextBtn.addEventListener('click', (e) => {\n  if (currentStep === 1) {\n    // Validation: check empty username\n    if (!fullName.value.trim()) {\n      fullName.classList.add('border-rose-500');\n      return;\n    } else {\n      fullName.classList.remove('border-rose-500');\n    }\n  }\n\n  if (currentStep < 3) {\n    currentStep++;\n    updateUI();\n  } else {\n    // Submit step 3\n    alert('Wizard form submitted successfully!');\n  }\n});\n\nupdateUI();"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

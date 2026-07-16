@@ -1,0 +1,120 @@
+{
+  "_id": "10dce21335cf465e86c351cc",
+  "title": "Echoing WebSocket Messages",
+  "slug": "echoing-websocket-messages-easy-websockets",
+  "difficulty": "Easy",
+  "topics": [
+    "WEBSOCKETS"
+  ],
+  "statement": "Create a WebSocket endpoint that echoes back any message sent to it. When a client connects, it should send a welcome message. When a client disconnects, it should send a goodbye message. You can use the Express framework with the built-in WebSocket library.",
+  "constraints": [
+    "Must use the express-ws library to handle WebSockets",
+    "Must handle incoming messages and send them back to the client"
+  ],
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/",
+      "description": "Health check endpoint, returns 200 if the server is up"
+    },
+    {
+      "method": "GET",
+      "path": "/ws",
+      "description": "WebSocket endpoint that echoes back messages sent by clients"
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\n  \"name\": \"websocket-echo\",\n  \"version\": \"1.0.0\",\n  \"main\": \"index.js\",\n  \"scripts\": {\n    \"start\": \"node index.js\"\n  },\n  \"dependencies\": {\n    \"express\": \"^4.18.2\",\n    \"express-ws\": \"^5.0.0\"\n  }\n}",
+    "index.js": "const express = require('express');\nconst WebSocket = require('ws');\nconst expressWs = require('express-ws')(express());\n\nconst app = express();\napp.use(express.json());\n\nconst PORT = process.env.PORT || 3000;\n\n// TODO: Implement WebSocket endpoint\n\napp.ws('/ws', ws => {\n  // Handle client connection\n  ws.on('message', message => {\n    // Handle incoming message\n  });\n\n  // Handle client disconnection\n  ws.on('close', () => {\n    // Handle disconnection\n  });\n});\n\napp.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "GET",
+      "path": "/ws",
+      "headers": {
+        "Connection": "Upgrade",
+        "Upgrade": "websocket",
+        "Sec-WebSocket-Version": "13",
+        "Sec-WebSocket-Key": "dGhlIHNhbXBsZSBub25jZQ=="
+      },
+      "expectedStatus": 101,
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "GET",
+      "path": "/ws",
+      "headers": {
+        "Connection": "Upgrade",
+        "Upgrade": "websocket",
+        "Sec-WebSocket-Version": "13",
+        "Sec-WebSocket-Key": "dGhlIHNhbXBsZSBub25jZQ=="
+      },
+      "body": "Hello, server!",
+      "expectedStatus": 101,
+      "expectedBody": "Hello, client!",
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "GET",
+      "path": "/ws",
+      "headers": {},
+      "expectedStatus": 405,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "GET",
+      "path": "/ws",
+      "headers": {
+        "Connection": "close"
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "GET",
+      "path": "/ws",
+      "expectedStatus": 200,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "socket.io",
+    "rooms",
+    "namespaces",
+    "events",
+    "real-time-chat",
+    "broadcasting",
+    "sockets",
+    "websocket",
+    "javascript",
+    "node.js"
+  ]
+}

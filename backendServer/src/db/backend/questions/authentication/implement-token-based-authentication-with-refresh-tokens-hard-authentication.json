@@ -1,0 +1,146 @@
+{
+  "_id": "950ce9a677ec6284ea16f055",
+  "title": "Implement Token-Based Authentication with Refresh Tokens",
+  "slug": "implement-token-based-authentication-with-refresh-tokens-hard-authentication",
+  "difficulty": "Hard",
+  "topics": [
+    "AUTH"
+  ],
+  "statement": "Implement a secure token-based authentication system with refresh tokens. The system should support JWT access tokens, refresh tokens, and token rotation.\n\nCreate a RESTful API with the following endpoints:\n\n* `POST /login`: Expects a JSON body with username and password credentials. Returns a JWT access token and a refresh token.\n* `POST /token-refresh`: Expects a JSON body with the refresh token. Returns a new JWT access token and a new refresh token.\n* `GET /api/resource`: Requires a valid JWT access token in the `Authorization` header. If the token is invalid or expired, returns a 401 Unauthorized response. If the token is valid, returns the user's data in the response body.\n\nYou can assume that the user data is stored in a database. Use a mock database provided at `users.json` for testing purposes.\n\n**Constraints:**\n\n* Use the JWT secret key stored in the environment variable `JWT_SECRET`.\n* Use a refresh token expiration time of 15 minutes.\n* Use a JWT token expiration time of 1 hour.\n* Implement token rotation to prevent refresh token reuse after token refresh.\n\n**Endpoints:**\n\n* `POST /login`: Creates a new JWT access token and refresh token for the user.\n* `POST /token-refresh`: Returns a new JWT access token and refresh token.\n* `GET /api/resource`: Requires a valid JWT access token in the `Authorization` header and returns the user's data.\n\n**Starter Code:**\n\n```bash\n// package.json\n{\n   \"name\": \"authentication\",\n   \"version\": \"1.0.0\",\n   \"main\": \"index.js\",\n   \"scripts\": {\n      \"start\": \"node index.js\"\n   },\n   \"dependencies\": {\n      \"express\": \"^4.18.2\",\n      \"jsonwebtoken\": \"^8.5.1\",\n      \"dotenv\": \"^10.0.0\"\n   }\n}\n\n// index.js\nconst express = require('express');\nconst app = express();\nconst jwt = require('jsonwebtoken');\nconst dotenv = require('dotenv');\nrequire('dotenv').config();\n\nconst users = require('./users.json');\n\napp.use(express.json());\n\n// TODO: Implement login endpoint\n// TODO: Implement token refresh endpoint\n// TODO: Implement protected endpoint\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));\n```\n\n```json\n// users.json\n[\n   {\n      \"id\": 1,\n      \"username\": \"john\",\n      \"password\": \"password\",\n      \"data\": { \"email\": \"john@example.com\" }\n   }\n]\n",
+  "constraints": [
+    "Use the JWT secret key stored in the environment variable JWT_SECRET.",
+    "Use a refresh token expiration time of 15 minutes.",
+    "Use a JWT token expiration time of 1 hour.",
+    "Implement token rotation to prevent refresh token reuse after token refresh."
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/login",
+      "description": "Creates a new JWT access token and refresh token for the user."
+    },
+    {
+      "method": "POST",
+      "path": "/token-refresh",
+      "description": "Returns a new JWT access token and refresh token."
+    },
+    {
+      "method": "GET",
+      "path": "/api/resource",
+      "description": "Requires a valid JWT access token in the Authorization header and returns the user's data."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\n  \"name\": \"authentication\",\n  \"version\": \"1.0.0\",\n  \"main\": \"index.js\",\n  \"scripts\": {\n    \"start\": \"node index.js\"\n  },\n  \"dependencies\": {\n    \"express\": \"^4.18.2\",\n    \"jsonwebtoken\": \"^8.5.1\",\n    \"dotenv\": \"^10.0.0\"\n  }\n}",
+    "index.js": "const express = require('express');\nconst app = express();\nconst jwt = require('jsonwebtoken');\nconst dotenv = require('dotenv');\nrequire('dotenv').config();\n\nconst users = require('./users.json');\n\napp.use(express.json());\n\n// TODO: Implement login endpoint\n// TODO: Implement token refresh endpoint\n// TODO: Implement protected endpoint\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "POST",
+      "path": "/login",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "username": "john",
+        "password": "password"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "access_token": "valid_access_token",
+        "refresh_token": "valid_refresh_token"
+      },
+      "expectedBodySchema": null,
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "POST",
+      "path": "/token-refresh",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "refresh_token": "valid_refresh_token"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "access_token": "new_valid_access_token",
+        "refresh_token": "new_valid_refresh_token"
+      },
+      "expectedBodySchema": null,
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "GET",
+      "path": "/api/resource",
+      "expectedStatus": 401,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "GET",
+      "path": "/api/resource",
+      "headers": {
+        "Authorization": "Bearer invalid_token"
+      },
+      "expectedStatus": 401,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "POST",
+      "path": "/login",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "username": "john",
+        "password": "invalid_password"
+      },
+      "expectedStatus": 401,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "jwt",
+    "access-token",
+    "refresh-token",
+    "sessions",
+    "cookies",
+    "otp",
+    "email-verification",
+    "password-reset",
+    "login",
+    "signup",
+    "logout",
+    "token-rotation",
+    "mfa",
+    "authentication"
+  ]
+}

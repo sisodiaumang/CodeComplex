@@ -1,0 +1,150 @@
+{
+  "_id": "3180bd6ef07ebd5ffb5ccb0c",
+  "title": "Detecting Bridges in a Spanning Tree: Fix the Low Link Values",
+  "slug": "detecting-bridges-in-a-spanning-tree-fix-the-low-link-values-bugfix-medium-graphs-1",
+  "difficulty": "Medium",
+  "category": "DSA",
+  "subCategory": "Depth-First Search (DFS)",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "graph"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given a graph represented as adjacency list, your task is to detect bridges in the graph using DFS.\n\nA bridge is an edge that, when removed, increases the number of connected components in the graph.\n\nYou will receive the graph as a dictionary where each key is a node and its corresponding value is a list of its neighboring nodes.\n\nYou should return a list of edges that forms a bridge in the graph.",
+    "inputFormat": "Dictionary representing the graph where each key is a node and its corresponding value is a list of its neighboring nodes.",
+    "outputFormat": "List of edges that forms a bridge in the graph.",
+    "notes": "Time complexity should be O(V+E), where V is the number of vertices and E is the number of edges. Note that the graph may not be connected.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\n               '0': ['1', '2'],\n               '1': ['0', '2', '3'],\n               '2': ['0', '1', '3'],\n               '3': ['1', '2']\n            }",
+        "output": "[ [0, 1], [1, 2], [2, 3] ]",
+        "explanation": "The graph has four nodes and four edges. All edges form a bridge in this graph."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use DFS to traverse the graph. Keep track of low values for each node and the discovery time for each node."
+    }
+  ],
+  "editorial": {
+    "title": "Detecting Bridges in a Spanning Tree",
+    "intuition": "The low value of a node represents the smallest discovery time reachable from the subtree rooted at the node.",
+    "bruteForce": "brute Force details.",
+    "betterSolution": "",
+    "optimalSolution": "Use DFS to traverse the graph. Keep track of low values for each node and the discovery time for each node. Update low values whenever a bridge edge is found.",
+    "proofOfCorrectness": "proof Of Correctness details.",
+    "dryRun": "dry Run details.",
+    "commonMistakes": [],
+    "timeComplexity": "O(V+E)",
+    "spaceComplexity": "O(V+E)"
+  },
+  "starterCode": {
+    "cpp": "class Solution { public: std::vector<std::vector<int> > bridges; void dfs(int node, int parent, int discoveryTime, int lowValue, std::vector<int> &parentNodes, int &timer); };",
+    "java": "public class Solution { public List<List<Integer>> bridges = new ArrayList<>(); public void dfs(int node, int parent, int discoveryTime, int lowValue, List<Integer> parentNodes, int timer) {} };",
+    "python": "class Solution: def __init__(self): self.bridges = [] def dfs(self, node, parent, discoveryTime, lowValue, parentNodes, timer): pass",
+    "javascript": "function solve(graph) { let bridges = []; function dfs(node, parent, discoveryTime, lowValue, parentNodes, timer) {} }"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution { public: std::vector<std::vector<int> > bridges; void dfs(int node, int parent, int discoveryTime, int lowValue, std::vector<int> &parentNodes, int &timer, bool isParentVisited) { if (parent == -1) { discoveryTime = timer++; lowValue = timer++; } parentNodes[node] = parent; for (int neighbor : graph[node]) { if (!visited[neighbor]) { visited[neighbor] = true; dfs(neighbor, node, discoveryTime, lowValue, parentNodes, timer, isParentVisited); } else if (!isParentVisited) { lowValue = std::min(lowValue, visited[neighbor]); } } } }; void Solution::solve(vector<vector<int>> &graph) { visited.clear(); visited.resize(graph.size(), false); bridges.clear(); int timer = 0; vector<int> parentNodes(graph.size(), -1); dfs(0, -1, 0, 0, parentNodes, timer, false); } ",
+    "java": "public class Solution { public List<List<Integer>> bridges; public void dfs(int node, int parent, int discoveryTime, int lowValue, List<Integer> parentNodes, int timer, boolean isParentVisited) { if (parent == -1) { discoveryTime = timer++; lowValue = timer++; } parentNodes.set(node, parent); for (int neighbor : graph.get(node)) { if (!visited.get(neighbor)) { visited.set(neighbor, true); dfs(neighbor, node, discoveryTime, lowValue, parentNodes, timer, isParentVisited); } else if (!isParentVisited) { lowValue = Math.min(lowValue, visited.get(neighbor)); } } } }; public void Solution::solve(List<List<Integer>> graph) { visited.clear(); visited.resize(graph.size(), false); bridges.clear(); int timer = 0; List<Integer> parentNodes = new ArrayList<>(); parentNodes.addAll(Collections.nCopies(graph.size(), -1)); dfs(0, -1, 0, 0, parentNodes, timer, false); } ",
+    "python": "class Solution: def __init__(self): self.bridges = [] def dfs(self, node, parent, discoveryTime, lowValue, parentNodes, timer, isParentVisited): if parent == -1: discoveryTime = timer lowValue = timer parentNodes[node] = parent for neighbor in self.graph[node]: if not self.visited[neighbor]: self.visited[neighbor] = True self.dfs(neighbor, node, discoveryTime, lowValue, parentNodes, timer, isParentVisited) elif not isParentVisited: lowValue = min(lowValue, self.visited[neighbor]) def solve(self, graph): self.visited = [False] * len(graph) self.bridges = [] timer = 0 parentNodes = [-1] * len(graph) self.dfs(0, -1, 0, 0, parentNodes, timer, False) ",
+    "javascript": "function solve(graph) { let bridges = []; function dfs(node, parent, discoveryTime, lowValue, parentNodes, timer, isParentVisited) { if (parent == -1) { discoveryTime = timer++; lowValue = timer++; } parentNodes[node] = parent; for (let neighbor of graph[node]) { if (!visited[neighbor]) { visited[neighbor] = true; dfs(neighbor, node, discoveryTime, lowValue, parentNodes, timer, isParentVisited); } else if (!isParentVisited) { lowValue = Math.min(lowValue, visited[neighbor]); } } } let visited = new Array(graph.length).fill(false); timer = 0; let parentNodes = new Array(graph.length).fill(-1); dfs(0, -1, 0, 0, parentNodes, timer, false); return bridges; }"
+  },
+  "functionSignature": {
+    "cpp": "bool dfs(int node, int parent, int &discoveryTime, int &lowValue, std::vector<int> &parentNodes, bool &isParentVisited); void solve(std::vector<std::vector<int>> &graph);",
+    "java": "public void dfs(int node, int parent, int discoveryTime, int lowValue, List<Integer> parentNodes, boolean isParentVisited); public void solve(List<List<Integer>> graph);",
+    "python": "def dfs(self, node, parent, discoveryTime, lowValue, parentNodes, isParentVisited); def solve(self, graph):",
+    "javascript": "function dfs(node, parent, discoveryTime, lowValue, parentNodes, isParentVisited); function solve(graph);"
+  },
+  "solutions": {
+    "python": "class Solution: def __init__(self): self.bridges = [] def dfs(self, node, parent, discoveryTime, lowValue, parentNodes, timer, isParentVisited): if parent == -1: discoveryTime = timer lowValue = timer + 1 parentNodes[node] = parent for neighbor in self.graph[node]: if not self.visited[neighbor]: self.visited[neighbor] = True self.dfs(neighbor, node, discoveryTime, lowValue, parentNodes, timer, True) elif not isParentVisited: lowValue = min(lowValue, self.visited[neighbor]) def solve(self, graph): self.visited = [False] * len(graph) timer = 0 parentNodes = [-1] * len(graph) for i in range(len(graph)): if not self.visited[i]: self.dfs(i, -1, 0, 0, parentNodes, timer, False) return [[node, parentNodes[node]] for node in range(len(parentNodes)) if parentNodes[node] == -1] ",
+    "cpp": "class Solution { public: void dfs(int node, int parent, int &discoveryTime, int &lowValue, std::vector<int> &parentNodes, int &timer, bool &isParentVisited) { if (parent == -1) { discoveryTime = timer++; lowValue = timer++; } parentNodes[node] = parent; for (int neighbor : graph[node]) { if (!visited[neighbor]) { visited[neighbor] = true; dfs(neighbor, node, discoveryTime, lowValue, parentNodes, timer, true); } else if (!isParentVisited) { lowValue = std::min(lowValue, visited[neighbor]); } } } public: std::vector<std::vector<int> > solve(std::vector<std::vector<int>> graph) { visited.clear(); visited.resize(graph.size(), false); int timer = 0; std::vector<int> parentNodes(graph.size(), -1); for (int i = 0; i < graph.size(); i++) { if (!visited[i]) { dfs(i, -1, timer, timer, parentNodes, timer, false); } } std::vector<std::vector<int>> result; for (int i = 0; i < parentNodes.size(); i++) { if (parentNodes[i] == -1) { result.push_back({i, -1}); } } return result; } };",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "4\n1 0 1 0\n2 1 1 0\n3 1 2 1\n3 2 1 0\n",
+      "output": "[[0, 1], [1, 2], [2, 3]]",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "5\n1 0 1 0 0\n2 1 1 1 1\n3 1 2 1 0\n4 1 3 1 0\n5 1 4 1 0\n",
+      "output": "[[0, 1], [1, 2], [2, 3], [3, 4]]",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

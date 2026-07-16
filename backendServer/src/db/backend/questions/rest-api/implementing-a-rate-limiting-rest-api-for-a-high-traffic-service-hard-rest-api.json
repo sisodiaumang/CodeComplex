@@ -1,0 +1,171 @@
+{
+  "_id": "ac2aa03fe02385d333957e19",
+  "title": "Implementing a Rate Limiting REST API for a High-Traffic Service",
+  "slug": "implementing-a-rate-limiting-rest-api-for-a-high-traffic-service-hard-rest-api",
+  "difficulty": "Hard",
+  "topics": [
+    "REST_API"
+  ],
+  "statement": "Create a REST API that allows users to create, read, update, and delete (CRUD) high-traffic web pages. Include robust rate limiting to prevent abuse and ensure fair usage. Implement a system to store user information and track their request history.\n\nEndpoints:\n\n### User Endpoints\n\n* **POST /users**: Create a new user with a unique ID and an empty request history.\n* **GET /users/:id**: Retrieve a user's information and request history.\n* **PUT /users/:id**: Update a user's information.\n* **DELETE /users/:id**: Delete a user and their request history.\n\n### Page Endpoints\n\n* **POST /pages**: Create a new high-traffic web page.\n* **GET /pages**: Retrieve a list of all high-traffic web pages.\n* **GET /pages/:id**: Retrieve a specific high-traffic web page.\n* **PUT /pages/:id**: Update a high-traffic web page.\n* **DELETE /pages/:id**: Delete a high-traffic web page.\n\n### Request Endpoints\n\n* **POST /requests**: Create a new request for a high-traffic web page.\n* **GET /requests**: Retrieve a list of all requests for a high-traffic web page.\n* **GET /requests/:id**: Retrieve a specific request for a high-traffic web page.\n* **PUT /requests/:id**: Update a request for a high-traffic web page.\n* **DELETE /requests/:id**: Delete a request for a high-traffic web page.\n\n### Rate Limiting\n\nImplement a rate limiting system that prevents a user from making more than 100 requests per minute. If a user exceeds this limit, return a 429 Too Many Requests response. Implement a sliding window algorithm to track requests.\n\n### Authentication\n\nImplement a basic authentication system that requires a user to provide their ID to access their request history. Use the `Authorization` header to pass the user ID.",
+  "constraints": [
+    "Must use a real database (e.g. MongoDB, PostgreSQL) to store user information and request history.",
+    "Must implement a sliding window algorithm to track requests and prevent abuse."
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/users",
+      "description": "Create a new user with a unique ID and an empty request history. Requires a JSON body with `name` and `email` properties."
+    },
+    {
+      "method": "GET",
+      "path": "/users/:id",
+      "description": "Retrieve a user's information and request history. Requires the `Authorization` header with the user ID."
+    },
+    {
+      "method": "POST",
+      "path": "/pages",
+      "description": "Create a new high-traffic web page. Requires a JSON body with `title` and `content` properties."
+    },
+    {
+      "method": "GET",
+      "path": "/requests",
+      "description": "Retrieve a list of all requests for a high-traffic web page. Requires the `Authorization` header with the user ID."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\n  \"name\": \"rate-limiting-api\",\n  \"version\": \"1.0.0\",\n  \"main\": \"index.js\",\n  \"scripts\": {\n    \"start\": \"node index.js\"\n  },\n  \"dependencies\": {\n    \"express\": \"^4.18.2\",\n    \"mongodb\": \"^3.6.4\"\n  }\n}",
+    "index.js": "const express = require('express');\nconst MongoClient = require('mongodb').MongoClient;\nconst app = express();\napp.use(express.json());\n\nconst MONGO_URL = 'mongodb://localhost:27017';\nconst DB_NAME = 'rate-limiting-api';\nconst COLLECTION_NAME = 'users';\n\nMongoClient.connect(MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true }, (err, client) => {\n  if (err) {\n    console.error(err);\n    return;\n  }\n\n  const db = client.db(DB_NAME);\n  const collection = db.collection(COLLECTION_NAME);\n\n  app.post('/users', (req, res) => {\n    // Create a new user and add to the database\n    const user = {\n      id: req.body.id,\n      name: req.body.name,\n      email: req.body.email,\n      requestHistory: []\n    };\n\n    collection.insertOne(user, (err, result) => {\n      if (err) {\n        console.error(err);\n        res.status(500).send({ error: 'Failed to create user' });\n      } else {\n        res.send({ id: user.id });\n      }\n    });\n  });\n\n  app.get('/users/:id', (req, res) => {\n    // Retrieve a user's information and request history\n    collection.findOne({ id: req.params.id }, (err, user) => {\n      if (err || !user) {\n        console.error(err);\n        res.status(404).send({ error: 'User not found' });\n      } else {\n        res.send(user);\n      }\n    });\n  });\n\n  app.post('/pages', (req, res) => {\n    // Create a new high-traffic web page\n    const page = {\n      id: req.body.id,\n      title: req.body.title,\n      content: req.body.content\n    };\n\n    collection.insertOne(page, (err, result) => {\n      if (err) {\n        console.error(err);\n        res.status(500).send({ error: 'Failed to create page' });\n      } else {\n        res.send({ id: page.id });\n      }\n    });\n  });\n\n  app.listen(3000, () => {\n    console.log('Server running on port 3000');\n  });\n"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "POST",
+      "path": "/users",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "id": "user123",
+        "name": "John Doe",
+        "email": "john.doe@example.com"
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "id": "user123"
+      },
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "GET",
+      "path": "/users/user123",
+      "headers": {
+        "Authorization": "user123"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "id": "user123",
+        "name": "John Doe",
+        "email": "john.doe@example.com",
+        "requestHistory": []
+      },
+      "isVisible": true
+    },
+    {
+      "id": "v_tc3",
+      "method": "POST",
+      "path": "/pages",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "id": "page123",
+        "title": "Hello World",
+        "content": "This is a high-traffic web page."
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "id": "page123"
+      },
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "GET",
+      "path": "/requests",
+      "expectedStatus": 200,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "GET",
+      "path": "/requests/123",
+      "expectedStatus": 200,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "POST",
+      "path": "/requests",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "id": "request123",
+        "pageId": "page123",
+        "timestamp": "new Date().getTime()"
+      },
+      "expectedStatus": 201,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "crud",
+    "rest-principles",
+    "http-methods",
+    "status-codes",
+    "headers",
+    "query-parameters",
+    "pagination",
+    "filtering",
+    "sorting",
+    "versioning",
+    "api-design",
+    "idempotency",
+    "select",
+    "appropriate",
+    "tags",
+    "from",
+    "topic",
+    "tag",
+    "list",
+    "rate-limiting",
+    "authentication",
+    "database",
+    "mongodb"
+  ]
+}

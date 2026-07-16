@@ -1,0 +1,140 @@
+{
+  "title": "Fix MongoDB Projection to Handle Nested Fields with Optional Keys and Mixed Types",
+  "subCategory": "MongoDB Projection",
+  "statement": {
+    "markdown": "Given a MongoDB document with nested fields, write a function that projects the document to include only the specified fields. The function should handle optional keys and mixed types in the nested fields. The function should return the projected document as a JSON string.",
+    "inputFormat": "The input will be a MongoDB document represented as a JSON object, and an array of field paths to project.",
+    "outputFormat": "The output should be the projected document as a JSON string.",
+    "notes": "The function should handle nested fields with optional keys and mixed types. The function should not throw an error if a field path is invalid.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of test cases"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"name\":\"John\",\"address\":{\"street\":\"123 Main St\",\"city\":\"Anytown\",\"state\":\"CA\"},\"age\":30}",
+        "output": "{\"name\":\"John\",\"address\":{\"street\":\"123 Main St\"}}",
+        "explanation": "Project the document to include only the \"name\" and \"address.street\" fields"
+      },
+      {
+        "input": "{\"name\":\"Jane\",\"address\":{\"street\":\"456 Elm St\",\"city\":\"Othertown\",\"state\":\"NY\"},\"age\":25}",
+        "output": "{\"name\":\"Jane\",\"address\":{\"city\":\"Othertown\"}}",
+        "explanation": "Project the document to include only the \"name\" and \"address.city\" fields"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 60,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "MONGODB"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "mongodb"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the MongoDB $ projection operator to project the desired fields"
+    },
+    {
+      "order": 2,
+      "text": "Use a recursive function to handle nested fields with optional keys"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial: Fixing MongoDB Projection",
+    "intuition": "The key to solving this problem is to use the MongoDB $ projection operator to project the desired fields. However, this operator does not handle nested fields with optional keys. To handle this, we can use a recursive function to project the nested fields.",
+    "bruteForce": "One possible brute-force approach is to use a recursive function to project each field individually. However, this approach is inefficient and may cause stack overflows for large inputs.",
+    "betterSolution": "A better solution is to use the MongoDB $ projection operator to project the desired fields, and then use a recursive function to handle nested fields with optional keys.",
+    "optimalSolution": "The optimal solution is to use the MongoDB $ projection operator to project the desired fields, and then use a recursive function to handle nested fields with optional keys. The recursive function should use the MongoDB $ projection operator to project the nested fields, and then return the projected document.",
+    "proofOfCorrectness": "The proof of correctness for this solution is to show that the recursive function correctly handles nested fields with optional keys, and that the MongoDB $ projection operator correctly projects the desired fields.",
+    "dryRun": "Step-by-step example run: 1. Parse the input document and field paths. 2. Use the MongoDB $ projection operator to project the desired fields. 3. Use a recursive function to handle nested fields with optional keys. 4. Return the projected document as a JSON string.",
+    "commonMistakes": [
+      "Not handling nested fields with optional keys",
+      "Not using the MongoDB $ projection operator to project the desired fields"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// Function to project the document\nfunction projectDocument(document, fieldPaths) {\n    // TO DO: implement the projection logic\n}\n",
+    "python": "class Solution:\n    def projectDocument(self, document, fieldPaths):\n        # TO DO: implement the projection logic\n        pass"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Function to project the document\nfunction projectDocument(document, fieldPaths) {\n    // Project the desired fields\n    let projectedDocument = {};\n    for (let fieldPath of fieldPaths) {\n        let pathParts = fieldPath.split('.');\n        let current = document;\n        for (let part of pathParts) {\n            if (current[part] !== undefined) {\n                current = current[part];\n            } else {\n                current = null;\n                break;\n            }\n        }\n        if (current !== null) {\n            projectedDocument[fieldPath] = current;\n        }\n    }\n    return JSON.stringify(projectedDocument);\n}\n",
+    "python": "class Solution:\n    def projectDocument(self, document, fieldPaths):\n        # Project the desired fields\n        projectedDocument = {}\n        for fieldPath in fieldPaths:\n            pathParts = fieldPath.split('.')\n            current = document\n            for part in pathParts:\n                if part in current:\n                    current = current[part]\n                else:\n                    current = None\n                    break\n            if current is not None:\n                projectedDocument[fieldPath] = current\n        return json.dumps(projectedDocument)"
+  },
+  "functionSignature": {
+    "javascript": "function projectDocument(document, fieldPaths) {\n}",
+    "python": "def projectDocument(self, document, fieldPaths):\n"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction projectDocument(document, fieldPaths) {\n    const project = (doc, path) => {\n        const pathParts = path.split('.');\n        let current = doc;\n        for (let part of pathParts) {\n            if (current[part] !== undefined) {\n                current = current[part];\n            } else {\n                break;\n            }\n        }\n        return current;\n    }\n    const projectedDocument = {};\n    for (let fieldPath of fieldPaths) {\n        projectedDocument[fieldPath] = project(document, fieldPath);\n    }\n    return JSON.stringify(projectedDocument);\n}",
+    "python": "import json\nclass Solution:\n    def projectDocument(self, document, fieldPaths):\n        def project(doc, path):\n            path_parts = path.split('.')\n            current = doc\n            for part in path_parts:\n                if part in current:\n                    current = current[part]\n                else:\n                    break\n            return current\n        projected_document = {}\n        for field_path in fieldPaths:\n            projected_document[field_path] = project(document, field_path)\n        return json.dumps(projected_document)"
+  },
+  "judgeConfig": {
+    "timeLimit": 3,
+    "memoryLimit": 512,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.5
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"name\":\"John\",\"address\":{\"street\":\"123 Main St\",\"city\":\"Anytown\",\"state\":\"CA\"},\"age\":30}\n[\"name\",\"address.street\"]",
+      "output": "{\"name\":\"John\",\"address\":{\"street\":\"123 Main St\"}}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"name\":\"Jane\",\"address\":{\"street\":\"456 Elm St\",\"city\":\"Othertown\",\"state\":\"NY\"},\"age\":25}\n[\"name\",\"address.city\"]",
+      "output": "{\"name\":\"Jane\",\"address\":{\"city\":\"Othertown\"}}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "6b763b646672e319e1957daa",
+  "slug": "fix-mongodb-projection-to-handle-nested-fields-with-optional-keys-and-mixed-types-bugfix-hard-mongodb",
+  "mode": "bug_fix",
+  "category": "MONGODB",
+  "difficulty": "Hard"
+}

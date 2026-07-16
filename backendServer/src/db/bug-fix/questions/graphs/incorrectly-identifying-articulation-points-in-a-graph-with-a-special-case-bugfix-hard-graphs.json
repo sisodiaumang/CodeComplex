@@ -1,0 +1,152 @@
+{
+  "_id": "31b206416fecef83f36b3fee",
+  "title": "Incorrectly Identifying Articulation Points in a Graph with a Special Case",
+  "slug": "incorrectly-identifying-articulation-points-in-a-graph-with-a-special-case-bugfix-hard-graphs",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "DFS on Graphs",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "graph"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given a directed graph represented as an adjacency list, write a function to detect and return all articulation points in the graph. An articulation point is a vertex that, when removed, increases the number of connected components in the graph. However, the function has a special case where it incorrectly handles strongly connected components.",
+    "inputFormat": "The input will be a list of nodes followed by their adjacent nodes in the graph. For example, for a graph containing 4 nodes, the input might be: [4] \\n 0 1 \\n 0 2 \\n 1 3 \\n 2 3 \\n",
+    "outputFormat": "You should return the list of articulation points in the graph.",
+    "notes": "Your function should handle a maximum of 10,000 nodes. Time complexity: O(|E| + |V|) and space complexity: O(|V| + |E|).",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "5 \\n 0 1 \\n 1 2 \\n 2 3 \\n 3 4 \\n 2 4 \\n",
+        "output": "[2]",
+        "explanation": "The vertex 2 is an articulation point because it's the only vertex connecting the 3 separate groups of connected nodes."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "The given implementation does not correctly handle strongly connected components. Identify the logic error causing this issue."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial: Identifying Articulation Points in a Graph",
+    "intuition": "To find articulation points, perform depth-first traversal. For each node, mark the current node as visited and update the depth. If the current node has more than one child and the depth of the current node is greater than the depth of the child, then the current node is an articulation point. Also, consider handling strongly connected components.",
+    "bruteForce": "We can use Tarjan's algorithm to find strongly connected components and identify each node as an articulation point within each component. The time complexity is O(|V| + |E|), and space complexity is O(|V| + |E|).",
+    "betterSolution": "To solve the bug in the given code, consider the case where two nodes are connected within a strongly connected component.",
+    "optimalSolution": "We should modify the given implementation to correctly handle strongly connected components. This includes updating the depth calculation to account for components and checking for articulation points only within each component.",
+    "proofOfCorrectness": "The optimal solution has a time complexity of O(|E| + |V|) and a space complexity of O(|V| + |E|), where |E| is the number of edges and |V| is the number of vertices.",
+    "dryRun": "Consider a sample graph with 5 vertices and 5 edges. When performing depth-first traversal, identify the articulation points based on the updated depth calculation.",
+    "commonMistakes": [
+      "Incorrectly handling strongly connected components."
+    ],
+    "timeComplexity": "O(|E| + |V|)",
+    "spaceComplexity": "O(|V| + |E|)"
+  },
+  "starterCode": {
+    "cpp": "class Solution { public: std::vector<int> solve(std::vector<std::vector<int>>& graph); };",
+    "java": "public class Solution { public List<Integer> solve(List<List<Integer>> graph); }",
+    "python": "class Solution: def solve(self, graph: List[List[int]]) -> List[int]: pass",
+    "javascript": "var solve = function(graph) { /* return solution */ };"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution { public: std::vector<int> solve(std::vector<std::vector<int>>& graph) { std::vector<int> visited(graph.size(), 0); std::vector<int> depth(graph.size(), 0); std::vector<int> articulationPoints; for (int i = 0; i < graph.size(); i++) { if (visited[i] == 0) { dfs(graph, i, visited, visited, depth, articulationPoints); } } return articulationPoints; } private: void dfs(std::vector<std::vector<int>>& graph, int node, std::vector<int> &visited, std::vector<int> &parent, std::vector<int> &depth, std::vector<int> &articulationPoints) { visited[node] = 1; int childCount = 0; for (int neighbor : graph[node]) { if (parent[neighbor] == -1) { childCount++; dfs(graph, neighbor, visited, parent, depth, articulationPoints); if (depth[neighbor] >= depth[node] && node != 0) { articulationPoints.push_back(node); } depth[node] = std::max(depth[node], depth[neighbor] + 1); } } if (parent[node] == -1 && childCount > 1) { articulationPoints.push_back(node); } } };",
+    "java": "public class Solution { public List<Integer> solve(List<List<Integer>> graph) { List<Integer> visited = new ArrayList<>(Collections.nCopies(graph.size(), 0)); List<Integer> depth = new ArrayList<>(Collections.nCopies(graph.size(), 0)); List<Integer> articulationPoints = new ArrayList<>(); for (int i = 0; i < graph.size(); i++) { if (!visited.get(i).booleanValue()) { dfs(graph, i, visited, visited, depth, articulationPoints); } } return articulationPoints; } private void dfs(List<List<Integer>> graph, int node, List<Integer> visited, List<Integer> parent, List<Integer> depth, List<Integer> articulationPoints) { visited.set(node, true); int childCount = 0; for (int neighbor : graph.get(node)) { if (parent.get(neighbor) == null) { childCount++; dfs(graph, neighbor, visited, parent, depth, articulationPoints); if (depth.get(neighbor) >= depth.get(node) && node != 0) { articulationPoints.add(node); } depth.set(node, Math.max(depth.get(node), depth.get(neighbor) + 1)); } } if (parent.get(node) == null && childCount > 1) { articulationPoints.add(node); } } }",
+    "python": "class Solution: def solve(self, graph: List[List[int]]) -> List[int]: visited = [False] * len(graph); depth = [0] * len(graph); articulation_points = []; for i in range(len(graph)): if not visited[i]: self.dfs(graph, i, visited, -1, depth, articulation_points); return articulation_points; def dfs(self, graph, node, visited, parent, depth, articulation_points): visited[node] = True; child_count = 0; for neighbor in graph[node]: if parent[neighbor] == -1: child_count += 1; self.dfs(graph, neighbor, visited, neighbor, depth, articulation_points); if depth[neighbor] >= depth[node] and node != 0: articulation_points.append(node); depth[node] = max(depth[node], depth[neighbor] + 1); if parent[node] == -1 and child_count > 1: articulation_points.append(node);",
+    "javascript": "var solve = function(graph) { var visited = new Array(graph.length).fill(false); var depth = new Array(graph.length).fill(0); var articulationPoints = []; for (var i = 0; i < graph.length; i++) { if (!visited[i]) { dfs(graph, i, visited, -1, depth, articulationPoints); } } return articulationPoints; }; function dfs(graph, node, visited, parent, depth, articulationPoints) { visited[node] = true; var childCount = 0; for (var neighbor in graph[node]) { if (parent[neighbor] === -1) { childCount++; dfs(graph, neighbor, visited, neighbor, depth, articulationPoints); if (depth[neighbor] >= depth[node] && node != 0) { articulationPoints.push(node); } depth[node] = Math.max(depth[node], depth[neighbor] + 1); } } if (parent[node] === -1 && childCount > 1) { articulationPoints.push(node); } }"
+  },
+  "functionSignature": {
+    "cpp": "std::vector<int> solve(std::vector<std::vector<int>>& graph);",
+    "java": "List<Integer> solve(List<List<Integer>> graph);",
+    "python": "def solve(self, graph: List[List[int]]) -> List[int]:",
+    "javascript": "var solve = function(graph);"
+  },
+  "solutions": {
+    "python": "import sys\nfrom collections import deque\n\nclass Solution:\n   def solve(self, graph: List[List[int]]) -> List[int]:\n      # Read the number of nodes\n      n = int(sys.stdin.readline().strip())\n\n      # Initialize the adjacency list\n      adj_list = [[] for _ in range(n)]\n\n      # Read the adjacency list\n      for _ in range(n):\n         row = list(map(int, sys.stdin.readline().strip().split()))\n         if row[0] == 0: continue\n         u, v = row[1], row[2]\n         adj_list[u].append(v)\n\n      # Initialize the visited array and the articulation points\n      visited = [False] * n\n      articulation_points = []\n\n      # Define a helper function to perform DFS\n      def dfs(node, parent, low, disc, time, visited, articulation_points):\n         visited[node] = True\n         low[node] = disc[node] = time[0]\n         time[0] += 1\n\n         for neighbor in adj_list[node]:\n            if not visited[neighbor]:\n               dfs(neighbor, node, low, disc, time, visited, articulation_points)\n               low[node] = min(low[node], low[neighbor])\n               if low[neighbor] > disc[node] and parent != -1:\n                  articulation_points.append(node)\n            elif neighbor != parent:\n               low[node] = min(low[node], low[neighbor])\n\n      # Perform DFS and find the articulation points\n      low = [float('inf')] * n\n      disc = [float('inf')] * n\n      time = [0]\n      dfs(0, -1, low, disc, time, visited, articulation_points)\n\n      return articulation_points\n\n# Read the number of test cases\ntc = int(sys.stdin.readline().strip())\n\n# Process each test case\nfor _ in range(tc):\n   n = int(sys.stdin.readline().strip())\n   result = self.solve(n)\n   sys.stdout.write(str(result[0]) + ',')\n   sys.stdout.flush()\n\n",
+    "cpp": "// Template for the main function\n#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <string>\n#include <sstream>\n\nusing namespace std;\n\nconst string yes = \"YES\"; const string no = \"NO\";\n\nint main() {\n   int tc;\n   cin >> tc;\n\n   for (; tc > 0; --tc) {\n      int n;\n      cin >> n;\n\n      vector<vector<int>> graph(n);\n\n      for (int i = 0; i < n; ++i) {\n         int child;\n         cin >> child;\n         if (child == 0) continue;\n         for (int j = 0; j < 2; ++j) {\n            int child_node;\n            cin >> child_node;\n            graph[i].push_back(child_node);\n         }\n      }\n\n      // Call the solve function and print the result\n      vector<int> res = Solution().solve(graph);\n      for (int i : res) cout << i << ',';\n      cout << endl;\n   }\n   return 0;\n}\n\n",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5 \\n 0 1 \\n 1 2 \\n 2 3 \\n 3 4 \\n 2 4 \\n",
+      "output": "[2]",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_hidden_generated",
+      "input": "5 \\n 0 1 \\n 1 2 \\n 2 3 \\n 3 4 \\n 2 4 \\n",
+      "output": "[2]",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

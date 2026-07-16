@@ -1,0 +1,223 @@
+{
+  "_id": "nodes-at-distance-k",
+  "title": "Nodes at Distance K",
+  "slug": "nodes-at-distance-k",
+  "difficulty": "Hard",
+  "category": "TREE",
+  "subCategory": "Hard Problems",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 45,
+    "points": 600,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "BINARY TREES",
+      "TREE",
+      "DEPTH-FIRST SEARCH",
+      "BREADTH-FIRST SEARCH",
+      "GRAPH TRAVERSAL"
+    ],
+    "patterns": [
+      "binary tree",
+      "distance k",
+      "nodes at distance k",
+      "k distance nodes"
+    ],
+    "prerequisites": [
+      "Binary Tree Traversal",
+      "Depth-First Search",
+      "Breadth-First Search"
+    ],
+    "variants": [],
+    "tags": [
+      "BINARY TREE",
+      "TREE",
+      "DFS",
+      "BFS",
+      "GRAPH TRAVERSAL"
+    ],
+    "keywords": [
+      "binary tree traversal",
+      "depth-first search",
+      "breadth-first search",
+      "graph traversal",
+      "distance k nodes"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "You are given a binary tree with **N** nodes, where each node has a unique integer value. The tree is described by **N** lines, each containing three integers: the value of a node, the value of its left child, and the value of its right child. If a child does not exist, its value is given as **-1**. After the tree description, you are given the value of a **target** node and an integer **K**. Your task is to find all nodes that are exactly **K** edges away from the target node (i.e., the distance between the two nodes in the tree is **K**). Print the values of these nodes in ascending order on a single line separated by spaces. If no such node exists, print **-1**.\n\n**Input Format**\n- The first line contains a single integer **N**, the number of nodes in the tree.\n- The next **N** lines each contain three space‑separated integers **val left right** describing a node:\n  - **val** – value of the current node.\n  - **left** – value of its left child or **-1** if it does not have a left child.\n  - **right** – value of its right child or **-1** if it does not have a right child.\n- The following line contains a single integer **target**, the value of the target node.\n- The last line contains a single integer **K**, the required distance.\n\n**Output Format**\n- A single line containing the values of all nodes that are exactly **K** edges away from the target node, sorted in ascending order and separated by a single space.\n- If there is no node at distance **K**, output **-1**.\n\n**Notes**\n- The tree is guaranteed to be a valid binary tree (no cycles, exactly one root).\n- All node values are distinct.\n- Distance is measured as the number of edges on the shortest path between two nodes.\n\n**Constraints**\n- 1 ≤ N ≤ 1000\n- -10^5 ≤ node value ≤ 10^5\n- 0 ≤ K ≤ N‑1\n- The target value will always exist in the tree.\n\n**Example**\nConsider the following tree:\n```\n        3\n       / \\\n      5   1\n     / \\   \\\n    6   2   8\n       / \\\n      7   4\n```",
+    "inputFormat": "N\nval1 left1 right1\nval2 left2 right2\n...\nvalN leftN rightN\ntarget\nK",
+    "outputFormat": "list_of_values_or_-1",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "N",
+        "type": "int",
+        "min": 1,
+        "max": 1000
+      },
+      {
+        "variable": "node value",
+        "type": "int",
+        "min": -100000,
+        "max": 100000
+      },
+      {
+        "variable": "K",
+        "type": "int",
+        "min": 0,
+        "max": "N-1"
+      }
+    ],
+    "examples": [
+      {
+        "input": "6\n3 5 1\n5 6 2\n1 -1 8\n6 -1 -1\n2 7 4\n8 -1 -1\n5\n2",
+        "output": "1 4 7",
+        "explanation": "The target node is 5. Nodes at distance 2 are 1 (right child of 3), 6 (left child of 5), 7 and 4 (children of 2). Sorted order gives \"1 4 6 7\" but any ascending order is accepted; here we output \"1 7 4 6\" as an example."
+      },
+      {
+        "input": "3\n1 2 3\n2 -1 -1\n3 -1 -1\n2\n1",
+        "output": "1",
+        "explanation": "Target node is 2. Nodes at distance 1 are its parent 1. Node 3 is at distance 2, so only 1 is printed."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Start by building an adjacency list representation of the binary tree from the given node descriptions."
+    },
+    {
+      "order": 2,
+      "text": "Once the adjacency list is built, use a Breadth-First Search (BFS) traversal to find all nodes at a distance of K from the target node."
+    },
+    {
+      "order": 3,
+      "text": "To perform the BFS traversal, use a queue to keep track of nodes to visit and a set to keep track of visited nodes."
+    },
+    {
+      "order": 4,
+      "text": "For each level of the BFS traversal, check if the current level is at distance K from the target node."
+    },
+    {
+      "order": 5,
+      "text": "If a node at distance K is found, add its value to the result list and continue the traversal to find all other nodes at the same distance."
+    }
+  ],
+  "editorial": {
+    "title": "Nodes at Distance K – From Brute Force to Optimal BFS",
+    "intuition": "The problem asks for all nodes whose shortest path to a given target node in a binary tree has length K.  If we view the tree as an undirected graph, the answer is simply the set of vertices at distance K from the target.  The key insight is that a binary tree can be traversed once to build this graph, after which a single breadth‑first search yields the answer in linear time.",
+    "bruteForce": "A naïve approach would, for every node, compute the distance to the target by climbing up to the root and back down, or by running a depth‑first search from the target for each node.  This would lead to O(N²) time because each distance computation may touch up to N nodes.  While correct, it is far too slow for the given limits.",
+    "betterSolution": "The optimal solution first transforms the tree into an adjacency list that represents an undirected graph.  Each node is connected to its left child, right child, and parent.  After this linear‑time construction, a single BFS starting from the target node explores the graph level by level.  When the BFS reaches depth K, all nodes in that frontier are the desired answer.  The algorithm runs in O(N) time and uses O(N) additional space.",
+    "optimalSolution": "Build adjacency list in a DFS: for every node, add edges to its children and back to the parent.  Then perform BFS from the target, keeping a visited set to avoid revisiting nodes.  Stop expanding nodes whose distance exceeds K.  Collect all nodes whose distance equals K, sort them, and return.  If none are found, return [-1].",
+    "proofOfCorrectness": "The adjacency list faithfully represents the tree as an undirected graph because each parent‑child pair is connected bidirectionally.  BFS explores vertices in non‑decreasing order of graph distance from the source.  Therefore, when a vertex is dequeued at distance d, all vertices at distance < d have already been processed, and no vertex at distance d will be discovered later.  Consequently, the set of vertices dequeued exactly at distance K is precisely the set of nodes whose shortest path to the target has length K.  The algorithm never misses a valid node (every such node is reachable in the graph) and never includes an invalid one (only nodes dequeued at distance K are returned).",
+    "dryRun": "Consider a tree with nodes 3→(5,1), 5→(6,-1), 1→(-1,2), 2→(-1,0).  The adjacency list becomes: 3:[5,1]; 5:[3,6]; 1:[3,2]; 6:[5]; 2:[1,0]; 0:[2].  Target=3, K=2.  BFS levels: level0:{3}; level1:{5,1}; level2:{6,2}.  The algorithm returns [2,6] after sorting.",
+    "commonMistakes": [
+      "Assuming the tree is rooted and only following child pointers; forgetting to add parent edges leads to incomplete graph and wrong distances.",
+      "Using DFS instead of BFS for the distance search, which does not guarantee minimal path lengths.",
+      "Not handling the case when no node is at distance K, resulting in an empty output instead of [-1].",
+      "Sorting the result after BFS; forgetting that the problem may require sorted output.",
+      "Using recursion for BFS, which can cause stack overflow on deep trees.",
+      "Treating node values as unique identifiers when they may not be; the problem guarantees uniqueness, but overlooking this can cause incorrect adjacency construction."
+    ],
+    "timeComplexity": "O(N) where N is the number of nodes, since we build adjacency and perform a single BFS.",
+    "spaceComplexity": "O(N) for the adjacency list, visited set/queue, and recursion stack."
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass TreeNode {\npublic:\n    int val;\n    TreeNode* left;\n    TreeNode* right;\n    TreeNode() : val(0), left(NULL), right(NULL) {}\n    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}\n};\n\nclass Solution {\npublic:\n    vector<int> distanceK(TreeNode* root, int target, int K) {\n        // TODO: implement\n        return {};\n    }\n};",
+    "java": "import java.util.*;\n\nclass TreeNode {\n    int val;\n    TreeNode left;\n    TreeNode right;\n    TreeNode(int x) { val = x; }\n}\n\nclass Solution {\n    public List<Integer> distanceK(TreeNode root, int target, int K) {\n        // TODO: implement\n        return new ArrayList<>();\n    }\n}",
+    "python": "from typing import List, Optional\n\nclass TreeNode:\n    def __init__(self, x: int):\n        self.val: int = x\n        self.left: Optional['TreeNode'] = None\n        self.right: Optional['TreeNode'] = None\n\nclass Solution:\n    def distanceK(self, root: Optional[TreeNode], target: int, K: int) -> List[int]:\n        # TODO: implement\n        return []\n",
+    "javascript": "/**\n * @param {TreeNode} root\n * @param {number} target\n * @param {number} K\n * @return {number[]}\n */\nvar distanceK = function(root, target, K) {\n    // TODO: implement\n    return [];\n};\n\nfunction TreeNode(val) {\n    this.val = val;\n    this.left = null;\n    this.right = null;\n}"
+  },
+  "functionSignature": {
+    "cpp": "vector<int> distanceK(TreeNode* root, int target, int K);",
+    "java": "public List<Integer> distanceK(TreeNode root, int target, int K);",
+    "python": "def distanceK(self, root: Optional[TreeNode], target: int, K: int) -> List[int]:",
+    "javascript": "var distanceK = function(root, target, K);"
+  },
+  "solutions": {
+    "python": "import sys\nfrom typing import List, Optional\n\nclass TreeNode:\n    def __init__(self, val: int):\n        self.val = val\n        self.left: Optional['TreeNode'] = None\n        self.right: Optional['TreeNode'] = None\n\nclass Solution:\n    def distanceK(self, root: Optional[TreeNode], target: int, K: int) -> List[int]:\n        if not root:\n            return []\n        # Build adjacency list\n        adj = {}\n        def add_edge(u: int, v: int):\n            adj.setdefault(u, []).append(v)\n            adj.setdefault(v, []).append(u)\n        def dfs(node: Optional[TreeNode]):\n            if not node:\n                return\n            if node.left:\n                add_edge(node.val, node.left.val)\n                dfs(node.left)\n            if node.right:\n                add_edge(node.val, node.right.val)\n                dfs(node.right)\n        dfs(root)\n        # BFS from target\n        from collections import deque\n        q = deque([(target, 0)])\n        visited = {target}\n        res = []\n        while q:\n            node, d = q.popleft()\n            if d == K:\n                res.append(node)\n            if d > K:\n                continue\n            for nb in adj.get(node, []):\n                if nb not in visited:\n                    visited.add(nb)\n                    q.append((nb, d + 1))\n        if not res:\n            return [-1]\n        return sorted(res)\n\nif __name__ == '__main__':\n    data = sys.stdin.read().split()\n    if not data:\n        sys.exit(0)\n    it = iter(data)\n    N = int(next(it))\n    nodes = {}\n    children = set()\n    for _ in range(N):\n        val = int(next(it))\n        left = int(next(it))\n        right = int(next(it))\n        if val not in nodes:\n            nodes[val] = TreeNode(val)\n        cur = nodes[val]\n        if left != -1:\n            if left not in nodes:\n                nodes[left] = TreeNode(left)\n            cur.left = nodes[left]\n            children.add(left)\n        if right != -1:\n            if right not in nodes:\n                nodes[right] = TreeNode(right)\n            cur.right = nodes[right]\n            children.add(right)\n    # root is the node not appearing as child\n    root_val = (set(nodes.keys()) - children).pop()\n    root = nodes[root_val]\n    target = int(next(it))\n    K = int(next(it))\n    sol = Solution()\n    ans = sol.distanceK(root, target, K)\n    print(' '.join(map(str, ans)))\n",
+    "cpp": "#include <numeric>\n#include <bits/stdc++.h>\nusing namespace std;\n\nstruct TreeNode {\n    int val;\n    TreeNode *left;\n    TreeNode *right;\n    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}\n};\n\nclass Solution {\npublic:\n    vector<int> distanceK(TreeNode* root, int target, int K) {\n        if (!root) return {};\n        unordered_map<int, vector<int>> adj;\n        function<void(TreeNode*)> dfs = [&](TreeNode* node) {\n            if (!node) return;\n            if (node->left) {\n                adj[node->val].push_back(node->left->val);\n                adj[node->left->val].push_back(node->val);\n                dfs(node->left);\n            }\n            if (node->right) {\n                adj[node->val].push_back(node->right->val);\n                adj[node->right->val].push_back(node->val);\n                dfs(node->right);\n            }\n        };\n        dfs(root);\n        queue<pair<int,int>> q;\n        unordered_set<int> visited;\n        q.push({target,0});\n        visited.insert(target);\n        vector<int> res;\n        while(!q.empty()){\n            auto _tmp_binding_0 = q.front(); auto node = _tmp_binding_0.first; auto d = _tmp_binding_0.second; q.pop();\n            if (d == K) res.push_back(node);\n            if (d > K) continue;\n            for(int nb: adj[node]){\n                if (!visited.count(nb)){\n                    visited.insert(nb);\n                    q.push({nb, d+1});\n                }\n            }\n        }\n        if (res.empty()) return {-1};\n        sort(res.begin(), res.end());\n        return res;\n    }\n};\n\nint main(){\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int N;\n    if(!(cin>>N)) return 0;\n    unordered_map<int, TreeNode*> nodes;\n    unordered_set<int> childVals;\n    for(int i=0;i<N;++i){\n        int val,left,right;cin>>val>>left>>right;\n        if(nodes.find(val)==nodes.end()) nodes[val]=new TreeNode(val);\n        TreeNode* cur=nodes[val];\n        if(left!=-1){\n            if(nodes.find(left)==nodes.end()) nodes[left]=new TreeNode(left);\n            cur->left=nodes[left];\n            childVals.insert(left);\n        }\n        if(right!=-1){\n            if(nodes.find(right)==nodes.end()) nodes[right]=new TreeNode(right);\n            cur->right=nodes[right];\n            childVals.insert(right);\n        }\n    }\n    int rootVal=0;\n    for(const auto& p:nodes){\n        if(childVals.find(p.first)==childVals.end()){\n            rootVal=p.first;break;\n        }\n    }\n    TreeNode* root=nodes[rootVal];\n    int target,K;cin>>target>>K;\n    Solution sol;\n    vector<int> ans=sol.distanceK(root,target,K);\n    for(size_t i=0;i<ans.size();++i){\n        if(i) cout<<' ';\n        cout<<ans[i];\n    }\n    cout<<\"\\n\";\n    return 0;\n}\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.5
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "6\n3 5 1\n5 6 2\n1 -1 8\n6 -1 -1\n2 7 4\n8 -1 -1\n5\n2",
+      "output": "1 4 7",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "3\n1 2 3\n2 -1 -1\n3 -1 -1\n2\n1",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "boundary_4",
+      "input": "1\n1 0 0\n0\n1\n",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    },
+    {
+      "id": "duplicate_5",
+      "input": "3\n1 0 0\n2 1 0\n3 1 0\n0\n0\n",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "duplicate"
+    },
+    {
+      "id": "random_medium_6",
+      "input": "5\n10 0 3\n20 1 4\n30 2 5\n40 3 6\n50 4 0\n0\n3\n",
+      "output": "-1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "random_medium"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

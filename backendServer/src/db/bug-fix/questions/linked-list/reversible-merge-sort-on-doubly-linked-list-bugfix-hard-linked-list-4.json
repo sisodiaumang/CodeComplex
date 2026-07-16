@@ -1,0 +1,157 @@
+{
+  "_id": "46da9dce2b171686a3601ca8",
+  "title": "Reversible Merge Sort on Doubly Linked List",
+  "slug": "reversible-merge-sort-on-doubly-linked-list-bugfix-hard-linked-list-4",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "Doubly Linked List",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 60,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "linked_list"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "You are given a doubly linked list and asked to sort it using merge sort. The list should be sorted in ascending order. After sorting, the original order of the list elements should be preserved.",
+    "inputFormat": "The first line of the input contains the number of nodes in the list. Each subsequent line represents a node with its value and next node's value.",
+    "outputFormat": "Print the sorted list in ascending order.",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "5\n1 2\n2 3\n3 4\n4 5\n5 6",
+        "output": "1 2 2 3 3 4 4 5 5 6",
+        "explanation": ""
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "The given implementation has a bug in its merge function. The bug causes the function to lose track of the node's original position."
+    },
+    {
+      "order": 2,
+      "text": "To solve this bug, you need to modify the merge function to correctly preserve the original order of the nodes."
+    }
+  ],
+  "editorial": {
+    "title": "Correcting the Merge Sort Implementation",
+    "intuition": "The correct approach is to use the merge function to sort the sublists and then merge them in the correct order to get the final sorted list.",
+    "bruteForce": "The brute force approach is to use a temporary list to store the sorted elements.",
+    "betterSolution": "",
+    "optimalSolution": "The optimal solution is to use a merge function that preserves the original order of the nodes.",
+    "proofOfCorrectness": "proof Of Correctness details.",
+    "dryRun": "dry Run details.",
+    "commonMistakes": [
+      "losing track of node's original position",
+      "not preserving original order"
+    ],
+    "timeComplexity": "O(n log n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "class Node {\n  int data;\n  Node* next;\n  Node* prev;\n};\nclass Solution {\n public:\n  void sort(Node* head);\n};\nint main() {\n  // Read input and create linked list\n  return 0;\n}",
+    "java": "public class Node {\n  int data;\n  Node next;\n  Node prev;\n}\nclass Solution {\n public:\n  void sort(Node head);\n}\npublic class Main {\n  public static void main(String[] args) {\n    // Read input and create linked list\n  }\n}",
+    "python": "class Node:\n  def __init__(self, data):\n    self.data = data\n    self.next = None\n    self.prev = None\nclass Solution:\n  def sort(self, head):\n    pass\nif __name__ == '__main__':\n  # Read input and create linked list",
+    "javascript": "class Node {\n  constructor(data) {\n    this.data = data;\n    this.next = null;\n    this.prev = null;\n  }\n}\nclass Solution {\n  sort(head) {}\n}\nfunction main() {\n  // Read input and create linked list\n  return;\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "void Solution::sort(Node* head) {\n  if (!head || !head->next) return;\n  Node* temp = head;\n  while (temp) {\n    if (temp->data > temp->next->data) {\n      swap(temp, temp->next);\n    }\n    temp = temp->next;\n  }\n}\nvoid Solution::swap(Node* a, Node* b) {\n  int temp = a->data;\n  a->data = b->data;\n  b->data = temp;\n}",
+    "java": "public void Solution.sort(Node head) {\n  if (!head || !head.next) return;\n  Node temp = head;\n  while (temp) {\n    if (temp.data > temp.next.data) {\n      swap(temp, temp.next);\n    }\n    temp = temp.next;\n  }\n}\npublic void swap(Node a, Node b) {\n  int temp = a.data;\n  a.data = b.data;\n  b.data = temp;\n}",
+    "python": "def Solution.sort(self, head):\n  if not head or not head.next:\n    return\n  temp = head\n  while temp:\n    if temp.data > temp.next.data:\n      swap(temp, temp.next)\n    temp = temp.next\n\ndef swap(a, b):\n  temp = a.data\n  a.data = b.data\n  b.data = temp",
+    "javascript": "Solution.prototype.sort = function(head) {\n  if (!head || !head.next) return;\n  var temp = head;\n  while (temp) {\n    if (temp.data > temp.next.data) {\n      swap(temp, temp.next);\n    }\n    temp = temp.next;\n  }\n};\nfunction swap(a, b) {\n  var temp = a.data;\n  a.data = b.data;\n  b.data = temp;\n}"
+  },
+  "functionSignature": {
+    "cpp": "void sort(Node*);",
+    "java": "void sort(Node);",
+    "python": "def sort(self, Node):\n  pass",
+    "javascript": "sort(Node);"
+  },
+  "solutions": {
+    "python": "import sys\nfrom collections import deque\n\nclass Node:\n  def __init__(self, data):\n    self.data = data\n    self.next = None\n    self.prev = None\n\nclass Solution:\n  def sort(self, head):\n    if not head or not head.next:\n      return head\n\n    dummy = Node(0)\n    dummy.next = head\n    prev = dummy\n\n    while head:\n      if head.data < prev.data:\n        prev.next = head\n        head.prev = prev\n        prev = head\n        head = head.next\n      else:\n        curr = head\n        while curr and curr.data < prev.data:\n          prev = curr\n          curr = curr.next\n        if curr:\n          prev.next = head\n          head.prev = prev\n          head = curr\n        else:\n          prev.next = head\n          head.prev = prev\n      head = head.next\n    return dummy.next\n\nif __name__ == '__main__':\n  # Read input and create linked list",
+    "cpp": "#include <iostream>\n#include <vector>\n#include <deque>\n\nusing namespace std;\n\nstruct Node {\n  int data;\n  Node* next;\n  Node* prev;\n};\n\nclass Solution {\n public:\n  Node* sort(Node* head);\n};\n\nint main() {\n  // Read input and create linked list\n  return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5\n1 2\n2 3\n3 4\n4 5\n5 6",
+      "output": "1 2 2 3 3 4 4 5 5 6",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_hidden_generated",
+      "input": "5\n1 2\n2 3\n3 4\n4 5\n5 6",
+      "output": "1 2 2 3 3 4 4 5 5 6",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

@@ -1,0 +1,138 @@
+{
+  "title": "Fixing a Node.js Express Middleware for Route Parameter Validation in Nested Routes",
+  "subCategory": "Route Parameter Validation",
+  "statement": {
+    "markdown": "You are given a Node.js Express application with a middleware function that handles route parameter validation. However, it has a logical bug that causes it to incorrectly validate route parameters in nested routes. Fix the bug to ensure the middleware function works correctly for all scenarios.",
+    "inputFormat": "The input will be an array of routes, where each route is an object with a 'path' property and a 'params' property.",
+    "outputFormat": "The output should be an array of boolean values indicating whether the route parameter validation was successful or not.",
+    "notes": "The middleware function should handle nested routes correctly and return false for invalid routes.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of routes"
+      },
+      {
+        "variable": "r",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of parameters in each route"
+      }
+    ],
+    "examples": [
+      {
+        "input": "[{'path':'/users/:id', 'params':{'id':123}}, {'path':'/users/:id/posts/:postid', 'params':{'id':123, 'postid':456}}]",
+        "output": "[true, true]",
+        "explanation": "The middleware function should return true for both routes, since the route parameters are valid."
+      },
+      {
+        "input": "[{'path':'/users/:id', 'params':{'id':123}}, {'path':'/users/:id/posts/:postid', 'params':{'id':'abc', 'postid':456}}]",
+        "output": "[true, false]",
+        "explanation": "The middleware function should return true for the first route, since the 'id' parameter is valid. However, it should return false for the second route, since the 'id' parameter is not a number."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "NODE_JS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "node_js"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Check the middleware function's logic for handling nested routes"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial: Fixing Route Parameter Validation in Nested Routes",
+    "intuition": "The middleware function should recursively check the route parameters for each route, including nested routes.",
+    "bruteForce": "One possible solution is to use a recursive function to check the route parameters for each route.",
+    "betterSolution": "",
+    "optimalSolution": "Use a recursive function to check the route parameters for each route, and use a regular expression to validate each parameter.",
+    "proofOfCorrectness": "The middleware function should return true for valid routes and false for invalid routes.",
+    "dryRun": "Test the middleware function with various input scenarios to ensure it works correctly.",
+    "commonMistakes": [
+      "Failing to handle nested routes correctly",
+      "Incorrectly validating route parameters"
+    ],
+    "timeComplexity": "O(n*r)",
+    "spaceComplexity": "O(n*r)"
+  },
+  "starterCode": {
+    "javascript": "function routeValidation(routes) {\n  // Your code here\n  return [...];\n}"
+  },
+  "buggyStarterCode": {
+    "javascript": "function routeValidation(routes) {\n  for (let route of routes) {\n    let path = route.path;\n    let params = route.params;\n    let isValid = true;\n    for (let param in params) {\n      if (!/^[0-9]+$/.test(params[param])) {\n        isValid = false;\n      }\n    }\n    if (isValid) {\n      console.log(true);\n    } else {\n      console.log(false);\n    }\n  }\n  return routes;\n}"
+  },
+  "functionSignature": {
+    "javascript": "function routeValidation(routes) {\n  ...;\n}"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction routeValidation(routes) {\n  for (let route of routes) {\n    let path = route.path;\n    let params = route.params;\n    let isValid = true;\n    try {\n      let regex = new RegExp(path.replace(/:[^/]+/g, match => '\\d+')); // Create a regular expression to match the route path\n      for (let param in params) {\n        if (!regex.test('/' + param)) {\n          isValid = false;\n        }\n      }\n    } catch (e) {\n      isValid = false;\n    }\n    if (isValid) {\n      result.push(true);\n    } else {\n      result.push(false);\n    }\n  }\n  return result;\n}\nlet result = [];\nconsole.log(routeValidation([{'path':'/users/:id', 'params':{'id':123}}, {'path':'/users/:id/posts/:postid', 'params':{'id':123, 'postid':456}}]));"
+  },
+  "judgeConfig": {
+    "timeLimit": 1000,
+    "memoryLimit": 1024,
+    "supportedLanguages": [
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "[{'path':'/users/:id', 'params':{'id':123}}, {'path':'/users/:id/posts/:postid', 'params':{'id':123, 'postid':456}}]",
+      "output": "[true, true]",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "[{'path':'/users/:id', 'params':{'id':123}}, {'path':'/users/:id/posts/:postid', 'params':{'id':'abc', 'postid':456}}]",
+      "output": "[true, false]",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "875e9acf8c55f938124d2287",
+  "slug": "fixing-a-nodejs-express-middleware-for-route-parameter-validation-in-nested-routes-bugfix-hard-node_js",
+  "mode": "bug_fix",
+  "category": "NODE_JS",
+  "difficulty": "Hard"
+}

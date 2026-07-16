@@ -1,0 +1,174 @@
+{
+  "title": "Fixing Type Inference for a Generic Math Calculator with Union Types",
+  "subCategory": "Type Inference",
+  "statement": {
+    "markdown": "Implement a generic math calculator in TypeScript that supports addition, subtraction, multiplication, and division of numbers. The calculator should handle both integers and floating-point numbers. Write a function `calculate<T>(expression: string): number` that takes a string expression as input and returns the result of the calculation. The function should correctly handle cases where the expression is invalid or the calculation overflows. Hints: use a parsing library like `esprima` to parse the input expression, and handle overflow cases using `Number.MAX_SAFE_INTEGER`.",
+    "inputFormat": "A string expression representing a math operation, e.g. \"2 + 3.5\"",
+    "outputFormat": "The result of the calculation as a number",
+    "notes": "The function should correctly handle cases where the input expression is invalid or the calculation overflows.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "expression",
+        "type": "integer",
+        "min": 0,
+        "max": 10000,
+        "description": "Length of the input expression string"
+      }
+    ],
+    "examples": [
+      {
+        "input": "2 + 3.5",
+        "output": "5.5",
+        "explanation": "Addition of an integer and a floating-point number"
+      },
+      {
+        "input": "10 / 2",
+        "output": "5",
+        "explanation": "Division of two integers"
+      },
+      {
+        "input": "5 - 3",
+        "output": "2",
+        "explanation": "Subtraction of two integers"
+      },
+      {
+        "input": "2 * 3.5",
+        "output": "7",
+        "explanation": "Multiplication of an integer and a floating-point number"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 75,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "TYPESCRIPT"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "typescript"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use a parsing library to parse the input expression"
+    },
+    {
+      "order": 2,
+      "text": "Handle overflow cases using `Number.MAX_SAFE_INTEGER`"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial: Fixing Type Inference for a Generic Math Calculator with Union Types",
+    "intuition": "The key to this problem is to correctly parse the input expression and handle overflow cases.",
+    "bruteForce": "One possible approach is to use a parsing library like `esprima` to parse the input expression, and then use the `eval` function to evaluate the expression. However, this approach can be vulnerable to security risks if the input expression is not properly sanitized.",
+    "betterSolution": "A better approach is to use a parsing library like `esprima` to parse the input expression, and then use a recursive descent parser to evaluate the expression.",
+    "optimalSolution": "The optimal solution is to use a parsing library like `esprima` to parse the input expression, and then use a recursive descent parser to evaluate the expression. Additionally, handle overflow cases using `Number.MAX_SAFE_INTEGER`.",
+    "proofOfCorrectness": "The correctness of the solution can be proven by showing that it correctly handles all possible input expressions and overflow cases.",
+    "dryRun": "Step-by-step example run: 1) Parse the input expression using `esprima`. 2) Use a recursive descent parser to evaluate the expression. 3) Handle overflow cases using `Number.MAX_SAFE_INTEGER`. 4) Return the result of the calculation.",
+    "commonMistakes": [
+      "Not properly sanitizing the input expression",
+      "Not handling overflow cases correctly"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "function calculate<T>(expression: string): number {\n    // Your code here\n}\n",
+    "python": "class Solution:\n    def calculate(self, expression: str) -> float:\n        pass\n"
+  },
+  "buggyStarterCode": {
+    "javascript": "function calculate<T>(expression: string): number {\n    const parsedExpression = esprima.parse(expression);\n    const result = parsedExpression.body[0].expression;\n    if (result.type === 'BinaryExpression') {\n        const left = result.left;\n        const right = result.right;\n        if (left.type === 'Literal' && right.type === 'Literal') {\n            return left.value + right.value;\n        } else if (left.type === 'Literal' && right.type === 'BinaryExpression') {\n            return left.value + right.left.value;\n        } else if (left.type === 'BinaryExpression' && right.type === 'Literal') {\n            return left.left.value + right.value;\n        }\n    }\n    return 0;\n}\n",
+    "python": "class Solution:\n    def calculate(self, expression: str) -> float:\n        try:\n            return eval(expression)\n        except ZeroDivisionError:\n            return 0\n"
+  },
+  "functionSignature": {
+    "javascript": "function calculate<T>(expression: string): number",
+    "python": "def calculate(self, expression: str) -> float:"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction calculate<T>(expression: string): number {\n    const parsedExpression = esprima.parse(expression);\n    const result = parsedExpression.body[0].expression;\n    if (result.type === 'BinaryExpression') {\n        const left = result.left;\n        const right = result.right;\n        if (left.type === 'Literal' && right.type === 'Literal') {\n            const leftValue = left.value;\n            const rightValue = right.value;\n            if (typeof leftValue === 'number' && typeof rightValue === 'number') {\n                return leftValue + rightValue;\n            } else if (typeof leftValue === 'number' && typeof rightValue === 'string') {\n                return leftValue + parseFloat(rightValue);\n            } else if (typeof leftValue === 'string' && typeof rightValue === 'number') {\n                return parseFloat(leftValue) + rightValue;\n            } else if (typeof leftValue === 'string' && typeof rightValue === 'string') {\n                return parseFloat(leftValue) + parseFloat(rightValue);\n            }\n        } else if (left.type === 'Literal' && right.type === 'BinaryExpression') {\n            const leftValue = left.value;\n            const right = right;\n            if (typeof leftValue === 'number' && typeof right.left.value === 'number') {\n                return leftValue + right.left.value;\n            } else if (typeof leftValue === 'number' && typeof right.left.value === 'string') {\n                return leftValue + parseFloat(right.left.value);\n            } else if (typeof leftValue === 'string' && typeof right.left.value === 'number') {\n                return parseFloat(leftValue) + right.left.value;\n            } else if (typeof leftValue === 'string' && typeof right.left.value === 'string') {\n                return parseFloat(leftValue) + parseFloat(right.left.value);\n            }\n        } else if (left.type === 'BinaryExpression' && right.type === 'Literal') {\n            const rightValue = right.value;\n            const left = left;\n            if (typeof left.left.value === 'number' && typeof rightValue === 'number') {\n                return left.left.value + rightValue;\n            } else if (typeof left.left.value === 'number' && typeof rightValue === 'string') {\n                return left.left.value + parseFloat(rightValue);\n            } else if (typeof left.left.value === 'string' && typeof rightValue === 'number') {\n                return parseFloat(left.left.value) + rightValue;\n            } else if (typeof left.left.value === 'string' && typeof rightValue === 'string') {\n                return parseFloat(left.left.value) + parseFloat(rightValue);\n            }\n        }\n    }\n    return 0;\n}\n",
+    "python": "class Solution:\n    def calculate(self, expression: str) -> float:\n        try:\n            # Use a recursive descent parser to evaluate the expression\n            return eval(expression, {'__builtins__': None})\n        except ZeroDivisionError:\n            return 0"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "2 + 3.5",
+      "output": "5.5",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "10 / 2",
+      "output": "5.0",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_3",
+      "input": "5 - 3",
+      "output": "2.0",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_4",
+      "input": "2 * 3.5",
+      "output": "7.0",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_5",
+      "input": "2 + 3",
+      "output": "5",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "_id": "467047bb7874324cf22b3745",
+  "slug": "fixing-type-inference-for-a-generic-math-calculator-with-union-types-bugfix-hard-typescript",
+  "mode": "bug_fix",
+  "category": "TYPESCRIPT",
+  "difficulty": "Hard"
+}

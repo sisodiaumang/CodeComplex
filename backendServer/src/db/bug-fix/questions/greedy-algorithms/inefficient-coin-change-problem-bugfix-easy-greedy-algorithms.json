@@ -1,0 +1,160 @@
+{
+  "_id": "2b80de1c1f8e01213643663f",
+  "title": "Inefficient Coin Change Problem",
+  "slug": "inefficient-coin-change-problem-bugfix-easy-greedy-algorithms",
+  "difficulty": "Easy",
+  "category": "DSA",
+  "subCategory": "GREEDY",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "greedy"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given the availability of coins of denomination 1, 5, and 10, find the minimum number of coins required to make change for a given amount. The greedy approach is to always choose the largest denomination coin that doesn't exceed the remaining amount.\n\nHowever, the given code implementation has a bug. Can you identify the issue and correct it?\n\nYou can assume that the input amount is always non-negative.",
+    "inputFormat": "Non-negative integer amount, non-negative integer array of coin denominations\n\nExample: 27 1 5 10",
+    "outputFormat": "Minimum number of coins required\n\nExample: 5",
+    "notes": "Time limit: 1 second\n\nMemory limit: 64 MB",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "amount",
+        "type": "integer",
+        "min": 0,
+        "max": 10000,
+        "description": "Non-negative target amount"
+      },
+      {
+        "variable": "coins",
+        "type": "integer array",
+        "min": 1,
+        "max": 3,
+        "description": "Denominations of available coins"
+      }
+    ],
+    "examples": [
+      {
+        "input": "27\n1 5 10",
+        "output": "5",
+        "explanation": "Coins: 10, 10, 5, 1, 1"
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "The greedy approach is to always choose the largest denomination coin that doesn't exceed the remaining amount."
+    }
+  ],
+  "editorial": {
+    "title": "Correcting the Inefficient Coin Change Problem",
+    "intuition": "The correct approach is to sort the coin denominations in descending order and then use a greedy state machine to select the largest denomination coin that doesn't exceed the remaining amount.",
+    "bruteForce": "A brute force approach would involve trying all possible combinations of coins and selecting the one that results in the minimum number of coins required.",
+    "betterSolution": "",
+    "optimalSolution": "The optimal solution involves sorting the coin denominations and then using a greedy state machine to select the largest denomination coin that doesn't exceed the remaining amount.",
+    "proofOfCorrectness": "This approach is correct because it always selects the largest denomination coin that doesn't exceed the remaining amount, minimizing the number of coins required.",
+    "dryRun": "For example, if the target amount is 27 and the available coin denominations are 1, 5, and 10, the optimal solution would be to select 2 coins of denomination 10 and 1 coin of denomination 7, resulting in a total of 5 coins.",
+    "commonMistakes": [
+      "Incorrectly sorting the coin denominations",
+      "Not using a greedy state machine"
+    ],
+    "timeComplexity": "O(n log n) due to sorting",
+    "spaceComplexity": "O(1) for a single input"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    int coinChange(vector<int>& coins, int amount) {\n        // TODO: implement\n    }\n};",
+    "java": "public class Solution {\n    public int coinChange(int[] coins, int amount) {\n        // TODO: implement\n    }\n}",
+    "python": "class Solution:\n    def coinChange(self, coins: list[int], amount: int) -> int:\n        # TODO: implement\n        pass",
+    "javascript": "function coinChange(coins, amount) {\n    // TODO: implement\n    return 0;\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    int coinChange(vector<int>& coins, int amount) {\n        if (amount < 0) return 0;\n        int result = 0;\n        sort(coins.begin(), coins.end());\n        for (int i = 0; i < coins.size(); ++i) {\n            while (amount >= coins[i]) {\n                result += coins[i] / coins[i];\n                amount -= coins[i];\n            }\n        }\n        return result;\n    }\n};",
+    "java": "public class Solution {\n    public int coinChange(int[] coins, int amount) {\n        if (amount < 0) return 0;\n        int result = 0;\n        Arrays.sort(coins);\n        for (int i = 0; i < coins.length; ++i) {\n            while (amount >= coins[i]) {\n                result += coins[i] / coins[i];\n                amount -= coins[i];\n            }\n        }\n        return result;\n    }\n}",
+    "python": "class Solution:\n    def coinChange(self, coins: list[int], amount: int) -> int:\n        if amount < 0:\n            return 0\n        result = 0\n        coins.sort()\n        for i in range(len(coins)):\n            while amount >= coins[i]:\n                result += coins[i] // coins[i]\n                amount -= coins[i]\n        return result",
+    "javascript": "function coinChange(coins, amount) {\n    if (amount < 0) return 0;\n    var result = 0;\n    coins.sort(function(a, b) {\n        return b - a;\n    });\n    for (var i = 0; i < coins.length; ++i) {\n        while (amount >= coins[i]) {\n            result += coins[i] / coins[i];\n            amount -= coins[i];\n        }\n    }\n    return result;\n}"
+  },
+  "functionSignature": {
+    "cpp": "bool solve(vector<int>& nums);",
+    "java": "public boolean solve(int[] nums);",
+    "python": "def solve(self, nums: list[int]) -> bool:",
+    "javascript": "var solve = function(nums);"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def coinChange(self, coins: list[int], amount: int) -> int:\n        if amount < 0:\n            return -1\n        result = float('inf')\n        coins.sort(reverse=True)\n        for i in range(1 << len(coins)):\n            total = 0\n            for j in range(len(coins)):\n                if (i & (1 << j)):\n                    total += coins[j]\n            if total <= amount and (amount - total) < result:\n                result = amount - total\n        return result if result != float('inf') else -1\n\nif __name__ == '__main__':\n    import sys\n    input = sys.stdin.readline\n    t = int(input())\n    for _ in range(t):\n        n = int(input())\n        coins = list(map(int, input().split()))\n        print(Solution().coinChange(coins, n))",
+    "cpp": "class Solution {\npublic:\n    int coinChange(std::vector<int>& coins, int amount) {\n        if (amount < 0) return -1;\n        int result = INT_MAX;\n        std::sort(coins.begin(), coins.end(), std::greater<int>());\n        int mask = 0;\n        for (int i = 0; i < coins.size(); ++i) {\n            int total = 0;\n            for (int j = 0; j < coins.size(); ++j) {\n                if (mask & (1 << j)) {\n                    total += coins[j];\n                }\n            }\n            if (total <= amount && (amount - total) < result) {\n                result = amount - total;\n            }\n            mask |= (1 << i);\n        }\n        return result == INT_MAX ? -1 : result;\n    }\n};\n\nint main() {\n    std::ios_base::sync_with_stdio(false);\n    std::cin.tie(nullptr);\n    int t;\n    std::cin >> t;\n    Solution solver;\n    while (t--) {\n        int n;\n        std::cin >> n;\n        std::vector<int> coins(n);\n        for (int i = 0; i < n; ++i) {\n            std::cin >> coins[i];\n        }\n        std::cout << solver.coinChange(coins, n) << '\n';\n    }\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "27\n1 5 10",
+      "output": "5",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "10\n1 5 10",
+      "output": "2",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

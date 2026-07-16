@@ -1,0 +1,144 @@
+{
+  "title": "Fix MongoDB Aggregation Pipeline to Handle Nested Fields",
+  "subCategory": "MongoDB Aggregation Pipeline",
+  "statement": {
+    "markdown": "Write a function that takes an array of MongoDB aggregation pipeline stages as input and returns the modified pipeline that handles nested fields. The function should recursively traverse the pipeline stages, replace any occurrences of `$project` with a new stage that uses the `includeNested` option to include nested fields.",
+    "inputFormat": "An array of MongoDB aggregation pipeline stages, where each stage is an object with `type` and `spec` properties",
+    "outputFormat": "The modified MongoDB aggregation pipeline",
+    "notes": "The `includeNested` option should be set to true for the `$project` stage to include nested fields.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Maximum number of pipeline stages"
+      }
+    ],
+    "examples": [
+      {
+        "input": "[{ type: 'project', spec: { a: 1, b: 1 } }, { type: 'match', spec: { c: 1 } }]",
+        "output": "[{ type: 'project', spec: { a: 1, b: 1 }, includeNested: true }, { type: 'match', spec: { c: 1 } }]",
+        "explanation": "The `$project` stage is modified to include nested fields"
+      },
+      {
+        "input": "[{ type: 'project', spec: { a: 1, b: 1 }, includeNested: true }, { type: 'match', spec: { c: 1 } }]",
+        "output": "[{ type: 'project', spec: { a: 1, b: 1 }, includeNested: true }, { type: 'match', spec: { c: 1 } }]",
+        "explanation": "No change needed for this pipeline stage"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "MONGODB"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "mongodb"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Start by iterating over the pipeline stages"
+    },
+    {
+      "order": 2,
+      "text": "Check if the current stage is a `$project` stage"
+    },
+    {
+      "order": 3,
+      "text": "If it is, modify the stage to include nested fields"
+    }
+  ],
+  "editorial": {
+    "title": "Handling Nested Fields in MongoDB Aggregation Pipeline",
+    "intuition": "The pipeline stages should be recursively traversed to replace any occurrences of `$project` with a new stage that uses the `includeNested` option",
+    "bruteForce": "This approach can be time-consuming and may not be efficient for large pipelines",
+    "betterSolution": "A more efficient approach would be to use a recursive function to traverse the pipeline stages",
+    "optimalSolution": "This approach uses a recursive function to traverse the pipeline stages and modify any `$project` stages to include nested fields",
+    "proofOfCorrectness": "The modified pipeline stages will correctly include nested fields for the `$project` stage",
+    "dryRun": "Example usage of the function with a sample pipeline",
+    "commonMistakes": [
+      "Not recursively traversing the pipeline stages",
+      "Not modifying the `$project` stage to include nested fields"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "function modifyPipeline(pipeline) {\n  return pipeline.map(stage => {\n    if (stage.type === 'project') {\n      // Modify the stage to include nested fields\n    }\n    return stage;\n  });\n}\n",
+    "python": "class Solution:\n  def modify_pipeline(self, pipeline):\n    return [stage for stage in pipeline if stage['type'] == 'project']"
+  },
+  "buggyStarterCode": {
+    "javascript": "function modifyPipeline(pipeline) {\n  return pipeline.map(stage => {\n    if (stage.type === 'project') {\n      stage.spec.includeNested = true;\n      stage.type = 'customProject';\n    }\n    return stage;\n  });\n}\n",
+    "python": "class Solution:\n  def modify_pipeline(self, pipeline):\n    return [stage for stage in pipeline if stage['type'] == 'project'] if stage.get('spec').get('includeNested') else stage"
+  },
+  "functionSignature": {
+    "javascript": "var modifyPipeline = function(pipeline) {\n  // Your code here\n}\n",
+    "python": "def modify_pipeline(self, pipeline: list) -> list:"
+  },
+  "solutions": {
+    "javascript": "// Your code here\n",
+    "python": "class Solution:\n  def modify_pipeline(self, pipeline: list) -> list:\n    modified_pipeline = []\n    for stage in pipeline:\n      if stage['type'] == 'project':\n        stage['spec']['includeNested'] = True\n      modified_pipeline.append(stage)\n    return modified_pipeline"
+  },
+  "judgeConfig": {
+    "timeLimit": 2000,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "[{ type: 'project', spec: { a: 1, b: 1 } }, { type: 'match', spec: { c: 1 } }]",
+      "output": "[{ type: 'project', spec: { a: 1, b: 1 }, includeNested: true }, { type: 'match', spec: { c: 1 } }]",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "[{ type: 'project', spec: { a: 1, b: 1 }, includeNested: true }, { type: 'match', spec: { c: 1 } }]",
+      "output": "[{ type: 'project', spec: { a: 1, b: 1 }, includeNested: true }, { type: 'match', spec: { c: 1 } }]",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "d805ae6dd456d51b08323907",
+  "slug": "fix-mongodb-aggregation-pipeline-to-handle-nested-fields-bugfix-hard-mongodb",
+  "mode": "bug_fix",
+  "category": "MONGODB",
+  "difficulty": "Hard"
+}

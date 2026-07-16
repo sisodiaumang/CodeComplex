@@ -1,0 +1,136 @@
+{
+  "title": "Fixing Invalid HTML List Tags",
+  "subCategory": "HTML List Rendering",
+  "statement": {
+    "markdown": "Write a function that validates and formats HTML list tags. The input string is a sequence of HTML list items. Each list item is represented by a string containing the item's text and its corresponding list tag (either '<ul>' or '<ol>')). The function should return the input string with all list items properly formatted, i.e., the list items should be wrapped in the correct list tags. The input string may contain any number of list items, and the list items may be in any order. The function should handle cases where the input string contains multiple lists, nested lists, and empty lists.",
+    "inputFormat": "A string containing a sequence of HTML list items, where each list item is a string containing the item's text and its corresponding list tag.",
+    "outputFormat": "The input string with all list items properly formatted, i.e., the list items should be wrapped in the correct list tags.",
+    "notes": "The function should handle cases where the input string contains multiple lists, nested lists, and empty lists. The function should not add any unnecessary list tags.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of list items in the input string."
+      }
+    ],
+    "examples": [
+      {
+        "input": "<li>Item 1</li><li>Item 2</li><li>Item 3</li>",
+        "output": "<ul><li>Item 1</li><li>Item 2</li><li>Item 3</li></ul>",
+        "explanation": "The input string contains a sequence of list items, and the function should return the input string with the list items properly formatted."
+      },
+      {
+        "input": "<ol><li>Item 1</li><li>Item 2</li></ol><ol><li>Item 3</li><li>Item 4</li></ol>",
+        "output": "<ol><li>Item 1</li><li>Item 2</li></ol><ol><li>Item 3</li><li>Item 4</li></ol>",
+        "explanation": "The input string contains multiple lists, and the function should return the input string with the list items properly formatted."
+      },
+      {
+        "input": "<li>Item 1</li><li>Item 2</li><li>Item 3</li><li>Item 4</li>",
+        "output": "<ul><li>Item 1</li><li>Item 2</li><li>Item 3</li><li>Item 4</li></ul>",
+        "explanation": "The input string contains a sequence of list items, and the function should return the input string with the list items properly formatted."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "HTML"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "html"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Start by identifying the list items in the input string."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial Title",
+    "intuition": "The function should iterate through the input string and identify the list items. It should then wrap each list item in the correct list tags. If a list item is missing a list tag, the function should add the missing tag.",
+    "bruteForce": "The function can use a brute force approach by iterating through the input string and checking each character to see if it is part of a list item. If it is, the function can then check the surrounding characters to determine the correct list tags to use.",
+    "betterSolution": "",
+    "optimalSolution": "The function can use a more optimal approach by using a stack to keep track of the list items. The function can then check the stack to determine the correct list tags to use for each list item.",
+    "proofOfCorrectness": "The function is correct because it properly formats the list items and handles cases where the input string contains multiple lists, nested lists, and empty lists.",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "function formatListItems(inputString) {\n    return inputString;\n}"
+  },
+  "buggyStarterCode": {
+    "javascript": "function formatListItems(inputString) {\n    let listItems = inputString.split('<li>')[1].split('</li>')[0];\n    let formattedString = ''; \n    if (listItems.includes('<ol>')) {\n        formattedString += '<ol>'; \n    } else {\n        formattedString += '<ul>'; \n    } \n    for (let i = 0; i < listItems.length; i++) {\n        formattedString += '<li>' + listItems[i] + '</li>'; \n    } \n    if (listItems.includes('<ol>')) {\n        formattedString += '</ol>'; \n    } else {\n        formattedString += '</ul>'; \n    } \n    return formattedString;\n}"
+  },
+  "functionSignature": {
+    "javascript": "function formatListItems(inputString) {\n}"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction formatListItems(inputString) {\n  let listItems = inputString.match(/<li>(.*?)</li>/g);\n  let formattedString = '';\n  let isOrderedList = false;\n  for (let i = 0; i < listItems.length; i++) {\n    let item = listItems[i].replace(/<li>|</li>/g, '');\n    if (!isOrderedList && listItems[i].includes('<ol>')) {\n      formattedString += '<ol>';\n      isOrderedList = true;\n    } else if (isOrderedList && !listItems[i].includes('<ol>')) {\n      formattedString += '</ol>';\n      isOrderedList = false;\n    }\n    formattedString += '<li>' + item + '</li>';\n  }\n  if (isOrderedList) {\n    formattedString += '</ol>';\n  } else {\n    formattedString += '</ul>';\n  }\n  return formattedString;\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "<li>Item 1</li><li>Item 2</li><li>Item 3</li>",
+      "output": "<ul><li>Item 1</li><li>Item 2</li><li>Item 3</li></ul>",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "<ol><li>Item 1</li><li>Item 2</li></ol><ol><li>Item 3</li><li>Item 4</li></ol>",
+      "output": "<ol><li>Item 1</li><li>Item 2</li></ol><ol><li>Item 3</li><li>Item 4</li></ol>",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "cc0d40a46e34e39d3a32e958",
+  "slug": "fixing-invalid-html-list-tags-bugfix-easy-html",
+  "mode": "bug_fix",
+  "category": "HTML",
+  "difficulty": "Easy"
+}

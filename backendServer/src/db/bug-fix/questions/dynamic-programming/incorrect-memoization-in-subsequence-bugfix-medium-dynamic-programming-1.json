@@ -1,0 +1,175 @@
+{
+  "_id": "1a2f97422c37d0d055de929c",
+  "title": "Incorrect Memoization in Subsequence",
+  "slug": "incorrect-memoization-in-subsequence-bugfix-medium-dynamic-programming-1",
+  "difficulty": "Medium",
+  "category": "DSA",
+  "subCategory": "Dynamic Programming",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "dp"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Implement a function `numSubseq` that counts the number of ways to select `target` elements from an array `A` such that the selected elements sum up to `target`. If there are multiple ways to achieve this, return the number of ways in which the sum of these elements will be greater than `target`.\n\nNote that there will be at least `target + 1` elements in `A` and `target will be greater than or equal to 0.`\nYou are allowed to use an auxiliary array for memoization.\n\nHowever, this code has a bug and does not give the correct output.\n",
+    "inputFormat": "The input consists of an integer `n` representing the size of the array, and a list of integers `A` representing the array itself, along with two integers `target` and `m`.",
+    "outputFormat": "Return an integer representing the count of ways to choose the elements to sum to `target` or greater.",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 100000,
+        "description": "Size of array"
+      },
+      {
+        "variable": "target",
+        "type": "integer",
+        "min": 0,
+        "max": 1000000000,
+        "description": "Target sum"
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 1,
+        "max": 100000,
+        "description": "Max ways to choose"
+      }
+    ],
+    "examples": [
+      {
+        "input": "5\n1 2 3 4 5\n4\n3",
+        "output": "8",
+        "explanation": "There are 8 different ways to choose elements to sum to 4 or greater. For example, 2+3 is one such way, while 1+2+3 is another."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "The current implementation uses memoization, but with an incorrect base case."
+    }
+  ],
+  "editorial": {
+    "title": "Subsequence Sum",
+    "intuition": "To count the ways of selecting elements to sum to `target` or greater, we can use a bottom-up DP approach, starting by initializing a DP array to store the count of ways for each possible suffix sum.",
+    "bruteForce": "Brute force approach involves checking all possible subsets of the array",
+    "betterSolution": "",
+    "optimalSolution": "Memoize the count of ways for each suffix sum and use this count to calculate the final result.",
+    "proofOfCorrectness": "The final solution gives the correct count.",
+    "dryRun": "Subsequence Sum example run",
+    "commonMistakes": [
+      "Incorrect index",
+      "Insufficient memoization"
+    ],
+    "timeComplexity": "O(n * m)",
+    "spaceComplexity": "O(n * m)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\nint numSubseq(vector<int>& A, int target, int m) {\n    vector<vector<int>> dp(n + 1, vector<int>(m + 1));",
+    "java": "class Solution {\npublic int numSubseq(int[] A, int target, int m) {\n    int n = A.length;\n    int[][] dp = new int[n + 1][m + 1];",
+    "python": "class Solution:\n    def numSubseq(self, A, target, m):\n        n = len(A)\n        dp = [[-1 for _ in range(m + 1)] for _ in range(n + 1)]",
+    "javascript": "class Solution {\n    numSubseq(nums, target, m) {\n        const n = nums.length;"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\nint numSubseq(vector<int>& A, int target, int m) {\n    vector<vector<int>> dp(n + 1, vector<int>(m + 1));\n    for (int i = n - 1; i >= 0; i--) {\n        dp[i][0] = 1;\n        for (int j = 1; j <= m; j++)\n            dp[i][j] = (A[i] > target ? dp[i + 1][j - 1] : 0) + (A[i] <= target ? dp[i + 1][j] : 0);\n    }\n    return dp[0][m];\n}",
+    "java": "class Solution {\npublic int numSubseq(int[] A, int target, int m) {\n    int n = A.length;\n    int[][] dp = new int[n + 1][m + 1];\n    for (int i = n - 1; i >= 0; i--) {\n        dp[i][0] = 1;\n        for (int j = 1; j <= m; j++)\n            dp[i][j] = (A[i] > target ? dp[i + 1][j - 1] : 0) + (A[i] <= target ? dp[i + 1][j] : 0);\n    }\n    return dp[0][m];\n}",
+    "python": "class Solution:\n    def numSubseq(self, A, target, m):\n        n = len(A)\n        dp = [[-1 for _ in range(m + 1)] for _ in range(n + 1)]\n        for i in range(n - 1, -1, -1):\n            dp[i][0] = 1\n            for j in range(1, m + 1):\n                dp[i][j] = (A[i] > target and dp[i + 1][j - 1]) or (A[i] <= target and dp[i + 1][j])\n        return dp[0][m]",
+    "javascript": "class Solution {\n    numSubseq(nums, target, m) {\n        const n = nums.length;\n        const dp = new Array(n + 1).fill(null).map(() => new Array(m + 1).fill(0));\n        for (let i = n - 1; i >= 0; i--) {\n            dp[i][0] = 1;\n            for (let j = 1; j <= m; j++)\n                dp[i][j] = (nums[i] > target ? dp[i + 1][j - 1] : 0) + (nums[i] <= target ? dp[i + 1][j] : 0);\n        }\n        return dp[0][m];\n    }\n}"
+  },
+  "functionSignature": {
+    "cpp": "int numSubseq(vector<int>& A, int target, int m);",
+    "java": "int numSubseq(int[] A, int target, int m);",
+    "python": "def numSubseq(self, nums: list[int], target: int, m: int) -> int;",
+    "javascript": "numSubseq = function(nums, target, m);"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def numSubseq(self, nums, target):\n        n = len(nums)\n        m = -1\n        for i in range(n + m):\n            if nums[i] <= target:\n                m += 1\n                nums.append(nums[i])\n        return m\n\n\nif __name__ == '__main__':\n    from sys import stdin\n    input = stdin.readline\n    n, m = map(int, input().split())\n    A = list(map(int, input().split()))\n    target = int(input())\n    soln = Solution()\n    print(soln.numSubseq(A, target, -1))",
+    "cpp": "class Solution {\npublic:\nint numSubseq(vector<int>& A, int target) {\n    int n = A.size();\n    sort(A.begin(), A.end());\n    int m = -1;\n    for (int i = n - 1; i >= 0; i--) {\n        if (A[i] <= target) {\n            m++;\n            A.push_back(A[i]);\n        }\n    }\n    return m;\n}\n\n\nint main() {\n    int n, m;\n    cin >> n >> m;\n    vector<int> A(n);\n    for (int i = 0; i < n; i++) {\n        cin >> A[i];\n    }\n    int target;\n    cin >> target;\n    Solution soln;\n    cout << soln.numSubseq(A, target);\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5\n1 2 3 4 5\n4\n3",
+      "output": "8",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "5\n1 2 3 4 5\n4\n10",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    },
+    {
+      "id": "tc_3",
+      "input": "5\n1 2 3 4 5\n10\n7",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

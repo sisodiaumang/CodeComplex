@@ -1,0 +1,175 @@
+{
+  "_id": "99534b55e79abb3f7aa7f6c7",
+  "title": "Stable Merging Sort with Incorrect Swap",
+  "slug": "stable-merging-sort-with-incorrect-swap-bugfix-hard-sorting",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "Sorting",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "sorting"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Implement a stable merge sort algorithm. This algorithm should sort the input array in ascending order and maintain the relative order of duplicate elements.\n\nThe function should return true if the input array is sorted in ascending order, false otherwise.\n\nYou can assume that the input array contains only integers.",
+    "inputFormat": "The input will be an array of integers.",
+    "outputFormat": "The function should return a boolean value indicating whether the input array is sorted or not.",
+    "notes": "This is a stable sorting algorithm, meaning that the order of equal elements is preserved.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "[1, 2, 3, 4, 5]",
+        "output": "true",
+        "explanation": "The input array is already sorted."
+      },
+      {
+        "input": "[5, 4, 3, 2, 1]",
+        "output": "false",
+        "explanation": "The input array is not sorted."
+      },
+      {
+        "input": "[2, 2, 2, 2, 2]",
+        "output": "true",
+        "explanation": "The input array is sorted, with duplicate elements remaining in the same order."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Start by splitting the input array into two halves."
+    },
+    {
+      "order": 2,
+      "text": "Recursively sort the two halves."
+    },
+    {
+      "order": 3,
+      "text": "Merge the two sorted halves."
+    },
+    {
+      "order": 4,
+      "text": "If the merged array is sorted, return true; otherwise, return false."
+    }
+  ],
+  "editorial": {
+    "title": "Stable Merging Sort",
+    "intuition": "The stable merge sort algorithm works by recursively splitting the input array into smaller subarrays until each subarray contains only one element. It then merges these subarrays in a way that preserves the relative order of equal elements.",
+    "bruteForce": "A brute-force approach would involve repeatedly iterating through the input array and swapping adjacent elements until the array is sorted.",
+    "betterSolution": "The stable merge sort algorithm is an efficient and stable sorting algorithm that can be used to sort large input arrays.",
+    "optimalSolution": "The optimal solution involves recursively splitting the input array into smaller subarrays and merging them in a way that preserves the relative order of equal elements.",
+    "proofOfCorrectness": "The stable merge sort algorithm is correct because it maintains the relative order of equal elements and produces a sorted output array.",
+    "dryRun": "Start by sorting the input array [1, 2, 3, 4, 5].",
+    "commonMistakes": [
+      "Incorrectly swapping elements during the merging process.",
+      "Failing to maintain the relative order of equal elements."
+    ],
+    "timeComplexity": "O(n log n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "// TODO: implement merge sort\n",
+    "java": "// TODO: implement merge sort\n",
+    "python": "def merge_sort(nums: list[int]) -> bool:\n    pass\n",
+    "javascript": "function mergeSort(nums) {\n    // TODO: implement merge sort\n}\n"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    bool mergeSort(vector<int>& nums) {\n        if (nums.size() <= 1) return true;\n        vector<int> left(nums.begin(), nums.begin() + nums.size() / 2);\n        vector<int> right(nums.begin() + nums.size() / 2, nums.end());\n        mergeSort(left);\n        mergeSort(right);\n        if (left.size() >= right.size()) { // <--- INCORRECT SWAP\n            nums.clear();\n            nums.insert(nums.end(), left.begin(), left.end());\n            nums.insert(nums.end(), right.begin(), right.end());\n        } else {\n            nums.clear();\n            nums.insert(nums.end(), right.begin(), right.end());\n            nums.insert(nums.end(), left.begin(), left.end());\n        }\n        return true;\n    }\n};\n",
+    "java": "public class Solution {\npublic boolean mergeSort(int[] nums) {\n    if (nums.length <= 1) return true;\n    int[] left = Arrays.copyOfRange(nums, 0, nums.length / 2);\n    int[] right = Arrays.copyOfRange(nums, nums.length / 2, nums.length);\n    mergeSort(left);\n    mergeSort(right);\n    if (left.length >= right.length) { // <--- INCORRECT SWAP\n        nums = Arrays.copyOf(left, left.length + right.length);\n        System.arraycopy(right, 0, nums, left.length, right.length);\n    } else {\n        nums = Arrays.copyOf(right, left.length + right.length);\n        System.arraycopy(left, 0, nums, right.length, left.length);\n    }\n    return true;\n}\n}\n",
+    "python": "class Solution:\n    def merge_sort(self, nums: list[int]) -> bool:\n        if len(nums) <= 1: return True\n        left = nums[:len(nums) // 2]\n        right = nums[len(nums) // 2:]\n        self.merge_sort(left)\n        self.merge_sort(right)\n        if len(left) >= len(right): # <--- INCORRECT SWAP\n            nums.clear()\n            nums.extend(left)\n            nums.extend(right)\n        else:\n            nums.clear()\n            nums.extend(right)\n            nums.extend(left)\n        return True\n",
+    "javascript": "function mergeSort(nums) {\n    if (nums.length <= 1) return true;\n    var left = nums.slice(0, Math.floor(nums.length / 2));\n    var right = nums.slice(Math.floor(nums.length / 2));\n    mergeSort(left);\n    mergeSort(right);\n    if (left.length >= right.length) { // <--- INCORRECT SWAP\n        nums = left.concat(right);\n    } else {\n        nums = right.concat(left);\n    }\n    return true;\n}\n"
+  },
+  "functionSignature": {
+    "cpp": "bool mergeSort(vector<int>& nums);",
+    "java": "public boolean mergeSort(int[] nums);",
+    "python": "def merge_sort(self, nums: list[int]) -> bool:",
+    "javascript": "function mergeSort(nums);"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def merge_sort(self, nums: list[int]) -> bool:\n        if len(nums) <= 1: return True\n        mid = len(nums) // 2\n        left = nums[:mid]\n        right = nums[mid:]\n        return self.merge_sorted(left) and self.merge_sorted(right) and self.merge(left, right)\n\n    def merge_sorted(self, nums: list[int]) -> bool:\n        if len(nums) <= 1: return True\n        mid = len(nums) // 2\n        left = nums[:mid]\n        right = nums[mid:]\n        return self.merge_sorted(left) and self.merge_sorted(right)\n\n    def merge(self, left: list[int], right: list[int]) -> bool:\n        result = []\n        i = j = 0\n        while i < len(left) and j < len(right):\n            if left[i] <= right[j]:\n                result.append(left[i])\n                i += 1\n            else:\n                result.append(right[j])\n                j += 1\n        result.extend(left[i:])\n        result.extend(right[j:])\n        return result == sorted(nums)\n\n\n\nif __name__ == '__main__':\n    nums = [1, 2, 3, 4, 5]\n    solution = Solution()\n    print(solution.merge_sort(nums))\n",
+    "cpp": "class Solution {\npublic:\n    bool mergeSort(vector<int>& nums) {\n        if (nums.size() <= 1) return true;\n        merge_sorted(nums, 0, nums.size() - 1);\n        return true;\n    }\n\n    bool merge_sorted(vector<int>& nums, int left, int right) {\n        if (left >= right) return true;\n        int mid = left + (right - left) / 2;\n        merge_sorted(nums, left, mid);\n        merge_sorted(nums, mid + 1, right);\n        merge(nums, left, mid, right);\n        return true;\n    }\n\n    void merge(vector<int>& nums, int left, int mid, int right) {\n        int n1 = mid - left + 1;\n        int n2 = right - mid;\n        vector<int> left_arr(n1);\n        vector<int> right_arr(n2);\n        for (int i = 0; i < n1; ++i) left_arr[i] = nums[left + i];\n        for (int i = 0; i < n2; ++i) right_arr[i] = nums[mid + 1 + i];\n        int i = 0, j = 0, k = left;\n        while (i < n1 && j < n2) {\n            if (left_arr[i] <= right_arr[j]) {\n                nums[k] = left_arr[i];\n                i++;\n            } else {\n                nums[k] = right_arr[j];\n                j++;\n            }\n            k++;\n        }\n        while (i < n1) {\n            nums[k] = left_arr[i];\n            i++;\n            k++;\n        }\n        while (j < n2) {\n            nums[k] = right_arr[j];\n            j++;\n            k++;\n        }\n    }\n};\n",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5\n1 2 3 4 5",
+      "output": "true",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "5\n5 4 3 2 1",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

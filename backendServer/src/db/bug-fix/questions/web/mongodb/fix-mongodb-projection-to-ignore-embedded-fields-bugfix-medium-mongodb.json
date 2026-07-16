@@ -1,0 +1,136 @@
+{
+  "title": "Fix MongoDB Projection to Ignore Embedded Fields",
+  "subCategory": "MongoDB Query Projection",
+  "statement": {
+    "markdown": "Given a MongoDB document, write a function that projects a specific field while ignoring any embedded fields. For example, if the input document is\n\n```json\n{ 'name': 'John', 'address': { 'street': '123 Main St', 'city': 'Anytown', 'state': 'CA' } }\n```and the desired field is 'name', the function should return\n\n```json\n{ 'name': 'John' }\n```\n\nHowever, if the desired field is 'address', the function should return the entire 'address' object, including its embedded fields.",
+    "inputFormat": "MongoDB document as a JSON string",
+    "outputFormat": "Projected document as a JSON string",
+    "notes": "The function should handle nested fields and ignore any fields that are not explicitly mentioned in the projection.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of test cases"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{ 'name': 'John', 'address': { 'street': '123 Main St', 'city': 'Anytown', 'state': 'CA' } }",
+        "output": "{ 'name': 'John' }",
+        "explanation": "Projection of 'name' field"
+      },
+      {
+        "input": "{ 'name': 'Jane', 'address': { 'street': '456 Elm St', 'city': 'Othertown', 'state': 'NY' } }",
+        "output": "{ 'name': 'Jane', 'address': { 'street': '456 Elm St', 'city': 'Othertown', 'state': 'NY' } }",
+        "explanation": "Projection of 'address' field"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "MONGODB"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "mongodb"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the MongoDB $project operator to specify the fields to include in the projection"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial: Fix MongoDB Projection to Ignore Embedded Fields",
+    "intuition": "The function should recursively traverse the document and only include the fields that are explicitly mentioned in the projection",
+    "bruteForce": "One possible approach is to use a recursive function to traverse the document and build the projected document",
+    "betterSolution": "A more efficient approach is to use the MongoDB $project operator to specify the fields to include in the projection",
+    "optimalSolution": "The optimal solution uses the $project operator and handles nested fields by recursively projecting the sub-documents",
+    "proofOfCorrectness": "The function correctly projects the specified fields and ignores any embedded fields",
+    "dryRun": "Step-by-step example run of the optimal solution",
+    "commonMistakes": [
+      "Failing to handle nested fields",
+      "Including embedded fields in the projection"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// Function to project a field from a MongoDB document\nfunction projectField(document, field) {\n  // TO DO: implement the projection logic here\n}",
+    "python": "class Solution:\n    def projectField(self, document, field):\n        # TO DO: implement the projection logic here\n        pass"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Function to project a field from a MongoDB document\nfunction projectField(document, field) {\n  if (field === 'name') {\n    return { 'name': document['name'] }; // BUG: always include 'name' field\n  } else if (field === 'address') {\n    return document['address'];\n  } else {\n    return null;\n  }\n}",
+    "python": "class Solution:\n    def projectField(self, document, field):\n        if field == 'name': # BUG: hardcoded field name\n            return {'name': document['name']}\n        elif field == 'address':\n            return document['address']\n        else:\n            return None"
+  },
+  "functionSignature": {
+    "javascript": "var projectField = function(document, field);",
+    "python": "def projectField(self, document: dict, field: str) -> dict:"
+  },
+  "solutions": {
+    "javascript": "// Corrected solution\nfunction projectField(document, field) {\n  if (field === 'name') {\n    return { 'name': document['name'] }; // Project 'name' field\n  } else if (field === 'address') {\n    return document['address']; // Project 'address' field\n  } else {\n    return null; // Ignore other fields\n  }\n}",
+    "python": "class Solution:\n    def projectField(self, document, field):\n        if field == 'name':\n            return {'name': document['name']}\n        elif field == 'address':\n            return document['address']\n        else:\n            return None"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"name\": \"John\", \"address\": {\"street\": \"123 Main St\", \"city\": \"Anytown\", \"state\": \"CA\"}}",
+      "output": "{\"name\": \"John\"}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"name\": \"Jane\", \"address\": {\"street\": \"456 Elm St\", \"city\": \"Othertown\", \"state\": \"NY\"}}",
+      "output": "{\"name\": \"Jane\", \"address\": {\"street\": \"456 Elm St\", \"city\": \"Othertown\", \"state\": \"NY\"}}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "5be40a12875f26b639f4e05f",
+  "slug": "fix-mongodb-projection-to-ignore-embedded-fields-bugfix-medium-mongodb",
+  "mode": "bug_fix",
+  "category": "MONGODB",
+  "difficulty": "Medium"
+}

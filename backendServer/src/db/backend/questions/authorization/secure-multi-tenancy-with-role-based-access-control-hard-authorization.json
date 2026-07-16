@@ -1,0 +1,83 @@
+{
+  "_id": "075656dbf57f3e2eab56bfd0",
+  "title": "Secure Multi-Tenancy with Role-Based Access Control",
+  "slug": "secure-multi-tenancy-with-role-based-access-control-hard-authorization",
+  "difficulty": "Hard",
+  "topics": [
+    "AUTHORIZATION"
+  ],
+  "statement": "Implement a multi-tenant e-commerce platform where each tenant has its own set of users with different roles. The platform should enforce role-based access control (RBAC) to restrict users' access to certain resources. Develop a RESTful API using Express.js that authenticates users, authorizes requests, and handles errors. Implement the following endpoints:\n\n**Authentication Endpoints**\n\n* `POST /api/tenants/{tenantId}/users` - Creates a new user for a given tenant.\n* `POST /api/tenants/{tenantId}/sessions` - Authenticates a user and returns a session token.\n\n**Resource Endpoints**\n\n* `GET /api/tenants/{tenantId}/orders` - Retrieves a list of orders for a given tenant and user.\n* `GET /api/tenants/{tenantId}/products` - Retrieves a list of products for a given tenant.\n\n**Authorization**\n\n* Only users with the role `ADMIN` can create orders.\n* Only users with the role `MANAGER` can retrieve orders.\n* All users can retrieve products.\n\n**Constraints**\n\n* Use a mock in-memory database to store tenant and user data.\n* Implement role-based access control using a separate data store for roles.\n\n**Note**: Assume that the mock database is populated with the following data:\n\n* Tenants:\n\t+ `tenantId: 1` - `name: Acme Inc.`\n\t+ `tenantId: 2` - `name: XYZ Corp.`\n* Users:\n\t+ `userId: 1` - `tenantId: 1`, `name: John Doe`, `role: ADMIN`\n\t+ `userId: 2` - `tenantId: 1`, `name: Jane Doe`, `role: MANAGER`\n\t+ `userId: 3` - `tenantId: 2`, `name: Bob Smith`, `role: USER`\n* Roles:\n\t+ `roleId: 1` - `name: ADMIN`\n\t+ `roleId: 2` - `name: MANAGER`\n\t+ `roleId: 3` - `name: USER`",
+  "constraints": [
+    "Must use only the in-memory array or mock database provided",
+    "Must implement role-based access control using a separate data store for roles"
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/tenants/{tenantId}/users",
+      "description": "Creates a new user for a given tenant. Request body should contain `name` and `role` properties."
+    },
+    {
+      "method": "POST",
+      "path": "/api/tenants/{tenantId}/sessions",
+      "description": "Authenticates a user and returns a session token. Request body should contain `username` and `password` properties."
+    },
+    {
+      "method": "GET",
+      "path": "/api/tenants/{tenantId}/orders",
+      "description": "Retrieves a list of orders for a given tenant and user. Requires authentication and authorization."
+    },
+    {
+      "method": "GET",
+      "path": "/api/tenants/{tenantId}/products",
+      "description": "Retrieves a list of products for a given tenant. Requires authentication."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": {
+      "name": "auth-backend",
+      "version": "1.0.0",
+      "main": "index.js",
+      "scripts": {
+        "start": "node index.js"
+      },
+      "dependencies": {
+        "express": "^4.18.2",
+        "json-web-token": "^8.5.1"
+      }
+    },
+    "index.js": null
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [],
+  "hiddenApiTestCases": [],
+  "tags": [
+    "backend",
+    "rbac",
+    "abac",
+    "middleware",
+    "roles",
+    "permissions",
+    "protected-routes",
+    "guards"
+  ]
+}

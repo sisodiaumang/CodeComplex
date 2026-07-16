@@ -1,0 +1,160 @@
+{
+  "_id": "ef972c04cb663c2db61b619e",
+  "title": "Invalid Stack-Based Expression Evaluator",
+  "slug": "invalid-stack-based-expression-evaluator-bugfix-hard-stack-queue",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "Expression Evaluator",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 70,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "stack"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Implement a function `evaluate` that takes a string `s` representing a mathematical expression involving addition, subtraction, multiplication, and division operations. Evaluate this expression using a stack and return the result as a string. The input string will contain digits, operators, and parentheses. Assume that the input expression is valid and does not contain any whitespace characters.",
+    "inputFormat": "s: a string representing a mathematical expression",
+    "outputFormat": "result: a string representing the result of the expression",
+    "notes": "Use a stack to store the intermediate results of the expression. You can assume that the input expression does not contain any invalid characters.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 100,
+        "description": "Size of the input string"
+      }
+    ],
+    "examples": [
+      {
+        "input": "3+2*2",
+        "output": "7",
+        "explanation": "Evaluate the expression 3+2*2 using a stack"
+      },
+      {
+        "input": "10-5/2",
+        "output": "8.0",
+        "explanation": "Evaluate the expression 10-5/2 using a stack"
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text: Implement a function using a stack to store the intermediate results of the expression."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(...) ",
+    "spaceComplexity": "O(...)"
+  },
+  "starterCode": {
+    "cpp": "// TODO: implement evaluate function\nint evaluate(const string& s) {\n    // Your code here\n}",
+    "java": "// TODO: implement evaluate function\npublic int evaluate(String s) {\n    // Your code here\n}",
+    "python": "class Solution:\n    def evaluate(self, s): # TODO: implement evaluate method\n        # Your code here\n        return None",
+    "javascript": "function evaluate(s) { // TODO: implement evaluate function\n    // Your code here\n    return null;"
+  },
+  "buggyStarterCode": {
+    "cpp": "int evaluate(const string& s) {\n    stack<double> stk;\n    for (auto c : s) {\n        if (isdigit(c)) {\n            stk.push(c - '0');\n        } else if (c == '+' || c == '-' || c == '*' || c == '/') {\n            double temp = stk.top();\n            stk.pop();\n            stk.push(temp + stk.top());\n        }\n    }\n    return stk.top();\n}",
+    "java": "public int evaluate(String s) {\n    Stack<Integer> stk = new Stack<>();\n    for (int i = 0; i < s.length(); i++) {\n        char c = s.charAt(i);\n        if (Character.isDigit(c)) {\n            stk.push(c - '0');\n        } else if (c == '+' || c == '-' || c == '*' || c == '/') {\n            int temp = stk.pop();\n            stk.push(temp + stk.pop());\n        }\n    }\n    return stk.pop();\n}",
+    "python": "class Solution:\n    def evaluate(self, s) -> int:\n        stk = [] # BUG: Using list instead of stack\n        for c in s:\n            if c.isdigit():\n                stk.append(int(c))\n            elif c in '+-*/':\n                temp = stk.pop()\n                stk.append(temp + stk.pop())\n        return stk.pop()",
+    "javascript": "function evaluate(s) {\n    let stk = [];\n    for (let c of s) {\n        if (/d/.test(c)) {\n            stk.push(parseInt(c));\n        } else if (c == '+' || c == '-' || c == '*' || c == '/') {\n            let temp = stk.pop();\n            stk.push(temp + stk.pop());\n        }\n    }\n    return stk.pop();\n}"
+  },
+  "functionSignature": {
+    "cpp": "int evaluate(const string& s);",
+    "java": "public int evaluate(String s);",
+    "python": "def evaluate(self, s: str) -> int:",
+    "javascript": "function evaluate(s: string): number;"
+  },
+  "solutions": {
+    "python": "# Solution",
+    "\nimport sys\nclass Solution:\n    def evaluate(self, s: str) -> int:\n        stk = []\n        for c in s:\n            if c.isdigit():\n                stk.append(int(c))\n            elif c in '+-*/':\n                temp = stk.pop()\n                if c == '+':\n                    stk.append(temp + stk.pop())\n                elif c == '-':\n                    stk.append(temp - stk.pop())\n                elif c == '*':\n                    stk.append(temp * stk.pop())\n                else:\n                    if stk.pop() == 0:\n                        stk.append(0)\n                    else:\n                        stk.append(temp / stk.pop())\n        return stk.pop()\n\nif __name__ == '__main__':\n    s = sys.stdin.readline().strip()\n    solution = Solution()\n    print(solution.evaluate(s))\n": "",
+    "cpp": "// Solution",
+    "\n#include <iostream>\n#include <stack>\n#include <string>\n\nusing namespace std;\n\nint evaluate(const string& s) {\n    stack<double> stk;\n    for (auto c : s) {\n        if (isdigit(c)) {\n            stk.push(c - '0');\n        } else if (c == '+' || c == '-' || c == '*' || c == '/') {\n            double temp = stk.top();\n            stk.pop();\n            if (c == '+') {\n                stk.push(temp + stk.top());\n            } else if (c == '-') {\n                stk.push(temp - stk.top());\n            } else if (c == '*') {\n                stk.push(temp * stk.top());\n            } else {\n                if (stk.top() == 0) {\n                    stk.push(0);\n                } else {\n                    stk.push(temp / stk.top());\n                }\n            }\n        }\n    }\n    return stk.top();\n}\n\nint main() {\n    string s;\n    getline(cin, s);\n    cout << evaluate(s) << endl;\n    return 0;\n}\n": "",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "3+2*2",
+      "output": "7",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "10-5/2",
+      "output": "8.0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

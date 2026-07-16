@@ -1,0 +1,164 @@
+{
+  "_id": "28da76ffe6d299a2831f7bac",
+  "title": "Incorrect Trie Insertion Causing Duplicate Node Creation",
+  "slug": "incorrect-trie-insertion-causing-duplicate-node-creation-bugfix-medium-tries",
+  "difficulty": "Medium",
+  "category": "DSA",
+  "subCategory": "TRIE",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 55,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "trie"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Implement a solution to insert words into a trie. Ensure that each word is stored exactly once and that insertion is performed efficiently. The solution should handle large datasets. The trie can contain at most 10,000 characters.",
+    "inputFormat": "The input will contain words to be inserted into the trie, one word per line.",
+    "outputFormat": "The solution should print the updated trie after all words have been inserted.",
+    "notes": "The solution should minimize the number of memory allocations.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10,
+        "description": "Number of words to insert"
+      },
+      {
+        "variable": "wordLength",
+        "type": "integer",
+        "min": 1,
+        "max": 100,
+        "description": "Maximum length of a word"
+      }
+    ],
+    "examples": [
+      {
+        "input": "3\nhello\nworld\nhelloworld\n",
+        "output": "Updated trie after all words have been inserted",
+        "explanation": "The solution should create a trie containing 'hello', 'world', and 'helloworld'."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use a depth-first search approach to insert words into the trie."
+    },
+    {
+      "order": 2,
+      "text": "Consider handling duplicate words by checking if a word is already present in the trie before attempting to insert it."
+    }
+  ],
+  "editorial": {
+    "title": "Correct Approach to Trie Insertion",
+    "intuition": "The solution should use a trie data structure to efficiently store words. When inserting a word, the solution should traverse the trie and create new nodes as necessary. If a word is already present in the trie, the solution should handle it by updating the existing nodes.",
+    "bruteForce": "Naive approach: insert each word into the trie by iterating over each character and creating new nodes as necessary.",
+    "betterSolution": "Improved approach: use a hash map to store the existing words in the trie and update the nodes accordingly.",
+    "optimalSolution": "Optimal approach: use a trie data structure and leverage its existing functionality to efficiently insert words.",
+    "proofOfCorrectness": "The solution is correct because it ensures that each word is stored exactly once in the trie and that insertion is performed efficiently.",
+    "dryRun": "Step-by-step example run: insert the words 'hello', 'world', and 'helloworld' into the trie and verify that the resulting trie contains the correct nodes.",
+    "commonMistakes": [
+      "Duplicate node creation",
+      "Inefficient insertion approach"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "class TrieNode { ... }; class Solution { ... };",
+    "java": "class TrieNode { ... }; class Solution { ... };",
+    "python": "class TrieNode: ...; class Solution: ...;",
+    "javascript": "class TrieNode { ... }; class Solution { ... };"
+  },
+  "buggyStarterCode": {
+    "cpp": "class TrieNode { ... }; class Solution { public: void insert(string word) { ... } };",
+    "java": "class TrieNode { ... }; class Solution { public void insert(String word) { ... } };",
+    "python": "class TrieNode: ...; class Solution: def insert(self, word: str) -> None: ...",
+    "javascript": "class TrieNode { ... }; class Solution { public insert(word: string): void { ... } }"
+  },
+  "functionSignature": {
+    "cpp": "void Solution::insert(string word);",
+    "java": "void Solution.insert(String word);",
+    "python": "def Solution.insert(self, word: str) -> None:",
+    "javascript": "insert(word: string): void;"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def __init__(self):\n        self.root = TrieNode()\n\n    def insert(self, word: str) -> None:\n        node = self.root\n        for c in word:\n            if not hasattr(node, 'children'):\n                node.children = {}\n            if not c in node.children:\n                node.children[c] = TrieNode()\n            node = node.children[c]\n\n        # BUGGY CODE: Create a new node for each character instead of updating the existing one\n        if not hasattr(node, 'word'):\n            node.word = word\n\n    def get_trie(self) -> str:\n        def dfs(node, current_word):\n            if node.word:\n                return current_word + node.word + '\\n'\n            result = ''\n            for c, child in sorted(node.children.items(), key=lambda x: x[0]):\n                result += dfs(child, current_word + c)\n            return result\n\n        return dfs(self.root, '')\n\n    def main(self):\n        T = int(input())\n        for _ in range(T):\n            word = input().strip()\n            self.insert(word)\n        print(self.get_trie())",
+    "cpp": "class Solution:\n  public:\n    void insert(string word) {\n      auto node = root;\n      for (char c : word) {\n        if (!node->children) {\n          node->children = new map<char, TrieNode*>;\n        }\n        if (!node->children->count(c)) {\n          node->children->insert({c, new TrieNode});\n        }\n        node = node->children->at(c);\n      }\n\n      // BUGGY CODE: Create a new node for each character instead of updating the existing one\n      if (!node->word) {\n        node->word = word;\n      }\n    }\n\n    string get_trie() {\n      string result;\n      function<void(TrieNode*, string)> dfs = [&](TrieNode* node, string current_word) {\n        if (node->word) {\n          result += current_word + node->word + '\\n';\n        }\n        for (auto& child : *node->children) {\n          dfs(child.second, current_word + child.first);\n        }\n      };\n      dfs(root, '');\n      return result;\n    }\n\n    void main() {\n      int T;\n      cin >> T;\n      for (int i = 0; i < T; i++) {\n        string word;\n        cin >> word;\n        insert(word);\n      }\n      cout << get_trie();\n    }\n  private:\n    TrieNode* root;\n};",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "3\nhello\nworld\nhelloworld\n",
+      "output": "Updated trie after all words have been inserted\nhello\nworld\nhelloworld\n",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_hidden_generated",
+      "input": "3\nhello\nworld\nhelloworld\n",
+      "output": "Updated trie after all words have been inserted\nhello\nworld\nhelloworld\n",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

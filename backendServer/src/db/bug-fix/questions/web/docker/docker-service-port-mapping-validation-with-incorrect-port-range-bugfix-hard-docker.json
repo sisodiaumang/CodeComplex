@@ -1,0 +1,151 @@
+{
+  "title": "DOCKER Service Port Mapping Validation with Incorrect Port Range",
+  "subCategory": "Docker Port Mapping",
+  "statement": {
+    "markdown": "Write a function that validates the port mappings in a Docker Compose service configuration. The function should take a string representing the service configuration as input and return a boolean indicating whether the port mappings are valid. A port mapping is valid if the exposed port is not equal to the host port and the exposed port is within the range of 1024 to 65535.",
+    "inputFormat": "A string representing the Docker Compose service configuration in the following format:\n\n`service:\n  ports:\n    - <host_port>:<exposed_port>`\n\nwhere `<host_port>` and `<exposed_port>` are integers.",
+    "outputFormat": "A boolean indicating whether the port mappings are valid.",
+    "notes": "The function should ignore any port mappings that are commented out or have an empty host or exposed port.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of port mappings in the service configuration."
+      },
+      {
+        "variable": "portRange",
+        "type": "integer",
+        "min": 1024,
+        "max": 65535,
+        "description": "The valid port range for exposed ports."
+      }
+    ],
+    "examples": [
+      {
+        "input": "service:\n  ports:\n    - 8080:8080\n",
+        "output": "false",
+        "explanation": "The exposed port is equal to the host port, so the port mapping is invalid."
+      },
+      {
+        "input": "service:\n  ports:\n    - 8080:8081\n",
+        "output": "true",
+        "explanation": "The exposed port is not equal to the host port, and it is within the valid port range."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DOCKER"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "docker"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text: Split the input string into lines and iterate over each line to extract the port mappings."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(...) ",
+    "spaceComplexity": "O(...)"
+  },
+  "starterCode": {
+    "javascript": "function validatePortMappings(config) {\n  // Split the config string into lines\n  const lines = config.split('\\n');\n  // Iterate over each line to extract the port mappings\n  for (let line of lines) {\n    // Check if the line is a port mapping\n    if (line.trim().startsWith('ports:')) {\n      // Extract the host and exposed ports\n      const [hostPort, exposedPort] = line.trim().split(':');\n      // Check if the exposed port is within the valid range\n      if (Number(exposedPort) >= 1024 && Number(exposedPort) <= 65535) {\n        // Check if the exposed port is not equal to the host port\n        if (Number(exposedPort) !== Number(hostPort)) {\n          return true;\n        }\n      }\n    }\n  }\n  return false;\n}",
+    "python": "class Solution:\n  def validate_port_mappings(self, config: str) -> bool:\n    # Split the config string into lines\n    lines = config.split('\\n')\n    # Iterate over each line to extract the port mappings\n    for line in lines:\n      # Check if the line is a port mapping\n      if line.strip().startswith('ports:'):\n        # Extract the host and exposed ports\n        host_port, exposed_port = line.strip().split(':')\n        # Check if the exposed port is within the valid range\n        if int(exposed_port) >= 1024 and int(exposed_port) <= 65535:\n          # Check if the exposed port is not equal to the host port\n          if int(exposed_port) != int(host_port):\n            return True\n    return False\n"
+  },
+  "buggyStarterCode": {
+    "javascript": "function validatePortMappings(config) {\n  // Split the config string into lines\n  const lines = config.split('\\n');\n  // Iterate over each line to extract the port mappings\n  for (let line of lines) {\n    // Check if the line is a port mapping\n    if (line.trim().startsWith('ports:')) {\n      // Extract the host and exposed ports\n      const [hostPort, exposedPort] = line.trim().split(':');\n      // Check if the exposed port is within the valid range\n      if (Number(exposedPort) >= 1024 && Number(exposedPort) <= 65535) {\n        // Check if the exposed port is not equal to the host port\n        if (Number(exposedPort) === Number(hostPort)) {\n          return true;\n        }\n      }\n    }\n  }\n  return false;\n}",
+    "python": "class Solution:\n  def validate_port_mappings(self, config: str) -> bool:\n    # Split the config string into lines\n    lines = config.split('\\n')\n    # Iterate over each line to extract the port mappings\n    for line in lines:\n      # Check if the line is a port mapping\n      if line.strip().startswith('ports:'):\n        # Extract the host and exposed ports\n        host_port, exposed_port = line.strip().split(':')\n        # Check if the exposed port is within the valid range\n        if int(exposed_port) >= 1024 and int(exposed_port) <= 65535:\n          # Check if the exposed port is not equal to the host port\n          if int(exposed_port) == int(host_port):\n            return True\n    return False\n"
+  },
+  "functionSignature": {
+    "javascript": "function validatePortMappings(config: string): boolean;",
+    "python": "def validate_port_mappings(self, config: str) -> bool:"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction solve(config) {\n  // Parse the config string\n  const configLines = config.split('\\n');\n  // Initialize a flag to indicate whether the port mappings are valid\n  let isValid = true;\n\n  // Iterate over each line to extract the port mappings\n  for (let line of configLines) {\n    // Check if the line is a port mapping\n    if (line.trim().startsWith('ports:')) {\n      // Extract the host and exposed ports\n      const [hostPort, exposedPort] = line.trim().split(':');\n\n      // Check if the exposed port is within the valid range\n      if (Number(exposedPort) >= 1024 && Number(exposedPort) <= 65535) {\n        // Check if the exposed port is not equal to the host port\n        if (Number(exposedPort) === Number(hostPort)) {\n          isValid = false;\n          break;\n        }\n      } else {\n        isValid = false;\n        break;\n      }\n    }\n  }\n\n  return isValid;\n}\n\n// Read input from stdin\nconst readline = require('readline').createInterface({\n  input: process.stdin,\n  output: process.stdout\n});\n\n// Read the config string from stdin\nreadline.on('line', (config) => {\n  // Call the solve function with the config string\n  const isValid = solve(config);\n  // Print the result to stdout\n  console.log(isValid);\n});",
+    "python": "import sys\n\nclass Solution:\n  def validate_port_mappings(self, config: str) -> bool:\n    # Parse the config string\n    config_lines = config.split('\\n')\n    # Initialize a flag to indicate whether the port mappings are valid\n    is_valid = True\n\n    # Iterate over each line to extract the port mappings\n    for line in config_lines:\n      # Check if the line is a port mapping\n      if line.strip().startswith('ports:'):\n        # Extract the host and exposed ports\n        host_port, exposed_port = line.strip().split(':')\n\n        # Check if the exposed port is within the valid range\n        if int(exposed_port) >= 1024 and int(exposed_port) <= 65535:\n          # Check if the exposed port is not equal to the host port\n          if int(exposed_port) == int(host_port):\n            is_valid = False\n            break\n        else:\n          is_valid = False\n          break\n\n    return is_valid\n\n# Read input from stdin\nwith open(0, 'r') as sys.stdin:\n  # Read the config string from stdin\n  config = sys.stdin.read()\n\n  # Call the validate_port_mappings method with the config string\n  solution = Solution()\n  result = solution.validate_port_mappings(config)\n\n  # Print the result to stdout\n  print(result)"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "service:\n  ports:\n    - 8080:8080\n",
+      "output": "false",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "service:\n  ports:\n    - 8080:8081\n",
+      "output": "true",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_3",
+      "input": "service:\n  ports:\n    - 8080:8080\n    - 8081:8082\n",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "3ce0aa7ed1e8eb1bc09a05f9",
+  "slug": "docker-service-port-mapping-validation-with-incorrect-port-range-bugfix-hard-docker",
+  "mode": "bug_fix",
+  "category": "DOCKER",
+  "difficulty": "Hard"
+}

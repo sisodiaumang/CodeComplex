@@ -1,0 +1,151 @@
+{
+  "title": "Fixing Node.js Express Middleware for Handling Nested Routes with Incorrect Route Resolution",
+  "subCategory": "Express Routing",
+  "statement": {
+    "markdown": "Write a Node.js Express middleware function that handles nested routes with a subtle logical bug. The function should correctly resolve the route based on the request URL and return the corresponding response. However, the current implementation has a bug that causes the function to return the wrong response for certain URLs.",
+    "inputFormat": "The input will be an Express request object and a callback function to be called with the response.",
+    "outputFormat": "The function should return the response from the callback function or throw an error.",
+    "notes": "The function should handle nested routes correctly and return the correct response for each URL.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of routes in the middleware function"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{'url': '/admin/users', 'method': 'GET'}",
+        "output": "Hello from admin/users",
+        "explanation": "The function should return 'Hello from admin/users' for the given URL and method"
+      },
+      {
+        "input": "{'url': '/admin/users/123', 'method': 'GET'}",
+        "output": "Hello from admin/users/123",
+        "explanation": "The function should return 'Hello from admin/users/123' for the given URL and method"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 100,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "NODE_JS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "node_js"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Check the route resolution logic for nested routes"
+    },
+    {
+      "order": 2,
+      "text": "Consider using a recursive function to handle nested routes"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "Solution using a recursive function",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "function nestedRoutes(req, res, next) { if (req.url.startsWith('/admin')) { // TO DO } next(); }"
+  },
+  "buggyStarterCode": {
+    "javascript": "function nestedRoutes(req, res, next) { if (req.url.startsWith('/admin')) { if (req.url.startsWith('/admin/users')) { res.send('Hello from admin/users'); } else if (req.url.startsWith('/admin/users/')) { res.send('Hello from admin/users/' + req.url.split('/admin/users/')[1]); } } else { next(); } }"
+  },
+  "functionSignature": {
+    "javascript": "function nestedRoutes(req, res, next) { }"
+  },
+  "solutions": {
+    "javascript": "// Correct nested routes middleware function\nfunction nestedRoutes(req, res, next) {\n    if (req.url.startsWith('/admin')) {\n        const parts = req.url.split('/admin/');\n        if (parts.length > 1) {\n            const [base, path] = parts;\n            if (path.startsWith('users')) {\n                res.send(`Hello from ${base}/${path}`);\n            } else {\n                next();\n            }\n        } else {\n            next();\n        }\n    } else {\n        next();\n    }\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{'url': '/admin/users', 'method': 'GET'}",
+      "output": "Hello from admin/users",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "{'url': '/admin/users/123', 'method': 'GET'}",
+      "output": "Hello from admin/users/123",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_1",
+      "input": "{'url': '/admin/dashboard', 'method': 'GET'}",
+      "output": "0",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{'url': '/admin/users/123/abc', 'method': 'GET'}",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "_id": "d5bb332fc916e54dbebdb3f2",
+  "slug": "fixing-nodejs-express-middleware-for-handling-nested-routes-with-incorrect-route-resolution-bugfix-hard-node_js",
+  "mode": "bug_fix",
+  "category": "NODE_JS",
+  "difficulty": "Hard"
+}

@@ -1,0 +1,225 @@
+{
+  "_id": "shortest-path-in-undirected-graph",
+  "title": "Shortest Path in Undirected Graph",
+  "slug": "shortest-path-in-undirected-graph",
+  "difficulty": "Hard",
+  "category": "GRAPH",
+  "subCategory": "Shortest Path Algorithms",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 60,
+    "points": 800,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "Graphs",
+      "Shortest Path Algorithms"
+    ],
+    "patterns": [
+      "Dijkstra's algorithm",
+      "Breadth-First Search"
+    ],
+    "prerequisites": [
+      "Graph Traversal",
+      "Graph Representation"
+    ],
+    "variants": [],
+    "tags": [
+      "Graph Theory",
+      "Algorithm Design"
+    ],
+    "keywords": [
+      "Graph Algorithms",
+      "Shortest Path",
+      "Dijkstra",
+      "BFS"
+    ],
+    "interviewFrequency": 5,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "You are given an undirected weighted graph with N vertices numbered from 1 to N and M edges. Each edge connects two distinct vertices u and v and has a positive integer weight w. The graph may contain multiple edges between the same pair of vertices but does not contain self‑loops. Your task is to compute the length of the shortest path between two given vertices S (source) and T (target). If there is no path connecting S and T, output -1.\n\nThe graph is undirected, so an edge (u, v, w) can be traversed in both directions with the same cost w. All edge weights are positive, therefore Dijkstra’s algorithm can be used to find the optimal distance efficiently.\n\n**Input Format**\n- The first line contains a single integer N, the number of vertices.\n- The second line contains a single integer M, the number of edges.\n- The next M lines each contain three space‑separated integers u, v and w, describing an undirected edge between vertices u and v with weight w.\n- The last line contains two space‑separated integers S and T, the source and target vertices.\n\n**Output Format**\n- Print a single integer: the length of the shortest path from S to T. If no such path exists, print -1.\n\n**Notes**\n- The graph can be disconnected.\n- Multiple edges between the same pair of vertices are allowed; each should be considered separately.\n- Because all weights are positive, the shortest‑path distance is well defined and can be found with Dijkstra’s algorithm using a priority queue.\n\n**Constraints**\n- 1 ≤ N ≤ 100000\n- 0 ≤ M ≤ 200000\n- 1 ≤ u, v ≤ N\n- u ≠ v\n- 1 ≤ w ≤ 1000000000\n- 1 ≤ S, T ≤ N\n\n**Example**\n```\n5\n6\n1 2 2\n1 3 4\n2 3 1\n2 4 7\n3 5 3\n4 5 1\n1 5\n```\nThe shortest path from vertex 1 to vertex 5 is 1 → 2 → 3 → 5 with total weight 2+1+3 = 6, so the output is:\n```\n6\n```\n\n**Another Example**\n```\n4\n2\n1 2 5\n3 4 10\n1 4\n```\nVertices 1 and 4 belong to different connected components, therefore there is no path. The output is:\n```\n-1\n```",
+    "inputFormat": "N\nM\nu1 v1 w1\nu2 v2 w2\n...\nuM vM wM\nS T",
+    "outputFormat": "shortest_distance_or_-1",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "N",
+        "type": "int",
+        "min": 1,
+        "max": 100000
+      },
+      {
+        "variable": "M",
+        "type": "int",
+        "min": 0,
+        "max": 200000
+      },
+      {
+        "variable": "w",
+        "type": "int",
+        "min": 1,
+        "max": 1000000000
+      },
+      {
+        "variable": "S",
+        "type": "int",
+        "min": 1,
+        "max": "N"
+      },
+      {
+        "variable": "T",
+        "type": "int",
+        "min": 1,
+        "max": "N"
+      }
+    ],
+    "examples": [
+      {
+        "input": "5\n6\n1 2 2\n1 3 4\n2 3 1\n2 4 7\n3 5 3\n4 5 1\n1 5",
+        "output": "6",
+        "explanation": "Shortest path 1-2-3-5 with total weight 6."
+      },
+      {
+        "input": "4\n2\n1 2 5\n3 4 10\n1 4",
+        "output": "-1",
+        "explanation": "Vertices 1 and 4 are in different components, no path exists."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Since the graph is undirected, you can treat each edge as two directed edges in the same direction, but you don't need to store them separately. This can simplify the graph representation and edge handling."
+    },
+    {
+      "order": 2,
+      "text": "You can use Dijkstra's algorithm to find the shortest path. This algorithm works by maintaining a priority queue of vertices to visit, where the priority of each vertex is its distance from the source vertex. You can use a priority queue data structure to efficiently extract the vertex with the minimum priority."
+    },
+    {
+      "order": 3,
+      "text": "Dijkstra's algorithm requires you to maintain a distance array to keep track of the minimum distance from the source vertex to each vertex. You can initialize the distance array with infinity for all vertices except the source vertex, which should be initialized with 0."
+    },
+    {
+      "order": 4,
+      "text": "When updating the distance of a vertex, you need to consider all its neighbors and update the distance if a shorter path is found. You can use the edge weights and the current distance of the vertex to calculate the new distance."
+    },
+    {
+      "order": 5,
+      "text": "Since the graph may be disconnected, you need to handle the case where there is no path between the source and target vertices. This can be done by checking if the target vertex is reachable from the source vertex before returning the distance."
+    }
+  ],
+  "editorial": {
+    "title": "From Brute‑Force to Dijkstra: The Shortest Path in an Undirected Graph",
+    "intuition": "The problem asks for the minimum total weight between two vertices in a weighted, undirected graph. A naïve approach would try every possible path, but the number of paths explodes combinatorially, making it infeasible for the given limits. The key observation is that all edge weights are non‑negative, which allows a greedy strategy: once the shortest distance to a vertex is known, it will never improve. This property is the cornerstone of Dijkstra’s algorithm, which processes vertices in order of increasing tentative distance using a priority queue.",
+    "bruteForce": "A brute‑force solution would enumerate all simple paths from S to T, compute their total weights, and keep the minimum. Even with pruning, the number of paths can grow exponentially with the number of vertices, leading to an impractical O(2^N) or worse runtime. For N up to 100 000 and M up to 200 000, such an approach would never finish within reasonable time limits.",
+    "betterSolution": "The optimal approach is Dijkstra’s algorithm. It maintains a priority queue of vertices keyed by their current best known distance from S. Repeatedly extracting the vertex with the smallest distance guarantees that when a vertex is removed from the queue, its distance is finalized. Relaxing its outgoing edges updates neighboring distances if a shorter path is found. The algorithm stops when T is extracted or the queue is empty.",
+    "optimalSolution": "Dijkstra’s algorithm runs in O((N+M) log N) time and uses O(N+M) space, which meets the problem’s constraints. The priority queue ensures that each vertex is processed only once with its optimal distance, and each edge is considered a constant number of times.",
+    "proofOfCorrectness": "Because all edge weights are non‑negative, the shortest path to any vertex is a simple path that does not revisit vertices. When a vertex u is extracted from the priority queue, all paths to u that could be shorter would have to go through vertices already processed, but those vertices have smaller or equal distances. Therefore, the distance assigned to u is the minimum possible. By induction over the extraction order, all distances finalized by the algorithm are optimal, and the distance to T (if reachable) is the true shortest path length.",
+    "dryRun": "Consider a graph with vertices 1–4 and edges: 1–2 (3), 1–3 (1), 2–4 (1), 3–4 (5). Start at S=1. The queue initially holds (0,1). Extract 1, relax 2 to 3 and 3 to 1. Queue: (1,3),(3,2). Extract 3, relax 4 to 6. Queue: (3,2),(6,4). Extract 2, relax 4 to 4 (better). Queue: (4,4),(6,4). Extract 4, distance 4 is final. The algorithm correctly returns 4, the shortest path 1–2–4.",
+    "commonMistakes": [
+      "Using a simple array for the priority queue, which leads to O(N^2) time; instead, a binary heap is required.",
+      "Assuming that a vertex’s first visit guarantees the shortest path without considering that later relaxations could improve it; Dijkstra’s algorithm relies on the non‑negative weight property.",
+      "Neglecting to break the loop when the target vertex is extracted, causing unnecessary extra work.",
+      "Using 0‑based indexing for vertices while the input is 1‑based, leading to off‑by‑one errors.",
+      "Not initializing the distance array with a sufficiently large value, causing overflow or incorrect comparisons.",
+      "Treating the graph as directed when it is undirected, missing half of the edges."
+    ],
+    "timeComplexity": "O((N+M) log N)",
+    "spaceComplexity": "O(N+M)"
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    long long shortestPath(int n, vector<vector<int>>& edges, int S, int T) {\n        // TODO: implement\n        return -1;\n    }\n};",
+    "java": "import java.util.*;\n\nclass Solution {\n    public long shortestPath(int n, int[][] edges, int S, int T) {\n        // TODO: implement\n        return -1L;\n    }\n}",
+    "python": "class Solution:\n    def shortestPath(self, n: int, edges: List[List[int]], S: int, T: int) -> int:\n        # TODO: implement\n        return -1",
+    "javascript": "/**\n * @param {number} n\n * @param {number[][]} edges\n * @param {number} S\n * @param {number} T\n * @return {number}\n */\nvar shortestPath = function(n, edges, S, T) {\n    // TODO: implement\n    return -1;\n};"
+  },
+  "functionSignature": {
+    "cpp": "long long shortestPath(int n, vector<vector<int>>& edges, int S, int T);",
+    "java": "public long shortestPath(int n, int[][] edges, int S, int T);",
+    "python": "def shortestPath(self, n: int, edges: list[list[int]], S: int, T: int) -> int:",
+    "javascript": "var shortestPath = function(n, edges, S, T);"
+  },
+  "solutions": {
+    "python": "import sys\nimport heapq\n\nclass Solution:\n    def shortestPath(self, n: int, edges: list[list[int]], S: int, T: int) -> int:\n        # build adjacency list\n        adj = [[] for _ in range(n + 1)]\n        for u, v, w in edges:\n            adj[u].append((v, w))\n            adj[v].append((u, w))\n        INF = 10**19\n        dist = [INF] * (n + 1)\n        dist[S] = 0\n        pq = [(0, S)]\n        while pq:\n            d, u = heapq.heappop(pq)\n            if d != dist[u]:\n                continue\n            if u == T:\n                break\n            for v, w in adj[u]:\n                nd = d + w\n                if nd < dist[v]:\n                    dist[v] = nd\n                    heapq.heappush(pq, (nd, v))\n        return -1 if dist[T] == INF else dist[T]\n\nif __name__ == '__main__':\n    data = sys.stdin.read().split()\n    it = iter(data)\n    try:\n        n = int(next(it))\n        m = int(next(it))\n        edges = []\n        for _ in range(m):\n            u = int(next(it)); v = int(next(it)); w = int(next(it))\n            edges.append([u, v, w])\n        S = int(next(it)); T = int(next(it))\n    except StopIteration:\n        sys.exit(0)\n    sol = Solution()\n    ans = sol.shortestPath(n, edges, S, T)\n    print(ans)",
+    "cpp": "#include <numeric>\n#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    long long shortestPath(int n, vector<vector<int>>& edges, int S, int T) {\n        vector<vector<pair<int,int>>> adj(n+1);\n        for (auto &e : edges) {\n            int u = e[0], v = e[1], w = e[2];\n            adj[u].push_back({v,w});\n            adj[v].push_back({u,w});\n        }\n        const long long INF = LLONG_MAX/4;\n        vector<long long> dist(n+1, INF);\n        dist[S] = 0;\n        using P = pair<long long,int>;\n        priority_queue<P, vector<P>, greater<P>> pq;\n        pq.push({0, S});\n        while (!pq.empty()) {\n            auto _tmp_binding_0 = pq.top(); auto d = _tmp_binding_0.first; auto u = _tmp_binding_0.second; pq.pop();\n            if (d != dist[u]) continue;\n            if (u == T) break;\n            for (auto &pr : adj[u]) {\n                int v = pr.first; int w = pr.second;\n                long long nd = d + w;\n                if (nd < dist[v]) {\n                    dist[v] = nd;\n                    pq.push({nd, v});\n                }\n            }\n        }\n        return dist[T]==INF ? -1 : dist[T];\n    }\n};\n\nint main(){\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int n; if(!(cin>>n)) return 0;\n    int m; cin>>m;\n    vector<vector<int>> edges(m, vector<int>(3));\n    for(int i=0;i<m;++i){\n        cin>>edges[i][0]>>edges[i][1]>>edges[i][2];\n    }\n    int S,T; cin>>S>>T;\n    Solution sol;\n    long long ans = sol.shortestPath(n, edges, S, T);\n    cout<<ans<<\"\\n\";\n    return 0;\n}\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.5
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5\n6\n1 2 2\n1 3 4\n2 3 1\n2 4 7\n3 5 3\n4 5 1\n1 5",
+      "output": "6",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "4\n2\n1 2 5\n3 4 10\n1 4",
+      "output": "-1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint_3",
+      "input": "2\n1\n1 2 1\n1 1 1\n1 2",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "sorted_7",
+      "input": "5\n4\n1 2 1\n2 3 1\n3 4 1\n4 5 1\n1 5 -1",
+      "output": "4",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sorted"
+    },
+    {
+      "id": "reverse_sorted_8",
+      "input": "5\n4\n5 4 1\n4 3 1\n3 2 1\n2 1 1\n1 5 -1",
+      "output": "4",
+      "isVisible": false,
+      "weight": 1,
+      "category": "reverse_sorted"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

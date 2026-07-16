@@ -1,0 +1,150 @@
+{
+  "title": "Fixing a Memoized React Component Re-renders Due to Changing Object Properties",
+  "subCategory": "Memoization in React",
+  "statement": {
+    "markdown": "Write a function to optimize the `useState` hook in a memoized React component. The component updates its state when the user changes the name of a person in the list. However, the component re-renders unnecessarily when the user updates the name of another person in the list. Your task is to fix the bug and prevent the component from re-rendering unnecessarily.",
+    "inputFormat": "The input is an array of objects, where each object represents a person with a unique ID and a name.",
+    "outputFormat": "The output should be an array of objects with the same structure as the input, but with the updated name for the person with the specified ID.",
+    "notes": "The `useState` hook is used to update the state of the component. The `useMemo` hook is used to memoize the state so that it does not re-render unnecessarily.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 1000,
+        "description": "The number of people in the list"
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 1,
+        "max": 100,
+        "description": "The number of updates to the list"
+      },
+      {
+        "variable": "k",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The maximum ID of a person in the list"
+      }
+    ],
+    "examples": [
+      {
+        "input": "[{ id: 1, name: 'John' }, { id: 2, name: 'Jane' }]\nupdate 1 2\n[ { id: 2, name: 'Bob' } ]\nupdate 2 1\n[ { id: 1, name: 'Alice' } ]\n",
+        "output": "[{ id: 1, name: 'Alice' }, { id: 2, name: 'Bob' }]\n",
+        "explanation": "The component updates the name of the person with ID 1 and then updates the name of the person with ID 2."
+      },
+      {
+        "input": "[{ id: 1, name: 'John' }, { id: 2, name: 'Jane' }, { id: 3, name: 'Bob' }]\nupdate 1 2\n[ { id: 2, name: 'Alice' } ]\nupdate 2 3\n[ { id: 3, name: 'Jane' } ]\nupdate 3 1\n[ { id: 1, name: 'Bob' } ]\n",
+        "output": "[{ id: 1, name: 'Bob' }, { id: 2, name: 'Alice' }, { id: 3, name: 'Jane' }]\n",
+        "explanation": "The component updates the name of the person with ID 1, then updates the name of the person with ID 2, and finally updates the name of the person with ID 3."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 100,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "REACT"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "react"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "The bug is due to the `useState` hook being called with the entire state array as an argument. Instead, you should only pass the updated person to the hook."
+    }
+  ],
+  "editorial": {
+    "title": "Optimizing a Memoized React Component",
+    "intuition": "When using the `useState` hook, you should only pass the updated value to the hook and not the entire state array.",
+    "bruteForce": "The brute force approach would be to update the entire state array every time a person's name is changed.",
+    "betterSolution": "You can use the `useMemo` hook to memoize the state array and only update it when the person's name is changed.",
+    "optimalSolution": "To prevent the component from re-rendering unnecessarily, you should use the `useMemo` hook to memoize the state array and only update it when the person's name is changed.",
+    "proofOfCorrectness": "The correct solution prevents the component from re-rendering unnecessarily and ensures that the state array is updated correctly.",
+    "dryRun": "Step-by-step example run to illustrate the correct solution.",
+    "commonMistakes": [
+      "Updating the entire state array every time a person's name is changed",
+      "Not using the `useMemo` hook to memoize the state array"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "function updatePerson(personList, updates) {\n  const [state, setState] = useState([]);\n  const [previousState, setPreviousState] = useState([]);\n\n  useEffect(() => {\n    setPreviousState(state);\n  }, [state]);\n\n  const updateState = (updates) => {\n    // Update the state array here\n  };\n\n  return state;\n}",
+    "python": "class Solution:\n  def update_person(self, person_list, updates):\n    self.state = []\n    self.previous_state = []\n\n    self.update_state = lambda updates: None\n\n    return self.state\n"
+  },
+  "buggyStarterCode": {
+    "javascript": "function updatePerson(personList, updates) {\n  const [state, setState] = useState([]);\n  const [previousState, setPreviousState] = useState([]);\n\n  useEffect(() => {\n    setPreviousState(state);\n  }, [state]);\n\n  const updateState = (updates) => {\n    setState([...state, updates]);\n  };\n\n  return state;\n}",
+    "python": "class Solution:\n  def update_person(self, person_list, updates):\n    self.state = []\n    self.previous_state = []\n\n    self.update_state = lambda updates: None\n\n    return self.state\n"
+  },
+  "functionSignature": {
+    "javascript": "var updatePerson = function(personList, updates)",
+    "python": "def update_person(self, person_list, updates)"
+  },
+  "solutions": {
+    "javascript": "// Solution\nconst updatePerson = function(personList, updates) {\n  const [state, setState] = useState([]);\n  const [previousState, setPreviousState] = useState([]);\n\n  useEffect(() => {\n    setPreviousState(state);\n  }, [state]);\n\n  const updateState = (updates) => {\n    setState((prev) => [...prev, updates]);\n  };\n\n  return state;\n}",
+    "python": "from sys import stdin\nfrom collections import defaultdict\n\nclass Solution:\n  def update_person(self, person_list, updates):\n    state = []\n    previous_state = []\n\n    self.update_state = lambda updates: None\n\n    for update in updates:\n      id, name = update\n      self.update_state((id, name))\n\n    return state\n\nif __name__ == '__main__':\n  person_list = []\n  updates = []\n  for line in stdin:\n    if line.startswith('update '):\n      id, name = line.split(' ', 1)\n      updates.append((int(id), name))\n    else:\n      person_list = json.loads(line)\n\n  solution = Solution()\n  result = solution.update_person(person_list, updates)\n  print(json.dumps(result))"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "[{ id: 1, name: 'John' }, { id: 2, name: 'Jane' }]\nupdate 1 2\n[ { id: 2, name: 'Bob' } ]\nupdate 2 1\n[ { id: 1, name: 'Alice' } ]\n",
+      "output": "[{ id: 1, name: 'Alice' }, { id: 2, name: 'Bob' }]\n",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "[{ id: 1, name: 'John' }, { id: 2, name: 'Jane' }, { id: 3, name: 'Bob' }]\nupdate 1 2\n[ { id: 2, name: 'Alice' } ]\nupdate 2 3\n[ { id: 3, name: 'Jane' } ]\nupdate 3 1\n[ { id: 1, name: 'Bob' } ]\n",
+      "output": "[{ id: 1, name: 'Bob' }, { id: 2, name: 'Alice' }, { id: 3, name: 'Jane' }]\n",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "20af30438242a9a82cb4a926",
+  "slug": "fixing-a-memoized-react-component-re-renders-due-to-changing-object-properties-bugfix-hard-react",
+  "mode": "bug_fix",
+  "category": "REACT",
+  "difficulty": "Hard"
+}

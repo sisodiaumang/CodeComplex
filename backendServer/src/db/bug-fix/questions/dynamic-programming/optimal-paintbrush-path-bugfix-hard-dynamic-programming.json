@@ -1,0 +1,179 @@
+{
+  "_id": "c213c450d459ff9c32647349",
+  "title": "Optimal Paintbrush Path",
+  "slug": "optimal-paintbrush-path-bugfix-hard-dynamic-programming",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "DP",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 45,
+    "points": 100,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "dp"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "An artist is planning to paint a rectangular room with a robot that follows a grid path. The grid is represented as a matrix of 0s and 1s, where 0s represent open spaces and 1s represent walls. The robot starts at the top-left corner of the grid and can move in four directions: up, down, left, right. The robot can only paint a cell when it reaches it. The cost of painting a cell is equal to the sum of all costs of its ancestors. Your task is to find the minimum total cost to paint all reachable cells from the top-left corner.",
+    "inputFormat": "The input is a matrix of 0s and 1s, where each matrix element is an integer representing the cost of painting that cell.",
+    "outputFormat": "Output the minimum total cost to paint all reachable cells from the top-left corner.",
+    "notes": "The robot can only move to an empty cell if it is adjacent (horizontally or vertically) to the current cell.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of matrix"
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of matrix"
+      }
+    ],
+    "examples": [
+      {
+        "input": "5 5\n0 0 0 0 0\n0 0 0 0 0\n0 0 0 0 0\n0 0 0 0 0\n0 0 0 0 0",
+        "output": "0",
+        "explanation": "Since all cells are open spaces (0s), the minimum total cost to paint all reachable cells is 0."
+      },
+      {
+        "input": "3 3\n0 1 0\n0 0 0\n0 0 0",
+        "output": "2",
+        "explanation": "The robot can only paint cells (0,0), (0,1), (2,2), and (2,3). The minimum total cost to paint these cells is 2."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Think about how to handle the costs of ancestors when reaching a new cell."
+    },
+    {
+      "order": 2,
+      "text": "Consider using dynamic programming to keep track of the minimum total cost to paint cells in the current path."
+    }
+  ],
+  "editorial": {
+    "title": "Correct Approach",
+    "intuition": "One way to solve this problem is to use a breadth-first search (BFS) algorithm, where we keep track of the cells in the current path and their corresponding costs.",
+    "bruteForce": "One possible brute-force approach is to simulate the robot's movement and calculate the cost of painting each cell individually.",
+    "betterSolution": "",
+    "optimalSolution": "The optimal solution is to use a dynamic programming approach, where we keep track of the minimum total cost to paint cells in the current path.",
+    "proofOfCorrectness": "proof Of Correctness details.",
+    "dryRun": "dry Run details.",
+    "commonMistakes": [
+      "Not considering the cost of ancestors",
+      "Not using dynamic programming"
+    ],
+    "timeComplexity": "O(n*m)",
+    "spaceComplexity": "O(n*m)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    bool paintRoom(vector<int>& nums) {\n        // TODO: implement\n        return false;\n    }\n};",
+    "\n      class Solution {\n      public:\n          int paintRoom(vector<vector<int>>& room) {\n              // TODO: implement\n          }\n      };\n      ": "",
+    "java": "class Solution {\n    public boolean paintRoom(int[] nums) {\n        // TODO: implement\n        return false;\n    }\n}",
+    "\n      public class Solution {\n          public int paintRoom(int[][] room) {\n              // TODO: implement\n          }\n      }\n      ": "",
+    "python": "class Solution:\n    def paintRoom(self, nums: list[int]) -> bool:\n        # TODO: implement\n        pass",
+    "\n      class Solution:\n          def paintRoom(self, room):\n              # TODO: implement\n              pass\n      ": "",
+    "javascript": "var paintRoom = function(nums) {\n    // TODO: implement\n    return false;\n};",
+    "\n      var paintRoom = function(room) {\n          // TODO: implement\n      };\n      ": ""
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    bool paintRoom(vector<int>& nums) {\n        // Buggy code\n        return false;\n    }\n};",
+    "\n      class Solution {\n      public:\n          int paintRoom(vector<vector<int>>& room) {\n              int n = room.size();\n              int m = room[0].size();\n              int minCost = 0;\n              vector<vector<int>> dp(n, vector<int>(m, 0));\n              dp[0][0] = room[0][0];\n              for (int i = 0; i < n; i++) {\n                  for (int j = 0; j < m; j++) {\n                      if (room[i][j] == 0) {\n                          dp[i][j] = minCost;\n                      } else {\n                          dp[i][j] = INT_MAX;\n                      }\n                  }\n              }\n              for (int i = 0; i < n; i++) {\n                  for (int j = 0; j < m; j++) {\n                      if (dp[i][j] == INT_MAX) continue;\n                      for (int k = 0; k < 4; k++) {\n                          int ni = i + dx[k];\n                          int nj = j + dy[k];\n                          if (ni >= 0 && ni < n && nj >= 0 && nj < m) {\n                              dp[ni][nj] = min(dp[ni][nj], dp[i][j] + room[ni][nj]);\n                          }\n                      }\n                  }\n              }\n              if (dp[n - 1][m - 1] == INT_MAX) return -1;\n              return dp[n - 1][m - 1];\n          }\n      };\n      ": "",
+    "java": "class Solution {\n    public boolean paintRoom(int[] nums) {\n        // Buggy code\n        return false;\n    }\n}",
+    "\n      public class Solution {\n          public int paintRoom(int[][] room) {\n              int n = room.length;\n              int m = room[0].length;\n              int minCost = 0;\n              int[][] dp = new int[n][m];\n              dp[0][0] = room[0][0];\n              for (int i = 0; i < n; i++) {\n                  for (int j = 0; j < m; j++) {\n                      if (room[i][j] == 0) {\n                          dp[i][j] = minCost;\n                      } else {\n                          dp[i][j] = Integer.MAX_VALUE;\n                      }\n                  }\n              }\n              for (int i = 0; i < n; i++) {\n                  for (int j = 0; j < m; j++) {\n                      if (dp[i][j] == Integer.MAX_VALUE) continue;\n                      for (int k = 0; k < 4; k++) {\n                          int ni = i + dx[k];\n                          int nj = j + dy[k];\n                          if (ni >= 0 && ni < n && nj >= 0 && nj < m) {\n                              dp[ni][nj] = Math.min(dp[ni][nj], dp[i][j] + room[ni][nj]);\n                          }\n                      }\n                  }\n              }\n              if (dp[n - 1][m - 1] == Integer.MAX_VALUE) return -1;\n              return dp[n - 1][m - 1];\n          }\n      }\n      ": "",
+    "python": "class Solution:\n    def paintRoom(self, nums: list[int]) -> bool:\n        # Buggy code\n        pass",
+    "\n      class Solution:\n          def paintRoom(self, room):\n              n = len(room)\n              m = len(room[0])\n              minCost = 0\n              dp = [[0]*m for _ in range(n)]\n              dp[0][0] = room[0][0]\n              for i in range(n):\n                  for j in range(m):\n                      if room[i][j] == 0:\n                          dp[i][j] = minCost\n                      else:\n                          dp[i][j] = float('inf')\n              for i in range(n):\n                  for j in range(m):\n                      if dp[i][j] == float('inf') : continue\n                      for k in range(4):\n                          ni = i + dx[k]\n                          nj = j + dy[k]\n                          if ni >= 0 and ni < n and nj >= 0 and nj < m:\n                              dp[ni][nj] = min(dp[ni][nj], dp[i][j] + room[ni][nj])\n              if dp[n-1][m-1] == float('inf') : return -1\n              return dp[n-1][m-1]\n      ": "",
+    "javascript": "var paintRoom = function(nums) {\n    // Buggy code\n    return false;\n};",
+    "\n      var paintRoom = function(room) {\n          var n = room.length;\n          var m = room[0].length;\n          var minCost = 0;\n          var dp = Array(n).fill(0).map(function() { return Array(m).fill(0); });\n          dp[0][0] = room[0][0];\n          for (var i = 0; i < n; i++) {\n              for (var j = 0; j < m; j++) {\n                  if (room[i][j] == 0) {\n                      dp[i][j] = minCost;\n                  } else {\n                      dp[i][j] = Number.MAX_SAFE_INTEGER;\n                  }\n              }\n          }\n          for (var i = 0; i < n; i++) {\n              for (var j = 0; j < m; j++) {\n                  if (dp[i][j] == Number.MAX_SAFE_INTEGER) continue;\n                  for (var k = 0; k < 4; k++) {\n                      var ni = i + dx[k];\n                      var nj = j + dy[k];\n                      if (ni >= 0 && ni < n && nj >= 0 && nj < m) {\n                          dp[ni][nj] = Math.min(dp[ni][nj], dp[i][j] + room[ni][nj]);\n                      }\n                  }\n              }\n          }\n          if (dp[n-1][m-1] == Number.MAX_SAFE_INTEGER) return -1;\n          return dp[n-1][m-1];\n      };\n      ": ""
+  },
+  "functionSignature": {
+    "cpp": "bool solve(vector<vector<int>>& room);",
+    "java": "int paintRoom(int[][] room);",
+    "python": "def paintRoom(self, room: List[List[int]]) -> int:",
+    "javascript": "int paintRoom(int[][] room);"
+  },
+  "solutions": {
+    "cpp": "// Solution",
+    "\n#include <iostream>\n#include <vector>\n#include <string>\n#include <cmath>\nusing namespace std;\n\nint main() {\n    // parse input from cin\n    int n;\n    cin >> n;\n    int m;\n    cin >> m;\n    vector<vector<int>> room(n, vector<int>(m));\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cin >> room[i][j];\n        }\n    }\n    Solution solution;\n    int result = solution.paintRoom(room);\n    cout << result << endl;\n    return 0;\n}\n      ": "",
+    "python": "# Solution",
+    "\nimport sys\nimport math\n\nclass Solution:\n    def paintRoom(self, room):\n        # parse input from sys.stdin\n        n = int(input())\n        m = int(input())\n        room = []\n        for _ in range(n):\n            row = list(map(int, input().split()))\n            room.append(row)\n        # rest of the code\n        return result\n\nresult = Solution().paintRoom(room)\nsys.stdout.write(str(result) + '\n')\n      ": "",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5 5\n0 0 0 0 0\n0 0 0 0 0\n0 0 0 0 0\n0 0 0 0 0\n0 0 0 0 0",
+      "output": "0",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "3 3\n0 1 0\n0 0 0\n0 0 0",
+      "output": "2",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

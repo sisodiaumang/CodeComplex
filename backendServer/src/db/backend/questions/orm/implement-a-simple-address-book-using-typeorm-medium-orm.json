@@ -1,0 +1,150 @@
+{
+  "_id": "743a0ffdcd249920e7531a56",
+  "title": "Implement a Simple Address Book using TypeORM",
+  "slug": "implement-a-simple-address-book-using-typeorm-medium-orm",
+  "difficulty": "Medium",
+  "topics": [
+    "ORM"
+  ],
+  "statement": "Create a RESTful API that allows users to create, read, update, and delete addresses using TypeORM as the ORM. The API should support the following endpoints:\n\n**GET /api/addresses**: Return all addresses in the database.\n\n**POST /api/addresses**: Create a new address with the provided data.\n\n**GET /api/addresses/:id**: Return the address with the specified ID.\n\n**PUT /api/addresses/:id**: Update the address with the specified ID.\n\n**DELETE /api/addresses/:id**: Delete the address with the specified ID.\n\nYou can use the in-memory TypeORM database for simplicity. Ensure to provide proper validation for incoming data and handle errors accordingly.\n\nTo complete this task, you will need to:\n\n* Set up a new TypeORM configuration and database\n* Create a `Address` entity with the necessary properties\n* Implement the API endpoints using Express.js\n* Handle validation and error cases as needed\n\nPlease use the starter code provided below as the foundation for your solution.\n\n**Constraints**\n\n* Must use the TypeORM library to interact with the database\n* Must handle validation for incoming data\n* Must provide proper error messages for invalid requests\n\n**Endpoints**\n\n* **GET /api/addresses**\n\t+ Returns all addresses in the database\n\t+ Response body: Array of `Address` objects\n* **POST /api/addresses**\n\t+ Creates a new address with the provided data\n\t+ Request body: `Address` object\n\t+ Response body: The newly created `Address` object\n* **GET /api/addresses/:id**\n\t+ Returns the address with the specified ID\n\t+ Path parameter: `id` (integer)\n\t+ Response body: The `Address` object with the specified ID\n* **PUT /api/addresses/:id**\n\t+ Updates the address with the specified ID\n\t+ Path parameter: `id` (integer)\n\t+ Request body: `Address` object\n\t+ Response body: The updated `Address` object\n* **DELETE /api/addresses/:id**\n\t+ Deletes the address with the specified ID\n\t+ Path parameter: `id` (integer)\n\t+ Response body: `null`\n\n**Starter Code**\n\n```javascript\nconst express = require('express');\nconst { createConnection } = require('typeorm');\n\nconst app = express();\napp.use(express.json());\n\ncreateConnection({\n  type: 'memory',\n  entities: [require('./entities/Address')],\n  synchronize: true,\n})\n.then(() => {\n  // TODO: Implement API endpoints here\n})\n.catch((error) => console.log(error));\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));\n```\n\n",
+  "constraints": [
+    "Must use the TypeORM library to interact with the database",
+    "Must handle validation for incoming data",
+    "Must provide proper error messages for invalid requests"
+  ],
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/api/addresses",
+      "description": "Returns all addresses in the database"
+    },
+    {
+      "method": "POST",
+      "path": "/api/addresses",
+      "description": "Creates a new address with the provided data"
+    },
+    {
+      "method": "GET",
+      "path": "/api/addresses/:id",
+      "description": "Returns the address with the specified ID"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/addresses/:id",
+      "description": "Updates the address with the specified ID"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/addresses/:id",
+      "description": "Deletes the address with the specified ID"
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\"name\":\"address-book\",\"version\":\"1.0.0\",\"main\":\"index.js\",\"scripts\":{\"start\":\"node index.js\"},\"dependencies\":{\"express\":\"^4.18.2\",\"typeorm\":\"^0.3.17\"}}",
+    "index.js": "const express = require('express');\nconst { createConnection } = require('typeorm');\n\nconst app = express();\napp.use(express.json());\n\ncreateConnection({\n  type: 'memory',\n  entities: [require('./entities/Address')],\n  synchronize: true,\n})\n.then(() => {\n  // TODO: Implement API endpoints here\n})\n.catch((error) => console.log(error));\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "GET",
+      "path": "/api/addresses",
+      "expectedStatus": 200,
+      "expectedBody": [],
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "POST",
+      "path": "/api/addresses",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "street": "123 Main St",
+        "city": "Anytown",
+        "state": "CA",
+        "zip": "12345"
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "street": "123 Main St",
+        "city": "Anytown",
+        "state": "CA",
+        "zip": "12345"
+      },
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "GET",
+      "path": "/api/addresses/:id",
+      "pathParams": {
+        "id": 1
+      },
+      "expectedStatus": 200,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "PUT",
+      "path": "/api/addresses/:id",
+      "pathParams": {
+        "id": 1
+      },
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "street": "456 Elm St"
+      },
+      "expectedStatus": 200,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "DELETE",
+      "path": "/api/addresses/:id",
+      "pathParams": {
+        "id": 999
+      },
+      "expectedStatus": 404,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "mongoose",
+    "prisma",
+    "sequelize",
+    "typeorm",
+    "drizzle",
+    "relations",
+    "populate",
+    "schema",
+    "migration",
+    "orm",
+    "api"
+  ]
+}

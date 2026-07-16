@@ -1,0 +1,164 @@
+{
+  "title": "Fixing Node.js Express Middleware for Route Parameter Validation in JSON Body",
+  "subCategory": "Express Middleware",
+  "statement": {
+    "markdown": "Write a Node.js Express middleware function to validate a JSON body with route parameters. The middleware should check if the 'name' and 'age' fields in the JSON body are valid (non-empty strings and integers respectively). If the validation fails, it should return a 400 Bad Request response with an error message.",
+    "inputFormat": "A JSON object with 'name' and 'age' fields.",
+    "outputFormat": "A JSON object with a status code and error message (if validation fails) or the original JSON object (if validation succeeds).",
+    "notes": "The middleware should handle empty JSON bodies and return a 400 Bad Request response with an error message.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "body",
+        "type": "object",
+        "min": 0,
+        "max": 10000,
+        "description": "JSON object with 'name' and 'age' fields"
+      },
+      {
+        "variable": "name",
+        "type": "string",
+        "min": 1,
+        "max": 100,
+        "description": "Non-empty string"
+      },
+      {
+        "variable": "age",
+        "type": "integer",
+        "min": 1,
+        "max": 100,
+        "description": "Non-negative integer"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"name\": \"John\", \"age\": 30}",
+        "output": "{\"name\": \"John\", \"age\": 30}",
+        "explanation": "Validation succeeds"
+      },
+      {
+        "input": "{\"name\": \"\", \"age\": 30}",
+        "output": "{\"statusCode\": 400, \"error\": \"Name cannot be empty\"}",
+        "explanation": "Validation fails for empty 'name'"
+      },
+      {
+        "input": "{\"name\": \"John\", \"age\": \"Invalid\"}",
+        "output": "{\"statusCode\": 400, \"error\": \"Age must be an integer\"}",
+        "explanation": "Validation fails for invalid 'age'"
+      },
+      {
+        "input": "{}",
+        "output": "{\"statusCode\": 400, \"error\": \"Invalid JSON body\"}",
+        "explanation": "Validation fails for empty JSON body"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 60,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "NODE_JS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "node_js"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the 'express.json()' middleware to parse the JSON body"
+    },
+    {
+      "order": 2,
+      "text": "Use a try-catch block to handle parsing errors"
+    },
+    {
+      "order": 3,
+      "text": "Use JSON schema validation to check the 'name' and 'age' fields"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial: Node.js Express Middleware for Route Parameter Validation",
+    "intuition": "The middleware should validate the JSON body using JSON schema validation and return a 400 Bad Request response if validation fails.",
+    "bruteForce": "The brute force approach is to use a try-catch block to handle parsing errors and then manually validate the 'name' and 'age' fields.",
+    "betterSolution": "The better solution is to use JSON schema validation to check the 'name' and 'age' fields.",
+    "optimalSolution": "The optimal solution is to use the 'express.json()' middleware to parse the JSON body and then use JSON schema validation to check the 'name' and 'age' fields.",
+    "proofOfCorrectness": "The proof of correctness is that the middleware returns a 400 Bad Request response if validation fails and the original JSON object if validation succeeds.",
+    "dryRun": "Dry run: If the JSON body is empty, the middleware should return a 400 Bad Request response with an error message.",
+    "commonMistakes": [
+      "Failing to handle parsing errors",
+      "Failing to validate the 'name' and 'age' fields",
+      "Returning the incorrect response format"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "// Import the express module\nconst express = require('express');\n// Create an express application\nconst app = express();\n// Define a route parameter\napp.get('/users/:id', (req, res) => {\n  // Your code here\n});"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Import the express module\nconst express = require('express');\n// Create an express application\nconst app = express();\n// Define a route parameter\napp.get('/users/:id', (req, res) => {\n  // Parse the JSON body\n  const body = JSON.parse(req.body);\n  // Validate the 'name' field\n  if (body.name === '') {\n    res.status(400).json({ error: 'Name cannot be empty' });\n  } else {\n    res.json(body);\n  }\n});"
+  },
+  "functionSignature": {
+    "javascript": "app.get('/users/:id', (req, res) => { ... });"
+  },
+  "solutions": {
+    "javascript": "// Import the express module\nconst express = require('express');\n// Create an express application\nconst app = express();\n// Define a route parameter\napp.get('/users/:id', (req, res) => {\n  // Parse the JSON body\n  const body = JSON.parse(req.body);\n  // Validate the 'name' and 'age' fields using JSON schema validation\n  const schema = {\n    type: 'object',\n    required: ['name', 'age'],\n    properties: {\n      name: {\n        type: 'string'\n      },\n      age: {\n        type: 'integer'\n      }\n    }\n  };\n  const validate = require('jsonschema').validate;\n  const result = validate(body, schema);\n  if (result.errors.length > 0) {\n    res.status(400).json({ statusCode: 400, error: 'Invalid JSON body' });\n  } else {\n    res.json(body);\n  }\n});"
+  },
+  "judgeConfig": {
+    "timeLimit": 2000,
+    "memoryLimit": 65536,
+    "supportedLanguages": [
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"name\": \"John\", \"age\": 30}",
+      "output": "{\"name\": \"John\", \"age\": 30}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"name\": \"\", \"age\": 30}",
+      "output": "{\"statusCode\": 400, \"error\": \"Name cannot be empty\"}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "0a13141ef6045ea6a01a4eea",
+  "slug": "fixing-nodejs-express-middleware-for-route-parameter-validation-in-json-body-bugfix-medium-node_js",
+  "mode": "bug_fix",
+  "category": "NODE_JS",
+  "difficulty": "Medium"
+}

@@ -1,0 +1,160 @@
+{
+  "_id": "224d9731c45f9e8a28f2642e",
+  "title": "Optimal Color Arrangement under Frequency Constraints",
+  "slug": "optimal-color-arrangement-under-frequency-constraints-bugfix-hard-greedy-algorithms",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "GREEDY",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 70,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "greedy"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given an array of integers `freq` representing the frequency of each color and an integer `n` representing the number of balls, return the maximum number of colors that can be arranged such that no two balls of the same color are adjacent.",
+    "inputFormat": "Input is provided through two lines in the format `n\nfreq0 freq1 freq2 ...`",
+    "outputFormat": "Output is an integer representing the maximum number of colors that can be arranged",
+    "notes": "You can assume that `n` and `freq` are non-negative integers.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of balls"
+      },
+      {
+        "variable": "freq",
+        "type": "integer array",
+        "minLength": 1,
+        "maxLength": 10000,
+        "description": "Frequencies of colors"
+      }
+    ],
+    "examples": [
+      {
+        "input": "10\n3 2 1 4 1 5\n",
+        "output": "6\n",
+        "explanation": "Maximum colors that can be arranged with 10 balls and given frequencies."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Consider sorting the frequencies array."
+    }
+  ],
+  "editorial": {
+    "title": "Optimal Color Arrangement under Frequency Constraints",
+    "intuition": "Greedy strategy is to always pick the color with highest frequency and place the balls of that color at least two positions apart.",
+    "bruteForce": "Brute force solution would be to generate all possible color arrangements and check if no two balls of the same color are adjacent.",
+    "betterSolution": "Greedy strategy works because the frequencies array is sorted in descending order.",
+    "optimalSolution": "We can use a greedy strategy with two pointers to place the balls of each color.",
+    "proofOfCorrectness": "Proof of correctness can be achieved by contradiction.",
+    "dryRun": "Example dry run to understand the optimal solution.",
+    "commonMistakes": [
+      "Not considering the possibility of two balls of different colors being adjacent",
+      "Not sorting the frequencies array"
+    ],
+    "timeComplexity": "O(n log n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n  int __solve(std::vector<int>& freq, int n);\n};\nint Solution::__solve(std::vector<int>& freq, int n) {\n    // TODO: implement\n}",
+    "java": "public class Solution {\nprivate:\n  int __solve(int[] freq, int n);\npublic:\n  int solve(int[] freq, int n) {\n    return __solve(freq, n);\n  }\n}\nint Solution::__solve(int[] freq, int n) {\n    // TODO: implement\n}",
+    "python": "class Solution:\n    def solve(self, freq, n):\n        # TODO: implement\n        pass",
+    "javascript": "class Solution {\n    solve(freq, n) {\n        // TODO: implement\n        return;\n    }\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "int Solution::__solve(std::vector<int>& freq, int n) {\n    std::sort(freq.begin(), freq.end());\n    int result = 0;\n    for (int i = 0; i < n; i++) {\n        if (i >= 2 && freq[i-2] != freq[i-1] && freq[i-2] != freq[i])\n            result++;\n    }\n    return result;\n}",
+    "java": "int Solution::__solve(int[] freq, int n) {\n    Arrays.sort(freq);\n    int result = 0;\n    for (int i = 0; i < n; i++) {\n        if (i >= 2 && freq[i-2] != freq[i-1] && freq[i-2] != freq[i])\n            result++;\n    }\n    return result;\n}",
+    "python": "class Solution:\n    def solve(self, freq, n):\n        freq.sort();\n        result = 0;\n        for i in range(n):\n            if i >= 2 and freq[i-2] != freq[i-1] and freq[i-2] != freq[i]:\n                result++;\n        return result;",
+    "javascript": "class Solution {\n    solve(freq, n) {\n        freq.sort((a, b) => a - b);\n        let result = 0;\n        for (let i = 0; i < n; i++) {\n            if (i >= 2 && freq[i-2] != freq[i-1] && freq[i-2] != freq[i])\n                result++;\n        }\n        return result;\n    }\n}"
+  },
+  "functionSignature": {
+    "cpp": "int solve(std::vector<int>& freq, int n);",
+    "java": "public int solve(int[] freq, int n);",
+    "python": "def solve(self, freq: list[int], n: int) -> int:",
+    "javascript": "var solve = function(freq, n);"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def solve(self, freq, n):\n        freq.sort(reverse=True);\n        result = 0;\n        i = 0;\n        while result < n and i < n:\n            result += freq[i] * 2;\n            i += 2;\n        return min(result, n);\n\n# Read input from stdin\nimport sys\ninput = sys.stdin.readline\nn = int(input().strip())\nfreq = list(map(int, input().strip().split()))\nsol = Solution()\nout = sol.solve(freq, n)\nprint(out)\n",
+    "cpp": "class Solution {\npublic:\n  int solve(vector<int>& freq, int n) {\n    sort(freq.begin(), freq.end(), greater<int>());\n    int result = 0;\n    for (int i = 0; i < n; i += 2) {\n      if (i + 1 < n) result += 2;\n      else result++;\n    }\n    return min(result, n);\n  }\n};\ntestCases();\nvoid testCases() {\n  int n;\n  cin >> n;\n  vector<int> freq(n);\n  for (int& val : freq) cin >> val;\n  Solution sol;\n  cout << sol.solve(freq, n) << endl;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 3,
+    "memoryLimit": 512,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": true
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": true,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.5
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "10\n3 2 1 4 1 5\n",
+      "output": "6\n",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "20\n1 2 3 4 5 5 5 5\n",
+      "output": "18\n",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

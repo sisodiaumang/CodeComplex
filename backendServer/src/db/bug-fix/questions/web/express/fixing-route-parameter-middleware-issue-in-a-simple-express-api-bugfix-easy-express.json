@@ -1,0 +1,131 @@
+{
+  "title": "Fixing Route Parameter Middleware Issue in a Simple Express API",
+  "subCategory": "Route Parameters",
+  "statement": {
+    "markdown": "Implement a route parameter middleware to validate a user's ID in a simple Express API. The middleware should check if the ID is a positive integer. If it is not, return a 400 Bad Request response. Otherwise, proceed to the next middleware or route handler.\n\nThis is a buggy version of the middleware function. It does not correctly check if the ID is a positive integer.",
+    "inputFormat": "The input will be a JSON object containing a user ID.",
+    "outputFormat": "The output should be a JSON object with a status code and a message.",
+    "notes": "You can assume that the input will be a valid JSON object.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "User ID must be a positive integer"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"id\": 1}",
+        "output": "{\"status\": 200, \"message\": \"User ID is valid\"}",
+        "explanation": "The ID 1 is a positive integer, so the middleware returns a success message."
+      },
+      {
+        "input": "{\"id\": -1}",
+        "output": "{\"status\": 400, \"message\": \"User ID is not a positive integer\"}",
+        "explanation": "The ID -1 is not a positive integer, so the middleware returns a Bad Request response."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 10,
+    "points": 30,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "EXPRESS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "express"
+    ],
+    "interviewFrequency": 1,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Check the type of the input ID"
+    }
+  ],
+  "editorial": {
+    "title": "Fixing the Route Parameter Middleware Issue",
+    "intuition": "The middleware function should check if the ID is a positive integer before proceeding.",
+    "bruteForce": "Use a regular expression to check if the ID is a positive integer.",
+    "betterSolution": "Use the built-in parseInt() function to check if the ID is a positive integer.",
+    "optimalSolution": "Use the built-in parseInt() function to check if the ID is a positive integer, and handle the case where the ID is not a number.",
+    "proofOfCorrectness": "The middleware function should return a 400 Bad Request response if the ID is not a positive integer.",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Not checking the type of the input ID",
+      "Not handling the case where the ID is not a number"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "function validateUserId(req, res, next) {\n  // Your code here\n  next();\n}\n\n// Example usage:\napp.use('/users/:id', validateUserId, function(req, res) {\n  // Handle the request\n  res.json({ status: 200, message: 'User ID is valid' });\n});"
+  },
+  "buggyStarterCode": {
+    "javascript": "function validateUserId(req, res, next) {\n  const id = req.params.id;\n  if (id > 0) {\n    res.json({ status: 200, message: 'User ID is valid' });\n  } else {\n    res.json({ status: 200, message: 'User ID is not a positive integer' });\n  }\n  next();\n}"
+  },
+  "functionSignature": {
+    "javascript": "function validateUserId(req, res, next) {\n  // Your code here\n  next();\n}"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction validateUserId(req, res, next) {\n  const id = parseInt(req.params.id);\n  if (isNaN(id) || id <= 0) {\n    res.status(400).json({ status: 400, message: 'User ID is not a positive integer' });\n  } else {\n    next();\n  }\n}\n\n// Example usage:\napp.use('/users/:id', validateUserId, function(req, res) {\n  // Handle the request\n  res.json({ status: 200, message: 'User ID is valid' });\n});"
+  },
+  "judgeConfig": {
+    "timeLimit": 1,
+    "memoryLimit": 128,
+    "supportedLanguages": [
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"id\": 1}",
+      "output": "{\"status\": 200, \"message\": \"User ID is valid\"}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"id\": -1}",
+      "output": "{\"status\": 400, \"message\": \"User ID is not a positive integer\"}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "f6509f72a98c39e972fa4b40",
+  "slug": "fixing-route-parameter-middleware-issue-in-a-simple-express-api-bugfix-easy-express",
+  "mode": "bug_fix",
+  "category": "EXPRESS",
+  "difficulty": "Easy"
+}

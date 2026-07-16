@@ -1,0 +1,64 @@
+{
+  "_id": "6b32c1033bae62d00b5ff405",
+  "title": "Particle Burst",
+  "slug": "anim-particle-burst",
+  "difficulty": "Hard",
+  "topics": [
+    "ANIMATION"
+  ],
+  "statement": {
+    "markdown": "{\"_type\":\"Text\",\"text\":\"Create a particle burst animation where particles are emitted from the center of the screen when the user clicks the mouse.\"}\n{\"_type\":\"Heading\",\"text\":\"## Requirements\"}\n{\"_type\":\"OrderedList\",\"items\":[{\"_type\":\"ListItem\",\"label\":\"Create an HTML structure to hold the canvas element.\",\"value\":20},{\"_type\":\"ListItem\",\"label\":\"Implement a function to create particles with random color and position.\",\"value\":30},{\"_type\":\"ListItem\",\"label\":\"Animate the particles moving outward from the center of the screen.\",\"value\":30},{\"_type\":\"ListItem\",\"label\":\"Handle user click events to emit new particles.\",\"value\":20}]}"
+  },
+  "constraints": [
+    "Only use JavaScript and CSS for animation.",
+    "Use Tailwind CSS classes for styling.",
+    "Particles should have a random size between 5-20 pixels.",
+    "Partcles should have a random lifetime between 0-5 seconds."
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "html": "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>Particle Burst</title><link rel=\"stylesheet\" href=\"styles.css\"></head><body><canvas id=\"canvas\" width=\"800\" height=\"600\"></canvas><script src=\"script.js\"></script></body></html>",
+    "css": "@tailwind base;\n@tailwind components;\n@tailwind utilities;\n\ncanvas {\n  position: absolute;\n  top: 0;\n  left: 0;\n}\n",
+    "javascript": "// Write your JavaScript code here"
+  },
+  "gradingCriteria": [
+    {
+      "id": "animation",
+      "description": "The particle burst animation works as expected.",
+      "weight": 40
+    },
+    {
+      "id": "particle_generation",
+      "description": "New particles are generated when the user clicks the mouse.",
+      "weight": 30
+    },
+    {
+      "id": "particle_movement",
+      "description": "Particles move outward from the center of the screen.",
+      "weight": 15
+    },
+    {
+      "id": "particle_lifetime",
+      "description": "Particles have a random lifetime between 0-5 seconds.",
+      "weight": 15
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "html",
+      "css",
+      "javascript"
+    ],
+    "referenceSolution": "// JavaScript solution\nlet canvas = document.getElementById('canvas');\nlet ctx = canvas.getContext('2d');\n\n// Particle class\nclass Particle {\n  constructor(x, y) {\n    this.x = x;\n    this.y = y;\n    this.color = this.getRandomColor();\n    this.size = Math.floor(Math.random() * 15) + 5;\n    this.lifetime = Math.floor(Math.random() * 5);\n    this.velocityX = (Math.random() * 2) - 1;\n    this.velocityY = (Math.random() * 2) - 1;\n  }\n\n  update() {\n    this.lifetime--;\n    this.x += this.velocityX;\n    this.y += this.velocityY;\n  }\n\n  draw() {\n    ctx.fillStyle = this.color;\n    ctx.beginPath();\n    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);\n    ctx.fill();\n  }\n\n  getRandomColor() {\n    let r = Math.floor(Math.random() * 256);\n    let g = Math.floor(Math.random() * 256);\n    let b = Math.floor(Math.random() * 256);\n    return `rgb(${r}, ${g}, ${b})`;\n  }\n}\n\nlet particles = [];\n\n// Add event listener for mouse click\ncanvas.addEventListener('click', (e) => {\n  let x = e.clientX;\n  let y = e.clientY;\n  let particle = new Particle(x, y);\n  particles.push(particle);\n});\n\n// Animation loop\nfunction animation() {\n  ctx.clearRect(0, 0, canvas.width, canvas.height);\n  for (let particle of particles) {\n    particle.draw();\n    particle.update();\n    if (particle.lifetime <= 0) {\n      particles.splice(particles.indexOf(particle), 1);\n    }\n  }\n  requestAnimationFrame(animation);\n}\n\nanimation();"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

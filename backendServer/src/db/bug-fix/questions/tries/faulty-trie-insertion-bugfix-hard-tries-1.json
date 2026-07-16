@@ -1,0 +1,158 @@
+{
+  "_id": "9a8d51deb24a44da597f8c8c",
+  "title": "Faulty Trie Insertion",
+  "slug": "faulty-trie-insertion-bugfix-hard-tries-1",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "TRIE",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 100,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "trie"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given a set of strings, insert them into a trie and count the number of leaves in the trie after all insertions. However, be cautious, as the implementation of the Trie class contains a bug that must be fixed.",
+    "inputFormat": "A set of strings, one per line, where each string is at most 100 characters long.",
+    "outputFormat": "The total number of leaves in the trie.",
+    "notes": "The input size will not exceed 10000 strings, and the length of each string will not exceed 100 characters.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of input strings"
+      }
+    ],
+    "examples": [
+      {
+        "input": "apple\nbanana\ncherry\napple",
+        "output": "3",
+        "explanation": "The trie will have three leaves, for the words 'apple', 'banana', and 'cherry'."
+      },
+      {
+        "input": "hello\nworld\nhello",
+        "output": "2",
+        "explanation": "The trie will have two leaves, for the words 'hello' and 'world'."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "The bug is related to the construction of the trie."
+    }
+  ],
+  "editorial": {
+    "title": "Trie Construction and Leaf Counting",
+    "intuition": "Use a trie data structure to efficiently store and count the leaves.",
+    "bruteForce": "Construct the trie by inserting each string into it and then count the leaves.",
+    "betterSolution": "",
+    "optimalSolution": "Use a recursive insertion function to insert each string into the trie and count the leaves.",
+    "proofOfCorrectness": "The optimal solution correctly inserts each string into the trie and counts the leaves.",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Not correctly constructing the trie",
+      "Not correctly counting the leaves"
+    ],
+    "timeComplexity": "O(n \\* m)",
+    "spaceComplexity": "O(n \\* m)"
+  },
+  "starterCode": {
+    "cpp": "class Solution { public: int countLeafs() { /* TODO: implement */ } };",
+    "java": "public class Solution { public int countLeafs() { /* TODO: implement */ } }",
+    "python": "class Solution: def count_leafs(self) -> int: pass",
+    "javascript": "function countLeafs() { /* TODO: implement */ }"
+  },
+  "buggyStarterCode": {
+    "cpp": "class TrieNode { public: TrieNode* children[26]; TrieNode* parent; }; class Solution { public: int countLeafs() { int count = 0; for (const auto& node : nodes) { if (node->children[0] != nullptr) count++; } return count; } };",
+    "java": "class TrieNode { public: TrieNode[] children; TrieNode parent; }; public class Solution { public int countLeafs() { int count = 0; for (TrieNode node : nodes) { if (node.children[0] != null) count++; } return count; } }",
+    "python": "class TrieNode: pass; class Solution: def count_leafs(self) -> int: count = 0; for node in self.nodes: if node.children[0]: count++; return count;",
+    "javascript": "class TrieNode { constructor() { this.children = []; this.parent = null; } } function countLeafs() { let count = 0; for (const node of nodes) { if (node.children[0]) count++; } return count; }"
+  },
+  "functionSignature": {
+    "cpp": "int countLeafs(vector<TrieNode*>& nodes);",
+    "java": "int countLeafs(TrieNode[] nodes);",
+    "python": "def count_leafs(self, nodes: list[TrieNode]) -> int:",
+    "javascript": "int countLeafs(TrieNode[] nodes);"
+  },
+  "solutions": {
+    "python": "class Solution: \n def __init__(self): \n self.root = TrieNode() \n def insert(self, word): \n node = self.root \n for ch in word: \n if not hasattr(node, ch): \n setattr(node, ch, TrieNode()) \n node = getattr(node, ch) \n def count_leafs(self): \n count = 0 \n for node in self.root.__dict__.values(): \n if not hasattr(node, 'children') and not hasattr(node, 'parent'): \n count++ \n return count \n \n # Read input from standard input \n import sys \n lines = sys.stdin.read().split('\\n') \n words = [line for line in lines if line] \n solution = Solution() \n for word in words: \n solution.insert(word) \n print(solution.count_leafs())",
+    "cpp": "#include <vector> #include <iostream> #include <string> using namespace std; \n class TrieNode { public: TrieNode* children[26]; TrieNode* parent; }; \n class Solution { public: TrieNode* root; \n void insert(string word) { TrieNode* node = root; \n for (char ch : word) { \n int index = ch - 'a'; \n if (!node->children[index]) \n node->children[index] = new TrieNode(); \n node = node->children[index]; \n } \n } \n int countLeafs() { \n int count = 0; \n for (TrieNode* node : nodes) { \n if (!node->parent && !node->children[0]) \n count++; \n } \n return count; \n }; \n \n #include <fstream> #include <sstream> int main() { \n ifstream file(\"input.txt\"); \n string line; \n vector<string> words; \n while (getline(file, line)) { \n words.push_back(line); \n } \n solution.insert(words[0]); \n for (int i = 1; i < words.size(); ++i) \n solution.insert(words[i]); \n cout << solution.countLeafs() << endl; \n return 0; }",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 3,
+    "memoryLimit": 512,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 2
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "apple\\nbanana\\ncherry\\napple",
+      "output": "3",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "hello\\nworld\\nhello",
+      "output": "2",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

@@ -1,0 +1,136 @@
+{
+  "title": "Fix a SQL Query to Extract Unique Product Names with Case Insensitivity",
+  "subCategory": "SQL Query",
+  "statement": {
+    "markdown": "You are given a SQL database containing information about products. The `products` table has two columns: `product_name` and `category`. Your task is to write a SQL query to extract unique product names from the table, ignoring case differences. The query should return the count of each unique product name and sort the results by the count in descending order.",
+    "inputFormat": "A SQL database with two tables: `products` and `categories`.",
+    "outputFormat": "A table with two columns: `product_name` and `count`, sorted by `count` in descending order.",
+    "notes": "The query should be case-insensitive, meaning that 'ProductA' and 'producta' should be treated as the same product name.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of rows in the `products` table."
+      }
+    ],
+    "examples": [
+      {
+        "input": "SELECT product_name, COUNT(*) as count FROM products GROUP BY product_name ORDER BY count DESC;",
+        "output": "product_name\tcount\nA\t3\nB\t2\nC\t1\n",
+        "explanation": "This query extracts unique product names from the `products` table, ignoring case differences, and returns the count of each unique product name, sorted by the count in descending order."
+      },
+      {
+        "input": "INSERT INTO products (product_name, category) VALUES ('ProductD', 'Category1');",
+        "output": "product_name\tcount\nA\t3\nB\t2\nC\t2\nD\t1\n",
+        "explanation": "This query inserts a new product into the `products` table and updates the result."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "SQL"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "sql"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the `LOWER()` function to make the query case-insensitive."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(n log n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "var sqlQuery = function(products) {\n  var result = [];\n  // Your code here...\n  return result;\n};",
+    "python": "class Solution:\n  def solve(self, products):\n    result = []\n    # Your code here...\n    return result;"
+  },
+  "buggyStarterCode": {
+    "javascript": "var sqlQuery = function(products) {\n  var result = [];\n  for (var i = 0; i < products.length; i++) {\n    var productName = products[i].product_name;\n    var existingProduct = result.find(function(p) {\n      return p.product_name === productName;\n    });\n    if (existingProduct) {\n      existingProduct.count++;\n    } else {\n      result.push({product_name: productName, count: 1});\n    }\n  }\n  result.sort(function(a, b) {\n    return b.count - a.count;\n  });\n  return result;\n};",
+    "python": "class Solution:\n  def solve(self, products):\n    result = []\n    for product in products:\n      product_name = product['product_name']\n      existing_product = [p for p in result if p['product_name'] == product_name]\n      if existing_product:\n        existing_product[0]['count'] += 1\n      else:\n        result.append({'product_name': product_name, 'count': 1})\n    result.sort(key=lambda x: x['count'], reverse=True)\n    return result;"
+  },
+  "functionSignature": {
+    "javascript": "var sqlQuery = function(products) {\n  // Your code here...\n}",
+    "python": "class Solution:\n  def solve(self, products):\n    // Your code here..."
+  },
+  "solutions": {
+    "javascript": "// Solution\nvar sqlQuery = function(products) {\n  var result = [];\n  var groupedProducts = {};\n  for (var i = 0; i < products.length; i++) {\n    var productName = products[i].product_name.toLowerCase();\n    if (groupedProducts[productName]) {\n      groupedProducts[productName].count++;\n    } else {\n      groupedProducts[productName] = {product_name: productName, count: 1};\n    }\n  }\n  var sortedProducts = Object.values(groupedProducts).sort(function(a, b) {\n    return b.count - a.count;\n  });\n  return sortedProducts;\n};",
+    "python": "class Solution:\n  def solve(self, products):\n    result = {}\n    for product in products:\n      product_name = product['product_name'].lower()\n      if product_name in result:\n        result[product_name]['count'] += 1\n      else:\n        result[product_name] = {'product_name': product_name, 'count': 1}\n    sortedProducts = sorted(result.values(), key=lambda x: x['count'], reverse=True)\n    return sortedProducts;"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "ProductA\nProductB\nProductC\nProductA\nProductB\nProductC\nProductA\nProductB\nProductC\n",
+      "output": "product_name\tcount\nA\t3\nB\t3\nC\t3\n",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "ProductD\nProductE\nProductF\nProductD\nProductE\nProductF\n",
+      "output": "product_name\tcount\nD\t2\nE\t2\nF\t2\n",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "17bd6ce33cfe1001771df137",
+  "slug": "fix-a-sql-query-to-extract-unique-product-names-with-case-insensitivity-bugfix-medium-sql",
+  "mode": "bug_fix",
+  "category": "SQL",
+  "difficulty": "Medium"
+}

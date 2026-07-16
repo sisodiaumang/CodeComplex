@@ -1,0 +1,202 @@
+{
+  "_id": "find-median-from-data-stream",
+  "title": "Find Median from Data Stream",
+  "slug": "find-median-from-data-stream",
+  "difficulty": "Hard",
+  "category": "TREE",
+  "subCategory": "Hard Problems",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 45,
+    "points": 500,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "HEAPS"
+    ],
+    "patterns": [
+      "median",
+      "data stream"
+    ],
+    "prerequisites": [
+      "HEAPS Basics"
+    ],
+    "variants": [],
+    "tags": [
+      "heaps",
+      "data streams",
+      "median"
+    ],
+    "keywords": [
+      "max heap",
+      "min heap",
+      "streaming algorithms"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "Design a data structure that dynamically maintains the median of a data stream.\n\nYou need to implement a class or structure that supports two operations:\n- `addNum(num)`: Adds an integer `num` to the data stream.\n- `findMedian()`: Returns the median of the current data stream. If the number of elements is even, return the average of the two middle elements.\n\n**Input Format**\n- The first line contains an integer **Q**, the number of operations.\n- The next **Q** lines each describe an operation:\n  - For `addNum`: the line starts with the string `addNum` followed by a space and an integer **num**.\n  - For `findMedian`: the line starts with the string `findMedian`.\n\n**Output Format**\n- For each `findMedian` operation, output a single line containing the median as a floating-point number with exactly five decimal places.\n\n**Example 1**\n```\n3\naddNum 1\naddNum 2\nfindMedian\n```\nOutput:\n```\n1.50000\n```\nExplanation:\n- Operations count is 3.\n- addNum 1 adds 1 to the stream.\n- addNum 2 adds 2 to the stream. The stream is now [1, 2].\n- findMedian returns the average of the two middle elements: (1 + 2) / 2 = 1.5.",
+    "inputFormat": "Q\noperation_1\noperation_2\n...\noperation_Q",
+    "outputFormat": "median_1\nmedian_2\n...",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "Q",
+        "type": "integer",
+        "min": 1,
+        "max": 10000
+      },
+      {
+        "variable": "num",
+        "type": "integer",
+        "min": -2147483648,
+        "max": 2147483647
+      }
+    ],
+    "examples": [
+      {
+        "input": "3\naddNum 1\naddNum 2\nfindMedian",
+        "output": "1.50000",
+        "explanation": "Stream becomes [1, 2]. Median is (1 + 2)/2 = 1.5"
+      },
+      {
+        "input": "2\naddNum 1\nfindMedian",
+        "output": "1.00000",
+        "explanation": "Stream is [1]. Median is 1.0"
+      },
+      {
+        "input": "4\naddNum 1\naddNum 2\naddNum 3\nfindMedian",
+        "output": "2.00000",
+        "explanation": "Stream is [1, 2, 3]. Median is 2.0"
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "To maintain the median of a data stream, we need to ensure that the data is sorted or can be efficiently sorted after each addition. One approach could be to use a data structure that inherently maintains sorted order, such as a balanced binary search tree or a sorted list."
+    },
+    {
+      "order": 2,
+      "text": "However, using a single data structure like a sorted list or a balanced binary search tree might not be the most efficient for finding the median, especially when the number of elements is large. A more efficient approach could involve using two heaps: a max heap to store the smaller half of the numbers and a min heap to store the larger half."
+    },
+    {
+      "order": 3,
+      "text": "The key insight is to balance these two heaps so that the max heap always contains one more element than the min heap when the total number of elements is odd, and they contain an equal number of elements when the total number is even. This balance ensures that the median can be found in constant time: it's either the top of the max heap when the total number of elements is odd, or the average of the tops of both heaps when the total number is even."
+    }
+  ],
+  "editorial": {
+    "title": "Median from Data Stream",
+    "intuition": "The problem requires finding the median of a stream of numbers, which can be efficiently solved by maintaining two heaps, a max heap for the lower half and a min heap for the upper half of the numbers. This approach ensures that the max heap always contains the smaller half of the numbers and the min heap contains the larger half.",
+    "bruteForce": "A brute force approach would involve sorting the entire list of numbers after each addition, which would be slow and inefficient due to its high time complexity of O(N^2 log N). The optimal approach of using two heaps reduces the time complexity to O(N log N), making it much more efficient.",
+    "betterSolution": "Using a single data structure such as a balanced binary search tree could also be considered, but it would be more complex to implement and may not provide the same level of efficiency as the two-heap approach.",
+    "optimalSolution": "The optimal solution involves using two heaps, a max heap and a min heap, to maintain the lower and upper halves of the numbers respectively. The max heap is used to store the smaller half of the numbers, and the min heap is used to store the larger half. This approach ensures that the median can be calculated in O(1) time after each addition, resulting in an overall time complexity of O(N log N).",
+    "proofOfCorrectness": "The correctness of the optimal solution can be proven by showing that the two heaps maintain the property that the max heap always contains the smaller half of the numbers and the min heap contains the larger half. This can be achieved by ensuring that the size of the max heap is always greater than or equal to the size of the min heap, and that the top element of the max heap is always less than or equal to the top element of the min heap.",
+    "dryRun": "A dry run of the algorithm can be performed by adding a few numbers to the data stream and verifying that the median is calculated correctly after each addition.",
+    "commonMistakes": [
+      "Not maintaining the balance between the two heaps",
+      "Not handling the case where the total number of elements is odd or even",
+      "Not using the correct data structure for the problem",
+      "Not considering the edge cases such as an empty data stream",
+      "Not optimizing the solution for the given constraints"
+    ],
+    "timeComplexity": "O(log Q)",
+    "spaceComplexity": "O(Q)"
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass MedianFinder {\npublic:\n    MedianFinder() {}\n    void addNum(int num) {\n        // TODO: implement\n    }\n    double findMedian() {\n        // TODO: implement\n        return 0.0;\n    }\n};",
+    "java": "import java.util.*;\n\nclass MedianFinder {\n    public MedianFinder() {}\n    public void addNum(int num) {\n        // TODO: implement\n    }\n    public double findMedian() {\n        // TODO: implement\n        return 0.0;\n    }\n}",
+    "python": "import heapq\nfrom typing import List\n\nclass MedianFinder:\n\n    def __init__(self):\n        pass\n\n    def addNum(self, num: int) -> None:\n        # TODO: implement\n        pass\n\n    def findMedian(self) -> float:\n        # TODO: implement\n        return 0.0",
+    "javascript": "/**\n * @class MedianFinder\n */\nclass MedianFinder {\n    constructor() {}\n    addNum(num) {\n        // TODO: implement\n    }\n    findMedian() {\n        // TODO: implement\n        return 0.0;\n    }\n}"
+  },
+  "functionSignature": {
+    "cpp": "void addNum(int num); double findMedian();",
+    "java": "public void addNum(int num); public double findMedian();",
+    "python": "def addNum(self, num: int) -> None; def findMedian(self) -> float:",
+    "javascript": "addNum(num); findMedian();"
+  },
+  "solutions": {
+    "python": "import sys\nimport heapq\n\nclass Solution:\n\n    def __init__(self):\n        self.max_heap = []\n        self.min_heap = []\n\n    def addNum(self, num: int) -> None:\n        if not self.max_heap or num <= -self.max_heap[0]:\n            heapq.heappush(self.max_heap, -num)\n        else:\n            heapq.heappush(self.min_heap, num)\n        \n        if len(self.max_heap) > len(self.min_heap) + 1:\n            heapq.heappush(self.min_heap, -heapq.heappop(self.max_heap))\n        elif len(self.min_heap) > len(self.max_heap):\n            heapq.heappush(self.max_heap, -heapq.heappop(self.min_heap))\n\n    def findMedian(self) -> float:\n        if len(self.max_heap) == len(self.min_heap):\n            return (-self.max_heap[0] + self.min_heap[0]) / 2.0\n        else:\n            return -self.max_heap[0] / 1.0\n\nif __name__ == '__main__':\n    it = iter(sys.stdin.read().split())\n    try:\n        q = int(next(it))\n    except StopIteration:\n        sys.exit(0)\n    sol = Solution()\n    for _ in range(q):\n        operation = next(it)\n        if operation == 'addNum':\n            num = int(next(it))\n            sol.addNum(num)\n        elif operation == 'findMedian':\n            print(f'{sol.findMedian():.5f}')\n",
+    "cpp": "#include <numeric>\n#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\nprivate:\n    priority_queue<int> max_heap;\n    priority_queue<int, vector<int>, greater<int>> min_heap;\npublic:\n    void addNum(int num) {\n        if (max_heap.empty() || num <= max_heap.top()) {\n            max_heap.push(num);\n        } else {\n            min_heap.push(num);\n        }\n        \n        if (max_heap.size() > min_heap.size() + 1) {\n            min_heap.push(max_heap.top());\n            max_heap.pop();\n        } else if (min_heap.size() > max_heap.size()) {\n            max_heap.push(min_heap.top());\n            min_heap.pop();\n        }\n    }\n    \n    double findMedian() {\n        if (max_heap.size() == min_heap.size()) {\n            return (max_heap.top() + min_heap.top()) / 2.0;\n        } else {\n            return (double)max_heap.top();\n        }\n    }\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int q;\n    cin >> q;\n    Solution sol;\n    for (int i = 0; i < q; i++) {\n        string operation;\n        cin >> operation;\n        if (operation == \"addNum\") {\n            int num;\n            cin >> num;\n            sol.addNum(num);\n        } else if (operation == \"findMedian\") {\n            double median = sol.findMedian();\n            printf(\"%.5f\\n\", median);\n        }\n    }\n    return 0;\n}\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.5
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "3\naddNum 1\naddNum 2\nfindMedian",
+      "output": "1.50000",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "2\naddNum 1\nfindMedian",
+      "output": "1.00000",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_3",
+      "input": "4\naddNum 1\naddNum 2\naddNum 3\nfindMedian",
+      "output": "2.00000",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "boundary_5",
+      "input": "3\naddNum -2147483648\naddNum 2147483647\nfindMedian",
+      "output": "-0.50000",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    },
+    {
+      "id": "duplicate_6",
+      "input": "4\naddNum 1\naddNum 1\naddNum 2\nfindMedian",
+      "output": "1.00000",
+      "isVisible": false,
+      "weight": 1,
+      "category": "duplicate"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

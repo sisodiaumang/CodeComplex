@@ -1,0 +1,151 @@
+{
+  "title": "Fixing a React Memoized Component Re-renders on State Change",
+  "subCategory": "Memoization",
+  "statement": {
+    "markdown": "Write a React functional component that memoizes its output using the `useMemo` hook. The component should display a greeting message with the user's name. However, the component re-renders unnecessarily when the user's name changes.\n\n**Task:** Fix the buggy memoized component so that it only re-renders when the user's name is updated.\n\n**Hint:** Use the `useState` hook to manage the user's name and the `useMemo` hook to memoize the greeting message.",
+    "inputFormat": "string",
+    "outputFormat": "string",
+    "notes": "Note that the component should only re-render when the user's name is updated. You can use the `useCallback` hook to memoize the component's dependencies.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10,
+        "description": "Number of times the user's name changes"
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 1,
+        "max": 10,
+        "description": "Number of times the component is rendered"
+      }
+    ],
+    "examples": [
+      {
+        "input": "John Doe",
+        "output": "Hello, John Doe!",
+        "explanation": "The component renders the greeting message with the user's name"
+      },
+      {
+        "input": "Jane Doe",
+        "output": "Hello, Jane Doe!",
+        "explanation": "The component re-renders with the updated user's name"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 10,
+    "points": 30,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "REACT"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "react"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the `useState` hook to manage the user's name"
+    },
+    {
+      "order": 2,
+      "text": "Use the `useMemo` hook to memoize the greeting message"
+    },
+    {
+      "order": 3,
+      "text": "Use the `useCallback` hook to memoize the component's dependencies"
+    }
+  ],
+  "editorial": {
+    "title": "Fixing a React Memoized Component Re-renders on State Change",
+    "intuition": "The `useMemo` hook should be used to memoize the greeting message based on the user's name.",
+    "bruteForce": "The brute force approach is to re-render the component on every state change using `useEffect`.",
+    "betterSolution": "Use the `useCallback` hook to memoize the component's dependencies.",
+    "optimalSolution": "Use the `useState` hook to manage the user's name and the `useMemo` hook to memoize the greeting message.",
+    "proofOfCorrectness": "The component re-renders only when the user's name is updated.",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Not using `useMemo` to memoize the greeting message",
+      "Not using `useCallback` to memoize the component's dependencies"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "// Define the user's name as a state variable\nconst [name, setName] = useState('');\n\n// Use useMemo to memoize the greeting message\nconst greeting = useMemo(() => {\n  return `Hello, ${name}!`;\n}, []);\n\n// Return the greeting message\nreturn greeting;",
+    "python": "import re\n\nclass MemoizedComponent:\n    def __init__(self):\n        self.name = ''\n        self.greeting = ''\n\n    def render(self):\n        # Use memoization to render the greeting message\n        self.greeting = f'Hello, {self.name}!'\n        return self.greeting\n\n    def update_name(self):\n        # Update the user's name\n        self.name = 'John Doe'"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Define the user's name as a state variable\nconst [name, setName] = useState('');\n\n// Use useMemo to memoize the greeting message\nconst greeting = useMemo(() => {\n  return `Hello, ${name}!`;\n}, [name]); // BUG: Memoizing on name instead of dependencies\n\n// Return the greeting message\nreturn greeting;",
+    "python": "import re\n\nclass MemoizedComponent:\n    def __init__(self):\n        self.name = ''\n        self.greeting = ''\n\n    def render(self):\n        # Use memoization to render the greeting message\n        self.greeting = f'Hello, {self.name}!'\n        return self.greeting\n\n    def update_name(self):\n        # Update the user's name\n        self.name = 'John Doe'\n        self.render() # BUG: Calling render manually"
+  },
+  "functionSignature": {
+    "javascript": "function MemoizedComponent() {",
+    "python": "class MemoizedComponent:"
+  },
+  "solutions": {
+    "javascript": "// Define the user's name as a state variable\nconst [name, setName] = useState('');\n\n// Use useMemo to memoize the greeting message\nconst greeting = useMemo(() => {\n  return `Hello, ${name}!`;\n}, [name]);\n\n// Use useCallback to memoize the component's dependencies\nconst handleUpdateName = useCallback((newName) => {\n  setName(newName);\n}, []);\n\n// Return the greeting message and the handleUpdateName function\nreturn <div>\n  {greeting}\n  <button onClick={() => handleUpdateName('Jane Doe')}>Update Name</button>\n</div>;",
+    "python": "import re\n\nclass MemoizedComponent:\n    def __init__(self):\n        self.name = ''\n        self.greeting = ''\n\n    def render(self):\n        # Use memoization to render the greeting message\n        self.greeting = f'Hello, {self.name}!'\n        return self.greeting\n\n    def update_name(self, newName):\n        # Update the user's name\n        self.name = newName\n        self.render() # This is automatically handled by the component lifecycle\n\n    def __str__(self):\n        return self.greeting\n\n# Usage example\ncomponent = MemoizedComponent()\nprint(component.update_name('John Doe')) # Should print 'Hello, John Doe!'"
+  },
+  "judgeConfig": {
+    "timeLimit": 1,
+    "memoryLimit": 128,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "John Doe",
+      "output": "Hello, John Doe!",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "Jane Doe",
+      "output": "Hello, Jane Doe!",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "1d6313bafc57916365c26714",
+  "slug": "fixing-a-react-memoized-component-re-renders-on-state-change-bugfix-easy-react",
+  "mode": "bug_fix",
+  "category": "REACT",
+  "difficulty": "Easy"
+}

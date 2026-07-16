@@ -1,0 +1,153 @@
+{
+  "_id": "aca490df9e1d7902468f8c48",
+  "title": "Flawed Preorder Traversal",
+  "slug": "flawed-preorder-traversal-bugfix-hard-binary-trees",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "DFS/BFS",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "tree"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given a binary tree root, implement a function to get the preorder traversal of the tree. Note that the traversal should start from the root.",
+    "inputFormat": "The input will be a binary tree represented as a Node class, each node having a value, left child, and right child.",
+    "outputFormat": "The preorder traversal of the binary tree should be returned as a list of node values.",
+    "notes": "You can assume that the tree nodes have unique values and the tree is not empty.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\n    \"root\": { \"val\": 1, \"left\": null, \"right\": {\n        \"val\": 2, \"left\": null, \"right\": {\n            \"val\": 3, \"left\": null, \"right\": null\n        }\n    }\n}\n}",
+        "output": "[1, 2, 3]",
+        "explanation": "The preorder traversal of the binary tree is [1, 2, 3]"
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(...) ",
+    "spaceComplexity": "O(...)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    vector<int> preorderTraversal(Node* root) {\n        vector<int> result;\n        // TODO: implement\n        return result;\n    }\n};",
+    "java": "public class Solution {\n    public List<Integer> preorderTraversal(Node root) {\n        List<Integer> result = new ArrayList<>();\n        // TODO: implement\n        return result;\n    }\n}",
+    "python": "class Solution:\n    def preorderTraversal(self, root: Node) -> List[int]:\n        result = []\n        # TODO: implement\n        return result",
+    "javascript": "var solve = function(root) {\n    var result = [];\n    // TODO: implement\n    return result;\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    vector<int> preorderTraversal(Node* root) {\n        vector<int> result;\n        if (root) {\n            result.push_back(root->val);\n            preorderTraversal(root->right);\n        }\n        return result;\n    }\n};",
+    "java": "public class Solution {\n    public List<Integer> preorderTraversal(Node root) {\n        List<Integer> result = new ArrayList<>();\n        if (root != null) {\n            result.add(root.val);\n            preorderTraversal(root.right);\n        }\n        return result;\n    }\n}",
+    "python": "class Solution:\n    def preorderTraversal(self, root: Node) -> List[int]:\n        result = []\n        if root:\n            result.append(root.val)\n            preorderTraversal(root.right)\n        return result",
+    "javascript": "var solve = function(root) {\n    var result = [];\n    if (root) {\n        result.push(root.val);\n        solve(root.right);\n    }\n    return result;\n}"
+  },
+  "functionSignature": {
+    "cpp": "vector<int> preorderTraversal(Node* root);",
+    "java": "List<Integer> preorderTraversal(Node root);",
+    "python": "List[int] preorderTraversal(self, root: Node) -> List[int]:",
+    "javascript": "var solve = function(root);"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def preorderTraversal(self, root: Node) -> List[int]:\n        result = []\n        if root:\n            result.append(root.val)\n            if root.left:\n                result += self.preorderTraversal(root.left)\n            if root.right:\n                result += self.preorderTraversal(root.right)\n        return result\n\ndef main():\n    from sys import stdin\n    root = deserialize(stdin.readline())\n    solution = Solution()\n    preorder = solution.preorderTraversal(root)\n    print(preorder)\n\ndef deserialize(s):\n    if not s:\n        return None\n    s = s.strip('[]()\\n')\n    if s == 'null':\n        return None\n    i = 0\n    def dfs():\n        if i >= len(s):\n            return None\n        val = s[i]\n        i += 1\n        if s[i] == '\\',':\n            i += 1\n            left = deserialize(s[i:])\n            i += len(s[:i].strip('[],\\n')) + 1\n        else:\n            left = None\n        if s[i] == '\\',':\n            i += 1\n            right = deserialize(s[i:])\n            i += len(s[:i].strip('[],\\n')) + 1\n        else:\n            right = None\n        return Node(int(val), left, right)\n    return dfs()\n\nclass Node:\n    def __init__(self, val, left=None, right=None):\n        self.val = val\n        self.left = left\n        self.right = right",
+    "cpp": "class Solution {\npublic:\n    vector<int> preorderTraversal(Node* root) {\n        vector<int> result;\n        if(root) {\n            result.push_back(root->val);\n            // Fix: Add left first\n            preorderTraversal(root->left);\n            preorderTraversal(root->right);\n        }\n        return result;\n    }\n};\n\nint main() {\n    // Read binary tree from input\n    Node* root = deserialize();\n    Solution s;\n    vector<int> preorder = s.preorderTraversal(root);\n    for (int val : preorder) {\n        cout << val << ' ';\n    }\n    cout << endl;\n    return 0;\n}\n\nstring readString() {\n    static string str;\n    cin >> str;\n    return str;\n}\n\nNode* deserialize() {\n    string str = readString();\n    if (str == 'null') return nullptr;\n    int val = stoi(str);\n    str = readString();\n    if (str == ',') return new Node(val);\n    str = readString();\n    if (str[0] == '[') {\n        str = readString();\n        Node* left = deserialize();\n        str = readString();\n        if (str == ',') {\n            str = readString();\n            Node* right = deserialize();\n            return new Node(val, left, right);\n        } else {\n            return new Node(val, left);\n        }\n    } else {\n        return new Node(val);\n    }\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\n    \"root\": {\n        \"val\": 1,\n        \"left\": {\n            \"val\": 2,\n            \"left\": null,\n            \"right\": null\n        },\n        \"right\": {\n            \"val\": 3,\n            \"left\": null,\n            \"right\": null\n        }\n    }\n}",
+      "output": "[1, 2, 3]",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\n    \"root\": {\n        \"val\": 1,\n        \"left\": {\n            \"val\": 2,\n            \"left\": null,\n            \"right\": null\n        },\n        \"right\": {\n            \"val\": 3,\n            \"left\": {\n                \"val\": 4,\n                \"left\": null,\n                \"right\": null\n            },\n            \"right\": null\n        }\n    }\n}",
+      "output": "[1, 2, 4, 3]",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

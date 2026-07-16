@@ -1,0 +1,53 @@
+{
+  "_id": "ae79988f4ed5d5c22ffbb709",
+  "title": "React Bento Grid Component",
+  "slug": "react-bento-grid",
+  "difficulty": "Easy",
+  "topics": [
+    "REACT",
+    "REACT_BENTO_GRID"
+  ],
+  "statement": {
+    "markdown": "## React Bento Grid Component with Glow spotlight Effect\n\nBuild a beautiful Bento Grid container styling layout cards of differing column spans. Add a cursor spotlight glow effect tracking the user's cursor.\n\n### Requirements:\n1. **Spotlight Tracking**: On mouse-move over each card, calculate mouse position relative to the card client boundaries. Dynamically update CSS custom variables (`--mouse-x` and `--mouse-y` in pixels).\n2. **Radial Gradient Glow**: Card designs must include an absolute gradient layer styled with a radial gradient centered at the mouse coordinates:\n   `radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(120, 119, 198, 0.1), transparent 40%)`.\n3. **Grid Layout**: Structure items in a multi-span Bento layout (combining standard 1-col items, large 2-col items, and full 3-col grids) using Tailwind CSS.\n"
+  },
+  "constraints": [
+    "Must support responsive screen widths",
+    "Must utilize React state and canvas lifecycle hooks",
+    "Must use Tailwind CSS classes"
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "html": "",
+    "css": "",
+    "react": "import React, { useState } from 'react';\n\nexport default function BentoGrid({ items }) {\n  // Implement bento grid with mouse-tracking glow spotlight here\n  return (\n    <div className=\"grid md:auto-rows-[18rem] grid-cols-1 md:grid-cols-3 gap-4 max-w-7xl mx-auto\">\n      {/* Bento grid items */}\n    </div>\n  );\n}"
+  },
+  "gradingCriteria": [
+    {
+      "id": "functional_correctness",
+      "description": "Verify that the interactive mouse tracking, scroll animations, or canvas draw loops work perfectly.",
+      "weight": 55
+    },
+    {
+      "id": "code_cleanliness",
+      "description": "Verify clean React hook cleanups (setInterval, requestAnimationFrame, listeners) on component unmount.",
+      "weight": 45
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "react",
+      "tailwind"
+    ],
+    "referenceSolution": "import React, { useRef } from 'react';\n\nexport default function BentoGrid({ items }) {\n  return (\n    <div className=\"grid md:auto-rows-[20rem] grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto py-10 px-4\">\n      {items.map((item, idx) => {\n        const cardRef = useRef(null);\n\n        const handleMouseMove = (e) => {\n          if (!cardRef.current) return;\n          const rect = cardRef.current.getBoundingClientRect();\n          const x = e.clientX - rect.left;\n          const y = e.clientY - rect.top;\n          cardRef.current.style.setProperty('--mouse-x', `${x}px`);\n          cardRef.current.style.setProperty('--mouse-y', `${y}px`);\n        };\n\n        return (\n          <div\n            key={idx}\n            ref={cardRef}\n            onMouseMove={handleMouseMove}\n            className={`relative overflow-hidden group rounded-2xl border border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-6 flex flex-col justify-between transition-shadow duration-300 hover:shadow-lg ${\n              item.className || \"\"\n            }`}\n          >\n            {/* Spotlight Layer */}\n            <div\n              className=\"absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10\"\n              style={{\n                background: 'radial-gradient(400px circle at var(--mouse-x, 0px) var(--mouse-y, 0px), rgba(99, 102, 241, 0.08), transparent 80%)'\n              }}\n            />\n\n            <div className=\"flex flex-col gap-2\">\n              {item.icon && <div className=\"text-indigo-500 w-8 h-8\">{item.icon}</div>}\n              <h3 className=\"font-bold text-xl text-gray-800 dark:text-gray-100 mt-2\">\n                {item.title}\n              </h3>\n              <p className=\"text-gray-500 dark:text-gray-400 text-sm leading-relaxed\">\n                {item.description}\n              </p>\n            </div>\n\n            {item.header && <div className=\"mt-4 flex-1\">{item.header}</div>}\n          </div>\n        );\n      })}\n    </div>\n  );\n}"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

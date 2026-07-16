@@ -1,0 +1,203 @@
+{
+  "_id": "maximum-depth-of-bt",
+  "title": "Maximum Depth of BT",
+  "slug": "maximum-depth-of-bt",
+  "difficulty": "Medium",
+  "category": "TREE",
+  "subCategory": "Medium Problems",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 10,
+    "points": 500,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "Binary Trees"
+    ],
+    "patterns": [
+      "Binary Tree",
+      "Depth"
+    ],
+    "prerequisites": [
+      "Basic Programming"
+    ],
+    "variants": [],
+    "tags": [
+      "Recursion",
+      "Tree Traversal"
+    ],
+    "keywords": [
+      "Maximum Depth",
+      "Height"
+    ],
+    "interviewFrequency": 4,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "Given the root of a binary tree, return its maximum depth.\n\nA binary tree's maximum depth is the number of nodes along the longest path from the root node down to the farthest leaf node.\n\n**Example 1:**\n\n     3\n    / \\\n   9  20\n     /  \\\n    15   7\n\n**Example 2:**\n\n    1\n   / \\\\ \n  2   3   4\n /\n5\n\n**Example 3:**\n\n       1\n      / \\\\ \n     2   3   4\n    /\n   5\n  /\n 6\n\n**Constraints:**\n- The number of nodes in the tree is in the range [0, 10^4].\n- -100 <= Node.val <= 100",
+    "inputFormat": "The root node of the binary tree",
+    "outputFormat": "The maximum depth of the binary tree",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "nodes",
+        "type": "number",
+        "min": 0,
+        "max": 10000,
+        "description": "The number of nodes in the tree"
+      },
+      {
+        "variable": "Node.val",
+        "type": "number",
+        "min": -100,
+        "max": 100,
+        "description": "The value of each node"
+      }
+    ],
+    "examples": [
+      {
+        "input": "1 3 9 20 null null 15 7",
+        "output": "1",
+        "explanation": "The maximum depth is 3 because the path 3->20->15 or 3->20->7 has the most nodes."
+      },
+      {
+        "input": "1 2 3 4 5",
+        "output": "1",
+        "explanation": "The maximum depth is 3 because the path 1->2->5 has the most nodes."
+      },
+      {
+        "input": "1 2 3 4 5 6",
+        "output": "1",
+        "explanation": "The maximum depth is 4 because the path 1->2->5->6 has the most nodes."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "The maximum depth of a binary tree is essentially the length of the longest path from the root to a leaf node. Think about how you can traverse the tree to find this path."
+    },
+    {
+      "order": 2,
+      "text": "A depth-first search (DFS) approach could be suitable for this problem. Consider how you can use DFS to explore the tree and keep track of the depth at each node."
+    },
+    {
+      "order": 3,
+      "text": "In a recursive DFS approach, for each node, you would consider the maximum depth of its left subtree and its right subtree, and then return the maximum of these two depths plus one (for the current node). This way, you accumulate the depth as you traverse down the tree."
+    }
+  ],
+  "editorial": {
+    "title": "Maximum Depth of a Binary Tree: From Brute Force to Linear Time",
+    "intuition": "The depth of a tree is the longest path from the root to a leaf. A naïve approach explores every possible path independently, which quickly becomes infeasible as the tree grows. The key insight is that the depth of a node depends only on the depths of its children, allowing a single bottom‑up traversal to compute all depths in one pass.",
+    "bruteForce": "A brute‑force method would enumerate every root‑to‑leaf path, computing its length and keeping the maximum. This requires traversing each path separately, leading to a time complexity that can approach O(n^2) in the worst case (e.g., a degenerate tree). While correct, it is far too slow for the 10,000‑node limit.",
+    "betterSolution": "The optimal strategy is a depth‑first search that returns the depth of each subtree. For a node, the depth is 1 plus the maximum depth of its left and right children. This recursion visits each node exactly once, yielding linear time.",
+    "optimalSolution": "Recursively compute depth: if node is null return 0; otherwise return 1 + max(depth(left), depth(right)). The recursion naturally propagates the maximum depth up to the root.",
+    "proofOfCorrectness": "For any node, the longest path to a leaf must go through either its left or right child. By induction, assuming the depths of the children are correctly computed, the node’s depth is correctly computed as 1 plus the larger child depth. The base case of a null node returns 0, which is correct for an empty subtree. Thus, the algorithm returns the true maximum depth.",
+    "dryRun": "Consider a tree with root 1, left child 2, right child 3, and 2 has a left child 4. The recursion visits 4 (depth 1), then 2 (depth 2), then 3 (depth 1), and finally 1 (depth 3). The maximum depth reported is 3, matching the longest path 1‑2‑4.",
+    "commonMistakes": [
+      "Misinterpreting null nodes as depth 1 instead of 0; this inflates the result by one.",
+      "Using a breadth‑first traversal but adding 1 at each level incorrectly; the level counter must start at 0 for the root.",
+      "Recursively computing depth without memoization in a tree with shared subtrees (not applicable to binary trees but a common error in graph problems).",
+      "Failing to handle empty input (no nodes) and returning a negative depth.",
+      "Assuming the tree is balanced and using a formula like log2(n) for depth; this fails for skewed trees.",
+      "Using an iterative stack but forgetting to pop nodes, leading to infinite loops."
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(h)"
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nstruct TreeNode {\n    int val;\n    TreeNode *left;\n    TreeNode *right;\n    TreeNode() : val(0), left(nullptr), right(nullptr) {}\n    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}\n    TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}\n};\n\nclass Solution {\npublic:\n    int maxDepth(TreeNode* root) {\n        // TODO: implement\n        return 0;\n    }\n};",
+    "java": "import java.util.*;\n\nclass TreeNode {\n    int val;\n    TreeNode left;\n    TreeNode right;\n    TreeNode() {}\n    TreeNode(int val) { this.val = val; }\n    TreeNode(int val, TreeNode left, TreeNode right) {\n        this.val = val;\n        this.left = left;\n        this.right = right;\n    }\n}\n\nclass Solution {\n    public int maxDepth(TreeNode root) {\n        // TODO: implement\n        return 0;\n    }\n}",
+    "python": "class TreeNode:\n    def __init__(self, val=0, left=None, right=None):\n        self.val = val\n        self.left = left\n        self.right = right\n\nclass Solution:\n    def maxDepth(self, root: TreeNode) -> int:\n        # TODO: implement\n        pass",
+    "javascript": "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n\n/**\n * @param {TreeNode} root\n * @return {number}\n */\nvar maxDepth = function(root) {\n    // TODO: implement\n    return 0;\n};"
+  },
+  "functionSignature": {
+    "cpp": "int maxDepth(TreeNode* root);",
+    "java": "public int maxDepth(TreeNode root);",
+    "python": "def maxDepth(self, root: TreeNode) -> int:",
+    "javascript": "var maxDepth = function(root);"
+  },
+  "solutions": {
+    "python": "import sys\nfrom typing import Optional\nclass TreeNode:\n    def __init__(self, val=0, left=None, right=None):\n        self.val = val\n        self.left = left\n        self.right = right\nclass Solution:\n    def maxDepth(self, root: Optional[TreeNode]) -> int:\n        if not root:\n            return 0\n        return 1 + max(self.maxDepth(root.left), self.maxDepth(root.right))\nif __name__ == '__main__':\n    def read_ints():\n        return map(int, sys.stdin.read().split())\n    it = iter(read_ints())\n    try:\n        val = next(it)\n        root = None\n        nodes = []\n        for _ in range(val):\n            node_val = next(it)\n            node = TreeNode(node_val)\n            nodes.append(node)\n        for i in range(val):\n            node = nodes[i]\n            left_child_idx = 2 * i + 1\n            if left_child_idx < val:\n                node.left = nodes[left_child_idx]\n            right_child_idx = 2 * i + 2\n            if right_child_idx < val:\n                node.right = nodes[right_child_idx]\n        root = nodes[0]\n    except StopIteration:\n        sys.exit(0)\n    sol = Solution()\n    ans = sol.maxDepth(root)\n    print(ans)",
+    "cpp": "#include <numeric>\n#include <iostream>\n#include <vector>\nusing namespace std;\nstruct TreeNode {\n    int val;\n    TreeNode *left;\n    TreeNode *right;\n    TreeNode(int x) : val(x), left(NULL), right(NULL) {}\n};\nclass Solution {\npublic:\n    int maxDepth(TreeNode* root) {\n        if (!root) return 0;\n        return 1 + max(maxDepth(root->left), maxDepth(root->right));\n    }\n};\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int n;\n    cin >> n;\n    vector<TreeNode*> nodes(n);\n    for (int i = 0; i < n; i++) {\n        int val;\n        cin >> val;\n        nodes[i] = new TreeNode(val);\n    }\n    for (int i = 0; i < n; i++) {\n        int left_child_idx = 2 * i + 1;\n        if (left_child_idx < n) nodes[i]->left = nodes[left_child_idx];\n        int right_child_idx = 2 * i + 2;\n        if (right_child_idx < n) nodes[i]->right = nodes[right_child_idx];\n    }\n    Solution sol;\n    int ans = sol.maxDepth(nodes[0]);\n    cout << ans << endl;\n    return 0;\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.2
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "1 3 9 20 null null 15 7",
+      "output": "1",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "1 2 3 4 5",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_3",
+      "input": "1 2 3 4 5 6",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "large_random_16",
+      "input": "5\n1\n2\n3\n4\n5\n",
+      "output": "3",
+      "isVisible": false,
+      "weight": 1,
+      "category": "large_random"
+    },
+    {
+      "id": "adversarial_17",
+      "input": "1\n-100\n",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "adversarial"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

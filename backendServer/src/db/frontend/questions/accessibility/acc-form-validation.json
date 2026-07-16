@@ -1,0 +1,52 @@
+{
+  "_id": "64c0045b2b239712677f8f80",
+  "title": "Accessible Form Validation",
+  "slug": "acc-form-validation",
+  "difficulty": "Hard",
+  "topics": [
+    "ACCESSIBILITY"
+  ],
+  "statement": {
+    "markdown": "## Accessible Form Validation\n\nBuild an accessible form field validating input, notifying screen readers, and managing focus.\n\n### Requirements:\n1. **Aria-Describedby**: Errors must hook directly into active input fields dynamically using `aria-describedby` when fields are invalid.\n2. **Role Alerts**: Wrap error message panels with `role=\"alert\"` notifying screen readers immediately upon validation failure.\n3. **Focus management**: Submission validation failure focuses the first input field containing an error."
+  },
+  "constraints": [
+    "Must update aria-invalid to true/false states dynamically",
+    "Do not submit form payloads if validation fails"
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "html": "<div class=\"p-6 bg-slate-900 min-h-[300px] flex items-center justify-center font-sans\">\n  <form id=\"contact-form\" class=\"w-full max-w-sm p-6 bg-slate-800 rounded-xl border border-slate-700 text-white space-y-4\">\n    <div>\n      <label for=\"name-input\" class=\"block text-sm font-semibold mb-1\">Name</label>\n      <input id=\"name-input\" type=\"text\" class=\"w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg focus:outline-none focus:border-indigo-500 text-sm\" />\n      <div id=\"name-error\" role=\"alert\" class=\"text-xs text-red-400 mt-1 hidden\">Name is required.</div>\n    </div>\n    <button type=\"submit\" class=\"w-full bg-indigo-600 py-2 rounded-lg font-bold hover:bg-indigo-500 transition-colors\">Submit</button>\n  </form>\n</div>",
+    "css": "",
+    "javascript": "const form = document.getElementById('contact-form');\nconst nameInput = document.getElementById('name-input');\nconst nameError = document.getElementById('name-error');\n\n// Implement forms validation, input error toggles (aria-invalid), aria-describedby associations, and error focus redirection here\n"
+  },
+  "gradingCriteria": [
+    {
+      "id": "validation_errors",
+      "description": "Verify form validates input fields, blocks submissions, and displays error messages correctly.",
+      "weight": 50
+    },
+    {
+      "id": "focus_management",
+      "description": "Verify aria-invalid and aria-describedby apply correctly, and focus moves to the invalid input.",
+      "weight": 50
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "html",
+      "css",
+      "javascript"
+    ],
+    "referenceSolution": "const form = document.getElementById('contact-form');\nconst nameInput = document.getElementById('name-input');\nconst nameError = document.getElementById('name-error');\n\nform.addEventListener('submit', (e) => {\n  e.preventDefault();\n  const val = nameInput.value.trim();\n  \n  if (!val) {\n    nameInput.setAttribute('aria-invalid', 'true');\n    nameInput.setAttribute('aria-describedby', 'name-error');\n    nameError.classList.remove('hidden');\n    nameInput.focus();\n  } else {\n    nameInput.removeAttribute('aria-invalid');\n    nameInput.removeAttribute('aria-describedby');\n    nameError.classList.add('hidden');\n    alert('Form submitted successfully!');\n  }\n});"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

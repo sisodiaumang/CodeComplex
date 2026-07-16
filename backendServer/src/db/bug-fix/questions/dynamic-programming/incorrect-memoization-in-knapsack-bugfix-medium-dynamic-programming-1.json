@@ -1,0 +1,169 @@
+{
+  "_id": "8d7480e658f8321b3ca69f55",
+  "title": "Incorrect Memoization in Knapsack",
+  "slug": "incorrect-memoization-in-knapsack-bugfix-medium-dynamic-programming-1",
+  "difficulty": "Medium",
+  "category": "DSA",
+  "subCategory": "DP/Knapsack",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "dp"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Solve the problem and fix the bugs.",
+    "inputFormat": "The first line contains an integer n representing the number of items. The next n lines contain two space-separated integers - the weights and values of the items. The last line contains an integer k representing the capacity of the knapsack.",
+    "outputFormat": "Output the maximum value of the items that can be put in the knapsack.",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of items"
+      },
+      {
+        "variable": "k",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Knapsack capacity"
+      }
+    ],
+    "examples": [
+      {
+        "input": "3\n1 6\n2 10\n3 12\n5\n",
+        "output": "14",
+        "explanation": "The maximum value is obtained by including the first and third items."
+      },
+      {
+        "input": "2\n4 7\n3 10\n8\n",
+        "output": "10",
+        "explanation": "The maximum value is obtained by including the second item."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Review the memoization table to ensure it's correctly storing subproblems."
+    },
+    {
+      "order": 2,
+      "text": "Consider how the items are being processed in the dynamic programming loop."
+    }
+  ],
+  "editorial": {
+    "title": "How to Fix Incorrect Memoization in Knapsack Problem",
+    "intuition": "The key to solving this problem is to correctly store and retrieve the subproblems in the memoization table.",
+    "bruteForce": "A naive approach would involve recursively trying all possible combinations of items and their values.",
+    "betterSolution": "A more efficient approach would utilize dynamic programming to store the solutions to subproblems.",
+    "optimalSolution": "The optimal solution involves iterating over the items and their weights, and for each item, deciding whether to include it in the knapsack or not. This decision is made based on the maximum value we can get with the remaining capacity of the knapsack.",
+    "proofOfCorrectness": "The correctness of the solution can be proven by showing that it always chooses the best option for each item, given the remaining capacity of the knapsack.",
+    "dryRun": "Let's say we have items with values 10, 20, and 30, and a knapsack capacity of 8. We want to fill the knapsack with the maximum value. In this case, we would include the first two items (10 and 20) and get a total value of 30.",
+    "commonMistakes": [
+      "Incorrectly filling the memoization table",
+      "Not properly considering the remaining capacity of the knapsack"
+    ],
+    "timeComplexity": "O(nk)",
+    "spaceComplexity": "O(nk)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\n    public:\n        int knapsack(vector<vector<int>>& dp, int i, int w, vector<pair<int, int>>& items);\n    };",
+    "java": "public class Solution {\n    public:\n        int knapsack(int[][] dp, int i, int w, int[][] items);\n    }",
+    "python": "class Solution:\n    def knapsack(self, dp, i, w, items):\n        pass",
+    "javascript": "function knapsack(dp, i, w, items){\n    // TODO: implement the function\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\n    public:\n        int knapsack(vector<vector<int>>& dp, int i, int w, vector<pair<int, int>>& items) {\n            if(i == items.size() - 1) {\n                return items[i].second;\n            }\n            if(dp[i][w] != -1) {\n                return dp[i][w];\n            }\n            int take = items[i].second + knapsack(dp, i + 1, w - items[i].first, items);\n            int notTake = 0 + knapsack(dp, i + 1, w, items);\n            dp[i][w] = max(take, notTake);\n            return dp[i][w];\n        }\n    };",
+    "java": "public class Solution {\n    public:\n        int knapsack(int[][] dp, int i, int w, int[][] items) {\n            if(i == items.length - 1) {\n                return items[i][1];\n            }\n            if(dp[i][w] != -1) {\n                return dp[i][w];\n            }\n            int take = items[i][1] + knapsack(dp, i + 1, w - items[i][0], items);\n            int notTake = 0 + knapsack(dp, i + 1, w, items);\n            dp[i][w] = Math.max(take, notTake);\n            return dp[i][w];\n        }\n    }",
+    "python": "class Solution:\n    def knapsack(self, dp, i, w, items):\n        if i == len(items) - 1:\n            return items[i][1]\n        if dp[i][w] != -1:\n            return dp[i][w]\n        take = items[i][1] + self.knapsack(dp, i + 1, w - items[i][0], items)\n        notTake = 0 + self.knapsack(dp, i + 1, w, items)\n        dp[i][w] = max(take, notTake)\n        return dp[i][w]",
+    "javascript": "function knapsack(dp, i, w, items) {\n    if (i == items.length - 1) {\n        return items[i][1];\n    }\n    if (dp[i][w] != -1) {\n        return dp[i][w];\n    }\n    let take = items[i][1] + knapsack(dp, i + 1, w - items[i][0], items);\n    let notTake = 0 + knapsack(dp, i + 1, w, items);\n    dp[i][w] = Math.max(take, notTake);\n    return dp[i][w];\n}"
+  },
+  "functionSignature": {
+    "cpp": "int knapsack(vector<vector<int>>& dp, int i, int w, vector<pair<int, int>>& items);",
+    "java": "int knapsack(int[][] dp, int i, int w, int[][] items);",
+    "python": "def knapsack(self, dp, i, w, items: list[list[int]]): -> int",
+    "javascript": "var knapsack = function(dp, i, w, items){"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def solve(self):\n        t = int(input())\n        for i in range(t):\n            n = int(input())\n            items = []\n            for _ in range(n):\n                w, v = map(int, input().split())\n                items.append((w, v))\n            k = int(input())\n            memo = [[-1 for _ in range(k+1)] for _ in range(n)]\n            ans = self.knapsack(memo, 0, k, items)\n            print(ans)\n\n    def knapsack(self, dp, i, w, items):\n        if i == len(items) - 1:\n            return items[i][1]\n        if dp[i][w] != -1:\n            return dp[i][w]\n        take = items[i][1] + self.knapsack(dp, i + 1, w - items[i][0], items)\n        notTake = 0 + self.knapsack(dp, i + 1, w, items)\n        dp[i][w] = max(take, notTake)\n        return dp[i][w]\n\n    def main(self):\n        self.solve()\n\nif __name__ == '__main__':\n    solution = Solution()\n    solution.main()\n",
+    "cpp": "class Solution {\n    void solve() {\n        int t;\n        cin >> t;\n        for(int i = 0; i < t; i++) {\n            int n;\n            cin >> n;\n            vector<pair<int, int>> items;\n            for(int j = 0; j < n; j++) {\n                int w, v;\n                cin >> w >> v;\n                items.push_back({w, v});\n            }\n            int k;\n            cin >> k;\n            vector<vector<int>> dp(n, vector<int>(k+1, -1));\n            cout << knapsack(dp, 0, k, items) << endl;\n        }\n    }\n\n    int knapsack(vector<vector<int>>& dp, int i, int w, vector<pair<int, int>>& items) {\n        if(i == items.size() - 1) {\n            return items[i].second;\n        }\n        if(dp[i][w] != -1) {\n            return dp[i][w];\n        }\n        int take = items[i].second + knapsack(dp, i + 1, w - items[i].first, items);\n        int notTake = 0 + knapsack(dp, i + 1, w, items);\n        dp[i][w] = max(take, notTake);\n        return dp[i][w];\n    }\n\n    void main() {\n        solve();\n    }\n\n};\n\nclass Main {\n    public:\n        static void main() {\n            Solution solution;\n            solution.main();\n        }\n};",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "3\n1 6\n2 10\n3 12\n5\n",
+      "output": "14",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "2\n4 7\n3 10\n8\n",
+      "output": "10",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

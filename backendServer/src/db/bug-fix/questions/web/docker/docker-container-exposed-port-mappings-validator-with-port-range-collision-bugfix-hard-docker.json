@@ -1,0 +1,136 @@
+{
+  "title": "DOCKER Container Exposed Port Mappings Validator with Port Range Collision",
+  "subCategory": "Docker port mapping",
+  "statement": {
+    "markdown": "Given a Docker Compose configuration file, write a function to validate that exposed container ports do not overlap with service ports. The function should return True if the ports are valid and False otherwise. Note that exposed ports are defined in the `ports` section of the `docker-compose.yml` file, while service ports are defined in the `ports` section of the `services` section.\n\nFor example, if the `docker-compose.yml` file contains the following:\n\nversion: '3'\n\nservices:\n  web:\n    image: web\n    ports:\n      - \"8000:80\"\n    expose:\n      - 8000\n\n    ports:\n      - \"8001:81\"\n\nThe function should return True because there is no port overlap between the exposed ports and the service ports. However, if the `docker-compose.yml` file contains the following:\n\nversion: '3'\n\nservices:\n  web:\n    image: web\n    ports:\n      - \"8000:80\"\n    expose:\n      - 8000\n\n    ports:\n      - \"8000:81\"\n\nThe function should return False because there is a port overlap between the exposed port and the service port.\n\nInput Format:\n  The input is a string representing the Docker Compose configuration file.\n\nOutput Format:\n  The output is a boolean value indicating whether the ports are valid.\n\nNotes:\n  You can assume that the input string is well-formed and that the `ports` and `expose` sections are defined.",
+    "inputFormat": "A string representing the Docker Compose configuration file.",
+    "outputFormat": "A boolean value indicating whether the ports are valid.",
+    "notes": "You can assume that the input string is well-formed and that the `ports` and `expose` sections are defined.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The maximum number of services in the Docker Compose configuration file."
+      }
+    ],
+    "examples": [
+      {
+        "input": "version: '3'\n\nservices:\n  web:\n    image: web\n    ports:\n      - \"8000:80\"\n    expose:\n      - 8000\n\n    ports:\n      - \"8001:81\"",
+        "output": "true",
+        "explanation": "There is no port overlap between the exposed ports and the service ports."
+      },
+      {
+        "input": "version: '3'\n\nservices:\n  web:\n    image: web\n    ports:\n      - \"8000:80\"\n    expose:\n      - 8000\n\n    ports:\n      - \"8000:81\"",
+        "output": "false",
+        "explanation": "There is a port overlap between the exposed port and the service port."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 75,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DOCKER"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "docker"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(n^2)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "function validatePorts(composeConfig) {\n  // Solution goes here\n}\n\nmodule.exports = validatePorts;",
+    "python": "class Solution:\n  def validatePorts(self, composeConfig: str) -> bool:\n    # Solution goes here\n\ndef main():\n  composeConfig = input()\n  solution = Solution()\n  result = solution.validatePorts(composeConfig)\n  print(result)\n\nif __name__ == '__main__':\n  main()"
+  },
+  "buggyStarterCode": {
+    "javascript": "function validatePorts(composeConfig) {\n  let services = composeConfig.match(/services:.*?/s)[0].replace(\"services:\", \"\").replace(/\\n/g, \"\").split(\"\");\n  let exposedPorts = composeConfig.match(/expose:.*/s)[0].replace(\"expose:\", \"\").replace(/\\n/g, \"\").split(\"\");\n  let servicePorts = composeConfig.match(/ports:.*/s)[0].replace(\"ports:\", \"\").replace(/\\n/g, \"\").split(\" \");\n  for (let i = 0; i < services.length; i++) {\n    let servicePortsArray = services[i].split(\":\");\n    let port = servicePortsArray[0];\n    let exposedPort = exposedPorts[i].replace(/\\/n/g, \"\");\n    if (port == exposedPort) {\n      return false;\n    }\n  }\n  return true;\n}\n\nmodule.exports = validatePorts;",
+    "python": "class Solution:\n  def validatePorts(self, composeConfig: str) -> bool:\n    services = composeConfig.split(\"services:\")[1].split(\"\\n\")[0].split(\" \")\n    exposedPorts = composeConfig.split(\"expose:\")[1].split(\"\\n\")[0].split(\" \")\n    servicePorts = composeConfig.split(\"ports:\")[1].split(\"\\n\")[0].split(\" \")\n    for service, exposed, port in zip(services, exposedPorts, servicePorts):\n      if int(port.split(\":\")[0]) == int(exposed):\n        return False\n    return True\n\ndef main():\n  composeConfig = input()\n  solution = Solution()\n  result = solution.validatePorts(composeConfig)\n  print(result)\n\nif __name__ == '__main__':\n  main()"
+  },
+  "functionSignature": {
+    "javascript": "function validatePorts(composeConfig) {\n  // Solution goes here\n}",
+    "python": "class Solution:\n  def validatePorts(self, composeConfig: str) -> bool:\n    # Solution goes here\n\n"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction validatePorts(composeConfig) {\n  let services = composeConfig.match(/services:.*?/s)[0].replace(\"services:\", \"\").replace(/\\n/g, \"\").split(\"\");\n  let exposedPorts = composeConfig.match(/expose:.*/s)[0].replace(\"expose:\", \"\").replace(/\\n/g, \"\").split(\"\");\n  let servicePorts = composeConfig.match(/ports:.*/s)[0].replace(\"ports:\", \"\").replace(/\\n/g, \"\").split(\" \");\n  let exposedPortSet = new Set(exposedPorts);\n  let servicePortSet = new Set();\n  for (let i = 0; i < services.length; i++) {\n    let servicePortsArray = services[i].split(\":\");\n    let port = servicePortsArray[0];\n    servicePortSet.add(port);\n    if (exposedPortSet.has(port) && servicePortSet.has(port)) {\n      return false;\n    }\n  }\n  return true;\n}\n\nmodule.exports = validatePorts;",
+    "python": "import re\nclass Solution:\n  def validatePorts(self, composeConfig: str) -> bool:\n    services = re.findall(r'services:.*?\\n', composeConfig)[0].replace(\"services:\", \"\").replace(\"\\n\", \"\").split(\" \")\n    exposedPorts = re.findall(r'expose:.*/s', composeConfig)[0].replace(\"expose:\", \"\").replace(\"\\n\", \"\").split(\" \")\n    servicePorts = re.findall(r'ports:.*/s', composeConfig)[0].replace(\"ports:\", \"\").replace(\"\\n\", \"\").split(\" \")\n    exposedPortSet = set(exposedPorts)\n    servicePortSet = set()\n    for service in services:\n      port = service.split(':')[0]\n      servicePortSet.add(port)\n      if port in exposedPortSet and port in servicePortSet:\n        return False\n    return True\n\ndef main():\n  composeConfig = input()\n  solution = Solution()\n  result = solution.validatePorts(composeConfig)\n  print(result)\n\nif __name__ == '__main__':\n  main()"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "version: '3'\n\nservices:\n  web:\n    image: web\n    ports:\n      - \"8000:80\"\n    expose:\n      - 8000\n\n    ports:\n      - \"8001:81\"",
+      "output": "true",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "version: '3'\n\nservices:\n  web:\n    image: web\n    ports:\n      - \"8000:80\"\n    expose:\n      - 8000\n\n    ports:\n      - \"8000:81\"",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "_id": "9e47335c753c1663dfdf8eb1",
+  "slug": "docker-container-exposed-port-mappings-validator-with-port-range-collision-bugfix-hard-docker",
+  "mode": "bug_fix",
+  "category": "DOCKER",
+  "difficulty": "Hard"
+}

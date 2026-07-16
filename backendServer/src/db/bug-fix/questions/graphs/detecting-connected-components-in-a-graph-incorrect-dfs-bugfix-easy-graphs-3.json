@@ -1,0 +1,162 @@
+{
+  "_id": "50479969fc3ead4d51eb061b",
+  "title": "Detecting Connected Components in a Graph: Incorrect DFS",
+  "slug": "detecting-connected-components-in-a-graph-incorrect-dfs-bugfix-easy-graphs-3",
+  "difficulty": "Easy",
+  "category": "DSA",
+  "subCategory": "DFS",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "graph",
+      "fix"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given an adjacency list representation of a graph, implement a function to detect and return the connected components of the graph. You should not consider the ordering in which the components are returned.",
+    "inputFormat": "The graph is represented as an adjacency list where each key is a vertex and its corresponding value is a list of adjacent vertices.",
+    "outputFormat": "The function should return a list of lists where each sublist contains a connected component of the graph.",
+    "notes": "Note that the graph is undirected and unweighted.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "Example input (matching the stdin format that main wrapper expects): \n3\n[0,1], [0,2], [1,2]\n",
+        "output": "Expected stdout output: \n[[0,1,2]]\n",
+        "explanation": "The graph is fully connected, so there is only one connected component."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Start with a given node and perform DFS on the graph."
+    }
+  ],
+  "editorial": {
+    "title": "Correct DFS Traversal Order in a Graph",
+    "intuition": "The correct approach is to start a DFS traversal from each unvisited node and include all nodes in the same DFS traversal as part of the same connected component.",
+    "bruteForce": "One possible brute force solution is to perform DFS traversal from each node and keep track of visited nodes using recursion.",
+    "betterSolution": "Use DFS and mark visited nodes to ensure we do not visit the same node in different DFS traversals.",
+    "optimalSolution": "Perform DFS from each unvisited node and use a set to keep track of visited nodes.",
+    "proofOfCorrectness": "The correctness of the algorithm can be proved using the fact that DFS traverses the graph level by level, and if two nodes are in the same level, they are connected.",
+    "dryRun": "Start a DFS traversal from node 0, visit node 1, and then visit node 2.",
+    "commonMistakes": [
+      "Mistaking a disconnected graph for a connected one",
+      "Mistaking a fully connected graph for an incomplete graph"
+    ],
+    "timeComplexity": "O(n + m)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    vector<vector<int>> solve(vector<vector<int>>& edges, int n) {\n        // TODO: implement\n        return {{}};\n    }\n};",
+    "java": "public class Solution {\n    public List<List<Integer>> solve(int[][] edges, int n) {\n        // TODO: implement\n        return new ArrayList<>();\n    }\n}",
+    "python": "class Solution:\n    def solve(self, edges, n) -> list:\n        # TODO: implement\n        return []",
+    "javascript": "var solve = function(edges, n) {\n    // TODO: implement\n    return [];"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    vector<vector<int>> solve(vector<vector<int>>& edges, int n) {\n        vector<vector<int>> result;\n        vector<int> stack;\n        stack.push_back(0);\n        while (!stack.empty()) {\n            int node = stack.back();\n            stack.pop_back();\n            for (int neighbor : edges[node]) {\n                if (stack.find(neighbor) == stack.end()) {\n                    stack.push_back(neighbor);\n                }\n            }\n            result.push_back(vector<int>{node});\n        }\n        return result;\n    }\n};",
+    "java": "public class Solution {\n    public List<List<Integer>> solve(int[][] edges, int n) {\n        List<List<Integer>> result = new ArrayList<>();\n        Stack<Integer> stack = new Stack<>();\n        stack.push(0);\n        while (!stack.isEmpty()) {\n            int node = stack.pop();\n            for (int neighbor : edges[node]) {\n                if (!stack.contains(neighbor)) {\n                    stack.push(neighbor);\n                }\n            }\n            result.add(Collections.singletonList(node));\n        }\n        return result;\n    }\n}",
+    "python": "class Solution:\n    def solve(self, edges, n) -> list:\n        result = []\n        stack = [0]\n        while stack:\n            node = stack.pop()\n            for neighbor in edges[node]:\n                if neighbor not in stack:\n                    stack.append(neighbor)\n            result.append([node])\n        return result",
+    "javascript": "var solve = function(edges, n) {\n    var result = [],\n        stack = [0];\n    while (stack.length) {\n        var node = stack.pop();\n        for (var neighbor of edges[node]) {\n            if (stack.indexOf(neighbor) === -1) {\n                stack.push(neighbor);\n            }\n        }\n        result.push([node]);\n    }\n    return result;\n}"
+  },
+  "functionSignature": {
+    "cpp": "vector<vector<int>> solve(vector<vector<int>>& edges, int n);",
+    "java": "List<List<Integer>> solve(int[][] edges, int n);",
+    "python": "def solve(self, edges: list, n: int) -> list:\n",
+    "javascript": "var solve = function(edges, n) {"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def solve(self, edges, n) -> list:\n        result = \n        visited = set()\n        result = []\n        for i in range(n):\n            if i not in visited:\n                component = [i]\n                stack = [i]\n                visited.add(i)\n                while stack:\n                    node = stack.pop()\n                    for neighbor in edges[node]:\n                        if neighbor not in visited:\n                            component.append(neighbor)\n                            visited.add(neighbor)\n                            stack.append(neighbor)\n                result.append(component)\n        return result\n\n# test cases\nimport sys\nfrom typing import List\n\ndef read_ints():\n    return list(map(int, sys.stdin.readline().strip().split()))\n\ndef read_int_grid(rows, cols):\n    return [list(map(int, sys.stdin.readline().strip().split())) for _ in range(rows)]\n\ndef print_result(result):\n    print(\"\\n\".join([\"[\" + \",\".join(map(str, component)) + \"]\" for component in result]))\n\nif __name__ == \"__main__\":\n    n = int(input())\n    edges = [list(map(int, input().split(\" \"))) for _ in range(n)]\n    solution = Solution()\n    result = solution.solve(edges, n)\n    print_result(result)\n",
+    "cpp": "// complete solution here",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "4\n[0, 0], [0, 1], [1, 2], [2, 3]\n",
+      "output": "Expected output: \n[[0, 1, 2, 3]]\n",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "4\n[0, 1], [1, 2], [2, 3], [3, 0]\n",
+      "output": "Expected output: \n[[0, 1, 2, 3]]\n",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    },
+    {
+      "id": "tc_3",
+      "input": "4\n[0, 1], [1, 2], [2, 3], [3, 0], [1, 3]\n",
+      "output": "Expected output: \n[[0, 1, 2, 3]]\n",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

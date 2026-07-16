@@ -1,0 +1,153 @@
+{
+  "_id": "aa21379c918d2375f8046fcc",
+  "title": "Unstable Merging Sort",
+  "slug": "unstable-merging-sort-bugfix-easy-sorting",
+  "difficulty": "Easy",
+  "category": "DSA",
+  "subCategory": "Merging",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "sorting"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given two sorted lists of integers, `left` and `right`, implement a function that merges them into a single sorted list. The resulting list should be in ascending order.",
+    "inputFormat": "You will be given two lists of integers as input, `left` and `right`, each with `n` elements.",
+    "outputFormat": "Your function should return a single list of integers, which is the merged and sorted result of `left` and `right`.",
+    "notes": "Be careful not to modify the input lists.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of the input lists"
+      }
+    ],
+    "examples": [
+      {
+        "input": "2\n1 2\n3 4",
+        "output": "1 2 3 4",
+        "explanation": "Merging two sorted lists in ascending order"
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Compare elements from both lists to ensure the correct order"
+    }
+  ],
+  "editorial": {
+    "title": "Correct Merging Algorithm",
+    "intuition": "The key is to use a recursive approach to compare elements from both lists and merge them correctly",
+    "bruteForce": "Use a simple loop to merge the lists, without considering optimization",
+    "betterSolution": "Use a recursive approach with a helper function to compare elements",
+    "optimalSolution": "Use a merge step to combine sorted subarrays from both lists",
+    "proofOfCorrectness": "The correctness of the algorithm can be proven through induction on the input size",
+    "dryRun": "Try the recursive approach with small inputs",
+    "commonMistakes": [
+      "Failing to handle edge cases",
+      "Not considering the stability of the sort"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    vector<int> merge(vector<int>& left, vector<int>& right) {\n        // TODO: implement\n    }\n};",
+    "java": "public class Solution {\n    public int[] merge(int[] left, int[] right) {\n        // TODO: implement\n    }\n}",
+    "python": "class Solution:\n    def merge(self, left, right) -> list[int]:\n        # TODO: implement\n        pass",
+    "javascript": "function merge(left, right) {\n    // TODO: implement\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    vector<int> merge(vector<int>& left, vector<int>& right) {\n        vector<int> result;\n        while (!left.empty() && !right.empty()) {\n            result.push_back(left.front() > right.front() ? left.front() : right.front());\n            if (left.front() > right.front()) left.erase(left.begin());\n            else right.erase(right.begin());\n        }\n        return result;\n    }\n};",
+    "java": "public class Solution {\n    public int[] merge(int[] left, int[] right) {\n        int[] result = new int[left.length + right.length];\n        int i = 0, j = 0, k = 0;\n        while (i < left.length && j < right.length) {\n            if (left[i] > right[j]) {\n                result[k++] = left[i++];\n            } else {\n                result[k++] = right[j++];\n            }\n        }\n        while (i < left.length) result[k++] = left[i++];\n        while (j < right.length) result[k++] = right[j++];\n        return result;\n    }\n}",
+    "python": "class Solution:\n    def merge(self, left, right) -> list[int]:\n        result = []\n        while left and right:\n            result.append(left[0] > right[0] and left.pop(0) or right.pop(0))\n        return result",
+    "javascript": "function merge(left, right) {\n    let result = [], i = 0, j = 0;\n    while (left.length && right.length) {\n        if (left[0] > right[0]) {\n            result.push(left.shift());\n        } else {\n            result.push(right.shift());\n        }\n    }\n    while (left.length) result.push(left.shift());\n    while (right.length) result.push(right.shift());\n    return result;"
+  },
+  "functionSignature": {
+    "cpp": "vector<int> merge(vector<int>& left, vector<int>& right);",
+    "java": "int[] merge(int[] left, int[] right);",
+    "python": "def merge(self, left: list[int], right: list[int]) -> list[int];",
+    "javascript": "function merge(left, right);"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def merge(self, left, right) -> list[int]:\n        result = []\n        i = 0\n        j = 0\n        while i < len(left) and j < len(right):\n            if left[i] <= right[j]:\n                result.append(left[i])\n                i += 1\n            else:\n                result.append(right[j])\n                j += 1\n        result += left[i:]\n        result += right[j:]\n        return result\n\ndef main():\n    # Read input from stdin\n    n = int(input())\n    left = list(map(int, input().split()))\n    right = list(map(int, input().split()))\n\n    # Create a solution instance and call the merge method\n    solution = Solution()\n    result = solution.merge(left, right)\n\n    # Print the result\n    print(*result)",
+    "cpp": "#include <iostream>\n#include <vector>\n\nusing namespace std;\n\nclass Solution {\npublic:\n    vector<int> merge(vector<int>& left, vector<int>& right) {\n        vector<int> result;\n        int i = 0, j = 0;\n        while (i < left.size() && j < right.size()) {\n            if (left[i] <= right[j]) {\n                result.push_back(left[i]);\n                i++;\n            } else {\n                result.push_back(right[j]);\n                j++;\n            }\n        }\n        result.insert(result.end(), left.begin() + i, left.end());\n        result.insert(result.end(), right.begin() + j, right.end());\n        return result;\n    }\n};\n\nint main() {\n    int n;\n    cin >> n;\n    vector<int> left(n), right(n);\n\n    for (int i = 0; i < n; i++) cin >> left[i];\n    for (int i = 0; i < n; i++) cin >> right[i];\n\n    Solution solution;\n    vector<int> result = solution.merge(left, right);\n\n    for (int num : result) cout << num << ' ';\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "2\n1 2\n3 4",
+      "output": "1 2 3 4",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "3\n1 3 5\n2 4 6",
+      "output": "1 2 3 4 5 6",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

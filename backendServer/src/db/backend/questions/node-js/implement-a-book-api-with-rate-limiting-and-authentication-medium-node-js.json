@@ -1,0 +1,155 @@
+{
+  "_id": "c798a1e87add3b3b78e67822",
+  "title": "Implement a Book API with Rate Limiting and Authentication",
+  "slug": "implement-a-book-api-with-rate-limiting-and-authentication-medium-node-js",
+  "difficulty": "Medium",
+  "topics": [
+    "NODE_JS"
+  ],
+  "statement": "Design and implement a RESTful API for a book store using Node.js and Express.js. Your API must include authentication, rate limiting, and CRUD operations for books. Implement the following endpoints:\n   - **POST /api/books**: Create a new book with a title, author, and publication year. Authentication is required.\n   - **GET /api/books**: Retrieve a list of all books. Authentication is not required.\n   - **GET /api/books/:id**: Retrieve a book by its ID. Authentication is not required.\n   - **PUT /api/books/:id**: Update a book by its ID. Authentication is required.\n   - **DELETE /api/books/:id**: Delete a book by its ID. Authentication is required.\n   \n   The authentication mechanism should be in the form of a JSON Web Token (JWT). The JWT should be included in the **Authorization** header of each request. The user is expected to generate the JWT using a username and password pair provided by the registration endpoint.\n\nConstraints:\n- Must use only the in-memory array or mock database provided.\n- Must implement rate limiting using the Express rate limiting middleware.\n- Must implement authentication using JSON Web Tokens.\n\nNote: You can assume the following user credentials for testing purposes:\n- Username: user1, Password: password123 (to get a JWT)\n- Username: user2, Password: password123 (to get a JWT)\n\nYour implementation should include error handling and validation for each endpoint.",
+  "constraints": [
+    "Must use only the in-memory array or mock database provided.",
+    "Must implement rate limiting using the Express rate limiting middleware.",
+    "Must implement authentication using JSON Web Tokens."
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/books",
+      "description": "Create a new book with a title, author, and publication year. Authentication is required."
+    },
+    {
+      "method": "GET",
+      "path": "/api/books",
+      "description": "Retrieve a list of all books. Authentication is not required."
+    },
+    {
+      "method": "GET",
+      "path": "/api/books/:id",
+      "description": "Retrieve a book by its ID. Authentication is not required."
+    },
+    {
+      "method": "PUT",
+      "path": "/api/books/:id",
+      "description": "Update a book by its ID. Authentication is required."
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/books/:id",
+      "description": "Delete a book by its ID. Authentication is required."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\"name\": \"book-api\",\n  \"version\": \"1.0.0\",\n  \"main\": \"index.js\",\n  \"scripts\": {\n    \"start\": \"node index.js\"\n  },\n  \"dependencies\": {\n    \"express\": \"^4.18.2\",\n    \"express-rate-limit\": \"^5.2.0\",\n    \"jsonwebtoken\": \"^8.5.1\"\n  }\n}",
+    "index.js": "const express = require('express');\nconst rateLimit = require('express-rate-limit');\nconst jwt = require('jsonwebtoken');\n\nconst app = express();\nconst books = [{ id: 1, title: 'Book 1', author: 'Author 1', year: 2020 }, { id: 2, title: 'Book 2', author: 'Author 2', year: 2021 }];\nconst secretKey = 'your_secret_key_here';\n\n// Implement rate limiting middleware\nconst limiter = rateLimit(\n  {\n    windowMs: 15 * 60 * 1000, // 15 minutes\n    max: 100 // limit each IP to 100 requests per windowMs\n  }\n);\napp.use(limiter);\n\n// Implement JSON Web Token (JWT) middleware\napp.use((req, res, next) => {\n  const token = req.headers.authorization;\n  if (!token) return res.status(401).send({ message: 'Unauthorized' });\n  jwt.verify(token, secretKey, (err, decoded) => {\n    if (err) return res.status(401).send({ message: 'Invalid token' });\n    req.user = decoded;\n    next();\n  });\n});\n\n// Define endpoints here...\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "POST",
+      "path": "/api/books",
+      "headers": {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer your_jwt_token_here"
+      },
+      "body": {
+        "title": "Book 3",
+        "author": "Author 3",
+        "year": 2022
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "id": 3,
+        "title": "Book 3",
+        "author": "Author 3",
+        "year": 2022
+      },
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "GET",
+      "path": "/api/books",
+      "expectedStatus": 200,
+      "expectedBody": [
+        {
+          "id": 1,
+          "title": "Book 1",
+          "author": "Author 1",
+          "year": 2020
+        }
+      ],
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "GET",
+      "path": "/api/books/999",
+      "expectedStatus": 404,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "PUT",
+      "path": "/api/books/1",
+      "headers": {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer invalid_token"
+      },
+      "body": {
+        "title": "Book 1 updated"
+      },
+      "expectedStatus": 401,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "DELETE",
+      "path": "/api/books/1",
+      "headers": {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer your_jwt_token_here"
+      },
+      "expectedStatus": 204,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "event-loop",
+    "streams",
+    "buffers",
+    "file-system",
+    "process",
+    "child-process",
+    "worker-threads",
+    "cluster",
+    "timers",
+    "nodejs",
+    "express",
+    "rate-limiting",
+    "authentication"
+  ]
+}

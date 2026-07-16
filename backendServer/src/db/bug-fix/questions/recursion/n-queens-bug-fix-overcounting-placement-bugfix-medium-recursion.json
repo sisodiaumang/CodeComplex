@@ -1,0 +1,152 @@
+{
+  "_id": "cd1b5ff100c79044fc845594",
+  "title": "N-Queens Bug Fix: Overcounting Placement",
+  "slug": "n-queens-bug-fix-overcounting-placement-bugfix-medium-recursion",
+  "difficulty": "Medium",
+  "category": "DSA",
+  "subCategory": "BACKTRACKING",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "backtracking"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Implement a solution to the classic N-Queens problem using backtracking. Given an integer `n`, return the number of distinct solutions (i.e., arrangements) where `n` queens can be placed on an `n x n` chessboard such that no two queens attack each other.",
+    "inputFormat": "Input is an integer `n` where `1 <= n <= 100`.",
+    "outputFormat": "Output is a single integer representing the number of distinct solutions.",
+    "notes": "You may use a helper function to check if a queen can safely be placed at a position. You cannot use any global variables.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 100,
+        "description": "Size of the chessboard"
+      }
+    ],
+    "examples": [
+      {
+        "input": "4",
+        "output": "2",
+        "explanation": "There are two distinct ways to place two queens on a 4x4 chessboard."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use a recursive backtracking approach with a helper function to check for conflicts."
+    }
+  ],
+  "editorial": {
+    "title": "N-Queens Bug Fix: Overcounting Placement",
+    "intuition": "The key to solving this problem is to realize that a queen can attack other queens through any position on the same row, column, or diagonal. We will use a recursive backtracking approach to find all distinct solutions.",
+    "bruteForce": "The brute force approach is to check all possible positions for the queens and count the number of placements that do not contain any conflicts.",
+    "betterSolution": "",
+    "optimalSolution": "Check if a queen can be placed at a position by checking for conflicts with previously placed queens. If it can, recursively place the next queen.",
+    "proofOfCorrectness": "proof Of Correctness details.",
+    "dryRun": "dry Run details.",
+    "commonMistakes": [
+      "Overcounting distinct placements"
+    ],
+    "timeComplexity": "O(N!)",
+    "spaceComplexity": "O(N)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    bool isValid(vector<int>& nums) {\n        // TODO: implement\n        return false;\n    }\n};",
+    "java": "class Solution {\n    public boolean isValid(int[] nums) {\n        // TODO: implement\n        return false;\n    }\n}",
+    "python": "class Solution:\n    def isValid(self, nums: list[int]) -> bool:\n        # TODO: implement\n        pass",
+    "javascript": "var isValid = function(nums) {\n    // TODO: implement\n    return false;\n};"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    int totalNQueens(int n) {\n        // Initialize variables here\n        return calculate(0, n);\n    }\n\n    int calculate(int row, int n) {\n        if (row == n) {\n            return 1;\n        }\n        int result = 0;\n        for (int i = 0; i < n; i++) {\n            if (isValid(row, i)) {\n                // Increment row here\n                result += calculate(row + 1, n);\n            }\n        }\n        return result;\n    }\n\n    bool isValid(int row, int col) {\n        // Check for conflicts here\n        return true;\n    }\n}",
+    "java": "class Solution {\npublic:\n    int totalNQueens(int n) {\n        return calculate(0, n);\n    }\n\n    int calculate(int row, int n) {\n        if (row == n) {\n            return 1;\n        }\n        int result = 0;\n        for (int i = 0; i < n; i++) {\n            if (isValid(row, i)) {\n                // Increment row here\n                result += calculate(row + 1, n);\n            }\n        }\n        return result;\n    }\n\n    boolean isValid(int row, int col) {\n        // Check for conflicts here\n        return true;\n    }\n}",
+    "python": "class Solution:\n    def isValid(self, nums: list[int]) -> bool:\n        # Buggy code\n        pass",
+    "javascript": "var isValid = function(nums) {\n    // Buggy code\n    return false;\n};"
+  },
+  "functionSignature": {
+    "cpp": "bool isValid(int row, int col);",
+    "java": "boolean isValid(int row, int col);",
+    "python": "def isValid(self, nums: list[int]) -> bool:",
+    "javascript": "var isValid = function(nums);"
+  },
+  "solutions": {
+    "python": "from collections import defaultdict\n\nclass Solution:\n    def totalNQueens(self, n):\n        self.boards = defaultdict(list)\n        self.columns = set()\n        self.diag_pos = [-1, -1, -1]\n        return self.calculate(0, n)\n\n    def calculate(self, row, n):\n        if row == n:\n            return 1\n        count = 0\n        for col in range(n):\n            if (self.isValid(row, col) and\n                col not in self.columns and\n                (row - col + n) not in self.diag_pos and\n                (row + col) not in self.diag_pos):\n                self.boards[row].append(col)\n                self.columns.add(col)\n                self.diag_pos[0] = row - col + n\n                self.diag_pos[1] = row + col\n                count += self.calculate(row + 1, n)\n                self.columns.remove(col)\n                self.diag_pos = [-1, -1, -1]\n        return count\n\n    def isValid(self, row, col):\n        return True\n\nif __name__ == '__main__':\n    n = int(input())\n    s = Solution()\n    print(s.totalNQueens(n))",
+    "cpp": "#include <iostream>\nusing namespace std;\nclass Solution {\npublic:\n    int totalNQueens(int n) {\n        return calculate(0, n);\n    }\n\n    int calculate(int row, int n) {\n        if (row == n) {\n            return 1;\n        }\n        int result = 0;\n        for (int i = 0; i < n; i++) {\n            if (isValid(row, i)) {\n                // Increment row here\n                result += calculate(row + 1, n);\n            }\n        }\n        return result;\n    }\n\n    bool isValid(int row, int col) {\n        // Check for conflicts here\n        return true;\n    }\n};\n\nint main() {\n    int n;\n    cin >> n;\n    Solution s;\n    cout << s.totalNQueens(n) << endl;\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "4\n",
+      "output": "2",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "5\n",
+      "output": "10",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

@@ -1,0 +1,158 @@
+{
+  "_id": "db7c1a036774e9cf8180ccea",
+  "title": "N-Queens Puzzle with Diagonal Conflicts and Overcounting",
+  "slug": "n-queens-puzzle-with-diagonal-conflicts-and-overcounting-bugfix-hard-recursion-2",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "BACKTRACKING",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "backtracking"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "The classic N-Queens puzzle is a classic problem in computer science. Given a board of size NxN, place N queens on the board such that no queen attacks any other queen. In this variation, we have a rotationally symmetric board, where every rotation of a valid board arrangement is considered a duplicate configuration.",
+    "inputFormat": "Input will consist of a single integer n, representing the size of the board. You can assume n will be between 1 and 10000, inclusive.",
+    "outputFormat": "Output the number of distinct, unique board configurations, where a configuration is a board arrangement that is not a duplicate of any rotation/mirror image of another configuration.",
+    "notes": "Please note that we use the term 'attack' to describe when two queens share the same row, column, or diagonal. If two queens are in the same row, column or diagonal but are positioned diagonally, they don't attack each other. In other words, queens do not attack each other when positioned at (i, j) and (j, i) or (i, n - 1 - j) and (n - 1 - j, i).",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10,
+        "description": "Size of board"
+      }
+    ],
+    "examples": [
+      {
+        "input": "4",
+        "output": "2",
+        "explanation": "There are only two unique arrangements for a 4x4 board."
+      },
+      {
+        "input": "2",
+        "output": "0",
+        "explanation": "No valid arrangement exists for a 2x2 board."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Backtracking puzzle configurations"
+    }
+  ],
+  "editorial": {
+    "title": "N-Queens Puzzle with Diagonal Conflicts and Overcounting Editorial",
+    "intuition": "This puzzle requires backtracking to explore different configurations on the board. We must keep track of the positions of queens relative to each other to avoid overcounting duplicate configurations.",
+    "bruteForce": "A brute force solution involves checking each cell of the board for potential queen positions, ensuring no queen attacks another.",
+    "betterSolution": "",
+    "optimalSolution": "This problem requires an optimal solution approach with the use of advanced backtracking techniques and bit manipulation to keep track of unique configurations.",
+    "proofOfCorrectness": "By examining the possible positions of queens, we can prove that the optimal solution is correct and efficient.",
+    "dryRun": "For a dry run, let's start with a simple board size of n = 3. We will try to place queens on a 3x3 board to get a sense of the possible arrangements.",
+    "commonMistakes": [
+      "Overcounting duplicate configurations",
+      "Incorrect bit manipulation"
+    ],
+    "timeComplexity": "O((N!) / N^2)",
+    "spaceComplexity": "O(N)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    int totalNQueens(int n) {\n        // TODO: implement\n        return 0;\n    }\n};",
+    "java": "public class Solution {\npublic int totalNQueens(int n) {\n        // TODO: implement\n        return 0;\n    }\n}",
+    "python": "class Solution:\n    def totalNQueens(self, n: int) -> int:\n        # TODO: implement\n        return 0",
+    "javascript": "function totalNQueens(n) {\n    // TODO: implement\n    return 0;\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    int totalNQueens(int n) {\n        for (int row = 0; row < n; row++) {\n            std::vector<int> column; // Use a vector instead of a set to keep track of column occupancy\n            for (int col = 0; col < n; col++) {\n                column.push_back(col);\n            }\n            std::vector<int> diagonal; // Use a vector to keep track of diagonal occupancy\n            for (int i = 0; i < n; i++) {\n                diagonal.push_back(i);\n            }\n            backtrack(row, column, diagonal, n);\n        }\n        return count;\n\n    }\n\n    void backtrack(int row, std::vector<int>& column, std::vector<int>& diagonal, int n) {\n        if (row == n) {\n            count++;\n        }\n        for (int col = 0; col < n; col++) {\n            if (column[col] == col && diagonal[col - row] == col - row\n                && diagonal[n - 1 + col + row] == n - 1 + col + row) {\n                column[col] = col;\n                diagonal[col - row] = col - row;\n                diagonal[n - 1 + col + row] = n - 1 + col + row;\n                backtrack(row + 1, column, diagonal, n);\n                column[col] = 0;\n                diagonal[col - row] = 0;\n                diagonal[n - 1 + col + row] = 0;\n            }\n        }\n    }\n\n    int count = 0;\n};",
+    "java": "public class Solution {\npublic int totalNQueens(int n) {\n        for (int row = 0; row < n; row++) {\n            List<Integer> column = new ArrayList<>(); // Use a list instead of a set to keep track of column occupancy\n            for (int col = 0; col < n; col++) {\n                column.add(col);\n            }\n            List<Integer> diagonal = new ArrayList<>(); // Use a list to keep track of diagonal occupancy\n            for (int i = 0; i < n; i++) {\n                diagonal.add(i);\n            }\n            backtrack(row, column, diagonal, n);\n        }\n        return count;\n\n    }\n\n    void backtrack(int row, List<Integer> column, List<Integer> diagonal, int n) {\n        if (row == n) {\n            count++;\n        }\n        for (int col = 0; col < n; col++) {\n            if (column.get(col) == col && diagonal.get(col - row) == col - row\n                && diagonal.get(n - 1 + col + row) == n - 1 + col + row) {\n                column.set(col, col);\n                diagonal.set(col - row, col - row);\n                diagonal.set(n - 1 + col + row, n - 1 + col + row);\n                backtrack(row + 1, column, diagonal, n);\n                column.set(col, 0);\n                diagonal.set(col - row, 0);\n                diagonal.set(n - 1 + col + row, 0);\n            }\n        }\n    }\n\n    int count = 0;\n}",
+    "python": "class Solution:\n    def totalNQueens(self, n: int) -> int:\n        count = 0\n        for row in range(n): # Backtrack through each row\n            column = [col for col in range(n)] # Initialize a list of all possible column indices\n            diagonal = [abs(diagonal_pos) for diagonal_pos in range(n)] # Initialize two lists to keep track of column and diagonal occupancy\n            self.backtrack(row, column, diagonal, n)\n\n    def backtrack(self, row, column, diagonal, n):\n        if row == n: # Base case: if we've reached the end of the board, increment the count\n            self.count += 1\n        for col in range(n):\n            if column[col] == col and diagonal[col - row] == abs(col - row) and diagonal[n - 1 + col + row] == abs(n - 1 + col + row):\n                column[col] = col\n                diagonal[col - row] = abs(col - row)\n                diagonal[n - 1 + col + row] = abs(n - 1 + col + row)\n                self.backtrack(row + 1, column, diagonal, n)\n                column[col] = 0\n                diagonal[col - row] = 0\n                diagonal[n - 1 + col + row] = 0\n\n",
+    "javascript": "function totalNQueens(n) {\n    let count = 0\n    for (let row = 0; row < n; row++) { // Backtrack through each row\n        let column = new Array(n).fill(0); // Initialize an array of all possible column indices\n        let diagonal = new Array(n).fill(0); // Initialize two arrays to keep track of column and diagonal occupancy\n        backtrack(row, column, diagonal, n);\n    }\n\n    function backtrack(row, column, diagonal, n) {\n        if (row == n) { // Base case: if we've reached the end of the board, increment the count\n            count++;\n        }\n        for (let col = 0; col < n; col++) {\n            if (column[col] == col && diagonal[col - row] == Math.abs(col - row) && diagonal[n - 1 + col + row] == Math.abs(n - 1 + col + row)) {\n                column[col] = col;\n                diagonal[col - row] = Math.abs(col - row);\n                diagonal[n - 1 + col + row] = Math.abs(n - 1 + col + row);\n                backtrack(row + 1, column, diagonal, n);\n                column[col] = 0;\n                diagonal[col - row] = 0;\n                diagonal[n - 1 + col + row] = 0;\n            }\n        }\n    }\n}"
+  },
+  "functionSignature": {
+    "cpp": "int totalNQueens(int n);",
+    "java": "int totalNQueens(int n);",
+    "python": "def totalNQueens(self, n: int) -> int:",
+    "javascript": "function totalNQueens(n) {"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def totalNQueens(self, n: int) -> int:\n        count = 0\n        def backtrack(row, column, diagonal):\n            if row == n:\n                count += 1\n                return\n            for col in range(n):\n                if column[col] == col and diagonal[col - row] == abs(col - row) and diagonal[n - 1 + col + row] == abs(n - 1 + col + row):\n                    column[col] = col\n                    diagonal[col - row] = abs(col - row)\n                    diagonal[n - 1 + col + row] = abs(n - 1 + col + row)\n                    backtrack(row + 1, column, diagonal)\n                    column[col] = 0\n                    diagonal[col - row] = 0\n                    diagonal[n - 1 + col + row] = 0\n            return\n        for row in range(n):\n            column = [col for col in range(n)]\n            diagonal = [abs(diagonal_pos) for diagonal_pos in range(n)]\n            backtrack(row, column, diagonal)\n        return count\n\ns = Solution()\nprint(s.totalNQueens(4))\n",
+    "cpp": "class Solution {\npublic:\n    int totalNQueens(int n) {\n        int count = 0;\n        std::function<void(int, std::vector<int>, std::vector<int>)> backtrack =\n            [&](int row, std::vector<int> column, std::vector<int> diagonal) {\n                if (row == n) {\n                    count++;\n                    return;\n                }\n                for (int col = 0; col < n; col++) {\n                    if (column[col] == col && diagonal[col - row] == col - row && diagonal[n - 1 + col + row] == n - 1 + col + row) {\n                        column[col] = col;\n                        diagonal[col - row] = col - row;\n                        diagonal[n - 1 + col + row] = n - 1 + col + row;\n                        backtrack(row + 1, column, diagonal);\n                        column[col] = 0;\n                        diagonal[col - row] = 0;\n                        diagonal[n - 1 + col + row] = 0;\n                    }\n                }\n            };\n\n        for (int row = 0; row < n; row++) {\n            std::vector<int> column;\n            for (int col = 0; col < n; col++) {\n                column.push_back(col);\n            }\n            std::vector<int> diagonal;\n            for (int i = 0; i < n; i++) {\n                diagonal.push_back(i);\n            }\n            backtrack(row, column, diagonal);\n        }\n\n        return count;\n    }\n};\nsolution = Solution();\nstd::cout << solution.totalNQueens(4) << std::endl;\n",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "4\n",
+      "output": "2\n",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "2\n",
+      "output": "0\n",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

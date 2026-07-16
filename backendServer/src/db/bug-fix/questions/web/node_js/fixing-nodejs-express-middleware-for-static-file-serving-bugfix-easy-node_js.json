@@ -1,0 +1,131 @@
+{
+  "title": "Fixing Node.js Express Middleware for Static File Serving",
+  "subCategory": "Express Middleware",
+  "statement": {
+    "markdown": "Write a Node.js Express middleware function that serves static files from a specified directory. The function should return the file contents for a given request if the file exists in the directory. If the file does not exist, it should return a 404 status code. The middleware function should handle GET requests only.",
+    "inputFormat": "The middleware function takes two arguments: `req` (an Express request object) and `res` (an Express response object). The `req` object has a `pathname` property representing the requested file path.",
+    "outputFormat": "The middleware function should return the file contents as a string if the file exists, or a 404 status code if the file does not exist.",
+    "notes": "The middleware function should handle GET requests only. Time complexity should be O(1).",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Maximum file size in bytes"
+      }
+    ],
+    "examples": [
+      {
+        "input": "GET /file.txt HTTP/1.1\r\nHost: example.com\r\n\r\n",
+        "output": "file contents",
+        "explanation": "The middleware function returns the file contents for the requested file."
+      },
+      {
+        "input": "GET /non-existent-file.txt HTTP/1.1\r\nHost: example.com\r\n\r\n",
+        "output": "404 Not Found",
+        "explanation": "The middleware function returns a 404 status code for a non-existent file."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 10,
+    "points": 30,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "NODE_JS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "node_js"
+    ],
+    "interviewFrequency": 1,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the Express `sendFile` method to serve static files."
+    }
+  ],
+  "editorial": {
+    "title": "Serving Static Files with Express Middleware",
+    "intuition": "The middleware function should check if the requested file exists in the specified directory. If it exists, it should return the file contents. Otherwise, it should return a 404 status code.",
+    "bruteForce": "Use a loop to check if the file exists in the directory. If it does, use the `fs` module to read the file contents.",
+    "betterSolution": "Use the Express `sendFile` method to serve static files. This method checks if the file exists in the directory and returns the file contents if it does.",
+    "optimalSolution": "Use the Express `sendFile` method to serve static files. This method checks if the file exists in the directory and returns the file contents if it does. Time complexity is O(1).",
+    "proofOfCorrectness": "The middleware function returns the correct file contents for existing files and a 404 status code for non-existent files.",
+    "dryRun": "Example usage of the middleware function to serve static files.",
+    "commonMistakes": [
+      "Failing to handle GET requests only",
+      "Returning incorrect file contents for non-existent files"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "// Import the Express module\nconst express = require('express');\n\n// Create an Express app\nconst app = express();\n\n// Define the middleware function\napp.use((req, res) => {\n\t// Your code here\n});"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Import the Express module\nconst express = require('express');\n\n// Create an Express app\nconst app = express();\n\n// Define the middleware function\napp.use((req, res) => {\n\t// Check if the requested file exists in the directory\n\tif (req.pathname === '/file.txt') {\n\t\t// Return the file contents\n\t\tres.send('file contents');\n\t}\n\t// Return a 404 status code for non-existent files\n\telse {\n\t\tres.status(404).send('404 Not Found');\n\t}\n});\n\n// Start the server\napp.listen(3000, () => {\n\tconsole.log('Server started on port 3000');\n});"
+  },
+  "functionSignature": {
+    "javascript": "app.use((req, res) => {\n\t// Your code here\n})"
+  },
+  "solutions": {
+    "javascript": "// Import the Express module\nconst express = require('express');\n\n// Create an Express app\nconst app = express();\n\n// Serve static files from the 'public' directory\napp.use(express.static('public'));\n\n// Start the server\napp.listen(3000, () => {\n\tconsole.log('Server started on port 3000');\n});\n\n// Import the fs module\nconst fs = require('fs');\n\n// Define the middleware function\napp.use((req, res) => {\n\t// Check if the requested file exists in the directory\n\tconst filePath = require('path').join(__dirname, 'public', req.pathname);\n\tfs.access(filePath, (err) => {\n\t\tif (err) {\n\t\t\t// Return a 404 status code for non-existent files\n\t\t\tres.status(404).send('404 Not Found');\n\t\t}\n\t\t// Return the file contents\n\t\telse {\n\t\t\tfs.readFile(filePath, 'utf8', (err, data) => {\n\t\t\t\tif (err) {\n\t\t\t\t\t// Handle read errors\n\t\t\t\t} else {\n\t\t\t\t\tres.send(data);\n\t\t\t\t}\n\t\t\t});\n\t\t}\n\t});\n});"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "GET /file.txt HTTP/1.1\r\nHost: example.com\r\n\r\n",
+      "output": "file contents",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "GET /non-existent-file.txt HTTP/1.1\r\nHost: example.com\r\n\r\n",
+      "output": "404 Not Found",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "7575e457a7a672853f761d4e",
+  "slug": "fixing-nodejs-express-middleware-for-static-file-serving-bugfix-easy-node_js",
+  "mode": "bug_fix",
+  "category": "NODE_JS",
+  "difficulty": "Easy"
+}

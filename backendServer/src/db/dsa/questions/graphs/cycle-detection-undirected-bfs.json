@@ -1,0 +1,203 @@
+{
+  "_id": "cycle-detection-undirected-bfs",
+  "title": "Cycle Detection Undirected (BFS)",
+  "slug": "cycle-detection-undirected-bfs",
+  "difficulty": "Hard",
+  "category": "GRAPH",
+  "subCategory": "BFS / DFS Problems",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 500,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "Graphs",
+      "BFS"
+    ],
+    "patterns": [],
+    "prerequisites": [
+      "BFS Basics",
+      "Graph Traversal"
+    ],
+    "variants": [],
+    "tags": [
+      "Cycle Detection",
+      "Undirected Graph",
+      "BFS Algorithm"
+    ],
+    "keywords": [
+      "Graph Cycle",
+      "Breadth-First Search",
+      "Undirected Graph Cycle Detection"
+    ],
+    "interviewFrequency": 4,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "Given an undirected graph with V vertices and E edges, detect if the graph contains a cycle. The vertices are 0-indexed.",
+    "inputFormat": "The first line contains two integers V and E, representing the number of vertices and edges in the graph respectively.\nEach of the next E lines contains two integers u and v, representing an undirected edge between vertices u and v.",
+    "outputFormat": "Print 'true' if the graph contains a cycle, and 'false' otherwise.",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "V",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of vertices"
+      },
+      {
+        "variable": "E",
+        "type": "integer",
+        "min": 0,
+        "max": 10000,
+        "description": "Number of edges"
+      }
+    ],
+    "examples": [
+      {
+        "input": "5 5\n0 1\n1 2\n2 0\n1 3\n3 4",
+        "output": "true",
+        "explanation": "The graph contains a cycle 0 -> 1 -> 2 -> 0."
+      },
+      {
+        "input": "4 3\n0 1\n1 2\n2 3",
+        "output": "false",
+        "explanation": "The graph is a simple tree and does not contain a cycle."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "To detect a cycle in an undirected graph, consider the properties of undirected graphs and how they differ from directed graphs in terms of cycles."
+    },
+    {
+      "order": 2,
+      "text": "Recall that a graph is considered to have a cycle if there is a path that starts and ends at the same vertex, and passes through at least one edge more than once. In an undirected graph, if you encounter a vertex that is already in your current path, it could indicate a cycle, but you need to handle the case where the vertex is the parent of the current vertex."
+    },
+    {
+      "order": 3,
+      "text": "BFS can be used for cycle detection in undirected graphs by keeping track of visited vertices and their parents. If during traversal you encounter a vertex that has already been visited and it's not the parent of the current vertex, then a cycle is detected."
+    },
+    {
+      "order": 4,
+      "text": "The key to solving this problem with BFS is to use a data structure to keep track of visited vertices and another to keep track of the parent of each vertex. This allows you to differentiate between a vertex that is part of a cycle and one that is not."
+    }
+  ],
+  "editorial": {
+    "title": "Optimizing Cycle Detection in Undirected Graphs",
+    "intuition": "The key observation is that in an undirected graph, a cycle can be detected by keeping track of the parent of each node during the traversal. If we encounter a visited node that is not the parent of the current node, then a cycle exists.",
+    "bruteForce": "A brute force approach would involve checking all possible paths in the graph, which would result in an exponential time complexity. This is impractical for large graphs.",
+    "betterSolution": "Using a breadth-first search (BFS) traversal with a parent tracking mechanism allows us to detect cycles in an undirected graph efficiently.",
+    "optimalSolution": "The provided solution uses a BFS traversal with a parent tracking mechanism, achieving a time complexity of O(V + E) and a space complexity of O(V + E).",
+    "proofOfCorrectness": "The correctness of the solution can be proven by observing that if a cycle exists in the graph, the BFS traversal will eventually encounter a visited node that is not the parent of the current node. Conversely, if no such node is encountered, then no cycle exists.",
+    "dryRun": "A dry run of the solution on a sample graph can help verify its correctness and illustrate its efficiency.",
+    "commonMistakes": [
+      "Failing to keep track of visited nodes, leading to infinite loops.",
+      "Not checking for cycles when encountering a visited node.",
+      "Using a traversal algorithm that is not suitable for undirected graphs.",
+      "Not handling the case where the graph is disconnected.",
+      "Incorrectly implementing the parent tracking mechanism.",
+      "Not considering the time and space complexity of the solution."
+    ],
+    "timeComplexity": "O(V + E)",
+    "spaceComplexity": "O(V)"
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\nclass Solution {\npublic:\n    bool isCyclic(vector<vector<int>>& edges, int V) {\n        // TODO: implement\n        return false;\n    }\n};",
+    "java": "import java.util.*;\nclass Solution {\n    public boolean isCyclic(int[][] edges, int V) {\n        // TODO: implement\n        return false;\n    }\n}",
+    "python": "from typing import List\nclass Solution:\n    def isCyclic(self, edges: List[List[int]], V: int) -> bool:\n        # TODO: implement\n        pass",
+    "javascript": "/**\n * @param {number[][]} edges\n * @param {number} V\n * @return {boolean}\n */\nvar isCyclic = function(edges, V) {\n    // TODO: implement\n    return false;\n};"
+  },
+  "functionSignature": {
+    "cpp": "bool isCyclic(vector<vector<int>>& edges, int V);",
+    "java": "public boolean isCyclic(int[][] edges, int V);",
+    "python": "def isCyclic(self, edges: list[list[int]], V: int) -> bool:",
+    "javascript": "var isCyclic = function(edges, V);"
+  },
+  "solutions": {
+    "python": "import sys\nfrom collections import deque\n\nclass Solution:\n    def isCyclic(self, edges: list[list[int]], V: int) -> bool:\n        graph = [[] for _ in range(V)]\n        for u, v in edges:\n            graph[u].append(v)\n            graph[v].append(u)\n        visited = [False] * V\n        for i in range(V):\n            if not visited[i]:\n                if self._isCyclicUtil(graph, visited, i, -1):\n                    return True\n        return False\n\n    def _isCyclicUtil(self, graph, visited, v, parent):\n        visited[v] = True\n        for neighbor in graph[v]:\n            if not visited[neighbor]:\n                if self._isCyclicUtil(graph, visited, neighbor, v):\n                    return True\n            elif neighbor != parent:\n                return True\n        return False\n\nif __name__ == '__main__':\n    it = iter(sys.stdin.read().split())\n    try:\n        V, E = int(next(it)), int(next(it))\n        edges = [[int(next(it)), int(next(it))] for _ in range(E)]\n    except StopIteration:\n        sys.exit(0)\n    sol = Solution()\n    print('true' if sol.isCyclic(edges, V) else 'false')",
+    "cpp": "#include <numeric>\n#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    bool isCyclic(vector<vector<int>>& edges, int V) {\n        vector<vector<int>> graph(V);\n        for (const auto& edge : edges) {\n            graph[edge[0]].push_back(edge[1]);\n            graph[edge[1]].push_back(edge[0]);\n        }\n        vector<bool> visited(V, false);\n        for (int i = 0; i < V; ++i) {\n            if (!visited[i] && _isCyclicUtil(graph, visited, i, -1)) {\n                return true;\n            }\n        }\n        return false;\n    }\n\nprivate:\n    bool _isCyclicUtil(const vector<vector<int>>& graph, vector<bool>& visited, int v, int parent) {\n        visited[v] = true;\n        for (int neighbor : graph[v]) {\n            if (!visited[neighbor]) {\n                if (_isCyclicUtil(graph, visited, neighbor, v)) {\n                    return true;\n                }\n            } else if (neighbor != parent) {\n                return true;\n            }\n        }\n        return false;\n    }\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int V, E;\n    if (!(cin >> V >> E)) return 0;\n    vector<vector<int>> edges(E, vector<int>(2));\n    for (int i = 0; i < E; ++i) {\n        if (!(cin >> edges[i][0] >> edges[i][1])) return 0;\n    }\n    Solution sol;\n    cout << (sol.isCyclic(edges, V) ? \"true\" : \"false\") << \"\\n\";\n    return 0;\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.5
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5 5\n0 1\n1 2\n2 0\n1 3\n3 4",
+      "output": "true",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "4 3\n0 1\n1 2\n2 3",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint_3",
+      "input": "1 0",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "duplicate_5",
+      "input": "3 2\n1 2\n2 2",
+      "output": "true",
+      "isVisible": false,
+      "weight": 1,
+      "category": "duplicate"
+    },
+    {
+      "id": "zero_13",
+      "input": "5 0",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "zero"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

@@ -1,0 +1,152 @@
+{
+  "_id": "166a15a1e45f2b8b44508574",
+  "title": "Flawed In-Order Traversal Result",
+  "slug": "flawed-in-order-traversal-result-bugfix-medium-binary-trees",
+  "difficulty": "Medium",
+  "category": "DSA",
+  "subCategory": "DFS/In-Order Traversal",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "tree"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given a binary tree, your task is to implement an in-order traversal function, but it should return the sum of all node values. You are given the root of the binary tree. Implement the `inOrderSum` function in the provided code skeleton.",
+    "inputFormat": "Input a binary tree represented as a linked list of nodes, where each node has a `val` and pointers to its left and right children.",
+    "outputFormat": "Return the sum of all node values in the binary tree.",
+    "notes": "The binary tree is not necessarily balanced. Assume you have a binary tree with nodes containing a value and pointers to left and right children. You can assume the node values are integers.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000
+      }
+    ],
+    "examples": [
+      {
+        "input": "1\n2 3\n#",
+        "output": "5",
+        "explanation": "Sum of node values: 1 + 2 + 3 = 6, but since some nodes (3) are not visited in order, the function will sum those nodes incorrectly."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Remember to visit the left subtree, the current node, and the right subtree in-order in your traversal."
+    }
+  ],
+  "editorial": {
+    "title": "In-Order Traversal and Sum",
+    "intuition": "To perform an in-order traversal, you need to visit the left subtree, the current node, and the right subtree. To get the sum of all node values, you should add the node value to the sum after visiting the left subtree in the in-order traversal.",
+    "bruteForce": "brute Force details.",
+    "betterSolution": "",
+    "optimalSolution": "Use a recursive function to perform the in-order traversal, and add the node value to the sum after visiting the left subtree.",
+    "proofOfCorrectness": "proof Of Correctness details.",
+    "dryRun": "dry Run details.",
+    "commonMistakes": [
+      "Not initializing the sum variable",
+      "Not adding the node value to the sum when visiting the node"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(h)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\nint inOrderSum(TreeNode* root) {\n\t// TODO: implement\n}",
+    "java": "class Solution {\npublic:\nint inOrderSum(TreeNode root) {\n\t// TODO: implement\n}",
+    "python": "class Solution:\n    def in_order_sum(self, root):\n        # TODO: implement\n        pass",
+    "javascript": "function inOrderSum(root) {\n\t// TODO: implement\n\treturn 0;"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\nint inOrderSum(TreeNode* root) {\n\tif (root == nullptr)\n\t\treturn 0;\n\telement = root->val + inOrderSum(root->left) + inOrderSum(root->right);\n\treturn element;\n\tint element;\n}",
+    "java": "class Solution {\npublic:\nint inOrderSum(TreeNode root) {\n\tif (root == null)\n\t\treturn 0;\n\telement = root.val + inOrderSum(root.left) + inOrderSum(root.right);\n\treturn element;\n\tint element;\n}",
+    "python": "class Solution:\n    def in_order_sum(self, root):\n\t\tif not root:\n\t\t\treturn 0\n\t\tself.element = root.val + self.in_order_sum(root.left) + self.in_order_sum(root.right)\n\t\treturn self.element\n\t\tself.element = 0\n",
+    "javascript": "function inOrderSum(root) {\n\tif (!root)\n\t\treturn 0;\n\telement = root.val + inOrderSum(root.left) + inOrderSum(root.right);\n\treturn element;\n\tvar element;\n}"
+  },
+  "functionSignature": {
+    "cpp": "int inOrderSum(TreeNode* root);",
+    "java": "int inOrderSum(TreeNode root);",
+    "python": "def in_order_sum(self, root: TreeNode) -> int;",
+    "javascript": "int inOrderSum(TreeNode root);"
+  },
+  "solutions": {
+    "python": "import sys\n\nclass TreeNode:\n\tdef __init__(self, val=0, left=None, right=None):\n\t\tself.val = val\n\t\tself.left = left\n\t\tself.right = right\n\nclass Solution:\n\ndef in_order_sum(self, root):\n\tif not root:\n\t\treturn 0\n\tleft_sum = self.in_order_sum(root.left)\n\tcurrent_sum = root.val\n\tright_sum = self.in_order_sum(root.right)\n\treturn left_sum + current_sum + right_sum\n\nn = int(input())\narr = list(map(int, input().split()))\nroot = TreeNode(arr[0])\nqueue = [root]\nfor i in range(1, 2 * n, 2):\n\tcurr = queue.pop(0)\n\tcurr.left = TreeNode(arr[i])\n\tqueue.append(curr.left)\n\tif i+1 < 2 * n:\n\t\tcurr.right = TreeNode(arr[i+1])\n\tqueue.append(curr.right)\nprint(Solution().in_order_sum(root))",
+    "cpp": "#include <iostream>\n#include <queue>\nusing namespace std;\n\nstruct TreeNode {\n\tint val;\n\tTreeNode* left;\n\tTreeNode* right;\n\tTreeNode(int x) : val(x), left(NULL), right(NULL) {}\n};\n\nclass Solution \n{\npublic:\n\tint inOrderSum(TreeNode* root) {\n\t\tif (root == nullptr)\n\t\t\treturn 0;\n\t\tint leftSum = inOrderSum(root->left);\n\t\tint currentSum = root->val;\n\t\tint rightSum = inOrderSum(root->right);\n\t\treturn leftSum + currentSum + rightSum;\n\t}\n};\n\nint main()\n{\n\tint n; cin >> n;\n\tvector<int> arr(n);\n\tfor (int i = 0; i < n; i++) cin >> arr[i];\n\tqueue<TreeNode*> q;\n\tq.push(new TreeNode(arr[0]));\n\tfor (int i = 1; i < 2 * n; i += 2)\n\t{\n\t\tTreeNode* curr = q.front(); q.pop();\n\t\tcurr->left = new TreeNode(arr[i]);\n\t\tq.push(curr->left);\n\t\tif (i + 1 < 2 * n)\n\t\t\tcurr->right = new TreeNode(arr[i + 1]);\n\t\tq.push(curr->right);\n\t}\n\tSolution solution;\n\tcout << solution.inOrderSum(q.front()) << endl;\n\treturn 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "2\n1 2\n#",
+      "output": "3",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_hidden_generated",
+      "input": "2\n1 2\n#",
+      "output": "3",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

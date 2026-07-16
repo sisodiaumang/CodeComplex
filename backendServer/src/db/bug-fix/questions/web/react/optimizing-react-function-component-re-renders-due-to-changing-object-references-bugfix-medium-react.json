@@ -1,0 +1,140 @@
+{
+  "title": "Optimizing React Function Component Re-renders Due to Changing Object References",
+  "subCategory": "React Function Components",
+  "statement": {
+    "markdown": "In this task, you will be working with a React function component that contains a memoized state. However, the component is re-rendering unnecessarily due to changing object references. Your goal is to optimize the component so that it does not re-render when the object reference remains the same.",
+    "inputFormat": "The function will receive an object with an array of tasks and a function to update the tasks.",
+    "outputFormat": "The function should return an object with the updated tasks and a boolean indicating whether the component has re-rendered.",
+    "notes": "You should assume that the input object will contain at least one task.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10,
+        "description": "Number of tasks"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"tasks\": [{\"id\": 1, \"name\": \"Task 1\"}, {\"id\": 2, \"name\": \"Task 2\"}], \"updateTasks\": (tasks) => tasks.concat({\"id\": 3, \"name\": \"Task 3\"})}",
+        "output": "{\"tasks\": [{\"id\": 1, \"name\": \"Task 1\"}, {\"id\": 2, \"name\": \"Task 2\"}, {\"id\": 3, \"name\": \"Task 3\"}], \"reRendered\": false}",
+        "explanation": "The component has not re-rendered because the new task's reference is the same as the original task's reference."
+      },
+      {
+        "input": "{\"tasks\": [{\"id\": 1, \"name\": \"Task 1\"}, {\"id\": 2, \"name\": \"Task 2\"}], \"updateTasks\": (tasks) => tasks.map((task) => ({...task, \"name\": task.name + \" updated\"}))}",
+        "output": "{\"tasks\": [{\"id\": 1, \"name\": \"Task 1 updated\"}, {\"id\": 2, \"name\": \"Task 2 updated\"}], \"reRendered\": true}",
+        "explanation": "The component has re-rendered because the new task's reference is different from the original task's reference."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "REACT"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "react"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Check the `updateTasks` function to see if it's creating a new reference for the task."
+    },
+    {
+      "order": 2,
+      "text": "Use the `===` operator to check for reference equality."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial: Optimizing React Function Component Re-renders",
+    "intuition": "To optimize the component, we need to check if the `updateTasks` function is creating a new reference for the task. If it is, we should use the `===` operator to check for reference equality.",
+    "bruteForce": "One possible solution is to use the `JSON.stringify` function to convert the task object to a string and then compare the strings.",
+    "betterSolution": "A better solution is to use the `Object.is` function to compare the task objects directly.",
+    "optimalSolution": "The optimal solution is to use the `===` operator to compare the task objects directly and check for reference equality.",
+    "proofOfCorrectness": "The proof of correctness is that the component will only re-render when the object reference changes.",
+    "dryRun": "Here's an example of how to use the `===` operator to check for reference equality: `const task = {id: 1, name: 'Task 1'}; const newTask = {id: 1, name: 'Task 1'}; console.log(task === newTask); // false`",
+    "commonMistakes": [
+      "Not checking for reference equality",
+      "Using the `==` operator instead of `===`"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "function optimizeTask(tasks, updateTasks) {\n  // Your code here\n  return {\n    tasks: updateTasks(tasks),\n    reRendered: false\n  };\n}",
+    "python": "class Solution:\n  def optimize_task(self, tasks, update_tasks):\n    # Your code here\n    return {\n      \"tasks\": update_tasks(tasks),\n      \"re_rendered\": False\n    }"
+  },
+  "buggyStarterCode": {
+    "javascript": "function optimizeTask(tasks, updateTasks) {\n  const newTasks = updateTasks(tasks);\n  return {\n    tasks: newTasks,\n    reRendered: newTasks.length !== tasks.length\n  };\n}",
+    "python": "class Solution:\n  def optimize_task(self, tasks, update_tasks):\n    new_tasks = update_tasks(tasks);\n    return {\n      \"tasks\": new_tasks,\n      \"re_rendered\": len(new_tasks) !== len(tasks)\n    }"
+  },
+  "functionSignature": {
+    "javascript": "function optimizeTask(tasks, updateTasks) {\n  return {\n    tasks: Array,\n    reRendered: boolean\n  };\n}",
+    "python": "def optimize_task(self, tasks, update_tasks)\n  return {\n    \"tasks\": list,\n    \"re_rendered\": bool\n  }"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction optimizeTask(tasks, updateTasks) {\n  // Your code here\n  return {\n    tasks: updateTasks(tasks),\n    reRendered: tasks === updateTasks(tasks)\n  };\n}\n\nfunction updateTasks(tasks) {\n  return tasks.map((task) => ({...task, name: task.name + \" updated\"}));\n}",
+    "python": "class Solution:\n  def optimize_task(self, tasks, update_tasks):\n    # Your code here\n    return {\n      \"tasks\": update_tasks(tasks),\n      \"re_rendered\": tasks == update_tasks(tasks)\n    }\n\n  def update_tasks(self, tasks):\n    return [task for task in tasks]  # This will create new references"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"tasks\": [{\"id\": 1, \"name\": \"Task 1\"}, {\"id\": 2, \"name\": \"Task 2\"}], \"updateTasks\": (tasks) => tasks.concat({\"id\": 3, \"name\": \"Task 3\"})}",
+      "output": "{\"tasks\": [{\"id\": 1, \"name\": \"Task 1\"}, {\"id\": 2, \"name\": \"Task 2\"}, {\"id\": 3, \"name\": \"Task 3\"}], \"reRendered\": false}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"tasks\": [{\"id\": 1, \"name\": \"Task 1\"}, {\"id\": 2, \"name\": \"Task 2\"}], \"updateTasks\": (tasks) => tasks.map((task) => ({...task, \"name\": task.name + \" updated\"}))}",
+      "output": "{\"tasks\": [{\"id\": 1, \"name\": \"Task 1 updated\"}, {\"id\": 2, \"name\": \"Task 2 updated\"}], \"reRendered\": true}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "6e8652eb38b6e33c039d001c",
+  "slug": "optimizing-react-function-component-re-renders-due-to-changing-object-references-bugfix-medium-react",
+  "mode": "bug_fix",
+  "category": "REACT",
+  "difficulty": "Medium"
+}

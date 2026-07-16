@@ -1,0 +1,145 @@
+{
+  "title": "Protecting Express API Routes with Rate Limiting Using the `express-rate-limit` Library",
+  "subCategory": "Rate Limiting",
+  "statement": {
+    "markdown": "You are tasked with protecting an Express API from abuse using the `express-rate-limit` library. The API has several routes that should be rate-limited to prevent excessive requests. The `express-rate-limit` library should be used to set a rate limit of 10 requests per minute for each user IP address. If a user exceeds this limit, a 429 response with a `RateLimitExceeded` message should be returned. The rate limit should be applied to all routes in the API. However, there is a subtle bug in the implementation that causes the rate limiter to be applied incorrectly.",
+    "inputFormat": "The input format for this problem is a JSON object containing the request headers, method, and URL.",
+    "outputFormat": "The output format for this problem is a JSON object containing the response status code and message.",
+    "notes": "The rate limiter should be applied globally to all routes in the API. The `express-rate-limit` library should be used to implement the rate limit. The response status code for a rate limit exceeded error should be 429.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000
+      },
+      {
+        "variable": "timeLimit",
+        "type": "integer",
+        "min": 1,
+        "max": 60
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"headers\": {}, \"method\": \"GET\", \"url\": \"/api/endpoint\"}",
+        "output": "{\"statusCode\": 200, \"message\": \"OK\"}",
+        "explanation": "Example input with a valid request"
+      },
+      {
+        "input": "{\"headers\": {\"X-Forwarded-For\": \"192.168.1.1\"}, \"method\": \"GET\", \"url\": \"/api/endpoint\"}",
+        "output": "{\"statusCode\": 429, \"message\": \"RateLimitExceeded\"}",
+        "explanation": "Example input with a rate-limited request"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "EXPRESS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "express"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "The rate limiter should be applied globally to all routes in the API."
+    },
+    {
+      "order": 2,
+      "text": "The `express-rate-limit` library should be used to implement the rate limit."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(...) ",
+    "spaceComplexity": "O(...)"
+  },
+  "starterCode": {
+    "javascript": "// Import express, express-rate-limit, and rate-limit-header middleware\nimport express from 'express';\nimport rateLimit from 'express-rate-limit';\nimport rateLimitHeader from 'rate-limit-header';\n\nconst app = express();\n\n// Set up rate limiter\nconst limiter = rateLimit({\n  windowMs: 60 * 1000,\n  max: 10\n});\n\n// Apply rate limiter to all routes\napp.use(limiter);\n\n// Example route\napp.get('/api/endpoint', (req, res) => {\n  res.json({ message: 'OK' });\n});\n\nexport default app;",
+    "python": "class Solution:\n    def __init__(self):\n        pass\n\n    def solve(self):\n        return None"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Import express, express-rate-limit, and rate-limit-header middleware\nimport express from 'express';\nimport rateLimit from 'express-rate-limit';\nimport rateLimitHeader from 'rate-limit-header';\n\nconst app = express();\n\n// Set up rate limiter\nconst limiter = rateLimit({\n  windowMs: 60 * 1000,\n  max: 10\n});\n\n// Apply rate limiter to all routes, but only if the request method is GET\napp.use('/api/', limiter); // <--- BUG INTRODUCED HERE\n\n// Example route\napp.get('/api/endpoint', (req, res) => {\n  res.json({ message: 'OK' });\n});\n\nexport default app;",
+    "python": "class Solution:\n    def solve(self, nums: list[int]) -> bool:\n        # Buggy code\n        pass"
+  },
+  "functionSignature": {
+    "javascript": "var solve = function(app) {\n    // Your code here\n};",
+    "python": "def solve(self):\n    # Your code here\n    return None"
+  },
+  "solutions": {
+    "javascript": "// Solution\nimport express from 'express';\nimport rateLimit from 'express-rate-limit';\n\nconst app = express();\n\n// Set up rate limiter\nconst limiter = rateLimit({\n  windowMs: 60 * 1000,\n  max: 10\n});\n\n// Apply rate limiter to all routes\napp.use('/api/', limiter);\n\n// Example route\napp.get('/api/endpoint', (req, res) => {\n  res.json({ message: 'OK' });\n});\n\nexport default app;",
+    "python": "class Solution:\n    def __init__(self):\n        pass\n\n    def solve(self):\n        self.app = express()\n        self.limiter = rateLimit({\n            'windowMs': 60 * 1000,\n            'max': 10\n        })\n        self.app.use('/api/', self.limiter)\n        self.app.get('/api/endpoint', (req, res):\n            res.json({\"message\": \"OK\"})\n        )\n        return self.app\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"headers\": {}, \"method\": \"GET\", \"url\": \"/api/endpoint\"}",
+      "output": "{\"statusCode\": 200, \"message\": \"OK\"}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"headers\": {\"X-Forwarded-For\": \"192.168.1.1\"}, \"method\": \"GET\", \"url\": \"/api/endpoint\"}",
+      "output": "{\"statusCode\": 429, \"message\": \"RateLimitExceeded\"}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "8810f5ccfaa0a735166af0b6",
+  "slug": "protecting-express-api-routes-with-rate-limiting-using-the-express-rate-limit-library-bugfix-medium-express",
+  "mode": "bug_fix",
+  "category": "EXPRESS",
+  "difficulty": "Medium"
+}

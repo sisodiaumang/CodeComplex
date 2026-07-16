@@ -1,0 +1,135 @@
+{
+  "title": "Fix MongoDB Aggregation Pipeline to Handle Nested Fields with Mixed Types",
+  "subCategory": "MongoDB Aggregation Pipeline",
+  "statement": {
+    "markdown": "Write a MongoDB aggregation pipeline that handles nested fields with mixed types. The pipeline should take a collection of documents and group them by a specific field, then apply a nested aggregation pipeline to each group. The nested pipeline should calculate the sum of numeric fields and the count of non-null string fields. The output should be a list of documents with the group field and the sum of numeric fields, the count of non-null string fields, and the group field.",
+    "inputFormat": "The input will be a collection of documents with a mix of numeric and string fields.",
+    "outputFormat": "The output will be a list of documents with the group field, the sum of numeric fields, and the count of non-null string fields.",
+    "notes": "The pipeline should handle nested fields with mixed types, including numeric and string fields.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of documents in the input collection"
+      }
+    ],
+    "examples": [
+      {
+        "input": "[{ _id: 1, a: 1, b: 'hello' }, { _id: 2, a: 2, b: 'world' }, { _id: 3, a: 3, b: null }]",
+        "output": "[{ _id: { $sum: '$a' }, countB: { $sum: 1 } }, { _id: { $sum: '$a' }, countB: { $sum: 1 } }, { _id: { $sum: '$a' }, countB: { $sum: 1 } }]",
+        "explanation": "The output shows the sum of the 'a' field and the count of non-null 'b' fields for each group."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 75,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "MONGODB"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "mongodb"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the $group pipeline operator to group the documents by the specified field."
+    },
+    {
+      "order": 2,
+      "text": "Use the $project pipeline operator to calculate the sum of numeric fields and the count of non-null string fields."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial Solution",
+    "intuition": "The key to solving this problem is to use the $group pipeline operator to group the documents by the specified field, and then use the $project pipeline operator to calculate the sum of numeric fields and the count of non-null string fields.",
+    "bruteForce": "One way to solve this problem is to use a loop to iterate over each document and calculate the sum of numeric fields and the count of non-null string fields for each group.",
+    "betterSolution": "A better solution is to use the $group and $project pipeline operators to calculate the sum of numeric fields and the count of non-null string fields for each group in a single pass.",
+    "optimalSolution": "The optimal solution is to use the $group pipeline operator to group the documents by the specified field, and then use the $project pipeline operator to calculate the sum of numeric fields and the count of non-null string fields.",
+    "proofOfCorrectness": "The proof of correctness is that the solution correctly calculates the sum of numeric fields and the count of non-null string fields for each group.",
+    "dryRun": "Here is a step-by-step example of how the solution works:",
+    "commonMistakes": [
+      "forgetting to use the $group pipeline operator",
+      "forgetting to use the $project pipeline operator"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// Write a MongoDB aggregation pipeline that handles nested fields with mixed types\n// The pipeline should group the documents by a specific field, then apply a nested aggregation pipeline to each group\n// The nested pipeline should calculate the sum of numeric fields and the count of non-null string fields\n// The output should be a list of documents with the group field and the sum of numeric fields, the count of non-null string fields, and the group field.",
+    "python": "class Solution:\n    def solve(self, documents):\n        # Write the MongoDB aggregation pipeline here\n        return []"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Use the $group pipeline operator to group the documents by the specified field\n// Use the $project pipeline operator to calculate the sum of numeric fields and the count of non-null string fields\nvar pipeline = [\n    {\n        $group: {\n            _id: \"$field\",\n            sum: { $sum: \"$numericField\" },\n            count: { $sum: 1 }\n        }\n    },\n    {\n        $project: {\n            _id: 1,\n            sum: 1,\n            count: 1\n        }\n    }\n];\n// The pipeline does not handle nested fields with mixed types",
+    "python": "class Solution:\n    def solve(self, documents):\n        # Use the $group pipeline operator to group the documents by the specified field\n        # Use the $project pipeline operator to calculate the sum of numeric fields and the count of non-null string fields\n        pipeline = [\n            {\n                '$group': {\n                    '_id': '\"$field\"',\n                    'sum': { '$sum': '\"$numericField\"' },\n                    'count': { '$sum': 1 }\n                }\n            },\n            {\n                '$project': {\n                    '_id': 1,\n                    'sum': 1,\n                    'count': 1\n                }\n            }\n        ];\n        return []"
+  },
+  "functionSignature": {
+    "javascript": "var solve = function(documents) {\n    // Write the MongoDB aggregation pipeline here\n    return [];\n};",
+    "python": "class Solution:\n    def solve(self, documents):\n        # Write the MongoDB aggregation pipeline here\n        return []"
+  },
+  "solutions": {
+    "javascript": "// Solution\nvar solve = function(documents) {\n    var pipeline = [\n        {\n            $group: {\n                _id: \"$field\",\n                sum: { $sum: \"$numericField\" },\n                count: { $sum: { $cond: [{ $ne: ['$b', null] }, 1, 0] } }\n            }\n        },\n        {\n            $project: {\n                _id: 1,\n                sum: 1,\n                count: 1\n            }\n        }\n    ];\n    return pipeline;\n};",
+    "python": "class Solution:\n    def solve(self, documents):\n        pipeline = [\n            {\n                '$group': {\n                    '_id': '\"$field\"',\n                    'sum': { '$sum': '\"$numericField\"' },\n                    'count': { '$sum': { '$cond': [{ '$ne': ['$b', None] }, 1, 0] } }\n                }\n            },\n            {\n                '$project': {\n                    '_id': 1,\n                    'sum': 1,\n                    'count': 1\n                }\n            }\n        ];\n        return pipeline"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "[{ _id: 1, a: 1, b: 'hello' }, { _id: 2, a: 2, b: 'world' }, { _id: 3, a: 3, b: null }]",
+      "output": "[{ _id: { $sum: '$a' }, countB: { $sum: 1 } }, { _id: { $sum: '$a' }, countB: { $sum: 1 } }, { _id: { $sum: '$a' }, countB: { $sum: 1 } }]",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "[{ _id: 1, a: 1, b: 'hello' }, { _id: 2, a: 2, b: 'world' }, { _id: 3, a: 3, b: null }, { _id: 4, a: 4, b: 'foo' }, { _id: 5, a: 5, b: 'bar' }]",
+      "output": "[{ _id: { $sum: '$a' }, countB: { $sum: 2 } }, { _id: { $sum: '$a' }, countB: { $sum: 2 } }, { _id: { $sum: '$a' }, countB: { $sum: 2 } }, { _id: { $sum: '$a' }, countB: { $sum: 1 } }, { _id: { $sum: '$a' }, countB: { $sum: 1 } }]",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "3559dc48ab98c40a86bd359e",
+  "slug": "fix-mongodb-aggregation-pipeline-to-handle-nested-fields-with-mixed-types-bugfix-hard-mongodb",
+  "mode": "bug_fix",
+  "category": "MONGODB",
+  "difficulty": "Hard"
+}

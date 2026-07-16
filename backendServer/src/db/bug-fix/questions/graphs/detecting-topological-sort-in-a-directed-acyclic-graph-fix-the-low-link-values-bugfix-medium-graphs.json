@@ -1,0 +1,158 @@
+{
+  "_id": "6caace7d2cad2a842c01577c",
+  "title": "Detecting Topological Sort in a Directed Acyclic Graph: Fix the Low Link Values",
+  "slug": "detecting-topological-sort-in-a-directed-acyclic-graph-fix-the-low-link-values-bugfix-medium-graphs",
+  "difficulty": "Medium",
+  "category": "DSA",
+  "subCategory": "DFS",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "graph"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given a directed acyclic graph (DAG) represented as an adjacency list, write a function to perform a topological sort on the graph. If the graph has a cycle, the function should return False.",
+    "inputFormat": "An undirected or directed graph represented as a dictionary of adjacency lists.",
+    "outputFormat": "A list of nodes in topological order, or False if the graph has a cycle.",
+    "notes": "The graph may contain multiple nodes with the same name.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"A\": ['B', 'C'], \"B\": ['D'], \"C\": ['D'], \"D\": []}",
+        "output": "[\"A\", \"C\", \"B\", \"D\"]",
+        "explanation": "Topological sort of the given graph."
+      },
+      {
+        "input": "{\"A\": ['B'], \"B\": ['A']}",
+        "output": "False",
+        "explanation": "Graph has a cycle, no topological sort possible."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use a recursive depth-first search (DFS) to traverse the graph."
+    }
+  ],
+  "editorial": {
+    "title": "Detecting Topological Sort in a Directed Acyclic Graph",
+    "intuition": "A topological sort of a graph is an ordering of the vertices in the graph such that for every directed edge u -> v, vertex u comes before v in the ordering.",
+    "bruteForce": "One approach is to use a recursive DFS to traverse the graph and keep track of the visited nodes.",
+    "betterSolution": "We can use Kahn's algorithm to perform the topological sort.",
+    "optimalSolution": "To solve this problem, we will use a recursive DFS to traverse the graph and keep track of the visited nodes.",
+    "proofOfCorrectness": "The correctness of the solution can be proved by showing that the recursive DFS visits the nodes in the correct order.",
+    "dryRun": "Step-by-step example run of the recursive DFS.",
+    "commonMistakes": [
+      "Not initializing the visited array correctly.",
+      "Not handling the case when a node has no outgoing edges."
+    ],
+    "timeComplexity": "O(n + m)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "// TODO: implement Solution class with dfs and topologicalSort functions\n",
+    "java": "// TODO: implement Solution class with dfs and topologicalSort functions\n",
+    "python": "class Solution:\n    def dfs(self, node, visited, graph):\n        pass\n\n    def topologicalSort(self, graph):\n        pass\n",
+    "javascript": "class Solution {\n    dfs(node, visited, graph) {\n        // TODO: implement\n    }\n\n    topologicalSort(graph) {\n        // TODO: implement\n    }\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\n    int dfs(int node, int[] low, int[] disc, bool[] visited, std::vector<std::vector<int>>& graph) {\n        if (!visited[node]) {\n            disc[node] = low[node] = ++time;\n            // Fix the bug here\n            for (int neighbor : graph[node]) {\n                if (!visited[neighbor]) {\n                    low[neighbor] = disc[node];\n                }\n            }\n        }\n        return disc[node];\n    }\n\n    vector<int> topologicalSort(vector<vector<int>>& graph) {\n        int n = graph.size();\n        int[] low = new int[n];\n        int[] disc = new int[n];\n        bool[] visited = new boolean[n];\n        int time = 0;\n\n        for (int i = 0; i < n; i++) {\n            if (!visited[i]) {\n                dfs(i, low, disc, visited, graph);\n            }\n        }\n\n        vector<int> order;\n        for (int i = n - 1; i >= 0; i--) {\n            if (!visited[i]) {\n                order.push_back(i);\n            }\n        }\n\n        // Sort the order in reverse\n        sort(order.begin(), order.end(), [](int a, int b) {\n            return graph[a][0] < graph[b][0];\n        });\n\n        return order;\n    }\n};",
+    "java": "class Solution {\n    int dfs(int node, int[] low, int[] disc, boolean[] visited, List<List<Integer>> graph) {\n        if (!visited[node]) {\n            disc[node] = low[node] = ++time;\n            // Fix the bug here\n            for (int neighbor : graph.get(node)) {\n                if (!visited[neighbor]) {\n                    low[neighbor] = disc[node];\n                }\n            }\n        }\n        return disc[node];\n    }\n\n    List<Integer> topologicalSort(List<List<Integer>> graph) {\n        int n = graph.size();\n        int[] low = new int[n];\n        int[] disc = new int[n];\n        boolean[] visited = new boolean[n];\n        int time = 0;\n\n        for (int i = 0; i < n; i++) {\n            if (!visited[i]) {\n                dfs(i, low, disc, visited, graph);\n            }\n        }\n\n        List<Integer> order = new ArrayList<>();\n        for (int i = n - 1; i >= 0; i--) {\n            if (!visited[i]) {\n                order.add(i);\n            }\n        }\n\n        // Sort the order in reverse\n        order.sort((a, b) -> graph.get(a).get(0).compareTo(graph.get(b).get(0)));\n\n        return order;\n    }\n}",
+    "python": "class Solution:\n    def dfs(self, node, visited, graph, low, disc):\n        if not visited[node]:\n            disc[node] = low[node] = self.time = self.time + 1\n            # Fix the bug here\n            for neighbor in graph[node]:\n                if not visited[neighbor]:\n                    low[neighbor] = disc[node]\n        return disc[node]\n\n    def topologicalSort(self, graph):\n        n = len(graph)\n        low = [0] * n\n        disc = [0] * n\n        visited = [False] * n\n\n        for i in range(n):\n            if not visited[i]:\n                self.dfs(i, visited, graph, low, disc)\n\n        order = [\n            for i in range(n-1, -1, -1)\n            if not visited[i]\n            ]\n\n        # Sort the order in reverse\n        order.sort(key=lambda x: graph[x][0], reverse=True)\n\n        return order\n",
+    "javascript": "class Solution {\n    dfs(node, visited, graph, low, disc) {\n        if (!visited[node]) {\n            disc[node] = low[node] = this.time = this.time + 1;\n            // Fix the bug here\n            for (let neighbor of graph[node]) {\n                if (!visited[neighbor]) {\n                    low[neighbor] = disc[node];\n                }\n            }\n        }\n        return disc[node];\n    }\n\n    topologicalSort(graph) {\n        let n = graph.length;\n        let low = new Array(n);\n        let disc = new Array(n);\n        let visited = new Array(n).\n        let time = 0;\n\n        for (let i = 0; i < n; i++) {\n            if (!visited[i]) {\n                this.dfs(i, visited, graph, low, disc);\n            }\n        }\n\n        let order = [\n            for (let i = n - 1; i >= 0; i--) {\n                if (!visited[i]) {\n                    order.push(i);\n                }\n            }\n        ];\n\n        // Sort the order in reverse\n        order.sort((a, b) => graph[a][0] - graph[b][0]);\n\n        return order;\n    }\n}"
+  },
+  "functionSignature": {
+    "cpp": "vector<int> topologicalSort(vector<vector<int>>& graph);",
+    "java": "List<Integer> topologicalSort(List<List<Integer>> graph);",
+    "python": "def topologicalSort(self, graph: list[list[int]]) -> list[int]:",
+    "javascript": "topologicalSort(graph: list[list[int]]);"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def dfs(self, node, visited, graph, low, disc):\n        if not visited[node]:\n            disc[node] = low[node] = self.time = self.time + 1\n            for neighbor in graph[node]:\n                if not visited[neighbor]:\n                    low[neighbor] = disc[node]\n            for neighbor in graph[node]:\n                if not visited[neighbor]:\n                    disc[neighbor] = self.dfs(neighbor, visited, graph, low, disc)\n            return disc[node]\n\n    def topologicalSort(self, graph):\n        n = len(graph)\n        low = [0] * n\n        disc = [0] * n\n        visited = [False] * n\n\n        for i in range(n):\n            if not visited[i]:\n                self.dfs(i, visited, graph, low, disc)\n\n        order = [\n            for i in range(n-1, -1, -1)\n            if not visited[i]\n            ]\n\n        order.sort(key=lambda x: graph[x][0], reverse=True)\n\n        return order\n\n\nif __name__ == '__main__':\n    s = Solution()\n    graph = [[1, 2], [0, 3], [0, 3], []]\n    print(s.topologicalSort(graph))\n",
+    "cpp": "// Complete the Solution class with the following code\n#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nclass Solution {\npublic:\n    vector<int> topologicalSort(vector<vector<int>>& graph) {\n        int n = graph.size();\n        int[] low = new int[n];\n        int[] disc = new int[n];\n        bool[] visited = new boolean[n];\n        int time = 0;\n\n        for (int i = 0; i < n; i++) {\n            if (!visited[i]) {\n                dfs(i, low, disc, visited, graph);\n            }\n        }\n\n        vector<int> order;\n        for (int i = n - 1; i >= 0; i--) {\n            if (!visited[i]) {\n                order.push_back(i);\n            }\n        }\n\n        // Sort the order in reverse\n        sort(order.begin(), order.end(), [](int a, int b) {\n            return graph[a][0] < graph[b][0];\n        });\n\n        return order;\n\n        // Helper function to perform DFS\n        void dfs(int node, int[] low, int[] disc, bool[] visited, vector<vector<int>>& graph) {\n            if (!visited[node]) {\n                disc[node] = low[node] = ++time;\n                for (int neighbor : graph[node]) {\n                    if (!visited[neighbor]) {\n                        low[neighbor] = disc[node];\n                    }\n                }\n                for (int neighbor : graph[node]) {\n                    if (!visited[neighbor]) {\n                        disc[neighbor] = dfs(neighbor, low, disc, visited, graph);\n                    }\n                }\n            }\n            return disc[node];\n        }\n    }\n};\n\nint main() {\n    int n;\n    cout << \"Enter number of nodes: \";\n    cin >> n;\n    vector<vector<int>> graph(n);\n    for (int i = 0; i < n; i++) {\n        int m;\n        cout << \"Enter number of edges for node \" << i << \": \";\n        cin >> m;\n        for (int j = 0; j < m; j++) {\n            int v;\n            cout << \"Enter edge for node \" << i << \": \";\n            cin >> v;\n            graph[i].push_back(v);\n        }\n    }\n    Solution s;\n    vector<int> order = s.topologicalSort(graph);\n    cout << \"Topological sort: \" << endl;\n    for (int i = 0; i < order.size(); i++) {\n        cout << order[i] << endl;\n    }\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"A\": [\"B\", \"C\"], \"B\": [\"D\"], \"C\": [\"D\"], \"D\": []}",
+      "output": "[\"A\", \"C\", \"B\", \"D\"]",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"A\": [\"B\"], \"B\": [\"A\"]}",
+      "output": "False",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

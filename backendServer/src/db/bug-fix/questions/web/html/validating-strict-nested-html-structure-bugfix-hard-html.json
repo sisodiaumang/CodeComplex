@@ -1,0 +1,135 @@
+{
+  "title": "Validating Strict Nested HTML Structure",
+  "subCategory": "HTML Validator",
+  "statement": {
+    "markdown": "Write a function to validate the strict nesting of HTML tags in a given string. The function should return `true` if the nesting is valid and `false` otherwise. A nesting is considered valid if every opening tag has a matching closing tag, and every closing tag matches the corresponding opening tag. For example, `<p><b>Hello, <i>World!</i></b></p>` is a valid nesting, but `<p><b>Hello, <i>World!</p>` is not.",
+    "inputFormat": "The input string is a sequence of HTML tags, where each tag is represented as a string of the form `<tag_name>...</tag_name>` or `</tag_name>`. The input string may contain multiple levels of nesting.",
+    "outputFormat": "The function should return a boolean value indicating whether the nesting is valid.",
+    "notes": "You can assume that the input string only contains valid HTML tag names. The function should be efficient and handle large input strings.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The maximum number of HTML tags in the input string"
+      }
+    ],
+    "examples": [
+      {
+        "input": "<p><b>Hello, <i>World!</i></b></p>",
+        "output": "true",
+        "explanation": "The nesting is valid because every opening tag has a matching closing tag."
+      },
+      {
+        "input": "<p><b>Hello, <i>World!</p>",
+        "output": "false",
+        "explanation": "The nesting is invalid because the closing tag `</p>` does not match the opening tag `<p>` in the corresponding opening tag `<b>`."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 100,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "HTML"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "html"
+    ],
+    "interviewFrequency": 4,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use a stack data structure to keep track of the opening tags."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial: Validating Strict Nested HTML Structure",
+    "intuition": "The key insight is to use a stack to keep track of the opening tags. When we encounter a closing tag, we pop the corresponding opening tag from the stack and check if the tags match.",
+    "bruteForce": "A brute-force approach would involve parsing the input string and checking each pair of opening and closing tags.",
+    "betterSolution": "We can improve the brute-force approach by using a stack to store the opening tags.",
+    "optimalSolution": "The optimal solution involves using a stack to keep track of the opening tags and checking each closing tag against the top of the stack.",
+    "proofOfCorrectness": "The solution is correct because it ensures that every opening tag has a matching closing tag and that every closing tag matches the corresponding opening tag.",
+    "dryRun": "The solution works as follows:",
+    "commonMistakes": [
+      "Failing to check if the stack is empty when popping an opening tag"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// Define a function to validate the strict nesting of HTML tags\nfunction solve(input) {\n    // Your implementation here\n}\n\n// Export the function to be executed by the test framework\nmodule.exports = solve;",
+    "python": "class Solution:\n    def solve(self, input_str) -> bool:\n        # Your implementation here\n        pass\n\n# Driver code to read input, execute the function, and print output\nif __name__ == '__main__':\n    input_str = input()\n    solution = Solution()\n    output = solution.solve(input_str)\n    print(output)"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Define a function to validate the strict nesting of HTML tags\nfunction solve(input) {\n    let stack = [];\n    for (let i = 0; i < input.length; i++) {\n        if (input[i] === '<') {\n            if (input[i + 1] === '/') {\n                if (stack.length === 0) return false;\n                let openingTag = stack.pop();\n                if (input.slice(i + 2, i + openingTag.length + 2) !== openingTag) return false;\n                i += openingTag.length + 1;\n            } else {\n                let tagName = '';\n                while (input[i + 1] !== '>') {\n                    tagName += input[i + 1];\n                    i++;\n                }\n                stack.push(tagName);\n                i++;\n            }\n        }\n    }\n    return stack.length === 0;\n}\n\n// Export the function to be executed by the test framework\nmodule.exports = solve;",
+    "python": "class Solution:\n    def solve(self, input_str) -> bool:\n        stack = []\n        i = 0\n        while i < len(input_str):\n            if input_str[i] == '<':\n                if input_str[i + 1] == '/':\n                    if not stack:\n                        return False\n                    opening_tag = stack.pop()\n                    if input_str[i + 2:i + opening_tag.length + 2] != opening_tag:\n                        return False\n                    i += opening_tag.length + 1\n                else:\n                    tag_name = ''\n                    j = i + 1\n                    while input_str[j] != '>':\n                        tag_name += input_str[j]\n                        j += 1\n                    stack.append(tag_name)\n                    i = j\n            i += 1\n        return not stack\n\n# Driver code to read input, execute the function, and print output\nif __name__ == '__main__':\n    input_str = input()\n    solution = Solution()\n    output = solution.solve(input_str)\n    print(output)"
+  },
+  "functionSignature": {
+    "javascript": "function solve(input) {\n}",
+    "python": "def solve(self, input_str: str) -> bool:"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction solve(input) {\n    let stack = [];\n    for (let i = 0; i < input.length; i++) {\n        if (input[i] === '<') {\n            if (input[i + 1] === '/') {\n                if (stack.length === 0) return false;\n                let openingTag = stack.pop();\n                if (input.slice(i + 2, i + openingTag.length + 2) !== openingTag) return false;\n                i += openingTag.length + 1;\n            } else {\n                let tagName = '';\n                while (input[i + 1] !== '>') {\n                    tagName += input[i + 1];\n                    i++;\n                }\n                stack.push(tagName);\n                i++;\n            }\n        }\n    }\n    return stack.length === 0;\n}\n",
+    "python": "class Solution:\n    def solve(self, input_str) -> bool:\n        stack = []\n        i = 0\n        while i < len(input_str):\n            if input_str[i] == '<':\n                if input_str[i + 1] == '/':\n                    if not stack:\n                        return False\n                    opening_tag = stack.pop()\n                    if input_str[i + 2:i + opening_tag.length + 2] != opening_tag:\n                        return False\n                    i += opening_tag.length + 2\n                else:\n                    tag_name = ''\n                    j = i + 1\n                    while input_str[j] != '>':\n                        tag_name += input_str[j]\n                        j += 1\n                    stack.append(tag_name)\n                    i = j\n            i += 1\n        return stack == []\n\n# Driver code to read input, execute the function, and print output\nif __name__ == '__main__':\n    input_str = input()\n    solution = Solution()\n    output = solution.solve(input_str)\n    print(output)"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "<p><b>Hello, <i>World!</i></b></p>",
+      "output": "true",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "<p><b>Hello, <i>World!</p>",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "_id": "b21972de33f2dbd815c27917",
+  "slug": "validating-strict-nested-html-structure-bugfix-hard-html",
+  "mode": "bug_fix",
+  "category": "HTML",
+  "difficulty": "Hard"
+}

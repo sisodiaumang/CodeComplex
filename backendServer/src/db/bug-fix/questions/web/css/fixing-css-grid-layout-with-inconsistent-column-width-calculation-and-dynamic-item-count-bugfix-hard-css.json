@@ -1,0 +1,147 @@
+{
+  "title": "Fixing CSS Grid Layout with Inconsistent Column Width Calculation and Dynamic Item Count",
+  "subCategory": "CSS Grid Layout",
+  "statement": {
+    "markdown": "Implement a function that takes a CSS grid layout configuration as input and calculates the width of each column. The configuration is represented as an object with the following properties: `gridTemplateColumns`, `gridGap`, and `items`. The `gridTemplateColumns` property is a string representing the column width specification (e.g., `1fr 2fr 3fr`), the `gridGap` property is a string representing the gap between columns (e.g., `10px`), and the `items` property is an array of objects representing the grid items, where each object has a `width` property. The function should return an object with the calculated column widths. Note that the grid items' widths may change dynamically, and the function should adapt to these changes.",
+    "inputFormat": "JSON object with gridTemplateColumns, gridGap, and items properties",
+    "outputFormat": "JSON object with calculated column widths",
+    "notes": "Assume that the gridTemplateColumns string is a space-separated list of column width specifications, where each specification is a number followed by a unit (e.g., `1fr`, `2px`, `3%`). The gridGap string is a measurement representing the gap between columns. The items array contains objects with a width property representing the width of each grid item.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of grid items"
+      },
+      {
+        "variable": "k",
+        "type": "integer",
+        "min": 1,
+        "max": 100,
+        "description": "Number of column width specifications"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"gridTemplateColumns\": \"1fr 2fr 3fr\", \"gridGap\": \"10px\", \"items\": [{\"width\": \"100px\"}, {\"width\": \"200px\"}]}",
+        "output": "{\"columnWidths\": [\"100px\", \"200px\", \"300px\"]}",
+        "explanation": "The function should calculate the column widths based on the gridTemplateColumns string and the item widths."
+      },
+      {
+        "input": "{\"gridTemplateColumns\": \"1fr 2fr 3fr\", \"gridGap\": \"20px\", \"items\": [{\"width\": \"150px\"}, {\"width\": \"250px\"}]}",
+        "output": "{\"columnWidths\": [\"150px\", \"250px\", \"375px\"]}",
+        "explanation": "The function should adjust the column widths based on the changed item widths."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 75,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "CSS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "css"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 1,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text: Parse the gridTemplateColumns string into an array of column width specifications and calculate the total width of the grid."
+    },
+    {
+      "order": 2,
+      "text": "Second hint text: Iterate over the grid items, calculate their widths, and adjust the column widths accordingly."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(k*n)",
+    "spaceComplexity": "O(k)"
+  },
+  "starterCode": {
+    "javascript": "// Define the function to calculate column widths",
+    "python": "class Solution:\n    def calculate_column_widths(self, config):\n        # Implement the logic here"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Define the function to calculate column widths\nfunction calculateColumnWidths(config) {\n  const gridTemplateColumns = config.gridTemplateColumns.split(' ');\n  const gridGap = parseInt(config.gridGap);\n  const items = config.items;\n\n  // Calculate the total width of the grid\n  let totalWidth = 0;\n  for (let i = 0; i < gridTemplateColumns.length; i++) {\n    totalWidth += gridTemplateColumns[i].replace('fr', '');\n  }\n\n  // Iterate over the grid items and adjust the column widths\n  for (let i = 0; i < items.length; i++) {\n    totalWidth -= parseInt(items[i].width);\n  }\n\n  // Calculate the column widths\n  const columnWidths = [];\n  for (let i = 0; i < gridTemplateColumns.length; i++) {\n    columnWidths.push(gridTemplateColumns[i] + 'px');\n  }\n\n  return { columnWidths };\n}\n\n// Test cases\nconsole.log(calculateColumnWidths({ gridTemplateColumns: \"1fr 2fr 3fr\", gridGap: \"10px\", items: [{width: \"100px\"}, {width: \"200px\"}] }));\nconsole.log(calculateColumnWidths({ gridTemplateColumns: \"1fr 2fr 3fr\", gridGap: \"20px\", items: [{width: \"150px\"}, {width: \"250px\"}] }));",
+    "python": "class Solution:\n    def calculate_column_widths(self, config):\n        grid_template_columns = config['grid_template_columns'].split(' ')\n        grid_gap = int(config['grid_gap'])\n        items = config['items']\n\n        # Calculate the total width of the grid\n        total_width = 0\n        for column in grid_template_columns:\n            total_width += int(column.replace('fr', ''))\n\n        # Iterate over the grid items and adjust the column widths\n        for item in items:\n            total_width -= int(item['width'])\n\n        # Calculate the column widths\n        column_widths = []\n        for i in range(len(grid_template_columns)):\n            column_widths.append(grid_template_columns[i] + 'px')\n\n        return { 'columnWidths': column_widths }\n\n    # Test cases\n    def main(self):\n        solution = self.calculate_column_widths({'grid_template_columns': '1fr 2fr 3fr', 'grid_gap': '10px', 'items': [{'width': '100px'}, {'width': '200px'}]})\n        print(solution)\n\n        solution = self.calculate_column_widths({'grid_template_columns': '1fr 2fr 3fr', 'grid_gap': '20px', 'items': [{'width': '150px'}, {'width': '250px'}]})\n        print(solution)"
+  },
+  "functionSignature": {
+    "javascript": "function calculateColumnWidths(config) { ... }",
+    "python": "def calculate_column_widths(self, config: dict) -> dict: ..."
+  },
+  "solutions": {
+    "javascript": "// Correct implementation goes here",
+    "python": "class Solution:\n    def calculate_column_widths(self, config):\n        # Correct implementation goes here"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"gridTemplateColumns\": \"1fr 2fr 3fr\", \"gridGap\": \"10px\", \"items\": [{\"width\": \"100px\"}, {\"width\": \"200px\"}]}",
+      "output": "{\"columnWidths\": [\"100px\", \"200px\", \"300px\"]}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"gridTemplateColumns\": \"1fr 2fr 3fr\", \"gridGap\": \"20px\", \"items\": [{\"width\": \"150px\"}, {\"width\": \"250px\"}]}",
+      "output": "{\"columnWidths\": [\"150px\", \"250px\", \"375px\"]}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "c44ed62fb0a79876ae3e5331",
+  "slug": "fixing-css-grid-layout-with-inconsistent-column-width-calculation-and-dynamic-item-count-bugfix-hard-css",
+  "mode": "bug_fix",
+  "category": "CSS",
+  "difficulty": "Hard"
+}

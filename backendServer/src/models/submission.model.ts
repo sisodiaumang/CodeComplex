@@ -39,7 +39,7 @@ const submissionSchema =
                     "DSA",
                     "FRONTEND",
                     "BACKEND",
-                    "FULLSTACK",
+                    "PROJECTS",
                     "PROMPT_WAR",
                     "BUG_FIX"
                 ],
@@ -53,14 +53,17 @@ const submissionSchema =
                     "JAVA",
                     "PYTHON",
                     "JAVASCRIPT",
-                    "TYPESCRIPT"
+                    "TYPESCRIPT",
+                    "HTML",
+                    "CSS",
+                    "REACT"
                 ]
             },
 
-            // FIX: For large submissions (frontend/fullstack), store source code
+            // FIX: For large submissions (frontend/projects), store source code
             // in object storage (S3/R2) and keep only the URL here.
             // For DSA submissions this field holds the code directly; for
-            // FRONTEND/BACKEND/FULLSTACK battles prefer sourceCodeUrl instead
+            // FRONTEND/BACKEND/PROJECTS battles prefer sourceCodeUrl instead
             // and set this to a short placeholder so the required constraint
             // is still satisfied. Both fields are kept for backward compatibility.
             sourceCode: {
@@ -230,8 +233,8 @@ submissionSchema.post("save", async function (doc, next) {
                     statField = "stats.frontendCompleted";
                 } else if (doc.battleType === "BACKEND") {
                     statField = "stats.backendCompleted";
-                } else if (doc.battleType === "FULLSTACK") {
-                    statField = "stats.fullstackCompleted";
+                } else if (doc.battleType === "PROJECTS") {
+                    statField = "stats.projectsCompleted";
                 }
 
                 if (statField) {

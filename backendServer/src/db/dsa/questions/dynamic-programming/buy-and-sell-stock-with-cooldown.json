@@ -1,0 +1,205 @@
+{
+  "_id": "buy-and-sell-stock-with-cooldown",
+  "title": "Buy and Sell Stock with Cooldown",
+  "slug": "buy-and-sell-stock-with-cooldown",
+  "difficulty": "Medium",
+  "category": "DP",
+  "subCategory": "DP on Stocks",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 500,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "Dynamic Programming",
+      "DP on Stocks"
+    ],
+    "patterns": [
+      "buy and sell",
+      "cooldown",
+      "stock"
+    ],
+    "prerequisites": [
+      "Knapsack Problem",
+      "Longest Common Subsequence"
+    ],
+    "variants": [],
+    "tags": [
+      "Dynamic Programming",
+      "Stocks",
+      "Cooldown",
+      "Optimization"
+    ],
+    "keywords": [
+      "buy and sell",
+      "cooldown",
+      "stock",
+      "dynamic programming",
+      "optimization"
+    ],
+    "interviewFrequency": 4,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "You are given an array prices where prices[i] is the price of a given stock on the i-th day. Find the maximum profit you can achieve. You may complete as many transactions as you like (i.e., buy one and sell one share of the stock multiple times) with the following constraints:\n- After you sell your stock, you cannot buy stock on the next day (i.e., cooldown one day).",
+    "inputFormat": "The first line contains a single integer N, the number of days.\nThe second line contains N space-separated integers representing the stock prices.",
+    "outputFormat": "A single integer representing the maximum profit achievable.",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "N",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of days"
+      },
+      {
+        "variable": "prices[i]",
+        "type": "integer",
+        "min": 0,
+        "max": 1000000,
+        "description": "Price of stock"
+      }
+    ],
+    "examples": [
+      {
+        "input": "5\n1 2 3 0 2",
+        "output": "3",
+        "explanation": "Buy on day 1 (price 1), sell on day 2 (price 2), profit = 1. Cooldown on day 3. Buy on day 4 (price 0), sell on day 5 (price 2), profit = 2. Total profit = 3."
+      },
+      {
+        "input": "3\n1 2 4",
+        "output": "3",
+        "explanation": "Buy on day 1 (price 1), sell on day 3 (price 4), profit = 3."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "The problem involves finding the maximum profit from a sequence of stock prices with a constraint on consecutive buy/sell actions. Consider using dynamic programming to track the maximum profit at each step."
+    },
+    {
+      "order": 2,
+      "text": "You need to maintain states for different actions (buy, sell, cooldown) on each day. Think about how the maximum profit changes based on the previous day's actions and the current price."
+    },
+    {
+      "order": 3,
+      "text": "The key states to track are: the maximum profit after buying the stock (but not selling it yet), the maximum profit after selling the stock (but not buying another), and the maximum profit after a cooldown (waiting period). The transitions between these states are crucial."
+    }
+  ],
+  "editorial": {
+    "title": "Buy and Sell Stock with Cooldown",
+    "intuition": "The problem requires finding the maximum profit from buying and selling stock with a cooldown period. The key observation is that we can use dynamic programming to track the maximum profit at each step, considering three states: holding the stock, selling the stock, and being in a cooldown period.",
+    "bruteForce": "A brute force approach would involve trying all possible combinations of buying and selling stock, while respecting the cooldown period. However, this approach would be extremely slow, with a time complexity of O(2^N), making it impractical for large inputs.",
+    "betterSolution": "The optimal approach uses dynamic programming to track the maximum profit in three states: hold, sell, and cooldown. By iterating through the prices and updating these states, we can find the maximum profit.",
+    "optimalSolution": "The dynamic programming approach has a time complexity of O(N) and a space complexity of O(1), making it much more efficient than the brute force approach.",
+    "proofOfCorrectness": "The correctness of the optimal solution can be proven by induction. The base case is when there are no prices, in which case the maximum profit is 0. For each price, we update the hold, sell, and cooldown states. The hold state is updated to be the maximum of the current hold and the cooldown minus the price. The cooldown state is updated to be the maximum of the current cooldown and sell. The sell state is updated to be the previous hold plus the price. The maximum profit is then the maximum of the sell and cooldown states.",
+    "dryRun": "A dry run with sample inputs, such as [1, 2, 3, 0, 2], helps verify that the dynamic programming approach produces the correct result.",
+    "commonMistakes": [
+      "Not considering the cooldown period when updating the states",
+      "Not using dynamic programming to track the maximum profit",
+      "Incorrectly updating the hold, sell, and cooldown states",
+      "Not handling the base case when there are no prices",
+      "Not returning the maximum of the sell and cooldown states"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    int maxProfit(vector<int>& prices) {\n        // TODO: implement\n        return 0;\n    }\n};",
+    "java": "import java.util.*;\n\nclass Solution {\n    public int maxProfit(int[] prices) {\n        // TODO: implement\n        return 0;\n    }\n}",
+    "python": "class Solution:\n    def maxProfit(self, prices: list[int]) -> int:\n        # TODO: implement\n        pass",
+    "javascript": "/**\n * @param {number[]} prices\n * @return {number}\n */\nvar maxProfit = function(prices) {\n    // TODO: implement\n    return 0;\n};"
+  },
+  "functionSignature": {
+    "cpp": "int maxProfit(vector<int>& prices);",
+    "java": "public int maxProfit(int[] prices);",
+    "python": "def maxProfit(self, prices: list[int]) -> int:",
+    "javascript": "var maxProfit = function(prices);"
+  },
+  "solutions": {
+    "python": "import sys\n\nclass Solution:\n    def maxProfit(self, prices: list[int]) -> int:\n        if not prices:\n            return 0\n\n        n = len(prices)\n        buy = -prices[0]\n        sell = 0\n        cooldown = 0\n\n        for i in range(1, n):\n            new_buy = max(buy, cooldown - prices[i])\n            new_sell = max(sell, buy + prices[i])\n            new_cooldown = max(cooldown, sell)\n\n            buy = new_buy\n            sell = new_sell\n            cooldown = new_cooldown\n\n        return max(sell, cooldown)\n\nif __name__ == '__main__':\n    it = iter(sys.stdin.read().split())\n    try:\n        n = int(next(it))\n        prices = [int(next(it)) for _ in range(n)]\n    except StopIteration:\n        sys.exit(0)\n    sol = Solution()\n    ans = sol.maxProfit(prices)\n    print(ans)",
+    "cpp": "#include <numeric>\n#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    int maxProfit(vector<int>& prices) {\n        if (prices.empty()) {\n            return 0;\n        }\n\n        int n = prices.size();\n        int buy = -prices[0];\n        int sell = 0;\n        int cooldown = 0;\n\n        for (int i = 1; i < n; i++) {\n            int new_buy = max(buy, cooldown - prices[i]);\n            int new_sell = max(sell, buy + prices[i]);\n            int new_cooldown = max(cooldown, sell);\n\n            buy = new_buy;\n            sell = new_sell;\n            cooldown = new_cooldown;\n        }\n\n        return max(sell, cooldown);\n    }\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int n;\n    if (!(cin >> n)) return 0;\n    vector<int> prices(n);\n    for (int i = 0; i < n; i++) cin >> prices[i];\n    Solution sol;\n    int ans = sol.maxProfit(prices);\n    cout << ans << \"\\n\";\n    return 0;\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.2
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5\n1 2 3 0 2",
+      "output": "3",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "3\n1 2 4",
+      "output": "3",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint_3",
+      "input": "1\n0",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "boundary_4",
+      "input": "2\n1000000 0",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    },
+    {
+      "id": "duplicate_5",
+      "input": "3\n10 10 10",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "duplicate"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

@@ -1,0 +1,168 @@
+{
+  "_id": "1966e9fd121b67b8dd197fb8",
+  "title": "Detecting Odd Length Cycles in a Graph",
+  "slug": "detecting-odd-length-cycles-in-a-graph-bugfix-easy-graphs",
+  "difficulty": "Easy",
+  "category": "DSA",
+  "subCategory": "BFS",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "graph"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "You are given a directed graph represented as an adjacency list. Write a function to check if there exists an odd length cycle in the graph. \n\n You should return 1 if there exists an odd cycle, and 0 otherwise. \n\n **Hint**: A graph contains an odd cycle if there is a node that has an odd number of incoming edges.",
+    "inputFormat": "The first line of the input contains the number of nodes n and the number of edges m. \n  Each of the following m lines contains two integers u and v representing a directed edge from u to v.",
+    "outputFormat": "A single integer indicating whether there exists an odd length cycle (1) or not (0).",
+    "notes": "1 <= n <= 10000, 1 <= m <= 10000, 1 <= u,v <= n.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of nodes in the graph"
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 0,
+        "max": 10000,
+        "description": "Number of edges in the graph"
+      }
+    ],
+    "examples": [
+      {
+        "input": "4 4 \n 1 2 \n 2 3 \n 3 4 \n 4 1",
+        "output": "1",
+        "explanation": "The graph has an odd cycle: 1 -> 2 -> 3 -> 4 -> 1"
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Consider using BFS to traverse the graph. You can use a queue to keep track of nodes to visit next."
+    }
+  ],
+  "editorial": {
+    "title": "Detecting Odd Length Cycles in a Graph",
+    "intuition": "To detect an odd cycle, we can use BFS. A node with an odd number of incoming edges is part of an odd cycle. \n\n We can use an extra array to count the number of incoming edges for each node.",
+    "bruteForce": "We can use DFS to detect if there is an odd cycle by keeping track of the current path and checking if we have visited before.",
+    "betterSolution": "We can use BFS to detect if there is an odd cycle by keeping track of the current queue and the number of incoming edges for each node.",
+    "optimalSolution": "Create a graph, perform BFS, count incoming edges. If there is a node with an odd incoming edge count, then there is an odd length cycle.",
+    "proofOfCorrectness": "If a graph has an odd cycle, then there will be at least one node with an odd number of incoming edges.",
+    "dryRun": "Create the graph, perform BFS, and count incoming edges. If a node has an odd incoming edge count, then there is an odd cycle.",
+    "commonMistakes": [
+      "Failing to count incoming edges correctly",
+      "Using DFS instead of BFS"
+    ],
+    "timeComplexity": "O(V + E)",
+    "spaceComplexity": "O(V)"
+  },
+  "starterCode": {
+    "cpp": "class Solution { \n public: \n void solve(vector<vector<int>>& edges) {\n     // TODO: implement \n } \n};",
+    "java": "class Solution { \n public: \n void solve(int[][] edges) {\n     // TODO: implement \n } \n};",
+    "python": "class Solution: \n def solve(self, edges: list[list[int]]) -> None: \n     # TODO: implement \n pass",
+    "javascript": "function solve(edges) {\n     // TODO: implement\n }"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution { \n public: \n void solve(vector<vector<int>>& edges) {\n     queue<int> q; \n     bool visited[edges.size()]; \n     memset(visited, false, sizeof(visited)); \n     for(int i = 0; i < edges.size(); i++){ \n         if(!visited[i]) \n             dfs(i, q, visited); \n     } \n } \n void dfs(int node, queue<int>& q, bool visited[]){ \n     q.push(node); \n     visited[node] = true; \n     for(int neighbor : edges[node]){ \n         if(visited[neighbor]){ \n             while(!q.empty()) \n                 q.pop();\n         } \n     } \n } \n};",
+    "java": "class Solution { \n public: \n void solve(int[][] edges) {\n     boolean[] visited = new boolean[edges.length]; \n     for(int i = 0; i < edges.length; i++){ \n         if(!visited[i]) \n             dfs(i, visited); \n     } \n } \n void dfs(int node, boolean[] visited){ \n     if(visited[node]) \n         return; \n     visited[node] = true; \n     for(int neighbor : edges[node]){ \n         if(visited[neighbor]){ \n             for(int i = 0; i < visited.length; i++) \n                 visited[i] = false;\n         } \n     } \n } \n};",
+    "python": "class Solution: \n def solve(self, edges: list[list[int]]) -> None: \n     visited = [False] * len(edges) \n     for i in range(len(edges)): \n         if not visited[i]: \n             self.dfs(i, visited) \n     return len(edges) \n     def dfs(self, node, visited): \n         if visited[node]: \n             return \n         visited[node] = True \n         for neighbor in edges[node]: \n             if visited[neighbor]: \n                 visited = [False] * len(edges) \n \n         return 0",
+    "javascript": "function solve(edges) {\n     let visited = new Array(edges.length).fill(false); \n     for(let i = 0; i < edges.length; i++){ \n         if(!visited[i]) \n             dfs(i, visited); \n     } \n } \n function dfs(node, visited){ \n     if(visited[node]) \n         return 0; \n     visited[node] = true; \n     for(let neighbor of edges[node]){ \n         if(visited[neighbor]) \n             for(let i = 0; i < visited.length; i++) \n                 visited[i] = false;\n     } \n } \n return solve(edges)"
+  },
+  "functionSignature": {
+    "cpp": "void solve(vector<vector<int>>& edges);",
+    "java": "void solve(int[][] edges);",
+    "python": "def solve(self, edges: list[list[int]]) -> int:",
+    "javascript": "function solve(edges);"
+  },
+  "solutions": {
+    "python": "from typing import List\n\nclass Solution:\n    def solve(self, edges: List[List[int]]) -> int: \n        visited = [False] * len(edges) \n        for i in range(len(edges)): \n            if not visited[i]: \n                self._dfs(i, visited) \n        for i in range(len(edges)): \n            if visited[i] and (sum([1 for neighbor in edges[j] if i == neighbor]) % 2 != 0): \n                return 1\n        return 0\n\n    def _dfs(self, node, visited): \n        if visited[node]: \n            return \n        visited[node] = True \n        for neighbor in edges[node]: \n            if visited[neighbor]: \n                visited = [False] * len(edges) \n        return",
+    "cpp": "#include <iostream> \n#include <vector> \n \nusing namespace std; \n \nclass Solution {\n public: \n void solve(vector<vector<int>>& edges){ \n     bool visited[edges.size()]; \n     memset(visited, false, sizeof(visited)); \n     for(int i = 0; i < edges.size(); i++){ \n         if(!visited[i]) \n             _dfs(i, visited); \n     } \n     for(int i = 0; i < edges.size(); i++){ \n         if(visited[i] && (sumOfIncomingEdges(i, edges) % 2 != 0)) \n             return 1; \n     } \n     return 0; \n } \n int sumOfIncomingEdges(int node, vector<vector<int>>& edges){ \n     int count = 0; \n     for(int i = 0; i < edges.size(); i++){ \n         for(int neighbor : edges[i]){ \n             if(node == neighbor) \n                 count++; \n         } \n     } \n     return count; \n } \n void _dfs(int node, bool visited[]){ \n     if(visited[node]){ \n         return; \n     } \n     visited[node] = true; \n     for(int neighbor : edges[node]){ \n         if(visited[neighbor]){ \n             memset(visited, false, sizeof(visited)); \n         } \n     } \n } \n}; \n int main(){ \n     Solution solution; \n     vector<vector<int>> edges = {{1, 2}, {2, 3}, {3, 4}, {4, 1}}; \n     cout << solution.solve(edges) << endl; \n     return 0; \n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "4 4 \n 1 2 \n 2 3 \n 3 4 \n 4 1",
+      "output": "1",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "3 3 \n 1 2 \n 2 3 \n 3 1",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    },
+    {
+      "id": "tc_3",
+      "input": "5 5 \n 1 2 \n 2 3 \n 3 4 \n 4 5 \n 5 1",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

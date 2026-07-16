@@ -1,0 +1,160 @@
+{
+  "_id": "8cb064a55f1b3590e8d0652e",
+  "title": "Secure Bookstore Authentication",
+  "slug": "secure-bookstore-authentication-medium-authentication",
+  "difficulty": "Medium",
+  "topics": [
+    "AUTH"
+  ],
+  "statement": "Create an authentication system for the Bookstore API, allowing users to register, login, and retrieve their profile information. The Bookstore API should validate user credentials using JSON Web Tokens (JWT) and implement token rotation after 30 minutes. If the user's access token expires, they should be redirected to the login page. For security, ensure password hashing and salting using Bcrypt. Include a refresh token system, allowing users to obtain a new access token when their current token expires. For simplicity, the refresh token should have an infinite lifespan, and users can obtain a new access token every 30 minutes. Consider using a session store (e.g., Redis or Memcached) to cache session data. Your API must handle concurrent requests from the same user, ensuring data consistency across multiple requests. Finally, implement rate limiting to prevent brute-force login attempts (max 5 attempts within 1 minute).",
+  "constraints": [
+    "Must use only the in-memory array or mock database provided for this challenge.",
+    "The refresh token should have an infinite lifespan, and users can obtain a new access token every 30 minutes."
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/register",
+      "description": "Register a new user with email and password. Input should be sent as JSON body in the request. Expected response: { success: true } or { success: false, message: 'Email already exists' }"
+    },
+    {
+      "method": "POST",
+      "path": "/api/login",
+      "description": "Login existing user with email and password. Input should be sent as JSON body in the request. Expected response: { access_token: string, refresh_token: string, expires_in: number } or { success: false, message: 'Invalid credentials' }"
+    },
+    {
+      "method": "GET",
+      "path": "/api/profile",
+      "description": "Retrieve user profile information using the provided access token. Expected response: { email: string, expires_in: number } or { success: false, message: 'Invalid token' }"
+    },
+    {
+      "method": "POST",
+      "path": "/api/refresh-token",
+      "description": "Exchange the refresh token for a new access token. Expected response: { access_token: string, expires_in: number } or { success: false, message: 'Invalid refresh token' }"
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\"name\":\"bookstore-api\",\"version\":\"1.0.0\",\"main\":\"index.js\",\"scripts\":{\"start\":\"node index.js\"},\"dependencies\":{\"express\":\"^4.18.2\",\"bcrypt\":\"^5.0.1\",\"jsonwebtoken\":\"^9.0.0\",\"redis\":\"^4.0.0\"}}",
+    "index.js": "const express = require('express');\nconst bcrypt = require('bcrypt');\nconst jwt = require('jsonwebtoken');\nconst redis = require('redis');\n\nconst app = express();\napp.use(express.json());\nconst client = redis.createClient();\n\nconst users = [\n    { id: 1, email: 'user1@example.com', password: bcrypt.hashSync('password1', 10) }\n];\n\napp.post('/api/register', (req, res) => {\n    // TODO: Implement user registration logic and password hashing\n});\n\napp.post('/api/login', (req, res) => {\n    // TODO: Implement user login logic and JWT generation\n});\n\napp.get('/api/profile', (req, res) => {\n    // TODO: Implement user profile retrieval logic and access token validation\n});\n\napp.post('/api/refresh-token', (req, res) => {\n    // TODO: Implement refresh token exchange logic and JWT generation\n});\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));\n"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "POST",
+      "path": "/api/register",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "email": "user1@example.com",
+        "password": "password1"
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "success": true
+      },
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "POST",
+      "path": "/api/login",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "email": "user1@example.com",
+        "password": "password1"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "access_token": "string",
+        "refresh_token": "string",
+        "expires_in": 1800
+      },
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "POST",
+      "path": "/api/register",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "email": "user1@example.com",
+        "password": "password1"
+      },
+      "expectedStatus": 201,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "POST",
+      "path": "/api/register",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "email": "user1@example.com",
+        "password": "password1"
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "POST",
+      "path": "/api/login",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "email": "user1@example.com",
+        "password": "wrongpassword"
+      },
+      "expectedStatus": 401,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "jwt",
+    "access-token",
+    "refresh-token",
+    "sessions",
+    "cookies",
+    "otp",
+    "email-verification",
+    "password-reset",
+    "login",
+    "signup",
+    "logout",
+    "token-rotation",
+    "mfa",
+    "authentication",
+    "rate-limiting"
+  ]
+}

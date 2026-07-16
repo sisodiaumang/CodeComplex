@@ -1,0 +1,52 @@
+{
+  "_id": "dde3b3a786cdb84fdbaf1505",
+  "title": "Mock Infinite Scroll",
+  "slug": "js-infinite-scroll",
+  "difficulty": "Hard",
+  "topics": [
+    "JAVASCRIPT"
+  ],
+  "statement": {
+    "markdown": "## Mock Infinite Scroll Component\n\nBuild a mock infinite scrolling list container that appends simulated items as users scroll down.\n\n### Requirements:\n1. **Scroll Event Detection**: Add scroll event listeners detecting when viewport scrolling reaches within 50px of the container's bottom boundary limit.\n2. **Throttle Fetch Requests**: Guard fetch triggers. Do not execute concurrent fetches, and load next pages only after a mock delay (e.g. 500ms using a setTimeout).\n3. **DOM Rendering & End State**: Append 5 card list items per page. Limit loading up to 5 total pages, rendering an end-of-list message once the maximum page count is reached."
+  },
+  "constraints": [
+    "Must correctly calculate scroll heights (scrollTop, clientHeight, scrollHeight)",
+    "Must use loading state flags to prevent duplicate fetches"
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "html": "<div class=\"p-6 bg-slate-900 min-h-[350px] flex flex-col font-sans text-white\">\n  <div id=\"list-container\" class=\"w-full max-w-sm mx-auto h-64 overflow-y-auto border border-slate-700 rounded-xl bg-slate-800 p-4 relative space-y-3\">\n    <!-- Initial list items -->\n    <div class=\"p-3 bg-slate-950/40 rounded border border-slate-700 text-sm\">Item #1</div>\n    <div class=\"p-3 bg-slate-950/40 rounded border border-slate-700 text-sm\">Item #2</div>\n    <div class=\"p-3 bg-slate-950/40 rounded border border-slate-700 text-sm\">Item #3</div>\n    <div class=\"p-3 bg-slate-950/40 rounded border border-slate-700 text-sm\">Item #4</div>\n    <div class=\"p-3 bg-slate-950/40 rounded border border-slate-700 text-sm\">Item #5</div>\n    <div id=\"loader\" class=\"text-xs text-center text-indigo-400 hidden py-2 animate-pulse\">Loading items...</div>\n  </div>\n</div>",
+    "css": "",
+    "javascript": "const container = document.getElementById('list-container');\nconst loader = document.getElementById('loader');\n\n// Implement infinite scrolling matching 50px threshold, mock fetch (500ms delay), and 5 pages limits here\n"
+  },
+  "gradingCriteria": [
+    {
+      "id": "scroll_detection",
+      "description": "Verify scrolling to the bottom triggers fetching mechanics correctly.",
+      "weight": 50
+    },
+    {
+      "id": "state_guards",
+      "description": "Verify duplicate parallel fetches are guarded, page pagination increments, and loading indicator toggles.",
+      "weight": 50
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "html",
+      "css",
+      "javascript"
+    ],
+    "referenceSolution": "const container = document.getElementById('list-container');\nconst loader = document.getElementById('loader');\n\nlet currentPage = 1;\nconst maxPages = 5;\nlet isLoading = false;\nlet itemIndex = 5;\n\nfunction loadMoreItems() {\n  if (isLoading || currentPage >= maxPages) return;\n  isLoading = true;\n  loader.classList.remove('hidden');\n  container.appendChild(loader); // keep loader at the bottom\n\n  setTimeout(() => {\n    for (let i = 0; i < 5; i++) {\n      itemIndex++;\n      const div = document.createElement('div');\n      div.className = 'p-3 bg-slate-950/40 rounded border border-slate-700 text-sm';\n      div.textContent = `Item #${itemIndex}`;\n      container.insertBefore(div, loader);\n    }\n    \n    currentPage++;\n    isLoading = false;\n    loader.classList.add('hidden');\n\n    if (currentPage >= maxPages) {\n      const endMsg = document.createElement('div');\n      endMsg.className = 'text-xs text-center text-slate-500 py-2';\n      endMsg.textContent = 'End of items reached';\n      container.appendChild(endMsg);\n    }\n  }, 500);\n}\n\ncontainer.addEventListener('scroll', () => {\n  const { scrollTop, clientHeight, scrollHeight } = container;\n  if (scrollHeight - scrollTop - clientHeight < 50) {\n    loadMoreItems();\n  }\n});"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

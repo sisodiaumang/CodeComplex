@@ -1,0 +1,54 @@
+{
+  "_id": "de3c5ae8b1e97359a20f9d78",
+  "title": "Command Pattern Challenge",
+  "slug": "type-command-pattern",
+  "difficulty": "Easy",
+  "topics": [
+    "TYPESCRIPT"
+  ],
+  "statement": {
+    "markdown": "## Command Pattern\n### Requirements numbered list\nImplement the Command Pattern in TypeScript to encapsulate requests as objects.\nCreate a Invoker class that sends the requests to the Command object.\nCreate a Receiver class that receives and processes the requests."
+  },
+  "constraints": [
+    "Use TypeScript classes to implement the Command Pattern.",
+    "Use interfaces to define the Command and Receiver classes.",
+    "Implement a specific command to perform a specific action."
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "typescript": "Invoker.ts: export class Invoker {}\nexport interface Command {}\nexport interface Receiver {}\nCommand.ts: export abstract class Command {}\nexport class ConcreteCommand extends Command {}\nReceiver.ts: export class Receiver {}\nexport class ConcreteReceiver extends Receiver {}"
+  },
+  "gradingCriteria": [
+    {
+      "id": "1",
+      "description": "Encapsulates requests as objects using the Command pattern.",
+      "weight": 40
+    },
+    {
+      "id": "2",
+      "description": "Creates an Invoker class that sends the requests to the Command object.",
+      "weight": 30
+    },
+    {
+      "id": "3",
+      "description": "Creates a Receiver class that receives and processes the requests.",
+      "weight": 30
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "typescript"
+    ],
+    "referenceSolution": "Invoker.ts: export class Invoker {\n  private command: Command;\n\n  constructor(command: Command) {\n    this.command = command;\n  }\n\n  execute(): void {\n    this.command.execute();\n  }\n}\n\nexport interface Command {\n  execute(): void;\n}\n\nexport interface Receiver {\n  action(): void;\n}\n\nexport class Receiver implements Receiver {\n  action(): void {\n    console.log('action performed');\n  }\n}\n\nexport class ConcreteCommand implements Command {\n  private receiver: Receiver;\n\n  constructor(receiver: Receiver) {\n    this.receiver = receiver;\n  }\n\n  execute(): void {\n    this.receiver.action();\n  }\n}\nindex.ts: import { Invoker, ConcreteCommand, Receiver } from './Invoker';\nconst receiver = new Receiver();\nconst command = new ConcreteCommand(receiver);\nconst invoker = new Invoker(command);\ninvoker.execute();"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

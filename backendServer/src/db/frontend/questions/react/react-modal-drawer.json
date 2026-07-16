@@ -1,0 +1,53 @@
+{
+  "_id": "2c99d347105b95a9f1719b07",
+  "title": "React Slideout Modal Drawer",
+  "slug": "react-modal-drawer",
+  "difficulty": "Medium",
+  "topics": [
+    "REACT",
+    "REACT_MODAL_DRAWER"
+  ],
+  "statement": {
+    "markdown": "## React Slideout Modal Drawer Component\n\nImplement a slide-out modal Drawer drawer layout opening from the right side of the viewport.\n\n### Requirements:\n1. **Slide Transition**: The drawer panel must slide in from the right edge smoothly, and slide back out on hide.\n2. **Backdrop Blur**: Render a backdrop overlay with custom background blurs that closes the drawer when clicked.\n3. **Esc Key Dismissal**: Listens to keydown keyboard events and closes the drawer when **Escape** is pressed.\n4. **Scroll Lock**: Locking body scroll when active to prevent secondary page navigation loops.\n"
+  },
+  "constraints": [
+    "Must support mobile responsive layout coordinates",
+    "Must utilize React hooks",
+    "Must use Tailwind CSS"
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "html": "",
+    "css": "",
+    "react": "import React, { useState, useEffect } from 'react';\n\nexport default function Drawer({ isOpen, onClose, title, children }) {\n  // Implement slideout drawer modal here\n  return null;\n}"
+  },
+  "gradingCriteria": [
+    {
+      "id": "functional_correctness",
+      "description": "Verify that the interactive props, callbacks, and element structures work cleanly.",
+      "weight": 60
+    },
+    {
+      "id": "code_cleanliness",
+      "description": "Verify state structure designs and clean Tailwind CSS layouts.",
+      "weight": 40
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "react",
+      "tailwind"
+    ],
+    "referenceSolution": "import React, { useEffect } from 'react';\n\nexport default function Drawer({ isOpen, onClose, title, children }) {\n  // Esc key down close listener\n  useEffect(() => {\n    const handleKeyDown = (e) => {\n      if (e.key === \"Escape\" && isOpen) {\n        onClose();\n      }\n    };\n    window.addEventListener(\"keydown\", handleKeyDown);\n    return () => window.removeEventListener(\"keydown\", handleKeyDown);\n  }, [isOpen, onClose]);\n\n  // Lock body scroll when drawer is open\n  useEffect(() => {\n    if (isOpen) {\n      document.body.style.overflow = \"hidden\";\n    } else {\n      document.body.style.overflow = \"\";\n    }\n    return () => { document.body.style.overflow = \"\"; };\n  }, [isOpen]);\n\n  if (!isOpen) return null;\n\n  return (\n    <div className=\"fixed inset-0 z-50 flex justify-end\">\n      {/* Backdrop overlay */}\n      <div\n        onClick={onClose}\n        className=\"fixed inset-0 bg-black/40 backdrop-blur-xs transition-opacity\"\n      />\n\n      {/* Drawer Drawer Body */}\n      <div className=\"relative z-10 w-96 h-full bg-white shadow-2xl flex flex-col p-6 animate-slide-left border-l border-gray-200\">\n        <div className=\"flex items-center justify-between border-b border-gray-100 pb-4 mb-4\">\n          <h2 className=\"text-lg font-bold text-gray-800\">{title || \"Menu Drawer\"}</h2>\n          <button onClick={onClose} className=\"text-gray-400 hover:text-gray-600 focus:outline-none\">\n            <svg className=\"w-5 h-5\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path strokeLinecap=\"round\" strokeLinejoin=\"round\" strokeWidth={2} d=\"M6 18L18 6M6 6l12 12\" /></svg>\n          </button>\n        </div>\n\n        {/* Content body */}\n        <div className=\"flex-1 overflow-y-auto text-sm text-gray-600 leading-relaxed\">\n          {children}\n        </div>\n      </div>\n    </div>\n  );\n}"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

@@ -1,0 +1,136 @@
+{
+  "title": "Fix MongoDB Projection to Ignore Missing Fields",
+  "subCategory": "MongoDB Query Projection",
+  "statement": {
+    "markdown": "You are given a MongoDB query with a projection that should ignore missing fields. However, the current implementation incorrectly includes missing fields in the output. Your task is to fix the bug in the projection function.",
+    "inputFormat": "The function takes a MongoDB query as input, which includes a projection object.",
+    "outputFormat": "The function should return the corrected query with the missing fields ignored.",
+    "notes": "The projection object may contain optional keys that may not exist in the collection.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of documents in the collection"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{ query: { name: 'John' }, projection: { age: 1, occupation: 1, address: 1 } }",
+        "output": "{ query: { name: 'John' }, projection: { age: 1, occupation: 1 } }",
+        "explanation": "The address field is missing and should be ignored."
+      },
+      {
+        "input": "{ query: { name: 'Jane' }, projection: { name: 1, interests: 1 } }",
+        "output": "{ query: { name: 'Jane' }, projection: { name: 1 } }",
+        "explanation": "The interests field is missing and should be ignored."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 10,
+    "points": 30,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "MONGODB"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "mongodb"
+    ],
+    "interviewFrequency": 1,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Review the MongoDB query and projection objects."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial: Fixing the MongoDB Projection Bug",
+    "intuition": "The key to solving this problem is to understand how MongoDB handles projection objects.",
+    "bruteForce": "One possible approach is to manually check each field in the projection object to see if it exists in the collection.",
+    "betterSolution": "A more efficient approach is to use the `$exists` operator to filter out missing fields.",
+    "optimalSolution": "The optimal solution involves using the `$exists` operator in combination with the projection object.",
+    "proofOfCorrectness": "The corrected projection function should return the expected output for all test cases.",
+    "dryRun": "Step-by-step example run:",
+    "commonMistakes": [
+      "Using the wrong MongoDB operator",
+      "Incorrectly handling missing fields"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "// Define a function to fix the MongoDB projection",
+    "python": "class Solution:\n  def fix_projection(self, query):\n    pass"
+  },
+  "buggyStarterCode": {
+    "javascript": "function fix_projection(query) {\n  var projection = query.projection || {};\n  for (var field in projection) {\n    if (projection.hasOwnProperty(field)) {\n      console.log(field + ': ' + projection[field]);\n    }\n  }\n  return query;\n}",
+    "python": "class Solution:\n  def fix_projection(self, query):\n    projection = query['projection'] or {}\n    for field in projection:\n      print(field + ': ' + str(projection[field]))\n    return query"
+  },
+  "functionSignature": {
+    "javascript": "function fix_projection(query);",
+    "python": "def fix_projection(self, query: dict) -> dict:"
+  },
+  "solutions": {
+    "javascript": "// Define a function to fix the MongoDB projection\nfunction fix_projection(query) {\n  var projection = query.projection || {};\n  for (var field in projection) {\n    if (typeof query.collection[field] === 'undefined') {\n      delete projection[field];\n    }\n  }\n  query.projection = projection;\n  return query;\n}",
+    "python": "class Solution:\n  def fix_projection(self, query):\n    projection = query['projection'] or {}\n    for field in list(projection.keys()):\n      if field not in query['collection']:\n        del projection[field]\n    query['projection'] = projection\n    return query"
+  },
+  "judgeConfig": {
+    "timeLimit": 1,
+    "memoryLimit": 128,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{ query: { name: 'John' }, projection: { age: 1, occupation: 1, address: 1 } }",
+      "output": "{ query: { name: 'John' }, projection: { age: 1, occupation: 1 } }",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{ query: { name: 'Jane' }, projection: { name: 1, interests: 1 } }",
+      "output": "{ query: { name: 'Jane' }, projection: { name: 1 } }",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "f90f1042e12cd60efcb6b2b8",
+  "slug": "fix-mongodb-projection-to-ignore-missing-fields-bugfix-easy-mongodb",
+  "mode": "bug_fix",
+  "category": "MONGODB",
+  "difficulty": "Easy"
+}

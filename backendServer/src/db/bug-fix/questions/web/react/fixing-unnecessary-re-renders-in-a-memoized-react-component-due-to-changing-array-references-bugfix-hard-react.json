@@ -1,0 +1,146 @@
+{
+  "title": "Fixing Unnecessary Re-renders in a Memoized React Component Due to Changing Array References",
+  "subCategory": "State Management",
+  "statement": {
+    "markdown": "You are given a memoized React component that uses the `useMemo` hook to memoize a complex dependency array. However, the component is re-rendering unnecessarily when the dependent array objects are modified, even if their references remain the same. Fix the code to prevent these unnecessary re-renders.",
+    "inputFormat": "The input will be an array of objects with id, name, and age properties",
+    "outputFormat": "The output should be the same array of objects",
+    "notes": "The component should only re-render when the array of objects changes",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of objects in the array"
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of objects in the dependent array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "[{id: 1, name: 'John', age: 25}, {id: 2, name: 'Jane', age: 30}]\n[{id: 3, name: 'Bob', age: 35}]\n[{id: 1, name: 'John', age: 25}, {id: 2, name: 'Jane', age: 30}]\n[{id: 4, name: 'Alice', age: 20}]\n",
+        "output": "[{id: 1, name: 'John', age: 25}, {id: 2, name: 'Jane', age: 30}]\n[{id: 3, name: 'Bob', age: 35}]\n[{id: 1, name: 'John', age: 25}, {id: 2, name: 'Jane', age: 30}]\n[{id: 4, name: 'Alice', age: 20}]\n",
+        "explanation": "The component should only re-render when the array of objects changes"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 100,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "REACT"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "react"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "The problem is caused by the `useMemo` hook re-computing the dependency array even if the references remain the same. You need to find a way to prevent this."
+    },
+    {
+      "order": 2,
+      "text": "Consider using a library like `deep-equal` to compare the array of objects for deep equality."
+    },
+    {
+      "order": 3,
+      "text": "Alternatively, you can use `JSON.stringify` to compare the array of objects as strings."
+    }
+  ],
+  "editorial": {
+    "title": "Optimizing Memoized React Components for Dependent Arrays",
+    "intuition": "The problem requires you to understand how the `useMemo` hook works and how to optimize it for dependent arrays.",
+    "bruteForce": "One possible solution is to use `JSON.stringify` to compare the array of objects as strings. However, this approach is not efficient and may have performance issues.",
+    "betterSolution": "A better solution is to use a library like `deep-equal` to compare the array of objects for deep equality.",
+    "optimalSolution": "The optimal solution is to use `JSON.stringify` and compare the output of `JSON.stringify` on both arrays. This approach is efficient and works well for arrays of objects.",
+    "proofOfCorrectness": "The proof of correctness is based on the fact that `JSON.stringify` produces a string representation of the array of objects that depends on the actual values of the objects, not just their references.",
+    "dryRun": "To test the solution, you can create a test array of objects and compare it with a modified version of the test array using `JSON.stringify`.",
+    "commonMistakes": [
+      "Failing to understand how the `useMemo` hook works",
+      "Using `JSON.stringify` incorrectly"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "function useMemo(array) {\n  const memo = useRef();\n  if (!memo.current || array !== memo.current) {\n    memo.current = array;\n  }\n  return memo.current;\n}\n\nfunction App() {\n  const [array, setArray] = useState([]);\n  const memoizedArray = useMemo(array);\n  return (\n    <div>\n      {memoizedArray.map((item, index) => (\n        <div key={index}>{item.name}</div>\n      ))}\n    </div>\n  );\n}\n\nexport default App;",
+    "python": "class Solution:\n    def __init__(self):\n        pass\n\n    def use_memo(self, array):\n        if not self.memo or array != self.memo:\n            self.memo = array\n        return self.memo\n\n    def app(self):\n        self.array = []\n        self.memoized_array = self.use_memo(self.array)\n        return self.memoized_array"
+  },
+  "buggyStarterCode": {
+    "javascript": "function useMemo(array) {\n  const memo = useRef();\n  if (!memo.current || array !== JSON.stringify(memo.current)) {\n    memo.current = array;\n  }\n  return memo.current;\n}\n\nfunction App() {\n  const [array, setArray] = useState([]);\n  const memoizedArray = useMemo(array);\n  return (\n    <div>\n      {memoizedArray.map((item, index) => (\n        <div key={index}>{item.name}</div>\n      ))}\n    </div>\n  );\n}\n\nexport default App;",
+    "python": "class Solution:\n    def __init__(self):\n        pass\n\n    def use_memo(self, array):\n        if not self.memo or array != JSON.stringify(self.memo):\n            self.memo = array\n        return self.memo\n\n    def app(self):\n        self.array = []\n        self.memoized_array = self.use_memo(self.array)\n        return self.memoized_array"
+  },
+  "functionSignature": {
+    "javascript": "function useMemo(array)",
+    "python": "def use_memo(self, array)"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction useMemo(array) {\n  const memo = useRef();\n  if (!memo.current || JSON.stringify(array) !== JSON.stringify(memo.current)) {\n    memo.current = array;\n  }\n  return memo.current;\n}\n\nfunction App() {\n  const [array, setArray] = useState([]);\n  const memoizedArray = useMemo(array);\n  return (\n    <div>\n      {memoizedArray.map((item, index) => (\n        <div key={index}>{item.name}</div>\n      ))}\n    </div>\n  );\n}\n\nexport default App;",
+    "python": "class Solution:\n    def __init__(self):\n        pass\n\n    def use_memo(self, array):\n        if not self.memo or JSON.stringify(array) != JSON.stringify(self.memo):\n            self.memo = array\n        return self.memo\n\n    def app(self):\n        self.array = []\n        self.memoized_array = self.use_memo(self.array)\n        return self.memoized_array"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "[{id: 1, name: 'John', age: 25}, {id: 2, name: 'Jane', age: 30}]\n[{id: 3, name: 'Bob', age: 35}]\n[{id: 1, name: 'John', age: 25}, {id: 2, name: 'Jane', age: 30}]\n[{id: 4, name: 'Alice', age: 20}]\n",
+      "output": "[{id: 1, name: 'John', age: 25}, {id: 2, name: 'Jane', age: 30}]\n[{id: 3, name: 'Bob', age: 35}]\n[{id: 1, name: 'John', age: 25}, {id: 2, name: 'Jane', age: 30}]\n[{id: 4, name: 'Alice', age: 20}]\n",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "[{id: 1, name: 'John', age: 25}, {id: 2, name: 'Jane', age: 30}]\n[{id: 3, name: 'Bob', age: 35}]\n[{id: 1, name: 'John', age: 25}, {id: 2, name: 'Jane', age: 30}]\n[{id: 4, name: 'Alice', age: 20}]\n",
+      "output": "[{id: 1, name: 'John', age: 25}, {id: 2, name: 'Jane', age: 30}]\n[{id: 3, name: 'Bob', age: 35}]\n[{id: 1, name: 'John', age: 25}, {id: 2, name: 'Jane', age: 30}]\n[{id: 4, name: 'Alice', age: 20}]\n",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "deb1352fb98b76e04ed98640",
+  "slug": "fixing-unnecessary-re-renders-in-a-memoized-react-component-due-to-changing-array-references-bugfix-hard-react",
+  "mode": "bug_fix",
+  "category": "REACT",
+  "difficulty": "Hard"
+}

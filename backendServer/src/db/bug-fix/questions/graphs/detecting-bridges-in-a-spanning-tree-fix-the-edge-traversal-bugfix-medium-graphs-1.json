@@ -1,0 +1,163 @@
+{
+  "_id": "ec7421ab995df8686f73c9ce",
+  "title": "Detecting Bridges in a Spanning Tree: Fix the Edge Traversal",
+  "slug": "detecting-bridges-in-a-spanning-tree-fix-the-edge-traversal-bugfix-medium-graphs-1",
+  "difficulty": "Medium",
+  "category": "DSA",
+  "subCategory": "Spanning Tree",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 75,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "graph"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given an undirected graph, find the bridges in the graph. The graph is represented as an adjacency list where `graph[i]` is a list of all vertices adjacent to vertex `i`.\n\nA bridge in a graph is an edge that, when removed, increases the number of connected components in the graph. You should return a list of the edges in the graph that are bridges.\n\nYou may assume that the input graph is connected and undirected. However, you do not necessarily know whether the input graph is connected or not.\n\nExample:\n\nInput:\n```\ngraph = [\n  [1, 2],\n  [1, 3],\n  [2, 3]\n]\n```\nOutput:\n```\n[[1, 2], [2, 3]]\n```\nNote that edges 1-3 and 2-3 form a cycle. Therefore, edges 1-3 and 2-3 are not bridges.\n\nInput:\n```\ngraph = [\n  [1, 2],\n  [1, 3],\n  [3, 4]\n]\n```\nOutput:\n```\n[[1, 3]]\n```\nNote that edge 1-2 is not a bridge because the graph remains connected even after the edge is removed.\n\nYou will be given a class `Solution` with a method `findBridges`. You should complete the implementation of the `findBridges` method and then use it to find the bridges in the graph.\n\nInput:\n```\nn = 4\ngraph = [\n  [1, 2],\n  [1, 3],\n  [3, 4]\n]\n```\nOutput:\n```\n[[1, 3]]\n``",
+    "inputFormat": "# Define the graph as an array of adjacency lists",
+    "outputFormat": "# Return a list of the edges in the graph that are bridges",
+    "notes": "You do not necessarily know whether the input graph is connected or not",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "graph = [[1, 2], [1, 3], [2, 3]]",
+        "output": "[[1, 2], [2, 3]]",
+        "explanation": "The edges 1-2 and 2-3 form a cycle. Therefore, edges 1-2 and 2-3 are not bridges."
+      },
+      {
+        "input": "graph = [[1, 2], [1, 3], [3, 4]]",
+        "output": "[[1, 3]]",
+        "explanation": "The edge 1-3 is a bridge because the graph is not connected if the edge 1-3 is removed."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use a Depth-First Search (DFS) to traverse the graph"
+    },
+    {
+      "order": 2,
+      "text": "For each edge in the graph, check if it is a bridge by checking if there is a path to all other vertices in the graph"
+    }
+  ],
+  "editorial": {
+    "title": "Bridges in a Graph",
+    "intuition": "A bridge in a graph is an edge that, when removed, increases the number of connected components in the graph. We can find the bridges in the graph by performing a Depth-First Search (DFS) on the graph and checking if each edge is a bridge.",
+    "bruteForce": "A brute-force approach to find the bridges in the graph would be to remove each edge in the graph and check if the number of connected components in the graph increases. However, this approach has a time complexity of O(n^4) where n is the number of vertices in the graph.",
+    "betterSolution": "We can find the bridges in the graph by performing a DFS on the graph and checking if each edge is a bridge. Specifically, we can use the concept of Time Complexity: O(n^2) and Space Complexity: O(n) by using a Depth-First Search (DFS) and keeping track of the discovery time of each vertex and the low value of each vertex.",
+    "optimalSolution": "The optimal solution to find the bridges in the graph is to perform a DFS on the graph and check if each edge is a bridge by checking if the low value of the destination vertex is greater than the discovery time of the source vertex.",
+    "proofOfCorrectness": "If an edge (u, v) is a bridge, then there is a path from u to v in the graph. Since the edge (u, v) is removed, there is no path from u to v in the graph. Therefore, the low value of v is greater than the discovery time of u.",
+    "dryRun": "Suppose we have the following graph:\n\n```\n1 -- 2\n| / |\n2 -- 3\n```\n\nWe perform a DFS on the graph starting from vertex 1. The discovery time of vertex 1 is 1. The low value of vertex 1 is also 1. Next, we visit vertex 2. The discovery time of vertex 2 is 2. The low value of vertex 2 is 1 (the discovery time of vertex 1). Finally, we visit vertex 3. The discovery time of vertex 3 is 3. The low value of vertex 3 is 2 (the discovery time of the parent of vertex 3, which is 2). Therefore, the edge (1, 3) is a bridge because the discovery time of vertex 1 is less than the low value of vertex 3.",
+    "commonMistakes": [
+      "Using an incorrect DFS algorithm",
+      "Not checking if an edge is a bridge",
+      "Using an incorrect data structure to keep track of the low value of each vertex"
+    ],
+    "timeComplexity": "O(n^2) where n is the number of vertices in the graph",
+    "spaceComplexity": "O(n) where n is the number of vertices in the graph"
+  },
+  "starterCode": {
+    "cpp": "class Solution { public: vector<vector<int>> findBridges(vector<vector<int>>& graph); };",
+    "java": "class Solution { public List<List<Integer>> findBridges(List<List<Integer>> graph); }",
+    "python": "class Solution: def findBridges(self, graph):",
+    "javascript": "function findBridges(graph) {"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution { public: vector<vector<int>> findBridges(vector<vector<int>>& graph) { vector<vector<int>> ret; for (int i = 0; i < graph.size(); i++) { for (int j = 0; j < graph[i].size(); j++) { vector<int> temp(graph[i][j], graph[i].size()); ret.push_back(temp); } } return ret; } };",
+    "java": "class Solution { public List<List<Integer>> findBridges(List<List<Integer>> graph) { List<List<Integer>> ret = new ArrayList<>(); for (int i = 0; i < graph.size(); i++) { for (int j = 0; j < graph.get(i).size(); j++) { List<Integer> temp = new ArrayList<>(); temp.add(graph.get(i).get(j)); ret.add(temp); } } return ret; } }",
+    "python": "class Solution: def findBridges(self, graph): ret = [] for i in range(len(graph)): for j in range(len(graph[i])): temp = [graph[i][j]] ret.append(temp) return ret",
+    "javascript": "function findBridges(graph) { let ret = []; for (let i = 0; i < graph.length; i++) { for (let j = 0; j < graph[i].length; j++) { let temp = graph[i][j]; ret.push([temp]); } } return ret;"
+  },
+  "functionSignature": {
+    "cpp": "vector<vector<int>> findBridges(vector<vector<int>>& graph);",
+    "java": "List<List<Integer>> findBridges(List<List<Integer>> graph);",
+    "python": "def findBridges(self, graph: list[list[int]]) -> list[list[int]]:",
+    "javascript": "function findBridges(graph: list[list[number]]): list[list<number>];"
+  },
+  "solutions": {
+    "python": "class Solution: def findBridges(self, graph): def dfs(self, node, parent, discovery_time, low_value, visited, stack, ret): if parent != -1: discovery_time[node] = discovery_time[parent] + 1 low_value[node] = discovery_time[parent] + 1 stack.append(node) for neighbor in graph[node]: if visited[neighbor] == -1: self.dfs(neighbor, node, discovery_time, low_value, visited, stack, ret) elif neighbor in stack: low_value[node] = min(low_value[node], discovery_time[neighbor]) visited[node] = 1 for neighbor in graph[node]: if visited[neighbor] == 0 and neighbor != parent: if discovery_time[neighbor] <= discovery_time[node]: stack.append(neighbor) ret.append([node, neighbor]) visited[neighbor] = 1 visited[node] = 1 stack.remove(node) return ret discovery_time = [-1] * len(graph) low_value = [-1] * len(graph) visited = [-1] * len(graph) stack = [] ret = [] for i in range(len(graph)): if visited[i] == -1: dfs(i, -1, discovery_time, low_value, visited, stack, ret) return ret",
+    "cpp": "#include <bits/stdc++.h> using namespace std; class Solution { public: vector<vector<int>> findBridges(vector<vector<int>>& graph) { vector<vector<int>> ret; vector<int> discovery_time(graph.size(), -1); vector<int> low_value(graph.size(), -1); vector<int> visited(graph.size(), -1); stack<int> stack; for (int i = 0; i < graph.size(); i++) { if (visited[i] == -1) { dfs(i, -1, discovery_time, low_value, visited, stack, ret); } } return ret; } void dfs(int node, int parent, vector<int>& discovery_time, vector<int>& low_value, vector<int>& visited, stack<int>& stack, vector<vector<int>>& ret) { if (parent != -1) { discovery_time[node] = discovery_time[parent] + 1; low_value[node] = discovery_time[parent] + 1; stack.push(node); } for (int neighbor : graph[node]) { if (visited[neighbor] == -1) { dfs(neighbor, node, discovery_time, low_value, visited, stack, ret); } else if (stack.find(neighbor) != stack.end()) { low_value[node] = min(low_value[node], discovery_time[neighbor]); } visited[node] = 1; for (int neighbor : graph[node]) { if (visited[neighbor] == 0 && neighbor != parent) { if (discovery_time[neighbor] <= discovery_time[node]) { stack.push(neighbor); ret.push_back({ node, neighbor }); visited[neighbor] = 1; } } } stack.pop(); } } };",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 3,
+    "memoryLimit": 512,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "graph = [[1, 2], [1, 3], [3, 4]]",
+      "output": "[[1, 3]]",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "graph = [[1, 2], [2, 3], [3, 4]]",
+      "output": "[[1, 2], [2, 3]]",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

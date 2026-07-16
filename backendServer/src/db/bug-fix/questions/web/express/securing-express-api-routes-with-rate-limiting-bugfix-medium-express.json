@@ -1,0 +1,136 @@
+{
+  "title": "Securing Express API Routes with Rate Limiting",
+  "subCategory": "Rate Limiting",
+  "statement": {
+    "markdown": "Implement rate limiting for an Express API to prevent abuse. The API has two endpoints: `/users` and `/products`. The `/users` endpoint should allow 10 requests per minute, while the `/products` endpoint should allow 5 requests per minute. If the rate limit is exceeded, return a `429 Too Many Requests` error with a custom error message. The API uses the `express-rate-limit` library.",
+    "inputFormat": "The input will be a string representing the API endpoint (either `/users` or `/products`).",
+    "outputFormat": "The output will be a string representing the rate-limited API endpoint.",
+    "notes": "Note that the rate limit should be enforced globally, meaning that all requests to the API should be subject to the rate limit.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of requests per minute"
+      }
+    ],
+    "examples": [
+      {
+        "input": "/users",
+        "output": "Rate limit exceeded for /users: 10 requests per minute",
+        "explanation": "Exceeds the rate limit of 10 requests per minute"
+      },
+      {
+        "input": "/products",
+        "output": "Rate limit exceeded for /products: 5 requests per minute",
+        "explanation": "Exceeds the rate limit of 5 requests per minute"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "EXPRESS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "express"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the `express-rate-limit` library to implement rate limiting."
+    }
+  ],
+  "editorial": {
+    "title": "Implementing Rate Limiting with Express Rate Limit",
+    "intuition": "The `express-rate-limit` library provides an easy-to-use API for implementing rate limiting. To use it, create a new instance of the `RateLimiterMiddleware` class, passing in the desired rate limit and window. Then, apply the middleware to the Express app using the `use` method.",
+    "bruteForce": "One possible approach is to use a brute-force approach, where you manually track the number of requests made to each endpoint and return an error if the rate limit is exceeded.",
+    "betterSolution": "A better approach is to use the `express-rate-limit` library, which provides a more efficient and scalable way to implement rate limiting.",
+    "optimalSolution": "The optimal solution is to use the `express-rate-limit` library and configure it to enforce the rate limit globally, affecting all requests to the API.",
+    "proofOfCorrectness": "To prove that the solution is correct, you can use a testing framework to simulate requests to the API and verify that the rate limit is enforced correctly.",
+    "dryRun": "Here is a step-by-step example of how to implement rate limiting using the `express-rate-limit` library:",
+    "commonMistakes": [
+      "Forgetting to configure the rate limit globally",
+      "Not using the `express-rate-limit` library"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "const express = require('express');\nconst rateLimiterMiddleware = require('express-rate-limit');\nconst app = express();\nconst limiter = rateLimiterMiddleware({\n  windowMs: 60 * 1000,\n  max: 10\n});\napp.use(limiter);\napp.get('/users', (req, res) => {\n  res.json({ message: 'Hello, users!' });\n});\napp.get('/products', (req, res) => {\n  res.json({ message: 'Hello, products!' });\n});",
+    "python": "class Solution:\n    def solve(self, nums: list[int]) -> bool:\n        # TODO: implement\n        pass"
+  },
+  "buggyStarterCode": {
+    "javascript": "const express = require('express');\nconst rateLimiterMiddleware = require('express-rate-limit');\nconst app = express();\nconst limiter = rateLimiterMiddleware({\n  windowMs: 60 * 1000,\n  max: 10\n});\napp.use('/users', limiter);\napp.use('/products', limiter);\napp.get('/users', (req, res) => {\n  res.json({ message: 'Hello, users!' });\n});\napp.get('/products', (req, res) => {\n  res.json({ message: 'Hello, products!' });\n});",
+    "python": "class Solution:\n    def solve(self, nums: list[int]) -> bool:\n        # Buggy code\n        pass"
+  },
+  "functionSignature": {
+    "javascript": "var solve = function(nums);",
+    "python": "def solve(self, nums: list[int]) -> bool:"
+  },
+  "solutions": {
+    "javascript": "// Your solution here",
+    "python": "class Solution:\n    def __init__(self):\n        pass\n\ndef solve(input):\n    # Your code here\n    return output\n\nif __name__ == '__main__':\n    # Read input from stdin\n    input = sys.stdin.readline().strip()\n    # Call the solution function\n    output = solve(input)\n    # Print the output to stdout\n    print(output)"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "/users",
+      "output": "Rate limit exceeded for /users: 10 requests per minute",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "/products",
+      "output": "Rate limit exceeded for /products: 5 requests per minute",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "2939c33db3991d6a11692575",
+  "slug": "securing-express-api-routes-with-rate-limiting-bugfix-medium-express",
+  "mode": "bug_fix",
+  "category": "EXPRESS",
+  "difficulty": "Medium"
+}

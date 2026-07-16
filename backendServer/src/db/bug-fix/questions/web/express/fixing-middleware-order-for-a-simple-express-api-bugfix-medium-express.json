@@ -1,0 +1,130 @@
+{
+  "title": "Fixing Middleware Order for a Simple Express API",
+  "subCategory": "Express Middleware",
+  "statement": {
+    "markdown": "Write a simple Express API that handles GET requests to the root path. The API should return a JSON response with the message 'Hello, World!' and the current timestamp. However, the current implementation has a logical bug in the middleware order.",
+    "inputFormat": "A single GET request to the root path (/)",
+    "outputFormat": "A JSON response with the message 'Hello, World!' and the current timestamp",
+    "notes": "The middleware order is critical in this implementation.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The timestamp should be within this range"
+      }
+    ],
+    "examples": [
+      {
+        "input": "GET / HTTP/1.1\r\nHost: example.com\r\n\r\n",
+        "output": "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\n\r\n{\"message\":\"Hello, World!\",\"timestamp\":1643723400}",
+        "explanation": "The expected response includes the current timestamp"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "EXPRESS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "express"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Check the order of the middleware"
+    }
+  ],
+  "editorial": {
+    "title": "Fixing Middleware Order for a Simple Express API",
+    "intuition": "The middleware order affects the order in which the functions are executed. In this case, the timestamp middleware should be executed before the response middleware.",
+    "bruteForce": "Try different middleware orders to see which one works",
+    "betterSolution": "",
+    "optimalSolution": "The correct middleware order is to execute the timestamp middleware before the response middleware",
+    "proofOfCorrectness": "The timestamp middleware should be executed before the response middleware to ensure the correct timestamp is returned",
+    "dryRun": "Try the dry run example to see the expected output",
+    "commonMistakes": [
+      "Executing the response middleware before the timestamp middleware"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "const express = require('express');\nconst app = express();\napp.use((req, res, next) => {\n    res.status(200).send({ message: 'Hello, World!', timestamp: new Date().getTime() });\n});\napp.use((req, res, next) => {\n    res.status(200).send({ message: 'Hello, World!' });\n});\napp.listen(3000, () => {\n    console.log('Server listening on port 3000');\n});",
+    "python": "import express from express\napp.use((req, res, next) => {\n    res.status(200).send({ message: 'Hello, World!', timestamp: new Date().getTime() });\n});\napp.use((req, res, next) => {\n    res.status(200).send({ message: 'Hello, World!' });\n});\napp.listen(3000, () => {\n    console.log('Server listening on port 3000');\n});"
+  },
+  "buggyStarterCode": {
+    "javascript": "const express = require('express');\nconst app = express();\napp.use((req, res, next) => {\n    res.status(200).send({ message: 'Hello, World!' });\n});\napp.use((req, res, next) => {\n    res.status(200).send({ message: 'Hello, World!', timestamp: new Date().getTime() });\n});\napp.listen(3000, () => {\n    console.log('Server listening on port 3000');\n});",
+    "python": "import express from express\napp.use((req, res, next) => {\n    res.status(200).send({ message: 'Hello, World!' });\n});\napp.use((req, res, next) => {\n    res.status(200).send({ message: 'Hello, World!', timestamp: new Date().getTime() });\n});\napp.listen(3000, () => {\n    console.log('Server listening on port 3000');\n});"
+  },
+  "functionSignature": {
+    "javascript": "var solve = function(nums);",
+    "python": "def solve(self, nums: list[int]) -> bool:"
+  },
+  "solutions": {
+    "javascript": "// Solution\nconst express = require('express');\nconst app = express();\napp.use((req, res, next) => {\n    const timestamp = new Date().getTime();\n    res.status(200).send({ message: 'Hello, World!', timestamp });\n});\napp.listen(3000, () => {\n    console.log('Server listening on port 3000');\n});",
+    "python": "import express from express\napp.use((req, res, next) => {\n    timestamp = new Date().getTime()\n    res.status(200).send({ message: 'Hello, World!', timestamp });\n});\napp.listen(3000, () => {\n    print('Server listening on port 3000');\n});"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "GET / HTTP/1.1\r\nHost: example.com\r\n\r\n",
+      "output": "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\n\r\n{\"message\":\"Hello, World!\",\"timestamp\":1643723400}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_hidden_generated",
+      "input": "GET / HTTP/1.1\r\nHost: example.com\r\n\r\n",
+      "output": "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\n\r\n{\"message\":\"Hello, World!\",\"timestamp\":1643723400}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "f07751b03d4f572ac9084dae",
+  "slug": "fixing-middleware-order-for-a-simple-express-api-bugfix-medium-express",
+  "mode": "bug_fix",
+  "category": "EXPRESS",
+  "difficulty": "Medium"
+}

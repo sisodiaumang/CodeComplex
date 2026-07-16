@@ -1,0 +1,174 @@
+{
+  "_id": "b9414e610bec2b34d78536cf",
+  "title": "Implement a Payment Service with Stripe and Webhooks",
+  "slug": "implement-a-payment-service-with-stripe-and-webhooks-hard-payment",
+  "difficulty": "Hard",
+  "topics": [
+    "PAYMENT"
+  ],
+  "statement": "Design a payment service that uses Stripe for processing payments and handles webhooks for successful and failed transactions. The service should support creating, updating, and retrieving payments, as well as refunding payments. The payment service should be robust, scalable, and secure, with proper error handling and validation.\n\nEndpoints:\n\n- **POST /api/payments**: Create a new payment.\n  * Request Body: `{ \"amount\": number, \"currency\": string, \"customer\": string, \"description\": string, \"paymentMethod\": string }`\n  * Response: `{ \"id\": string, \"amount\": number, \"currency\": string, \"customer\": string, \"description\": string, \"paymentMethod\": string, \"status\": string }`\n\n- **GET /api/payments/:id**: Retrieve a payment by ID.\n  * Request Parameters: `id` (string)\n  * Response: `{ \"id\": string, \"amount\": number, \"currency\": string, \"customer\": string, \"description\": string, \"paymentMethod\": string, \"status\": string }`\n\n- **PUT /api/payments/:id**: Update a payment.\n  * Request Body: `{ \"amount\": number, \"currency\": string, \"customer\": string, \"description\": string, \"paymentMethod\": string }`\n  * Response: `{ \"id\": string, \"amount\": number, \"currency\": string, \"customer\": string, \"description\": string, \"paymentMethod\": string, \"status\": string }`\n\n- **POST /api/refunds**: Refund a payment.\n  * Request Body: `{ \"paymentId\": string, \"amount\": number }`\n  * Response: `{ \"id\": string, \"paymentId\": string, \"amount\": number, \"status\": string }`\n\n- **GET /api/webhooks**: Retrieve all webhooks.\n  * Response: `[ { \"id\": string, \"event\": string, \"url\": string, \"active\": boolean } ]`\n\n- **POST /api/webhooks**: Create a new webhook.\n  * Request Body: `{ \"event\": string, \"url\": string, \"active\": boolean }`\n  * Response: `{ \"id\": string, \"event\": string, \"url\": string, \"active\": boolean }`\n\n- **PATCH /api/webhooks/:id**: Update a webhook.\n  * Request Body: `{ \"event\": string, \"url\": string, \"active\": boolean }`\n  * Response: `{ \"id\": string, \"event\": string, \"url\": string, \"active\": boolean }`\n\nInstructions:\n\n1. Use Stripe API for payment processing and webhooks.\n2. Handle webhooks for successful and failed transactions.\n3. Implement proper error handling and validation.\n4. Use a robust and scalable design.",
+  "constraints": [
+    "Use Stripe API for payment processing and webhooks.",
+    "Implement proper error handling and validation."
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/payments",
+      "description": "Create a new payment."
+    },
+    {
+      "method": "GET",
+      "path": "/api/payments/:id",
+      "description": "Retrieve a payment by ID."
+    },
+    {
+      "method": "PUT",
+      "path": "/api/payments/:id",
+      "description": "Update a payment."
+    },
+    {
+      "method": "POST",
+      "path": "/api/refunds",
+      "description": "Refund a payment."
+    },
+    {
+      "method": "GET",
+      "path": "/api/webhooks",
+      "description": "Retrieve all webhooks."
+    },
+    {
+      "method": "POST",
+      "path": "/api/webhooks",
+      "description": "Create a new webhook."
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/webhooks/:id",
+      "description": "Update a webhook."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": {
+      "\n": ":",
+      "name": "payment-service",
+      "version": "1.0.0",
+      "main": "index.js",
+      "scripts": {
+        "start": "node index.js"
+      },
+      "dependencies": {
+        "express": "^4.18.2",
+        "stripe": "^10.0.0"
+      }
+    },
+    "index.js": "const express = require('express');\n            const app = express();\n            const stripe = require('stripe')('YOUR_STRIPE_SECRET_KEY');\n            app.use(express.json());\n\n            // TODO: Implement endpoints\n            app.listen(3000, () => console.log('Server running on port 3000'));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "POST",
+      "path": "/api/payments",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "amount": 100,
+        "currency": "usd",
+        "customer": "cus_ABC123",
+        "description": "Test payment",
+        "paymentMethod": "pm_123ABC"
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "id": "pay_123ABC",
+        "amount": 100,
+        "currency": "usd",
+        "customer": "cus_ABC123",
+        "description": "Test payment",
+        "paymentMethod": "pm_123ABC",
+        "status": "paid"
+      },
+      "expectedBodySchema": null,
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "GET",
+      "path": "/api/payments/pay_123ABC",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "id": "pay_123ABC",
+        "amount": 100,
+        "currency": "usd",
+        "customer": "cus_ABC123",
+        "description": "Test payment",
+        "paymentMethod": "pm_123ABC",
+        "status": "paid"
+      },
+      "expectedBodySchema": null,
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "POST",
+      "path": "/api/payments",
+      "body": {
+        "amount": -100,
+        "currency": "usd"
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "GET",
+      "path": "/api/payments/pay_123ABC",
+      "expectedStatus": 404,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "POST",
+      "path": "/api/refunds",
+      "body": {
+        "paymentId": "pay_123ABC",
+        "amount": 1000
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "stripe",
+    "razorpay",
+    "webhooks",
+    "checkout",
+    "refunds",
+    "subscriptions",
+    "payment"
+  ]
+}

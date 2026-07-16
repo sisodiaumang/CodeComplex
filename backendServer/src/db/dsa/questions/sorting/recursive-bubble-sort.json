@@ -7,7 +7,7 @@
   "subCategory": "Sorting II",
   "mode": "solve",
   "metadata": {
-    "estimatedTime": 10,
+    "estimatedTime": 15,
     "points": 50,
     "premium": false,
     "isPublished": true,
@@ -16,113 +16,118 @@
       "Sorting"
     ],
     "patterns": [
-      "recursion"
+      "bubble sort",
+      "recursive"
     ],
     "prerequisites": [],
     "variants": [],
     "tags": [
-      "sorting-algorithms",
-      "recursion"
+      "sorting",
+      "recursion",
+      "array"
     ],
     "keywords": [
-      "bubble-sort",
-      "sorting-algorithms"
+      "bubble sort",
+      "recursive sort",
+      "array sorting"
     ],
-    "interviewFrequency": 2,
+    "interviewFrequency": 1,
     "revisionLevel": 0,
     "contestEligible": false
   },
   "statement": {
-    "markdown": "You are given an array of integers. Your task is to sort the array in non‑decreasing order using the recursive version of Bubble Sort. In the recursive approach, one full pass of the classic bubble sort (which pushes the largest unsorted element to the end) is performed, and then the function calls itself to sort the remaining prefix of length n‑1. Implement this algorithm and output the sorted array.\n\n**Input**\n- The first line contains a single integer N, the number of elements in the array.\n- The second line contains N space‑separated integers A1, A2, …, AN.\n\n**Output**\n- Print the N integers of the sorted array in a single line, separated by a single space.\n\n**Constraints**\n- 1 ≤ N ≤ 1000\n- -1000000 ≤ Ai ≤ 1000000 for each valid i\n\n**Explanation**\nThe recursive bubble sort works as follows:\n1. Perform one pass from index 0 to index n‑2, swapping adjacent elements if they are out of order. After this pass the largest element among the first n elements is at position n‑1.\n2. Recursively sort the first n‑1 elements using the same procedure.\n3. The recursion stops when the sub‑array size becomes 1.\nThe final array after all recursive calls is the sorted array.\n",
-    "inputFormat": "The first line contains an integer N, the size of the array.\nThe second line contains N space‑separated integers representing the array elements.",
-    "outputFormat": "A single line with N space‑separated integers in non‑decreasing order.",
-    "notes": "The recursion depth will be at most N, which fits comfortably within typical stack limits for the given constraints.",
+    "markdown": "Given an array of integers, sort it using the recursive bubble sort algorithm. The algorithm works by repeatedly swapping adjacent elements if they are in the wrong order.\n\nThe steps to solve this problem are:\n1. Start from the first element of the array.\n2. Compare the current element with the next one.\n3. If the current element is greater than the next one, swap them.\n4. Move to the next element and repeat steps 2-3 until the end of the array is reached.\n5. Repeat steps 1-4 until no more swaps are needed, indicating that the array is sorted.",
+    "inputFormat": "1\n5\n64 34 25 12 22 11 90",
+    "outputFormat": "64 34 25 12 22 11 90",
+    "notes": "The input array may contain duplicate elements.",
     "images": [],
     "constraints": [
       {
-        "variable": "N",
+        "variable": "array length",
         "type": "integer",
         "min": 1,
-        "max": 1000,
-        "description": "Number of elements in the array"
+        "max": 10000,
+        "description": "The length of the input array."
       },
       {
-        "variable": "Ai",
+        "variable": "array elements",
         "type": "integer",
-        "min": -1000000,
-        "max": 1000000,
-        "description": "Value of each array element"
+        "min": -10000,
+        "max": 10000,
+        "description": "The elements of the input array."
       }
     ],
     "examples": [
       {
-        "input": "5\n5 1 4 2 8",
-        "output": "1 2 4 5 8",
-        "explanation": "After applying recursive bubble sort, the array becomes sorted as 1 2 4 5 8."
+        "input": "1\n5\n64 34 25 12 22 11 90",
+        "output": "12 22 25 34 64",
+        "explanation": "The array is sorted in ascending order using recursive bubble sort."
       },
       {
-        "input": "3\n-1 0 -5",
-        "output": "-5 -1 0",
-        "explanation": "The recursive process moves -5 to the front, resulting in the sorted order -5 -1 0."
+        "input": "1\n3\n5 1 4",
+        "output": "1 4 5",
+        "explanation": "The array is sorted in ascending order using recursive bubble sort."
+      },
+      {
+        "input": "1\n1\n5",
+        "output": "5",
+        "explanation": "The array is already sorted."
+      },
+      {
+        "input": "1\n4\n4 3 2 1",
+        "output": "1 2 3 4",
+        "explanation": "The array is sorted in ascending order using recursive bubble sort."
       }
     ]
   },
   "hints": [
     {
       "order": 1,
-      "text": "Start with a base case: handle the base case where the array has only one element. Sorting an array with one element is trivial."
+      "text": "The problem requires implementing a sorting algorithm recursively. Think about how the base case for the recursion could be defined, especially in relation to the array being sorted or not."
     },
     {
       "order": 2,
-      "text": "Recursively sort the remaining elements. This means calling the function again with a smaller array (one element less)."
+      "text": "The algorithm works by comparing adjacent elements and swapping them if necessary. Consider how a pass through the array affects the array's state and how this could be used to determine when to stop recursing."
     },
     {
       "order": 3,
-      "text": "In the recursive call, compare adjacent elements and swap them if necessary. This step is the same as the base case, but applied to the remaining elements."
-    },
-    {
-      "order": 4,
-      "text": "Continue until the array is sorted or the array size becomes one."
-    },
-    {
-      "order": 5,
-      "text": "Print the final array as the solution."
+      "text": "A key part of the algorithm is to repeatedly make passes through the array until no more swaps are needed. This indicates that the array is sorted. Think about how you can implement this logic using recursive function calls, focusing on how to track if any swaps were made in a pass."
     }
   ],
   "editorial": {
-    "title": "Recursive Bubble Sort: From Naïve Recursion to Efficient Iteration",
-    "intuition": "Bubble sort is a simple comparison‑based algorithm that repeatedly steps through the list, compares adjacent items and swaps them if they’re in the wrong order. The classic recursive version performs one full pass to move the largest element to the end, then calls itself on the remaining prefix. While this approach is conceptually elegant, it still performs the same O(n^2) work as the iterative version and incurs additional overhead from the recursion stack. The key observation is that the algorithm’s behavior does not depend on recursion itself; the same logic can be expressed with a tight loop, eliminating function call overhead and allowing early termination when the list becomes sorted before all passes are completed.",
-    "bruteForce": "The straightforward recursive implementation is:\n\n```python\n\ndef recursive_bubble(arr, n):\n    if n <= 1:\n        return\n    for i in range(n-1):\n        if arr[i] > arr[i+1]:\n            arr[i], arr[i+1] = arr[i+1], arr[i]\n    recursive_bubble(arr, n-1)\n```\n\nIt correctly sorts the array because each call guarantees that the largest element among the first `n` positions is moved to index `n-1`. After the recursive call, the sub‑array `arr[0:n-1]` is sorted by the same logic. However, the algorithm still performs `n-1` comparisons in the first call, `n-2` in the second, and so on, resulting in a quadratic number of comparisons and swaps. The recursion depth is `n`, so the auxiliary space is `O(n)` due to the call stack, even though the algorithm itself uses only constant extra space for the swaps.",
-    "betterSolution": "An iterative version removes the function call overhead and makes the code more readable:\n\n```python\n\ndef bubble_sort(arr):\n    n = len(arr)\n    for pass_num in range(n-1):\n        swapped = False\n        for i in range(n-1-pass_num):\n            if arr[i] > arr[i+1]:\n                arr[i], arr[i+1] = arr[i+1], arr[i]\n                swapped = True\n        if not swapped:\n            break\n```\n\nThe `swapped` flag allows the algorithm to terminate early if a full pass makes no swaps, which can reduce the average running time on nearly sorted data. The time complexity remains `O(n^2)` in the worst case, but the constant factors are lower and the space usage drops to `O(1)`.\n\nIn practice, one would normally use the language’s built‑in sort (e.g., `sorted()` in Python) which implements a highly optimized hybrid algorithm (Timsort) with `O(n log n)` average time and `O(n)` auxiliary space.",
-    "optimalSolution": "The optimal solution for the given constraints is the iterative bubble sort with early exit shown above. It preserves the correctness of the recursive version while eliminating recursion overhead and providing a small practical speedup. The algorithm still runs in `O(n^2)` time and `O(1)` extra space, which is acceptable for `N ≤ 1000`.\n\nIf the problem allowed a different algorithm, a comparison‑based sort such as Timsort would improve the worst‑case complexity to `O(n log n)` and would be the preferred choice for larger inputs.\n",
-    "proofOfCorrectness": "The algorithm performs a series of passes. In pass `k` (0‑indexed), the inner loop compares each adjacent pair up to index `n-2-k`. Whenever `arr[i] > arr[i+1]`, the two elements are swapped, guaranteeing that after the inner loop finishes, the element that was largest among the first `n-k` positions is now at index `n-1-k`. Thus, after `k` passes, the last `k` elements are in their final sorted positions. By induction, after `n-1` passes the entire array is sorted. The early‑exit condition only stops the algorithm when a full pass makes no swaps, which can only happen when the array is already sorted; this does not affect correctness because the array is already in the desired state.\n\nThe iterative version follows the same logical steps as the recursive one, so its correctness proof is identical.\n",
-    "dryRun": "Consider the array `[3, 1, 4, 2]`:\n\n1. **First pass** (`i=0..2`):\n   - Compare 3 and 1 → swap → `[1, 3, 4, 2]`\n   - Compare 3 and 4 → no swap\n   - Compare 4 and 2 → swap → `[1, 3, 2, 4]`\n   Largest element 4 is now at the end.\n2. **Second pass** (`i=0..1`):\n   - Compare 1 and 3 → no swap\n   - Compare 3 and 2 → swap → `[1, 2, 3, 4]`\n   Largest remaining element 3 is now at index 2.\n3. **Third pass** (`i=0`):\n   - Compare 1 and 2 → no swap\n   No swaps occurred in this pass, so the algorithm terminates early.\nThe final sorted array is `[1, 2, 3, 4]`.\n",
+    "title": "Optimizing Recursive Bubble Sort",
+    "intuition": "The key observation is that bubble sort can terminate early if no swaps are made in a pass, indicating the array is already sorted.",
+    "bruteForce": "A brute force approach would involve recursively sorting the array by iterating through it, comparing adjacent elements, and swapping them if they are in the wrong order. This process would be repeated until the array is sorted. However, this approach would be extremely slow with a time complexity of O(n^2) and is inefficient for large inputs.",
+    "betterSolution": "The optimal approach is to implement an iterative bubble sort with a flag to track if any swaps were made in a pass. If no swaps were made, the array is sorted and the algorithm can terminate early.",
+    "optimalSolution": "The provided reference solution implements the optimal approach with a time complexity of O(n^2) and space complexity of O(1).",
+    "proofOfCorrectness": "The correctness of the optimal solution can be proven by observing that the algorithm maintains the invariant that the largest element in the unsorted portion of the array 'bubbles up' to the end of the unsorted portion in each pass. If no swaps are made in a pass, the algorithm terminates, indicating the array is sorted.",
+    "dryRun": "A dry run of the algorithm with a sample input, such as [5, 3, 8, 4, 2], demonstrates that the algorithm correctly sorts the array in a finite number of steps.",
     "commonMistakes": [
-      "Forgetting the base case (`n <= 1`) in the recursive version, which leads to infinite recursion.",
-      "Using `range(n)` instead of `range(n-1)` in the inner loop, causing an out‑of‑range index error.",
-      "Swapping elements incorrectly (e.g., assigning `arr[i] = arr[i+1]` before storing the original value), which corrupts data.",
-      "Not resetting the `swapped` flag inside the outer loop, so the early‑exit condition never triggers.",
-      "Using recursion for large `n` without considering the recursion depth limit, which can cause a stack overflow.",
-      "Implementing the algorithm with a `while` loop but forgetting to decrement the effective length (`n`) after each pass, resulting in an infinite loop."
+      "Not checking for swaps in a pass, leading to unnecessary iterations",
+      "Not terminating early when no swaps are made",
+      "Using recursion instead of iteration, leading to increased function call overhead",
+      "Not considering the time and space complexity of the algorithm",
+      "Failing to handle edge cases, such as an empty or single-element array",
+      "Not using a flag to track swaps, leading to decreased performance"
     ],
     "timeComplexity": "O(n^2)",
-    "spaceComplexity": "O(n)"
+    "spaceComplexity": "O(1)"
   },
   "starterCode": {
-    "cpp": "void recursiveBubbleSort(vector<int>& arr, int n) {\n    \n}\n\n// @driver-code-start\nint main() {\n    ios_base::sync_with_stdio(false);\n    cin.tie(NULL);\n    int n;\n    cin >> n;\n    vector<int> arr(n);\n    for (int i = 0; i < n; i++) {\n        cin >> arr[i];\n    }\n    recursiveBubbleSort(arr, n);\n    for (int i = 0; i < n; i++) {\n        cout << arr[i] << \" \";\n    }\n    return 0;\n}",
-    "java": "class Solution {\n    public void recursiveBubbleSort(int[] arr, int n) {\n        \n    }\n}\n\n// @driver-code-start\npublic class Main {\n    public static void main(String[] args) {\n        java.util.Scanner scanner = new java.util.Scanner(System.in);\n        int n = scanner.nextInt();\n        int[] arr = new int[n];\n        for (int i = 0; i < n; i++) {\n            arr[i] = scanner.nextInt();\n        }\n        Solution solution = new Solution();\n        solution.recursiveBubbleSort(arr, n);\n        for (int i = 0; i < n; i++) {\n            System.out.print(arr[i] + \" \");\n        }\n    }\n}",
-    "python": "class Solution:\n    def recursive_bubble_sort(self, arr, n):\n        \n\n# @driver-code-start\nimport sys\nit = iter(sys.stdin.read().split())\nn = int(next(it))\narr = [int(next(it)) for _ in range(n)]\nsolution = Solution()\nsolution.recursive_bubble_sort(arr, n)\nprint(' '.join(map(str, arr)))",
-    "javascript": "class Solution {\n    recursiveBubbleSort(arr, n) {\n        \n    }\n}\n\n// @driver-code-start\nconst readline = require('readline').createInterface({\n    input: process.stdin,\n    output: process.stdout\n});\nlet i = '';\nreadline.on('line', line => {\n    i += line + '\\n';\n});\nreadline.on('close', () => {\n    const input = i.trim().split('\\n').map(line => line.split(' ').map(Number));\n    const n = input[0][0];\n    const arr = input[1];\n    const solution = new Solution();\n    solution.recursiveBubbleSort(arr, n);\n    console.log(arr.join(' '));\n});"
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    void bubbleSort(vector<int>& nums) {\n        // TODO: implement\n        return;\n    }\n};",
+    "java": "import java.util.*;\n\nclass Solution {\n    public void bubbleSort(int[] nums) {\n        // TODO: implement\n        return;\n    }\n}",
+    "python": "class Solution:\n    def bubbleSort(self, nums: List[int]) -> None:\n        # TODO: implement\n        pass",
+    "javascript": "/**\n * @param {number[]} nums\n * @return {void}\n */\nvar bubbleSort = function(nums) {\n    // TODO: implement\n    return;\n};"
   },
   "functionSignature": {
-    "cpp": "void recursiveBubbleSort(vector<int>& arr, int n)",
-    "java": "public static void recursiveBubbleSort(int[] arr, int n)",
-    "python": "def recursive_bubble_sort(arr, n):",
-    "javascript": "function recursiveBubbleSort(arr, n)"
+    "cpp": "void bubbleSort(vector<int>& nums);",
+    "java": "public void bubbleSort(int[] nums);",
+    "python": "def bubbleSort(self, nums: list[int]) -> None:",
+    "javascript": "var bubbleSort = function(nums);"
   },
   "solutions": {
-    "python": "import sys\n\ndef recursive_bubble(arr, n):\n    if n <= 1:\n        return\n    for i in range(n-1):\n        if arr[i] > arr[i+1]:\n            arr[i], arr[i+1] = arr[i+1], arr[i]\n    recursive_bubble(arr, n-1)\n\nit = iter(sys.stdin.read().split())\nn = int(next(it))\narr = [int(next(it)) for _ in range(n)]\nrecursive_bubble(arr, n)\nprint(' '.join(map(str, arr)))",
-    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nvoid recursiveBubbleSort(vector<long long>& arr, int n) {\n    if (n <= 1) return;\n    for (int i = 0; i < n-1; i++) {\n        if (arr[i] > arr[i+1]) {\n            swap(arr[i], arr[i+1]);\n        }\n    }\n    recursiveBubbleSort(arr, n-1);\n}\n\nint main() {\n    int n;\n    if (!(cin >> n)) return 0;\n    vector<long long> nums(n);\n    for (int i = 0; i < n; i++) {\n        cin >> nums[i];\n    }\n    recursiveBubbleSort(nums, n);\n    for (int i = 0; i < n; i++) {\n        cout << nums[i] << (i == n-1 ? '\\n' : ' ');\n    }\n}"
+    "python": "import sys\n\nclass Solution:\n    def bubbleSort(self, nums: list[int]) -> None:\n        n = len(nums)\n        for i in range(n):\n            swapped = False\n            for j in range(0, n - i - 1):\n                if nums[j] > nums[j + 1]:\n                    nums[j], nums[j + 1] = nums[j + 1], nums[j]\n                    swapped = True\n            if not swapped:\n                break\n\nif __name__ == '__main__':\n    it = iter(sys.stdin.read().split())\n    try:\n        next(it)\n        n = int(next(it))\n        nums = [int(next(it)) for _ in range(n)]\n    except StopIteration:\n        sys.exit(0)\n    sol = Solution()\n    sol.bubbleSort(nums)\n    print(\" \".join(map(str, nums)))",
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    void bubbleSort(vector<int>& nums) {\n        int n = nums.size();\n        for (int i = 0; i < n; i++) {\n            bool swapped = false;\n            for (int j = 0; j < n - i - 1; j++) {\n                if (nums[j] > nums[j + 1]) {\n                    swap(nums[j], nums[j + 1]);\n                    swapped = true;\n                }\n            }\n            if (!swapped) {\n                break;\n            }\n        }\n    }\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int t;\n    if (!(cin >> t)) return 0;\n    int n;\n    if (!(cin >> n)) return 0;\n    vector<int> nums(n);\n    for (int i = 0; i < n; i++) cin >> nums[i];\n    Solution sol;\n    sol.bubbleSort(nums);\n    for (int i = 0; i < nums.size(); i++) {\n        cout << nums[i] << (i == nums.size() - 1 ? \"\" : \" \");\n    }\n    cout << \"\\n\";\n    return 0;\n}"
   },
   "judgeConfig": {
     "timeLimit": 2,
@@ -149,155 +154,43 @@
   "testCases": [
     {
       "id": "sample_1",
-      "input": "5\n5 1 4 2 8",
-      "output": "1 2 4 5 8",
+      "input": "1\n5\n64 34 25 12 22 11 90",
+      "output": "12 22 25 34 64",
       "isVisible": true,
       "weight": 1,
       "category": "sample"
     },
     {
       "id": "sample_2",
-      "input": "3\n-1 0 -5",
-      "output": "-5 -1 0",
-      "isVisible": true,
+      "input": "1\n3\n5 1 4",
+      "output": "1 4 5",
+      "isVisible": false,
       "weight": 1,
       "category": "sample"
     },
     {
-      "id": "min_constraint",
-      "input": "1\n340975",
-      "output": "340975",
+      "id": "sample_3",
+      "input": "1\n1\n5",
+      "output": "5",
       "isVisible": false,
       "weight": 1,
-      "category": "min_constraint"
+      "category": "sample"
     },
     {
-      "id": "max_constraint",
-      "input": "1\n1000000",
-      "output": "1000000",
+      "id": "sample_4",
+      "input": "1\n4\n4 3 2 1",
+      "output": "1 2 3 4",
       "isVisible": false,
-      "weight": 2,
-      "category": "max_constraint"
+      "weight": 1,
+      "category": "sample"
     },
     {
-      "id": "boundary",
-      "input": "2\n1000000 1000000",
-      "output": "1000000 1000000",
-      "isVisible": false,
-      "weight": 2,
-      "category": "boundary"
-    },
-    {
-      "id": "boundary_2",
-      "input": "2\n-1000000 -1000000",
-      "output": "-1000000 -1000000",
-      "isVisible": false,
-      "weight": 2,
-      "category": "boundary"
-    },
-    {
-      "id": "duplicate",
-      "input": "5\n1 1 1 1 1",
+      "id": "duplicate_7",
+      "input": "1\n5\n1 1 1 1 1",
       "output": "1 1 1 1 1",
       "isVisible": false,
       "weight": 1,
       "category": "duplicate"
-    },
-    {
-      "id": "sorted",
-      "input": "5\n1 2 3 4 5",
-      "output": "1 2 3 4 5",
-      "isVisible": false,
-      "weight": 1,
-      "category": "sorted"
-    },
-    {
-      "id": "reverse_sorted",
-      "input": "5\n5 4 3 2 1",
-      "output": "1 2 3 4 5",
-      "isVisible": false,
-      "weight": 1,
-      "category": "reverse_sorted"
-    },
-    {
-      "id": "zero",
-      "input": "3\n0 0 0",
-      "output": "0 0 0",
-      "isVisible": false,
-      "weight": 1,
-      "category": "zero"
-    },
-    {
-      "id": "one",
-      "input": "1\n1",
-      "output": "1",
-      "isVisible": false,
-      "weight": 1,
-      "category": "one"
-    },
-    {
-      "id": "repeated",
-      "input": "4\n1 2 2 2",
-      "output": "1 2 2 2",
-      "isVisible": false,
-      "weight": 1,
-      "category": "repeated"
-    },
-    {
-      "id": "large_random_0",
-      "input": "24\n-947549 555144 -423222 -486425 -531894 -707368 544492 -785053 419141 553292 871036 143716 -817677 238352 -115166 -933347 -937511 -803507 -541483 -512075 59806 262524 -944351 177016",
-      "output": "-947549 -944351 -937511 -933347 -817677 -803507 -785053 -707368 -541483 -531894 -512075 -486425 -423222 -115166 59806 143716 177016 238352 262524 419141 544492 553292 555144 871036",
-      "isVisible": false,
-      "weight": 1,
-      "category": "large_random"
-    },
-    {
-      "id": "large_random_1",
-      "input": "35\n501601 362906 470785 142825 -120204 -537703 -57941 235779 -416592 697498 823054 -986372 591334 689925 -665171 464104 -113714 -286443 -417262 -673936 -548455 601163 -294111 -785650 -805498 -203235 -797172 -247166 777324 -278673 266105 -445260 692670 -908878 530358",
-      "output": "-986372 -908878 -805498 -797172 -785650 -673936 -665171 -548455 -537703 -445260 -417262 -416592 -294111 -286443 -278673 -247166 -203235 -120204 -113714 -57941 142825 235779 266105 362906 464104 470785 501601 530358 591334 601163 689925 692670 697498 777324 823054",
-      "isVisible": false,
-      "weight": 1,
-      "category": "large_random"
-    },
-    {
-      "id": "large_random_2",
-      "input": "68\n124551 -738221 934193 -206156 -834745 157713 -385161 739387 318353 297129 856926 807130 -241597 210795 -596742 477594 -854133 -903900 386769 -522063 621241 -393110 -832665 793731 -511803 817147 -788185 -202818 -417048 -49130 333126 749256 -234892 -658890 -223675 -254944 -560632 405459 -440107 471823 964307 433503 359028 -850259 277440 331645 -641097 120172 529089 -486595 -657321 -30571 -204225 -433879 940685 342176 443180 168008 -539434 435740 -319930 767588 611270 627389 -882690 -519652 723444 -932681",
-      "output": "-932681 -903900 -882690 -854133 -850259 -834745 -832665 -788185 -738221 -658890 -657321 -641097 -596742 -560632 -539434 -522063 -519652 -511803 -486595 -440107 -433879 -417048 -393110 -385161 -319930 -254944 -241597 -234892 -223675 -206156 -204225 -202818 -49130 -30571 120172 124551 157713 168008 210795 277440 297129 318353 331645 333126 342176 359028 386769 405459 433503 435740 443180 471823 477594 529089 611270 621241 627389 723444 739387 749256 767588 793731 807130 817147 856926 934193 940685 964307",
-      "isVisible": false,
-      "weight": 1,
-      "category": "large_random"
-    },
-    {
-      "id": "large_random_3",
-      "input": "50\n-158697 -438507 -861193 -557537 914985 977424 189462 837876 505575 -340073 -554090 374554 46963 -170300 855315 917945 348158 -37718 -700377 -444507 -707174 -482785 562355 177274 130317 -448991 566601 225965 -101510 882871 223757 -162397 -240839 -540052 -709898 68554 34977 -809350 584990 -901190 805863 -770050 -679469 315849 -664494 661110 427072 -114667 250760 -866773",
-      "output": "-901190 -866773 -861193 -809350 -770050 -709898 -707174 -700377 -679469 -664494 -557537 -554090 -540052 -482785 -448991 -444507 -438507 -340073 -240839 -170300 -162397 -158697 -114667 -101510 -37718 34977 46963 68554 130317 177274 189462 223757 225965 250760 315849 348158 374554 427072 505575 562355 566601 584990 661110 805863 837876 855315 882871 914985 917945 977424",
-      "isVisible": false,
-      "weight": 1,
-      "category": "large_random"
-    },
-    {
-      "id": "large_random_4",
-      "input": "59\n-199687 249668 -18429 109633 -472747 160198 805185 976420 -975923 426657 511463 -759768 429650 855535 126108 574704 -440428 611868 344194 -286601 -766059 -384486 -88232 -668320 -48473 -993195 514336 836796 509279 -447634 49805 597950 -625340 64685 913919 -776841 825609 311349 -374116 765108 339974 64646 277103 -582854 -679473 -215846 599101 -661208 131159 999633 632898 934484 112232 926220 -998801 256077 -320196 24680 -959155",
-      "output": "-998801 -993195 -975923 -959155 -776841 -766059 -759768 -679473 -668320 -661208 -625340 -582854 -472747 -447634 -440428 -384486 -374116 -320196 -286601 -215846 -199687 -88232 -48473 -18429 24680 49805 64646 64685 109633 112232 126108 131159 160198 249668 256077 277103 311349 339974 344194 426657 429650 509279 511463 514336 574704 597950 599101 611868 632898 765108 805185 825609 836796 855535 913919 926220 934484 976420 999633",
-      "isVisible": false,
-      "weight": 1,
-      "category": "large_random"
-    },
-    {
-      "id": "adversarial_0",
-      "input": "214\n985896 985685 974670 961915 948461 948072 943049 942732 936228 928094 898803 892559 886627 867067 850491 842813 841319 833929 829624 813303 811596 807365 807058 806379 802786 795092 788283 785394 779843 753276 744129 711324 694545 693443 691929 678964 646535 645466 644315 642828 606071 595098 583905 580341 568618 542952 534921 531980 530776 528982 527174 516980 506611 495162 484450 460858 446757 416023 412147 408629 402948 388044 383597 381986 370395 367646 362893 355137 323518 298937 272119 247879 246797 234048 233772 225109 214629 214081 208403 197564 194695 189833 165530 161657 154115 153021 137065 133695 130985 130855 124672 117165 113852 106612 85435 78263 64993 54553 20623 19195 18463 17987 9481 -103 -3261 -8104 -8738 -20579 -29799 -45779 -53165 -59190 -70688 -81238 -96021 -111692 -112616 -112890 -115251 -137857 -146334 -147688 -153222 -155642 -158958 -163253 -181227 -205236 -216881 -238775 -256985 -288431 -290984 -307042 -342324 -346284 -355097 -377759 -401790 -415849 -415991 -443829 -444136 -476118 -478530 -480105 -483649 -490398 -494856 -497833 -500869 -504277 -506742 -517415 -519875 -528776 -538171 -543449 -550713 -551740 -555827 -578156 -598207 -600682 -601104 -601756 -610297 -615198 -651221 -653704 -654731 -669840 -675368 -706017 -722522 -730744 -736262 -746236 -748580 -770847 -793603 -794671 -796722 -802185 -804414 -820372 -828069 -831995 -834835 -841907 -851117 -851402 -854851 -856301 -857476 -858652 -865728 -872163 -872887 -876533 -877033 -877352 -878523 -880116 -880715 -886395 -893909 -894844 -916656 -934123 -955888 -969051 -984920 -995480",
-      "output": "-995480 -984920 -969051 -955888 -934123 -916656 -894844 -893909 -886395 -880715 -880116 -878523 -877352 -877033 -876533 -872887 -872163 -865728 -858652 -857476 -856301 -854851 -851402 -851117 -841907 -834835 -831995 -828069 -820372 -804414 -802185 -796722 -794671 -793603 -770847 -748580 -746236 -736262 -730744 -722522 -706017 -675368 -669840 -654731 -653704 -651221 -615198 -610297 -601756 -601104 -600682 -598207 -578156 -555827 -551740 -550713 -543449 -538171 -528776 -519875 -517415 -506742 -504277 -500869 -497833 -494856 -490398 -483649 -480105 -478530 -476118 -444136 -443829 -415991 -415849 -401790 -377759 -355097 -346284 -342324 -307042 -290984 -288431 -256985 -238775 -216881 -205236 -181227 -163253 -158958 -155642 -153222 -147688 -146334 -137857 -115251 -112890 -112616 -111692 -96021 -81238 -70688 -59190 -53165 -45779 -29799 -20579 -8738 -8104 -3261 -103 9481 17987 18463 19195 20623 54553 64993 78263 85435 106612 113852 117165 124672 130855 130985 133695 137065 153021 154115 161657 165530 189833 194695 197564 208403 214081 214629 225109 233772 234048 246797 247879 272119 298937 323518 355137 362893 367646 370395 381986 383597 388044 402948 408629 412147 416023 446757 460858 484450 495162 506611 516980 527174 528982 530776 531980 534921 542952 568618 580341 583905 595098 606071 642828 644315 645466 646535 678964 691929 693443 694545 711324 744129 753276 779843 785394 788283 795092 802786 806379 807058 807365 811596 813303 829624 833929 841319 842813 850491 867067 886627 892559 898803 928094 936228 942732 943049 948072 948461 961915 974670 985685 985896",
-      "isVisible": false,
-      "weight": 2,
-      "category": "adversarial"
-    },
-    {
-      "id": "adversarial_1",
-      "input": "529\n999488 996487 992377 989934 984035 981915 977072 972085 971874 969723 969078 962377 960221 957186 956827 954034 952062 950101 948292 941467 941071 938790 930996 928418 926133 924074 904547 901967 901812 898628 897583 895675 893320 889913 887535 886398 885300 885181 882846 881581 872813 872043 870702 869907 869455 865862 858363 856955 854164 852008 848463 847306 846870 844738 843963 841565 839282 834405 829066 827296 817919 813209 812679 812073 806685 805024 804474 800600 796697 789810 788687 782029 779090 778416 774408 769285 762668 761320 752650 750272 748489 748448 746699 741829 739269 720789 716358 713591 712506 709192 700311 700264 692611 691484 691375 686340 682409 680692 677484 677445 673825 669589 669384 667960 664583 651244 649259 647855 640783 636022 632465 630902 621783 617154 614903 614378 611638 606027 605568 596414 583874 580151 577078 576774 576590 575250 574886 571768 568951 567653 559558 556960 555982 554473 545680 544687 543423 541527 540639 527869 518718 509434 508754 508426 506480 504941 501963 496412 486430 481468 479891 475430 470686 462152 460360 459432 458617 455318 449173 442048 441785 440443 430397 425052 424263 420438 416893 410954 408636 406409 404897 404517 402729 400610 400011 398660 398575 394458 393007 392202 391226 391224 390411 384189 381710 378611 375853 373017 371487 353713 347943 345284 337272 336123 330190 330093 327373 320713 314386 306851 304967 302665 301621 298684 290828 284825 282781 281934 272261 271312 268420 265112 251100 248754 241289 224903 224049 221611 217584 216316 209192 207310 207269 193500 185366 183615 180683 176306 174160 172151 168964 163085 162687 160194 158729 156957 149107 148970 145322 144185 139210 137938 132781 129215 128730 127501 124525 120138 113864 109269 96354 93244 90351 86236 80981 72531 72009 68301 63512 60917 59919 58596 36784 24525 23891 18465 16273 299 -3567 -4536 -7657 -12892 -19812 -22886 -24850 -25573 -25769 -31749 -34675 -38906 -41131 -42731 -44924 -46427 -56136 -64852 -71857 -72724 -73404 -73508 -77521 -81061 -84816 -85522 -85986 -88654 -95504 -98460 -98672 -101134 -103076 -105060 -108404 -111698 -118261 -118896 -121249 -128059 -129959 -130855 -135356 -136575 -143538 -145203 -147765 -148399 -152087 -156106 -161814 -161868 -164357 -169977 -173680 -182139 -183208 -184508 -192187 -194739 -196717 -197752 -202284 -204875 -204915 -204962 -225046 -225698 -235271 -236173 -249620 -258283 -262309 -263594 -266714 -268076 -275042 -280928 -292211 -295086 -295677 -297060 -300482 -303357 -305529 -306092 -307521 -311585 -313492 -314555 -315945 -324195 -329521 -334578 -336525 -336929 -341109 -341672 -342171 -349004 -351384 -353536 -359969 -362729 -365576 -368863 -370179 -370861 -372158 -373764 -379967 -398299 -400785 -402339 -404857 -409115 -414633 -415728 -416454 -418436 -419760 -424128 -427614 -428845 -430173 -440468 -442966 -443277 -443835 -445375 -446386 -450640 -452193 -453135 -454413 -456436 -465809 -473361 -476699 -477394 -479556 -481501 -486528 -487699 -488328 -498266 -499440 -503526 -507445 -508232 -515010 -522698 -528895 -532496 -533523 -537497 -539840 -541057 -551309 -551836 -552984 -556117 -558278 -559215 -559438 -566237 -571638 -573026 -581466 -582395 -586788 -592240 -594978 -597683 -601376 -618887 -623854 -625517 -628695 -631139 -635039 -644132 -653877 -659210 -661139 -666138 -666222 -669181 -674003 -675879 -679545 -683686 -687411 -689425 -690521 -690977 -709809 -715418 -718372 -720368 -722219 -725529 -725652 -732346 -732728 -733059 -738642 -745493 -757474 -757929 -758111 -765384 -772664 -773308 -775530 -776471 -782764 -784427 -790325 -804153 -806437 -822171 -823950 -831017 -837506 -842203 -846362 -847269 -847867 -853255 -854415 -855735 -865303 -869420 -893467 -894546 -894685 -903083 -906915 -907544 -912279 -916335 -918789 -919769 -924444 -939131 -942118 -943163 -943448 -948020 -948777 -950373 -959039 -979722 -980465 -983594 -987636 -988372 -992565 -996454 -999149",
-      "output": "-999149 -996454 -992565 -988372 -987636 -983594 -980465 -979722 -959039 -950373 -948777 -948020 -943448 -943163 -942118 -939131 -924444 -919769 -918789 -916335 -912279 -907544 -906915 -903083 -894685 -894546 -893467 -869420 -865303 -855735 -854415 -853255 -847867 -847269 -846362 -842203 -837506 -831017 -823950 -822171 -806437 -804153 -790325 -784427 -782764 -776471 -775530 -773308 -772664 -765384 -758111 -757929 -757474 -745493 -738642 -733059 -732728 -732346 -725652 -725529 -722219 -720368 -718372 -715418 -709809 -690977 -690521 -689425 -687411 -683686 -679545 -675879 -674003 -669181 -666222 -666138 -661139 -659210 -653877 -644132 -635039 -631139 -628695 -625517 -623854 -618887 -601376 -597683 -594978 -592240 -586788 -582395 -581466 -573026 -571638 -566237 -559438 -559215 -558278 -556117 -552984 -551836 -551309 -541057 -539840 -537497 -533523 -532496 -528895 -522698 -515010 -508232 -507445 -503526 -499440 -498266 -488328 -487699 -486528 -481501 -479556 -477394 -476699 -473361 -465809 -456436 -454413 -453135 -452193 -450640 -446386 -445375 -443835 -443277 -442966 -440468 -430173 -428845 -427614 -424128 -419760 -418436 -416454 -415728 -414633 -409115 -404857 -402339 -400785 -398299 -379967 -373764 -372158 -370861 -370179 -368863 -365576 -362729 -359969 -353536 -351384 -349004 -342171 -341672 -341109 -336929 -336525 -334578 -329521 -324195 -315945 -314555 -313492 -311585 -307521 -306092 -305529 -303357 -300482 -297060 -295677 -295086 -292211 -280928 -275042 -268076 -266714 -263594 -262309 -258283 -249620 -236173 -235271 -225698 -225046 -204962 -204915 -204875 -202284 -197752 -196717 -194739 -192187 -184508 -183208 -182139 -173680 -169977 -164357 -161868 -161814 -156106 -152087 -148399 -147765 -145203 -143538 -136575 -135356 -130855 -129959 -128059 -121249 -118896 -118261 -111698 -108404 -105060 -103076 -101134 -98672 -98460 -95504 -88654 -85986 -85522 -84816 -81061 -77521 -73508 -73404 -72724 -71857 -64852 -56136 -46427 -44924 -42731 -41131 -38906 -34675 -31749 -25769 -25573 -24850 -22886 -19812 -12892 -7657 -4536 -3567 299 16273 18465 23891 24525 36784 58596 59919 60917 63512 68301 72009 72531 80981 86236 90351 93244 96354 109269 113864 120138 124525 127501 128730 129215 132781 137938 139210 144185 145322 148970 149107 156957 158729 160194 162687 163085 168964 172151 174160 176306 180683 183615 185366 193500 207269 207310 209192 216316 217584 221611 224049 224903 241289 248754 251100 265112 268420 271312 272261 281934 282781 284825 290828 298684 301621 302665 304967 306851 314386 320713 327373 330093 330190 336123 337272 345284 347943 353713 371487 373017 375853 378611 381710 384189 390411 391224 391226 392202 393007 394458 398575 398660 400011 400610 402729 404517 404897 406409 408636 410954 416893 420438 424263 425052 430397 440443 441785 442048 449173 455318 458617 459432 460360 462152 470686 475430 479891 481468 486430 496412 501963 504941 506480 508426 508754 509434 518718 527869 540639 541527 543423 544687 545680 554473 555982 556960 559558 567653 568951 571768 574886 575250 576590 576774 577078 580151 583874 596414 605568 606027 611638 614378 614903 617154 621783 630902 632465 636022 640783 647855 649259 651244 664583 667960 669384 669589 673825 677445 677484 680692 682409 686340 691375 691484 692611 700264 700311 709192 712506 713591 716358 720789 739269 741829 746699 748448 748489 750272 752650 761320 762668 769285 774408 778416 779090 782029 788687 789810 796697 800600 804474 805024 806685 812073 812679 813209 817919 827296 829066 834405 839282 841565 843963 844738 846870 847306 848463 852008 854164 856955 858363 865862 869455 869907 870702 872043 872813 881581 882846 885181 885300 886398 887535 889913 893320 895675 897583 898628 901812 901967 904547 924074 926133 928418 930996 938790 941071 941467 948292 950101 952062 954034 956827 957186 960221 962377 969078 969723 971874 972085 977072 981915 984035 989934 992377 996487 999488",
-      "isVisible": false,
-      "weight": 2,
-      "category": "adversarial"
     }
   ],
   "analytics": {

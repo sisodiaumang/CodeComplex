@@ -1,0 +1,149 @@
+{
+  "title": "Fixing Broken HTML Anchor Tag Attributes",
+  "subCategory": "HTML Tag Validation",
+  "statement": {
+    "markdown": "Given a string representing an HTML anchor tag, validate whether the tag has a valid 'href' attribute and a valid 'target' attribute. A valid 'href' attribute is one that starts with either 'http://' or 'https://', and a valid 'target' attribute is one that is one of '_blank', '_self', '_parent', or '_top'. If the tag has both a valid 'href' and a valid 'target' attribute, return the tag as is. Otherwise, return a modified version of the tag with a default 'href' attribute if the 'href' attribute is missing, and a default 'target' attribute if the 'target' attribute is missing or invalid.",
+    "inputFormat": "A string representing an HTML anchor tag as a string, e.g. '<a href=\"https://www.example.com\" target=\"_blank\">Example</a>'",
+    "outputFormat": "A string representing the modified HTML anchor tag with valid 'href' and 'target' attributes",
+    "notes": "Assume that the input string is well-formed and does not contain any malicious code.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Input string length"
+      }
+    ],
+    "examples": [
+      {
+        "input": "<a href=\"https://www.example.com\" target=\"_blank\">Example</a>",
+        "output": "<a href=\"https://www.example.com\" target=\"_blank\">Example</a>",
+        "explanation": "Input tag with valid 'href' and 'target' attributes"
+      },
+      {
+        "input": "<a href=\"\">Example</a>",
+        "output": "<a href=\"\" target=\"_self\">Example</a>",
+        "explanation": "Input tag with missing 'href' attribute"
+      },
+      {
+        "input": "<a href=\"https://www.example.com\" target=\"invalid\">Example</a>",
+        "output": "<a href=\"https://www.example.com\" target=\"_self\">Example</a>",
+        "explanation": "Input tag with invalid 'target' attribute"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "HTML"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "html"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Parse the input HTML anchor tag to extract the 'href' and 'target' attributes"
+    },
+    {
+      "order": 2,
+      "text": "Check if the 'href' attribute starts with 'http://' or 'https://', if not, default it to an empty string"
+    },
+    {
+      "order": 3,
+      "text": "Check if the 'target' attribute is one of '_blank', '_self', '_parent', or '_top', if not, default it to '_self'"
+    }
+  ],
+  "editorial": {
+    "title": "Fixing Broken HTML Anchor Tag Attributes",
+    "intuition": "The problem requires parsing the input HTML anchor tag to extract the 'href' and 'target' attributes, and then checking if they are valid. If they are not valid, we need to default them to a valid value.",
+    "bruteForce": "We can use a regular expression to parse the input HTML anchor tag and extract the 'href' and 'target' attributes. Then, we can check if they are valid by comparing them to a list of valid values.",
+    "betterSolution": "We can use the DOM API to parse the input HTML anchor tag and extract the 'href' and 'target' attributes. Then, we can check if they are valid by using the `includes` method to check if they are in a list of valid values.",
+    "optimalSolution": "We can use the `URL` API to check if the 'href' attribute is a valid URL, and we can use a `switch` statement to check if the 'target' attribute is one of the valid values.",
+    "proofOfCorrectness": "We can prove that our solution is correct by showing that it handles all possible cases, including when the 'href' and 'target' attributes are missing or invalid.",
+    "dryRun": "Let's dry run our solution with the following inputs: <a href=\"https://www.example.com\" target=\"_blank\">Example</a>, <a href=\"\">Example</a>, and <a href=\"https://www.example.com\" target=\"invalid\">Example</a>.",
+    "commonMistakes": [
+      "forgetting to check for missing attributes",
+      "forgetting to default to a valid value when an attribute is missing or invalid"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// function validateAnchorTag(tag) {",
+    "python": "class Solution(object):\n    def validateAnchorTag(self, tag):\n        pass"
+  },
+  "buggyStarterCode": {
+    "javascript": "// function validateAnchorTag(tag) {\n//   var href = tag.match(/href=\"(.*)\"/); \n//   var target = tag.match(/target=\"(.*)\"/);\n//   if (href && target) {\n//     return tag;\n//   } else {\n//     return tag.replace(/href=\"\"/g, 'href=\"\" target=\"_self\"');\n//   }\n// }",
+    "python": "class Solution(object):\n    def validateAnchorTag(self, tag):\n        href = tag.match(/href=\"(.*)\"/)\n        target = tag.match(/target=\"(.*)\"/)\n        if href and target:\n            return tag\n        else:\n            return tag.replace(/href=\"\"/g, 'href=\"\" target=\"_self\"')"
+  },
+  "functionSignature": {
+    "javascript": "function validateAnchorTag(tag) {",
+    "python": "def validateAnchorTag(self, tag: str) -> str:"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction validateAnchorTag(tag) {\n  var href = tag.match(/href=\"([^\"]*)\"/);\n  var target = tag.match(/target=\"([^\"]*)\"/);\n  if (href && target) {\n    return tag;\n  } else if (!href) {\n    return tag.replace(/href=\"\"/g, 'href=\"\" target=\"_self\"');\n  } else if (target && !['_blank', '_self', '_parent', '_top'].includes(target[1])) {\n    return tag.replace(/target=\"([^\"]*)\"/g, 'target=\"_self\"');\n  } else {\n    return tag;\n  }\n}\n",
+    "python": "class Solution(object):\n    def validateAnchorTag(self, tag: str) -> str:\n        import re\n        href = re.search(r'href=\"([^\"]*)\"', tag)\n        target = re.search(r'target=\"([^\"]*)\"', tag)\n        if href and target:\n            return tag\n        elif not href:\n            return tag.replace('href=\"\"', 'href=\"\" target=\"_self\"')\n        elif target and target.group(1) not in ['_blank', '_self', '_parent', '_top']:\n            return tag.replace(f'target=\"{target.group(1)}\"', 'target=\"_self\"')\n        else:\n            return tag\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2000,
+    "memoryLimit": 65536,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "<a href=\"https://www.example.com\" target=\"_blank\">Example</a>",
+      "output": "<a href=\"https://www.example.com\" target=\"_blank\">Example</a>",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "<a href=\"\">Example</a>",
+      "output": "<a href=\"\" target=\"_self\">Example</a>",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "12d0a28af4c8e5e3719f00d0",
+  "slug": "fixing-broken-html-anchor-tag-attributes-bugfix-medium-html",
+  "mode": "bug_fix",
+  "category": "HTML",
+  "difficulty": "Medium"
+}

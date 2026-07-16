@@ -82,7 +82,19 @@ export async function createMatchForRoom(
     room: InstanceType<typeof BattleRoom>,
     options: { questionSlug: string; durationInMinutes: number }
 ) {
-    const { questionSlug, durationInMinutes } = options;
+    const { questionSlug } = options;
+    let durationInMinutes = options.durationInMinutes;
+
+    if (room.difficulty) {
+        const diff = room.difficulty.toUpperCase();
+        if (diff === "EASY") {
+            durationInMinutes = 15;
+        } else if (diff === "MEDIUM") {
+            durationInMinutes = 30;
+        } else if (diff === "HARD") {
+            durationInMinutes = 45;
+        }
+    }
 
     if (room.status !== "WAITING") {
         throw new MatchServiceError(400, `Match cannot be started — room is ${room.status.toLowerCase()}`);
@@ -109,7 +121,7 @@ export async function createMatchForRoom(
 
     // Validate questionSlug exists in the appropriate question bank for this battleType.
     // (Done before the atomic claim so a bad slug doesn't leave the room STARTED.)
-    const FRONTEND_TYPES = ["FRONTEND", "FULLSTACK"];
+    const FRONTEND_TYPES = ["FRONTEND", "PROJECTS"];
     const BACKEND_TYPES  = ["BACKEND"];
     const PROMPT_TYPES   = ["PROMPT_WAR"];
 

@@ -1,0 +1,143 @@
+{
+  "title": "Preventing Middleware-Induced Route Conflicts in Express",
+  "subCategory": "Express Routing",
+  "statement": {
+    "markdown": "Implement a middleware function `logger` that logs requests and responses to the console for a given Express API. However, when a request is made to a route that uses the `logger` middleware, it should also validate that the `Authorization` header is present and contains a valid JWT token. If the validation fails, return a 401 Unauthorized error. Ensure that this additional validation is executed before the `logger` middleware.",
+    "inputFormat": "POST /api/endpoint HTTP/1.1\r\nHost: example.com\r\nAuthorization: Bearer <JWT_TOKEN>\r\n\r\n",
+    "outputFormat": "HTTP/1.1 200 OK\r\nContent-Length: 0\r\n\r\nor HTTP/1.1 401 Unauthorized\r\nContent-Length: 0\r\n\r\n",
+    "notes": "The `logger` middleware should be executed for all routes, but only the additional validation should be executed for routes that use the `validateToken` middleware.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": ""
+      }
+    ],
+    "examples": [
+      {
+        "input": "POST /api/endpoint HTTP/1.1\r\nHost: example.com\r\nAuthorization: Bearer <JWT_TOKEN>\r\n\r\n",
+        "output": "HTTP/1.1 200 OK\r\nContent-Length: 0\r\n\r\n",
+        "explanation": ""
+      },
+      {
+        "input": "POST /api/endpoint HTTP/1.1\r\nHost: example.com\r\n\r\n",
+        "output": "HTTP/1.1 401 Unauthorized\r\nContent-Length: 0\r\n\r\n",
+        "explanation": ""
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 100,
+    "premium": true,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "EXPRESS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "express"
+    ],
+    "interviewFrequency": 1,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Implement the `logger` middleware to log requests and responses."
+    },
+    {
+      "order": 2,
+      "text": "Implement the `validateToken` middleware to validate the JWT token in the `Authorization` header."
+    },
+    {
+      "order": 3,
+      "text": "Combine the `logger` and `validateToken` middleware to ensure that the additional validation is executed before the `logger` middleware."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial",
+    "intuition": "The key to solving this problem is to use middleware to validate the JWT token before logging the request and response.",
+    "bruteForce": "One possible solution is to create two separate middleware functions, one for logging and one for validating the JWT token.",
+    "betterSolution": "A better approach is to combine the two middleware functions to ensure that the validation is executed before the logging.",
+    "optimalSolution": "The optimal solution is to use the `express` middleware API to combine the two middleware functions and ensure that the validation is executed before the logging.",
+    "proofOfCorrectness": "The proof of correctness is to ensure that the additional validation is executed before the `logger` middleware and that the `logger` middleware is executed for all routes.",
+    "dryRun": "dry Run details.",
+    "commonMistakes": [
+      "Executing the `logger` middleware before the `validateToken` middleware",
+      "Not executing the `logger` middleware for all routes"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "const express = require('express');\nconst jwt = require('jsonwebtoken');\n\nconst app = express();\n\n// Create the logger middleware\nconst logger = (req, res, next) => {\n  console.log('Request:', req.method, req.url);\n  next();\n};\n\n// Create the validateToken middleware\nconst validateToken = (req, res, next) => {\n  const token = req.header('Authorization');\n  if (!token) return res.status(401).send();\n  const decoded = jwt.verify(token, 'secretkey');\n  next();\n};\n\n// Combine the middleware functions\napp.use(logger);\napp.use(validateToken);\n\n// Define the API endpoint\napp.post('/api/endpoint', (req, res) => {\n  res.send();\n});\n\napp.listen(3000, () => {\n  console.log('Server listening on port 3000');\n});",
+    "python": ""
+  },
+  "buggyStarterCode": {
+    "javascript": "const express = require('express');\nconst jwt = require('jsonwebtoken');\n\nconst app = express();\n\n// Create the logger middleware\nconst logger = (req, res, next) => {\n  console.log('Request:', req.method, req.url);\n  next();\n};\n\n// Create the validateToken middleware\nconst validateToken = (req, res, next) => {\n  const token = req.header('Authorization');\n  if (!token) res.status(401).send();\n  const decoded = jwt.verify(token, 'secretkey');\n  next();\n};\n\n// Combine the middleware functions in reverse order\napp.use(validateToken);\napp.use(logger);\n\n// Define the API endpoint\napp.post('/api/endpoint', (req, res) => {\n  res.send();\n});\n\napp.listen(3000, () => {\n  console.log('Server listening on port 3000');\n});",
+    "python": ""
+  },
+  "functionSignature": {
+    "javascript": "const logger = (req, res, next) => {\n  // Implementation\n}",
+    "python": ""
+  },
+  "solutions": {
+    "javascript": "// Correct implementation of the logger middleware\nconst logger = (req, res, next) => {\n  console.log('Request:', req.method, req.url);\n  next();\n};\n\n// Correct implementation of the validateToken middleware\nconst validateToken = (req, res, next) => {\n  const token = req.header('Authorization');\n  if (!token) return res.status(401).send();\n  const decoded = jwt.verify(token, 'secretkey');\n  next();\n};\n\n// Correct combination of middleware functions\napp.use(validateToken);\napp.use(logger);\n",
+    "python": ""
+  },
+  "judgeConfig": {
+    "timeLimit": 3,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "POST /api/endpoint HTTP/1.1\r\nHost: example.com\r\nAuthorization: Bearer <JWT_TOKEN>\r\n\r\n",
+      "output": "HTTP/1.1 200 OK\r\nContent-Length: 0\r\n\r\n",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "POST /api/endpoint HTTP/1.1\r\nHost: example.com\r\n\r\n",
+      "output": "HTTP/1.1 401 Unauthorized\r\nContent-Length: 0\r\n\r\n",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "8e3ab9d40bf69464bef4381b",
+  "slug": "preventing-middleware-induced-route-conflicts-in-express-bugfix-hard-express",
+  "mode": "bug_fix",
+  "category": "EXPRESS",
+  "difficulty": "Hard"
+}

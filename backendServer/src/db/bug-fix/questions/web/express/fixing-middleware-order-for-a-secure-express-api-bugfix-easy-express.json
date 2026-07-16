@@ -1,0 +1,136 @@
+{
+  "title": "Fixing Middleware Order for a Secure Express API",
+  "subCategory": "Express Routing",
+  "statement": {
+    "markdown": "Implement a secure Express API that handles user authentication and authorization. The API should have two routes: `/login` and `/private`. The `/login` route should authenticate the user and return a JSON Web Token (JWT) upon successful login. The `/private` route should require the JWT token in the request header to be authenticated and authorize access to the private data. However, the current implementation has a logical bug that prevents the JWT token from being verified correctly.",
+    "inputFormat": "JSON object containing user credentials for login and request body for private data",
+    "outputFormat": "JSON object containing the JWT token or private data",
+    "notes": "Use the `jsonwebtoken` library to verify the JWT token. Ensure that the token is verified correctly to prevent authentication bypass attacks.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Maximum number of login attempts"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"username\": \"john\", \"password\": \"12345\"}",
+        "output": "{\"token\": \"...\"}",
+        "explanation": "Successful login with JWT token"
+      },
+      {
+        "input": "{\"data\": \"private info\"}",
+        "output": "{\"data\": \"private info\"}",
+        "explanation": "Access to private data with valid JWT token"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "EXPRESS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "express"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Verify the JWT token correctly to prevent authentication bypass attacks"
+    }
+  ],
+  "editorial": {
+    "title": "Secure Express API",
+    "intuition": "Use the `jsonwebtoken` library to verify the JWT token.",
+    "bruteForce": "Implement a brute-force attack to bypass the JWT token verification.",
+    "betterSolution": "Use a more secure approach to verify the JWT token.",
+    "optimalSolution": "Use a library like `jsonwebtoken` to verify the JWT token correctly.",
+    "proofOfCorrectness": "Verify the JWT token using the `verify` method.",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Incorrect JWT token verification",
+      "Missing error handling"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "const express = require('express');\nconst jwt = require('jsonwebtoken');\n\nconst app = express();\n\napp.use(express.json());\n\napp.post('/login', (req, res) => {\n  const { username, password } = req.body;\n  // Generate JWT token\n  const token = jwt.sign({ username }, 'secret', { expiresIn: '1h' });\n  res.json({ token });\n});\n\napp.get('/private', (req, res) => {\n  const token = req.header('Authorization');\n  // Verify JWT token\n  jwt.verify(token, 'secret', (err, decoded) => {\n    if (err) {\n      res.status(401).send({ error: 'Invalid token' });\n    } else {\n      res.json({ data: 'private info' });\n    }\n  });\n});\n\napp.listen(3000, () => console.log('Server listening on port 3000'));\n",
+    "python": "import json\nfrom flask import Flask, request\nfrom flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity\n\napp = Flask(__name__)\napp.config['JWT_SECRET_KEY'] = 'secret'\njwt = JWTManager(app)\n\n@app.route('/login', methods=['POST'])\ndef login():\n    data = request.get_json()\n    username = data.get('username')\n    password = data.get('password')\n    # Generate JWT token\n    token = jwt.create_access_token(identity=username)\n    return {'token': token}\n\n@app.route('/private', methods=['GET'])\n@jwt_required()\ndef private():\n    # Verify JWT token\n    user_id = get_jwt_identity()\n    return {'data': 'private info'}\n\nif __name__ == '__main__':\n    app.run(debug=True)"
+  },
+  "buggyStarterCode": {
+    "javascript": "const express = require('express');\nconst jwt = require('jsonwebtoken');\n\nconst app = express();\n\napp.use(express.json());\n\napp.post('/login', (req, res) => {\n  const { username, password } = req.body;\n  // Generate JWT token\n  const token = jwt.sign({ username }, 'secret', { expiresIn: '1h' });\n  res.json({ token });\n});\n\napp.get('/private', (req, res) => {\n  const token = req.header('Authorization');\n  // Verify JWT token (BUGGY)\n  jwt.verify(token, 'wrong-secret', (err, decoded) => {\n    if (err) {\n      res.status(401).send({ error: 'Invalid token' });\n    } else {\n      res.json({ data: 'private info' });\n    }\n  });\n});\n\napp.listen(3000, () => console.log('Server listening on port 3000'));",
+    "python": "import json\nfrom flask import Flask, request\nfrom flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity\n\napp = Flask(__name__)\napp.config['JWT_SECRET_KEY'] = 'secret'\njwt = JWTManager(app)\n\n@app.route('/login', methods=['POST'])\ndef login():\n    data = request.get_json()\n    username = data.get('username')\n    password = data.get('password')\n    # Generate JWT token\n    token = jwt.create_access_token(identity=username)\n    return {'token': token}\n\n@app.route('/private', methods=['GET'])\n@jwt_required()\ndef private():\n    # Verify JWT token (BUGGY)\n    user_id = get_jwt_identity()\n    return {'data': 'private info'}\n\nif __name__ == '__main__':\n    app.run(debug=True)"
+  },
+  "functionSignature": {
+    "javascript": "var solve = function() {\n  // Fix the buggy code here\n};\n",
+    "python": "def solve():\n    # Fix the buggy code here\n"
+  },
+  "solutions": {
+    "javascript": "// Solution\nconst express = require('express');\nconst jwt = require('jsonwebtoken');\n\nconst app = express();\n\napp.use(express.json());\n\napp.post('/login', (req, res) => {\n  const { username, password } = req.body;\n  // Generate JWT token\n  const token = jwt.sign({ username }, 'secret', { expiresIn: '1h' });\n  res.json({ token });\n});\n\napp.get('/private', (req, res) => {\n  const token = req.header('Authorization');\n  // Verify JWT token\n  jwt.verify(token, 'secret', (err, decoded) => {\n    if (err) {\n      res.status(401).send({ error: 'Invalid token' });\n    } else {\n      res.json({ data: 'private info' });\n    }\n  });\n});\n\napp.listen(3000, () => console.log('Server listening on port 3000'));\n",
+    "python": "import json\nfrom flask import Flask, request\nfrom flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity\n\napp = Flask(__name__)\napp.config['JWT_SECRET_KEY'] = 'secret'\njwt = JWTManager(app)\n\n@app.route('/login', methods=['POST'])\ndef login():\n    data = request.get_json()\n    username = data.get('username')\n    password = data.get('password')\n    # Generate JWT token\n    token = jwt.create_access_token(identity=username)\n    return {'token': token}\n\n@app.route('/private', methods=['GET'])\n@jwt_required()\ndef private():\n    # Verify JWT token\n    user_id = get_jwt_identity()\n    return {'data': 'private info'}\n\nif __name__ == '__main__':\n    app.run(debug=True)"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"username\": \"john\", \"password\": \"12345\"}",
+      "output": "{\"token\": \"...\"}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"data\": \"private info\"}",
+      "output": "{\"data\": \"private info\"}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "_id": "d740f17c0514c37b6e6bafd3",
+  "slug": "fixing-middleware-order-for-a-secure-express-api-bugfix-easy-express",
+  "mode": "bug_fix",
+  "category": "EXPRESS",
+  "difficulty": "Easy"
+}

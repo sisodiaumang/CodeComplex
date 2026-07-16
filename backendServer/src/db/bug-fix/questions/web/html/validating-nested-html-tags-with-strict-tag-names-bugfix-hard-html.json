@@ -1,0 +1,149 @@
+{
+  "title": "Validating Nested HTML Tags with Strict Tag Names",
+  "subCategory": "HTML Validator",
+  "statement": {
+    "markdown": "Write a function that validates if a given HTML string has any nested tags with strict tag names (i.e., tags that do not start with 'img', 'input', or 'br'). If there are no nested tags, return true. Otherwise, return false. Note that HTML comments are ignored. An example of a nested tag is `<a><b></a></b>`. An example of a non-nested tag is `<p>Hello <img src='image.jpg'> World</p>`. The input HTML string will not contain any duplicate tags.",
+    "inputFormat": "A string representing the HTML input.",
+    "outputFormat": "A boolean indicating whether the HTML string has any nested tags with strict tag names.",
+    "notes": "This problem is a variation of the classic 'HTML Validator' problem. The key difference here is the requirement for strict tag names and the presence of HTML comments.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "s",
+        "type": "integer",
+        "min": 0,
+        "max": 10000,
+        "description": "The length of the input HTML string"
+      }
+    ],
+    "examples": [
+      {
+        "input": "<a><b></a></b>",
+        "output": "false",
+        "explanation": "The tags <a> and <b> are nested."
+      },
+      {
+        "input": "<p>Hello <img src='image.jpg'> World</p>",
+        "output": "true",
+        "explanation": "The tags <p> and <img> are not nested."
+      },
+      {
+        "input": "<!-- Comment --> <a><b></a></b>",
+        "output": "false",
+        "explanation": "The comment is ignored."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 60,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "HTML"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "html"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use a stack data structure to keep track of the opening tags."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial Title",
+    "intuition": "The key insight here is to use a stack to keep track of the opening tags. We push opening tags onto the stack and pop them off when we encounter a closing tag. If we encounter a closing tag that does not match the top of the stack, we know that there is a nested tag.",
+    "bruteForce": "A brute force approach would involve parsing the HTML string and checking each tag to see if it is nested. However, this approach would be inefficient for large input strings.",
+    "betterSolution": "We can improve the brute force approach by using a stack to keep track of the opening tags.",
+    "optimalSolution": "The optimal solution involves using a stack and checking each tag to see if it is nested. If we encounter a closing tag that does not match the top of the stack, we know that there is a nested tag.",
+    "proofOfCorrectness": "The proof of correctness involves showing that the stack implementation correctly identifies nested tags.",
+    "dryRun": "Here is a dry run of the solution: <a><b></a></b>",
+    "commonMistakes": [
+      "Not handling HTML comments",
+      "Not checking for strict tag names"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "function solve(s) {\n    // Your code here\n}",
+    "python": "class Solution:\n    def solve(self, s: str) -> bool:\n        # Your code here\n"
+  },
+  "buggyStarterCode": {
+    "javascript": "function solve(s) {\n    let stack = [];\n    for (let i = 0; i < s.length; i++) {\n        if (s[i] === '<') {\n            if (s[i + 1] === '/') {\n                stack.pop();\n            } else {\n                stack.push(s[i + 1]);\n            }\n        }\n    }\n    return stack.length === 0;\n}",
+    "python": "class Solution:\n    def solve(self, s: str) -> bool:\n        stack = []\n        for i in range(len(s)):\n            if s[i] === '<':\n                if s[i + 1] === '/':\n                    stack.pop()\n                else:\n                    stack.append(s[i + 1])\n        return len(stack) === 0\n"
+  },
+  "functionSignature": {
+    "javascript": "function solve(s);",
+    "python": "def solve(self, s: str) -> bool:"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction solve(s) {\n    let stack = [];\n    let nested = false;\n    for (let i = 0; i < s.length; i++) {\n        if (s[i] === '<') {\n            if (s[i + 1] === '/') {\n                stack.pop();\n            } else {\n                stack.push(s[i + 1]);\n                if (stack.length > 1 && !['img', 'input', 'br'].includes(stack[stack.length - 2])) {\n                    nested = true;\n                }\n            }\n        }\n    }\n    return !nested;\n}",
+    "python": "class Solution:\n    def solve(self, s: str) -> bool:\n        stack = []\n        nested = False\n        for i in range(len(s)):\n            if s[i] === '<':\n                if s[i + 1] === '/':\n                    stack.pop()\n                else:\n                    stack.append(s[i + 1])\n                    if len(stack) > 1 and stack[-2] not in ['img', 'input', 'br']:\n                        nested = True\n        return not nested\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "<a><b></a></b>",
+      "output": "false",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "<p>Hello <img src='image.jpg'> World</p>",
+      "output": "true",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_3",
+      "input": "<!-- Comment --> <a><b></a></b>",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "_id": "d34da5f325b58849d62a7269",
+  "slug": "validating-nested-html-tags-with-strict-tag-names-bugfix-hard-html",
+  "mode": "bug_fix",
+  "category": "HTML",
+  "difficulty": "Hard"
+}

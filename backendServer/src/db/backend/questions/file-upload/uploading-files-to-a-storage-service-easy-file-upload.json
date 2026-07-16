@@ -1,0 +1,132 @@
+{
+  "_id": "d0750c4730c54cae266c7636",
+  "title": "Uploading Files to a Storage Service",
+  "slug": "uploading-files-to-a-storage-service-easy-file-upload",
+  "difficulty": "Easy",
+  "topics": [
+    "FILE_UPLOAD"
+  ],
+  "statement": "Develop a simple file upload service using Express.js. Implement a POST endpoint `/api/upload` that accepts uploaded files and stores them on AWS S3. Handle different types of files (images, documents, etc.) and provide a response with the file URL and other metadata. Ensure the endpoint validates the file type before uploading it to S3.\n\nCreate a GET endpoint `/api/upload/uuid` that retrieves a specific file by its UUID and provides it as a binary response.\n\nWhen uploading a file, ensure that the file name is unique by appending a timestamp to the file name. The timestamp should be in the format `YYYY-MM-DD HH:mm:ss`.\n\nUse Multer middleware to handle multipart/form-data requests and store files on S3. Configure AWS S3 credentials in the environment variables `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.\n\nPlease note that you should not store any sensitive information in the code, instead, provide a placeholder for the AWS S3 credentials.\n\n**Constraints:**\n- Use Multer middleware to handle file uploads.\n- Store files on AWS S3.\n- Ensure file names are unique by appending a timestamp.\n- Handle different types of files.\n\n**Endpoints:**\n### POST /api/upload\n- **Description:** Upload a file to S3 and provide a response with the file URL and metadata.\n- **Request Body:** `multipart/form-data` containing the file to upload.\n- **Response Body:** `{ fileName: string, fileType: string, fileSize: number, fileUrl: string }`\n\n### GET /api/upload/:uuid\n- **Description:** Retrieve a specific file by its UUID and provide it as a binary response.\n- **Path Parameters:** `uuid: string`\n- **Response Body:** The file contents as a binary response.\n",
+  "constraints": [
+    "Use Multer middleware to handle file uploads.",
+    "Store files on AWS S3.",
+    "Ensure file names are unique by appending a timestamp."
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/upload",
+      "description": "Upload a file to S3 and provide a response with the file URL and metadata."
+    },
+    {
+      "method": "GET",
+      "path": "/api/upload/:uuid",
+      "description": "Retrieve a specific file by its UUID and provide it as a binary response."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\"name\": \"file-upload-service\", \"version\": \"1.0.0\", \"main\": \"index.js\", \"scripts\": { \"start\": \"node index.js\" }, \"dependencies\": { \"express\": \"^4.18.2\", \"multer\": \"^1.4.2\", \"aws-sdk\": \"^2.7.24\" }}",
+    "index.js": "const express = require('express');\nconst multer = require('multer');\nconst AWS = require('aws-sdk');\n\nconst app = express();\nconst upload = multer({ dest: 'uploads/' });\n\n// TODO: Implement AWS S3 configuration and file upload logic\n\napp.use(express.json());\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));\n"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "POST",
+      "path": "/api/upload",
+      "headers": {
+        "Content-Type": "multipart/form-data"
+      },
+      "body": {
+        "file": {
+          "value": "This is a test file.",
+          "originalname": "test.txt",
+          "mimetype": "text/plain"
+        }
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "fileName": "test.txt-2022-01-01-12-00-00",
+        "fileType": "text/plain",
+        "fileSize": 13,
+        "fileUrl": "https://s3.amazonaws.com/file-upload-service/test.txt-2022-01-01-12-00-00"
+      },
+      "expectedBodySchema": null,
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "GET",
+      "path": "/api/upload/uuid",
+      "expectedStatus": 200,
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "POST",
+      "path": "/api/upload",
+      "headers": {
+        "Content-Type": "multipart/form-data"
+      },
+      "body": {
+        "file": {
+          "value": "This is a test file with a large size.",
+          "originalname": "large-test.txt",
+          "mimetype": "text/plain"
+        }
+      },
+      "expectedStatus": 413,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "GET",
+      "path": "/api/upload/non-existent-uuid",
+      "expectedStatus": 404,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "POST",
+      "path": "/api/upload",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "multer",
+    "cloudinary",
+    "aws-s3",
+    "validation",
+    "image-processing",
+    "file-storage",
+    "file-upload",
+    "nodejs",
+    "express"
+  ]
+}

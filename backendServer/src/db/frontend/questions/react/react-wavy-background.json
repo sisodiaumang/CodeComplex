@@ -1,0 +1,53 @@
+{
+  "_id": "33e8f09199ea3f60cebb1a67",
+  "title": "React Wavy Canvas Background",
+  "slug": "react-wavy-background",
+  "difficulty": "Hard",
+  "topics": [
+    "REACT",
+    "REACT_WAVY_BACKGROUND"
+  ],
+  "statement": {
+    "markdown": "## React Wavy Canvas Background Component\n\nBuild a smooth, animated wavy canvas overlay background using React hooks and HTML5 Canvas.\n\n### Requirements:\n1. **Canvas Rendering**: Set up a responsive HTML5 Canvas ref that automatically resizes to fill its viewport boundaries.\n2. **Animation Loop**: Use a `requestAnimationFrame` loop inside a `useEffect` hook to draw wave line paths smoothly. Ensure to clean up the loop ref on component unmount.\n3. **Multiwave Sine Logic**: Draw exactly 5 overlapping wave paths with different color gradients, wave heights (amplitude), and velocity offsets to create an organic, floating wave effect.\n4. **Configurable Props**: Allow controlling wave customization via props: `waveWidth` (line thickness), `backgroundFill` (canvas backing color), and `speed` (`\"fast\"` or `\"slow\"`).\n"
+  },
+  "constraints": [
+    "Must support responsive screen widths",
+    "Must utilize React state and canvas lifecycle hooks",
+    "Must use Tailwind CSS classes"
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "html": "",
+    "css": "",
+    "react": "import React, { useRef, useEffect } from 'react';\n\nexport default function WavyBackground({ waveWidth = 2, speed = \"slow\", backgroundFill = \"#000000\", children }) {\n  // Implement wavy canvas rendering background here\n  return (\n    <div className=\"relative w-full h-screen overflow-hidden\">\n      <canvas className=\"absolute inset-0 w-full h-full block\" />\n      {/* You can temporarily add child components here to preview them over the background */}\n      {children}\n    </div>\n  );\n}"
+  },
+  "gradingCriteria": [
+    {
+      "id": "functional_correctness",
+      "description": "Verify that the interactive mouse tracking, scroll animations, or canvas draw loops work perfectly.",
+      "weight": 55
+    },
+    {
+      "id": "code_cleanliness",
+      "description": "Verify clean React hook cleanups (setInterval, requestAnimationFrame, listeners) on component unmount.",
+      "weight": 45
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "react",
+      "tailwind"
+    ],
+    "referenceSolution": "import React, { useRef, useEffect } from 'react';\n\nexport default function WavyBackground({\n  waveWidth = 2,\n  speed = \"slow\",\n  backgroundFill = \"#080710\"\n}) {\n  const canvasRef = useRef(null);\n\n  useEffect(() => {\n    const canvas = canvasRef.current;\n    if (!canvas) return;\n    const ctx = canvas.getContext('2d');\n    \n    let animationFrameId;\n    let nt = 0; // noise/time counter\n\n    const resizeCanvas = () => {\n      canvas.width = canvas.parentElement.clientWidth;\n      canvas.height = canvas.parentElement.clientHeight;\n    };\n    resizeCanvas();\n    window.addEventListener('resize', resizeCanvas);\n\n    const colors = [\"#38bdf8\", \"#818cf8\", \"#c084fc\", \"#e879f9\", \"#22d3ee\"];\n    const speedMultiplier = speed === \"fast\" ? 0.02 : 0.005;\n\n    const render = () => {\n      // Clear canvas with base background fill\n      ctx.fillStyle = backgroundFill;\n      ctx.fillRect(0, 0, canvas.width, canvas.height);\n\n      nt += speedMultiplier;\n\n      // Draw 5 separate waves\n      for (let i = 0; i < 5; i++) {\n        ctx.beginPath();\n        ctx.lineWidth = waveWidth;\n        ctx.strokeStyle = colors[i];\n\n        // Draw sine wave path across x-axis\n        for (let x = 0; x < canvas.width; x += 10) {\n          // Compute Y offset using sine wave equations\n          const y =\n            canvas.height / 2 +\n            Math.sin(x * 0.002 + nt + i * 2) * 50 * Math.sin(nt * 0.5 + i) +\n            Math.sin(x * 0.005 + nt * 2) * 15;\n\n          if (x === 0) {\n            ctx.moveTo(x, y);\n          } else {\n            ctx.lineTo(x, y);\n          }\n        }\n        ctx.stroke();\n      }\n\n      animationFrameId = requestAnimationFrame(render);\n    };\n\n    render();\n\n    return () => {\n      cancelAnimationFrame(animationFrameId);\n      window.removeEventListener('resize', resizeCanvas);\n    };\n  }, [waveWidth, speed, backgroundFill]);\n\n  return (\n    <div className=\"relative w-full h-full min-h-screen overflow-hidden\">\n      <canvas ref={canvasRef} className=\"absolute inset-0 w-full h-full block\" />\n    </div>\n  );\n}"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

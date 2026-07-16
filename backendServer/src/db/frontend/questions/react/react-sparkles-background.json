@@ -1,0 +1,53 @@
+{
+  "_id": "3494a8c4420c2e690d73f366",
+  "title": "React Sparkling Particles Background",
+  "slug": "react-sparkles-background",
+  "difficulty": "Hard",
+  "topics": [
+    "REACT",
+    "REACT_SPARKLES_BACKGROUND"
+  ],
+  "statement": {
+    "markdown": "## React Sparkling Particles Background\n\nBuild a dynamic canvas background overlay rendering floating, twinkling star particles (sparkles).\n\n### Requirements:\n1. **Dynamic Particle Tracking**: Build a particle generator system that tracks individual coordinates, particle sizes, speeds, and opacity parameters.\n2. ** Twinkling Effect**: Over time, fade the opacity of particles up and down dynamically to simulate a realistic twinkling starry night sky.\n3. **Float Motion**: Slowly float particles upward (negative Y movement). If a particle drifts off the top edge, regenerate its position at the bottom boundary.\n4. **Canvas Lifecycle**: Ensure proper canvas context initialization, resize event handling, and `requestAnimationFrame` cleanup on component unmount.\n"
+  },
+  "constraints": [
+    "Must support responsive screen widths",
+    "Must utilize React state and canvas lifecycle hooks",
+    "Must use Tailwind CSS classes"
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "html": "",
+    "css": "",
+    "react": "import React, { useRef, useEffect } from 'react';\n\nexport default function SparklesBackground({ particleCount = 100, minSize = 1, maxSize = 3 }) {\n  // Implement canvas-based sparkling particles background here\n  return (\n    <div className=\"relative w-full h-screen bg-black\">\n      <canvas className=\"absolute inset-0 w-full h-full block\" />\n    </div>\n  );\n}"
+  },
+  "gradingCriteria": [
+    {
+      "id": "functional_correctness",
+      "description": "Verify that the interactive mouse tracking, scroll animations, or canvas draw loops work perfectly.",
+      "weight": 55
+    },
+    {
+      "id": "code_cleanliness",
+      "description": "Verify clean React hook cleanups (setInterval, requestAnimationFrame, listeners) on component unmount.",
+      "weight": 45
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "react",
+      "tailwind"
+    ],
+    "referenceSolution": "import React, { useRef, useEffect } from 'react';\n\nexport default function SparklesBackground({\n  particleCount = 120,\n  minSize = 1,\n  maxSize = 4,\n  particleColor = \"#ffffff\"\n}) {\n  const canvasRef = useRef(null);\n\n  useEffect(() => {\n    const canvas = canvasRef.current;\n    if (!canvas) return;\n    const ctx = canvas.getContext('2d');\n    let animationFrameId;\n\n    const resizeCanvas = () => {\n      canvas.width = canvas.parentElement.clientWidth;\n      canvas.height = canvas.parentElement.clientHeight;\n    };\n    resizeCanvas();\n    window.addEventListener('resize', resizeCanvas);\n\n    // Particle structure definition\n    class Particle {\n      constructor() {\n        this.reset(true);\n      }\n\n      reset(init = false) {\n        this.x = Math.random() * canvas.width;\n        // If initial load, scatter y coordinates. Otherwise, place at bottom.\n        this.y = init ? Math.random() * canvas.height : canvas.height + 10;\n        this.size = Math.random() * (maxSize - minSize) + minSize;\n        this.speedY = -(Math.random() * 0.5 + 0.1);\n        this.speedX = (Math.random() - 0.5) * 0.1;\n        this.opacity = Math.random();\n        this.fadeSpeed = Math.random() * 0.02 + 0.005;\n        this.fadingOut = Math.random() > 0.5;\n      }\n\n      update() {\n        this.y += this.speedY;\n        this.x += this.speedX;\n\n        // Twinkle effect (fade opacity up/down)\n        if (this.fadingOut) {\n          this.opacity -= this.fadeSpeed;\n          if (this.opacity <= 0.1) {\n            this.opacity = 0.1;\n            this.fadingOut = false;\n          }\n        } else {\n          this.opacity += this.fadeSpeed;\n          if (this.opacity >= 0.9) {\n            this.opacity = 0.9;\n            this.fadingOut = true;\n          }\n        }\n\n        // Reset if float off-screen\n        if (this.y < -10 || this.x < -10 || this.x > canvas.width + 10) {\n          this.reset(false);\n        }\n      }\n\n      draw() {\n        ctx.beginPath();\n        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);\n        ctx.fillStyle = particleColor;\n        ctx.globalAlpha = this.opacity;\n        ctx.fill();\n      }\n    }\n\n    const particles = Array.from({ length: particleCount }, () => new Particle());\n\n    const render = () => {\n      // Clear canvas\n      ctx.clearRect(0, 0, canvas.width, canvas.height);\n\n      // Update and draw particles\n      particles.forEach(p => {\n        p.update();\n        p.draw();\n      });\n\n      animationFrameId = requestAnimationFrame(render);\n    };\n\n    render();\n\n    return () => {\n      cancelAnimationFrame(animationFrameId);\n      window.removeEventListener('resize', resizeCanvas);\n    };\n  }, [particleCount, minSize, maxSize, particleColor]);\n\n  return (\n    <div className=\"relative w-full h-full min-h-screen bg-neutral-950 overflow-hidden\">\n      <canvas ref={canvasRef} className=\"absolute inset-0 w-full h-full block\" />\n    </div>\n  );\n}"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

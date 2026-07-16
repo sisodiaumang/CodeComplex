@@ -1,0 +1,156 @@
+{
+  "_id": "75b29117a187542f629a6c49",
+  "title": "Implement Email Resend Feature",
+  "slug": "implement-email-resend-feature-medium-email",
+  "difficulty": "Medium",
+  "topics": [
+    "EMAIL"
+  ],
+  "statement": "Implement a resend email feature. When a user requests an email resend, your API should verify if a resend is allowed within the last hour. If allowed, your API should generate a new unique verification link for the email and send it to the user's email. If not allowed, return an error message. \n\nEndpoints to implement: \n- POST /api/resend-email: Resend a verification email to a user's email address.\n- GET /api/users/:id: Fetch a user by ID and return their email address.\n\nConstraints: \n- Must use only the in-memory array of users provided.\n- Must validate user ID existence before fetching email address.\n- Must validate email address format before sending email.\n\nVisible Test Cases: \n- Resend email to a user with a valid verification link.\n- Attempt to resend email to a user with a resend allowed within the last hour.\n- Attempt to resend email to a user with a resend not allowed within the last hour.\n\nHidden Test Cases: \n- Fetch a non-existent user by ID and return an error message.\n- Fetch a user by ID with a missing email address.\n- Attempt to resend email to a user with a malformed email address.",
+  "constraints": [
+    "Must use only the in-memory array of users provided",
+    "Must validate user ID existence before fetching email address",
+    "Must validate email address format before sending email"
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/resend-email",
+      "description": "Resend a verification email to a user's email address."
+    },
+    {
+      "method": "GET",
+      "path": "/api/users/:id",
+      "description": "Fetch a user by ID and return their email address."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\n  \"name\": \"email-app\",\n  \"version\": \"1.0.0\",\n  \"main\": \"index.js\",\n  \"scripts\": {\n    \"start\": \"node index.js\"\n  },\n  \"dependencies\": {\n    \"express\": \"^4.18.2\",\n    \"nodemailer\": \"^6.7.7\"\n  }\n}",
+    "index.js": "const express = require('express');\nconst app = express();\nconst nodemailer = require('nodemailer');\n\napp.use(express.json());\nconst users = [\n  {\n    id: 1,\n    email: 'user1@example.com'\n  },\n  {\n    id: 2,\n    email: 'user2@example.com'\n  }\n];\n\n// TODO: Implement resend-email endpoint\n// TODO: Implement get-user endpoint\n\napp.listen(3000, () => console.log('Server running on port 3000'))"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "POST",
+      "path": "/api/resend-email",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "emailId": 1,
+        "resendTime": 1643723400
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "success": true
+      },
+      "expectedBodySchema": null,
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "POST",
+      "path": "/api/resend-email",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "emailId": 2,
+        "resendTime": 1643723400
+      },
+      "expectedStatus": 400,
+      "expectedBody": {
+        "error": "Cannot resend within the last hour"
+      },
+      "expectedBodySchema": null,
+      "isVisible": true
+    },
+    {
+      "id": "v_tc3",
+      "method": "POST",
+      "path": "/api/resend-email",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "emailId": 2,
+        "resendTime": 1643723410
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "success": true
+      },
+      "expectedBodySchema": null,
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "GET",
+      "path": "/api/users/3",
+      "expectedStatus": 404,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "GET",
+      "path": "/api/users/1",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "email": "user1@example.com"
+      },
+      "expectedBodySchema": null,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "POST",
+      "path": "/api/resend-email",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "emailId": 1,
+        "resendTime": "malformed"
+      },
+      "expectedStatus": 400,
+      "expectedBody": {
+        "error": "Invalid resend time"
+      },
+      "expectedBodySchema": null,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "nodemailer",
+    "resend",
+    "smtp",
+    "templates",
+    "otp",
+    "verification",
+    "password-reset",
+    "email"
+  ]
+}

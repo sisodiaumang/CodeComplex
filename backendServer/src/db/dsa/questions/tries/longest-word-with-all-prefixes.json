@@ -1,0 +1,206 @@
+{
+  "_id": "longest-word-with-all-prefixes",
+  "title": "Longest Word with All Prefixes",
+  "slug": "longest-word-with-all-prefixes",
+  "difficulty": "Medium",
+  "category": "TREE",
+  "subCategory": "Theory & Problems",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 500,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "Tries"
+    ],
+    "patterns": [
+      "longest word",
+      "all prefixes"
+    ],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "tries",
+      "tree",
+      "theory",
+      "problems"
+    ],
+    "keywords": [
+      "longest common prefix",
+      "trie",
+      "prefix tree"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "Given a list of strings, find the longest word that can be formed by adding one character at a time, and at each step, the resulting word must be a prefix of another word in the list. A single character is considered a valid word.\n\nThe problem requires designing a Trie data structure to efficiently store and retrieve words with common prefixes.",
+    "inputFormat": "number of words\nword1\nword2\n...\n",
+    "outputFormat": "longest word\n",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "number of words",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of words in the input list."
+      },
+      {
+        "variable": "length of each word",
+        "type": "integer",
+        "min": 1,
+        "max": 1000,
+        "description": "The length of each word in the input list."
+      }
+    ],
+    "examples": [
+      {
+        "input": "5\na\nbanana\napple\napp\nap",
+        "output": "banana",
+        "explanation": "The longest word that can be formed by adding one character at a time and at each step, the resulting word must be a prefix of another word in the list is 'apple'."
+      },
+      {
+        "input": "3\na\nan\nand",
+        "output": "and",
+        "explanation": "The longest word that can be formed by adding one character at a time and at each step, the resulting word must be a prefix of another word in the list is 'and'."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Start by creating a Trie data structure to efficiently store and retrieve words with common prefixes. Each node in the Trie will have a boolean flag to mark the end of a word."
+    },
+    {
+      "order": 2,
+      "text": "When inserting a word into the Trie, iterate through each character of the word and update the child nodes accordingly. If a word is already present in the Trie, mark the end of the word at the corresponding node."
+    },
+    {
+      "order": 3,
+      "text": "To find the longest word that can be formed by adding one character at a time, perform a depth-first search (DFS) from the root of the Trie. During the DFS, keep track of the longest word found so far and the current word being explored."
+    },
+    {
+      "order": 4,
+      "text": "When exploring a node during the DFS, check if the current word is a prefix of any other word in the Trie. If it is, update the longest word found so far if the current word is longer."
+    },
+    {
+      "order": 5,
+      "text": "The longest word that can be formed by adding one character at a time will be the longest word found during the DFS that has a corresponding node in the Trie with the end-of-word flag set."
+    }
+  ],
+  "editorial": {
+    "title": "Longest Word with All Prefixes",
+    "intuition": "The task is to find the longest word that can be built one letter at a time, each intermediate string also being a word. The key insight is that a word’s validity depends only on its prefixes, not on the rest of the list. By storing all words in a hash set we can check any prefix in constant time, turning a potentially quadratic check into linear in the word’s length.",
+    "bruteForce": "A naïve approach would generate every possible prefix for each word and then search the entire list for that prefix, leading to O(N^2 * L) time. Even if we used a hash set, we might still iterate over all words and for each word check all prefixes, which is O(N * L). This is correct but slow when N and L are large, as the constant factors and repeated lookups become expensive.",
+    "betterSolution": "The optimal solution keeps a hash set of all words for O(1) prefix lookups. It iterates once over the input list, and for each word of sufficient length it checks its prefixes in order. If any prefix is missing, the word is discarded immediately. This reduces the work to the sum of lengths of all words that pass the length filter, giving O(N * L) time and O(N * L) space.",
+    "optimalSolution": "For each word w, we test all prefixes w[0:i] for i=1..len(w)-1. If every prefix exists in the set, w is a candidate. We maintain the best candidate by length and lexicographical order. This linear scan over words and linear scan over prefixes per word yields the required complexity.",
+    "proofOfCorrectness": "Assume the algorithm outputs word B. For any other word A that satisfies the prefix condition, either |A|<|B| or |A|=|B| and A lexicographically larger. Since the algorithm checks all words, A would have been considered. If A were longer, the algorithm would have updated best to A, contradicting that B is output. If A were equal length but lexicographically larger, the algorithm keeps the smaller one. Therefore no valid word longer or lexicographically smaller than B exists, proving B is optimal.",
+    "dryRun": "Input: 5 words: a, ap, app, appl, apple. The set contains all five. The algorithm checks 'a' (valid), 'ap' (valid), 'app' (valid), 'appl' (valid), 'apple' (valid). The longest is 'apple', which is output.",
+    "commonMistakes": [
+      "Using a list instead of a hash set for prefix checks, leading to O(L) per lookup.",
+      "Ignoring the lexicographical tie‑break condition.",
+      "Checking prefixes in reverse order, which can miss early failures.",
+      "Updating the best word before confirming all prefixes exist.",
+      "Not handling the case where no word satisfies the condition, resulting in an empty output."
+    ],
+    "timeComplexity": "O(N * M)",
+    "spaceComplexity": "O(N * M)"
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass TrieNode {\npublic:\n    unordered_map<char, TrieNode*> children;\n    bool isWord;\n    TrieNode() : isWord(false) {}\n};\n\nclass Solution {\npublic:\n    string longestWord(vector<string>& words) {\n        // TODO: implement\n        return \"\";\n    }\nprivate:\n    TrieNode* root;\n    void insert(const string& word) {\n        TrieNode* node = root;\n        for (char c : word) {\n            if (node->children.find(c) == node->children.end()) {\n                node->children[c] = new TrieNode();\n            }\n            node = node->children[c];\n        }\n        node->isWord = true;\n    }\n    bool search(const string& word) {\n        TrieNode* node = root;\n        for (char c : word) {\n            if (node->children.find(c) == node->children.end()) {\n                return false;\n            }\n            node = node->children[c];\n        }\n        return node->isWord;\n    }\n};",
+    "java": "import java.util.*;\n\nclass TrieNode {\n    Map<Character, TrieNode> children;\n    boolean isWord;\n    TrieNode() {\n        children = new HashMap<>();\n        isWord = false;\n    }\n}\n\nclass Solution {\n    private TrieNode root;\n    public String longestWord(String[] words) {\n        // TODO: implement\n        return \"\";\n    }\n    private void insert(String word) {\n        TrieNode node = root;\n        for (char c : word.toCharArray()) {\n            node.children.putIfAbsent(c, new TrieNode());\n            node = node.children.get(c);\n        }\n        node.isWord = true;\n    }\n    private boolean search(String word) {\n        TrieNode node = root;\n        for (char c : word.toCharArray()) {\n            if (!node.children.containsKey(c)) {\n                return false;\n            }\n            node = node.children.get(c);\n        }\n        return node.isWord;\n    }\n}",
+    "python": "class TrieNode:\n    def __init__(self):\n        self.children = {}\n        self.isWord = False\n\nclass Solution:\n    def __init__(self):\n        self.root = TrieNode()\n    def longestWord(self, words: List[str]) -> str:\n        # TODO: implement\n        pass\n    def insert(self, word: str) -> None:\n        node = self.root\n        for c in word:\n            if c not in node.children:\n                node.children[c] = TrieNode()\n            node = node.children[c]\n        node.isWord = True\n    def search(self, word: str) -> bool:\n        node = self.root\n        for c in word:\n            if c not in node.children:\n                return False\n            node = node.children[c]\n        return node.isWord",
+    "javascript": "/**\n * @param {string[]} words\n * @return {string}\n */\nvar longestWord = function(words) {\n    // TODO: implement\n    return \"\";\n};\n\nclass TrieNode {\n    constructor() {\n        this.children = {};\n        this.isWord = false;\n    }\n}\n\nfunction insert(word) {\n    let node = root;\n    for (let c of word) {\n        if (!(c in node.children)) {\n            node.children[c] = new TrieNode();\n        }\n        node = node.children[c];\n    }\n    node.isWord = true;\n}\n\nfunction search(word) {\n    let node = root;\n    for (let c of word) {\n        if (!(c in node.children)) {\n            return false;\n        }\n        node = node.children[c];\n    }\n    return node.isWord;\n}"
+  },
+  "functionSignature": {
+    "cpp": "string longestWord(vector<string>& words);",
+    "java": "public String longestWord(String[] words);",
+    "python": "def longestWord(self, words: List[str]) -> str:",
+    "javascript": "var longestWord = function(words);"
+  },
+  "solutions": {
+    "python": "import sys\nfrom typing import List\n\nclass TrieNode:\n    def __init__(self):\n        self.children = {}\n        self.is_word = False\n\nclass Solution:\n    def longestWord(self, words: List[str]) -> str:\n        root = TrieNode()\n        for word in words:\n            node = root\n            for char in word:\n                if char not in node.children:\n                    node.children[char] = TrieNode()\n                node = node.children[char]\n            node.is_word = True\n\n        longest_word = \"\"\n        def dfs(node: TrieNode, prefix: str):\n            nonlocal longest_word\n            if node.is_word:\n                if len(prefix) > len(longest_word):\n                    longest_word = prefix\n            for char, child_node in node.children.items():\n                dfs(child_node, prefix + char)\n\n        dfs(root, \"\")\n        return longest_word\n\nif __name__ == '__main__':\n    it = iter(sys.stdin.read().split())\n    try:\n        n = int(next(it))\n        words = [next(it) for _ in range(n)]\n    except StopIteration:\n        sys.exit(0)\n    sol = Solution()\n    print(sol.longestWord(words))",
+    "cpp": "#include <numeric>\n#include <bits/stdc++.h>\nusing namespace std;\n\nstruct TrieNode {\n    unordered_map<char, TrieNode*> children;\n    bool is_word;\n    TrieNode() : is_word(false) {}\n};\n\nclass Solution {\npublic:\n    string longestWord(vector<string>& words) {\n        TrieNode* root = new TrieNode();\n        for (const string& word : words) {\n            TrieNode* node = root;\n            for (char c : word) {\n                if (node->children.find(c) == node->children.end()) {\n                    node->children[c] = new TrieNode();\n                }\n                node = node->children[c];\n            }\n            node->is_word = true;\n        }\n\n        string longest_word;\n        function<void(TrieNode*, string)> dfs = [&](TrieNode* node, string prefix) {\n            if (node->is_word) {\n                if (prefix.size() > longest_word.size()) {\n                    longest_word = prefix;\n                }\n            }\n            for (const auto& child : node->children) {\n                dfs(child.second, prefix + child.first);\n            }\n        };\n        dfs(root, \"\");\n        return longest_word;\n    }\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int n;\n    if (!(cin >> n)) return 0;\n    vector<string> words(n);\n    for (int i = 0; i < n; i++) cin >> words[i];\n    Solution sol;\n    cout << sol.longestWord(words) << '\\n';\n    return 0;\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.2
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5\na\nbanana\napple\napp\nap",
+      "output": "banana",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "3\na\nan\nand",
+      "output": "and",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint_3",
+      "input": "1\nabc",
+      "output": "abc",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "boundary_4",
+      "input": "1\na\nb\nc",
+      "output": "a",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    },
+    {
+      "id": "duplicate_5",
+      "input": "2\nabc\nabc",
+      "output": "abc",
+      "isVisible": false,
+      "weight": 1,
+      "category": "duplicate"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

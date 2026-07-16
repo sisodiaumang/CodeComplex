@@ -1,0 +1,58 @@
+{
+  "_id": "57ff5c0fda72620b1dd20f1e",
+  "title": "React Sliding Carousel",
+  "slug": "react-carousel",
+  "difficulty": "Medium",
+  "topics": [
+    "REACT",
+    "REACT_CAROUSEL"
+  ],
+  "statement": {
+    "markdown": "## React Sliding Image Carousel\n\nBuild a sliding Carousel image component. It should cycle through an array of images.\n\n### Requirements:\n1. **Navigation Buttons**: Left and right slide arrows overlaying the carousel.\n2. **Infinite Looping**: Clicking \"Next\" on the last slide wraps around to the first slide; clicking \"Previous\" on the first slide wraps to the last slide.\n3. **Auto-Play**: Support an `autoPlay` boolean prop. If active, slide transitions should cycle automatically every 3 seconds. Hovering over the carousel should temporarily pause autoplay.\n4. **Dot Indicators**: Include navigation dots showing the current active index. Clicking a dot jumps directly to that slide.\n"
+  },
+  "constraints": [
+    "Must be fully responsive",
+    "Must use React state hooks",
+    "Must style elements with Tailwind CSS"
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "html": "",
+    "css": "",
+    "react": "import React, { useState, useEffect } from 'react';\n\nexport default function Carousel({ slides, autoPlay = true }) {\n  // Implement sliding image carousel here\n  return (\n    <div className=\"relative w-full max-w-xl aspect-video rounded-xl overflow-hidden group\">\n      {/* Slides & Controls */}\n    </div>\n  );\n}"
+  },
+  "gradingCriteria": [
+    {
+      "id": "functional_correctness",
+      "description": "Check if the component state is managed properly and fulfills all interaction criteria.",
+      "weight": 50
+    },
+    {
+      "id": "accessibility_focus",
+      "description": "Verify that keyboard focus, event handlers, and ARIA roles match custom specifications.",
+      "weight": 30
+    },
+    {
+      "id": "code_cleanliness",
+      "description": "Verify proper component code design structure and clean state structures.",
+      "weight": 20
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "react",
+      "tailwind"
+    ],
+    "referenceSolution": "import React, { useState, useEffect, useRef } from 'react';\n\nexport default function Carousel({ slides, autoPlay = true }) {\n  const [currentIndex, setCurrentIndex] = useState(0);\n  const [isHovered, setIsHovered] = useState(false);\n  const timerRef = useRef(null);\n\n  const prevSlide = () => {\n    setCurrentIndex(prev => (prev === 0 ? slides.length - 1 : prev - 1));\n  };\n\n  const nextSlide = () => {\n    setCurrentIndex(prev => (prev === slides.length - 1 ? 0 : prev + 1));\n  };\n\n  const goToSlide = (idx) => {\n    setCurrentIndex(idx);\n  };\n\n  useEffect(() => {\n    if (autoPlay && !isHovered) {\n      timerRef.current = setInterval(nextSlide, 3000);\n    }\n    return () => {\n      if (timerRef.current) clearInterval(timerRef.current);\n    };\n  }, [autoPlay, isHovered]);\n\n  return (\n    <div\n      onMouseEnter={() => setIsHovered(true)}\n      onMouseLeave={() => setIsHovered(false)}\n      className=\"relative w-full max-w-xl aspect-video rounded-xl overflow-hidden bg-gray-100 group shadow-md\"\n    >\n      {/* Images Slider Container */}\n      <div className=\"w-full h-full flex transition-transform duration-500 ease-out\" style={{ transform: `translateX(-${currentIndex * 100}%)` }}>\n        {slides.map((slide, idx) => (\n          <img\n            key={idx}\n            src={slide}\n            alt={`Slide ${idx + 1}`}\n            className=\"w-full h-full object-cover shrink-0\"\n          />\n        ))}\n      </div>\n\n      {/* Prev / Next controls */}\n      <button\n        onClick={prevSlide}\n        className=\"absolute top-1/2 left-4 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white rounded-full p-2.5 focus:outline-none focus:ring-2 focus:ring-white transition opacity-0 group-hover:opacity-100\"\n      >\n        <svg className=\"w-5 h-5\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" strokeWidth={2.5}>\n          <path strokeLinecap=\"round\" strokeLinejoin=\"round\" d=\"M15 19l-7-7 7-7\" />\n        </svg>\n      </button>\n\n      <button\n        onClick={nextSlide}\n        className=\"absolute top-1/2 right-4 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white rounded-full p-2.5 focus:outline-none focus:ring-2 focus:ring-white transition opacity-0 group-hover:opacity-100\"\n      >\n        <svg className=\"w-5 h-5\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" strokeWidth={2.5}>\n          <path strokeLinecap=\"round\" strokeLinejoin=\"round\" d=\"M9 5l7 7-7 7\" />\n        </svg>\n      </button>\n\n      {/* Slide Navigation Dots */}\n      <div className=\"absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2\">\n        {slides.map((_, idx) => (\n          <button\n            key={idx}\n            onClick={() => goToSlide(idx)}\n            className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${currentIndex === idx ? 'bg-white scale-125' : 'bg-white/50 hover:bg-white/80'}`}\n          />\n        ))}\n      </div>\n    </div>\n  );\n}"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

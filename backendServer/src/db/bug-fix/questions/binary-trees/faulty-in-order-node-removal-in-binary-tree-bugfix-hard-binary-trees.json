@@ -1,0 +1,153 @@
+{
+  "_id": "e0a826a76be4a120538d4f66",
+  "title": "Faulty In-Order Node Removal in Binary Tree",
+  "slug": "faulty-in-order-node-removal-in-binary-tree-bugfix-hard-binary-trees",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "In-Order DFS in Binary Tree",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 100,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "tree"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "You are given a binary tree and a target node. Remove the target node from the binary tree while maintaining the in-order property.\n\nYou are allowed to remove a node and its children. However, if the target node has both a left and right child, you cannot remove only the target node.\n\nYour function should return the root of the modified binary tree.",
+    "inputFormat": "class Node:\n    def __init__(self, val, left=None, right=None):\n        self.val = val\n        self.left = left\n        self.right = right\n\nThe input will be a binary tree represented as a list of nodes.\n\nInput:\n    root: the root of the binary tree\n    target: the node to be removed\n\nOutput:\n    the root of the modified binary tree",
+    "outputFormat": "the root of the modified binary tree",
+    "notes": "You are allowed to delete a node and its children. However, if the target node has both a left and right child, you cannot remove only the target node.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "Example input (matching the stdin format that main wrapper expects)\nroot = Node(4)\nroot.left = Node(2)\nroot.right = Node(5)\nroot.left.left = Node(1)\nroot.left.right = Node(3)\nremoveNode(root, root.left)\n\n3 1 4 2",
+        "output": "the modified binary tree has in-order traversal: 1 2 3 4 5",
+        "explanation": ""
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use an In-Order DFS traversal to find the target node."
+    }
+  ],
+  "editorial": {
+    "title": "Faulty In-Order Node Removal in Binary Tree",
+    "intuition": "To remove a target node, you can use In-Order DFS traversal to find the node, and then recursively remove the node's left and right subtrees.",
+    "bruteForce": "You can use an In-Order DFS traversal to find the target node, and then remove the node and its children.",
+    "betterSolution": "",
+    "optimalSolution": "You can use an In-Order DFS traversal to find the target node, and then recursively remove the node's left and right subtrees.",
+    "proofOfCorrectness": "The modified binary tree after removing the target node still maintains the in-order property.",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(N)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    bool removeNode(vector<int>& nums) {\n        // TODO: implement\n        return false;\n    }\n};",
+    "java": "class Solution {\n    public boolean removeNode(int[] nums) {\n        // TODO: implement\n        return false;\n    }\n}",
+    "python": "class Solution:\n    def removeNode(self, root: TreeNode, target: TreeNode):\n        # TODO: implement\n        pass\n\nclass TreeNode:\n    def __init__(self, x):\n        self.val = x\n        self.left = None\n        self.right = None\n",
+    "javascript": "var removeNode = function(nums) {\n    // TODO: implement\n    return false;\n};"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    bool removeNode(TreeNode* root, TreeNode* target) {\n        if (!root) return false;\n        if (root == target) {\n            root->val = root->left->val;\n            root->left = root->left->left;\n            return true;\n        }\n        removeNode(root->left, target);\n        removeNode(root->right, target);\n        return false;\n    }\n};",
+    "java": "public class Solution {\npublic boolean removeNode(TreeNode root, TreeNode target) {\n    if (root == null) return false;\n    if (root == target) {\n        root.val = root.left.val;\n        root.left = root.left.left;\n        return true;\n    }\n    removeNode(root.left, target);\n    removeNode(root.right, target);\n    return false;\n}\n}",
+    "python": "class Solution:\n    def removeNode(self, root: TreeNode, target: TreeNode):\n        if not root: return False\n        if root == target:\n            root.val = root.left.val\n            root.left = root.left.left\n            return True\n        self.removeNode(root.left, target)\n        self.removeNode(root.right, target)\n        return False\n\nclass TreeNode:\n    def __init__(self, x):\n        self.val = x\n        self.left = None\n        self.right = None\n",
+    "javascript": "var removeNode = function(nums) {\n    // Buggy code\n    return false;\n};"
+  },
+  "functionSignature": {
+    "cpp": "bool removeNode(TreeNode* root, TreeNode* target);",
+    "java": "public boolean removeNode(TreeNode root, TreeNode target);",
+    "python": "def removeNode(self, root: TreeNode, target: TreeNode) -> bool:",
+    "javascript": "var removeNode = function(root, target){}"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def removeNode(self, root: TreeNode, target: TreeNode):\n        if not root: return\n\n        if root == target:\n            if not target.left:\n                root = target.right\n            elif not target.right:\n                root = target.left\n            else:\n                min_val = self.getMinVal(root.right)\n                root.val = min_val\n                self.removeNode(root.right, root.right)\n\n        self.removeNode(root.left, target)\n        self.removeNode(root.right, target)\n\n    def getMinVal(self, root):\n        while root.left:\n            root = root.left\n        return root.val\n\nn = 5\nroot = TreeNode(4)\nroot.left = TreeNode(2)\nroot.right = TreeNode(5)\nroot.left.left = TreeNode(1)\nroot.left.right = TreeNode(3)\nprint(removeNode(root, root.left))\n\n# Expected output\n# 3 1 4 2",
+    "cpp": "#include <iostream>\n#include <vector>\n#include <string>\n#include <algorithm>\n#include <utility>\n#include <stack>\n#include <unordered_set>\n#include <unordered_map>\n#include <set>\n#include <map>\nusing namespace std;\n\nconst int N = 100010;\n\nstruct TreeNode {\n    int val;\n    TreeNode* left;\n    TreeNode* right;\n\n    TreeNode(int x) : val(x), left(NULL), right(NULL) {}\n};\n\nclass Solution {\npublic:\n    void removeNode(TreeNode* root, TreeNode* target) {\n        if (root == NULL) {\n            return;\n        }\n\n        if (root == target) {\n            if (root->left == NULL) {\n                root = root->right;\n            } else if (root->right == NULL) {\n                root = root->left;\n            } else {\n                TreeNode* minNode = getMinNode(root->right);\n                root->val = minNode->val;\n                removeNode(root->right, minNode);\n            }\n        }\n\n        removeNode(root->left, target);\n        removeNode(root->right, target);\n    }\n\n    TreeNode* getMinNode(TreeNode* root) {\n        while (root->left) {\n            root = root->left;\n        }\n        return root;\n    }\n};\n\nint main() {\n    int n;\n    cin >> n;\n\n    Solution s;\n\n    for (int i = 0; i < n; i++) {\n        int val;\n        cin >> val;\n\n        if (i == 0) {\n            TreeNode* root = new TreeNode(val);\n            root = s.removeNode(root, root);\n            cout << root->val << endl;\n        } else {\n            TreeNode* node = new TreeNode(val);\n            root->left = node;\n            cout << node->val << endl;\n        }\n    }\n\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 5,
+    "memoryLimit": 512,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5\n4\n2\n5\n1\n3",
+      "output": "3\n1\n4\n2",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_hidden_generated",
+      "input": "5\n4\n2\n5\n1\n3",
+      "output": "3\n1\n4\n2",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

@@ -1,0 +1,133 @@
+{
+  "_id": "7957d16907d5c6781e1af969",
+  "title": "Secure File Upload Service",
+  "slug": "secure-file-upload-service-medium-file-upload",
+  "difficulty": "Medium",
+  "topics": [
+    "FILE_UPLOAD"
+  ],
+  "statement": "\nCreate an API service that securely handles file uploads to a cloud storage service. Implement a POST endpoint to receive file uploads from clients.\n\n### Requirements\n\n*   Use the Multer middleware to handle multipart/form-data requests.\n*   Validate the uploaded file to ensure it is a valid image (jpg, jpeg, or png) and its size is less than 2 MB.\n*   Store the uploaded file in a cloud storage service (AWS S3).\n*   Expose a GET endpoint to retrieve a list of all uploaded files.\n*   Include a hidden GET endpoint to retrieve a specific file by its unique identifier.\n\n### Endpoints\n\n*   **POST /api/upload**: Upload a file to the cloud storage service.\n*   **GET /api/files**: Retrieve a list of all uploaded files.\n*   **GET /api/files/:id**: Retrieve a specific file by its unique identifier.\n",
+  "constraints": [
+    "Store uploaded files in the provided AWS S3 mock database (see starter code for details)",
+    "Must validate file type and size on the server-side"
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/upload",
+      "description": "Upload a file to the cloud storage service. Accepts multipart/form-data with a file key. Returns the uploaded file's ID on success."
+    },
+    {
+      "method": "GET",
+      "path": "/api/files",
+      "description": "Retrieve a list of all uploaded files. Returns an array of file objects on success."
+    },
+    {
+      "method": "GET",
+      "path": "/api/files/:id",
+      "description": "Retrieve a specific file by its unique identifier. Returns the file object on success."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\n  \"name\": \"file-upload-app\",\n  \"version\": \"1.0.0\",\n  \"main\": \"index.js\",\n  \"scripts\": {\n    \"start\": \"node index.js\"\n  },\n  \"dependencies\": {\n    \"aws-sdk\": \"^2.7.12\",\n    \"express\": \"^4.18.2\",\n    \"multer\": \"^1.4.4\"\n  }\n}",
+    "index.js": "const express = require('express');\nconst multer = require('multer');\nconst AWS = require('aws-sdk');\n\nconst s3 = new AWS.S3({\n  region: 'your-region',\n  accessKeyId: 'your-access-key-id',\n  secretAccessKey: 'your-secret-access-key'\n});\n\nconst app = express();\nconst upload = multer({\n  dest: './uploads/',\n  limits: { fileSize: 2 * 1024 * 1024 }\n});\n\n// TODO: Implement upload endpoint\n// TODO: Implement file list endpoint\n// TODO: Implement file retrieval endpoint\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "POST",
+      "path": "/api/upload",
+      "headers": {
+        "Content-Type": "multipart/form-data"
+      },
+      "body": {
+        "file": {
+          "value": "file contents",
+          "options": {
+            "file": "test-image.jpg"
+          }
+        }
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "id": "12345"
+      },
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "GET",
+      "path": "/api/files",
+      "expectedStatus": 200,
+      "expectedBody": [
+        {
+          "id": "12345",
+          "name": "test-image.jpg",
+          "type": "image/jpeg",
+          "size": 1000000
+        }
+      ],
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "GET",
+      "path": "/api/files/12345",
+      "expectedStatus": 200,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "GET",
+      "path": "/api/files/12345",
+      "headers": {
+        "Accept": "application/json"
+      },
+      "expectedStatus": 404,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "POST",
+      "path": "/api/upload",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {},
+      "expectedStatus": 400,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "multer",
+    "cloudinary",
+    "aws-s3",
+    "validation",
+    "image-processing",
+    "file-storage",
+    "file-upload"
+  ]
+}

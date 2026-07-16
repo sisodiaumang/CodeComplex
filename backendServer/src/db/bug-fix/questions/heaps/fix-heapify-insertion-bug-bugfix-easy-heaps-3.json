@@ -1,0 +1,158 @@
+{
+  "_id": "5358e98fa49ee1ad1efa7178",
+  "title": "Fix Heapify Insertion Bug",
+  "slug": "fix-heapify-insertion-bug-bugfix-easy-heaps-3",
+  "difficulty": "Easy",
+  "category": "DSA",
+  "subCategory": "Basic Heap Operations",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "heap"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Heapify an array after inserting a new element at a specific position.",
+    "inputFormat": "Input is an array of integers and the index at which the new element is to be inserted. The array is already a max heap. The new element is also an integer.",
+    "outputFormat": "The function should return the resulting heap after the insertion.",
+    "notes": "The inserted element should ensure the heap property is maintained. You can assume the input array has at least 1 element.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "2\n5 3",
+        "output": "5 3 2 1 0",
+        "explanation": "Example 1: Insert 1 at index 3 of the max heap [5, 3]."
+      },
+      {
+        "input": "3\n2 1 0",
+        "output": "2 1 0",
+        "explanation": "Example 2: Insert 2 at index 1 of the max heap [2, 1, 0]."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Recall the heapify operation and how it maintains the heap property."
+    }
+  ],
+  "editorial": {
+    "title": "Heapify Insertion",
+    "intuition": "Insert the new element in its correct position in the heap and then perform a heapify operation to maintain the heap property.",
+    "bruteForce": "brute Force details.",
+    "betterSolution": "",
+    "optimalSolution": "Perform the insert operation and follow it by a max heapify operation starting from the index at which the new element was inserted.",
+    "proofOfCorrectness": "proof Of Correctness details.",
+    "dryRun": "dry Run details.",
+    "commonMistakes": [
+      "Incorrect insertion in the heap",
+      "Inadequate heapify operation"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {public: vector<int> heapifyInsertion(vector<int> array, int n, int idx) {\t// TODO: implement\treturn array;}};",
+    "java": "class Solution {public static int[] heapifyInsertion(int[] array, int n, int idx) {\t// TODO: implement\treturn array;}};",
+    "python": "class Solution: def heapifyInsertion(self, nums: list[int], n: int, idx: int) -> list[int]:\t# TODO: implement\treturn nums;",
+    "javascript": "function heapifyInsertion(nums, n, idx) {\t// TODO: implement\treturn nums;"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {public: vector<int> heapifyInsertion(vector<int> array, int n, int idx) {\tfor (int i = n - 1; i > idx; --i) swap(array[i], array[i - 1]);\treturn array;}};",
+    "java": "class Solution {public static int[] heapifyInsertion(int[] array, int n, int idx) {\tfor (int i = n - 1; i > idx; --i) {\tint temp = array[i]; array[i] = array[i - 1]; array[i - 1] = temp;\t}\treturn array;}};",
+    "python": "class Solution: def heapifyInsertion(self, nums: list[int], n: int, idx: int) -> list[int]:\tfor i in range(n - 1, idx, -1):\tnums[i], nums[i - 1] = nums[i - 1], nums[i]\n\treturn nums;",
+    "javascript": "function heapifyInsertion(nums, n, idx) {\tfor (let i = n - 1; i > idx; --i) {\tlet temp = nums[i]; nums[i] = nums[i - 1]; nums[i - 1] = temp;\t}\treturn nums;"
+  },
+  "functionSignature": {
+    "cpp": "vector<int> heapifyInsertion(vector<int> array, int n, int idx)",
+    "java": "int[] heapifyInsertion(int[] array, int n, int idx)",
+    "python": "def heapifyInsertion(self, nums: list[int], n: int, idx: int) -> list[int]:",
+    "javascript": "function heapifyInsertion(nums, n, idx)"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def heapifyInsertion(self, nums: list[int], n: int, idx: int) -> list[int]:\n        for i in range(n - 1, idx, -1):\n            nums[i], nums[i - 1] = nums[i - 1], nums[i]\n        self.max_heapify(nums, n - 1)\n        return nums\n\n    def max_heapify(self, nums: list[int], i: int) -> None:\n        largest = i\n        left = 2 * i + 1\n        right = 2 * i + 2\n        if left < n and nums[left] > nums[largest]:\n            largest = left\n        if right < n and nums[right] > nums[largest]:\n            largest = right\n        if largest != i:\n            nums[i], nums[largest] = nums[largest], nums[i]\n            self.max_heapify(nums, largest)\n\n    def heapifyInsertion2(self, nums: list[int], n: int, idx: int) -> list[int]:\n        # The buggy code implementation\n        for i in range(n - 1, idx, -1):\n            nums[i], nums[i - 1] = nums[i - 1], nums[i]\n        for i in range(n - 1, 0, -1):\n            self.max_heapify(nums, i)\n        return nums\n",
+    "cpp": "class Solution {\npublic:\n    vector<int> heapifyInsertion(vector<int> array, int n, int idx) {\n        for (int i = n - 1; i > idx; --i)\n            swap(array[i], array[i - 1]);\n\n        int root = n - 1;\n        while (root > 0) {\n            int largest = root;\n            int left = 2 * root + 1;\n            int right = 2 * root + 2;\n            if (left < n && array[left] > array[largest])\n                largest = left;\n            if (right < n && array[right] > array[largest])\n                largest = right;\n            if (largest != root) {\n                swap(array[root], array[largest]);\n                root = largest;\n            } else\n                break;\n        }\n\n        return array;\n    }\n};",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "2\n5 3",
+      "output": "5 3 2 1 0",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "3\n2 1 0",
+      "output": "2 1 0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

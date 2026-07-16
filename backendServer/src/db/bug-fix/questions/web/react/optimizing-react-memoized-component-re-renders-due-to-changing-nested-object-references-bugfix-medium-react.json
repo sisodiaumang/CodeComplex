@@ -1,0 +1,147 @@
+{
+  "title": "Optimizing React Memoized Component Re-renders Due to Changing Nested Object References",
+  "subCategory": "State Management",
+  "statement": {
+    "markdown": "A React application uses a memoized component to optimize re-renders of a nested object. However, the component still re-renders unnecessarily when the nested object's references change. Your task is to modify the existing implementation to prevent this behavior.",
+    "inputFormat": "A nested object with changing references, e.g. `{ a: { b: { c: 1 } } }`",
+    "outputFormat": "The memoized component's rendered output",
+    "notes": "The nested object's references change frequently, causing the component to re-render unnecessarily.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of nested object references"
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of object properties"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"a\":{\"b\":{\"c\":1}}}",
+        "output": "{\"a\":{\"b\":{\"c\":1}}}",
+        "explanation": "The component should not re-render unnecessarily when the nested object's references change."
+      },
+      {
+        "input": "{\"a\":{\"b\":{\"c\":1,\"d\":2}}}",
+        "output": "{\"a\":{\"b\":{\"c\":1,\"d\":2}}}",
+        "explanation": "The component should re-render when the nested object's properties change."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 75,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "REACT"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "react"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the `React.memo` Higher-Order Component (HOC) to optimize re-renders"
+    },
+    {
+      "order": 2,
+      "text": "Use the `JSON.stringify` method to compare nested object references"
+    }
+  ],
+  "editorial": {
+    "title": "Optimizing React Memoized Component Re-renders",
+    "intuition": "The `React.memo` HOC can be used to optimize re-renders by comparing the props of a component. However, when dealing with nested objects, comparing references using `JSON.stringify` can lead to unnecessary re-renders.",
+    "bruteForce": "One possible solution is to use a recursive function to compare nested object references. However, this approach can be inefficient and lead to stack overflows.",
+    "betterSolution": "A better approach is to use the `React.useCallback` hook to memoize the nested object's references and compare them using `JSON.stringify`.",
+    "optimalSolution": "The optimal solution is to use the `React.useCallback` hook to memoize the nested object's references and compare them using `JSON.stringify`. Additionally, use the `JSON.parse` method to parse the JSON string and compare the nested object's properties.",
+    "proofOfCorrectness": "The proof of correctness is based on the fact that `JSON.stringify` returns a JSON string that represents the nested object's properties. By comparing this string, we can determine whether the nested object's references have changed.",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Comparing nested object references using `===`",
+      "Using `JSON.stringify` without `JSON.parse`"
+    ],
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "class MemoizedComponent extends React.Component {\n  constructor(props) {\n    super(props);\n  }\n\n  shouldComponentUpdate(nextProps) {\n    // Your code here\n  }\n\n  render() {\n    return <div>Rendered Output</div>\n  }\n}\n",
+    "python": "class Solution:\n    def __init__(self):\n        pass\n\n    def solve(self):\n        # Your code here\n        pass"
+  },
+  "buggyStarterCode": {
+    "javascript": "class MemoizedComponent extends React.Component {\n  constructor(props) {\n    super(props);\n  }\n\n  shouldComponentUpdate(nextProps) {\n    return nextProps.data !== this.props.data;\n  }\n\n  render() {\n    return <div>Rendered Output</div>\n  }\n}\n",
+    "python": "class Solution:\n    def __init__(self):\n        pass\n\n    def solve(self):\n        # You need to implement this method\n        return pass"
+  },
+  "functionSignature": {
+    "javascript": "var MemoizedComponent = React.createClass({\n  shouldComponentUpdate(nextProps) {\n    // Your code here\n  }\n\n  render() {\n    return <div>Rendered Output</div>\n  }\n});",
+    "python": "class Solution:\n    def solve(self):\n        # Your code here\n        pass"
+  },
+  "solutions": {
+    "javascript": "// Solution\nclass MemoizedComponent extends React.Component {\n  constructor(props) {\n    super(props);\n    this.memoizedData = React.useCallback(() => JSON.stringify(props.data), [props.data]);\n  }\n\n  shouldComponentUpdate(nextProps) {\n    return JSON.stringify(nextProps.data) !== this.memoizedData;\n  }\n\n  render() {\n    return <div>Rendered Output</div>\n  }\n}\n",
+    "python": "class Solution:\n    def __init__(self):\n        pass\n\n    def solve(self):\n        def memoized_data(data):\n            return JSON.stringify(data)\n\n        # Your code here\n        # Parse the JSON string using JSON.parse()\n        # Compare the nested object's properties using JSON.parse()\n        # Return the parsed JSON string\n        return JSON.parse(JSON.stringify(data))"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"a\":{\"b\":{\"c\":1}}}",
+      "output": "{\"a\":{\"b\":{\"c\":1}}}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"a\":{\"b\":{\"c\":1,\"d\":2}}}",
+      "output": "{\"a\":{\"b\":{\"c\":1,\"d\":2}}}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "425d7efe5fd04c4ff24cd5dc",
+  "slug": "optimizing-react-memoized-component-re-renders-due-to-changing-nested-object-references-bugfix-medium-react",
+  "mode": "bug_fix",
+  "category": "REACT",
+  "difficulty": "Medium"
+}

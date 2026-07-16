@@ -1,0 +1,70 @@
+{
+  "_id": "d48c105db6622dbd6b5cf271",
+  "title": "Cookie Manager",
+  "slug": "java-cookie-manager",
+  "difficulty": "Hard",
+  "topics": [
+    "JAVASCRIPT"
+  ],
+  "statement": {
+    "markdown": "### Problem Statement\nCreate a Cookie Manager application that allows users to store, edit, and delete cookies.\n\n ### Requirements\n1. Display a form to input cookie name and value.\n2. Store the input cookie in local storage.\n3. Display all stored cookies in a table.\n4. Provide options to edit and delete each cookie.\n5. Implement validation for cookie name and value."
+  },
+  "constraints": [
+    "Use HTML, CSS, and JavaScript for this challenge.",
+    "Use Tailwind CSS for styling.",
+    "Validate cookie name and value before storing.",
+    "Store cookies in local storage.",
+    "Use a table to display all stored cookies."
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "html": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Cookie Manager</title>\n    <script src=\"https://cdn.tailwindcss.com\"></script>\n</head>\n<body>\n    <div class=\"max-w-md mx-auto p-4 mt-10 bg-white rounded-md shadow-md\">\n        <form id=\"cookie-form\">\n            <label class=\"block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300\">Cookie Name:</label>\n            <input type=\"text\" id=\"cookie-name\" class=\"block p-2 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400\" placeholder=\"cookie_name\">\n            <label class=\"block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300\">Cookie Value:</label>\n            <input type=\"text\" id=\"cookie-value\" class=\"block p-2 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400\" placeholder=\"cookie_value\">\n            <button id=\"store-button\" class=\"bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded\">Store</button>\n        </form>\n        <div id=\"cookies-container\"></div>\n    </div>\n    <script src=\"script.js\"></script>\n</body>\n</html>",
+    "css": "",
+    "javascript": "// Implement your solution here\n"
+  },
+  "gradingCriteria": [
+    {
+      "id": "1",
+      "description": "Cookies are stored in local storage.",
+      "weight": 20
+    },
+    {
+      "id": "2",
+      "description": "Users can input cookie name and value.",
+      "weight": 20
+    },
+    {
+      "id": "3",
+      "description": "Cookies are displayed in a table.",
+      "weight": 20
+    },
+    {
+      "id": "4",
+      "description": "Users can edit and delete each cookie.",
+      "weight": 20
+    },
+    {
+      "id": "5",
+      "description": "Cookie name and value are validated.",
+      "weight": 20
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "html",
+      "css",
+      "javascript"
+    ],
+    "referenceSolution": "const cookiesContainer = document.getElementById(\"cookies-container\");\nconst cookieForm = document.getElementById(\"cookie-form\");\nconst cookieNameInput = document.getElementById(\"cookie-name\");\nconst cookieValueInput = document.getElementById(\"cookie-value\");\nconst storeButton = document.getElementById(\"store-button\");\n\n// Get stored cookies from local storage\nconst storedCookies = JSON.parse(localStorage.getItem(\"cookies\")) || [];\n\n// Display stored cookies\nstoredCookies.forEach((cookie) => {\n    const cookieElement = document.createElement(\"div\");\n    cookieElement.classList.add(\"p-4\", \"mb-2\", \"bg-white\", \"rounded-md\", \"shadow-md\");\n    cookieElement.innerHTML = `Cookie Name: ${cookie.name}, Value: ${cookie.value}`;\n    const editButton = document.createElement(\"button\");\n    editButton.textContent = \"Edit\";\n    editButton.onclick = () => editCookie(cookie);\n    const deleteButton = document.createElement(\"button\");\n    deleteButton.textContent = \"Delete\";\n    deleteButton.onclick = () => deleteCookie(cookie);\n    cookieElement.appendChild(editButton);\n    cookieElement.appendChild(deleteButton);\n    cookiesContainer.appendChild(cookieElement);\n});\n\n// Handle store form submission\ncookieForm.addEventListener(\"submit\", (e) => {\n    e.preventDefault();\n    const cookieName = cookieNameInput.value;\n    const cookieValue = cookieValueInput.value;\n    if (validateCookieName(cookieName) && validateCookieValue(cookieValue)) {\n        const newCookie = {name: cookieName, value: cookieValue};\n        storedCookies.push(newCookie);\n        localStorage.setItem(\"cookies\", JSON.stringify(storedCookies));\n        storeCookie(newCookie);\n    }\n});\n\n// Edit cookie function\nfunction editCookie(cookie) {\n    cookieNameInput.value = cookie.name;\n    cookieValueInput.value = cookie.value;\n    const existingCookieElement = document.querySelector(\".p-4.mb-2.bg-white.rounded-md.shadow-md\":contains(${cookie.name}));\n    existingCookieElement.remove();\n}\n\n// Delete cookie function\nfunction deleteCookie(cookie) {\n    storedCookies = storedCookies.filter((c) => c !== cookie);\n    localStorage.setItem(\"cookies\", JSON.stringify(storedCookies));\n    const cookieElement = document.querySelector(\".p-4.mb-2.bg-white.rounded-md.shadow-md\":contains(${cookie.name}));\n    cookieElement.remove();\n}\n\n// Store cookie function\nfunction storeCookie(cookie) {\n    const cookieElement = document.createElement(\"div\");\n    cookieElement.classList.add(\"p-4\", \"mb-2\", \"bg-white\", \"rounded-md\", \"shadow-md\");\n    cookieElement.innerHTML = `Cookie Name: ${cookie.name}, Value: ${cookie.value}`;\n    const editButton = document.createElement(\"button\");\n    editButton.textContent = \"Edit\";\n    editButton.onclick = () => editCookie(cookie);\n    const deleteButton = document.createElement(\"button\");\n    deleteButton.textContent = \"Delete\";\n    deleteButton.onclick = () => deleteCookie(cookie);\n    cookieElement.appendChild(editButton);\n    cookieElement.appendChild(deleteButton);\n    cookiesContainer.appendChild(cookieElement);\n}\n\n// Validate cookie name function\nfunction validateCookieName(name) {\n    return name.trim() !== \"\" && name.length <= 50;\n}\n\n// Validate cookie value function\nfunction validateCookieValue(value) {\n    return value.trim() !== \"\";\n}"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

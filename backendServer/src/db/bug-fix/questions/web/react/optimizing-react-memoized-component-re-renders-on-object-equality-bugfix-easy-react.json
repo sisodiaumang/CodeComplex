@@ -1,0 +1,143 @@
+{
+  "title": "Optimizing React Memoized Component Re-renders on Object Equality",
+  "subCategory": "Memoization and Object Equality",
+  "statement": {
+    "markdown": "A React component is memoized to avoid unnecessary re-renders. However, due to a logical bug, the component still re-renders when the object properties change. Fix the bug to prevent unnecessary re-renders.",
+    "inputFormat": "An object with integer properties (e.g., `{ a: 1, b: 2 }`)",
+    "outputFormat": "A boolean indicating whether the component should re-render (true) or not (false)",
+    "notes": "The object properties may change, but the object reference remains the same.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The maximum number of properties in the object"
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The maximum value of a property"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{ a: 1, b: 2 }",
+        "output": "false",
+        "explanation": "The object properties do not change, so the component should not re-render"
+      },
+      {
+        "input": "{ a: 1, b: 2 }, { a: 1, b: 3 }",
+        "output": "true",
+        "explanation": "The object properties change, so the component should re-render"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 10,
+    "points": 20,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "REACT"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "react"
+    ],
+    "interviewFrequency": 1,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Check the object reference before comparing properties"
+    }
+  ],
+  "editorial": {
+    "title": "Memoization and Object Equality",
+    "intuition": "Memoization is used to avoid unnecessary re-renders, but it's essential to compare object references correctly",
+    "bruteForce": "Comparing all properties individually can lead to inefficient re-renders",
+    "betterSolution": "",
+    "optimalSolution": "Use the `JSON.stringify` method to compare object references",
+    "proofOfCorrectness": "The `JSON.stringify` method returns a string representation of the object, which can be compared for equality",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Comparing object properties individually",
+      "Failing to check object references"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// Define a memoized React component",
+    "python": "class Solution:\n    def __init__(self, props):\n        self.memo = {}"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Define a memoized React component\nvar memoized = React.memo(function(props) {\n    return <div>Component</div>\n});\n// The component still re-renders when object properties change\nmemoized = React.memo(function(props) {\n    return <div>Component</div>\n});\n",
+    "python": "class Solution:\n    def __init__(self, props):\n        self.memo = {}\n    def memoized_component(self, props):\n        # The component still re-renders when object properties change\n        return True"
+  },
+  "functionSignature": {
+    "javascript": "var memoized = React.memo(function(props) {\n    return <div>Component</div>\n});",
+    "python": "def memoized_component(self, props: dict) -> bool:"
+  },
+  "solutions": {
+    "javascript": "// Solution\nvar memoized = React.memo(function(props) {\n    const stringifiedProps = JSON.stringify(props);\n    if (memoized[stringifiedProps]) return memoized[stringifiedProps];\n    memoized[stringifiedProps] = true;\n    return <div>Component</div>\n});",
+    "python": "from json import dumps\nclass Solution:\n    def __init__(self, props):\n        self.memo = {}\n    def memoized_component(self, props: dict) -> bool:\n        stringifiedProps = dumps(props)\n        if stringifiedProps in self.memo:\n            return self.memo[stringifiedProps]\n        self.memo[stringifiedProps] = True\n        return True"
+  },
+  "judgeConfig": {
+    "timeLimit": 1,
+    "memoryLimit": 64,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": false,
+    "ratingEnabled": false,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{ a: 1, b: 2 }",
+      "output": "false",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{ a: 1, b: 2 }, { a: 1, b: 3 }",
+      "output": "true",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "32b0cc788f04dafa931cea7c",
+  "slug": "optimizing-react-memoized-component-re-renders-on-object-equality-bugfix-easy-react",
+  "mode": "bug_fix",
+  "category": "REACT",
+  "difficulty": "Easy"
+}

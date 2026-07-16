@@ -1,0 +1,48 @@
+{
+  "_id": "bd72a1466351abb85a9bcddb",
+  "title": "Type Schema Validator",
+  "slug": "ts-schema-validator",
+  "difficulty": "Medium",
+  "topics": [
+    "TYPESCRIPT"
+  ],
+  "statement": {
+    "markdown": "## TypeScript Schema Validator\n\nCreate a basic schema validator that checks whether a data object matches a given schema.\n\n### Requirements:\n1. **Schema Definition**: Accept a schema object where each key maps to an expected primitive type (e.g. `'string'` or `'number'`).\n2. **Validation Method**: A `.validate(data)` method should check `data` against the schema and return an array of error messages describing any fields that don't match (an empty array if the data is valid).\n3. **Type Inference**: Where possible, infer a TypeScript type from the schema so callers get type-safe access to validated data."
+  },
+  "constraints": [
+    "Must handle nested key check assertions cleanly",
+    "Validator results must return descriptive errors mapping invalid properties"
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "typescript": "type SchemaDefinition = {\n  [key: string]: 'string' | 'number' | 'boolean';\n};\n\nexport class SchemaValidator<S extends SchemaDefinition> {\n  constructor(schema: S) {}\n\n  // Implement validate(data: any): { success: boolean; errors: string[] } here\n}\n"
+  },
+  "gradingCriteria": [
+    {
+      "id": "validation_rules",
+      "description": "Verify type mismatches or missing properties flag failures.",
+      "weight": 50
+    },
+    {
+      "id": "schema_matching",
+      "description": "Verify valid payloads evaluate clean true outputs.",
+      "weight": 50
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "typescript"
+    ],
+    "referenceSolution": "type SchemaDefinition = {\n  [key: string]: 'string' | 'number' | 'boolean';\n};\n\nexport class SchemaValidator<S extends SchemaDefinition> {\n  private schema: S;\n\n  constructor(schema: S) {\n    this.schema = schema;\n  }\n\n  validate(data: any): { success: boolean; errors: string[] } {\n    const errors: string[] = [];\n    if (!data || typeof data !== 'object') {\n      return { success: false, errors: ['Input data must be an object'] };\n    }\n\n    for (const key of Object.keys(this.schema)) {\n      const expectedType = this.schema[key];\n      const actualValue = data[key];\n\n      if (actualValue === undefined) {\n        errors.push(`Property \"${key}\" is missing`);\n      } else if (typeof actualValue !== expectedType) {\n        errors.push(`Property \"${key}\" must be of type \"${expectedType}\", got \"${typeof actualValue}\"`);\n      }\n    }\n\n    return {\n      success: errors.length === 0,\n      errors\n    };\n  }\n}"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

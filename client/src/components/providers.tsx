@@ -32,6 +32,35 @@ function AuthBootstrap({ children }: { children: React.ReactNode }) {
 function ThemeBootstrap({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     initTheme();
+
+    // Disable right-click context menu
+    const disableContextMenu = (e: MouseEvent) => {
+      e.preventDefault();
+    };
+
+    // Disable developer tools shortcuts
+    const disableDevShortcuts = (e: KeyboardEvent) => {
+      // Prevent F12
+      if (e.key === "F12") {
+        e.preventDefault();
+      }
+      // Prevent Ctrl + Shift + I, J, C
+      if (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "J" || e.key === "C" || e.key === "i" || e.key === "j" || e.key === "c")) {
+        e.preventDefault();
+      }
+      // Prevent Ctrl + U (View Source)
+      if (e.ctrlKey && (e.key === "u" || e.key === "U")) {
+        e.preventDefault();
+      }
+    };
+
+    document.addEventListener("contextmenu", disableContextMenu);
+    document.addEventListener("keydown", disableDevShortcuts);
+
+    return () => {
+      document.removeEventListener("contextmenu", disableContextMenu);
+      document.removeEventListener("keydown", disableDevShortcuts);
+    };
   }, []);
   return <>{children}</>;
 }

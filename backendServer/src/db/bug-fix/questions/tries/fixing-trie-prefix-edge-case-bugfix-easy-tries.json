@@ -1,0 +1,153 @@
+{
+  "_id": "4a040555fbc4df33649b8f26",
+  "title": "Fixing Trie Prefix Edge Case",
+  "slug": "fixing-trie-prefix-edge-case-bugfix-easy-tries",
+  "difficulty": "Easy",
+  "category": "DSA",
+  "subCategory": "TRIE",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "trie"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given a string Trie and a string prefix, implement a function to check if the Trie contains a string that is a suffix of the prefix. The function should return True if the Trie contains such a string, False otherwise.",
+    "inputFormat": "The function will be given a string Trie and a string prefix as input.",
+    "outputFormat": "The function should return True if the Trie contains a string that is a suffix of the prefix, False otherwise.",
+    "notes": "The input Trie is guaranteed to be a valid string.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of the prefix string"
+      }
+    ],
+    "examples": [
+      {
+        "input": "Trie = 'abcde', prefix = 'deab'",
+        "output": "true",
+        "explanation": "The Trie contains the string 'abcde' which is a suffix of the prefix 'deab'"
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(...) ",
+    "spaceComplexity": "O(...)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    bool insert(vector<int>& nums) {\n        // TODO: implement\n        return false;\n    }\n};",
+    "java": "class Solution {\n    public boolean insert(int[] nums) {\n        // TODO: implement\n        return false;\n    }\n}",
+    "python": "class TrieNode:\n    def __init__(self):\n        self.children = {}\n        self.endOfString = False\n\nclass Solution:\n    def __init__(self):\n        self.root = TrieNode()\n\n    def solve(self, s, prefix):\n        root = self.root\n        for char in prefix[::-1]:\n            if char not in root.children:\n                return False\n            root = root.children[char]\n        # TODO: implement the rest of the function\n",
+    "javascript": "class TrieNode {\n    constructor() {\n        this.children = {};\n        this.endOfString = false;\n    }\n}\n\nclass Solution {\n    constructor() {\n        this.root = new TrieNode();\n    }\n\n    solve(s, prefix) {\n        let root = this.root;\n        for (let char of prefix.split('').reverse()) {\n            if (!(char in root.children)) {\n                return false;\n            }\n            root = root.children[char];\n        } // TODO: implement the rest of the function\n"
+  },
+  "buggyStarterCode": {
+    "cpp": "class TrieNode {\n    char c;\n    int freq;\n    TrieNode* children[26];\n    TrieNode(char c) {\n        this->c = c;\n        this->freq = 0;\n        for (int i = 0; i < 26; i++) {\n            this->children[i] = NULL;\n        }\n    }\n};\n\nvoid Solution::insert(char* s) {\n    TrieNode* root = this->root;\n    for (int i = 0; s[i]; i++) {\n        if (s[i] not in root.children) {\n            return;\n        }\n        root = root.children[s[i]];\n    }\n    root->freq++;\n}\n\nbool Solution::solve(char* s, char* prefix) {\n    TrieNode* root = this->root;\n    for (int i = 0; prefix[i]; i++) {\n        if (prefix[i] not in root.children) {\n            return false;\n        }\n        root = root.children[prefix[i]];\n    }\n    // The bug is here: This will return true even if the prefix is not a suffix of the Trie\n    if (root->freq > 0) {\n        return true;\n    }\n    return false;\n}",
+    "java": "class TrieNode {\n    char c;\n    int freq;\n    TrieNode[] children;\n    TrieNode(char c) {\n        this.c = c;\n        this.freq = 0;\n        this.children = new TrieNode[26];\n    }\n}\n\nvoid Solution.insert(char[] s) {\n    TrieNode root = this.root;\n    for (int i = 0; s[i]; i++) {\n        if (s[i] not in root.children) {\n            return;\n        }\n        root = root.children[s[i]];\n    }\n    root.freq++;\n}\n\nboolean Solution.solve(char[] s, char[] prefix) {\n    TrieNode root = this.root;\n    for (int i = 0; prefix[i]; i++) {\n        if (prefix[i] not in root.children) {\n            return false;\n        }\n        root = root.children[prefix[i]];\n    }\n    // The bug is here: This will return true even if the prefix is not a suffix of the Trie\n    if (root.freq > 0) {\n        return true;\n    }\n    return false;\n}",
+    "python": "class TrieNode:\n    def __init__(self):\n        self.children = {}\n        self.endOfString = False\n        self.freq = 0\n\n    def insert(self, s):\n        root = self\n        for char in s[::-1]:\n            if char not in root.children:\n                return\n            root = root.children[char]\n        root.freq++\n\n    def solve(self, s, prefix):\n        root = self\n        for char in prefix[::-1]:\n            if char not in root.children:\n                return False\n            root = root.children[char]\n        # The bug is here: This will return true even if the prefix is not a suffix of the Trie\n        if root.freq > 0:\n            return True\n        return False\n",
+    "javascript": "class TrieNode {\n    constructor() {\n        this.children = {};\n        this.endOfString = false;\n        this.freq = 0;\n    }\n\n    insert(s) {\n        let root = this;\n        for (let char of s.split('').reverse()) {\n            if (!(char in root.children)) {\n                return;\n            }\n            root = root.children[char];\n        }\n        root.freq++;\n    }\n\n    solve(s, prefix) {\n        let root = this;\n        for (let char of prefix.split('').reverse()) {\n            if (!(char in root.children)) {\n                return false;\n            }\n            root = root.children[char];\n        }\n        // The bug is here: This will return true even if the prefix is not a suffix of the Trie\n        if (root.freq > 0) {\n            return true;\n        }\n        return false;\n"
+  },
+  "functionSignature": {
+    "cpp": "void insert(char* s);\nbool solve(char* s, char* prefix);",
+    "java": "void insert(char[] s);\nboolean solve(char[] s, char[] prefix);",
+    "python": "def insert(self, s):\n    ...\ndef solve(self, s, prefix):\n    ...",
+    "javascript": "var insert = function(s) {...};\nvar solve = function(s, prefix) {...};"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def __init__(self):\n        self.root = TrieNode()\n\n    def insert(self, s):\n        root = self.root\n        for char in s[::-1]:\n            if char not in root.children:\n                root.children[char] = TrieNode()\n            root = root.children[char]\n        root.endOfString = True\n\n    def solve(self, s, prefix):\n        root = self.root\n        for char in prefix[::-1]:\n            if char not in root.children:\n                return False\n            root = root.children[char]\n        return root.endOfString\n\n# Test the solution\ns = Solution()\ns.insert('abcde')\nresult = s.solve('deab', 'deab')\nprint(result)",
+    "cpp": "// Solution.cpp\n#include <iostream>\n#include <string>\nusing namespace std;\n\nclass TrieNode {\npublic:\n    char c;\n    int freq;\n    TrieNode* children[26];\n    TrieNode(char c) {\n        this->c = c;\n        this->freq = 0;\n        for (int i = 0; i < 26; i++) {\n            this->children[i] = NULL;\n        }\n    }\n};\nclass Solution {\npublic:\n    TrieNode* root;\n    Solution() {\n        root = new TrieNode();\n    }\n\n    void insert(string s) {\n        TrieNode* root = this->root;\n        for (int i = s.length() - 1; i >= 0; i--) {\n            if (root->children[s[i] - 'a'] == NULL) {\n                root->children[s[i] - 'a'] = new TrieNode(s[i]);\n            }\n            root = root->children[s[i] - 'a'];\n        }\n        root->freq++;\n    }\n\n    bool solve(string s, string prefix) {\n        TrieNode* root = this->root;\n        for (int i = prefix.length() - 1; i >= 0; i--) {\n            if (root->children[prefix[i] - 'a'] == NULL) {\n                return false;\n            }\n            root = root->children[prefix[i] - 'a'];\n        }\n        return root->freq > 0;\n    }\n};\n\nint main() {\n    Solution s;\n    s.insert(\"abcde\");\n    result = s.solve(\"deab\", \"deab\");\n    cout << (result ? \"True\" : \"False\") << endl;\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "First line count, second line elements (stdin match)",
+      "output": "Expected output string",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "Example 2 input",
+      "output": "Example 2 output",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

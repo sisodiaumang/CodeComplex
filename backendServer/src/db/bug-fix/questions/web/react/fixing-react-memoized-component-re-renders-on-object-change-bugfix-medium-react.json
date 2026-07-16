@@ -1,0 +1,136 @@
+{
+  "title": "Fixing React Memoized Component Re-renders on Object Change",
+  "subCategory": "React Memoization",
+  "statement": {
+    "markdown": "In this problem, you are given a React memoized component that calculates the sum of squares of numbers from 0 to `n` (inclusive). The `n` value is passed as a prop from the parent component. However, the component is re-rendering unnecessarily when the `n` value changes, because the `memo` function is not correctly handling object changes. Your task is to fix the bug in the component to prevent unnecessary re-renders.",
+    "inputFormat": "Input is a single integer `n`.",
+    "outputFormat": "Output is the sum of squares of numbers from 0 to `n` (inclusive).",
+    "notes": "The component should only re-render when the `n` value changes.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Input number `n`"
+      }
+    ],
+    "examples": [
+      {
+        "input": "5",
+        "output": "55",
+        "explanation": "The sum of squares from 0 to 5 is 0^2 + 1^2 + 2^2 + 3^2 + 4^2 + 5^2 = 55."
+      },
+      {
+        "input": "10",
+        "output": "385",
+        "explanation": "The sum of squares from 0 to 10 is 0^2 + 1^2 + 2^2 + 3^2 + 4^2 + 5^2 + 6^2 + 7^2 + 8^2 + 9^2 + 10^2 = 385."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "REACT"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "react"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Check the `memo` function to see if it's correctly handling object changes."
+    }
+  ],
+  "editorial": {
+    "title": "Fixing the React Memoized Component Re-renders Bug",
+    "intuition": "The `memo` function is not correctly handling object changes, which is causing the component to re-render unnecessarily.",
+    "bruteForce": "One possible approach is to use the `JSON.stringify` method to convert the object to a string and then compare the strings.",
+    "betterSolution": "A better approach is to use the `immer` library to create a new object that only includes the changed values.",
+    "optimalSolution": "The optimal solution is to use the `useCallback` hook to memoize the component's dependencies, which will prevent unnecessary re-renders.",
+    "proofOfCorrectness": "The correct solution will prevent the component from re-rendering when the `n` value changes.",
+    "dryRun": "Step 1: Identify the bug in the `memo` function. Step 2: Use the `JSON.stringify` method to convert the object to a string and compare the strings. Step 3: Use the `immer` library to create a new object that only includes the changed values.",
+    "commonMistakes": [
+      "Not handling object changes correctly",
+      "Not using the `useCallback` hook to memoize dependencies"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// Memoized component\nimport React from 'react';\n\nconst sumOfSquares = (n) => {\n  const squares = [...Array(n + 1).keys()]\n    .map((i) => i ** 2);\n  return React.memo(() => squares.reduce((a, b) => a + b, 0));\n};\n\nconst App = () => {\n  const [n, setN] = React.useState(5);\n  return (\n    <div>\n      <h1>Sum of squares: {sumOfSquares(n)(n)}</h1>\n      <button onClick={() => setN(n + 1)}>Increase n</button>\n    </div>\n  );\n};\n\nexport default App;",
+    "python": "// Memoized component\nclass SumOfSquares:\n    def __init__(self):\n        self.n = 5\n\n    def calculate(self):\n        squares = [i ** 2 for i in range(self.n + 1)]\n        return sum(squares)\n\n    def render(self):\n        return React.memo(self.calculate)\n\nclass App:\n    def __init__(self):\n        self.state = {'n': 5}\n\n    def increase_n(self):\n        self.state['n'] += 1\n\n    def render(self):\n        return (\n            <div>\n                <h1>Sum of squares: {self.render().calculate()}</h1>\n                <button onClick={self.increase_n}>Increase n</button>\n            </div>\n        )"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Memoized component\nimport React from 'react';\n\nconst sumOfSquares = (n) => {\n  const squares = [...Array(n + 1).keys()]\n    .map((i) => i ** 2);\n  return React.memo(() => squares.reduce((a, b) => a + b, 0), [n]);\n};\n\nconst App = () => {\n  const [n, setN] = React.useState(5);\n  return (\n    <div>\n      <h1>Sum of squares: {sumOfSquares(n)(n)}</h1>\n      <button onClick={() => setN(n + 1)}>Increase n</button>\n    </div>\n  );\n};\n\nexport default App;",
+    "python": "// Memoized component\nclass SumOfSquares:\n    def __init__(self):\n        self.n = 5\n\n    def calculate(self):\n        squares = [i ** 2 for i in range(self.n + 1)]\n        return sum(squares)\n\n    def render(self):\n        return React.memo(self.calculate, [self.n])\n\nclass App:\n    def __init__(self):\n        self.state = {'n': 5}\n\n    def increase_n(self):\n        self.state['n'] += 1\n\n    def render(self):\n        return (\n            <div>\n                <h1>Sum of squares: {self.render().calculate()}</h1>\n                <button onClick={self.increase_n}>Increase n</button>\n            </div>\n        )"
+  },
+  "functionSignature": {
+    "javascript": "const sumOfSquares = (n) => {\n  // ...",
+    "python": "class SumOfSquares:\n    def __init__(self):\n        # ..."
+  },
+  "solutions": {
+    "javascript": "// Memoized component with fix\nimport React from 'react';\n\nconst sumOfSquares = (n) => {\n  const squares = [...Array(n + 1).keys()]\n    .map((i) => i ** 2);\n  return React.memo(() => squares.reduce((a, b) => a + b, 0), [n]);\n};\n\nconst App = () => {\n  const [n, setN] = React.useState(5);\n  return (\n    <div>\n      <h1>Sum of squares: {sumOfSquares(n)(n)}</h1>\n      <button onClick={() => setN(n + 1)}>Increase n</button>\n    </div>\n  );\n};\n\nexport default App;",
+    "python": "// Memoized component with fix\nclass SumOfSquares:\n    def __init__(self, n):\n        self.n = n\n\n    def calculate(self):\n        squares = [i ** 2 for i in range(self.n + 1)]\n        return sum(squares)\n\n    def render(self):\n        return React.memo(self.calculate)\n\nclass App:\n    def __init__(self):\n        self.state = {'n': 5}\n\n    def increase_n(self):\n        self.state['n'] += 1\n\n    def render(self):\n        return (\n            <div>\n                <h1>Sum of squares: {(self.state['n'])(self.state['n'])}</h1>\n                <button onClick={self.increase_n}>Increase n</button>\n            </div>\n        )"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5",
+      "output": "55",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "10",
+      "output": "385",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "97f422df583e916c28ddd6ba",
+  "slug": "fixing-react-memoized-component-re-renders-on-object-change-bugfix-medium-react",
+  "mode": "bug_fix",
+  "category": "REACT",
+  "difficulty": "Medium"
+}

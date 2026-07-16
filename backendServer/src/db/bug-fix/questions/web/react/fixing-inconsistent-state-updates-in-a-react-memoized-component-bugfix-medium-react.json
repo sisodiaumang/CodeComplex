@@ -1,0 +1,142 @@
+{
+  "title": "Fixing Inconsistent State Updates in a React Memoized Component",
+  "subCategory": "State Management",
+  "statement": {
+    "markdown": "Write a function to update the state of a memoized React component. The component's state has two properties: `count` and `name`. When the user clicks a button, the state is updated in two ways: it increments the count and updates the name. However, the current implementation causes the component to re-render unnecessarily, leading to inconsistent behavior.",
+    "inputFormat": "An object with two properties: `count` and `name`",
+    "outputFormat": "An updated object with the new count and name",
+    "notes": "Use React's `useMemo` hook to memoize the component's state.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "count",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Initial count value"
+      },
+      {
+        "variable": "name",
+        "type": "string",
+        "min": 1,
+        "max": 50,
+        "description": "Initial name value"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"count\": 5, \"name\": \"John\"}",
+        "output": "{\"count\": 6, \"name\": \"Jane\"}",
+        "explanation": "User clicks a button to increment count and update name"
+      },
+      {
+        "input": "{\"count\": 10, \"name\": \"Jane\"}",
+        "output": "{\"count\": 11, \"name\": \"Bob\"}",
+        "explanation": "User clicks a button to increment count and update name again"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 75,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "REACT"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "react"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the `useMemo` hook to memoize the component's state."
+    },
+    {
+      "order": 2,
+      "text": "Check if the `count` or `name` has changed before updating the state."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial: Fixing Inconsistent State Updates in a React Memoized Component",
+    "intuition": "The current implementation causes the component to re-render unnecessarily, leading to inconsistent behavior. We need to use React's `useMemo` hook to memoize the component's state and check if the `count` or `name` has changed before updating the state.",
+    "bruteForce": "Brute forcing the solution would involve checking all possible combinations of `count` and `name` updates, which would be inefficient and prone to errors.",
+    "betterSolution": "A better solution would be to use the `useMemo` hook to memoize the component's state and check if the `count` or `name` has changed before updating the state.",
+    "optimalSolution": "The optimal solution involves using the `useMemo` hook to memoize the component's state and checking if the `count` or `name` has changed before updating the state. This ensures that the component only re-renders when necessary, leading to consistent behavior.",
+    "proofOfCorrectness": "The proof of correctness involves showing that the `useMemo` hook correctly memoizes the component's state and that the check for `count` or `name` changes ensures that the component only re-renders when necessary.",
+    "dryRun": "A dry run of the solution would involve testing the `useMemo` hook and the check for `count` or `name` changes to ensure that the component only re-renders when necessary.",
+    "commonMistakes": [
+      "Not using `useMemo` hook",
+      "Not checking for `count` or `name` changes"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "function useCounter(initialCount) {\n  const [count, setCount] = useState(initialCount);\n\n  return { count, setCount };\n}\n\nfunction Counter({ name }) {\n  const { count, setCount } = useCounter(0);\n  const [name, setName] = useState(name);\n\n  useEffect(() => {\n    setCount(count + 1);\n    setName(\"Jane\");\n  }, [name]);\n\n  return (\n    <div>\n      <p>Count: {count}</p>\n      <p>Name: {name}</p>\n    </div>\n  );\n}"
+  },
+  "buggyStarterCode": {
+    "javascript": "function useCounter(initialCount) {\n  const [count, setCount] = useState(initialCount);\n\n  return { count, setCount };\n}\n\nfunction Counter({ name }) {\n  const { count, setCount } = useCounter(0);\n  const [name, setName] = useState(name);\n\n  useEffect(() => {\n    setCount(count + 1);\n    setName(\"Jane\");\n    setCount(count + 1);\n  }, [name]);\n\n  return (\n    <div>\n      <p>Count: {count}</p>\n      <p>Name: {name}</p>\n    </div>\n  );\n}"
+  },
+  "functionSignature": {
+    "javascript": "var solve = function({ count, name }) {\n  return { count: count + 1, name: \"Jane\" };\n}"
+  },
+  "solutions": {
+    "javascript": "// Solution\n  function solve({ count, name }) {\n    return { count: count + 1, name: name === \"Jane\" ? \"Bob\" : \"Jane\" };\n  }"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"count\": 5, \"name\": \"John\"}",
+      "output": "{\"count\": 6, \"name\": \"Jane\"}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"count\": 10, \"name\": \"Jane\"}",
+      "output": "{\"count\": 11, \"name\": \"Bob\"}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "ec3c71529ff840d720250591",
+  "slug": "fixing-inconsistent-state-updates-in-a-react-memoized-component-bugfix-medium-react",
+  "mode": "bug_fix",
+  "category": "REACT",
+  "difficulty": "Medium"
+}

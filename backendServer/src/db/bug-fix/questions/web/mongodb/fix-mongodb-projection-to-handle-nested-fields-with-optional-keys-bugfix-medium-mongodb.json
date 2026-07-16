@@ -1,0 +1,149 @@
+{
+  "title": "Fix MongoDB Projection to Handle Nested Fields with Optional Keys",
+  "subCategory": "MongoDB Projection",
+  "statement": {
+    "markdown": "Implement a function that takes a MongoDB document and a projection object as input. The projection object is expected to have nested fields with optional keys. The function should return the filtered document based on the projection. If a field is not present in the document, it should be ignored in the projection. If a field has a null value, it should not be included in the projection.",
+    "inputFormat": "The MongoDB document is represented as a nested object, where each key is a field name and each value is a value or another nested object.",
+    "outputFormat": "The filtered document should also be a nested object, with the same structure as the input document but with only the fields specified in the projection.",
+    "notes": "The function should handle nested fields with optional keys. If a field is missing in the document, it should be ignored in the projection.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of fields in the document"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"name\": \"John\", \"age\": 30, \"address\": {\"street\": \"123 Main St\", \"city\": \"New York\"}}",
+        "output": "{\"name\": \"John\", \"age\": 30, \"address\": {\"street\": \"123 Main St\", \"city\": \"New York\"}}",
+        "explanation": "Projection includes all fields"
+      },
+      {
+        "input": "{\"name\": \"John\", \"age\": 30, \"address\": {\"street\": \"123 Main St\", \"city\": \"New York\"}}",
+        "output": "{\"name\": \"John\", \"age\": 30}",
+        "explanation": "Projection excludes address field"
+      },
+      {
+        "input": "{\"name\": \"John\", \"age\": 30, \"address\": {\"street\": \"123 Main St\", \"city\": \"New York\"}}",
+        "output": "{\"name\": \"John\", \"age\": 30, \"address\": {\"street\": \"123 Main St\"}}",
+        "explanation": "Projection excludes city field"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "MONGODB"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "mongodb"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use a recursive function to handle nested fields"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial Solution",
+    "intuition": "The key insight is to use a recursive function to handle nested fields. We can iterate over the document and projection objects at the same time, using a recursive function to handle nested fields.",
+    "bruteForce": "One possible brute-force solution is to manually check each field in the document and include it in the projection only if it is present in the projection object.",
+    "betterSolution": "A better solution is to use a recursive function to handle nested fields.",
+    "optimalSolution": "The optimal solution is to use a recursive function to handle nested fields, and to ignore fields that are not present in the document.",
+    "proofOfCorrectness": "The proof of correctness is by induction on the size of the document.",
+    "dryRun": "Example run",
+    "commonMistakes": [
+      "Forgetting to handle nested fields",
+      "Including fields that are not present in the document"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "function filterDocument(document, projection) {\n  // TO DO: filter the document based on the projection\n  return document;\n}",
+    "python": "class Solution:\n  def filterDocument(self, document, projection):\n    # TO DO: filter the document based on the projection\n    return document"
+  },
+  "buggyStarterCode": {
+    "javascript": "function filterDocument(document, projection) {\n  if (typeof projection === 'object') {\n    for (let key in projection) {\n      if (document[key] !== undefined) {\n        if (typeof document[key] === 'object') {\n          document[key] = filterDocument(document[key], projection[key]);\n        } else {\n          document[key] = projection[key];\n        }\n      }\n    }\n  }\n  return document;\n}",
+    "python": "class Solution:\n  def filterDocument(self, document, projection):\n    if isinstance(projection, dict):\n      for key in projection:\n        if key in document:\n          if isinstance(document[key], dict):\n            document[key] = self.filterDocument(document[key], projection[key])\n          else:\n            document[key] = projection[key]\n    return document"
+  },
+  "functionSignature": {
+    "javascript": "function filterDocument(document, projection) {\n  // TO DO: filter the document based on the projection\n  return document;\n}",
+    "python": "class Solution:\n  def filterDocument(self, document, projection):\n    # TO DO: filter the document based on the projection\n    return document"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction filterDocument(document, projection) {\n  if (typeof projection === 'object') {\n    for (let key in projection) {\n      if (document[key] !== undefined) {\n        if (typeof document[key] === 'object') {\n          document[key] = filterDocument(document[key], projection[key]);\n        } else {\n          document[key] = projection[key];\n        }\n      }\n    }\n    return document;\n  } else {\n    return document;\n  }\n}\n",
+    "python": "import json\n\nclass Solution:\n  def filterDocument(self, document, projection):\n    if isinstance(projection, dict):\n      for key in projection:\n        if key in document:\n          if isinstance(document[key], dict):\n            document[key] = self.filterDocument(document[key], projection[key])\n          elif document[key] is not None:\n            document[key] = projection[key]\n      return document\n    return document\n\ndef main():\n  s = Solution()\n  document = json.loads(input())\n  projection = json.loads(input())\n  print(json.dumps(s.filterDocument(document, projection)))\n\nif __name__ == '__main__':\n  main()"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"name\": \"John\", \"age\": 30, \"address\": {\"street\": \"123 Main St\", \"city\": \"New York\"}}\n{\"name\": \"John\", \"age\": 30}",
+      "output": "{\"name\": \"John\", \"age\": 30}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"name\": \"John\", \"age\": 30, \"address\": {\"street\": \"123 Main St\", \"city\": \"New York\"}}\n{\"name\": \"John\", \"age\": 30, \"address\": {\"street\": \"123 Main St\"}}",
+      "output": "{\"name\": \"John\", \"age\": 30, \"address\": {\"street\": \"123 Main St\"}}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_3",
+      "input": "{\"name\": \"John\", \"age\": 30, \"address\": {\"street\": \"123 Main St\", \"city\": \"New York\"}}\n{\"name\": \"John\", \"age\": 30}",
+      "output": "{\"name\": \"John\", \"age\": 30}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "_id": "21fb09f32886ed7d76b7d49b",
+  "slug": "fix-mongodb-projection-to-handle-nested-fields-with-optional-keys-bugfix-medium-mongodb",
+  "mode": "bug_fix",
+  "category": "MONGODB",
+  "difficulty": "Medium"
+}

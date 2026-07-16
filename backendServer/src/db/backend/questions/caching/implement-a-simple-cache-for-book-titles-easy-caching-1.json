@@ -1,0 +1,121 @@
+{
+  "_id": "5a76659a73294941098702b2",
+  "title": "Implement a Simple Cache for Book Titles",
+  "slug": "implement-a-simple-cache-for-book-titles-easy-caching-1",
+  "difficulty": "Easy",
+  "topics": [
+    "CACHING"
+  ],
+  "statement": "Implement a simple cache to store and retrieve book titles using the Cache Aside pattern. Your server should handle GET requests to retrieve book titles and POST requests to add new books to the cache. The cache should store book titles with their corresponding IDs. Cache invalidation should not be implemented in this challenge. You can use an in-memory array as the cache store. The cache should persist for at least 5 seconds after the server restarts.\n\n   **Endpoints**\n\n   *   **GET /api/books/:id**: Retrieve the title of the book with the given ID.\n   *   **POST /api/books**: Add a new book to the cache with its title and ID.\n   *   **GET /api/cache-status**: Return the number of items in the cache.\n\n   **Requirements for book data**\n\n   *   The book ID should be a string of 3 digits.\n   *   The book title should be a non-empty string.\n\n   **Assumptions**\n\n   *   You can assume that the book IDs will be unique.\n   *   You can assume that the book titles will never be empty.\n\n   **Note**\n\n   *   You can use any Node.js library or framework for this challenge. Make sure to install it in the package.json file.\n   ",
+  "constraints": [
+    "Must use only the in-memory array provided",
+    "Must persist the cache for at least 5 seconds"
+  ],
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/api/books/:id",
+      "description": "Retrieve the title of the book with the given ID"
+    },
+    {
+      "method": "POST",
+      "path": "/api/books",
+      "description": "Add a new book to the cache with its title and ID"
+    },
+    {
+      "method": "GET",
+      "path": "/api/cache-status",
+      "description": "Return the number of items in the cache"
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\"name\":\"cache-app\",\"version\":\"1.0.0\",\"main\":\"index.js\",\"scripts\":{\"start\":\"node index.js\"},\"dependencies\":{\"express\":\"^4.18.2\"}}",
+    "index.js": "const express = require('express');\nconst app = express();\napp.use(express.json());\nconst cache = [];\n\n// TODO: Implement endpoints\n\napp.listen(3000, () => console.log('Server running on port 3000'))"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "GET",
+      "path": "/api/books/001",
+      "headers": {},
+      "body": {},
+      "expectedStatus": 200,
+      "expectedBody": {
+        "title": "Book 1"
+      },
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "POST",
+      "path": "/api/books",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "id": "002",
+        "title": "Book 2"
+      },
+      "expectedStatus": 201,
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "GET",
+      "path": "/api/books/999",
+      "expectedStatus": 404,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "POST",
+      "path": "/api/books",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {},
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "GET",
+      "path": "/api/cache-status",
+      "expectedStatus": 200,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "redis",
+    "cache-aside",
+    "write-through",
+    "ttl",
+    "invalidation",
+    "memory-cache",
+    "cache",
+    "easy"
+  ]
+}

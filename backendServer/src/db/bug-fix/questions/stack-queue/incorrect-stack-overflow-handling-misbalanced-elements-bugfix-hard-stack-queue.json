@@ -1,0 +1,164 @@
+{
+  "_id": "f03b17409b563c0454b9c70b",
+  "title": "Incorrect Stack Overflow Handling: Misbalanced Elements",
+  "slug": "incorrect-stack-overflow-handling-misbalanced-elements-bugfix-hard-stack-queue",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "STACK",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 60,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [
+      "STACK"
+    ],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "stack"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Design a stack implementation to validate parentheses for an arithmetic expression. The stack should handle overflow conditions appropriately, and it should return True if the input string has balanced parentheses.",
+    "inputFormat": "A string containing parentheses and operators.",
+    "outputFormat": "True if the expression has balanced parentheses, False otherwise.",
+    "notes": "You can use any additional data structures you like, but implement the stack from scratch.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "s",
+        "type": "string",
+        "min": 1,
+        "max": 10000,
+        "description": "Input expression"
+      }
+    ],
+    "examples": [
+      {
+        "input": "((()))",
+        "output": "True",
+        "explanation": ""
+      },
+      {
+        "input": "((()))[)]",
+        "output": "False",
+        "explanation": ""
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use a custom stack implementation to handle overflow conditions."
+    },
+    {
+      "order": 2,
+      "text": "Recall the basic principles of stack-based expression parsing."
+    }
+  ],
+  "editorial": {
+    "title": "Invalid Stack-Based Expression Evaluator",
+    "intuition": "The goal is to identify whether the input expression has balanced parentheses.",
+    "bruteForce": "Implementing a simple stack-based approach using a built-in stack data structure would suffice.",
+    "betterSolution": "Implementing a custom stack from scratch would help handle potential overflow conditions correctly.",
+    "optimalSolution": "We can use a recursive function to validate the input string directly, avoiding the need for a stack altogether.",
+    "proofOfCorrectness": "The correctness of our approach can be verified by checking the base cases and the recursive function.",
+    "dryRun": "An example dry run of the optimal solution to understand its behavior.",
+    "commonMistakes": [
+      "Overlooked the potential for overflow conditions when using a built-in stack.",
+      "Failed to correctly handle nested parentheses in the input string."
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "// TODO: implement",
+    "java": "// TODO: implement",
+    "python": "class Solution:",
+    "javascript": "function solve(s) {"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Stack:\n    def __init__(self, max_size):\n        self.stack = [None] * max_size\n        self.top = -1\n    def push(self, x):\n        if self.top == 0:\n            print('Stack Overflow')\n        else:\n            self.top += 1\n            self.stack[self.top] = x\n        return self\n    def pop(self):\n        if self.top == -1:\n            print('Stack Underflow')\n        else:\n            self.top -= 1\n            return self.stack[self.top + 1]\n    def empty(self):\n        return True if self.top == -1 else False\n\n    def validate(self, s):\n        stack = Stack(1000)\n        for char in s:\n            if char in {'(', '[', '{'}:\n                stack.push(char)\n            elif char == ')' or char == ']' or char == '}':\n                if stack.empty():\n                    return False\n                popped_char = stack.pop()\n                # Bug: Misbalanced Elements - Incorrect comparison\n                if ((char == ')' and popped_char != '(') or (char == ']' and popped_char != '[') or (char == '}' and popped_char != '{')):\n                    return False\n                    # BUG\n        return stack.empty()\n",
+    "java": "import java.util.Stack;\npublic class Stack {\n    private Stack[] stack;\n    private int top;\n\n    public Stack(int max_size) {\n        this.stack = new Stack[max_size];\n        this.top = -1;\n    }\n\n    public Stack push(int x) {\n        if (top == 0) {\n            System.out.println(\"Stack Overflow\");\n        } else {\n            top += 1;\n            stack[top] = x;\n        }\n        return this;\n    }\n\n    public int pop() {\n        if (top == -1) {\n            System.out.println(\"Stack Underflow\");\n        } else {\n            top -= 1;\n            return stack[top + 1];\n        }\n    }\n\n    public boolean empty() {\n        return true if top == -1 else false;\n    }\n\n    public boolean validate(String s) {\n        Stack stack = new Stack(1000);\n        for (char c : s.toCharArray()) {\n            if (c in {'(', '[', '{'}:\n                stack.push(c);\n            } else if (c == ')' || c == ']' || c == '}'): \n                if stack.empty():\n                    return false\n                popped_char = stack.pop()\n                if ((c == ')' and popped_char != '(') or (c == ']' and popped_char != '[') or (c == '}' and popped_char != '{')):\n                    return false\n                    # BUG\n        return stack.empty()\n",
+    "python": "class Solution:\n    def validate(self, s):\n        stack = self.Stack(1000)\n        for char in s:\n            if char in {'(', '[', '{'}:\n                stack.push(char)\n            elif char == ')' or char == ']' or char == '}':\n                if stack.empty():\n                    return False\n                popped_char = stack.pop()\n                # Bug: Misbalanced Elements - Incorrect comparison\n                if ((char == ')' and popped_char != '(') or (char == ']' and popped_char != '[') or (char == '}' and popped_char != '{')):\n                    return False\n                    # BUG\n        return stack.empty()\n",
+    "javascript": "function solve(s) {\n    let stack = new Stack(1000);\n    for (let char of s) {\n        if (char in {'(', '[', '{'}:\n            stack.push(char);\n        } else if (char == ')' || char == ']' || char == '}'):\n            if stack.empty():\n                return false;\n            let popped_char = stack.pop();\n            // Bug: Misbalanced Elements - Incorrect comparison\n            if ((char == ')' and popped_char != '(') || (char == ']' and popped_char != '[') || (char == '}' and popped_char != '{')):\n                return false;\n                # BUG\n    return stack.empty();\n"
+  },
+  "functionSignature": {
+    "cpp": "class Stack { public: ...; } void validate(string s);",
+    "java": "class Stack { public ...; } public boolean validate(String s);",
+    "python": "class Solution:\n    def validate(self, s):\n        ...\n",
+    "javascript": "function solve(s) { ... }"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def __init__(self):\n        pass\n\n    def Stack(self, max_size):\n        self.stack = [None] * max_size\n        self.top = -1\n\n    def push(self, x):\n        if self.top == max_size - 1:\n            raise Exception('Stack Overflow')\n        else:\n            self.top += 1\n            self.stack[self.top] = x\n\n    def pop(self):\n        if self.top == -1:\n            raise Exception('Stack Underflow')\n        else:\n            self.top -= 1\n            return self.stack[self.top + 1]\n\n    def empty(self):\n        return True if self.top == -1 else False\n\n    def validate(self, s):\n        stack = self.Stack(1000)\n        for char in s:\n            if char in {'(', '[', '{'}:\n                stack.push(char)\n            elif char == ')' or char == ']' or char == '}':\n                if stack.empty():\n                    return False\n                popped_char = stack.pop()\n                # Bug: Misbalanced Elements - Incorrect comparison\n                if ((char == ')' and popped_char != '(') or (char == ']' and popped_char != '[') or (char == '}' and popped_char != '{')):\n                    return False\n        return stack.empty()\n\n    def solve(self, s):\n        return self.validate(s)\ndef main():\n    solution = Solution()\n    s = input()\n    print(solution.solve(s))",
+    "cpp": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Solution {\npublic:\n    Stack validate(string s) {\n        Stack stack;\n        for (char c : s) {\n            if (c == '(' || c == '[' || c == '{') {\n                stack.push(c);\n            } else if (c == ')' || c == ']' || c == '}') {\n                if (stack.empty()) {\n                    return stack;\n                }\n                char popped_char = stack.pop();\n                if ((c == ')' && popped_char != '(') || (c == ']' && popped_char != '[') || (c == '}' && popped_char != '{')) {\n                    return stack;\n                }\n            }\n        }\n        return stack;\n    }\n\n    struct Stack {\n        char* stack;\n        int top;\n    \n        Stack(int max_size) {\n            stack = new char[max_size];\n            top = -1;\n        }\n\n        void push(char x) {\n            if (top == max_size - 1) {\n                cout << \"Stack Overflow\" << endl;\n            } else {\n                top += 1;\n                stack[top] = x;\n            }\n        }\n\n        char pop() {\n            if (top == -1) {\n                cout << \"Stack Underflow\" << endl;\n            } else {\n                top -= 1;\n                return stack[top + 1];\n            }\n        }\n\n        bool empty() {\n            return true if top == -1 else false;\n        }\n    };\n\n    bool solve(string s) {\n        Stack stack = validate(s);\n        return stack.empty();\n    }\n\n    int main() {\n        string s;\n        cin >> s;\n        cout << (solve(s) ? \"True\" : \"False\") << endl;\n        return 0;\n    }\n};",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "((()))\n3\n2\n1\n",
+      "output": "True",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "((()))[)\n3\n2\n1\n",
+      "output": "False",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

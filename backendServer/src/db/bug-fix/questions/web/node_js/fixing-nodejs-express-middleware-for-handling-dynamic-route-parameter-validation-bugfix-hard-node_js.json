@@ -1,0 +1,136 @@
+{
+  "title": "Fixing Node.js Express Middleware for Handling Dynamic Route Parameter Validation",
+  "subCategory": "Express Route Parameter Validation",
+  "statement": {
+    "markdown": "Write a Node.js Express middleware function that handles dynamic route parameters validation. The function should validate the input parameter 'id' against a predefined list of allowed values. It should also handle cases where the 'id' is missing, invalid (not a number), or not in the allowed list. The function should return a 404 error if the 'id' is not valid, and a 200 status code with the validated 'id' if it is valid. The middleware should be reusable and work with any Express route.",
+    "inputFormat": "Express route handler function",
+    "outputFormat": "Express response object",
+    "notes": "The function should not modify the original request object. It should use a try-catch block to handle any potential errors.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of allowed values"
+      }
+    ],
+    "examples": [
+      {
+        "input": "const express = require('express');\nconst app = express();\napp.get('/users/:id', validateIdMiddleware, (req, res) => {\n  res.send(`User ${req.params.id} is valid`);\n});",
+        "output": "Express response object with status code 200 and the validated 'id'",
+        "explanation": "The middleware validates the 'id' parameter and returns a 404 error if it is not valid."
+      },
+      {
+        "input": "const express = require('express');\nconst app = express();\napp.get('/users/:id', validateIdMiddleware, (req, res) => {\n  res.send(`User ${req.params.id} is invalid`);\n});",
+        "output": "Express response object with status code 404 and an error message",
+        "explanation": "The middleware returns a 404 error if the 'id' is not valid."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "NODE_JS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "node_js"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use a try-catch block to handle potential errors"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "// Function declaration with a comment.\nfunction validateIdMiddleware(req, res, next) {\n  // TO DO: write the middleware function\n}",
+    "python": "// Class Solution definition with method declaration and pass.\nclass Solution {\n  def validateIdMiddleware(self):\n    # TO DO: write the middleware function\n}"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Middleware function with a logical bug\nfunction validateIdMiddleware(req, res, next) {\n  const id = req.params.id;\n  if (id === undefined) {\n    res.status(404).send('Invalid ID');\n  } else if (isNaN(id)) {\n    res.status(404).send('Invalid ID');\n  } else {\n    const allowedIds = [1, 2, 3];\n    if (allowedIds.includes(id)) {\n      res.send(`ID ${id} is valid`);\n    } else {\n      res.status(404).send('Invalid ID');\n    }\n  }\n}",
+    "python": "// Middleware function with a logical bug\nclass Solution {\n  def validateIdMiddleware(self, req, res):\n    id = req.params.id\n    if id is None:\n      res.status(404).send('Invalid ID')\n    elif not id.isdigit():\n      res.status(404).send('Invalid ID')\n    else:\n      allowedIds = [1, 2, 3]\n      if int(id) in allowedIds:\n        res.send(f'ID {id} is valid')\n      else:\n        res.status(404).send('Invalid ID')"
+  },
+  "functionSignature": {
+    "javascript": "function validateIdMiddleware(req, res, next)",
+    "python": "def validateIdMiddleware(self, req, res)"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction validateIdMiddleware(req, res, next) {\n  const id = req.params.id;\n  if (id === undefined) {\n    res.status(404).send('ID is missing');\n  } else if (isNaN(id)) {\n    res.status(404).send('Invalid ID');\n  } else {\n    const allowedIds = [1, 2, 3];\n    if (allowedIds.includes(parseInt(id))) {\n      res.send(`ID ${id} is valid`);\n    } else {\n      res.status(404).send('Invalid ID');\n    }\n  }\n}",
+    "python": "class Solution {\n  def validateIdMiddleware(self, req, res):\n    id = req.params.id\n    if id is None:\n      res.status(404).send('ID is missing')\n    elif not id.isdigit():\n      res.status(404).send('Invalid ID')\n    else:\n      allowedIds = [1, 2, 3]\n      if int(id) in allowedIds:\n        res.send(f'ID {id} is valid')\n      else:\n        res.status(404).send('Invalid ID')\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "GET /users/1 HTTP/1.1\r\nHost: example.com\r\n\r\n",
+      "output": "ID 1 is valid\r\n\r\n",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "GET /users/4 HTTP/1.1\r\nHost: example.com\r\n\r\n",
+      "output": "ID is missing\r\n\r\n",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "f438ee1a270f18ea0e52aa37",
+  "slug": "fixing-nodejs-express-middleware-for-handling-dynamic-route-parameter-validation-bugfix-hard-node_js",
+  "mode": "bug_fix",
+  "category": "NODE_JS",
+  "difficulty": "Hard"
+}

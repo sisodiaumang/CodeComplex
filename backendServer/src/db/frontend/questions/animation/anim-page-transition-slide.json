@@ -1,0 +1,53 @@
+{
+  "_id": "3ebd7fba2eb1cdb2642b6e02",
+  "title": "Page Transition Slide",
+  "slug": "anim-page-transition-slide",
+  "difficulty": "Hard",
+  "topics": [
+    "ANIMATION"
+  ],
+  "statement": {
+    "markdown": "# Page Transition Slide\nCreate a page transition effect where sliding elements slide from left to right. The effect will be triggered from button click.\n\n## Requirements\n1. Use CSS transitions and animations for the sliding effect.\n2. Make it work across different window sizes (responsive).\n3. Use Tailwind CSS classes for styling.\n4. The sliding elements should be reusable and can be customized via the attributes.\n5. The animation should be smooth and visually appealing.\n6. Include a button to trigger the sliding effect.\n7. Add a loading animation while the transition is happening.\n8. Display a message after the transition is complete."
+  },
+  "constraints": [
+    "Number of sliding elements",
+    "Number of sliding blocks",
+    "Animation duration in seconds"
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "html": "<!-- index.html -->\n<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Page Transition Slide</title>\n    <script src=\"https://cdn.tailwindcss.com\"></script>\n</head>\n<body>\n    <!-- Page Container -->\n    <div class=\"h-screen w-screen flex justify-center items-center\">\n        <button class=\"bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded\">\n            Trigger Slide\n        </button>\n        <!-- Sliding Elements -->\n        <div id=\"sliding-elements\" class=\"w-screen h-screen absolute top-0 left-0 flex justify-center items-center\"></div>\n        <!-- Loading Animation -->\n        <div class=\"absolute top-0 left-0 w-screen h-screen bg-gray-800 opacity-50\"></div>\n        <div id=\"loading-animation\" class=\"absolute top-0 left-0 w-screen h-screen flex justify-center items-center\">\n            <div class=\"animate-spin text-5xl\" style=\"color: #000\">☑</div>\n        </div>\n    </div>\n    <script src=\"script.js\"></script>\n</body>\n</html>",
+    "css": "",
+    "javascript": "// script.js\nconsole.log('Page Transition Slide');"
+  },
+  "gradingCriteria": [
+    {
+      "id": "functional_correctness",
+      "description": "Implementation works as specified",
+      "weight": 60
+    },
+    {
+      "id": "code_quality",
+      "description": "Clean, readable code structure",
+      "weight": 40
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "html",
+      "css",
+      "javascript"
+    ],
+    "referenceSolution": "// script.js\nconst slidingElementsContainer = document.getElementById('sliding-elements');\nconst button = document.querySelector('button');\nconst loadingAnimation = document.getElementById('loading-animation');\nconst message = document.createElement('p');\n\nlet slideDuration = 3; // seconds\n\nbutton.addEventListener(\"click\", () => {\n    // Hide and show sliding elements\n    if (slidingElementsContainer.style.display === \"block\") {\n        slidingElementsContainer.style.display = \"none\";\n    } else {\n        slidingElementsContainer.style.display = \"block\";\n        slidingElementsContainer.style.opacity = \"0\";\n        slidingElementsContainer.style.transform = \"translateX(-100%)\";\n    }\n    // Show loading animation\n    loadingAnimation.style.display = \"block\";\n    message.textContent = \"Sliding...\";\n    message.style.display = \"block\";\n    message.style.top = \"50%\";\n    message.style.left = \"50%\";\n    document.body.style.overflow = \"hidden\";\n    // Animate sliding elements\n    gsap.to(slidingElementsContainer, {\n        opacity: 1,\n        transform: \"translateX(0%)\",\n        duration: slideDuration,\n        delay: 0.2,\n        onStart: () => {}\n    });\n    // Set up transition end callback\n    slidingElementsContainer.addEventListener('transitionend', () => {\n        message.textContent = \"Slide completed\";\n        setTimeout(() => {\n            message.style.display = \"none\";\n            slidingElementsContainer.style.display = \"none\";\n            document.body.style.overflow = \"auto\";\n            loadingAnimation.style.display = \"none\";\n        }, 2000);\n    });\n});\ngsap = new class { to(element, config = {}) { const animation = css => element.style.cssText += css + '; animation-name: anim;' let start = performance.now(); const callback = typeof config.onStart === 'function' ? config.onStart : () => {} const end = () => typeof config.onComplete === 'function' ? config.onComplete.call(element) : undefined let time = performance.now(); let state = 0 const frame = () => { requestAnimationFrame(frame); const elapsed = time - start; const progress = (1 - (start + elapsed) / (start + config.duration)) * 100; const progressStr = ` animation-delay: -${progress}%;\n` const css = `transform: ${progressStr} translate(${progress}% ,0);\n${config.ease || ''}; animation-fill-mode: both;` animation += css; if (progress <= 0) { end(); return; } callback(); } requestAnimationFrame(frame); } }();\ncss = {\n    '@keyframes anim': {\n        '0%': {\n            'transform': 'translate(0,0)',\n        },\n        '100%': {\n            'transform': 'translate(100%,0)',\n        },\n    },\n};\n"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

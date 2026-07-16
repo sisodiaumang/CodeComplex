@@ -1,0 +1,155 @@
+{
+  "_id": "8ae22c819b2a5e951b1bb15b",
+  "title": "N-Queens Puzzle with Diagonal Conflicts and Overcounting",
+  "slug": "n-queens-puzzle-with-diagonal-conflicts-and-overcounting-bugfix-hard-recursion",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "BACKTRACKING",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [
+      ""
+    ],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "backtracking"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Solve the problem and fix the bugs.",
+    "inputFormat": "",
+    "outputFormat": "",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "4\n",
+        "output": "2\n",
+        "explanation": "",
+        "id": "sample_1"
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text"
+    }
+  ],
+  "editorial": {
+    "title": "N-Queens Puzzle with Diagonal Conflicts and Overcounting",
+    "intuition": "intuition details.",
+    "bruteForce": "brute Force details.",
+    "betterSolution": "",
+    "optimalSolution": "optimal Solution details.",
+    "proofOfCorrectness": "proof Of Correctness details.",
+    "dryRun": "dry Run details.",
+    "commonMistakes": [
+      ""
+    ],
+    "timeComplexity": "O(n!)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    bool totalNQueens(vector<int>& nums) {\n        // TODO: implement\n        return false;\n    }\n};",
+    "java": "\nclass Solution {\n   public int totalNQueens(int n) {\n      boolean[] board = new boolean[n];\n      int[] placed = new int[n];\n      var res = new ArrayDeque<Integer>();\n      backtrack(0, board, placed, res);\n      return res.size();\n   }\n   private boolean backtrack(int row,\n                             boolean[] board,\n                             int[] placed,\n                             var res) {\n      if (row == board.length) {\n         res.add(placed.length);\n         return false;\n      }\n      for (int i = 0; i < board.length; i++)\n         if (isValid(i, row, board, placed)) {\n            placed[row] = i;\n\n            board[row] = true;\n            if (backtrack(row + 1, board, placed, res)) {\n               board[row] = false;\n               return false;\n            } else {\n               board[row] = false;\n            }\n            // TO DO: implement this branch\n         }\n      return true;\n   }\n   private boolean isValid(int col, int row, boolean[] board, int[] placed) {\n      // TO DO: implement this logic\n      return true;\n   }\n}",
+    "python": "class Solution:\n    def totalNQueens(self, nums: list[int]) -> bool:\n        # TODO: implement\n        pass",
+    "javascript": "var totalNQueens = function(nums) {\n    // TODO: implement\n    return false;\n};"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    bool totalNQueens(vector<int>& nums) {\n        // Buggy code\n        return false;\n    }\n};",
+    "java": "\nclass Solution {\n   public int totalNQueens(int n) {\n      boolean[] board = new boolean[n];\n      int[] placed = new int[n];\n      var res = new ArrayDeque<Integer>();\n      backtrack(0, board, placed, res);\n      return res.size();\n   }\n   private boolean backtrack(int row,\n                             boolean[] board,\n                             int[] placed,\n                             var res) {\n      if (row == board.length) {\n         res.add(placed.length);\n         return false;\n      }\n      for (int i = 0; i < board.length; i++)\n         if (isValid(i, row, board, placed)) {\n            placed[row] = i;\n\n            board[row] = true;\n            if (backtrack(row + 1, board, placed, res)) {\n               board[row] = false;\n               return false;\n            } else {\n               board[row] = false;\n               return true;  // BUG: incorrect logic\n            }\n         }\n      return true;\n   }\n   private boolean isValid(int col, int row, boolean[] board, int[] placed) {\n      for (int i = 0; i < row; i++) {\n         if (placed[i] == col ||\n             placed[i] - i == col - row ||\n             placed[i] + i == col + row) {\n            return false;\n         }\n      }\n      return true;\n   }\n}",
+    "python": "class Solution:\n    def totalNQueens(self, nums: list[int]) -> bool:\n        # Buggy code\n        pass",
+    "javascript": "var totalNQueens = function(nums) {\n    // Buggy code\n    return false;\n};"
+  },
+  "functionSignature": {
+    "cpp": "bool totalNQueens(vector<int>& nums);",
+    "java": "\\npublic int totalNQueens(int n);\\n",
+    "python": "def totalNQueens(self, nums: list[int]) -> bool:",
+    "javascript": "var totalNQueens = function(nums);"
+  },
+  "solutions": {
+    "python": "import sys\ndef total_n_queens(n):\n    def backtrack(row, board, placed):\n        if row == board.size:\n            result.add(placed)\n            return False\n        for col in range(n):\n            if is_valid(col, row, board, placed):\n                board[row] = True\n                placed[row] = col\n                if backtrack(row + 1, board, placed):\n                    board[row] = False\n                    placed[row] = -1\n                    return False\n                board[row] = False\n                placed[row] = -1\n                return True\n        return True\n\n    board = [False] * n\n    placed = [-1] * n\n    result = []\n    backtrack(0, board, placed)\n    return len(result)\n\ndef is_valid(col, row, board, placed):\n    for i in range(row):\n        if placed[i] == col or \n           placed[i] - i == col - row or \n           placed[i] + i == col + row:\n            return False\n    return True\n\nn = int(sys.stdin.readline())\nprint(total_n_queens(n))",
+    "cpp": "// Solution",
+    "javascript": "// Solution",
+    "java": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "4\n",
+      "output": "2\n",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_hidden_generated",
+      "input": "4\n",
+      "output": "2\n",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

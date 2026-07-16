@@ -1,0 +1,131 @@
+{
+  "title": "Fixing a Node.js Express Middleware Route with Incorrect Route Parameter Validation",
+  "subCategory": "Route Parameter Validation",
+  "statement": {
+    "markdown": "Given a Node.js Express application, write a middleware function to validate the 'id' route parameter in the following route: '/users/:id'. The function should return a 400 Bad Request response if the 'id' parameter is not a positive integer.",
+    "inputFormat": "Route string (e.g. '/users/:id')",
+    "outputFormat": "HTTP Response Object (statusCode, body)",
+    "notes": "The middleware function should be used before the main route handler.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "id",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Valid 'id' parameter"
+      }
+    ],
+    "examples": [
+      {
+        "input": "/users/abc123",
+        "output": "400 Bad Request: Invalid 'id' parameter",
+        "explanation": "The 'id' parameter is not a positive integer."
+      },
+      {
+        "input": "/users/123",
+        "output": "200 OK: Valid 'id' parameter",
+        "explanation": "The 'id' parameter is a positive integer."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "NODE_JS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "node_js"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the 'params' object in the Express route handler to access the 'id' parameter."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial: Fixing the Route Parameter Validation Middleware",
+    "intuition": "The goal is to validate the 'id' parameter before the main route handler is executed.",
+    "bruteForce": "Use a regular expression to match the 'id' parameter, but this will not provide the correct validation.",
+    "betterSolution": "Use the 'isInteger' function from the 'lodash' library to validate the 'id' parameter.",
+    "optimalSolution": "Use the 'Number.isInteger' method to validate the 'id' parameter. This is the most efficient solution.",
+    "proofOfCorrectness": "The 'Number.isInteger' method will return true if the 'id' parameter is a positive integer, and false otherwise.",
+    "dryRun": "Example usage of the optimal solution: app.get('/users/:id', validateIdMiddleware, (req, res) => { res.send('Valid 'id' parameter'); });",
+    "commonMistakes": [
+      "Using a regular expression to match the 'id' parameter",
+      "Not using the 'Number.isInteger' method"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "// Define a middleware function to validate the 'id' parameter\nvar validateIdMiddleware = function(req, res, next) {\n\t// Add code to validate the 'id' parameter\n\tif (/* id is not a positive integer */) {\n\t\tres.status(400).send('Invalid 'id' parameter');\n\t} else {\n\t\t// Call the next middleware function in the chain\n\t\tnext();\n\t}\n};"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Define a middleware function to validate the 'id' parameter\nvar validateIdMiddleware = function(req, res, next) {\n\t// Use the 'params' object to access the 'id' parameter\n\tvar id = req.params.id;\n\t// Check if the 'id' parameter is a positive integer using the 'isInteger' function from the 'lodash' library\n\tif (!_.isInteger(id)) {\n\t\tres.status(400).send('Invalid 'id' parameter');\n\t} else {\n\t\t// Call the next middleware function in the chain\n\t\tnext();\n\t}\n};"
+  },
+  "functionSignature": {
+    "javascript": "var validateIdMiddleware = function(req, res, next) {\n\t//\n}"
+  },
+  "solutions": {
+    "javascript": "// Define a middleware function to validate the 'id' parameter\nvar validateIdMiddleware = function(req, res, next) {\n\t// Use the 'params' object to access the 'id' parameter\n\tvar id = req.params.id;\n\t// Use the 'Number.isInteger' method to validate the 'id' parameter\n\tif (!Number.isInteger(id) || id <= 0) {\n\t\tres.status(400).send('Invalid 'id' parameter');\n\t} else {\n\t\t// Call the next middleware function in the chain\n\t\tnext();\n\t}\n};"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "/users/abc123",
+      "output": "400 Bad Request: Invalid 'id' parameter",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "/users/123",
+      "output": "200 OK: Valid 'id' parameter",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "_id": "6c4a4c773df25823ee953bda",
+  "slug": "fixing-a-nodejs-express-middleware-route-with-incorrect-route-parameter-validation-bugfix-easy-node_js",
+  "mode": "bug_fix",
+  "category": "NODE_JS",
+  "difficulty": "Easy"
+}

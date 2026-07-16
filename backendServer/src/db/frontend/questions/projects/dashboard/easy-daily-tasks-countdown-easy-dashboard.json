@@ -1,0 +1,67 @@
+{
+  "_id": "1545f934178cc8b7f20eb69a",
+  "title": "Easy Daily Tasks Countdown",
+  "slug": "easy-daily-tasks-countdown-easy-dashboard",
+  "difficulty": "Easy",
+  "topics": [
+    "DASHBOARD"
+  ],
+  "statement": {
+    "markdown": "## Projects Challenge: Easy Daily Tasks Countdown\n\nYour objective is to build a fully functional, highly interactive React component representing the target design mockup.\n\n### 🎨 Color Palette\n* `#B7D7CD`\n* `#C06C88`\n* `#411C56`\n\n### 📐 Target Design Mockup\nUse the visual mockup shown in the panel to guide your coordinate alignment, container proportions, and spacing.\n\n### 📌 Target Design SVG Source\nThe target geometry is defined by the following SVG vector graphic (viewable by the LLM judge):\n```xml\n<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300'>\n  <rect x='10' y='10' width='380' height='280' fill='#090a0f'/>\n  <g transform='translate(50,30)'>\n    <rect x='10' y='10' width='80' height='20' fill='#C06C88'/>\n    <text x='15' y='28' fill='#B7D7CD' font-size='16' font-family='Arial'>Tasks</text>\n  </g>\n  <g transform='translate(150,30)'>\n    <rect x='10' y='10' width='80' height='20' fill='#C06C88'/>\n    <text x='15' y='28' fill='#B7D7CD' font-size='16' font-family='Arial'>Completed Today</text>\n  </g>\n  <g transform='translate(250,30)'>\n    <rect x='10' y='10' width='80' height='20' fill='#C06C88'/>\n    <text x='15' y='28' fill='#B7D7CD' font-size='16' font-family='Arial'>Days Left</text>\n  </g>\n  <g transform='translate(350,30)'>\n    <rect x='10' y='10' width='80' height='20' fill='#C06C88'/>\n    <text x='15' y='28' fill='#B7D7CD' font-size='16' font-family='Arial'>Add Task</text>\n  </g>\n</svg>\n```\n\n### ⚙️ Requirements\n1. Match the visual presentation (layout, alignment, borders, colors) of the mockup.\n2. Implement all necessary React state variables, event handlers, and input bindings to make the page interactive.\n3. Make sure all interactive controls (buttons, forms, checkboxes, sliders) update the view correctly.\n"
+  },
+  "constraints": [
+    "Must use only specified colors",
+    "Must be fully interactive with state updates",
+    "Use Tailwind CSS utility classes"
+  ],
+  "referenceAssets": [
+    {
+      "url": "http://localhost:8000/public/mockups/easy-daily-tasks-countdown-easy-dashboard.svg",
+      "caption": "Recreate target design: Easy Daily Tasks Countdown"
+    }
+  ],
+  "starterCode": {
+    "react": "import React, { useState } from 'react';\n\nconst App = () => {\n  const [tasks, setTasks] = useState([]);\n  const [newTask, setNewTask] = useState('');\n  const [daysLeft, setDaysLeft] = useState(0);\n\n  const handleSubmit = (e) => {\n    e.preventDefault();\n    const newTaskObj = {\n      name: newTask,\n      completed: false,\n      dueDate: '2024-01-01'\n    };\n    setTasks([...tasks, newTaskObj]);\n    setNewTask('');\n  };\n\n  const handleDelete = (index) => {\n    setTasks(tasks.filter((task, i) => i !== index));\n  };\n\n  const handleCompleteToday = (index) => {\n    const newTasks = tasks.map((task, i) => i === index ? {\n      ...task,\n      completed: true\n    } : task);\n    setTasks(newTasks);\n  };\n\n  const calculateDaysLeft = () => {\n    const today = new Date();\n    const dueDate = new Date('2024-01-01');\n    const diffTime = dueDate.getTime() - today.getTime();\n    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));\n  };\n\n  return (\n    <div className=\"min-h-screen bg-[#090a0f] text-white p-4 flex items-center justify-center\">\n      <div className=\"w-1/2 bg-white p-4 rounded shadow\">\n        <h2 className=\"text-lg font-bold mb-2\">Tasks</h2>\n        <ul className=\"list-disc pl-4 mb-4\">\n          {tasks.map((task, index) => (\n            <li key={index} className=\"mb-2\">\n              <span className=\"mr-2\">{task.name}</span>\n              <button className=\"bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded\" onClick={() => handleCompleteToday(index)}>Complete Today</button>\n              <button className=\"bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded\" onClick={() => handleDelete(index)}>Delete</button>\n            </li>\n          ))}\n        </ul>\n        <form onSubmit={handleSubmit} className=\"mb-4\">\n          <input\n            type=\"text\"\n            value={newTask}\n            onChange={(e) => setNewTask(e.target.value)}\n            placeholder=\"Add new task\"\n            className=\"p-2 w-full border border-gray-300 rounded\"\n          />\n          <button className=\"bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded\" type=\"submit\">Add Task</button>\n        </form>\n        <p className=\"text-lg font-bold mb-2\">Days Left: {calculateDaysLeft()}</p>\n      </div>\n    </div>\n  );\n};\n\nexport default App;"
+  },
+  "gradingCriteria": [
+    {
+      "id": "visual_fidelity",
+      "description": "Evaluate how closely the layout, colors, and positioning match the target visual mockup.",
+      "weight": 30
+    },
+    {
+      "id": "interactive_features",
+      "description": "Verify interactive state updates, form logic, active selections, and handlers.",
+      "weight": 40
+    },
+    {
+      "id": "code_quality",
+      "description": "Review code cleanliness, proper semantic elements, and efficient state use.",
+      "weight": 30
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "react"
+    ]
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "tags": [
+    "frontend",
+    "react",
+    "projects",
+    "dashboard",
+    "color:#B7D7CD",
+    "color:#C06C88",
+    "color:#411C56"
+  ]
+}

@@ -1,0 +1,138 @@
+{
+  "title": "Fix MongoDB Aggregation Pipeline to Handle Missing Fields",
+  "subCategory": "MongoDB Aggregation Pipeline",
+  "statement": {
+    "markdown": "Given a MongoDB collection `users` with the following documents:\n\n```json\n[ { _id: 1, name: 'John', address: { street: '123 Main St', city: 'Anytown', state: 'CA', zip: '12345' } }, { _id: 2, name: 'Jane', address: { street: '456 Elm St', city: 'Othertown', state: 'NY' } } ]\n```\n\nWrite an aggregation pipeline that returns the `name` and `city` fields for each user, handling cases where the `city` field is missing in the `address` object.\n\nThe output should be a JSON array of objects with `name` and `city` properties, like this:\n\n```json\n[ { name: 'John', city: 'Anytown' }, { name: 'Jane', city: 'Othertown' } ]\n```\n\nThe pipeline should not crash or throw an error when encountering missing fields.\n",
+    "inputFormat": "MongoDB collection with user documents",
+    "outputFormat": "JSON array of objects with name and city properties",
+    "notes": "Pay attention to the handling of missing fields in the address object",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of user documents in the collection"
+      },
+      {
+        "variable": "fields",
+        "type": "integer",
+        "min": 1,
+        "max": 10,
+        "description": "Number of fields in the address object"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{ _id: 1, name: 'John', address: { street: '123 Main St', city: 'Anytown', state: 'CA', zip: '12345' } }",
+        "output": "{ name: 'John', city: 'Anytown' }",
+        "explanation": "Handle missing fields in the address object"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "MONGODB"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "mongodb"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the `$project` aggregation operator to select the desired fields"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial: Handling Missing Fields in Aggregation Pipelines",
+    "intuition": "The key to solving this problem is to use the `$project` operator to select the desired fields, while also handling missing fields using the `$ifNull` operator",
+    "bruteForce": "A brute force approach would involve using multiple `$project` operators to select the desired fields, but this would lead to a complex and inefficient pipeline",
+    "betterSolution": "Use the `$project` operator with the `$ifNull` operator to select the desired fields and handle missing fields",
+    "optimalSolution": "The optimal solution involves using a single `$project` operator with the `$ifNull` operator to select the desired fields and handle missing fields in a concise and efficient manner",
+    "proofOfCorrectness": "The proof of correctness involves demonstrating that the pipeline returns the correct output for both missing and non-missing fields",
+    "dryRun": "Step-by-step example run of the pipeline",
+    "commonMistakes": [
+      "Not handling missing fields",
+      "Using multiple $project operators"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "// Define the aggregation pipeline here",
+    "python": "class Solution:\n    def solve(self):\n        # Define the aggregation pipeline here\n        return []"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Define the aggregation pipeline here\nvar pipeline = [\n  {\n    $project: {\n      name: 1,\n      city: 1\n    }\n  }\n];",
+    "python": "class Solution:\n    def solve(self):\n        # Define the aggregation pipeline here\n        pipeline = [\n            {\n                '$project': {\n                    'name': 1,\n                    'city': 1\n                }\n            }\n        ]\n        return pipeline"
+  },
+  "functionSignature": {
+    "javascript": "var solve = function(collection) {\n    // Define the aggregation pipeline here\n};",
+    "python": "def solve(self, collection: list) -> list:\n    # Define the aggregation pipeline here\n    return []"
+  },
+  "solutions": {
+    "javascript": "// Define the aggregation pipeline here\nvar pipeline = [\n  {\n    $project: {\n      name: 1,\n      city: { $ifNull: ['$address.city', ''] }\n    }\n  }\n];",
+    "python": "class Solution:\n    def solve(self):\n        # Define the aggregation pipeline here\n        pipeline = [\n            {\n                '$project': {\n                    'name': 1,\n                    'city': { '$ifNull': ['$address.city', ''] }\n                }\n            }\n        ]\n        return pipeline"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{ _id: 1, name: 'John', address: { street: '123 Main St', city: 'Anytown', state: 'CA', zip: '12345' } }",
+      "output": "{ name: 'John', city: 'Anytown' }",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{ _id: 2, name: 'Jane', address: { street: '456 Elm St', state: 'NY' } }",
+      "output": "{ name: 'Jane', city: '' }",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "_id": "e5ef99b91ab25f713e8f953c",
+  "slug": "fix-mongodb-aggregation-pipeline-to-handle-missing-fields-bugfix-medium-mongodb",
+  "mode": "bug_fix",
+  "category": "MONGODB",
+  "difficulty": "Medium"
+}

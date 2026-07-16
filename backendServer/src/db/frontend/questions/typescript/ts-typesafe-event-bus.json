@@ -1,0 +1,48 @@
+{
+  "_id": "3db518a0fbe0add19fa8689d",
+  "title": "Type-Safe Event Bus",
+  "slug": "ts-typesafe-event-bus",
+  "difficulty": "Medium",
+  "topics": [
+    "TYPESCRIPT"
+  ],
+  "statement": {
+    "markdown": "## Type-Safe Event Bus\n\nImplement a typesafe Event Bus in TypeScript. The event bus must enforce that published event names exist on a predefined type interface map, and the payload matches the exact signature constraints.\n\n### Requirements:\n1. **Generic Typing**: Ensure subscribe and publish methods use generic argument checks validating against `EventMap` type definitions.\n2. **Unsubscribe Callback**: The subscribe listener should return a function. Invoking this returned function stops further event callbacks.\n3. **Event Dispatching**: Emitting events should dispatch payloads to all registered callbacks matching the key."
+  },
+  "constraints": [
+    "Must enforce typesafe checks on method signatures",
+    "Do not use type assertions like 'any' or 'as any' in public API parameters"
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "typescript": "type EventMap = {\n  login: { userId: string; username: string };\n  logout: void;\n  error: { code: number; message: string };\n};\n\nexport class EventBus {\n  // Implement subscribe, unsubscribe returns, and type-safe publish here\n}\n"
+  },
+  "gradingCriteria": [
+    {
+      "id": "typesafety_compilation",
+      "description": "Verify type check errors compile and block invalid payloads at build-time.",
+      "weight": 50
+    },
+    {
+      "id": "event_dispatching",
+      "description": "Verify event callbacks fire and unsubscribe callbacks detach correctly.",
+      "weight": 50
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "typescript"
+    ],
+    "referenceSolution": "type EventMap = {\n  login: { userId: string; username: string };\n  logout: void;\n  error: { code: number; message: string };\n};\n\nexport class EventBus {\n  private listeners: { [K in keyof EventMap]?: Array<(payload: EventMap[K]) => void> } = {};\n\n  subscribe<K extends keyof EventMap>(event: K, callback: (payload: EventMap[K]) => void): () => void {\n    if (!this.listeners[event]) {\n      this.listeners[event] = [];\n    }\n    this.listeners[event]!.push(callback as any);\n    return () => {\n      this.listeners[event] = this.listeners[event]!.filter(cb => cb !== callback) as any;\n    };\n  }\n\n  publish<K extends keyof EventMap>(event: K, payload: EventMap[K]): void {\n    const callbacks = this.listeners[event];\n    if (callbacks) {\n      callbacks.forEach(cb => cb(payload));\n    }\n  }\n}"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

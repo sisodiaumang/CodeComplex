@@ -1,0 +1,131 @@
+{
+  "title": "Fixing a Node.js Express Route for Incorrect Route Parameter Validation",
+  "subCategory": "Node.js Express Middleware",
+  "statement": {
+    "markdown": "You are given a Node.js Express application with a route to handle user profiles. The route expects a 'username' parameter, but it's not properly validated. The route should return a 400 error with a message if the 'username' parameter is missing or empty. Otherwise, it should return a JSON object with the user's profile information.",
+    "inputFormat": "The input will be a URL path with a 'username' parameter.",
+    "outputFormat": "The output should be a JSON object with the user's profile information or a 400 error message.",
+    "notes": "The user profiles are stored in a MongoDB database. You can assume that the 'username' parameter is a valid MongoDB username.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of users in the database"
+      }
+    ],
+    "examples": [
+      {
+        "input": "/users/john",
+        "output": "{\"name\":\"John\",\"email\":\"john@example.com\"}",
+        "explanation": "The user 'john' exists in the database."
+      },
+      {
+        "input": "/users",
+        "output": "{\"error\":\"Missing username parameter\"}",
+        "explanation": "The 'username' parameter is missing from the URL path."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "NODE_JS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "node_js"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Check the Express route parameters for the 'username' parameter."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial for Fixing a Node.js Express Route for Incorrect Route Parameter Validation",
+    "intuition": "The route should return a 400 error with a message if the 'username' parameter is missing or empty.",
+    "bruteForce": "Try to return a 400 error with a message for each possible error case.",
+    "betterSolution": "Use the Express route parameters to validate the 'username' parameter.",
+    "optimalSolution": "Use the Express route parameters and a middleware function to validate the 'username' parameter.",
+    "proofOfCorrectness": "The route should return a 400 error with a message if the 'username' parameter is missing or empty, and a JSON object with the user's profile information otherwise.",
+    "dryRun": "Try to pass different URL paths to the route to see how it behaves.",
+    "commonMistakes": [
+      "Forgetting to check the Express route parameters.",
+      "Not returning a 400 error with a message for missing or empty 'username' parameters."
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "// Define a middleware function to validate the 'username' parameter\nvar validateUsername = function(req, res, next) {\n    // TO DO: Implement the username validation logic here\n};\n\n// Define the Express route\napp.get('/users/:username', function(req, res) {\n    // TO DO: Implement the route logic here\n});"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Define a middleware function to validate the 'username' parameter\nvar validateUsername = function(req, res, next) {\n    // TO DO: Implement the username validation logic here\n};\n\n// Define the Express route\napp.get('/users/:username', function(req, res) {\n    // Get the username parameter from the URL path\n    var username = req.params.username;\n\n    // Check if the username is empty\n    if (!username) {\n        // Return a 400 error with a message\n        res.status(400).send({ error: 'Missing username parameter' });\n    }\n    // TO DO: Implement the route logic here\n});"
+  },
+  "functionSignature": {
+    "javascript": "var validateUsername = function(req, res, next) {\n    // TO DO: Implement the username validation logic here\n};\n\napp.get('/users/:username', function(req, res) {\n    // TO DO: Implement the route logic here\n});"
+  },
+  "solutions": {
+    "javascript": "// Define a middleware function to validate the 'username' parameter\nvar validateUsername = function(req, res, next) {\n    // Get the username parameter from the URL path\n    var username = req.params.username;\n\n    // Check if the username is empty\n    if (!username) {\n        // Return a 400 error with a message\n        res.status(400).send({ error: 'Missing username parameter' });\n    } else {\n        // Call the next middleware function in the chain\n        next();\n    }\n};\n\n// Define the Express route\napp.get('/users/:username', validateUsername, function(req, res) {\n    // Get the user's profile information from the database\n    var user = getUserProfile(req.params.username);\n\n    // Return a JSON object with the user's profile information\n    res.json(user);\n});\n\n// Function to get the user's profile information from the database\nfunction getUserProfile(username) {\n    // TO DO: Implement the function to get the user's profile information from the database\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "/users/john",
+      "output": "{\"name\":\"John\",\"email\":\"john@example.com\"}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "/users",
+      "output": "{\"error\":\"Missing username parameter\"}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "5055dcd767902572a15e71db",
+  "slug": "fixing-a-nodejs-express-route-for-incorrect-route-parameter-validation-bugfix-medium-node_js",
+  "mode": "bug_fix",
+  "category": "NODE_JS",
+  "difficulty": "Medium"
+}

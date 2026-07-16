@@ -1,0 +1,159 @@
+{
+  "title": "Fix SQL Query to Extract Unique Table Names",
+  "subCategory": "SQL Parser",
+  "statement": {
+    "markdown": "Given a SQL query as a string, write a function to extract unique table names. The query can contain multiple `FROM` clauses, and table names can be aliased. Table names are case-insensitive. The function should return a list of unique table names in the order they appear in the query.",
+    "inputFormat": "A SQL query as a string",
+    "outputFormat": "A list of unique table names as strings",
+    "notes": "Table names can be enclosed in double quotes or not.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of tables in the query"
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of unique table names"
+      }
+    ],
+    "examples": [
+      {
+        "input": "SELECT * FROM table1 AS t1, table2 AS t2 FROM table3",
+        "output": "table1\ntable2\ntable3",
+        "explanation": "The function should return a list of unique table names in the order they appear in the query."
+      },
+      {
+        "input": "SELECT * FROM \"Table 1\" AS t1, table2 AS t2 FROM \"Table 3\"",
+        "output": "Table 1\ntable2\nTable 3",
+        "explanation": "Table names can be enclosed in double quotes or not."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "SQL"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "sql"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use a regular expression to extract table names"
+    },
+    {
+      "order": 2,
+      "text": "Remove the `AS` keyword and any aliases"
+    },
+    {
+      "order": 3,
+      "text": "Convert table names to lowercase"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial: Extracting Unique Table Names",
+    "intuition": "The function should first extract all table names from the query, then remove any duplicates and sort the list.",
+    "bruteForce": "One way to solve this problem is to use a regular expression to extract table names, then iterate over the list to remove any duplicates.",
+    "betterSolution": "",
+    "optimalSolution": "The optimal solution is to use a set to store unique table names, and a regular expression to extract table names. This way, we can avoid checking for duplicates.",
+    "proofOfCorrectness": "We can prove the correctness of the solution by showing that it handles all possible cases, including table names enclosed in double quotes or not.",
+    "dryRun": "Let's try the solution on the first example: SELECT * FROM table1 AS t1, table2 AS t2 FROM table3.",
+    "commonMistakes": [
+      "Not handling table names enclosed in double quotes",
+      "Not removing the `AS` keyword and any aliases"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// This function should extract unique table names from a SQL query",
+    "python": "class Solution:\n    def solve(self, s):\n        # This function should extract unique table names from a SQL query\n        pass"
+  },
+  "buggyStarterCode": {
+    "javascript": "function solve(s) {\n  const tableNames = s.match(/FROM\\s+\\w+/g);\n  const uniqueTableNames = new Set(tableNames);\n  return Array.from(uniqueTableNames);\n}",
+    "python": "class Solution:\n    def solve(self, s):\n        # Extract table names using a regular expression\n        tableNames = s.split('FROM')\n        uniqueTableNames = {}\n        for tableName in tableNames:\n            # Remove the 'AS' keyword and any aliases\n            tableName = tableName.strip()\n            # Convert table names to lowercase\n            tableName = tableName.lower()\n            uniqueTableNames[tableName] = True\n        return list(uniqueTableNames.keys())"
+  },
+  "functionSignature": {
+    "javascript": "function solve(s);",
+    "python": "def solve(self, s: str) -> list:"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction solve(s) {\n  const regex = /FROM\\s+(\\w+(?=\\s+AS|\\s+FROM))/g;\n  const tableNames = s.match(regex);\n  return tableNames.map(tableName => tableName.replace('FROM ', ''))\n}",
+    "python": "class Solution:\n    def solve(self, s):\n        import re\n        # Extract table names using a regular expression\n        regex = r'FROM\\s+(\\w+(?=\\s+AS|\\s+FROM))'\n        tableNames = re.findall(regex, s)\n        # Remove the 'AS' keyword and any aliases\n        tableNames = [tableName.replace('AS', '').replace('FROM ', '') for tableName in tableNames]\n        # Convert table names to lowercase\n        tableNames = [tableName.lower() for tableName in tableNames]\n        # Remove duplicates and sort the list\n        return sorted(list(set(tableNames)))"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "SELECT * FROM table1 AS t1, table2 AS t2 FROM table3",
+      "output": "table1\ntable2\ntable3",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "SELECT * FROM \"Table 1\" AS t1, table2 AS t2 FROM \"Table 3\"",
+      "output": "Table 1\ntable2\nTable 3",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_1",
+      "input": "SELECT * FROM table1 AS t1 FROM table2 AS t2 FROM table3",
+      "output": "table1\ntable3",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "e2bd475cc84f54b18f6783a9",
+  "slug": "fix-sql-query-to-extract-unique-table-names-bugfix-medium-sql",
+  "mode": "bug_fix",
+  "category": "SQL",
+  "difficulty": "Medium"
+}

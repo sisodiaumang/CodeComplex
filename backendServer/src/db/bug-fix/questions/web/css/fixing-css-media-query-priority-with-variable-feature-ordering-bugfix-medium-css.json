@@ -1,0 +1,151 @@
+{
+  "title": "Fixing CSS Media Query Priority with Variable Feature Ordering",
+  "subCategory": "CSS Media Queries",
+  "statement": {
+    "markdown": "Given a CSS style sheet with multiple media queries, each with different features (e.g., width, height, orientation), write a function that takes the media queries as input and returns the style sheet with the media queries ordered by priority. The priority is determined by the number of features in each media query, with more features indicating a higher priority. If two media queries have the same number of features, the one with the feature that appears first in the alphabet is given higher priority.",
+    "inputFormat": "Array of strings, where each string represents a media query in the format '(feature1, feature2, ..., featureN)'.",
+    "outputFormat": "Array of strings, where each string represents a media query with the same format as the input, but ordered by priority.",
+    "notes": "The input media queries may contain duplicate features, and the features may appear in any order.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10,
+        "description": "Number of media queries"
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 1,
+        "max": 10,
+        "description": "Number of features in each media query"
+      }
+    ],
+    "examples": [
+      {
+        "input": "['(width, height)', '(width, orientation)', '(height, width)']",
+        "output": "['(width, height)', '(height, width)', '(width, orientation)']",
+        "explanation": "The first media query has two features, the second has two features, and the third has two features. Since they have the same number of features, we order them alphabetically by the first feature: 'height' comes before 'width', so the third media query is given higher priority than the first two."
+      },
+      {
+        "input": "['(width, height)', '(orientation, width)', '(width)']",
+        "output": "['(width, height)', '(width, orientation)', '(width)']",
+        "explanation": "The first media query has two features, the second has two features, and the third has one feature. Since the second media query has two features and its first feature is 'orientation', which appears after 'width' in the alphabet, it is given higher priority than the first media query. The third media query has only one feature, so it has the lowest priority."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "CSS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "css",
+      "media queries"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Split the media queries into arrays of features."
+    },
+    {
+      "order": 2,
+      "text": "Count the number of features in each media query."
+    },
+    {
+      "order": 3,
+      "text": "Order the media queries by the number of features, and then alphabetically by the first feature."
+    }
+  ],
+  "editorial": {
+    "title": "Fixing CSS Media Query Priority with Variable Feature Ordering",
+    "intuition": "The key to this problem is to first split the media queries into arrays of features, and then count the number of features in each media query. Finally, we can order the media queries by the number of features, and then alphabetically by the first feature.",
+    "bruteForce": "We can use a brute force approach by sorting the media queries based on the number of features, and then alphabetically by the first feature. However, this approach has a time complexity of O(n^2), where n is the number of media queries.",
+    "betterSolution": "A better solution is to use a two-step approach. First, we count the number of features in each media query and store the result in an array. Then, we sort the array based on the number of features, and then alphabetically by the first feature.",
+    "optimalSolution": "The optimal solution is to use a single pass through the media queries to count the number of features, and then sort the array based on the number of features, and then alphabetically by the first feature.",
+    "proofOfCorrectness": "We can prove the correctness of the optimal solution by showing that it produces the correct ordering of media queries.",
+    "dryRun": "Here's an example dry run of the optimal solution: input: ['(width, height)', '(width, orientation)', '(height, width)'], output: ['(width, height)', '(height, width)', '(width, orientation)']",
+    "commonMistakes": [
+      "forgetting to handle duplicate features",
+      "forgetting to handle media queries with different numbers of features"
+    ],
+    "timeComplexity": "O(n log n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "function orderMediaQueries(mediaQueries) {\n    // Your code here\n}\n",
+    "python": "class Solution:\n    def orderMediaQueries(self, mediaQueries):\n        # Your code here\n        pass\n"
+  },
+  "buggyStarterCode": {
+    "javascript": "function orderMediaQueries(mediaQueries) {\n    let features = mediaQueries.map(query => query.split(',').map(feature => feature.trim()));\n    let sortedQueries = mediaQueries.sort((a, b) => a.split(',').length - b.split(',').length);\n    return sortedQueries;\n}",
+    "python": "class Solution:\n    def orderMediaQueries(self, mediaQueries):\n        features = [query.split(',') for query in mediaQueries]\n        sortedQueries = sorted(mediaQueries, key=lambda query: len(query.split(',')))\n        return sortedQueries\n"
+  },
+  "functionSignature": {
+    "javascript": "var orderMediaQueries = function(mediaQueries) {\n    // Your code here\n};",
+    "python": "class Solution:\n    def orderMediaQueries(self, mediaQueries):\n        # Your code here\n        pass\n"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction orderMediaQueries(mediaQueries) {\n    let features = mediaQueries.map(query => query.split(',').map(feature => feature.trim()));\n    let sortedQueries = mediaQueries.sort((a, b) => {\n        let aFeatures = a.split(',').map(feature => feature.trim()).sort().join(',');\n        let bFeatures = b.split(',').map(feature => feature.trim()).sort().join(',');\n        if (a.split(',').length !== b.split(',').length) {\n            return a.split(',').length - b.split(',').length;\n        } else {\n            return aFeatures.localeCompare(bFeatures);\n        }\n    });\n    return sortedQueries;\n}\n",
+    "python": "class Solution:\n    def orderMediaQueries(self, mediaQueries):\n        features = [query.split(',') for query in mediaQueries]\n        sortedQueries = sorted(mediaQueries, key=lambda query: (\n            -len(query.split(',')),\n            query.split(',').map(feature => feature.strip()).sort().join(',')\n        ))\n        return sortedQueries\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2000,
+    "memoryLimit": 65536,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "['(width, height)', '(width, orientation)', '(height, width)']",
+      "output": "['(width, height)', '(height, width)', '(width, orientation)']",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "['(width, height)', '(orientation, width)', '(width)']",
+      "output": "['(width, height)', '(width, orientation)', '(width)']",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "e1e88fe9e0395669cee2a66b",
+  "slug": "fixing-css-media-query-priority-with-variable-feature-ordering-bugfix-medium-css",
+  "mode": "bug_fix",
+  "category": "CSS",
+  "difficulty": "Medium"
+}

@@ -1,0 +1,153 @@
+{
+  "_id": "9dbccc8f2cbfb3feb8f6f2bd",
+  "title": "Inconsistent Trie Insertion and Deletion",
+  "slug": "inconsistent-trie-insertion-and-deletion-bugfix-medium-tries",
+  "difficulty": "Medium",
+  "category": "DSA",
+  "subCategory": "Trie",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "trie"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Implement a Trie class with insert and delete methods. However, the delete method does not correctly handle cases where a node's child has multiple children.",
+    "inputFormat": "The function will be passed a string and a list of strings for testing.",
+    "outputFormat": "The function should return a boolean indicating whether the string was inserted or deleted successfully.",
+    "notes": "Make sure to handle cases where a node has multiple children.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "Example input (matching the stdin format that main wrapper expects)",
+        "output": "Expected stdout output",
+        "explanation": "Brief explanation"
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(...) ",
+    "spaceComplexity": "O(...)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\nbool insert(TrieNode* node, char ch);\nbool delete(TrieNode* node, char ch);\n};",
+    "java": "public class Solution {\nboolean insert(TrieNode node, char ch);\nboolean delete(TrieNode node, char ch);\n}",
+    "python": "class Solution:\n    def insert(self, node, ch):\n        pass\n    def delete(self, node, ch):\n        pass",
+    "javascript": "function solve(node, ch) {\n        // TODO: implement\n    }"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\nbool insert(TrieNode* node, char ch) {\nif (!node) {\nnode = new TrieNode();\nnode->children[ch-'a'] = new TrieNode();\nreturn true;\n}\nreturn node->children[ch-'a'] != NULL;\n}\nbool delete(TrieNode* node, char ch) {\nif (!node) {\nreturn false;\n}\nif (node->children[ch-'a'] != NULL) {\nreturn true;\n}\nreturn false;\n}",
+    "java": "public class Solution {\nboolean insert(TrieNode node, char ch) {\nif (node == null) {\nnode = new TrieNode();\nnode.children[ch-'a'] = new TrieNode();\nreturn true;\n}\nreturn node.children[ch-'a'] != null;\n}\nboolean delete(TrieNode node, char ch) {\nif (node == null) {\nreturn false;\n}\nif (node.children[ch-'a'] != null) {\nreturn true;\n}\nreturn false;\n}",
+    "python": "class Solution:\n    def insert(self, node, ch):\n        if not node:\n            node = TrieNode()\n            node.children[ch-'a'] = TrieNode()\n            return True\n        return node.children[ch-'a'] is not None\n    def delete(self, node, ch):\n        if not node:\n            return False\n        if node.children[ch-'a'] is not None:\n            return True\n        return False",
+    "javascript": "function solve(node, ch) {\n        if (!node) {\n                node = new TrieNode();\n                node.children[ch.charCodeAt(0)-97] = new TrieNode();\n                return true;\n        }\n        return node.children[ch.charCodeAt(0)-97] != null;\n    }\nfunction delete(node, ch) {\n        if (!node) {\n                return false;\n        }\n        if (node.children[ch.charCodeAt(0)-97] != null) {\n                return true;\n        }\n        return false;\n    }"
+  },
+  "functionSignature": {
+    "cpp": "TrieNode* insert(TrieNode* node, char ch); bool delete(TrieNode* node, char ch);",
+    "java": "TrieNode insert(TrieNode node, char ch); boolean delete(TrieNode node, char ch);",
+    "python": "def insert(self, node: TrieNode, ch: str) -> bool; def delete(self, node: TrieNode, ch: str) -> bool",
+    "javascript": "function insert(node, ch) {\n        // TODO: implement\n    }\nfunction delete(node, ch) {\n        // TODO: implement\n    }"
+  },
+  "solutions": {
+    "python": "class TrieNode:\n    def __init__(self):\n        self.children = {}\n\nclass Solution:\n    def insert(self, node: TrieNode, ch: str) -> bool:\n        if not node:\n            node = TrieNode()\n            node.children[ch] = TrieNode()\n            return True\n        return ch in node.children\n\n    def delete(self, node: TrieNode, ch: str) -> bool:\n        if not node:\n            return False\n        if ch in node.children:\n            del node.children[ch]\n            return len(node.children) == 0\n        return False\n\nn = int(input())\nfor _ in range(n):\n    op, ch = input().split()\n    if op == 'insert':\n        print(Solution().insert(TrieNode(), ch))\n    else:\n        print(Solution().delete(TrieNode(), ch))",
+    "cpp": "#include <bits/stdc++.h>\n\nusing namespace std;\n\nclass TrieNode {\npublic:\n    unordered_map<char, TrieNode*> children;\n};\n\nclass Solution {\npublic:\n    bool insert(TrieNode* node, char ch) {\n        if (!node) {\n            node = new TrieNode();\n            node->children[ch-'a'] = new TrieNode();\n            return true;\n        }\n        return node->children.find(ch-'a') != node->children.end();\n    }\n\n    bool delete(TrieNode* node, char ch) {\n        if (!node) {\n            return false;\n        }\n        if (node->children.find(ch-'a') != node->children.end()) {\n            node->children.erase(ch-'a');\n            return node->children.size() == 0;\n        }\n        return false;\n    }\n};\n\nint main() {\n    int n;\n    cin >> n;\n    for (int i = 0; i < n; i++) {\n        string op, ch;\n        cin >> op >> ch;\n        if (op == \"insert\") {\n            cout << Solution().insert(new TrieNode(), ch[0]) << endl;\n        } else {\n            cout << Solution().delete(new TrieNode(), ch[0]) << endl;\n        }\n    }\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "2\ninsert a\ninsert b",
+      "output": "1\n1",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_hidden_generated",
+      "input": "2\ninsert a\ninsert b",
+      "output": "1\n1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

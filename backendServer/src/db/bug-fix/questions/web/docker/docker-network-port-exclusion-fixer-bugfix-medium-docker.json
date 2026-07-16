@@ -1,0 +1,131 @@
+{
+  "title": "Docker Network Port Exclusion Fixer",
+  "subCategory": "Docker Networking",
+  "statement": {
+    "markdown": "In a Docker Compose file, you're trying to expose a port on a service, but also exclude it from the default network port mapping. However, your code is not correctly overriding the default mapping, resulting in a port conflict. Fix the bug to ensure the service exposes the correct port without conflicts.",
+    "inputFormat": "A Docker Compose file (docker-compose.yml) with a service that exposes a port, and a default network that maps ports.",
+    "outputFormat": "A Docker Compose file with the service exposing the correct port, and the default network updated to exclude the port.",
+    "notes": "Make sure to test your solution with different input scenarios, including ports in different ranges.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of ports to map"
+      }
+    ],
+    "examples": [
+      {
+        "input": "version: '3'\n  services:\n    web:\n      build: .\n      ports:\n        - '8080:80'\n  networks:\n    default:\n      driver: bridge\n      ipam:\n        config:\n          - subnet: 172.18.0.0/16\n  networks:\n    web-net:\n      driver: bridge\n      ipam:\n        config:\n          - subnet: 172.19.0.0/16\n      external: true\n",
+        "output": "version: '3'\n  services:\n    web:\n      build: .\n      ports:\n        - '8080:80'\n  networks:\n    default:\n      driver: bridge\n      ipam:\n        config:\n          - subnet: 172.18.0.0/16\n          - subnet: 172.19.0.0/16\n          - subnet: 172.19.1.0/24\n      external: true\n",
+        "explanation": "The output should have the default network updated to exclude the port 8080, and include the subnet 172.19.1.0/24"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DOCKER"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "docker"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Check the Docker Compose file documentation for the correct syntax to exclude ports from the default network mapping."
+    }
+  ],
+  "editorial": {
+    "title": "Docker Network Port Exclusion Fixer Editorial",
+    "intuition": "The solution involves updating the default network in the Docker Compose file to exclude the port being exposed by the service.",
+    "bruteForce": "One possible brute force approach is to manually update the default network in the Docker Compose file to exclude the port, but this is not scalable and may lead to errors.",
+    "betterSolution": "A better solution would be to use the `extends` keyword to create a new network that excludes the port, and then use that network in the service definition.",
+    "optimalSolution": "The optimal solution involves using the `extends` keyword to create a new network that excludes the port, and then using the `extends` keyword again to create a new service that uses the new network.",
+    "proofOfCorrectness": "The proof of correctness involves verifying that the updated Docker Compose file does not expose the port to the default network, and that the service can still be accessed using the exposed port.",
+    "dryRun": "To dry run the solution, create a new Docker Compose file with the updated service and network definitions, and then run `docker-compose up` to verify that the service can be accessed using the exposed port.",
+    "commonMistakes": [
+      "Not updating the default network to exclude the port",
+      "Not using the `extends` keyword correctly"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "// Define your Docker Compose file here\n",
+    "python": "// Define your Docker Compose file here\n"
+  },
+  "buggyStarterCode": {
+    "javascript": "// version: '3'\n//  services:\n//    web:\n//      build: .\n//      ports:\n//        - '8080:80'\n//  networks:\n//    default:\n//      driver: bridge\n//      ipam:\n//        config:\n//          - subnet: 172.18.0.0/16\n//  networks:\n//    web-net:\n//      driver: bridge\n//      ipam:\n//        config:\n//          - subnet: 172.19.0.0/16\n//      external: true\n",
+    "python": "// version: '3'\n//  services:\n//    web:\n//      build: .\n//      ports:\n//        - '8080:80'\n//  networks:\n//    default:\n//      driver: bridge\n//      ipam:\n//        config:\n//          - subnet: 172.18.0.0/16\n//          - subnet: 172.19.0.0/16\n//          - subnet: 172.19.1.0/24\n//      external: true\n//  networks:\n//    web-net:\n//      driver: bridge\n//      ipam:\n//        config:\n//          - subnet: 172.19.0.0/16\n//      external: true\n"
+  },
+  "functionSignature": {
+    "javascript": "// function solve(input) {}\n",
+    "python": "// def solve(input) -> None:\n"
+  },
+  "solutions": {
+    "javascript": "// Define your function here\nfunction solve(input) {\n  // Update the default network to exclude the port\n  input = input.replace('172.19.0.0/16', '172.18.0.0/16, 172.19.1.0/24');\n  return input;\n}\n",
+    "python": "// Define your function here\ndef solve(self, input) -> None:\n  # Update the default network to exclude the port\n  input = input.replace('172.19.0.0/16', '172.18.0.0/16, 172.19.1.0/24');\n  return input;"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "version: '3'\n  services:\n    web:\n      build: .\n      ports:\n        - '8080:80'\n  networks:\n    default:\n      driver: bridge\n      ipam:\n        config:\n          - subnet: 172.18.0.0/16\n  networks:\n    web-net:\n      driver: bridge\n      ipam:\n        config:\n          - subnet: 172.19.0.0/16\n      external: true\n",
+      "output": "version: '3'\n  services:\n    web:\n      build: .\n      ports:\n        - '8080:80'\n  networks:\n    default:\n      driver: bridge\n      ipam:\n        config:\n          - subnet: 172.18.0.0/16\n          - subnet: 172.19.1.0/24\n      external: true\n",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "version: '3'\n  services:\n    web:\n      build: .\n      ports:\n        - '8081:81'\n  networks:\n    default:\n      driver: bridge\n      ipam:\n        config:\n          - subnet: 172.18.0.0/16\n  networks:\n    web-net:\n      driver: bridge\n      ipam:\n        config:\n          - subnet: 172.19.0.0/16\n      external: true\n",
+      "output": "version: '3'\n  services:\n    web:\n      build: .\n      ports:\n        - '8081:81'\n  networks:\n    default:\n      driver: bridge\n      ipam:\n        config:\n          - subnet: 172.18.0.0/16\n          - subnet: 172.19.1.0/24\n      external: true\n",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "5dc85ddce5d820e2995a4351",
+  "slug": "docker-network-port-exclusion-fixer-bugfix-medium-docker",
+  "mode": "bug_fix",
+  "category": "DOCKER",
+  "difficulty": "Medium"
+}

@@ -1,0 +1,143 @@
+{
+  "title": "Optimizing a Memoized React Component Re-renders Due to Changing Nested Object References",
+  "subCategory": "State Management",
+  "statement": {
+    "markdown": "Write a memoized React component that efficiently re-renders only when the nested object references inside its state change. The component receives a nested object `data` as a prop and maintains its own state `count`. When a new `data` is passed, the component should update its state accordingly.",
+    "inputFormat": "The input will be an object representing the nested data structure. For example: `{ a: { b: { c: 1 } }, d: { e: 2 } }`",
+    "outputFormat": "The component should render the updated count.",
+    "notes": "You should consider using a library like `lodash.isequal` to compare the nested objects.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Maximum depth of the nested object"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"a\": { \"b\": { \"c\": 1 } }, \"d\": { \"e\": 2 }}",
+        "output": "1",
+        "explanation": "The component receives the initial nested object and updates its state accordingly."
+      },
+      {
+        "input": "{\"a\": { \"b\": { \"c\": 2 } }, \"d\": { \"e\": 2 }}",
+        "output": "2",
+        "explanation": "The component re-renders with the updated count when a new nested object is passed."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 100,
+    "premium": true,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "REACT"
+    ],
+    "patterns": [],
+    "prerequisites": [
+      "Basic knowledge of React and memoization"
+    ],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "react",
+      "memoization"
+    ],
+    "interviewFrequency": 1,
+    "revisionLevel": 1,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use `lodash.isequal` to compare the nested objects."
+    },
+    {
+      "order": 2,
+      "text": "Consider using a recursive function to traverse the nested object."
+    }
+  ],
+  "editorial": {
+    "title": "Memoized React Component Optimization",
+    "intuition": "The key to optimizing the memoized component is to efficiently compare the nested objects.",
+    "bruteForce": "A brute-force approach would involve checking all nested object properties for changes.",
+    "betterSolution": "A better solution involves using `lodash.isequal` to compare the nested objects.",
+    "optimalSolution": "The optimal solution involves using a recursive function to traverse the nested object and update the state accordingly.",
+    "proofOfCorrectness": "The proof of correctness involves demonstrating that the updated state reflects the changes in the nested object.",
+    "dryRun": "A dry run would involve testing the component with various inputs to ensure it behaves as expected.",
+    "commonMistakes": [
+      "Failing to use memoization",
+      "Incorrectly comparing nested objects"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "const MemoizedComponent = ({ data }) => {\n  const [count, setCount] = useState(0);\n  // Implement memoization here\n  return <div>Count: {count}</div>;\n};",
+    "python": "class MemoizedComponent:\n  def __init__(self, data):\n    self.data = data\n    self.count = 0\n  # Implement memoization here\n  def render(self):\n    return f\"Count: {self.count}\""
+  },
+  "buggyStarterCode": {
+    "javascript": "const MemoizedComponent = ({ data }) => {\n  const [count, setCount] = useState(0);\n  useEffect(() => {\n    // Incorrectly comparing nested objects\n    setCount(new Date().getTime());\n  }, [data]);\n  return <div>Count: {count}</div>;\n};",
+    "python": "class MemoizedComponent:\n  def __init__(self, data):\n    self.data = data\n    self.count = 0\n  def render(self):\n    # Incorrectly comparing nested objects\n    self.count = str(self.data) + str(self.count)\n    return f\"Count: {self.count}\""
+  },
+  "functionSignature": {
+    "javascript": "const MemoizedComponent = ({ data }) => {\n  // Implement memoization here\n  return <div>Count: {count}</div>;\n};",
+    "python": "class MemoizedComponent:\n  def __init__(self, data):\n    # Implement memoization here\n  def render(self):\n    return f\"Count: {self.count}\""
+  },
+  "solutions": {
+    "javascript": "// Solution\nimport _ from 'lodash';\nconst MemoizedComponent = ({ data }) => {\n  const [count, setCount] = useState(0);\n  useEffect(() => {\n    const isEqual = _.isEqual(data, prevData);\n    if (!isEqual) setCount(new Date().getTime());\n  }, [data, prevData]);\n  return <div>Count: {count}</div>;\n};",
+    "python": "import json\nfrom functools import lru_cache\nclass MemoizedComponent:\n  def __init__(self, data):\n    self.data = data\n    self.count = 0\n  def render(self):\n    @lru_cache(maxsize=None)\n    def isEqual(data1, data2):\n      return json.dumps(data1, sort_keys=True) == json.dumps(data2, sort_keys=True)\n    if not isEqual(self.data, self.prevData):\n      self.count += 1\n    self.prevData = self.data\n    return f\"Count: {self.count}\""
+  },
+  "judgeConfig": {
+    "timeLimit": 5,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 2
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"a\": { \"b\": { \"c\": 1 } }, \"d\": { \"e\": 2 }}",
+      "output": "1",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"a\": { \"b\": { \"c\": 2 } }, \"d\": { \"e\": 2 }}",
+      "output": "2",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "0f4a88e0d439970c1d7e95ba",
+  "slug": "optimizing-a-memoized-react-component-re-renders-due-to-changing-nested-object-references-bugfix-hard-react",
+  "mode": "bug_fix",
+  "category": "REACT",
+  "difficulty": "Hard"
+}

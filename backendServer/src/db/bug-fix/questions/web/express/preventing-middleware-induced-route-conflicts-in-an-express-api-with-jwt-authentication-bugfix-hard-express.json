@@ -1,0 +1,143 @@
+{
+  "title": "Preventing Middleware-Induced Route Conflicts in an Express API with JWT Authentication",
+  "subCategory": "ROUTING",
+  "statement": {
+    "markdown": "In this Express API, we're implementing JWT authentication for all routes. However, we're experiencing issues with middleware order causing conflicts between our authentication and route parameter validation middleware. Your task is to fix the bug in the code to ensure that authentication and route parameter validation are executed in the correct order.",
+    "inputFormat": "The input format is a JSON object containing the route path, HTTP method, and any route parameters.",
+    "outputFormat": "The output format is a JSON object containing the authentication status and any route parameter values.",
+    "notes": "The authentication middleware checks the JWT token in the Authorization header, while the route parameter validation middleware ensures that the route parameters match the expected format.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 100,
+        "description": "Number of routes"
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 1,
+        "max": 10,
+        "description": "Number of route parameters per route"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"path\":\"/users/:id\",\"method\":\"GET\",\"params\":{\"id\":\"123\"}}",
+        "output": "{\"authenticated\":true,\"params\":{\"id\":\"123\"}}",
+        "explanation": "Authentication is successful, and the route parameter is validated."
+      },
+      {
+        "input": "{\"path\":\"/users\",\"method\":\"POST\",\"params\":{}}",
+        "output": "{\"authenticated\":false,\"params\":{}}",
+        "explanation": "Authentication fails because the JWT token is missing."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 75,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "EXPRESS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "express"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Review the middleware order and ensure that authentication is executed before route parameter validation."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial: Preventing Middleware-Induced Route Conflicts",
+    "intuition": "The key to solving this problem is to understand the order in which middleware are executed and how they interact with each other.",
+    "bruteForce": "One way to solve this problem is to execute the authentication middleware first and then the route parameter validation middleware.",
+    "betterSolution": "However, this approach can be inefficient because it requires executing unnecessary middleware. A better solution is to use middleware that can handle both authentication and route parameter validation.",
+    "optimalSolution": "The optimal solution is to use the built-in Express middleware, such as express-jwt, to handle authentication and route parameter validation in a single middleware.",
+    "proofOfCorrectness": "The correct middleware order is authentication -> route parameter validation.",
+    "dryRun": "Here's a step-by-step example run:",
+    "commonMistakes": [
+      "Executing authentication middleware after route parameter validation",
+      "Using multiple middleware for authentication and route parameter validation"
+    ],
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "// Define the authentication middleware\n\n// Define the route parameter validation middleware\n\n// Define the route handler\n\n// Export the routes\n",
+    "python": "// Import the required modules\n\n// Define the authentication middleware\n\n// Define the route parameter validation middleware\n\n// Define the route handler\n\n// Export the routes\n"
+  },
+  "buggyStarterCode": {
+    "javascript": "const express = require('express');\nconst jwt = require('express-jwt');\n\nconst app = express();\n\n// Define the authentication middleware\nconst authenticate = jwt({ secret: 'your-secret-key' });\n\n// Define the route parameter validation middleware\nconst validateRouteParams = (req, res, next) => {\n  if (!req.params.id) {\n    return res.status(400).send({ error: 'Missing route parameter' });\n  }\n  next();\n};\n\n// Define the route handler\nconst get_user = (req, res) => {\n  res.send({ authenticated: true, params: { id: req.params.id } });\n};\n\n// Define the routes\napp.get('/users/:id', validateRouteParams, authenticate, get_user);\n\n// Export the routes\nmodule.exports = app;",
+    "python": "import json\nimport express\nfrom express_jwt import jwt\n\napp = express()  # Initialize the Express app\n\n# Define the authentication middleware\nauthenticate = jwt(secret='your-secret-key')\n\n# Define the route parameter validation middleware\ndef validate_route_params(req, res, next):\n    if not req.params.get('id'):\n        res.status(400).send({'error': 'Missing route parameter'})\n    else:\n        next()\n\n# Define the route handler\ndef get_user(req, res):\n    res.send({'authenticated': True, 'params': {'id': req.params.get('id')}})\n\n# Define the routes\napp.get('/users/<id>', validate_route_params, authenticate, get_user)\n\n# Export the routes\nif __name__ == '__main__':\n    app.run(port=3000)"
+  },
+  "functionSignature": {
+    "javascript": "var solve = function(app, routes);\n",
+    "python": "def solve(app):\n    # Define the routes here\n"
+  },
+  "solutions": {
+    "javascript": "// Solution\nconst express = require('express');\nconst jwt = require('express-jwt');\n\nconst app = express();\n\n// Define the authentication middleware\nconst authenticate = jwt({ secret: 'your-secret-key' });\n\n// Define the route parameter validation middleware\nconst validateRouteParams = (req, res, next) => {\n  if (!req.params.id) {\n    return res.status(400).send({ error: 'Missing route parameter' });\n  }\n  next();\n};\n\n// Define the route handler\nconst get_user = (req, res) => {\n  res.send({ authenticated: true, params: { id: req.params.id } });\n};\n\n// Define the routes\napp.get('/users/:id', authenticate, validateRouteParams, get_user);\n\n// Export the routes\nmodule.exports = app;",
+    "python": "// Solution\nimport json\nimport express\nfrom express_jwt import jwt\n\napp = express()  # Initialize the Express app\n\n# Define the authentication middleware\nauthenticate = jwt(secret='your-secret-key')\n\n# Define the route parameter validation middleware\ndef validate_route_params(req, res, next):\n    if not req.params.get('id'):\n        res.status(400).send({'error': 'Missing route parameter'})\n    else:\n        next()\n\n# Define the route handler\ndef get_user(req, res):\n    res.send({'authenticated': True, 'params': {'id': req.params.get('id')}})\n\n# Define the routes\napp.get('/users/<id>', authenticate, validate_route_params, get_user)\n\n# Export the routes\nif __name__ == '__main__':\n    app.run(port=3000)"
+  },
+  "judgeConfig": {
+    "timeLimit": 3,
+    "memoryLimit": 512,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.5
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"path\":\"/users/123\",\"method\":\"GET\",\"params\":{\"id\":\"123\"}}",
+      "output": "{\"authenticated\":true,\"params\":{\"id\":\"123\"}}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"path\":\"/users\",\"method\":\"POST\",\"params\":{}}",
+      "output": "{\"authenticated\":false,\"params\":{}}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "b068ce474ef133b28b32620e",
+  "slug": "preventing-middleware-induced-route-conflicts-in-an-express-api-with-jwt-authentication-bugfix-hard-express",
+  "mode": "bug_fix",
+  "category": "EXPRESS",
+  "difficulty": "Hard"
+}

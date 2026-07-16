@@ -93,8 +93,14 @@ export const updateSocialsSchema = z.object({
 
 export const updateMascotSchema = z.object({
     body: z.object({
-        type: z.enum(["cat", "dog", "panda", "crab"]),
+        type: z.string().min(1).max(50),
         color: z.string().min(4).max(10),
+    }).strict(),
+});
+
+export const updateBannerSchema = z.object({
+    body: z.object({
+        banner: z.string().min(1).max(50),
     }).strict(),
 });
 

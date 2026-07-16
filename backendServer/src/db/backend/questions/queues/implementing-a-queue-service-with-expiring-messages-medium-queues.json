@@ -1,0 +1,142 @@
+{
+  "_id": "9cfec8dd1b6b15f39f9d52f5",
+  "title": "Implementing a Queue Service with Expiring Messages",
+  "slug": "implementing-a-queue-service-with-expiring-messages-medium-queues",
+  "difficulty": "Medium",
+  "topics": [
+    "QUEUES"
+  ],
+  "statement": "Design and implement a queue service using the BullMQ library. The service should allow users to submit messages with an expiration time. Messages that are not processed within the specified expiration time should be automatically deleted from the queue. Implement the following endpoints:\n\n- **POST /api/queues/{queueName}**: Submit a message to a queue with a specified expiration time.\n- **GET /api/queues/{queueName}**: Retrieve a list of messages from a queue, including their expiration time.\n- **GET /api/queues/{queueName}/{messageId}**: Retrieve a specific message from a queue.\n- **DELETE /api/queues/{queueName}/{messageId}**: Remove a specific message from a queue.\n\nNote: When implementing the queue, use the `bullmq` library and store the messages in memory. The expiration time should be stored as an attribute of the message.\n\nYou can assume that the `bullmq` library is installed and available. The `queueName` parameter is a string that identifies the queue.\n\nYou can test your implementation using the following visible API test cases and hidden API test cases.\n\n**Constraints:**\n\n- Use the `bullmq` library to implement the queue.\n- Messages should be stored in memory.\n- Expiration times should be preserved as an attribute of the message.\n- Implement proper error handling for cases where a message is not found, or when a queue does not exist.\n\n**Visible API Test Cases:**\n\n| ID | Method | Path | Headers | Body | Expected Status | Expected Body | Expected Body Schema | Is Visible |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- |\n| v_tc1 | POST | /api/queues/myQueue | { 'Content-Type': 'application/json' } | { 'message': 'Hello World', 'expiresIn': 1000 } | 201 | { 'success': true } | null | true |\n| v_tc2 | GET | /api/queues/myQueue | {} | {} | 200 | [{ 'id': '123', 'message': 'Hello World', 'expiresIn': 1000 }] | null | true |\n\n**Hidden API Test Cases:**\n\n| ID | Method | Path | Headers | Body | Expected Status | Expected Body | Expected Body Schema | Is Visible |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- |\n| h_tc1 | GET | /api/queues/myQueue | {} | {} | 500 | { 'error': 'Queue does not exist' } | null | false |\n| h_tc2 | GET | /api/queues/myQueue/abc | {} | {} | 404 | { 'error': 'Message not found' } | null | false |\n| h_tc3 | DELETE | /api/queues/myQueue/abc | {} | {} | 400 | { 'error': 'Invalid message id' } | null | false |",
+  "constraints": [
+    "Use the bullmq library to implement the queue.",
+    "Messages should be stored in memory.",
+    "Expiration times should be preserved as an attribute of the message.",
+    "Implement proper error handling for cases where a message is not found, or when a queue does not exist."
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/queues/{queueName}",
+      "description": "Submit a message to a queue with a specified expiration time."
+    },
+    {
+      "method": "GET",
+      "path": "/api/queues/{queueName}",
+      "description": "Retrieve a list of messages from a queue, including their expiration time."
+    },
+    {
+      "method": "GET",
+      "path": "/api/queues/{queueName}/{messageId}",
+      "description": "Retrieve a specific message from a queue."
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/queues/{queueName}/{messageId}",
+      "description": "Remove a specific message from a queue."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\n  \"name\": \"queue-service\",\n  \"version\": \"1.0.0\",\n  \"main\": \"index.js\",\n  \"scripts\": {\n    \"start\": \"node index.js\"\n  },\n  \"dependencies\": {\n    \"bullmq\": \"^4.0.3\",\n    \"express\": \"^4.18.2\"\n  }\n}",
+    "index.js": "const express = require('express');\nconst BullMQ = require('bullmq');\nconst app = express();\napp.use(express.json());\n\nconst queue = new BullMQ('myQueue');\n\n// TODO: Implement endpoints\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "POST",
+      "path": "/api/queues/myQueue",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "message": "Hello World",
+        "expiresIn": 1000
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "success": true
+      },
+      "expectedBodySchema": null,
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "GET",
+      "path": "/api/queues/myQueue",
+      "expectedStatus": 200,
+      "expectedBody": [
+        {
+          "id": "123",
+          "message": "Hello World",
+          "expiresIn": 1000
+        }
+      ],
+      "expectedBodySchema": null,
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "GET",
+      "path": "/api/queues/myQueue",
+      "expectedStatus": 500,
+      "expectedBody": {
+        "error": "Queue does not exist"
+      },
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "GET",
+      "path": "/api/queues/myQueue/abc",
+      "expectedStatus": 404,
+      "expectedBody": {
+        "error": "Message not found"
+      },
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "DELETE",
+      "path": "/api/queues/myQueue/abc",
+      "expectedStatus": 400,
+      "expectedBody": {
+        "error": "Invalid message id"
+      },
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "bullmq",
+    "rabbitmq",
+    "kafka",
+    "background-jobs",
+    "workers",
+    "retry",
+    "delayed-jobs",
+    "queues",
+    "messages",
+    "expiration"
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "_id": "7296a83188a054ad4ff62b50",
+  "title": "Infinite Scroll",
+  "slug": "java-infinite-scroll",
+  "difficulty": "Medium",
+  "topics": [
+    "JAVASCRIPT"
+  ],
+  "statement": {
+    "markdown": "### Problem Statement\nWe want users to be able to browse through a large list of items without having to navigate to multiple pages. This can be achieved using an infinite scroll feature.\n\n## Solution\nYour task is to implement an infinite scroll feature for a list of items.\n\n### Requirements\n1. The list of items should be generated dynamically.\n2. The infinite scroll feature should be triggered when the user reaches the bottom of the list.\n3. The list should be paginated (i.e., divided into chunks).\n4. Each chunk should be loaded when the user scrolls to the bottom of the previous chunk."
+  },
+  "constraints": [
+    "The list of items must be generated dynamically.",
+    "The infinite scroll feature should be triggered when the user reaches the bottom of the list.",
+    "The list should be paginated (i.e., divided into chunks)."
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "html": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Infinite Scroll</title>\n    <link rel=\"stylesheet\" href=\"styles.css\">\n</head>\n<body>\n    <div class=\"container mx-auto p-4\">\n        <h1 class=\"text-3xl font-bold mb-4\">Infinite Scroll</h1>\n        <button id=\"loadMore\" class=\"bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded\">Load More</button>\n        <ul id=\"itemList\"></ul>\n    </div>\n    <script src=\"script.js\"></script>\n</body>\n</html>",
+    "css": ".container {\n    max-width: 800px;\n}\n\n#itemList {\n    list-style-type: none;\n    padding: 0;\n    margin: 0;\n}\n\n#itemList li {\n    padding: 10px;\n    border-bottom: 1px solid #ccc;\n}\n\n#itemList li:last-child {\n    border-bottom: none;\n}",
+    "javascript": "const itemList = document.getElementById('itemList');\nconst loadMoreButton = document.getElementById('loadMore');\nlet currentPage = 1;\n\n// TODO: load the first page of items on page load, then fetch and\n// append more items each time the load more button is clicked\n// (or when the user scrolls near the bottom of the page)\nloadMoreButton.addEventListener('click', () => {\n\n});\n"
+  },
+  "gradingCriteria": [
+    {
+      "id": "functional_correctness",
+      "description": "Implementation works as specified",
+      "weight": 60
+    },
+    {
+      "id": "code_quality",
+      "description": "Clean, readable code structure",
+      "weight": 40
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "html",
+      "css",
+      "javascript"
+    ],
+    "referenceSolution": "html: <!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Infinite Scroll</title>\n    <link rel=\"stylesheet\" href=\"styles.css\">\n</head>\n<body>\n    <div class=\"container mx-auto p-4\">\n        <h1 class=\"text-3xl font-bold mb-4\">Infinite Scroll</h1>\n        <button id=\"loadMore\" class=\"bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded\">Load More</button>\n        <ul id=\"itemList\"></ul>\n    </div>\n    <script src=\"script.js\"></script>\n</body>\n</html>\ncss: .container {\n    max-width: 800px;\n}\n\n#itemList {\n    list-style-type: none;\n    padding: 0;\n    margin: 0;\n}\n\n#itemList li {\n    padding: 10px;\n    border-bottom: 1px solid #ccc;\n}\n\n#itemList li:last-child {\n    border-bottom: none;\n}\n\n#itemList li:nth-child(n+5) {\n    opacity: 0.5;\n}\njs: // Initialize variables\nconst itemList = document.getElementById('itemList');\nconst loadMoreButton = document.getElementById('loadMore');\nlet items = [];\nlet currentPage = 1;\nlet itemsPerPage = 10;\nlet observer;\n\n// Load initial items\nloadInitialItems();\n\n// Function to load initial items\nfunction loadInitialItems() {\n    fetch('/api/items?page=1&limit=10')\n        .then(response => response.json())\n        .then(data => {\n            items = data.items;\n            renderItems();\n            observer = new IntersectionObserver(checkIfBottomReached, { threshold: 1 });\n            observer.observe(itemList);\n        });\n}\n\n// Function to render items\nfunction renderItems() {\n    itemList.innerHTML = '';\n    items.forEach(item => {\n        const listItem = document.createElement('li');\n        listItem.textContent = item.name;\n        itemList.appendChild(listItem);\n    });\n}\n\n// Function to load more items\nfunction loadMoreItems() {\n    currentPage++;\n    fetch('/api/items?page=' + currentPage + '&limit=' + itemsPerPage)\n        .then(response => response.json())\n        .then(data => {\n            items = items.concat(data.items);\n            renderItems();\n        });\n}\n\n// Function to check if bottom is reached\nfunction checkIfBottomReached(entries) {\n    if (entries[0].isIntersecting) {\n        loadMoreItems();\n    }\n}\n\n// Add event listener to load more button\nloadMoreButton.addEventListener('click', loadMoreItems);\n\ncriteria\n{\"id\":\"infinite_scroll_feature\",\"description\":\"The list should have an infinite scroll feature.\",\"weight\":20}\n{\"id\":\"dynamic_item_generation\",\"description\":\"The list of items should be generated dynamically.\",\"weight\":30}\n{\"id\":\"pagination\",\"description\":\"The list should be paginated (i.e., divided into chunks).\",\"weight\":20}\n{\"id\":\"bottom_reached_detection\",\"description\":\"The infinite scroll feature should be triggered when the user reaches the bottom of the list.\",\"weight\":30}"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

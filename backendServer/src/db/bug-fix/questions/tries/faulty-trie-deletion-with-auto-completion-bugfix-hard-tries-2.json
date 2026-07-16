@@ -1,0 +1,158 @@
+{
+  "_id": "87733b70fb929fb119a79178",
+  "title": "Faulty Trie Deletion with Auto Completion",
+  "slug": "faulty-trie-deletion-with-auto-completion-bugfix-hard-tries-2",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "Trie",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "trie"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Solve the problem and fix the bugs.",
+    "inputFormat": "Input is provided in the following format:\n\nword1\nword2\nword3\nword4",
+    "outputFormat": "The output should be the number of remaining words in the trie.\nIf the trie is empty, output 0.",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "0",
+        "output": "0",
+        "explanation": "An empty trie has 0 words."
+      },
+      {
+        "input": "\nabc\ndef\n",
+        "output": "2",
+        "explanation": "abc and def exist in the trie."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Check the deletion logic for auto completion"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "proof Of Correctness details.",
+    "dryRun": "dry Run details.",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(...) ",
+    "spaceComplexity": "O(...)"
+  },
+  "starterCode": {
+    "cpp": "class TrieNode {\npublic:\n\tTrieNode*\nchildren[26];\n\tbool\nisEndOfWord;\n};\n\nclass Trie {\npublic:\n\tvoid\ninsert(string word) {\n\t\tTrieNode*\nroot = new TrieNode();\n\t}\n\tvoid\nremove(string word) {\n\t\t// TODO: implement\n\t}\n\tint\nautoCompletion(int n) {\n\t\t// TODO: implement\n\t\treturn 0;\n\t}\n};",
+    "java": "class TrieNode {\npublic:\n\tTrieNode[]\nchildren;\n\tboolean\nisEndOfWord;\n};\n\nclass Trie {\npublic:\n\tvoid\ninsert(String word) {\n\t\tTrieNode\nroot = new TrieNode();\n\t}\n\tvoid\nremove(String word) {\n\t\t// TODO: implement\n\t}\n\tint\nautoCompletion(int n) {\n\t\t// TODO: implement\n\t\treturn 0;\n\t}\n}",
+    "python": "class TrieNode:\n\tchildren = None\n\tisEndOfWord = None\n\nclass Trie:\n\tdef\ninsert(self, word):\n\t\tself.root = TrieNode()\n\t\ndef\nremove(self, word):\n\t\t# TODO: implement\n\t\ndef\nautoCompletion(self, n):\n\t\t# TODO: implement\n\t\treturn 0",
+    "javascript": "function TrieNode() {\n\tthis.children = []; // TODO: implement children\n\tthis.isEndOfWord = false;\n}\n\nfunction Trie() {\n\tthis.insert = function(word) {\n\t\t// TODO: implement\n\t\t};\n\tthis.remove = function(word) {\n\t\t// TODO: implement\n\t\t};\n\tthis.autoCompletion = function(n) {\n\t\t// TODO: implement\n\t\treturn 0;\n\t}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class TrieNode {\npublic:\n\tTrieNode*\nchildren[26];\n\tbool\nisEndOfWord;\n};\n\nclass Trie {\npublic:\n\tvoid\ninsert(string word) {\n\t\tTrieNode*\nroot = new TrieNode();\n\t\tfor (int i=0;i<word.length();i++)\n\t\t{\n\t\t\tint charCode = word[i] - 'a';\n\t\t\tif (root->children[charCode] == NULL) root->children[charCode] = new TrieNode();\n\t\t\troot = root->children[charCode];\n\t\t}\n\t\troot->isEndOfWord = true;\n\t}\n\tvoid\nremove(string word) {\n\t\tTrieNode*\nroot = this->root;\n\t\tfor (int i=0;i<word.length();i++)\n\t\t{\n\t\t\tint charCode = word[i] - 'a';\n\t\t\tif (root->children[charCode] == NULL) return;\n\t\t\troot = root->children[charCode];\n\t\t}\n\t\troot->isEndOfWord = false;\n\t\t// BUG: remove all children if root is not end of word\n\t\tfor (int i=0;i<26;i++)\n\t\t{\n\t\t\tif (root->children[i] != NULL) delete root->children[i];\n\t\t}\n\t\tdelete root;\n\t}\n}\n\nint\nautoCompletion(int n) {\n\tTrie trie;\n\tstring word;\n\tfor (int i=0;i<n;i++)\n\t{\n\t\tcin>>word;\n\t\ttrie.insert(word);\n\t}\n\treturn 0;\n}",
+    "java": "class TrieNode {\npublic:\n\tTrieNode[]\nchildren;\n\tboolean\nisEndOfWord;\n};\n\nclass Trie {\npublic:\n\tvoid\ninsert(String word) {\n\t\tTrieNode\nroot = new TrieNode();\n\t\tfor (int i=0;i<word.length();i++)\n\t\t{\n\t\t\tint charCode = word.charAt(i) - 'a';\n\t\t\tif (root.children[charCode] == null) root.children[charCode] = new TrieNode();\n\t\t\troot = root.children[charCode];\n\t\t}\n\t\troot.isEndOfWord = true;\n\t}\n\tvoid\nremove(String word) {\n\t\tTrieNode\nroot = this.root;\n\t\tfor (int i=0;i<word.length();i++)\n\t\t{\n\t\t\tint charCode = word.charAt(i) - 'a';\n\t\t\tif (root.children[charCode] == null) return;\n\t\t\troot = root.children[charCode];\n\t\t}\n\t\troot.isEndOfWord = false;\n\t\t// BUG: remove all children if root is not end of word\n\t\tfor (int i=0;i<26;i++)\n\t\t{\n\t\t\tif (root.children[i] != null) delete root.children[i];\n\t\t}\n\t\tdelete root;\n\t}\n}\n\nint\nautoCompletion(int n) {\n\tTrie trie = new Trie();\n\tString word;\n\twhile (n-- > 0) {\n\t\tword = in.readLine();\n\t\ttrie.insert(word);\n\t}\n\treturn 0;\n}",
+    "python": "class TrieNode:\n\tchildren = None\n\tisEndOfWord = None\n\nclass Trie:\n\tdef\ninsert(self, word):\n\t\tself.root = TrieNode()\n\t\tfor i in range(len(word)):\n\t\t\tcharCode = ord(word[i]) - ord('a')\n\t\t\tif self.root.children[charCode] is None:\n\t\t\t\tself.root.children[charCode] = TrieNode()\n\t\t\tself.root = self.root.children[charCode]\n\t\tself.root.isEndOfWord = True\n\t\ndef\nremove(self, word):\n\t\troot = self.root\n\t\tfor i in range(len(word)):\n\t\t\tcharCode = ord(word[i]) - ord('a')\n\t\t\tif self.root.children[charCode] is None:\n\t\t\t\treturn\n\t\t\troot = self.root.children[charCode]\n\t\tself.root.isEndOfWord = False\n\t\t# BUG: remove all children if root is not end of word\n\t\tfor charCode in range(26):\n\t\t\tif self.root.children[charCode] is not None:\n\t\t\t\tself.root.children[charCode] = None\n\t\ndef\nautoCompletion(self, n):\n\t\twhile n > 0:\n\t\t\tword = input()\n\t\t\tself.insert(word)\n\t\t\tself.remove(word)\n\t\t\tself.root.isEndOfWord = False\n\t\t\tfor charCode in range(26):\n\t\t\t\tif self.root.children[charCode] is not None:\n\t\t\t\t\tself.root = self.root.children[charCode]\n\t\t\t\tself.root.isEndOfWord = False\n\t\t\t\tif self.root.children[charCode] is not None:\n\t\t\t\t\tdelete self.root.children[charCode]\n\t\t\t\tself.root.children[charCode] = None\n\t\t\tself.root = None\n\t\t\tself.root = TrieNode()\n\t\t\tself.insert(word)\n\t\t\tself.root = self.root.children[ord(word[0]) - ord('a')]\n\t\t\tself.root.isEndOfWord = False\n\t\t\tself.root.children[ord(word[0]) - ord('a')] = None\n\t\treturn 0",
+    "javascript": "function TrieNode() {\n\tthis.children = []; // TODO: implement children\n\tthis.isEndOfWord = false;\n}\n\nfunction Trie() {\n\tthis.insert = function(word) {\n\t\t// TODO: implement\n\t\t};\n\tthis.remove = function(word) {\n\t\t// TODO: implement\n\t\t};\n\tthis.autoCompletion = function(n) {\n\t\t// TODO: implement\n\t\treturn 0;\n\t}\n\tthis.root = new TrieNode();\n}\n\nvar autoCompletion = function(n) {\n\tvar trie = new Trie();\n\tvar word;\n\tfor (var i = 0; i < n; i++) {\n\t\tword = readline();\n\t\ttrie.insert(word);\n\t}\n\t// BUG: remove all children if root is not end of word\n\tfor (var charCode = 0; charCode < 26; charCode++) {\n\t\tif (trie.root.children[charCode] != null) {\n\t\t\tdelete trie.root.children[charCode];\n\t\t\ttrie.root.children[charCode] = null;\n\t\t}\n\t}\n\treturn 0;\n}"
+  },
+  "functionSignature": {
+    "cpp": "bool\nautoCompletion(int n);\n\nvoid\ninsert(string word);\n\nvoid\nremove(string word);\n",
+    "java": "boolean\nautoCompletion(int n);\n\nvoid\ninsert(String word);\n\nvoid\nremove(String word);\n",
+    "python": "def\nauto_completion(self, n: int) -> int:\n\n\tdef\ninsert(self, word: str) -> None:\n\t\t'''\n\t\t'''  # TODO\n\n\tdef\nremove(self, word: str) -> None:\n\t\t'''\n\t\t'''  # TODO",
+    "javascript": "function autoCompletion(n) {\n\t// TODO\n}\n\nfunction insert(word) {\n\t// TODO\n}\n\nfunction remove(word) {\n\t// TODO\n}"
+  },
+  "solutions": {
+    "python": "import sys\n\nclass TrieNode:\n\tchildren = None\n\tisEndOfWord = None\n\nclass Trie:\n\tdef\ninsert(self, word):\n\t\tself.root = TrieNode()\n\t\tfor i in range(len(word)):\n\t\t\tcharCode = ord(word[i]) - ord('a')\n\t\t\tif self.root.children[charCode] is None:\n\t\t\t\tself.root.children[charCode] = TrieNode()\n\t\t\tself.root = self.root.children[charCode]\n\t\tself.root.isEndOfWord = True\n\t\ndef\nremove(self, word):\n\t\troot = self.root\n\t\tfor i in range(len(word)):\n\t\t\tcharCode = ord(word[i]) - ord('a')\n\t\t\tif self.root.children[charCode] is None:\n\t\t\t\treturn\n\t\t\troot = self.root.children[charCode]\n\t\tself.root.isEndOfWord = False\n\t\tself.root.children[charCode] = None\n\t\ndef\nautoCompletion(self, n):\n\t\twhile n > 0:\n\t\t\tword = input()\n\t\t\tself.insert(word)\n\t\t\tself.root.isEndOfWord = False\n\t\t\tself.root.children = None\n\t\t\tself.root = None\n\t\t\tself.root = TrieNode()\n\t\t\tself.insert(word)\n\t\t\tself.root = self.root.children[ord(word[0]) - ord('a')]\n\t\t\tself.root.isEndOfWord = False\n\t\t\tself.root.children[ord(word[0]) - ord('a')] = None\n\t\treturn 0\n\nclass Solution:\n\tdef\nautoCompletion(self, n: int) -> int:\n\t\ttrie = Trie()\n\t\twhile n > 0:\n\t\t\tword = input()\n\t\t\ttrie.insert(word)\n\t\t\tself.remove(trie, word)\n\n\tdef\nremove(self, trie, word):\n\t\troot = trie.root\n\t\tfor i in range(len(word)):\n\t\t\tcharCode = ord(word[i]) - ord('a')\n\t\t\tif root.children[charCode] is None:\n\t\t\t\treturn\n\t\t\troot = root.children[charCode]\n\t\troot.isEndOfWord = False\n\t\troot.children = None\n\n\tdef\nmain(self):\n\t\ttry:\n\t\t\tinput = sys.stdin.readline\n\t\t\tself.autoCompletion(int(input().strip()))\n\t\texcept:\n\t\t\tpass\n",
+    "cpp": "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <string>\n\nclass TrieNode {\npublic:\n\tTrieNode*\nchildren[26];\n\tbool\nisEndOfWord;\n};\n\nclass Trie {\npublic:\n\tTrieNode*\nroot;\n\tvoid\ninsert(string word, TrieNode* root) {\n\t\tTrieNode*\nnewRoot = new TrieNode();\n\t\tfor (int i=0;i<word.length();i++)\n\t\t{\n\t\t\tint charCode = word[i] - 'a';\n\t\t\tif (newRoot->children[charCode] == NULL) newRoot->children[charCode] = new TrieNode();\n\t\t\tnewRoot = newRoot->children[charCode];\n\t\t}\n\t\tnewRoot->isEndOfWord = true;\n\t\troot = newRoot;\n\t}\n\tvoid\nremove(string word, TrieNode* root) {\n\t\tTrieNode*\nnewRoot = root;\n\t\tfor (int i=0;i<word.length();i++)\n\t\t{\n\t\t\tint charCode = word[i] - 'a';\n\t\t\tif (newRoot->children[charCode] == NULL) return;\n\t\t\tnewRoot = newRoot->children[charCode];\n\t\t}\n\t\tnewRoot->isEndOfWord = false;\n\t\tif (newRoot->isEndOfWord == false) {\n\t\t\tfor (int i=0;i<26;i++)\n\t\t\t{\n\t\t\t\tif (newRoot->children[i] != NULL) delete newRoot->children[i];\n\t\t\t}\n\t\t\tdelete newRoot;\n\t\t} else {\n\t\t\tnewRoot->isEndOfWord = false;\n\t\t\tnewRoot->children = NULL;\n\t\t}\n\t\troot = newRoot;\n\t}\n}\n\nclass Solution {\n\tpublic:\n\t\tvoid\nautoCompletion(int n) {\n\t\tTrie trie;\n\t\tstring word;\n\t\tfor (int i=0;i<n;i++)\n\t\t{\n\t\t\tcin>>word;\n\t\t\ttrie.insert(word, trie.root);\n\t\t}\n\t}\n};\n\nint\nmain() {\n\tSolution solution;\n\tint n;\n\tcin>>n;\n\tsolution.autoCompletion(n);\n\treturn 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "0",
+      "output": "0",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "\nabc\ndef\n",
+      "output": "2",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

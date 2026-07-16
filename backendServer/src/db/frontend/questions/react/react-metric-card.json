@@ -1,0 +1,53 @@
+{
+  "_id": "936610a1d97157147142fa41",
+  "title": "React Bento Grid Metric widget",
+  "slug": "react-metric-card",
+  "difficulty": "Easy",
+  "topics": [
+    "REACT",
+    "REACT_METRIC_CARD"
+  ],
+  "statement": {
+    "markdown": "## React Bento Grid Metric KPI Card\n\nCreate a Dashboard Metric Card component displaying a values summary and trend visualizer sparkline.\n\n### Requirements:\n1. **Visual Trend Sparkline**: Render a lightweight SVG trend sparkline chart based on an input list of historic coordinates.\n2. **Trend Percentage Badge**: Display a percentage indicator badge colored green (upwards positive arrow) or red (downwards negative arrow) based on positive or negative value changes.\n3. **Responsive layout**: Card grids scaling cleanly onto Bento layout structures.\n"
+  },
+  "constraints": [
+    "Must support mobile responsive layout coordinates",
+    "Must utilize React hooks",
+    "Must use Tailwind CSS"
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "html": "",
+    "css": "",
+    "react": "import React from 'react';\n\nexport default function MetricCard({ title, value, percentage, trends }) {\n  // Implement dashboard metric KPI card with SVG sparkline here\n  return null;\n}"
+  },
+  "gradingCriteria": [
+    {
+      "id": "functional_correctness",
+      "description": "Verify that the interactive props, callbacks, and element structures work cleanly.",
+      "weight": 60
+    },
+    {
+      "id": "code_cleanliness",
+      "description": "Verify state structure designs and clean Tailwind CSS layouts.",
+      "weight": 40
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "react",
+      "tailwind"
+    ],
+    "referenceSolution": "import React from 'react';\n\nexport default function MetricCard({ title, value, percentage, trends = [] }) {\n  const isPositive = percentage >= 0;\n\n  // Generate SVG Sparkline coordinates path\n  const width = 100;\n  const height = 30;\n  const padding = 2;\n  const minVal = Math.min(...trends);\n  const maxVal = Math.max(...trends);\n  const range = maxVal - minVal || 1;\n\n  const points = trends.map((val, idx) => {\n    const x = (idx / (trends.length - 1)) * (width - padding * 2) + padding;\n    const y = height - ((val - minVal) / range) * (height - padding * 2) - padding;\n    return `${x},${y}`;\n  }).join(' ');\n\n  return (\n    <div className=\"w-72 border border-gray-250 rounded-2xl p-5 bg-white shadow-xs font-sans\">\n      <div className=\"flex justify-between items-start\">\n        <span className=\"text-xs font-bold text-gray-400 uppercase tracking-wider\">{title}</span>\n        <svg className=\"w-4 h-4 text-gray-300\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path strokeLinecap=\"round\" strokeLinejoin=\"round\" strokeWidth={2} d=\"M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z\" /></svg>\n      </div>\n\n      <div className=\"flex items-baseline gap-2 mt-2\">\n        <span className=\"text-2xl font-bold text-gray-800\">{value}</span>\n        <span className={`text-xs font-semibold px-2 py-0.5 rounded-full flex items-center gap-0.5 ${\n          isPositive ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'\n        }`}>\n          {isPositive ? '↑' : '↓'} {Math.abs(percentage)}%\n        </span>\n      </div>\n\n      {/* SVG Sparkline */}\n      {trends.length > 1 && (\n        <div className=\"mt-4 pt-2 flex items-center justify-between border-t border-gray-50\">\n          <span className=\"text-[10px] text-gray-400 font-medium\">Last 7 days trend</span>\n          <svg width={width} height={height} className=\"overflow-visible\">\n            <polyline\n              fill=\"none\"\n              stroke={isPositive ? \"#22c55e\" : \"#ef4444\"}\n              strokeWidth=\"2\"\n              strokeLinecap=\"round\"\n              strokeLinejoin=\"round\"\n              points={points}\n            />\n          </svg>\n        </div>\n      )}\n    </div>\n  );\n}"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

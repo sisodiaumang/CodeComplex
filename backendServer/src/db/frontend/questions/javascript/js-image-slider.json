@@ -1,0 +1,52 @@
+{
+  "_id": "d0859c77a44c775c404ea33b",
+  "title": "Image Carousel Slider",
+  "slug": "js-image-slider",
+  "difficulty": "Medium",
+  "topics": [
+    "JAVASCRIPT"
+  ],
+  "statement": {
+    "markdown": "## Image Carousel Slider\n\nBuild an interactive image carousel with manual and automatic navigation.\n\n### Requirements:\n1. **Manual Navigation**: Clicking 'Next' or 'Prev' buttons shifts the visible image index, wrapping around when bounds are exceeded.\n2. **Slide Indicators**: Display dot indicators representing each slide. Clicking a dot selects and displays that slide.\n3. **Autoplay**: Support automatic slide advancement every 3000ms. Pause the autoplay timer when hovering over the carousel slider container, resuming it on mouseleave."
+  },
+  "constraints": [
+    "Must manage active index state and apply active styles (e.g. show/hide images)",
+    "Must correctly clear and restart timer intervals during user interactions"
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "html": "<div id=\"carousel\" class=\"relative max-w-md mx-auto bg-slate-800 rounded-xl overflow-hidden shadow-lg border border-slate-700 font-sans group\">\n  <div class=\"h-48 relative overflow-hidden\">\n    <div class=\"slide absolute inset-0 bg-red-800 text-white flex items-center justify-center font-bold text-xl\">Slide 1</div>\n    <div class=\"slide absolute inset-0 bg-blue-800 text-white flex items-center justify-center font-bold text-xl hidden\">Slide 2</div>\n    <div class=\"slide absolute inset-0 bg-green-800 text-white flex items-center justify-center font-bold text-xl hidden\">Slide 3</div>\n  </div>\n  <button id=\"prev-btn\" class=\"absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/80 font-bold\">&lt;</button>\n  <button id=\"next-btn\" class=\"absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/80 font-bold\">&gt;</button>\n  <div id=\"dots-container\" class=\"absolute bottom-3 left-1/2 -translate-y-1/2 -translate-x-1/2 flex gap-2\">\n    <span class=\"dot w-3 h-3 rounded-full bg-white/40 cursor-pointer border border-slate-700\" data-slide=\"0\"></span>\n    <span class=\"dot w-3 h-3 rounded-full bg-white/40 cursor-pointer border border-slate-700\" data-slide=\"1\"></span>\n    <span class=\"dot w-3 h-3 rounded-full bg-white/40 cursor-pointer border border-slate-700\" data-slide=\"2\"></span>\n  </div>\n</div>",
+    "css": "",
+    "javascript": "const carousel = document.getElementById('carousel');\nconst slides = Array.from(carousel.querySelectorAll('.slide'));\nconst prevBtn = document.getElementById('prev-btn');\nconst nextBtn = document.getElementById('next-btn');\nconst dots = Array.from(carousel.querySelectorAll('.dot'));\n\n// Implement image carousel logic with wrap-around, dot selection, and autoplay (3000ms) features\n"
+  },
+  "gradingCriteria": [
+    {
+      "id": "navigation",
+      "description": "Verify manual slide changing, boundaries wrapping, and active dot indicator highlights work correctly.",
+      "weight": 60
+    },
+    {
+      "id": "autoplay",
+      "description": "Verify autoplay timer triggers properly, resets during manual triggers, and pauses on hover.",
+      "weight": 40
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "html",
+      "css",
+      "javascript"
+    ],
+    "referenceSolution": "const carousel = document.getElementById('carousel');\nconst slides = Array.from(carousel.querySelectorAll('.slide'));\nconst prevBtn = document.getElementById('prev-btn');\nconst nextBtn = document.getElementById('next-btn');\nconst dots = Array.from(carousel.querySelectorAll('.dot'));\n\nlet currentIndex = 0;\nlet autoplayTimer;\n\nfunction updateUI() {\n  slides.forEach((slide, index) => {\n    slide.classList.toggle('hidden', index !== currentIndex);\n  });\n  dots.forEach((dot, index) => {\n    dot.classList.toggle('bg-white', index === currentIndex);\n    dot.classList.toggle('bg-white/40', index !== currentIndex);\n  });\n}\n\nfunction showNext() {\n  currentIndex = (currentIndex + 1) % slides.length;\n  updateUI();\n}\n\nfunction showPrev() {\n  currentIndex = (currentIndex - 1 + slides.length) % slides.length;\n  updateUI();\n}\n\nfunction startAutoplay() {\n  stopAutoplay();\n  autoplayTimer = setInterval(showNext, 3000);\n}\n\nfunction stopAutoplay() {\n  clearInterval(autoplayTimer);\n}\n\nnextBtn.addEventListener('click', () => {\n  showNext();\n  startAutoplay();\n});\nprevBtn.addEventListener('click', () => {\n  showPrev();\n  startAutoplay();\n});\ndots.forEach((dot, index) => {\n  dot.addEventListener('click', () => {\n    currentIndex = index;\n    updateUI();\n    startAutoplay();\n  });\n});\n\ncarousel.addEventListener('mouseenter', stopAutoplay);\ncarousel.addEventListener('mouseleave', startAutoplay);\n\nupdateUI();\nstartAutoplay();"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

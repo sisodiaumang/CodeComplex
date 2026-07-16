@@ -1,0 +1,167 @@
+{
+  "_id": "4e1b574afd54b3ced07ee8ce",
+  "title": "Faulty Coin Change Problem",
+  "slug": "faulty-coin-change-problem-bugfix-easy-dynamic-programming-1",
+  "difficulty": "Easy",
+  "category": "DSA",
+  "subCategory": "DP",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "dp"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given an array of coin denominations and a total amount, find the minimum number of coins needed to make up the amount. If it is not possible to make change using the given coins, return -1.\\n\\nInput/Output\\n\\n* input * `amount` - int - The amount for which change should be made.\\n* input * `coins` - list[int] - The list of coin denominations.\\n* output * `number of coins` - int - The minimum number of coins needed.\\n\\nNote: The problem is easy if the solution can be done in a single pass through the coins array.",
+    "inputFormat": "The first line will contain an integer `n`, the number of coins. The second line will contain `n` space-separated integers representing the coin denominations.",
+    "outputFormat": "Print the minimum number of coins needed to make up the `amount`. If it is not possible to make change, print -1.",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of coins"
+      },
+      {
+        "variable": "amount",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Amount for which change is to be made."
+      },
+      {
+        "variable": "coins",
+        "type": "list of integers",
+        "min": 1,
+        "max": 10000,
+        "description": "List of coin denominations"
+      }
+    ],
+    "examples": [
+      {
+        "input": "3\\n1 2 5",
+        "output": "2",
+        "explanation": "2 coins of denomination 2 and 1 respectively to make 3"
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Review the given code. Find out what it does in each step."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial Title",
+    "intuition": "The idea is to initialize a DP array of size amount + 1 with infinite numbers and update it for each coin in coins array.",
+    "bruteForce": "The brute force approach is to try to make the amount using each coin in coins array.",
+    "betterSolution": "This problem can be solved using dynamic programming (DP) and memoization.",
+    "optimalSolution": "The optimal solution is to iterate over the coins array and for each coin check if it can be used to make up the amount. Use memoization to avoid duplicate calculations.",
+    "proofOfCorrectness": "We can prove the correctness of the solution using induction.",
+    "dryRun": "Let's say the amount is 3 and coins are [1, 2, 5]. We can make 3 by using one coin of denomination 3. But we can't make 3 by using a coin of denomination 5 because the remainder will be -2 which is negative.",
+    "commonMistakes": [
+      "Forgetting to handle the base case.",
+      "Trying to use a coin of denomination that is larger than the amount."
+    ],
+    "timeComplexity": "O(n*m)",
+    "spaceComplexity": "O(m)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {public:\nint coinChange(vector<int>& coins, int amount) {\n    // TODO: implement\n}",
+    "java": "public class Solution {\npublic int coinChange(int[] coins, int amount) {\n    // TODO: implement\n}",
+    "python": "class Solution:\n    def coinChange(self, coins: List[int], amount: int) -> int:\n        # TODO: implement\n",
+    "javascript": "function coinChange(coins, amount) {\n    // TODO: implement\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    int coinChange(vector<int>& coins, int amount) {\n        if (amount  1) return 0;\n        for (int i = 0; i < coins.size(); i++) {\n            if (coins[i] > amount) break;\n            else \n                amount -= coins[i];\n        }\n        return amount > 0 ? -1 : 1;\n    }\n};\n",
+    "java": "public class Solution {\npublic int coinChange(int[] coins, int amount) {\n    if (amount  1) return 0;\n    for (int i = 0; i < coins.length; i++) {\n        if (coins[i] > amount) break;\n        else \n            amount -= coins[i];\n    }\n    return amount > 0 ? -1 : 1;\n}",
+    "python": "class Solution:\n    def coinChange(self, coins: List[int], amount: int) -> int:\n        if amount < 1: return 0\n        for i in range(len(coins)):\n            if coins[i] > amount: break\n            else \n                amount -= coins[i]\n        return amount > 0 and -1 or 1\n",
+    "javascript": "function coinChange(coins, amount) {\n    if (amount < 1) return 0;\n    for (var i = 0; i < coins.length; i++) {\n        if (coins[i] > amount) break;\n        else \n            amount -= coins[i];\n    }\n    return amount > 0 ? -1 : 1;\n}"
+  },
+  "functionSignature": {
+    "cpp": "bool solve(vector<int>& nums);",
+    "java": "public boolean solve(int[] nums);",
+    "python": "def solve(self, nums: List[int]) -> bool:",
+    "javascript": "var solve = function(nums);"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def coinChange(self, coins: List[int], amount: int) -> int:\n        dp = [float('inf')] * (amount + 1)\n        dp[0] = 0\n        for coin in coins:\n            for i in range(coin, amount + 1):\n                dp[i] = min(dp[i], dp[i - coin] + 1)\n        return dp[amount] if dp[amount] != float('inf') else -1\n\n# Test cases\nif __name__ == '__main__':\n    import sys\n    coins = list(map(int, input().split()))\n    amount = int(input())\n    coins = [1, 2, 5]\n    amount = 3\n    solution = Solution()\n    result = solution.coinChange(coins, amount)\n    print(result)\n",
+    "cpp": "class Solution {\npublic:\n    int coinChange(vector<int>& coins, int amount) {\n        if (amount  1) return 0;\n        vector<int> dp(amount + 1, 0);\n        dp[0] = 0;\n        for (int i = 1; i <= amount; i++) {\n            for (int coin : coins) {\n                if (i - coin >= 0)\n                    dp[i] = min(dp[i], dp[i - coin] + 1);\n            }\n        }\n        return dp[amount] == 0 ? dp[amount] : -1;\n    }\n};\n",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "3\n1 2 5\n3",
+      "output": "2",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "2\n2 5\n7",
+      "output": "2",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

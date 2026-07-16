@@ -1,0 +1,153 @@
+{
+  "title": "Fix MongoDB Projection to Ignore Embedded Fields",
+  "subCategory": "MongoDB Projection",
+  "statement": {
+    "markdown": "Implement a MongoDB projection that ignores embedded fields. Given a MongoDB document and a projection object, return the filtered document. The projection object specifies which fields to include or exclude from the result. If a field is not specified in the projection, it should be included by default. Embedded fields are represented as nested objects in the document.",
+    "inputFormat": "document: object, projection: object",
+    "outputFormat": "filtered document: object",
+    "notes": "The projection object can have the following formats: { field: true, field: false } or { field: { subfield: true } }",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10,
+        "description": "Maximum number of fields in the document"
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 1,
+        "max": 5,
+        "description": "Maximum number of fields in the projection"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"name\": \"John\", \"age\": 30, \"address\": {\"street\": \"123 Main St\", \"city\": \"Anytown\"}}",
+        "projection": "{\"name\": true, \"age\": false}",
+        "output": "{\"name\": \"John\"}",
+        "explanation": "The age field is excluded from the result since it's set to false in the projection."
+      },
+      {
+        "input": "{\"name\": \"Jane\", \"age\": 25, \"address\": {\"street\": \"456 Elm St\", \"city\": \"Othertown\"}}",
+        "projection": "{\"name\": true, \"address\": {\"street\": true}}",
+        "output": "{\"name\": \"Jane\", \"address\": {\"street\": \"456 Elm St\"}}",
+        "explanation": "The city field in the address object is excluded from the result since it's not specified in the projection."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "MONGODB"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "mongodb"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Start by parsing the input document and projection as JSON objects."
+    },
+    {
+      "order": 2,
+      "text": "Iterate over the fields in the document and check if they are specified in the projection."
+    },
+    {
+      "order": 3,
+      "text": "If a field is specified in the projection, include it in the result. If a field is not specified, include it by default."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial: Fixing MongoDB Projection",
+    "intuition": "The goal is to filter the document based on the projection object. We can achieve this by iterating over the fields in the document and checking if they are specified in the projection.",
+    "bruteForce": "We can use a recursive approach to handle embedded fields. However, this may lead to performance issues for large documents.",
+    "betterSolution": "We can use a simple iterative approach to handle both top-level fields and embedded fields.",
+    "optimalSolution": "The optimal solution uses a recursive approach to handle embedded fields and a simple iterative approach to handle top-level fields.",
+    "proofOfCorrectness": "The solution correctly filters the document based on the projection object.",
+    "dryRun": "Example run: Given the document {name: John, age: 30, address: {street: 123 Main St, city: Anytown}} and the projection {name: true, address: {street: true}}, the solution returns {name: John, address: {street: 123 Main St}}.",
+    "commonMistakes": [
+      "Failing to include fields not specified in the projection",
+      "Including embedded fields that are not specified in the projection"
+    ],
+    "timeComplexity": "O(n * m)",
+    "spaceComplexity": "O(n * m)"
+  },
+  "starterCode": {
+    "javascript": "// Define a function to fix MongoDB projection\nfunction fixMongoDBProjection(document, projection) {\n\n}",
+    "python": "class Solution:\n    def fix_mongodb_projection(self, document, projection):\n        pass\n"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Define a function to fix MongoDB projection\nfunction fixMongoDBProjection(document, projection) {\n    let result = {};\n\n    // Iterate over the fields in the document\n    for (let field in document) {\n        // Check if the field is specified in the projection\n        if (field in projection) {\n            // If the field is specified, include it in the result\n            result[field] = document[field];\n        } else {\n            // If the field is not specified, include it by default\n            result[field] = document[field];\n        }\n    }\n\n    return result;\n}",
+    "python": "class Solution:\n    def fix_mongodb_projection(self, document, projection):\n        result = {}\n\n        # Iterate over the fields in the document\n        for field in document:\n            # Check if the field is specified in the projection\n            if field in projection:\n                # If the field is specified, include it in the result\n                result[field] = document[field]\n            else:\n                # If the field is not specified, include it by default\n                result[field] = document[field]\n\n        return result"
+  },
+  "functionSignature": {
+    "javascript": "function fixMongoDBProjection(document, projection) {\n}",
+    "python": "def fix_mongodb_projection(self, document, projection):\n"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction fixMongoDBProjection(document, projection) {\n    let result = {};\n\n    // Iterate over the fields in the document\n    for (let field in document) {\n        // Check if the field is specified in the projection\n        if (projection[field] === true) {\n            // If the field is specified, include it in the result\n            result[field] = document[field];\n        } else if (typeof document[field] === 'object') {\n            // If the field is an object, recursively call the function\n            let subfield = fixMongoDBProjection(document[field], projection[field]);\n            if (Object.keys(subfield).length > 0) {\n                result[field] = subfield;\n            }\n        }\n    }\n\n    return result;\n}",
+    "python": "class Solution:\n    def fix_mongodb_projection(self, document, projection):\n        result = {}\n\n        # Iterate over the fields in the document\n        for field in document:\n            # Check if the field is specified in the projection\n            if field in projection and projection[field] is True:\n                # If the field is specified, include it in the result\n                result[field] = document[field]\n            elif isinstance(document[field], dict):\n                # If the field is an object, recursively call the function\n                subfield = self.fix_mongodb_projection(document[field], projection[field])\n                if len(subfield) > 0:\n                    result[field] = subfield\n\n        return result"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"name\": \"John\", \"age\": 30, \"address\": {\"street\": \"123 Main St\", \"city\": \"Anytown\"}}\n{\"name\": true, \"age\": false}",
+      "output": "{\"name\": \"John\"}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"name\": \"Jane\", \"age\": 25, \"address\": {\"street\": \"456 Elm St\", \"city\": \"Othertown\"}}\n{\"name\": true, \"address\": {\"street\": true}}",
+      "output": "{\"name\": \"Jane\", \"address\": {\"street\": \"456 Elm St\"}}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "9386d2a8a7ea86b6c461065f",
+  "slug": "fix-mongodb-projection-to-ignore-embedded-fields-bugfix-easy-mongodb",
+  "mode": "bug_fix",
+  "category": "MONGODB",
+  "difficulty": "Easy"
+}

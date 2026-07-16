@@ -1,0 +1,200 @@
+{
+  "_id": "mcm-bottom-up",
+  "title": "MCM Bottom-Up",
+  "slug": "mcm-bottom-up",
+  "difficulty": "Hard",
+  "category": "DP",
+  "subCategory": "MCM / Partition DP",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 25,
+    "points": 500,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "Dynamic Programming",
+      "MCM/Partition DP"
+    ],
+    "patterns": [],
+    "prerequisites": [
+      "Fibonacci Series",
+      "Memoization"
+    ],
+    "variants": [],
+    "tags": [
+      "Dynamic Programming",
+      "Memoization",
+      "Bottom-Up Approach"
+    ],
+    "keywords": [
+      "Dynamic Programming",
+      "Memoization",
+      "Bottom-Up Approach",
+      "MCM/Partition DP",
+      "Fibonacci Series"
+    ],
+    "interviewFrequency": 5,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "Given a sequence of matrices A1, A2, ..., An, where Ai is a matrix with dimensions p[i-1] x p[i], find the most efficient way to multiply these matrices together. The efficiency is measured by the total number of scalar multiplications required.\n\nThe problem statement involves finding the minimum number of scalar multiplications required to compute the product of n matrices A1, A2, ..., An, where Ai has dimensions p[i-1] x p[i].",
+    "inputFormat": "The number of matrices (n)\nThe dimensions of the matrices (p) - a list of n+1 integers",
+    "outputFormat": "The minimum number of scalar multiplications required",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 100,
+        "description": "The number of matrices"
+      },
+      {
+        "variable": "p",
+        "type": "list of integers",
+        "min": 1,
+        "max": 1000,
+        "description": "The dimensions of the matrices"
+      }
+    ],
+    "examples": [
+      {
+        "input": "3\n30 35 15 5",
+        "output": "7875",
+        "explanation": "The optimal order of multiplication is (A1 * (A2 * A3)). The minimum number of scalar multiplications required is 15125."
+      },
+      {
+        "input": "2\n10 20 30",
+        "output": "6000",
+        "explanation": "The optimal order of multiplication is (A1 * A2). The minimum number of scalar multiplications required is 6000."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "The problem can be broken down into smaller sub-problems by considering the multiplication of sub-sequences of matrices. Think about how the optimal solution for a sub-sequence can be constructed from the optimal solutions of its sub-sequences."
+    },
+    {
+      "order": 2,
+      "text": "The problem has overlapping sub-problems, which suggests that dynamic programming could be a suitable approach. Consider using a 2D array to store the minimum number of scalar multiplications required for each sub-sequence."
+    },
+    {
+      "order": 3,
+      "text": "The key to solving this problem is to find the optimal split point for each sub-sequence of matrices. For a sub-sequence from Ai to Aj, consider all possible split points k such that i < k < j, and calculate the minimum number of scalar multiplications required."
+    }
+  ],
+  "editorial": {
+    "title": "MCM Bottom-Up Solution Analysis",
+    "intuition": "The problem can be solved using dynamic programming by breaking down the matrix chain into subproblems and storing their solutions to avoid redundant computation.",
+    "bruteForce": "A brute force approach would involve trying all possible ways to split the matrix chain into sub-chains and computing the minimum cost. This would result in an exponential time complexity due to the overlapping subproblems.",
+    "betterSolution": "The optimal approach is to use a bottom-up dynamic programming strategy, where we start with the smallest subproblems and build up to the original problem.",
+    "optimalSolution": "The given solution uses a bottom-up dynamic programming approach with a time complexity of O(n^3) and a space complexity of O(n^2), where n is the number of matrices.",
+    "proofOfCorrectness": "The correctness of the optimal solution can be proven by observing that it satisfies the optimal substructure property: the optimal solution to the problem can be constructed from the optimal solutions of its subproblems. The base case is when there is only one matrix, in which case the cost is 0. For larger subproblems, the solution iterates over all possible splits and chooses the one with the minimum cost.",
+    "dryRun": "A dry run of the solution with sample inputs can help verify its correctness and performance.",
+    "commonMistakes": [
+      "Not considering all possible splits of the matrix chain",
+      "Not storing the solutions to subproblems to avoid redundant computation",
+      "Incorrectly initializing the dp table",
+      "Not handling the base case correctly",
+      "Not iterating over all possible subproblem lengths"
+    ],
+    "timeComplexity": "O(n^3)",
+    "spaceComplexity": "O(n^2)"
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    int mcm(vector<int>& p) {\n        // TODO: implement\n        return 0;\n    }\n};",
+    "java": "import java.util.*;\n\nclass Solution {\n    public int mcm(int[] p) {\n        // TODO: implement\n        return 0;\n    }\n}",
+    "python": "class Solution:\n    def mcm(self, p: list[int]) -> int:\n        # TODO: implement\n        pass",
+    "javascript": "/**\n * @param {number[]} p\n * @return {number}\n */\nvar mcm = function(p) {\n    // TODO: implement\n    return 0;\n};"
+  },
+  "functionSignature": {
+    "cpp": "int mcm(vector<int>& p);",
+    "java": "public int mcm(int[] p);",
+    "python": "def mcm(self, p: list[int]) -> int:",
+    "javascript": "var mcm = function(p);"
+  },
+  "solutions": {
+    "python": "import sys\n\nclass Solution:\n    def mcm(self, p: list[int]) -> int:\n        n = len(p) - 1\n        dp = [[0] * n for _ in range(n)]\n        for length in range(2, n + 1):\n            for i in range(n - length + 1):\n                j = i + length - 1\n                dp[i][j] = float('inf')\n                for k in range(i, j):\n                    dp[i][j] = min(dp[i][j], dp[i][k] + dp[k + 1][j] + p[i] * p[k + 1] * p[j + 1])\n        return dp[0][n - 1]\n\nif __name__ == '__main__':\n    it = iter(sys.stdin.read().split())\n    try:\n        n = int(next(it))\n        p = [int(next(it)) for _ in range(n + 1)]\n    except StopIteration:\n        sys.exit(0)\n    sol = Solution()\n    ans = sol.mcm(p)\n    print(ans)",
+    "cpp": "#include <numeric>\n#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    int mcm(vector<int>& p) {\n        int n = p.size() - 1;\n        vector<vector<int>> dp(n, vector<int>(n));\n        for (int length = 2; length <= n; length++) {\n            for (int i = 0; i < n - length + 1; i++) {\n                int j = i + length - 1;\n                dp[i][j] = INT_MAX;\n                for (int k = i; k < j; k++) {\n                    dp[i][j] = min(dp[i][j], dp[i][k] + dp[k + 1][j] + p[i] * p[k + 1] * p[j + 1]);\n                }\n            }\n        }\n        return dp[0][n - 1];\n    }\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int n;\n    if (!(cin >> n)) return 0;\n    vector<int> p(n + 1);\n    for (int i = 0; i < n + 1; i++) cin >> p[i];\n    Solution sol;\n    int ans = sol.mcm(p);\n    cout << ans << \"\\n\";\n    return 0;\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.5
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "3\n30 35 15 5",
+      "output": "7875",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "2\n10 20 30",
+      "output": "6000",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint_3",
+      "input": "2\n30 35 15",
+      "output": "15750",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "duplicate_5",
+      "input": "4\n10 20 30 40 50",
+      "output": "38000",
+      "isVisible": false,
+      "weight": 1,
+      "category": "duplicate"
+    },
+    {
+      "id": "random_medium_6",
+      "input": "5\n40 30 25 45 38 12",
+      "output": "57420",
+      "isVisible": false,
+      "weight": 1,
+      "category": "random_medium"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

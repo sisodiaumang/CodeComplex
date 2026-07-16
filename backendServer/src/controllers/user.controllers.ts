@@ -10,7 +10,7 @@ import { env } from "../config/env.js";
 import bcrypt from "bcrypt";
 import OTP, { MAX_OTP_ATTEMPTS } from "../models/otp.model.js";
 import { generateOTP } from "../services/otp.service.js";
-import { sendVerificationMail } from "../services/emailSend.service.js";
+import { sendVerificationMail, sendWelcomeMail, sendEmailChangeMail } from "../services/emailSend.service.js";
 import UserProfile from "../models/userProfile.model.js";
 import Friendship from "../models/friendship.model.js";
 import { OtpPurpose } from "../interfaces/otp.interface.js";
@@ -320,11 +320,12 @@ const verifyUser = asyncHandler(async (req, res) => {
         isVerified: true
     });
 
-    // FIX (W7): previously no UserProfile was created at registration —
-    // leaderboard queries, achievement checks, and profile endpoints would
-    // come up empty (or rely on rating.service.ts's getOrCreateProfile
-    // fallback) until the user played their first match.
     await UserProfile.create({ userId: user._id });
+
+    // Send Welcome Email
+    sendWelcomeMail(user.email, user.username).catch((err) => {
+        console.error("[EmailService] Failed to send welcome mail:", err);
+    });
 
     await OTP.deleteOne({ _id: otpDoc._id });
 
@@ -692,7 +693,7 @@ const requestEmailChange = asyncHandler(async (req, res) => {
     const otp = await sendOtp(newEmail, "EMAIL_CHANGE");
 
     try {
-        await sendVerificationMail(newEmail, otp);
+        await sendEmailChangeMail(newEmail, otp);
     } catch {
         await OTP.deleteOne({ email: newEmail, purpose: "EMAIL_CHANGE" });
         throw new ApiError(500, "Failed to send verification email to new address");
@@ -870,6 +871,7 @@ const getMe = asyncHandler(async (req, res) => {
                 linkedinProfile: user.linkedinProfile,
                 leetcodeProfile: user.leetcodeProfile,
                 mascot: user.mascot,
+                banner: user.banner,
                 createdAt: user.createdAt,
                 profileData: profile ? {
                     ratings: profile.ratings,
@@ -897,7 +899,7 @@ const getUserByUsername = asyncHandler(async (req, res) => {
     const user = await User.findOne({ username })
         .select(
             // Public-safe fields only — no email, no role internals
-            "username fullName avatar bio country githubProfile linkedinProfile leetcodeProfile mascot createdAt"
+            "username fullName avatar bio country githubProfile linkedinProfile leetcodeProfile mascot banner createdAt"
         );
 
     if (!user) throw new ApiError(404, "User not found");
@@ -917,6 +919,7 @@ const getUserByUsername = asyncHandler(async (req, res) => {
                 linkedinProfile: user.linkedinProfile,
                 leetcodeProfile: user.leetcodeProfile,
                 mascot: user.mascot,
+                banner: user.banner,
                 country: {
                     code: user.country,
                     name: user.country
@@ -1008,9 +1011,13 @@ const updateMascot = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Mascot type and color are required");
     }
 
-    const validTypes = ["cat", "dog", "panda", "crab"];
+    const validTypes = [
+        "cat", "dog", "panda", "crab", "octopus", "frog", "hamster", "bunny", "turtle", "koala",
+        "fox", "owl", "squirrel", "badger", "whale", "sloth", "dino", "otter", "monkey", "quantum_cat",
+        "dolphin", "lion", "raccoon", "parrot", "snake", "dragon", "phoenix", "cyber_fox", "unicorn", "robo_puppy"
+    ];
     if (!validTypes.includes(type)) {
-        throw new ApiError(400, `Invalid mascot type. Must be one of: ${validTypes.join(", ")}`);
+        throw new ApiError(400, `Invalid mascot type.`);
     }
 
     const user = await User.findByIdAndUpdate(
@@ -1023,6 +1030,28 @@ const updateMascot = asyncHandler(async (req, res) => {
 
     return res.status(200).json(
         new ApiResponse(200, { mascot: user.mascot }, "Mascot updated successfully")
+    );
+});
+
+// ─── updateBanner ──────────────────────────────────────────────────────────────
+
+const updateBanner = asyncHandler(async (req, res) => {
+    const { banner } = req.body;
+
+    if (typeof banner !== "string") {
+        throw new ApiError(400, "Banner type is required");
+    }
+
+    const user = await User.findByIdAndUpdate(
+        req.user!._id,
+        { $set: { banner } },
+        { new: true, runValidators: true }
+    ).select("-password");
+
+    if (!user) throw new ApiError(404, "User not found");
+
+    return res.status(200).json(
+        new ApiResponse(200, { banner: user.banner }, "Banner updated successfully")
     );
 });
 
@@ -1144,5 +1173,6 @@ export {
     updateCountry,
     updateFullName,
     updateSocials,
-    updateMascot
+    updateMascot,
+    updateBanner
 };

@@ -1,0 +1,207 @@
+{
+  "_id": "matrix-chain-multiplication",
+  "title": "Matrix Chain Multiplication",
+  "slug": "matrix-chain-multiplication",
+  "difficulty": "Hard",
+  "category": "DP",
+  "subCategory": "MCM / Partition DP",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 60,
+    "points": 800,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "Dynamic Programming"
+    ],
+    "patterns": [
+      "MCM",
+      "Partition DP"
+    ],
+    "prerequisites": [
+      "Basic Dynamic Programming",
+      "Matrix Multiplication"
+    ],
+    "variants": [],
+    "tags": [
+      "Dynamic Programming",
+      "Matrix",
+      "MCM",
+      "Partition DP",
+      "Memoization",
+      "Optimization"
+    ],
+    "keywords": [
+      "Matrix Chain Multiplication",
+      "Dynamic Programming",
+      "Memoization",
+      "Optimization",
+      "MCM",
+      "Partition DP"
+    ],
+    "interviewFrequency": 4,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "Given a sequence of matrices, find the most efficient way to multiply these matrices together. The problem is not actually to perform the multiplications, but to decide in which order to perform the multiplications in order to minimize the total number of scalar multiplications required. A matrix can only be multiplied with another matrix if the number of columns in the first matrix is equal to the number of rows in the second matrix. The dimensions of the matrices are given in an array `p` where `p[i]` represents the number of rows in matrix `i` and `p[i + 1]` represents the number of columns in matrix `i`.",
+    "inputFormat": "The number of matrices\nThe dimensions array",
+    "outputFormat": "The minimum number of scalar multiplications required",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 2,
+        "max": 100,
+        "description": "The number of matrices"
+      },
+      {
+        "variable": "p",
+        "type": "array",
+        "min": 1,
+        "max": 1000,
+        "description": "The dimensions array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "6\n30 35 15 5 10 20 25",
+        "output": "15125",
+        "explanation": "The optimal order of multiplication is ((A1(A2A3))A4)A5"
+      },
+      {
+        "input": "4\n10 20 30 40 30",
+        "output": "30000",
+        "explanation": "The optimal order of multiplication is (A1(A2A3))A4"
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "The problem can be solved using dynamic programming. Think about how the optimal solution for a subproblem can be used to construct the optimal solution for the larger problem."
+    },
+    {
+      "order": 2,
+      "text": "Consider a 2D array `m` where `m[i][j]` represents the minimum number of scalar multiplications required to multiply the matrices from `i` to `j`. You need to fill up this array in a bottom-up manner."
+    },
+    {
+      "order": 3,
+      "text": "The key to solving this problem is to find the optimal split point `k` for multiplying the matrices from `i` to `j`. The cost of multiplying the matrices from `i` to `k` and from `k+1` to `j` should be minimized. Think about how to express this mathematically."
+    }
+  ],
+  "editorial": {
+    "title": "Matrix Chain Multiplication: A Dynamic Programming Approach",
+    "intuition": "The problem requires finding the optimal way to multiply a chain of matrices to minimize the total number of scalar multiplications. The key observation is that the optimal solution can be constructed from the optimal solutions of subproblems.",
+    "bruteForce": "A brute force approach would involve trying all possible ways to split the matrix chain into two sub-chains and recursively computing the minimum cost for each sub-chain. This approach is slow because it has a time complexity of O(2^n), which is impractical for large inputs.",
+    "betterSolution": "The optimal approach uses dynamic programming to store the solutions to subproblems in a table and reuse them to avoid redundant computation.",
+    "optimalSolution": "The dynamic programming approach has a time complexity of O(n^3) and a space complexity of O(n^2), making it much faster than the brute force approach for large inputs.",
+    "proofOfCorrectness": "The correctness of the dynamic programming approach can be proved by induction on the length of the matrix chain. The base case is when the length is 2, in which case there is only one way to multiply the matrices. For longer chains, the optimal solution can be constructed by trying all possible splits and taking the minimum cost.",
+    "dryRun": "A dry run of the algorithm with a sample input can help verify its correctness and performance.",
+    "commonMistakes": [
+      "Not initializing the dp table correctly",
+      "Not considering all possible splits of the matrix chain",
+      "Not using the stored solutions to subproblems to avoid redundant computation",
+      "Incorrectly calculating the cost of multiplying two matrices",
+      "Not handling the base case correctly",
+      "Not verifying the correctness of the algorithm with test cases"
+    ],
+    "timeComplexity": "O(n^3)",
+    "spaceComplexity": "O(n^2)"
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    int matrixChainOrder(vector<int>& p) {\n        // TODO: implement\n        return 0;\n    }\n};",
+    "java": "import java.util.*;\n\nclass Solution {\n    public int matrixChainOrder(int[] p) {\n        // TODO: implement\n        return 0;\n    }\n}",
+    "python": "class Solution:\n    def matrixChainOrder(self, p: list[int]) -> int:\n        # TODO: implement\n        pass",
+    "javascript": "/**\n * @param {number[]} p\n * @return {number}\n */\nvar matrixChainOrder = function(p) {\n    // TODO: implement\n    return 0;\n};"
+  },
+  "functionSignature": {
+    "cpp": "int matrixChainOrder(vector<int>& p);",
+    "java": "public int matrixChainOrder(int[] p);",
+    "python": "def matrixChainOrder(self, p: list[int]) -> int:",
+    "javascript": "var matrixChainOrder = function(p);"
+  },
+  "solutions": {
+    "python": "import sys\n\nclass Solution:\n    def matrixChainOrder(self, p: list[int]) -> int:\n        n = len(p) - 1\n        dp = [[0] * n for _ in range(n)]\n        for length in range(2, n + 1):\n            for i in range(n - length + 1):\n                j = i + length - 1\n                dp[i][j] = float('inf')\n                for k in range(i, j):\n                    dp[i][j] = min(dp[i][j], dp[i][k] + dp[k + 1][j] + p[i] * p[k + 1] * p[j + 1])\n        return dp[0][n - 1]\n\nif __name__ == '__main__':\n    it = iter(sys.stdin.read().split())\n    try:\n        n = int(next(it))\n        p = [int(next(it)) for _ in range(n + 1)]\n    except StopIteration:\n        sys.exit(0)\n    sol = Solution()\n    ans = sol.matrixChainOrder(p)\n    print(ans)",
+    "cpp": "#include <numeric>\n#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    int matrixChainOrder(vector<int>& p) {\n        int n = p.size() - 1;\n        vector<vector<int>> dp(n, vector<int>(n, 0));\n        for (int length = 2; length <= n; length++) {\n            for (int i = 0; i < n - length + 1; i++) {\n                int j = i + length - 1;\n                dp[i][j] = INT_MAX;\n                for (int k = i; k < j; k++) {\n                    dp[i][j] = min(dp[i][j], dp[i][k] + dp[k + 1][j] + p[i] * p[k + 1] * p[j + 1]);\n                }\n            }\n        }\n        return dp[0][n - 1];\n    }\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int n;\n    if (!(cin >> n)) return 0;\n    vector<int> p(n + 1);\n    for (int i = 0; i <= n; i++) cin >> p[i];\n    Solution sol;\n    int ans = sol.matrixChainOrder(p);\n    cout << ans << '\\n';\n    return 0;\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.5
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "6\n30 35 15 5 10 20 25",
+      "output": "15125",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "4\n10 20 30 40 30",
+      "output": "30000",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint_3",
+      "input": "2\n30 35 15",
+      "output": "15750",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "boundary_4",
+      "input": "100\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101",
+      "output": "343398",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    },
+    {
+      "id": "duplicate_5",
+      "input": "4\n10 20 30 40 50",
+      "output": "38000",
+      "isVisible": false,
+      "weight": 1,
+      "category": "duplicate"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

@@ -1,0 +1,153 @@
+{
+  "_id": "a9852dd57328d3936228c59a",
+  "title": "Correcting Tree Height Calculations in a Binary Tree",
+  "slug": "correcting-tree-height-calculations-in-a-binary-tree-bugfix-easy-binary-trees",
+  "difficulty": "Easy",
+  "category": "DSA",
+  "subCategory": "DFS/BFS",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 10,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "tree"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given a binary tree, calculate the height of each node's subtree. However, the provided code has a logical bug causing incorrect results. You must correct this issue to pass all test cases.",
+    "inputFormat": "# Each line represents a binary tree node, where each node is in the format '[value, left_child, right_child]',\n# The binary tree has a maximum of 10000 nodes.",
+    "outputFormat": "The height of each node in the binary tree, where the output is in the format '[height1, height2, ...]',\n# The height of each node is calculated as the number of edges from the root to the node.",
+    "notes": "The binary tree is represented as a list of nodes, where each node contains a value and two child pointers.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "[1, null, null],\n[2, 3, 4],\n[5, 6, 7]",
+        "output": "[0, 2, 1]",
+        "explanation": "For the given binary tree,\n      1\n   /   \\\n  2     3\n / \\   / \\\n4  5 6   7\nThe height of the root node (1) is 0,\nthe height of the left subtree of 2 is 2 (2 -> 3 -> 4),\nand the height of the right subtree of 2 is 1 (2 -> 3 -> 6)."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Review the binary tree height calculation logic in the code to identify the logical bug."
+    }
+  ],
+  "editorial": {
+    "title": "Correcting Binary Tree Height Calculations",
+    "intuition": "A recursive function is needed to calculate the height of each node's subtree. A binary tree height calculation function should recursively call itself on the left and right child nodes, incrementing the height by 1 for each recursive call.",
+    "bruteForce": "A brute force solution involves a nested loop to check every node in the binary tree. This will have a higher time complexity compared to the recursive solution.",
+    "betterSolution": "",
+    "optimalSolution": "Use a recursive DFS to traverse the binary tree, updating the height of each node as you go.",
+    "proofOfCorrectness": "proof Of Correctness details.",
+    "dryRun": "dry Run details.",
+    "commonMistakes": [
+      "Incorrectly calculating the height of the root node",
+      "Forgetting to update the height of child nodes"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n   vector<int> treeHeight(vector<vector<int>> &nodes);\n};\n\nvector<int> Solution::treeHeight(vector<vector<int>> &nodes) {\n    // TODO: implement\n}",
+    "java": "public class Solution {\npublic:\n   List<Integer> treeHeight(List<List<Integer>> nodes);\n}\n\nList<Integer> Solution::treeHeight(List<List<Integer>> nodes) {\n    // TODO: implement\n}",
+    "python": "class Solution:\n    def treeHeight(self, nodes):\n        # TODO: implement\n        pass",
+    "javascript": "function treeHeight(nodes) {\n    // TODO: implement\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "vector<int> Solution::treeHeight(vector<vector<int>> &nodes) {\n    vector<int> heights;\n    for (int i = 0; i < nodes.size(); i++) {\n        heights.push_back(0);\n        if (nodes[i][1] != -1) {\n            heights.push_back(1);\n        }\n        if (nodes[i][2] != -1) {\n            heights.push_back(1);\n        }\n    }\n    return heights;\n}",
+    "java": "List<Integer> Solution::treeHeight(List<List<Integer>> nodes) {\n    List<Integer> heights = new ArrayList<>();\n    for (int i = 0; i < nodes.size(); i++) {\n        heights.add(0);\n        if (nodes.get(i).get(1) != -1) {\n            heights.add(1);\n        }\n        if (nodes.get(i).get(2) != -1) {\n            heights.add(1);\n        }\n    }\n    return heights;\n}",
+    "python": "class Solution:\n    def treeHeight(self, nodes):\n        heights = []\n        for node in nodes:\n            heights.append(0)\n            if node[1] != -1:\n                heights.append(1)\n            if node[2] != -1:\n                heights.append(1)\n        return heights",
+    "javascript": "function treeHeight(nodes) {\n    let heights = [];\n    for (let i = 0; i < nodes.length; i++) {\n        heights.push(0);\n        if (nodes[i][1] != -1) {\n            heights.push(1);\n        }\n        if (nodes[i][2] != -1) {\n            heights.push(1);\n        }\n    }\n    return heights;"
+  },
+  "functionSignature": {
+    "cpp": "vector<int> treeHeight(vector<vector<int>> &nodes);",
+    "java": "List<Integer> treeHeight(List<List<Integer>> nodes);",
+    "python": "def treeHeight(self, nodes: list[list[int]]) -> list[int]:",
+    "javascript": "function treeHeight(nodes: number[][]): number[]"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def treeHeight(self, nodes):\n        heights = [0] * len(nodes)\n        for i, node in enumerate(nodes):\n            if node[1] != -1:\n                heights[i] += 1 + self.treeHeight(nodes[node[1]])\n            if node[2] != -1:\n                heights[i] += 1 + self.treeHeight(nodes[node[2]])\n        return heights",
+    "cpp": "#include <iostream>\n#include <vector>\n\nusing namespace std;\n\nclass Solution {\npublic:\n   vector<int> treeHeight(vector<vector<int>> &nodes);\n};\n\nint main() {\n   Solution solution;\n   vector<vector<int>> nodes = {{1, -1, -1}, {2, 3, -1}, {4, -1, -1}, {5, 6, 7}};\n   vector<int> heights = solution.treeHeight(nodes);\n   for (int height : heights) {\n      cout << height << ' '; \n   }\n   cout << endl;\n   return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "4\n1 -1 -1\n2 3 -1\n4 -1 -1\n5 6 7",
+      "output": "0 2 1 1 2 1",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_hidden_generated",
+      "input": "4\n1 -1 -1\n2 3 -1\n4 -1 -1\n5 6 7",
+      "output": "0 2 1 1 2 1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

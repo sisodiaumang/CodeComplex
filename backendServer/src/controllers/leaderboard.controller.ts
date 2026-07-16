@@ -20,7 +20,7 @@ function normalizeBattleType(battleType: unknown): BattleType | null {
         "DSA",
         "FRONTEND",
         "BACKEND",
-        "FULLSTACK",
+        "PROJECTS",
         "PROMPT_WAR",
         "BUG_FIX",
         "TEAM",
@@ -33,7 +33,7 @@ function getCategory(battleType: BattleType):
     | "dsa"
     | "frontend"
     | "backend"
-    | "fullstack"
+    | "projects"
     | "promptWar"
     | "team"
     | "bugFix" {
@@ -46,8 +46,8 @@ function getCategory(battleType: BattleType):
             return "frontend";
         case "BACKEND":
             return "backend";
-        case "FULLSTACK":
-            return "fullstack";
+        case "PROJECTS":
+            return "projects";
         case "PROMPT_WAR":
             return "promptWar";
         case "TEAM":

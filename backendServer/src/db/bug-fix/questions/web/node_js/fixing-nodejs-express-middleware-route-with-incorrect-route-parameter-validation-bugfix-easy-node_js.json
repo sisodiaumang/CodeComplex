@@ -1,0 +1,136 @@
+{
+  "title": "Fixing Node.js Express Middleware Route with Incorrect Route Parameter Validation",
+  "subCategory": "Express Routing",
+  "statement": {
+    "markdown": "Write a Node.js Express middleware function to validate the route parameter `id` in the route `/users/:id`. The middleware function should check if the `id` exists in a predefined array of valid user IDs. If the `id` is valid, the function should call the next middleware in the chain. If the `id` is invalid, it should return a 404 status code with a custom error message.\n\n**Predefined valid user IDs:** `[1, 2, 3]`\n\n**Example use case:** When the client sends a request to `/users/4`, the middleware function should validate the `id` and return a 404 status code with the message `\"User not found\"`. When the client sends a request to `/users/2`, the middleware function should allow the request to proceed to the next middleware in the chain.",
+    "inputFormat": "A string representing the route path, e.g., `/users/:id`",
+    "outputFormat": "undefined or a 404 status code with a custom error message",
+    "notes": "The middleware function should be defined as a separate function and should not be combined with other middleware functions.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of valid user IDs"
+      }
+    ],
+    "examples": [
+      {
+        "input": "/users/4",
+        "output": "404 Not Found\nUser not found",
+        "explanation": "The middleware function returns a 404 status code with a custom error message"
+      },
+      {
+        "input": "/users/2",
+        "output": "undefined",
+        "explanation": "The middleware function allows the request to proceed to the next middleware in the chain"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "NODE_JS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "node_js"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Validate the route parameter `id` against the predefined array of valid user IDs"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial: Fixing Node.js Express Middleware Route with Incorrect Route Parameter Validation",
+    "intuition": "The key to solving this problem is to use a middleware function to validate the route parameter `id` against the predefined array of valid user IDs.",
+    "bruteForce": "One possible approach is to use a simple if-else statement to check if the `id` exists in the predefined array of valid user IDs.",
+    "betterSolution": "",
+    "optimalSolution": "Create a middleware function that uses the `req.params.id` property to validate the route parameter `id` against the predefined array of valid user IDs. If the `id` is valid, call `next()` to proceed to the next middleware in the chain. If the `id` is invalid, return a 404 status code with a custom error message.",
+    "proofOfCorrectness": "The middleware function should be tested with different input values to ensure it returns the correct output.",
+    "dryRun": "Test the middleware function with the following input values:\n* /users/4\n* /users/2",
+    "commonMistakes": [
+      "Not validating the route parameter `id` correctly",
+      "Returning the wrong status code or error message"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "var express = require('express');\nvar app = express();\n\n// Middleware function to validate route parameter `id`\nvar validateId = function(req, res, next) {\n  // TODO: Implement validation logic here\n  next();\n}\n\n// Route definition\napp.get('/users/:id', validateId, function(req, res) {\n  // TODO: Implement route handler logic here\n  res.send('User found');\n});\n\napp.listen(3000, function() {\n  console.log('Server listening on port 3000');\n});",
+    "python": "import express\nfrom express import Request, Response, NextFunction\n\n# Route handler function\ndef validate_id(req: Request, res: Response, next: NextFunction) -> None:\n    # TODO: Implement validation logic here\n    next()\n\n# Route definition\napp = express.Router()\napp.get('/users/:id', validate_id, lambda req, res: res.send('User found'))"
+  },
+  "buggyStarterCode": {
+    "javascript": "var express = require('express');\nvar app = express();\n\n// Middleware function to validate route parameter `id`\nvar validateId = function(req, res, next) {\n  // Try to parse the route parameter `id` as an integer\n  var id = parseInt(req.params.id);\n  if (isNaN(id)) {\n    // If the `id` is not a valid integer, return a 404 status code\n    res.status(404).send('Invalid user ID');\n  } else {\n    if (!validUserIds.includes(id)) {\n      // If the `id` is a valid integer but not in the array of valid user IDs, return a 404 status code\n      res.status(404).send('User not found');\n    } else {\n      next();\n    }\n  }\n}\n\n// Predefined array of valid user IDs\nvar validUserIds = [1, 2, 3];\n\n// Route definition\napp.get('/users/:id', validateId, function(req, res) {\n  res.send('User found');\n});\n\napp.listen(3000, function() {\n  console.log('Server listening on port 3000');\n});",
+    "python": "import express\nfrom express import Request, Response, NextFunction\n\n# Route handler function\ndef validate_id(req: Request, res: Response, next: NextFunction) -> None:\n    try:\n        # Try to parse the route parameter `id` as an integer\n        id = int(req.params.id)\n        if id not in valid_user_ids:\n            # If the `id` is not in the array of valid user IDs, return a 404 status code\n            res.status(404).send('User not found')\n        else:\n            next()\n    except ValueError:\n        # If the `id` is not a valid integer, return a 404 status code\n        res.status(404).send('Invalid user ID')\n\n# Predefined array of valid user IDs\nvalid_user_ids = [1, 2, 3]\n\n# Route definition\napp = express.Router()\napp.get('/users/:id', validate_id, lambda req, res: res.send('User found'))"
+  },
+  "functionSignature": {
+    "javascript": "var validateId = function(req, res, next) { ... }",
+    "python": "def validate_id(req: Request, res: Response, next: NextFunction) -> None: ..."
+  },
+  "solutions": {
+    "javascript": "// Solution\nvar express = require('express');\nvar app = express();\n\n// Middleware function to validate route parameter `id`\nvar validateId = function(req, res, next) {\n  var id = parseInt(req.params.id);\n  if (isNaN(id) || !validUserIds.includes(id)) {\n    res.status(404).send('User not found');\n  } else {\n    next();\n  }\n}\n\n// Predefined array of valid user IDs\nvar validUserIds = [1, 2, 3];\n\n// Route definition\napp.get('/users/:id', validateId, function(req, res) {\n  res.send('User found');\n});\n\napp.listen(3000, function() {\n  console.log('Server listening on port 3000');\n});",
+    "python": "import express\nfrom express import Request, Response, NextFunction\n\n# Route handler function\ndef validate_id(req: Request, res: Response, next: NextFunction) -> None:\n    try:\n        id = int(req.params.id)\n        if id not in valid_user_ids:\n            res.status(404).send('User not found')\n        else:\n            next()\n    except ValueError:\n        res.status(404).send('Invalid user ID')\n\n# Predefined array of valid user IDs\nvalid_user_ids = [1, 2, 3]\n\n# Route definition\napp = express.Router()\napp.get('/users/:id', validate_id, lambda req, res: res.send('User found'))"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "/users/4",
+      "output": "404 Not Found\nUser not found",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "/users/2",
+      "output": "undefined",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "cc67a620c0bbf2e4b17e98ac",
+  "slug": "fixing-nodejs-express-middleware-route-with-incorrect-route-parameter-validation-bugfix-easy-node_js",
+  "mode": "bug_fix",
+  "category": "NODE_JS",
+  "difficulty": "Easy"
+}

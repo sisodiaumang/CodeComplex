@@ -1,0 +1,53 @@
+{
+  "_id": "e3246302ac442a4e7a040ccf",
+  "title": "React Star Rating Component",
+  "slug": "react-star-rating",
+  "difficulty": "Easy",
+  "topics": [
+    "REACT",
+    "REACT_STAR_RATING"
+  ],
+  "statement": {
+    "markdown": "## React Star Rating Component\n\nBuild an interactive Star Rating component.\n\n### Requirements:\n1. **Interactive Hover**: Hovering over stars dynamically highlights stars up to the hovered index.\n2. **Star Count**: Supports a configurable `maxStars` count prop (defaults to 5).\n3. **Click Event**: Clicking a star selects that rating and updates the component value state.\n4. **Fractional Stars**: Support half-star ratings and indicators (display-only or interactive).\n"
+  },
+  "constraints": [
+    "Must support responsive styles",
+    "Must use React hooks",
+    "Must style elements with Tailwind CSS"
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "html": "",
+    "css": "",
+    "react": "import React, { useState } from 'react';\n\nexport default function StarRating({ maxStars = 5, initialRating = 0, onChange }) {\n  // Implement star rating component here\n  return null;\n}"
+  },
+  "gradingCriteria": [
+    {
+      "id": "functional_correctness",
+      "description": "Verify that the interactive props, callbacks, and element structures work cleanly.",
+      "weight": 60
+    },
+    {
+      "id": "code_cleanliness",
+      "description": "Verify state structure designs and clean Tailwind CSS layouts.",
+      "weight": 40
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "react",
+      "tailwind"
+    ],
+    "referenceSolution": "import React, { useState } from 'react';\n\nexport default function StarRating({ maxStars = 5, initialRating = 0, onChange }) {\n  const [rating, setRating] = useState(initialRating);\n  const [hoverRating, setHoverRating] = useState(null);\n\n  const handleRating = (val) => {\n    setRating(val);\n    if (onChange) onChange(val);\n  };\n\n  return (\n    <div className=\"flex gap-1 select-none items-center\">\n      {Array.from({ length: maxStars }).map((_, idx) => {\n        const starValue = idx + 1;\n        const isHighlighted = hoverRating !== null ? starValue <= hoverRating : starValue <= rating;\n\n        return (\n          <button\n            key={idx}\n            type=\"button\"\n            onClick={() => handleRating(starValue)}\n            onMouseEnter={() => setHoverRating(starValue)}\n            onMouseLeave={() => setHoverRating(null)}\n            className=\"focus:outline-none transition-transform active:scale-95\"\n          >\n            <svg\n              className={`w-8 h-8 transition-colors duration-150 ${\n                isHighlighted ? 'text-amber-400 fill-amber-400' : 'text-gray-300 fill-transparent'\n              }`}\n              viewBox=\"0 0 24 24\"\n              stroke=\"currentColor\"\n              strokeWidth={2}\n            >\n              <path\n                strokeLinecap=\"round\"\n                strokeLinejoin=\"round\"\n                d=\"M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.907c.961 0 1.36 1.242.58 1.8l-3.97 2.88a1 1 0 00-.364 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.971-2.88a1 1 0 00-1.176 0l-3.97 2.88c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.364-1.118l-3.97-2.88c-.78-.558-.38-1.81.58-1.8h4.908a1 1 0 00.95-.69l1.519-4.674z\"\n              />\n            </svg>\n          </button>\n        );\n      })}\n      {rating > 0 && (\n        <span className=\"text-gray-500 font-bold ml-2 text-sm\">({rating} / {maxStars})</span>\n      )}\n    </div>\n  );\n}"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

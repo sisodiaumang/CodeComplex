@@ -1,0 +1,52 @@
+{
+  "_id": "ca18008e8d7c070f614d7026",
+  "title": "Staggered Fade-in Animation",
+  "slug": "anim-staggered-fade",
+  "difficulty": "Medium",
+  "topics": [
+    "ANIMATION"
+  ],
+  "statement": {
+    "markdown": "## Staggered Card Fade-in List\n\nBuild a staggered list grid fading cards sequentially.\n\n### Requirements:\n1. **Staggered Delays**: List cards fade-in step by step with custom delays (e.g. index-based increments).\n2. **Smooth Fade**: Transitions scale cards and fade opacity simultaneously.\n3. **Restart triggers**: Trigger buttons reset grid animations dynamically."
+  },
+  "constraints": [
+    "Must utilize transition-delay or custom animation-delay variables",
+    "Layout grids must remain responsive"
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "html": "<div class=\"p-6 bg-slate-900 min-h-[300px] flex flex-col items-center justify-center font-sans text-white gap-6\">\n  <button id=\"trigger-btn\" class=\"bg-indigo-600 px-4 py-2 rounded font-bold hover:bg-indigo-500 transition-colors\">Replay Intro</button>\n  <div id=\"grid\" class=\"grid grid-cols-3 gap-4 max-w-sm w-full\">\n    <div class=\"item bg-slate-800 p-4 rounded text-center opacity-0 scale-95 border border-slate-700\">A</div>\n    <div class=\"item bg-slate-800 p-4 rounded text-center opacity-0 scale-95 border border-slate-700\">B</div>\n    <div class=\"item bg-slate-800 p-4 rounded text-center opacity-0 scale-95 border border-slate-700\">C</div>\n  </div>\n</div>",
+    "css": "/* Implement transition properties and staggered item-index delays overrides here */\n",
+    "javascript": "const triggerBtn = document.getElementById('trigger-btn');\nconst items = Array.from(document.querySelectorAll('.item'));\n\n// Implement replay animation toggling by resetting visual active classes here\n"
+  },
+  "gradingCriteria": [
+    {
+      "id": "staggered_timing",
+      "description": "Verify cards fade-in sequentially rather than simultaneously.",
+      "weight": 60
+    },
+    {
+      "id": "replay_action",
+      "description": "Verify triggers reset card values and replay transitions seamlessly.",
+      "weight": 40
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "html",
+      "css",
+      "javascript"
+    ],
+    "referenceSolution": "const triggerBtn = document.getElementById('trigger-btn');\nconst items = Array.from(document.querySelectorAll('.item'));\n\nfunction play() {\n  items.forEach((item, idx) => {\n    item.classList.remove('active');\n    item.style.transition = 'none';\n    \n    // Force reflow\n    void item.offsetHeight;\n    \n    item.style.transition = 'opacity 0.4s, transform 0.4s';\n    item.style.transitionDelay = `${idx * 150}ms`;\n    item.classList.add('active');\n  });\n}\n\ntriggerBtn.addEventListener('click', play);\nplay();"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

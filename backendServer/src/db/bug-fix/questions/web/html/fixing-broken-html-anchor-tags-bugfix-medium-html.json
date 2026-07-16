@@ -1,0 +1,140 @@
+{
+  "title": "Fixing Broken HTML Anchor Tags",
+  "subCategory": "HTML Anchor Tags",
+  "statement": {
+    "markdown": "You are given a list of HTML anchor tags as strings. Each tag is in the format '<a href=[link] target=[target]>. The task is to validate each tag and return the list of tags with missing 'href' attribute replaced with a default 'href' attribute. The 'href' attribute should be the same as the tag's text.",
+    "inputFormat": "List of HTML anchor tags as strings",
+    "outputFormat": "List of validated HTML anchor tags as strings",
+    "notes": "Assume that the input tags are well-formed and do not contain any invalid HTML syntax.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of input tags"
+      }
+    ],
+    "examples": [
+      {
+        "input": "<a href=https://www.example.com target=_blank>Example</a>\n<a target=_blank>Missing href</a>",
+        "output": "<a href=https://www.example.com target=_blank>Example</a>\n<a href=Example target=_blank>Missing href</a>",
+        "explanation": "The second tag is validated by adding a default 'href' attribute with the value of the tag's text."
+      },
+      {
+        "input": "<a href=https://www.example.com target=_blank>Example</a>\n<a href=https://www.example2.com target=_blank>Example2</a>",
+        "output": "<a href=https://www.example.com target=_blank>Example</a>\n<a href=https://www.example2.com target=_blank>Example2</a>",
+        "explanation": "The first tag is valid and does not need any changes."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "HTML"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "html"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Check if the 'href' attribute exists in each tag"
+    },
+    {
+      "order": 2,
+      "text": "If the 'href' attribute does not exist, add it with the value of the tag's text"
+    }
+  ],
+  "editorial": {
+    "title": "Fixing Broken HTML Anchor Tags",
+    "intuition": "We need to iterate over the list of tags and check if each tag has a 'href' attribute. If it does not, we need to add it with the value of the tag's text.",
+    "bruteForce": "We can use a simple loop to iterate over the list of tags and check if each tag has a 'href' attribute. If it does not, we can use the 'replace' method to add the 'href' attribute with the value of the tag's text.",
+    "betterSolution": "We can use a regular expression to extract the tag's text and add it as the 'href' attribute if it does not exist.",
+    "optimalSolution": "We can use a single loop to iterate over the list of tags and add the 'href' attribute with the value of the tag's text if it does not exist.",
+    "proofOfCorrectness": "We can use a unit test to verify that the function returns the correct output for different inputs.",
+    "dryRun": "We can use a sample input to test the function and verify that it returns the correct output.",
+    "commonMistakes": [
+      "Forgetting to handle the case where the 'href' attribute does not exist",
+      "Adding the 'href' attribute with an empty value"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// Function to validate HTML anchor tags\nfunction validateTags(tags) {\n    // Your code here\n}\n",
+    "python": "class Solution:\n    def validate(self, tags):\n        # Your code here"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Function to validate HTML anchor tags\nfunction validateTags(tags) {\n    let result = [];\n    for (let tag of tags) {\n        let regex = /<a href=(.*?)( target=(.*?))>/;\n        let match = regex.exec(tag);\n        if (match) {\n            result.push(tag);\n        } else {\n            let text = tag.replace(/<a(.*?)>/, '');\n            result.push(tag.replace(/<a(.*?)>/, '<a href=' + text + ' target=_blank>'));\n        }\n    }\n    return result;\n}",
+    "python": "class Solution:\n    def validate(self, tags):\n        result = []\n        for tag in tags:\n            regex = re.compile(r'<a href=(.*?) target=(.*?)>')\n            match = regex.search(tag)\n            if match:\n                result.append(tag)\n            else:\n                text = tag.split('>')[1].split('<')[0]\n                result.append(tag.replace('>', ' href=' + text + ' target=_blank>'))\n        return result"
+  },
+  "functionSignature": {
+    "javascript": "var validateTags = function(tags) {",
+    "python": "def validate(self, tags: List[str]) -> List[str]:"
+  },
+  "solutions": {
+    "javascript": "// Function to validate HTML anchor tags\nfunction validateTags(tags) {\n    let result = [];\n    for (let tag of tags) {\n        let regex = /<a href=(.*?)( target=(.*?))>/;\n        let match = regex.exec(tag);\n        if (match) {\n            result.push(tag);\n        } else {\n            let text = tag.match(/^<a(.*?)>/)[1].trim();\n            result.push(tag.replace(/<a(.*?)>/, '<a href=' + text + ' target=_blank>'));\n        }\n    }\n    return result;\n}",
+    "python": "class Solution:\n    def validate(self, tags):\n        result = []\n        for tag in tags:\n            regex = re.compile(r'<a href=(.*?) target=(.*?)>')\n            match = regex.search(tag)\n            if match:\n                result.append(tag)\n            else:\n                text = tag.split('>')[1].split('<')[0]\n                result.append(tag.replace('>', ' href=' + text + ' target=_blank>'))\n        return result"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "<a href=https://www.example.com target=_blank>Example</a>\n<a target=_blank>Missing href</a>",
+      "output": "<a href=https://www.example.com target=_blank>Example</a>\n<a href=Example target=_blank>Missing href</a>",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "<a href=https://www.example.com target=_blank>Example</a>\n<a href=https://www.example2.com target=_blank>Example2</a>",
+      "output": "<a href=https://www.example.com target=_blank>Example</a>\n<a href=https://www.example2.com target=_blank>Example2</a>",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "_id": "e71e018cd0a3af2f62071ecc",
+  "slug": "fixing-broken-html-anchor-tags-bugfix-medium-html",
+  "mode": "bug_fix",
+  "category": "HTML",
+  "difficulty": "Medium"
+}

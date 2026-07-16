@@ -1,0 +1,157 @@
+{
+  "_id": "5db0277ee0510af3e2eccbf8",
+  "title": "In-Order Traversal with Incorrect Node Access",
+  "slug": "in-order-traversal-with-incorrect-node-access-bugfix-medium-binary-trees",
+  "difficulty": "Medium",
+  "category": "DSA",
+  "subCategory": "DFS",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "tree"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Write a function `solve` that performs an in-order traversal on a binary tree and returns the root node's value. The binary tree is represented as a linked list where each node is an instance of `TreeNode` with an integer value and references to its left and right children. However, the `solve` function contains a bug that makes it return the wrong node value when the tree has nodes with a value of 0. Fix the bug to make the function work correctly.",
+    "inputFormat": "A binary tree represented as a linked list of TreeNode instances.",
+    "outputFormat": "The value of the root node.",
+    "notes": "You are not allowed to create a new instance of TreeNode. You must use the existing nodes in the tree.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of nodes in the binary tree."
+      }
+    ],
+    "examples": [
+      {
+        "input": "Input node values: 1 -> 2 -> 3 -> 4 -> 5 (stdin format)",
+        "output": "Expected output: 2",
+        "explanation": "The function should perform an in-order traversal and return the root node's value."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Understand how in-order traversal works and how it can be implemented using a stack."
+    },
+    {
+      "order": 2,
+      "text": "Identify the bug in the given code and determine the correct approach to fix it."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial Solution for In-Order Traversal with Incorrect Node Access",
+    "intuition": "The given code tries to implement in-order traversal but incorrectly handles nodes with a value of 0.",
+    "bruteForce": "The brute force solution can be implemented using a recursive approach, but it will exceed the time limit.",
+    "betterSolution": "A stack-based solution can solve the problem efficiently by correctly handling nodes with a value of 0.",
+    "optimalSolution": "The optimal solution uses a stack to store nodes in the correct order and returns the root node's value at the end.",
+    "proofOfCorrectness": "The proof of correctness can be done by analyzing the stack operations and ensuring that the root node's value is correctly returned.",
+    "dryRun": "Perform a dry run with a small input to understand how the stack operations work and how the root node's value is returned.",
+    "commonMistakes": [
+      "Incorrect handling of nodes with a value of 0.",
+      "Incorrect stack operations."
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "class Solution { public: int solve(TreeNode* root) { // TODO: implement } };",
+    "java": "class Solution { public int solve(TreeNode root) { // TODO: implement return; } }",
+    "python": "class Solution: def solve(self, root: TreeNode) -> int: # TODO: implement return",
+    "javascript": "function solve(root) { // TODO: implement return; }"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution { public: int solve(TreeNode* root) { int result = 0; if (root->left) result = solve(root->left); if (result != 0) return result; return root->val; } };",
+    "java": "class Solution { public int solve(TreeNode root) { int result = 0; if (root.left != null) result = solve(root.left); if (result != 0) return result; return root.val; } }",
+    "python": "class Solution: def solve(self, root: TreeNode) -> int: result = 0 if root.left else node = solve(root.left) if node != 0 return node else return root.val",
+    "javascript": "function solve(root) { var result = 0; if (root.left) result = solve(root.left); if (result != 0) return result; return root.val; }"
+  },
+  "functionSignature": {
+    "cpp": "int solve(TreeNode* root);",
+    "java": "int solve(TreeNode root);",
+    "python": "int solve(self, root: TreeNode) -> int:",
+    "javascript": "int solve(root);"
+  },
+  "solutions": {
+    "python": "# Full executable Python solution file\nimport sys\nclass Solution:\n    def solve(self, root: TreeNode) -> int:\n        stack = [root]\n        result = 0\n        while stack:\n            node = stack.pop()\n            if node:\n                stack.append(node.right)\n                stack.append(node)\n                result = node.val\n        return result\n\n# Driver code\nif __name__ == '__main__':\n    root = TreeNode(1)\n    root.left = TreeNode(2)\n    root.right = TreeNode(3)\n    root.left.left = TreeNode(4)\n    root.left.right = TreeNode(5)\n    solution = Solution()\n    result = solution.solve(root)\n    print(result)\n",
+    "cpp": "// Full executable C++ solution file\n#include <iostream>\n#include <stack>\nusing namespace std;\n\nstruct TreeNode { int val; TreeNode* left; TreeNode* right; TreeNode(int x) : val(x), left(NULL), right(NULL) {} };\n\nclass Solution { public: int solve(TreeNode* root) { stack<TreeNode*> stk; int result = 0; while (root || !stk.empty()) { if (root) { stk.push(root); root = root->right; } else { root = stk.top()->left; stk.pop(); result = stk.top()->val; } } return result; } };\n\nint main() { Solution solution; TreeNode root(1); root.left = new TreeNode(2); root.right = new TreeNode(3); root.left->left = new TreeNode(4); root.left->right = new TreeNode(5);\n    int result = solution.solve(&root);\n    cout << result << endl;\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5\n1 2 3 4 5",
+      "output": "2",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "4\n1 2 3 4",
+      "output": "2",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

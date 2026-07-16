@@ -1,0 +1,165 @@
+{
+  "_id": "ce356f5156bc32324ceb8686",
+  "title": "Incorrect Memoization in Subarray Sum",
+  "slug": "incorrect-memoization-in-subarray-sum-bugfix-medium-dynamic-programming",
+  "difficulty": "Medium",
+  "category": "DSA",
+  "subCategory": "DP",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 60,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "dp"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Solve the problem and fix the bugs.",
+    "inputFormat": "Input will contain two lines: the size of the array and the array elements separated by a space.",
+    "outputFormat": "Output the maximum sum of a Subarray of size k.",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "k",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of Subarray"
+      },
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "4\n10 20 30 40",
+        "output": "60",
+        "explanation": "Subarray sum of size 2 from 20 to 30 is 50, of size 3 from 10 to 40 is 60."
+      },
+      {
+        "input": "3\n-1 2 3",
+        "output": "5",
+        "explanation": "Subarray sum of size 2 from 2 to 3 is 5"
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Check if the memoization is being applied correctly"
+    }
+  ],
+  "editorial": {
+    "title": "Incorrect Memoization in Subarray Sum",
+    "intuition": "Memoization can be used to store previous results to avoid redundant subproblems.",
+    "bruteForce": "Brute force approach involves finding Sum of subarray of size k for every possible subarray.",
+    "betterSolution": "Use a sliding window approach and dynamic programming to store subproblems",
+    "optimalSolution": "Use a Map to store the sum of the subarray of size k and iterate over the array using a sliding window approach.",
+    "proofOfCorrectness": "Memoization ensures that the same subproblem is solved only once, thus reducing the time complexity.",
+    "dryRun": "For the first test case, the sum of the subarray of size 2 is 10+20+30+40=100 but we can select the subarray [10, 20, 30, 40] which will give us a sum of 100.",
+    "commonMistakes": [
+      "Not applying memoization correctly",
+      "Using wrong data structure for memoization"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\n public:\n  int solve(int k, vector<int>& a) {\n    int n = a.size();\n    // TODO: implement\n  }\n};",
+    "java": "class Solution {\n public:\n  int solve(int k, int[] a) {\n    int n = a.length;\n    // TODO: implement\n  }\n}",
+    "python": "class Solution:\n def solve(self, k, a):\n n = len(a)\n  # TODO: implement\n  pass",
+    "javascript": "function solve(k, a) {\n  let n = a.length;\n  // TODO: implement\n  return 0;\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\n public:\n  int solve(int k, vector<int>& a) {\n    int n = a.size();\n    map<int, int> dp;\n    dp[0] = 1;\n    for (int i = 0; i < n; i++) {\n      if (dp.find(i) != dp.end()) {\n        dp[i + 1] = dp[i] + 1;\n      }\n    }\n    return dp[n];\n  }\n};",
+    "java": "class Solution {\n public:\n  int solve(int k, int[] a) {\n    int n = a.length;\n    HashMap<Integer, Integer> dp = new HashMap<>();\n    dp.put(0, 1);\n    for (int i = 0; i < n; i++) {\n      if (dp.containsKey(i)) {\n        dp.put(i + 1, dp.get(i) + 1);\n      }\n    }\n    return dp.get(n);\n  }\n}",
+    "python": "class Solution:\n def solve(self, k, a):\n n = len(a)\n  dp = {0: 1}\n  for i in range(n):\n    if i in dp:\n      dp[i + 1] = dp[i] + 1\n  return dp.get(n)\n  pass",
+    "javascript": "function solve(k, a) {\n  let n = a.length;\n  let dp = new Map();\n  dp.set(0, 1);\n  for (let i = 0; i < n; i++) {\n    if (dp.has(i)) {\n      dp.set(i + 1, dp.get(i) + 1);\n    }\n  }\n  return dp.get(n);\n}"
+  },
+  "functionSignature": {
+    "cpp": "int solve(int k, vector<int>& a);",
+    "java": "int solve(int k, int[] a);",
+    "python": "int solve(self, k, a: List[int]) -> int:",
+    "javascript": "var solve = function(k, a);"
+  },
+  "solutions": {
+    "python": "class Solution:\n def solve(self, k, a):\n n = len(a)\n  dp = [0] * (n + 1)\n  dp[0] = 0\n  for i in range(1, n + 1):\n    max_val = float('-inf')\n    for j in range(1, min(i, k) + 1):\n      max_val = max(max_val, a[i - j] + dp[j])\n    dp[i] = max_val\n  return dp[n]",
+    "cpp": "class Solution {\n public:\n  int solve(int k, vector<int>& a) {\n    int n = a.size();\n    vector<int> dp(n + 1, 0);\n    dp[0] = 0;\n    for (int i = 1; i <= n; i++) {\n      int max_val = INT_MIN;\n      for (int j = 1; j <= min(i, k); j++) {\n        max_val = max(max_val, a[i - j] + dp[j]);\n      }\n      dp[i] = max_val;\n    }\n    return dp[n];\n  }\n};",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 3,
+    "memoryLimit": 512,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "tc_1",
+      "input": "4\n10 20 30 40",
+      "output": "60",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    },
+    {
+      "id": "tc_2",
+      "input": "3\n-1 2 3",
+      "output": "5",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

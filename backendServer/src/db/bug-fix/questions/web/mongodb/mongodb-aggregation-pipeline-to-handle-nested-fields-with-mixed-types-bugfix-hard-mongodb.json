@@ -1,0 +1,157 @@
+{
+  "title": "MongoDB Aggregation Pipeline to Handle Nested Fields with Mixed Types",
+  "subCategory": "Aggregation Pipeline",
+  "statement": {
+    "markdown": "Your task is to fix the buggy MongoDB aggregation pipeline that handles nested fields with mixed types. The pipeline should extract the `name` field from the `author` document, the `title` field from the `book` document, and the `price` field from the `book` document. However, the pipeline should only extract these fields if the corresponding document exists and its type is not an array. If the document exists but its type is an array, the pipeline should skip it. If the document does not exist, the pipeline should replace it with `null`.",
+    "inputFormat": "The input will be a MongoDB collection with documents containing nested fields with mixed types.",
+    "outputFormat": "The output should be a new collection with the extracted fields.",
+    "notes": "You should use the `$map`, `$mergeObjects`, and `$ifNull` operators to achieve this.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of documents in the input collection"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{ 'author': { 'name': 'John Doe' }, 'book': { 'title': 'Book Title', 'price': 19.99 } }",
+        "output": "{ 'name': 'John Doe', 'title': 'Book Title', 'price': 19.99 }",
+        "explanation": "Extracted fields from the input document"
+      },
+      {
+        "input": "{ 'author': { 'name': 'Jane Doe' }, 'book': [ 'Book Title', 'Book Price' ] }",
+        "output": "{ 'name': 'Jane Doe', 'title': null, 'price': null }",
+        "explanation": "Extracted fields from the input document, skipping the array-type document"
+      },
+      {
+        "input": "{ 'author': null, 'book': { 'title': 'Book Title', 'price': 19.99 } }",
+        "output": "{ 'name': null, 'title': 'Book Title', 'price': 19.99 }",
+        "explanation": "Extracted fields from the input document, replacing non-existent document with null"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 75,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "MONGODB"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "mongodb"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the `$map` operator to iterate over the nested fields."
+    },
+    {
+      "order": 2,
+      "text": "Use the `$mergeObjects` operator to extract the desired fields."
+    },
+    {
+      "order": 3,
+      "text": "Use the `$ifNull` operator to replace non-existent documents with null."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial: MongoDB Aggregation Pipeline",
+    "intuition": "The correct approach involves using the `$map`, `$mergeObjects`, and `$ifNull` operators to handle the nested fields with mixed types.",
+    "bruteForce": "One possible brute force approach is to use multiple `$ifNull` operators to check the existence of each field, but this is inefficient and not optimal.",
+    "betterSolution": "A better solution involves using the `$map` operator to iterate over the nested fields and the `$mergeObjects` operator to extract the desired fields.",
+    "optimalSolution": "The optimal solution involves using the `$map`, `$mergeObjects`, and `$ifNull` operators in a single pipeline to achieve the desired result.",
+    "proofOfCorrectness": "The correct pipeline should produce the expected output for all test cases.",
+    "dryRun": "Step-by-step example run of the correct pipeline.",
+    "commonMistakes": [
+      "Using multiple `$ifNull` operators",
+      "Not handling array-type documents correctly"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// Define the aggregation pipeline",
+    "python": "class Solution:\n    def solve(self):\n        # Define the aggregation pipeline"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Define the aggregation pipeline\npipeline = [\n    { $addFields: { name: { $ifNull: ['$author.name', '$book.title'] } } },\n    { $addFields: { title: { $ifNull: ['$author.name', '$book.price'] } } },\n    { $addFields: { price: { $ifNull: ['$author.name', '$book.price'] } } }\n];\nreturn pipeline;",
+    "python": "class Solution:\n    def solve(self):\n        # Define the aggregation pipeline\n        pipeline = [\n            {'$addFields': {'name': {'$ifNull': ['$author.name', '$book.title']}}},\n            {'$addFields': {'title': {'$ifNull': ['$author.name', '$book.price']}}},\n            {'$addFields': {'price': {'$ifNull': ['$author.name', '$book.price']}}}]\n        return pipeline;"
+  },
+  "functionSignature": {
+    "javascript": "function solve() {",
+    "python": "def solve(self):"
+  },
+  "solutions": {
+    "javascript": "// Solution\npipeline = [\n    { $map: { input: '$author', as: 'author', in: { $mergeObjects: { name: '$$author.name', _id: null } } } },\n    { $map: { input: '$book', as: 'book', in: { $mergeObjects: { title: '$$book.title', price: '$$book.price', _id: null } } } },\n    { $addFields: { name: { $ifNull: ['$author.name', null] }, title: { $ifNull: ['$book.title', null] }, price: { $ifNull: ['$book.price', null] } } }\n];\nreturn pipeline;",
+    "python": "class Solution:\n    def solve(self):\n        # Solution\n        pipeline = [\n            {'$map': {'input': '$author', 'as': 'author', 'in': {'$mergeObjects': {'name': '$$author.name', '_id': None}}}},\n            {'$map': {'input': '$book', 'as': 'book', 'in': {'$mergeObjects': {'title': '$$book.title', 'price': '$$book.price', '_id': None}}}},\n            {'$addFields': {'name': {'$ifNull': ['$author.name', None]}, 'title': {'$ifNull': ['$book.title', None]}, 'price': {'$ifNull': ['$book.price', None]}}}\n        ]\n        return pipeline;"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{ 'author': { 'name': 'John Doe' }, 'book': { 'title': 'Book Title', 'price': 19.99 } }",
+      "output": "{ 'name': 'John Doe', 'title': 'Book Title', 'price': 19.99 }",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{ 'author': { 'name': 'Jane Doe' }, 'book': [ 'Book Title', 'Book Price' ] }",
+      "output": "{ 'name': 'Jane Doe', 'title': null, 'price': null }",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    },
+    {
+      "id": "tc_3",
+      "input": "{ 'author': null, 'book': { 'title': 'Book Title', 'price': 19.99 } }",
+      "output": "{ 'name': null, 'title': 'Book Title', 'price': 19.99 }",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "_id": "5792712e5bd0d157fad93d67",
+  "slug": "mongodb-aggregation-pipeline-to-handle-nested-fields-with-mixed-types-bugfix-hard-mongodb",
+  "mode": "bug_fix",
+  "category": "MONGODB",
+  "difficulty": "Hard"
+}

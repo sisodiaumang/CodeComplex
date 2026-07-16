@@ -1,0 +1,131 @@
+{
+  "title": "Optimizing React Memoized Component Re-renders Due to Changing Object Reference",
+  "subCategory": "Memoization",
+  "statement": {
+    "markdown": "You are given a React memoized component `MemoizedComponent` that uses the `useState` hook to manage its local state. The component also uses the `useMemo` hook to memoize a complex calculation based on its state. However, the component re-renders unnecessarily when the state changes, even if the calculation result remains the same. Your task is to optimize the component to avoid unnecessary re-renders.",
+    "inputFormat": "A JSON object containing the component's state and props.",
+    "outputFormat": "The optimized memoized component code.",
+    "notes": "Make sure to use memoization correctly to avoid unnecessary re-renders.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of times the component's state is updated"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"state\": {\"x\": 1, \"y\": 2}, \"props\": {\"a\": 3}}",
+        "output": "{\"state\": {\"x\": 1, \"y\": 2}, \"props\": {\"a\": 3}}",
+        "explanation": "The component should re-render when the state or props change."
+      },
+      {
+        "input": "{\"state\": {\"x\": 1, \"y\": 2}, \"props\": {\"a\": 3}}",
+        "output": "{\"state\": {\"x\": 1, \"y\": 2}, \"props\": {\"a\": 3}}",
+        "explanation": "The component should not re-render when the state remains the same."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 60,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "REACT"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "react"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the `memo` hook to memoize the calculation result."
+    }
+  ],
+  "editorial": {
+    "title": "Optimizing React Memoized Component Re-renders Due to Changing Object Reference",
+    "intuition": "Memoization is used to avoid unnecessary re-renders.",
+    "bruteForce": "Re-render the component on every state change.",
+    "betterSolution": "Use memoization to cache the calculation result.",
+    "optimalSolution": "Use the `memo` hook to memoize the calculation result and avoid unnecessary re-renders.",
+    "proofOfCorrectness": "The component re-renders only when the state or props change.",
+    "dryRun": "Step-by-step example run of the optimized component.",
+    "commonMistakes": [
+      "Not using memoization",
+      "Using memoization incorrectly"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "const MemoizedComponent = () => {\n  const [state, setState] = useState({ x: 0, y: 0 });\n  const calculation = useMemo(() => {\n    const result = complexCalculation(state);\n    return result;\n  }, [state]);\n  // ... rest of the component code ...\n}"
+  },
+  "buggyStarterCode": {
+    "javascript": "const MemoizedComponent = () => {\n  const [state, setState] = useState({ x: 0, y: 0 });\n  const calculation = useMemo(() => {\n    const result = complexCalculation(state);\n    return result;\n  }, [\n    state,\n    state.x,\n    state.y\n  ]); // BUG: Including state.x and state.y in the dependency array causes unnecessary re-renders"
+  },
+  "functionSignature": {
+    "javascript": "const MemoizedComponent = () => {}"
+  },
+  "solutions": {
+    "javascript": "// Solution: Use the `memo` hook to memoize the calculation result and avoid unnecessary re-renders.\nconst MemoizedComponent = () => {\n  const [state, setState] = useState({ x: 0, y: 0 });\n  const calculation = memo(() => {\n    const result = complexCalculation(state);\n    return result;\n  });\n  // ... rest of the component code ...\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"state\": {\"x\": 1, \"y\": 2}, \"props\": {\"a\": 3}}",
+      "output": "{\"state\": {\"x\": 1, \"y\": 2}, \"props\": {\"a\": 3}}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"state\": {\"x\": 1, \"y\": 2}, \"props\": {\"a\": 3}}",
+      "output": "{\"state\": {\"x\": 1, \"y\": 2}, \"props\": {\"a\": 3}}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "d137cb97cf09f0304f3d6d21",
+  "slug": "optimizing-react-memoized-component-re-renders-due-to-changing-object-reference-bugfix-hard-react",
+  "mode": "bug_fix",
+  "category": "REACT",
+  "difficulty": "Hard"
+}

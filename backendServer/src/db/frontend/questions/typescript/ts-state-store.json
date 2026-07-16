@@ -1,0 +1,48 @@
+{
+  "_id": "1194a91fa908ec4a0804360e",
+  "title": "Custom Typed State Store",
+  "slug": "ts-state-store",
+  "difficulty": "Hard",
+  "topics": [
+    "TYPESCRIPT"
+  ],
+  "statement": {
+    "markdown": "## Custom Typed State Store\n\nBuild a small, reactive state management store.\n\n### Requirements:\n1. **Store Initialization**: Create a store that takes an initial `State` value and a map of action handlers (reducers).\n2. **Dispatching Actions**: Dispatching an action should run the matching reducer and update the store's internal state, with full type safety on action names and payloads.\n3. **Selectors**: Provide a way to select and return a derived slice of state via a callback, typed to match the shape of `State`."
+  },
+  "constraints": [
+    "Selector returns must match return types automatically",
+    "Dispatch calls must validate action shape payloads at compile time"
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "typescript": "export class StateStore<State, Action extends { type: string; payload?: any }> {\n  constructor(initialState: State, reducer: (state: State, action: Action) => State) {}\n\n  // Implement getState, select, and dispatch here\n}\n"
+  },
+  "gradingCriteria": [
+    {
+      "id": "state_reactive",
+      "description": "Verify dispatch updates states accurately and triggers registered listeners.",
+      "weight": 50
+    },
+    {
+      "id": "typesafe_methods",
+      "description": "Verify action payloads and selector returns narrow types correctly.",
+      "weight": 50
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "typescript"
+    ],
+    "referenceSolution": "export class StateStore<State, Action extends { type: string; payload?: any }> {\n  private state: State;\n  private reducer: (state: State, action: Action) => State;\n  private listeners: Array<() => void> = [];\n\n  constructor(initialState: State, reducer: (state: State, action: Action) => State) {\n    this.state = initialState;\n    this.reducer = reducer;\n  }\n\n  getState(): State {\n    return this.state;\n  }\n\n  dispatch(action: Action): void {\n    this.state = this.reducer(this.state, action);\n    this.listeners.forEach(fn => fn());\n  }\n\n  subscribe(listener: () => void): () => void {\n    this.listeners.push(listener);\n    return () => {\n      this.listeners = this.listeners.filter(fn => fn !== listener);\n    };\n  }\n\n  select<R>(selector: (state: State) => R): R {\n    return selector(this.state);\n  }\n}"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

@@ -1,0 +1,136 @@
+{
+  "title": "Fix SQL Query to Extract Unique Values",
+  "subCategory": "SQL Query Optimization",
+  "statement": {
+    "markdown": "Write a SQL query that takes a table `orders` with columns `id`, `customer_id`, and `product_id`. The query should return all unique `customer_id` and `product_id` pairs from the table, sorted by `customer_id` and then by `product_id`.\n\n### Constraints\n\n- The `orders` table has at least 1 row.\n\n### Example\n\nInput:\n`+-------+-------------+------------+\n| id | customer_id | product_id |\n+-------+-------------+------------+\n| 1  | 1           | 10        |\n| 2  | 1           | 20        |\n| 3  | 2           | 10        |\n| 4  | 3           | 30        |\n+-------+-------------+------------+\n`Output:\n`+-------------+------------+\n| customer_id | product_id |\n+-------------+------------+\n| 1           | 10        |\n| 1           | 20        |\n| 2           | 10        |\n| 3           | 30        |\n+-------------+------------+`",
+    "inputFormat": "SQL query",
+    "outputFormat": "Table with unique `customer_id` and `product_id` pairs, sorted by `customer_id` and then by `product_id`",
+    "notes": "You can assume the `orders` table has the required columns.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of rows in the `orders` table"
+      }
+    ],
+    "examples": [
+      {
+        "input": "SELECT DISTINCT customer_id, product_id FROM orders ORDER BY customer_id, product_id;",
+        "output": "+-------------+------------+\n| customer_id | product_id |\n+-------------+------------+\n| 1           | 10        |\n| 1           | 20        |\n| 2           | 10        |\n| 3           | 30        |\n+-------------+------------+",
+        "explanation": "This example input should return the expected output table."
+      },
+      {
+        "input": "SELECT DISTINCT customer_id, product_id FROM orders ORDER BY customer_id DESC, product_id ASC;",
+        "output": "+-------------+------------+\n| customer_id | product_id |\n+-------------+------------+\n| 3           | 30        |\n| 2           | 10        |\n| 1           | 20        |\n| 1           | 10        |\n+-------------+------------+",
+        "explanation": "This example input should return a different output table, sorted by `customer_id` in descending order and then by `product_id` in ascending order."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 10,
+    "points": 30,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "SQL"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "sql"
+    ],
+    "interviewFrequency": 1,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the `DISTINCT` keyword to remove duplicate rows."
+    }
+  ],
+  "editorial": {
+    "title": "Optimizing the SQL Query",
+    "intuition": "The correct approach is to use the `DISTINCT` keyword to remove duplicate rows and then sort the result by `customer_id` and `product_id`.",
+    "bruteForce": "The brute force approach would be to use a subquery to remove duplicate rows and then sort the result.",
+    "betterSolution": "",
+    "optimalSolution": "The optimal solution is to use the `DISTINCT` keyword directly in the `SELECT` statement.",
+    "proofOfCorrectness": "The proof of correctness is that the output table matches the expected output table for the given input.",
+    "dryRun": "Step-by-step example run: 1. Write the SQL query using the `DISTINCT` keyword. 2. Execute the query. 3. Sort the result by `customer_id` and `product_id`.",
+    "commonMistakes": [
+      "Not using the `DISTINCT` keyword",
+      "Sorting the result incorrectly"
+    ],
+    "timeComplexity": "O(n log n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// Write a SQL query that takes a table `orders` with columns `id`, `customer_id`, and `product_id`. The query should return all unique `customer_id` and `product_id` pairs from the table, sorted by `customer_id` and then by `product_id`.",
+    "python": "class Solution:\n    def solve(self, orders):\n        # Write your SQL query here"
+  },
+  "buggyStarterCode": {
+    "javascript": "SELECT customer_id, product_id FROM orders GROUP BY customer_id, product_id ORDER BY customer_id, product_id;",
+    "python": "class Solution:\n    def solve(self, orders):\n        # This code will return duplicate rows\n        return 'SELECT customer_id, product_id FROM orders GROUP BY customer_id, product_id ORDER BY customer_id, product_id;'"
+  },
+  "functionSignature": {
+    "javascript": "var solve = function(orders);\nreturn // SQL query string;",
+    "python": "def solve(self, orders):\n    # Return the SQL query string"
+  },
+  "solutions": {
+    "javascript": "var solve = function(orders) {\n    return 'SELECT DISTINCT customer_id, product_id FROM orders ORDER BY customer_id, product_id;';\n};",
+    "python": "class Solution:\n    def solve(self, orders):\n        # Return the SQL query string\n        return 'SELECT DISTINCT customer_id, product_id FROM orders ORDER BY customer_id, product_id;'"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "1\n2\n3\n4",
+      "output": "+-------------+------------+\n| customer_id | product_id |\n+-------------+------------+\n| 1           | 10        |\n| 1           | 20        |\n| 2           | 10        |\n| 3           | 30        |\n+-------------+------------+",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "1\n2\n3\n4",
+      "output": "+-------------+------------+\n| customer_id | product_id |\n+-------------+------------+\n| 3           | 30        |\n| 2           | 10        |\n| 1           | 20        |\n| 1           | 10        |\n+-------------+------------+",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "dad7db9b63af843c9c6b2496",
+  "slug": "fix-sql-query-to-extract-unique-values-bugfix-easy-sql",
+  "mode": "bug_fix",
+  "category": "SQL",
+  "difficulty": "Easy"
+}

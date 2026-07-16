@@ -1,0 +1,136 @@
+{
+  "title": "Docker Compose Service Port Mappings Validation Bug Fixer",
+  "subCategory": "Port Mapping Validator",
+  "statement": {
+    "markdown": "Given a Docker Compose configuration, validate service port mappings. Each service should have a unique port. The validation should consider exposed ports, published ports, and container ports. The function should return `true` if valid and `false` otherwise. Note that the input configuration is a JSON object with services as properties and their respective port mappings as values. Also, consider that some services might have environment variables that override default port mappings.",
+    "inputFormat": "JSON object with services and their port mappings",
+    "outputFormat": "boolean (true for valid, false for invalid)",
+    "notes": "Assume environment variables override default port mappings",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of services"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"service1\":{\"exposed\":80,\"published\":8080,\"container\":8081},\"service2\":{\"exposed\":81,\"published\":8081,\"container\":8082}}",
+        "output": "true",
+        "explanation": "No duplicate ports, valid configuration"
+      },
+      {
+        "input": "{\"service1\":{\"exposed\":80,\"published\":8080,\"container\":8081},\"service2\":{\"exposed\":80,\"published\":8080,\"container\":8082}}",
+        "output": "false",
+        "explanation": "Duplicate exposed port, invalid configuration"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DOCKER"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "docker"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Iterate over services and their port mappings"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// Function to validate Docker Compose service port mappings\nfunction validateDockerComposePortMappings(config) {\n  // Iterate over services\n  for (var service in config) {\n    // Get port mappings for the current service\n    var portMappings = config[service];\n\n    // Check if port mappings are valid (TODO: implement logic)\n    var isValid = true;\n    // ...\n\n    return isValid;\n  }\n}",
+    "python": "class Solution:\n  def validate_docker_compose_port_mappings(self, config):\n    # Iterate over services\n    for service in config:\n      # Get port mappings for the current service\n      port_mappings = config[service]\n\n      # Check if port mappings are valid (TODO: implement logic)\n      is_valid = True\n      # ...\n\n      return is_valid"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Function to validate Docker Compose service port mappings\nfunction validateDockerComposePortMappings(config) {\n  // Iterate over services\n  for (var service in config) {\n    // Get port mappings for the current service\n    var portMappings = config[service];\n\n    // Check if port mappings are valid\n    var isValid = true;\n    // If exposed port is not the same as published port, it's valid\n    if (portMappings.exposed !== portMappings.published) {\n      isValid = true;\n    } else {\n      // If exposed port is the same as published port, but not the same as container port, it's valid\n      if (portMappings.exposed !== portMappings.container) {\n        isValid = true;\n      } else {\n        // If exposed, published, and container ports are the same, it's not valid\n        isValid = false;\n      }\n    }\n\n    return isValid;\n  }\n}",
+    "python": "class Solution:\n  def validate_docker_compose_port_mappings(self, config):\n    # Iterate over services\n    for service in config:\n      # Get port mappings for the current service\n      port_mappings = config[service]\n\n      # Check if port mappings are valid\n      is_valid = True\n      # If exposed port is not the same as published port, it's valid\n      if port_mappings['exposed'] != port_mappings['published']:\n        is_valid = True\n      else:\n        # If exposed port is the same as published port, but not the same as container port, it's valid\n        if port_mappings['exposed'] != port_mappings['container']:\n          is_valid = True\n        else:\n          # If exposed, published, and container ports are the same, it's not valid\n          is_valid = False\n\n      return is_valid"
+  },
+  "functionSignature": {
+    "javascript": "function validateDockerComposePortMappings(config) {\n  // ...\n}",
+    "python": "def validate_docker_compose_port_mappings(self, config) -> bool:\n  # ...\n}"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction validateDockerComposePortMappings(config) {\n  // Iterate over services\n  for (var service in config) {\n    // Get port mappings for the current service\n    var portMappings = config[service];\n\n    // Check if port mappings are valid\n    var isValid = true;\n    // If exposed port is not unique across all services, it's not valid\n    for (var otherService in config) {\n      if (otherService !== service && portMappings.exposed === config[otherService].exposed) {\n        isValid = false;\n        break;\n      }\n    }\n\n    return isValid;\n  }\n}",
+    "python": "class Solution:\n  def validate_docker_compose_port_mappings(self, config) -> bool:\n    # Iterate over services\n    for service in config:\n      # Get port mappings for the current service\n      port_mappings = config[service]\n\n      # Check if port mappings are valid\n      is_valid = True\n      # If exposed port is not unique across all services, it's not valid\n      for other_service in config:\n        if other_service != service and port_mappings['exposed'] == config[other_service]['exposed']:\n          is_valid = False\n          break\n\n      return is_valid"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"service1\":{\"exposed\":80,\"published\":8080,\"container\":8081},\"service2\":{\"exposed\":81,\"published\":8081,\"container\":8082}}",
+      "output": "true",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"service1\":{\"exposed\":80,\"published\":8080,\"container\":8081},\"service2\":{\"exposed\":80,\"published\":8080,\"container\":8082}}",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "_id": "5f262ba9a372b3dcf3a9d3ff",
+  "slug": "docker-compose-service-port-mappings-validation-bug-fixer-bugfix-medium-docker",
+  "mode": "bug_fix",
+  "category": "DOCKER",
+  "difficulty": "Medium"
+}

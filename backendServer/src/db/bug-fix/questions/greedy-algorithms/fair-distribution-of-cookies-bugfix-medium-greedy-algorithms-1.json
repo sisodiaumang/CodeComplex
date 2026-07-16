@@ -1,0 +1,160 @@
+{
+  "_id": "d6f00b45be691df97519434b",
+  "title": "Fair Distribution of Cookies",
+  "slug": "fair-distribution-of-cookies-bugfix-medium-greedy-algorithms-1",
+  "difficulty": "Medium",
+  "category": "DSA",
+  "subCategory": "GREEDY",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 60,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "greedy"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "You are given an array of cookies and a target number of people to distribute the cookies to. The objective is to find the maximum number of people who can be given a fair distribution of cookies. A fair distribution is where the number of cookies each person receives is as close as possible to the total number of cookies divided by the number of people.",
+    "inputFormat": "The input will be an array of integers representing the number of cookies and a target number of people.",
+    "outputFormat": "The output should be the maximum number of people who can be given a fair distribution of cookies.",
+    "notes": "The array of cookies will not be empty and will contain only positive integers. The target number of people will be a positive integer.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "cookies",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Array of cookies"
+      },
+      {
+        "variable": "people",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Target number of people"
+      }
+    ],
+    "examples": [
+      {
+        "input": "[4,9,3] 5",
+        "output": "3",
+        "explanation": "The maximum number of people who can be given a fair distribution of cookies are 3."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(...) ",
+    "spaceComplexity": "O(...)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\nbool solve(vector<int>& cookies, int people);\n};",
+    "java": "public class Solution {\npublic:\nboolean solve(int[] cookies, int people);\n};",
+    "python": "class Solution:\n\tdef solve(self, cookies: list[int], people: int) -> bool:",
+    "javascript": "class Solution {\n\tvar solve = function(cookies, people);\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\nbool solve(vector<int>& cookies, int people) {\n\tint total = 0;\n\tfor (int i = 0; i < cookies.size(); i++) {\n\t\ttotal += cookies[i];\n\t}\n\ntotal /= people;\n\tif (total * people != total) return false;\n\treturn true;\n}\n};",
+    "java": "public class Solution {\npublic boolean solve(int[] cookies, int people) {\n\tint total = 0;\n\tfor (int i = 0; i < cookies.length; i++) {\n\t\ttotal += cookies[i];\n\t}\n\ttotal /= people;\n\tif (total * people != total) return false;\n\treturn true;\n}\n};",
+    "python": "class Solution:\n\tdef solve(self, cookies: list[int], people: int) -> bool:\n\t\ttotal = sum(cookies)\n\t\ttotal /= people\n\t\tif total * people != total:\n\t\t\treturn False\n\t\treturn True",
+    "javascript": "class Solution {\n\tvar solve = function(cookies, people) {\n\t\tvar total = cookies.reduce(function(a, b) { return a + b; }, 0);\n\t\ttotal /= people;\n\t\tif (total * people != total) return false;\n\t\treturn true;\n\t};\n}"
+  },
+  "functionSignature": {
+    "cpp": "bool solve(vector<int>& cookies, int people);",
+    "java": "boolean solve(int[] cookies, int people);",
+    "python": "def solve(self, cookies: list[int], people: int) -> bool:",
+    "javascript": "var solve = function(cookies, people);"
+  },
+  "solutions": {
+    "python": "class Solution:\n\tdef solve(self, cookies: list[int], people: int) -> bool:\n\t\ttotal = sum(cookies)\n\t\tmax_share = total // people\n\t\tmin_share = total // people\n\t\tfor share in range(max_share, min_share - 1, -1):\n\t\t\tif total % people == 0:\n\t\t\t\treturn True\n\t\t\tif (total % people != 0) and (total % people >= share):\n\t\t\t\treturn True\n\t\treturn True\n\nclass Main:\n\tsol = Solution()\n\tparse = lambda: list(map(int, input().split()))\n\tcookies, people = parse(), parse()[0]\n\tpass\n\tprint(sol.solve(cookies, people))\n",
+    "cpp": "class Solution {\npublic:\nbool solve(vector<int>& cookies, int people) {\n\tint total = 0;\n\tfor (int i = 0; i < cookies.size(); i++) {\n\t\ttotal += cookies[i];\n\t}\n\tint min_share = total / people;\n\tint max_share = min_share;\n\twhile (max_share - min_share > 1) {\n\t\tint mid_share = (max_share + min_share) / 2;\n\t\tif (total % people == 0 || total % people >= mid_share) {\n\t\t\tmin_share = mid_share;\n\t\t} else {\n\t\t\tmax_share = mid_share;\n\t\t}\n\t}\n\treturn (total % people >= min_share);\n}\n};\n\nint main() {\n\tSolution solution;\n\tint num_cookies;\n\tcin >> num_cookies;\n\tvector<int> cookies(num_cookies);\n\tfor (int &i : cookies) {\n\t\tcin >> i;\n\t}\n\tint num_people;\n\tcin >> num_people;\n\tcout << (solution.solve(cookies, num_people) ? '1' : '0') << endl;\n\treturn 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "[4,9,3] 5",
+      "output": "3",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_hidden_generated",
+      "input": "[4,9,3] 5",
+      "output": "3",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

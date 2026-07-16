@@ -1,0 +1,86 @@
+{
+  "_id": "c585a349b57df0870b15eafe",
+  "title": "Resilient File Storage System",
+  "slug": "resilient-file-storage-system-hard-file-upload",
+  "difficulty": "Hard",
+  "topics": [
+    "FILE_UPLOAD"
+  ],
+  "statement": "\n   Implement a robust file storage system with end-to-end checksums, automatic resizing, and multiple storage options.\n   Users can upload files with an optional checksum to verify upload integrity.\n   Store files on both local disk using Multer and in the cloud using Cloudinary.\n   Provide endpoints to resize images, retrieve uploaded files, and view file information.\n   Include validation, error handling, and proper response formatting.\n   The system should be resilient, recoverable, and maintainable.\n   \n   ## Instructions:\n   \n   1. Implement a REST API using Express.\n   2. Use Multer to handle local file uploads.\n   3. Store uploaded files on local disk and in the cloud using Cloudinary.\n   4. Provide an endpoint to resize images.\n   5. Implement a separate endpoint for retrieving uploaded files.\n   6. Include an API to fetch file information, including checksums and storage status.\n   \n   ## API Endpoints:\n   \n   - **POST /upload**: Upload a file with optional checksum.\n   - **GET /files**: Retrieve a list of uploaded files.\n   - **GET /files/{id}**: Fetch file information by ID.\n   - **GET /image/{id}/resize**: Resize an image by ID.\n   \n   ## Constraints:\n   \n   - The system should be recoverable from failures.\n   - The system should handle concurrent uploads and retrievals.\n   - The system should follow proper validation and error handling.\n   - The system should maintain API consistency and formatting.\n   \n   ## Starter Code:\n   \n   ```json\n   {\n     \"name\": \"file-storage\",\n     \"version\": \"1.0.0\",\n     \"main\": \"index.js\",\n     \"scripts\": {\n       \"start\": \"node index.js\"\n     },\n     \"dependencies\": {\n       \"express\": \"^4.18.2\",\n       \"multer\": \"^1.4.4\",\n       \"cloudinary\": \"^1.23.0\",\n       \"jimp\": \"^0.16.3\"\n     }\n   }\"\n   \n   ```javascript\n   const express = require('express');\n   const app = express();\n   const multer = require('multer');\n   const cloudinary = require('cloudinary');\n   const Jimp = require('jimp');\n   \n   app.use(express.json());\n   app.use(multer({ dest: './uploads/' }).single('file'));\n   \n   const PORT = process.env.PORT || 3000;\n   app.listen(PORT, () => console.log('Server running on port ' + PORT));\n   ```\n\n   ## Judge Configuration:\n   \n   ```json\n   {\n     \"requestTimeoutMs\": 2000,\n     \"startupTimeoutMs\": 4000,\n     \"healthCheckPath\": \"/health\",\n     \"port\": 3000,\n     \"stack\": [\"node\"]\n   }\"\n   ```\n\n   ## Scoring:\n   \n   ```json\n   {\n     \"type\": \"binary\",\n     \"maxScore\": 100,\n     \"partialScoring\": false\n   }\"\n   ```\n\n   ## Battle Configuration:\n   \n   ```json\n   {\n     \"enabled\": true,\n     \"timeBonus\": false,\n     \"maxBattleScore\": 100\n   }\"\n   ```\n\n   ## Visible API Test Cases:\n   \n   ```json\n   [\n     {\n       \"id\": \"v_tc1\",\n       \"method\": \"POST\",\n       \"path\": \"/upload\",\n       \"headers\": {\n         \"Content-Type\": \"multipart/form-data\",\n         \"X-Checksum\": \"example-checksum\"\n       },\n       \"body\": {\n         file: {\n           \"path\": \"path/to/local/file\",\n           \"size\": 1024,\n           \"type\": \"image/jpeg\"\n         }\n       },\n       \"expectedStatus\": 201,\n       \"expectedBody\": {\n         \"id\": \"example-id\",\n         \"size\": 1024,\n         \"type\": \"image/jpeg\",\n         \"checksum\": \"example-checksum\",\n         \"storageStatus\": \"local\"\n       },\n       \"isVisible\": true\n     },\n     {\n       \"id\": \"v_tc2\",\n       \"method\": \"GET\",\n       \"path\": \"/files\",\n       \"expectedStatus\": 200,\n       \"expectedBody\": [\n         {\n           \"id\": \"example-id\",\n           \"size\": 1024,\n           \"type\": \"image/jpeg\",\n           \"checksum\": \"example-checksum\",\n           \"storageStatus\": \"local\"\n         }\n       ],\n       \"isVisible\": true\n     }\n   ]\n   ```\n\n   ## Hidden API Test Cases:\n   \n   ```json\n   [\n     {\n       \"id\": \"h_tc1\",\n       \"method\": \"POST\",\n       \"path\": \"/upload\",\n       \"headers\": {\n         \"Content-Type\": \"multipart/form-data\",\n         \"X-Checksum\": \"invalid-checksum\"\n       },\n       \"expectedStatus\": 400,\n       \"isVisible\": false\n     },\n     {\n       \"id\": \"h_tc2\",\n       \"method\": \"GET\",\n       \"path\": \"/files/\",\n       \"expectedStatus\": 404,\n       \"isVisible\": false\n     },\n     {\n       \"id\": \"h_tc3\",\n       \"method\": \"GET\",\n       \"path\": \"/image/\",\n       \"expectedStatus\": 400,\n       \"isVisible\": false\n     }\n   ]\n   ```\n\n   ## Tags:\n   \n   ```json\n   [\"file-upload\", \"multer\", \"cloudinary\", \"validation\", \"resilience\"]\"\n   ```\n   ",
+  "constraints": [
+    "The system must be recoverable from failures.",
+    "The system must handle concurrent uploads and retrievals.",
+    "The system must follow proper validation and error handling.",
+    "The system must maintain API consistency and formatting."
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/upload",
+      "description": "Upload a file with optional checksum."
+    },
+    {
+      "method": "GET",
+      "path": "/files",
+      "description": "Retrieve a list of uploaded files."
+    },
+    {
+      "method": "GET",
+      "path": "/files/{id}",
+      "description": "Fetch file information by ID."
+    },
+    {
+      "method": "GET",
+      "path": "/image/{id}/resize",
+      "description": "Resize an image by ID."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": {
+      "name": "file-storage",
+      "version": "1.0.0",
+      "main": "index.js",
+      "scripts": {
+        "start": "node index.js"
+      },
+      "dependencies": {
+        "express": "^4.18.2",
+        "multer": "^1.4.4",
+        "cloudinary": "^1.23.0",
+        "jimp": "^0.16.3"
+      }
+    },
+    "index.js": null
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [],
+  "hiddenApiTestCases": [],
+  "tags": [
+    "backend",
+    "multer",
+    "cloudinary",
+    "aws-s3",
+    "validation",
+    "image-processing",
+    "file-storage"
+  ]
+}

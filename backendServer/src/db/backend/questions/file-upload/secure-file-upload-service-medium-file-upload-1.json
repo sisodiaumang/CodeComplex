@@ -1,0 +1,192 @@
+{
+  "_id": "9cb559353e22dea7f3f335f6",
+  "title": "Secure File Upload Service",
+  "slug": "secure-file-upload-service-medium-file-upload-1",
+  "difficulty": "Medium",
+  "topics": [
+    "FILE_UPLOAD"
+  ],
+  "statement": "Design a file upload service that accepts user-uploaded files, validates their type and size, and stores them securely on Cloudinary. Implement a RESTful API to handle file uploads, validate user input, and return file metadata upon successful upload. Ensure the API is properly authenticated and handles error cases.\n\nThe API should have the following endpoints:\n\n- **POST /api/upload**:\n  - Accepts JSON payload with fields `file` (file object), `type` (file type, e.g., image, video, document), and `size` (file size in bytes).\n  - Validates the file type and size.\n  - Stores the file securely on Cloudinary.\n  - Returns file metadata (cloudinary URL, public ID, type, size) upon successful upload.\n\n- **GET /api/upload/:id**:\n  - Retrieves file metadata for the specified file ID.\n  - Returns file metadata (cloudinary URL, public ID, type, size) if the file exists.\n\nPlease note that you should use the following starter code and implement the API endpoints as described above.\n\n**Authentication**: Implement authentication using JSON Web Tokens (JWT). You can use the `jsonwebtoken` package to generate and verify tokens. For simplicity, you can use the `express-jwt` middleware to parse the JWT token from the `Authorization` header.\n\n**Constraints**:\n\n- Use the `multer` middleware to handle multipart/form-data requests.\n- Validate file type and size using the `file-type` package.\n- Use the `cloudinary` package to store and retrieve files from Cloudinary.\n- Handle error cases properly.\n\nPlease refer to the `cloudinary` and `multer` documentation for setup and configuration.\n\nYou are free to use any other packages or dependencies as needed.\n",
+  "constraints": [
+    "Use only the in-memory array or mock database provided for file metadata storage.",
+    "Implement authentication using JSON Web Tokens (JWT)."
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/upload",
+      "description": "Upload a file and store it securely on Cloudinary.",
+      "requestBody": {
+        "type": "object",
+        "properties": {
+          "file": {
+            "type": "object"
+          },
+          "type": {
+            "type": "string"
+          },
+          "size": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "file",
+          "type",
+          "size"
+        ]
+      },
+      "response": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "publicId": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "size": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "url",
+          "publicId",
+          "type",
+          "size"
+        ]
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/upload/:id",
+      "description": "Retrieve file metadata for the specified file ID.",
+      "response": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "publicId": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "size": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "url",
+          "publicId",
+          "type",
+          "size"
+        ]
+      }
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\"name\": \"file-upload-service\",\"version\": \"1.0.0\",\"main\": \"index.js\",\"scripts\": {\"start\": \"node index.js\"},\"dependencies\": {\"body-parser\": \"^1.19.0\",\"cloudinary\": \"^1.23.0\",\"express\": \"^4.18.2\",\"jsonwebtoken\": \"^8.5.1\",\"multer\": \"^1.4.2\"}}",
+    "index.js": "const express = require('express');\nconst bodyParser = require('body-parser');\nconst cloudinary = require('cloudinary');\nconst multer = require('multer');\nconst jwt = require('jsonwebtoken');\n\nconst app = express();\nconst port = process.env.PORT || 3000;\n\nconst multerUpload = multer({\n  dest: './uploads/\n});\n\napp.use(express.json());\napp.use(bodyParser.json());\n\n// TODO: Implement authentication logic.\n// TODO: Implement file upload endpoint.\n// TODO: Implement file metadata retrieval endpoint.\n\napp.listen(port, () => console.log(`Server running on port ${port}`));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "POST",
+      "path": "/api/upload",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "file": "test.txt",
+        "type": "text",
+        "size": 1024
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "url": "https://res.cloudinary.com/your-cloudinary-account/image/upload/v1664291235/test.txt",
+        "publicId": "test.txt",
+        "type": "text",
+        "size": 1024
+      },
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "GET",
+      "path": "/api/upload/123456789",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "url": "https://res.cloudinary.com/your-cloudinary-account/image/upload/v1664291235/test.txt",
+        "publicId": "test.txt",
+        "type": "text",
+        "size": 1024
+      },
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "POST",
+      "path": "/api/upload",
+      "body": {
+        "file": "test.txt",
+        "type": "image/jpeg",
+        "size": 1024
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "GET",
+      "path": "/api/upload/abcdefg",
+      "expectedStatus": 404,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "POST",
+      "path": "/api/upload",
+      "headers": {
+        "Authorization": "Bearer invalid-token"
+      },
+      "expectedStatus": 401,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "multer",
+    "cloudinary",
+    "aws-s3",
+    "validation",
+    "image-processing",
+    "file-storage",
+    "file-upload"
+  ]
+}

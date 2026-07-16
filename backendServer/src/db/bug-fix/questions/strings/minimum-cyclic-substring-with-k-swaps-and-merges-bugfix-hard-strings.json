@@ -1,0 +1,172 @@
+{
+  "_id": "fe9fd621d5d902935bb29fbb",
+  "title": "Minimum Cyclic Substring with K Swaps and Merges",
+  "slug": "minimum-cyclic-substring-with-k-swaps-and-merges-bugfix-hard-strings",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "Dynamic Programming",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "string"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given a string and two integers K and M, find the length of the smallest substring which becomes a palindrome by at most K swaps and at most M merges between any two characters in the substring. A merge operation means changing a pair of characters to the same character.",
+    "inputFormat": "The first line of the input contains the string S. The second line contains the integer K and the integer M space-separated.",
+    "outputFormat": "The first line contains the minimum length of substring which satisfies the given conditions.",
+    "notes": "You can consider that the string is a circular string. The swap and merge operations are allowed at most K and M times respectively.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 100000,
+        "description": "Length of string"
+      },
+      {
+        "variable": "k",
+        "type": "integer",
+        "min": 0,
+        "max": 100000,
+        "description": "Number of swaps allowed"
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 0,
+        "max": 100000,
+        "description": "Number of merges allowed"
+      }
+    ],
+    "examples": [
+      {
+        "input": "abcba\n3 1",
+        "output": "1",
+        "explanation": ""
+      },
+      {
+        "input": "abacabaabacaba\n3 2",
+        "output": "4",
+        "explanation": ""
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use suffix tree for efficient string matching."
+    }
+  ],
+  "editorial": {
+    "title": "Dynamic Programming with Bit Masking",
+    "intuition": "Start with the whole string, then gradually shrink the window size.",
+    "bruteForce": "Compare each substring with its reverse, check if it's a palindrome, and count the number of swaps and merges needed.",
+    "betterSolution": "",
+    "optimalSolution": "Maintain a bit mask of allowed operations for each substring length.",
+    "proofOfCorrectness": "proof Of Correctness details.",
+    "dryRun": "dry Run details.",
+    "commonMistakes": [
+      "Incorrect window size management",
+      "Overcounting operations"
+    ],
+    "timeComplexity": "O(n * (k + m))",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {public: int find(string s, int k, int m); };",
+    "java": "public class Solution {public int find(String s, int k, int m); };",
+    "python": "class Solution:\n    def find(self, s, k, m):\n        # TODO: implement\n        pass;",
+    "javascript": "function solve(s, k, m) { }"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {public: int find(string s, int k, int m) { int ans = 0; for (int i = 0; i < s.size(); i++) { if (s[i] != s[i+1]) { ans++; } } return ans; } };",
+    "java": "public class Solution {public int find(String s, int k, int m) { int ans = 0; for (int i = 0; i < s.length(); i++) { if (s.charAt(i) != s.charAt(i+1)) { ans++; } } return ans; } };",
+    "python": "class Solution:\n    def find(self, s, k, m):\n        ans = 0\n        for i in range(len(s)-1):\n            if s[i] != s[i+1):\n                ans += 1\n        return ans\n",
+    "javascript": "function solve(s, k, m) { let ans = 0; for (let i = 0; i < s.length - 1; i++) { if (s[i] != s[i+1]) { ans++; } } return ans; }"
+  },
+  "functionSignature": {
+    "cpp": "int find(string s, int k, int m);",
+    "java": "int find(String s, int k, int m);",
+    "python": "def find(self, s, k, m) -> int:",
+    "javascript": "var solve = function(s, k, m) { }"
+  },
+  "solutions": {
+    "python": "from typing import List\n\nclass Solution:\n    def find(self, s: str, k: int, m: int) -> int:\n        n = len(s)\n        dp = [[-1 for _ in range(k + m + 1)] for _ in range(n + 1)]\n        for i in range(n + 1):\n            for j in range(k + m + 1):\n                if i == 0:\n                    dp[i][j] = 0\n                elif j == 0:\n                    dp[i][j] = i\n                elif s[i-1] == s[i-2]:\n                    dp[i][j] = dp[i-1][j]\n                else:\n                    dp[i][j] = 1 + min(dp[i-1][j-1], dp[i-1][j-2], dp[i-2][j-1])\n        return dp[n][k + m]\n\nif __name__ == '__main__':\n    s = input()\n    k, m = map(int, input().split())\n    print(Solution().find(s, k, m))",
+    "cpp": "// Solution",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2000,
+    "memoryLimit": 131072,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": false,
+    "ratingEnabled": false,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "First line string, second line k and m separated by space (stdin match)\nabacabad\n3 2",
+      "output": "2",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "Example 2 input\nabababababababababababababababab\n5 5",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

@@ -1,0 +1,143 @@
+{
+  "title": "Optimizing React Memoized Component Re-renders Due to Changing State Array",
+  "subCategory": "State Management",
+  "statement": {
+    "markdown": "A React function component, `TodoList`, is designed to render a list of todo items. It uses the `useState` hook to manage its state, which is an array of todo items. The component is memoized with the `useMemo` hook to prevent unnecessary re-renders. However, when the state array is modified by adding or removing an item, the component re-renders unnecessarily due to the shallow equality check of the `useMemo` hook. Fix the bug to optimize the component re-renders.",
+    "inputFormat": "A JSON object representing the todo list state",
+    "outputFormat": "The rendered HTML string of the todo list",
+    "notes": "The component should re-render when the todo list state changes, but not unnecessarily due to shallow equality checks.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 100,
+        "description": "The number of todo items in the list"
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 0,
+        "max": 100,
+        "description": "The number of times the todo list is modified"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"items\": [{\"id\": 1, \"text\": \"Buy milk\"}, {\"id\": 2, \"text\": \"Walk the dog\"}]}",
+        "output": "<ol><li>Buy milk</li><li>Walk the dog</li></ol>",
+        "explanation": "The initial todo list state with 2 items"
+      },
+      {
+        "input": "{\"items\": [{\"id\": 1, \"text\": \"Buy eggs\"}, {\"id\": 2, \"text\": \"Walk the dog\"}]}",
+        "output": "<ol><li>Buy eggs</li><li>Walk the dog</li></ol>",
+        "explanation": "The todo list state after modifying the first item"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 25,
+    "points": 75,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "REACT"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "react"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Understand the `useMemo` hook and shallow equality checks"
+    }
+  ],
+  "editorial": {
+    "title": "Optimizing React Memoized Component Re-renders",
+    "intuition": "The `useMemo` hook is used to memoize the component, but it has a shallow equality check. This means that when the state array is modified, the component re-renders unnecessarily.",
+    "bruteForce": "One possible solution is to use a deep equality check, but this can be inefficient. A better solution is to use the `useReducer` hook to manage the state and avoid shallow equality checks.",
+    "betterSolution": "Use the `useReducer` hook to manage the state and avoid shallow equality checks.",
+    "optimalSolution": "Implement the `useReducer` hook with a deep equality check to prevent unnecessary re-renders.",
+    "proofOfCorrectness": "The `useReducer` hook ensures that the component re-renders only when the state changes, not unnecessarily due to shallow equality checks.",
+    "dryRun": "Step-by-step example run of the corrected component",
+    "commonMistakes": [
+      "Not understanding shallow equality checks",
+      "Not using the `useReducer` hook"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "function TodoList({ items }) {\n  const [state, setState] = React.useState(items);\n  const memoizedItems = React.useMemo(() => (\n    state.map((item) => (\n      <li key={item.id}>{item.text}</li>\n    ))\n  ), [state]);\n  return <ol>{memoizedItems}</ol>;\n}\n\nfunction App() {\n  const [items, setItems] = React.useState([]);\n  const addItem = () => setItems([...items, { id: 1, text: 'Buy milk' }]);\n  return (\n    <div>\n      <TodoList items={items} />\n      <button onClick={addItem}>Add item</button>\n    </div>\n  );\n}",
+    "python": "// Solution"
+  },
+  "buggyStarterCode": {
+    "javascript": "function TodoList({ items }) {\n  const [state, setState] = React.useState(items);\n  const memoizedItems = React.useMemo(() => (\n    state.map((item) => (\n      <li key={item.id}>{item.text}</li>\n    ))\n  ), [items]);\n  return <ol>{memoizedItems}</ol>;\n}\n\nfunction App() {\n  const [items, setItems] = React.useState([]);\n  const addItem = () => setItems([...items, { id: 1, text: 'Buy milk' }]);\n  return (\n    <div>\n      <TodoList items={items} />\n      <button onClick={addItem}>Add item</button>\n    </div>\n  );\n}",
+    "python": "class Solution:\n    def TodoList(self, nums: list[int]) -> bool:\n        # Buggy code\n        pass"
+  },
+  "functionSignature": {
+    "javascript": "function TodoList({ items }) {\n  // ...\n}",
+    "python": "def TodoList(self, nums: list[int]) -> bool:"
+  },
+  "solutions": {
+    "javascript": "// Solution\nimport React, { useState, useMemo } from 'react';\n\nfunction TodoList({ items }) {\n  const [state, setState] = useState(items);\n  const [dispatch, reduce] = useReducer((state, action) => (\n    action.type === 'ADD_ITEM'\n      ? [...state, { id: 1, text: 'Buy milk' }]\n      : state\n  ), []);\n  const memoizedItems = useMemo(() => (\n    state.map((item) => (\n      <li key={item.id}>{item.text}</li>\n    ))\n  ), [state]);\n  return <ol>{memoizedItems}</ol>;\n\nfunction App() {\n  const [items, dispatch] = useReducer((state, action) => (\n    action.type === 'ADD_ITEM'\n      ? [...state, { id: 1, text: 'Buy milk' }]\n      : state\n  ), []);\n  return (\n    <div>\n      <TodoList items={items} />\n      <button onClick={() => dispatch({ type: 'ADD_ITEM' })}>Add item</button>\n    </div>\n  );\n}",
+    "python": "# Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"items\": [{\"id\": 1, \"text\": \"Buy milk\"}, {\"id\": 2, \"text\": \"Walk the dog\"}]}",
+      "output": "<ol><li>Buy milk</li><li>Walk the dog</li></ol>",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"items\": [{\"id\": 1, \"text\": \"Buy eggs\"}, {\"id\": 2, \"text\": \"Walk the dog\"}]}\nAdd item",
+      "output": "<ol><li>Buy eggs</li><li>Walk the dog</li></ol>",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "aae20d136afab00dfdd0783d",
+  "slug": "optimizing-react-memoized-component-re-renders-due-to-changing-state-array-bugfix-medium-react",
+  "mode": "bug_fix",
+  "category": "REACT",
+  "difficulty": "Medium"
+}

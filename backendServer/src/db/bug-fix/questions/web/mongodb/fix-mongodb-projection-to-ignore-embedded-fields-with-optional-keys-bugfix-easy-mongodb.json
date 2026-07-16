@@ -1,0 +1,136 @@
+{
+  "title": "Fix MongoDB Projection to Ignore Embedded Fields with Optional Keys",
+  "subCategory": "MongoDB Query Projection",
+  "statement": {
+    "markdown": "Write a MongoDB projection function that ignores embedded fields with optional keys. Given a MongoDB collection document, it should project only the required fields and ignore the optional ones.",
+    "inputFormat": "A MongoDB collection document as a JSON string",
+    "outputFormat": "The projected document as a JSON string",
+    "notes": "The function should handle nested fields and ignore embedded fields with optional keys.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of documents in the collection"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"name\": \"John\", \"address\": {\"street\": \"123 Main St\", \"city\": \"Anytown\"}}",
+        "output": "{\"name\": \"John\", \"address\": {\"city\": \"Anytown\"}}",
+        "explanation": "The function ignores the optional key \"street\" in the address field"
+      },
+      {
+        "input": "{\"name\": \"Jane\", \"address\": {\"state\": \"CA\", \"country\": \"USA\"}}",
+        "output": "{\"name\": \"Jane\", \"address\": {}}",
+        "explanation": "The function ignores both optional keys \"state\" and \"country\" in the address field"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 10,
+    "points": 30,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "MONGODB"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "mongodb"
+    ],
+    "interviewFrequency": 1,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the MongoDB $project operator to project only the required fields"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial: MongoDB Query Projection",
+    "intuition": "The correct approach is to use the MongoDB $project operator to project only the required fields and ignore the optional ones.",
+    "bruteForce": "A brute-force approach would be to manually check each field and decide whether to include it or not, but this would be inefficient and prone to errors.",
+    "betterSolution": "",
+    "optimalSolution": "Use the $project operator with the $ifNull expression to project only the required fields and ignore the optional ones.",
+    "proofOfCorrectness": "The $project operator is designed to project only the specified fields, and the $ifNull expression is used to handle null values.",
+    "dryRun": "Step-by-step example run: Input: {\"name\": \"John\", \"address\": {\"street\": \"123 Main St\", \"city\": \"Anytown\"}}; Output: {\"name\": \"John\", \"address\": {\"city\": \"Anytown\"}}",
+    "commonMistakes": [
+      "Failing to use the $project operator",
+      "Including optional fields in the projection"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "// Define a function to project the document\nfunction projectDocument(doc) {\n  // Your code here\n}\nreturn projectDocument;",
+    "python": "class Solution:\n  def projectDocument(self, doc) -> dict:\n    # Your code here\n    pass"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Define a function to project the document\nfunction projectDocument(doc) {\n  // Project only the \"name\" field\n  return { name: doc.name }\n}\nreturn projectDocument;",
+    "python": "class Solution:\n  def projectDocument(self, doc) -> dict:\n    # Project only the \"name\" field\n    return { 'name': doc['name'] }"
+  },
+  "functionSignature": {
+    "javascript": "function projectDocument(doc) {\n  // Your code here\n}\nreturn projectDocument;",
+    "python": "def projectDocument(self, doc: dict) -> dict:"
+  },
+  "solutions": {
+    "javascript": "// Define a function to project the document\nfunction projectDocument(doc) {\n  // Use the $project operator to project only the required fields\n  return { name: doc.name, address: { city: doc.address.city } }\n}\nreturn projectDocument;",
+    "python": "class Solution:\n  def projectDocument(self, doc) -> dict:\n    # Use the $project operator to project only the required fields\n    return { 'name': doc['name'], 'address': { 'city': doc['address'].get('city') } }"
+  },
+  "judgeConfig": {
+    "timeLimit": 1,
+    "memoryLimit": 128,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"name\": \"John\", \"address\": {\"street\": \"123 Main St\", \"city\": \"Anytown\"}}",
+      "output": "{\"name\": \"John\", \"address\": {\"city\": \"Anytown\"}}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"name\": \"Jane\", \"address\": {\"state\": \"CA\", \"country\": \"USA\"}}",
+      "output": "{\"name\": \"Jane\", \"address\": {}}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "d6857a2d1c6d8cf070901a6a",
+  "slug": "fix-mongodb-projection-to-ignore-embedded-fields-with-optional-keys-bugfix-easy-mongodb",
+  "mode": "bug_fix",
+  "category": "MONGODB",
+  "difficulty": "Easy"
+}

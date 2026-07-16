@@ -5,6 +5,7 @@ import { io } from "socket.io-client";
 import { useQueryClient } from "@tanstack/react-query";
 import { SOCKET_URL } from "@/lib/api";
 import { useAuth } from "@/stores/auth-store";
+import { useToastStore } from "@/stores/toast-store";
 
 export const socket = io(SOCKET_URL, {
   withCredentials: true,
@@ -54,16 +55,28 @@ export function useSocketNotifications() {
       queryClient.invalidateQueries({ queryKey: ["friends"] });
     };
 
+    const handleActiveRoomUpdate = () => {
+      queryClient.invalidateQueries({ queryKey: ["battle", "me", "active"] });
+    };
+
+    const handleAchievementUnlocked = (data: any) => {
+      useToastStore.getState().addToast(data);
+    };
+
     socket.on("connect", handleConnect);
     socket.on("disconnect", handleDisconnect);
     socket.on("notification:new", handleNewNotification);
     socket.on("friendship:update", handleFriendshipUpdate);
+    socket.on("battle:active_room_update", handleActiveRoomUpdate);
+    socket.on("achievement:unlocked", handleAchievementUnlocked);
 
     return () => {
       socket.off("connect", handleConnect);
       socket.off("disconnect", handleDisconnect);
       socket.off("notification:new", handleNewNotification);
       socket.off("friendship:update", handleFriendshipUpdate);
+      socket.off("battle:active_room_update", handleActiveRoomUpdate);
+      socket.off("achievement:unlocked", handleAchievementUnlocked);
     };
   }, [status, user, queryClient]);
 }

@@ -1,0 +1,166 @@
+{
+  "_id": "475f57063d6691c70051ce14",
+  "title": "Flawed Topological Sort",
+  "slug": "flawed-topological-sort-bugfix-easy-graphs",
+  "difficulty": "Easy",
+  "category": "DSA",
+  "subCategory": "DFS/BFS",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 10,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "graph",
+      "topological sort"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given a directed graph, implement a topological sort. A topological sort is an ordering of the vertices in the graph such that for every directed edge u -> v, vertex u comes before v in the ordering. Note that not all directed graphs have a valid topological sorting, so your function should return False in this case.\n\nYou should return False for any graph with a cycle. The graph is represented as an adjacency list where each key is a node and its corresponding value is a list of its neighbors.\n\nFor example, if the graph is {1: [2, 3], 2: [4], 3: [], 4: []}, the valid topological sort could be [4, 2, 3, 1].",
+    "inputFormat": "Input is a dictionary representing the adjacency list of a directed graph.",
+    "outputFormat": "Return True if a valid topological sort exists, False otherwise.",
+    "notes": "You can use DFS or BFS for this problem. You can also assume that the graph has at least one node.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of nodes in the graph"
+      },
+      {
+        "variable": "e",
+        "type": "integer",
+        "min": 0,
+        "max": 10000,
+        "description": "Number of edges in the graph"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{1: [2, 3], 2: [4], 3: [], 4: []}",
+        "output": "True",
+        "explanation": "Topological sort [4, 2, 3, 1] exists"
+      },
+      {
+        "input": "{1: [2], 2: [3], 3: [1]}",
+        "output": "False",
+        "explanation": "No valid topological sort exists due to the cycle 1 -> 2 -> 3 -> 1"
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Think about using DFS or BFS to traverse the graph"
+    }
+  ],
+  "editorial": {
+    "title": "Topological Sort",
+    "intuition": "To check if a topological sort exists, we can perform a DFS on the graph. We maintain a set of visited nodes and another set of nodes that are currently being visited. If we encounter a node that is being visited, it means there's a cycle and we return False.",
+    "bruteForce": "Try all possible orderings of the nodes and check if they form a valid topological sort",
+    "betterSolution": "",
+    "optimalSolution": "Perform a DFS on the graph and return False if we encounter a cycle",
+    "proofOfCorrectness": "We can prove that this algorithm is correct by showing that it returns True if and only if a valid topological sort exists",
+    "dryRun": "Start with an empty graph and add nodes/edges one by one to see how the DFS traversal would proceed",
+    "commonMistakes": [
+      "Not initializing the visited set correctly",
+      "Not returning False when encountering a cycle"
+    ],
+    "timeComplexity": "O(V + E)",
+    "spaceComplexity": "O(V + E)"
+  },
+  "starterCode": {
+    "cpp": "class Solution { public: bool solve(unordered_map<int, vector<int>> &graph) { /* TODO: implement */ } };",
+    "java": "public class Solution { public boolean solve(Map<Integer, List<Integer>> graph) { /* TODO: implement */ } }",
+    "python": "class Solution: def solve(self, graph: dict) -> bool: /* pass */",
+    "javascript": "function solve(graph) { /* TODO: implement */ return false; }"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution { public: bool solve(unordered_map<int, vector<int>> &graph) { bool visited[10000]; memset(visited, false, sizeof(visited)); for (int i = 0; i < 10000; i++) visited[i] = true; for (auto &pair : graph) { for (int node : pair.second) if (visited[node]) return true; } return false; } };",
+    "java": "public class Solution { public boolean solve(Map<Integer, List<Integer>> graph) { boolean[] visited = new boolean[10000]; for (int i = 0; i < 10000; i++) visited[i] = true; for (Map.Entry<Integer, List<Integer>> pair : graph.entrySet()) { for (Integer node : pair.getValue()) if (visited[node]) return true; } return false; } }",
+    "python": "class Solution: def solve(self, graph: dict) -> bool: visited = [True] * 10000; for pair in graph.items(): for node in pair[1]: if visited[node]: return True; return False;",
+    "javascript": "function solve(graph) { let visited = new Array(10000).fill(true); for (let pair of Object.entries(graph)) { for (let node of pair[1]) if (visited[node]) return true; } return false; }"
+  },
+  "functionSignature": {
+    "cpp": "bool solve(unordered_map<int, vector<int>> &graph);",
+    "java": "boolean solve(Map<Integer, List<Integer>> graph);",
+    "python": "def solve(self, graph: dict) -> bool:",
+    "javascript": "function solve(graph);"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def solve(self, graph: dict) -> bool:\n        visited = {node: False for node in graph}\n        for node in graph:\n            if not self._dfs(node, visited, set()):\n                return False\n        return True\n\n    def _dfs(self, node, visited, current_path):\n        if node in current_path:\n            return False\n        visited[node] = True\n        current_path.add(node)\n        for neighbor in graph[node]:\n            if not self._dfs(neighbor, visited, current_path):\n                return False\n        current_path.remove(node)\n        return True\n",
+    "cpp": "class Solution {\n public:\n  bool solve(unordered_map<int, vector<int>> &graph) {\n    unordered_map<int, bool> visited;\n    for (auto &pair : graph) {\n      if (!dfs(pair.first, visited, {})) return false;\n    }\n    return true;\n  }\n\n  bool dfs(int node, unordered_map<int, bool> &visited, unordered_set<int> current_path) {\n    if (current_path.find(node) != current_path.end())\n      return false;\n    visited[node] = true;\n    current_path.insert(node);\n    for (int neighbor : graph[node])\n      if (!dfs(neighbor, visited, current_path)) return false;\n    current_path.erase(node);\n    return true;\n  }\n};",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "4 4 1 2 2 4 3 4",
+      "output": "true",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "3 3 1 2 2 3 3 1",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

@@ -1,0 +1,53 @@
+{
+  "_id": "aa7034b9d194062c2a474754",
+  "title": "React Infinite Moving Cards",
+  "slug": "react-infinite-moving-cards",
+  "difficulty": "Medium",
+  "topics": [
+    "REACT",
+    "REACT_INFINITE_MOVING_CARDS"
+  ],
+  "statement": {
+    "markdown": "## React Infinite Moving Cards Component\n\nCreate a horizontal infinite scroller component for displaying testimonial card blocks.\n\n### Requirements:\n1. **Seamless Infinite Loop**: The cards must scroll horizontally infinitely without showing gaps.\n2. **Speed Customization**: Support a `speed` prop taking values: `\"fast\"` (20s duration), `\"normal\"` (40s duration), or `\"slow\"` (80s duration).\n3. **Direction Toggle**: Support a `direction` prop to toggle scroll movement to the left (`\"left\"`) or right (`\"right\"`).\n4. **Interactive Controls**: Autoplay animation should pause smoothly when the cursor hovers over any card in the list.\n5. **Gradient Fade Overlay**: Add subtle gradient shadow overlays on the left and right edges of the list wrapper container.\n"
+  },
+  "constraints": [
+    "Must support responsive screen widths",
+    "Must utilize React state and canvas lifecycle hooks",
+    "Must use Tailwind CSS classes"
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "html": "",
+    "css": "/* Define infinite scroll animations */\n@keyframes scroll {\n  to {\n    transform: translate(calc(-50% - 0.5rem));\n  }\n}",
+    "react": "import React, { useState, useEffect, useRef } from 'react';\n\nexport default function InfiniteMovingCards({ items, speed = \"normal\", direction = \"left\", pauseOnHover = true }) {\n  // Implement horizontal infinite scroller here\n  return (\n    <div className=\"scroller relative z-20 max-w-7xl overflow-hidden\">\n      {/* Testimonials list */}\n    </div>\n  );\n}"
+  },
+  "gradingCriteria": [
+    {
+      "id": "functional_correctness",
+      "description": "Verify that the interactive mouse tracking, scroll animations, or canvas draw loops work perfectly.",
+      "weight": 55
+    },
+    {
+      "id": "code_cleanliness",
+      "description": "Verify clean React hook cleanups (setInterval, requestAnimationFrame, listeners) on component unmount.",
+      "weight": 45
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "react",
+      "tailwind"
+    ],
+    "referenceSolution": "import React, { useState, useEffect, useRef } from 'react';\n\nexport default function InfiniteMovingCards({\n  items,\n  speed = \"normal\",\n  direction = \"left\",\n  pauseOnHover = true\n}) {\n  const containerRef = useRef(null);\n  const scrollerRef = useRef(null);\n  const [start, setStart] = useState(false);\n\n  useEffect(() => {\n    addAnimation();\n  }, []);\n\n  function addAnimation() {\n    if (containerRef.current && scrollerRef.current) {\n      const scrollerContent = Array.from(scrollerRef.current.children);\n\n      // Duplicate list to achieve infinite seamless loop\n      scrollerContent.forEach((item) => {\n        const duplicatedItem = item.cloneNode(true);\n        if (scrollerRef.current) {\n          scrollerRef.current.appendChild(duplicatedItem);\n        }\n      });\n\n      getDirection();\n      getSpeed();\n      setStart(true);\n    }\n  }\n\n  const getDirection = () => {\n    if (containerRef.current) {\n      if (direction === \"left\") {\n        containerRef.current.style.setProperty(\"--animation-direction\", \"forwards\");\n      } else {\n        containerRef.current.style.setProperty(\"--animation-direction\", \"reverse\");\n      }\n    }\n  };\n\n  const getSpeed = () => {\n    if (containerRef.current) {\n      if (speed === \"fast\") {\n        containerRef.current.style.setProperty(\"--animation-duration\", \"20s\");\n      } else if (speed === \"normal\") {\n        containerRef.current.style.setProperty(\"--animation-duration\", \"40s\");\n      } else {\n        containerRef.current.style.setProperty(\"--animation-duration\", \"80s\");\n      }\n    }\n  };\n\n  return (\n    <div\n      ref={containerRef}\n      className={`scroller relative z-20 max-w-7xl overflow-hidden [mask-image:linear-gradient(to_right,transparent,white_20%,white_80%,transparent)]`}\n    >\n      <ul\n        ref={scrollerRef}\n        className={`flex min-w-full shrink-0 gap-4 py-4 w-max flex-nowrap ${\n          start ? \"animate-scroll\" : \"\"\n        } ${pauseOnHover ? \"hover:[animation-play-state:paused]\" : \"\"}`}\n        style={{\n          animation: 'scroll var(--animation-duration, 40s) var(--animation-direction, forwards) linear infinite'\n        }}\n      >\n        {items.map((item, idx) => (\n          <li\n            key={idx}\n            className=\"w-[350px] max-w-full relative rounded-2xl border border-b-0 shrink-0 border-slate-200 px-8 py-6 md:w-[450px] bg-white dark:bg-slate-900 dark:border-slate-800 shadow-sm\"\n          >\n            <blockquote>\n              <span className=\"relative z-20 text-sm leading-[1.6] text-gray-700 dark:text-gray-300 font-normal\">\n                {item.quote}\n              </span>\n              <div className=\"relative z-20 mt-6 flex flex-row items-center\">\n                <span className=\"flex flex-col gap-1\">\n                  <span className=\"text-sm leading-[1.6] text-gray-500 dark:text-gray-400 font-bold\">\n                    {item.name}\n                  </span>\n                  <span className=\"text-sm leading-[1.6] text-gray-400 dark:text-gray-500 font-normal\">\n                    {item.title}\n                  </span>\n                </span>\n              </div>\n            </blockquote>\n          </li>\n        ))}\n      </ul>\n      <style>{`\n        @keyframes scroll {\n          to {\n            transform: translate(calc(-50% - 0.5rem));\n          }\n        }\n      `}</style>\n    </div>\n  );\n}"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

@@ -1,0 +1,158 @@
+{
+  "_id": "558c5eb1bc21974acfa38c64",
+  "title": "Faulty Binary Search on Rotated Array",
+  "slug": "faulty-binary-search-on-rotated-array-bugfix-hard-binary-search",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "BINARY_SEARCH",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 55,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "binary_search"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given a sorted but rotated array `nums` and an integer `target`, return `true` if `target` is in `nums` and `false` otherwise.\n\nThe array is rotated at an unknown pivot index. You must find the index of the target in the rotated array.\n\nYou can assume that `nums` contains all unique elements.\n\nYou can use extra space to store the rotated array for later use.\n\nHowever, you must ensure that your solution is as efficient as possible. You must not use any extra space that scales with the size of `nums`.\n\nNote that you do not need to find the index of the target in `nums`, but you must use binary search to achieve this.\n\n**Your task is to fix the bug in the binary search function below.**",
+    "inputFormat": "You will be given a rotated array `nums` and an integer `target` as input.",
+    "outputFormat": "Return `true` if `target` is in `nums` and `false` otherwise.",
+    "notes": "You can use extra space to store the rotated array for later use.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "1\n[4,5,6,7,0,1,2]\n5",
+        "output": "true",
+        "explanation": "Return true because 5 is in the rotated array"
+      },
+      {
+        "input": "1\n[4,5,6,7,0,1,2]\n8",
+        "output": "false",
+        "explanation": "Return false because 8 is not in the rotated array"
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Think about how to rotate the array to its original state while keeping the binary search property."
+    }
+  ],
+  "editorial": {
+    "title": "Binary Search on Rotated Array",
+    "intuition": "Rotating the array to its original state preserves the binary search property. This can be done by finding the first element that is greater than or equal to the target in the rotated array.",
+    "bruteForce": "You can iterate over the array and check each element. However, this approach has a O(n) time complexity.",
+    "betterSolution": "You can use a temporary array to store the rotated array.",
+    "optimalSolution": "Use a modified binary search approach that takes into account the rotation of the array.",
+    "proofOfCorrectness": "We will prove that the modified binary search approach is correct.",
+    "dryRun": "Let's run the modified binary search algorithm on an example input.",
+    "commonMistakes": [
+      "Assuming that the array is sorted",
+      "Not checking if the target is within the array"
+    ],
+    "timeComplexity": "O(log n)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    bool search(vector<int>& nums, int target) {\n        // TODO: implement\n    }\n};",
+    "java": "class Solution {\npublic boolean search(int[] nums, int target) {\n    // TODO: implement\n}\n}",
+    "python": "class Solution:\n    def search(self, nums: list[int], target: int) -> bool:\n        # TODO: implement\n        return False",
+    "javascript": "function search(nums, target) {\n    // TODO: implement\n    return false;"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    bool search(vector<int>& nums, int target) {\n        int low = 0, high = nums.size() - 1;\n        while (low <= high) {\n            int mid = low + (high - low) / 2;\n            if (nums[mid] == target) return true;\n            if (nums[low] <= nums[mid]) {\n                if (nums[low] <= target && target < nums[mid]) high = mid - 1;\n                else low = mid + 1;\n            } else {\n                if (nums[mid] < target && target < nums[high]) low = mid + 1;\n                else high = mid - 1;\n            }\n        }\n        return low == high && nums[low] == target;\n    }\n};",
+    "java": "class Solution {\npublic boolean search(int[] nums, int target) {\n    int low = 0, high = nums.length - 1;\n    while (low <= high) {\n        int mid = low + (high - low) / 2;\n        if (nums[mid] == target) return true;\n        if (nums[low] <= nums[mid]) {\n            if (nums[low] <= target && target < nums[mid]) high = mid - 1;\n            else low = mid + 1;\n        } else {\n            if (nums[mid] < target && target < nums[high]) low = mid + 1;\n            else high = mid - 1;\n        }\n    }\n    return low == high && nums[low] == target;\n}\n}",
+    "python": "class Solution:\n    def search(self, nums: list[int], target: int) -> bool:\n        low, high = 0, len(nums) - 1\n        while low <= high:\n            mid = low + (high - low) // 2\n            if nums[mid] == target: return True\n            if nums[low] <= nums[mid]:\n                if nums[low] <= target and target < nums[mid]: high = mid - 1\n                else: low = mid + 1\n            else:\n                if nums[mid] < target and target < nums[high]: low = mid + 1\n                else: high = mid - 1\n        return low == high and nums[low] == target",
+    "javascript": "function search(nums, target) {\n    let low = 0, high = nums.length - 1;\n    while (low <= high) {\n        let mid = low + (high - low) / 2;\n        if (nums[mid] == target) return true;\n        if (nums[low] <= nums[mid]) {\n            if (nums[low] <= target && target < nums[mid]) high = mid - 1;\n            else low = mid + 1;\n        } else {\n            if (nums[mid] < target && target < nums[high]) low = mid + 1;\n            else high = mid - 1;\n        }\n    }\n    return low == high && nums[low] == target;\n}"
+  },
+  "functionSignature": {
+    "cpp": "bool search(vector<int>& nums, int target);",
+    "java": "public boolean search(int[] nums, int target);",
+    "python": "def search(self, nums: list[int], target: int) -> bool;",
+    "javascript": "function search(nums, target);"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def search(self, nums: list[int], target: int) -> bool:\n        low, high = 0, len(nums) - 1\n        while low <= high:\n            mid = low + (high - low) // 2\n            if nums[mid] == target: return True\n            if nums[low] <= nums[mid]:\n                if nums[low] <= target and target < nums[mid]: high = mid - 1\n                else: low = mid + 1\n            else:\n                if nums[mid] < target and target < nums[high]: low = mid + 1\n                else: high = mid - 1\n        return False\n\ndef main():\n    nums = [4, 5, 6, 7, 0, 1, 2]\n    target = 5\n    solution = Solution()\n    res = solution.search(nums, target)\n    print(res)\n\nif __name__ == '__main__':\n    main()\n",
+    "cpp": "class Solution {\npublic:\n    bool search(vector<int>& nums, int target) {\n        int low = 0, high = nums.size() - 1;\n        while (low <= high) {\n            int mid = low + (high - low) / 2;\n            if (nums[mid] == target) return true;\n            if (nums[low] <= nums[mid]) {\n                if (nums[low] <= target && target < nums[mid]) high = mid - 1;\n                else low = mid + 1;\n            } else {\n                if (nums[mid] < target && target < nums[high]) low = mid + 1;\n                else high = mid - 1;\n            }\n        }\n        return false;\n    }\n};\n\nint main() {\n    vector<int> nums = {4, 5, 6, 7, 0, 1, 2};\n    int target = 5;\n    Solution solution;\n    bool res = solution.search(nums, target);\n    cout << res << endl;\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "1\n[4,5,6,7,0,1,2]\n5",
+      "output": "true",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "1\n[4,5,6,7,0,1,2]\n8",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

@@ -1,0 +1,158 @@
+{
+  "_id": "05e9f148e15f28da276a2ea4",
+  "title": "Faulty Coin Change Problem",
+  "slug": "faulty-coin-change-problem-bugfix-easy-dynamic-programming",
+  "difficulty": "Easy",
+  "category": "DSA",
+  "subCategory": "DP",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 10,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "dp"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "You are given an integer array `coins` representing coins of different denominations and a total amount of `amount`. Return the number of combinations that sum up to `amount`. You can use all the coins more than once.\n\nExample 1:\nInput: coins = [1, 2, 5], amount = 11\nOutput: 3\nExplanation: There are four possible ways to combine coins to make `11`:\n- 5 + 5 + 1 = 11\n- 5 + 1 + 1 + 1 + 1 + 1 = 11\n- 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 = 11\n- 1 + 1 + 1 + 1 + 1 + 1 + 1 + 5 = 11\n\nExample 2:\nInput: coins = [2], amount = 3\nOutput: 0\nExplanation: There is no possible way to combine `2` coins to make `3`.",
+    "inputFormat": "coins: list of integers representing coin denominations\namount: integer representing target amount",
+    "outputFormat": "integer representing number of combinations",
+    "notes": "You can use all the coins more than once.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "coins = [1, 2, 5], amount = 11",
+        "output": "3",
+        "explanation": ""
+      },
+      {
+        "input": "coins = [2], amount = 3",
+        "output": "0",
+        "explanation": ""
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "The problem can be solved using dynamic programming and recursion."
+    }
+  ],
+  "editorial": {
+    "title": "Dynamic Programming Approach",
+    "intuition": "The problem can be solved by initializing a dynamic programming array `dp` of size `amount + 1` with zeros.",
+    "bruteForce": "A brute force solution can be implemented using recursion and backtracking.",
+    "betterSolution": "",
+    "optimalSolution": "The optimal solution uses dynamic programming to avoid repeated work.",
+    "proofOfCorrectness": "The dynamic programming solution is correct because it correctly calculates the number of combinations for each amount.",
+    "dryRun": "To understand the dynamic programming solution, consider the following example: coins = [1, 2, 5], amount = 3",
+    "commonMistakes": [
+      "not using dynamic programming",
+      "not initializing dp array correctly"
+    ],
+    "timeComplexity": "O(amount)",
+    "spaceComplexity": "O(amount)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {public: int change(int amount, vector<int>& coins);}",
+    "java": "public class Solution {public int change(int amount, int[] coins);}",
+    "python": "class Solution:\n    def change(self, amount: int, coins: list[int]) -> int:",
+    "javascript": "var change = function(amount, coins);"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {public: int change(int amount, vector<int>& coins) {\n        int dp[amount + 1];\n        for (int i = 0; i <= amount; i++) {\n            if (i == 0) dp[i] = 1;\n            else if (coins.size() == 0) dp[i] = 0;\n            else if (coins[0] > i) dp[i] = dp[i];\n            else dp[i] = dp[i - coins[0]] + dp[i];\n        }\n        return dp[amount];\n    }};",
+    "java": "public class Solution {public int change(int amount, int[] coins) {\n        int[] dp = new int[amount + 1];\n        for (int i = 0; i <= amount; i++) {\n            if (i == 0) dp[i] = 1;\n            else if (coins.length == 0) dp[i] = 0;\n            else if (coins[0] > i) dp[i] = dp[i];\n            else dp[i] = dp[i - coins[0]] + dp[i];\n        }\n        return dp[amount];\n    }};",
+    "python": "class Solution:\n    def change(self, amount: int, coins: list[int]) -> int:\n        dp = [0] * (amount + 1)\n        for i in range(amount + 1):\n            if i == 0:\n                dp[i] = 1\n            elif not coins:\n                dp[i] = 0\n            elif coins[0] > i:\n                dp[i] = dp[i]\n            else:\n                dp[i] = dp[i - coins[0]] + dp[i]\n        return dp[amount]",
+    "javascript": "var change = function(amount, coins) {\n        var dp = new Array(amount + 1).fill(0);\n        for (var i = 0; i <= amount; i++) {\n            if (i == 0) dp[i] = 1;\n            else if (coins.length == 0) dp[i] = 0;\n            else if (coins[0] > i) dp[i] = dp[i];\n            else dp[i] = dp[i - coins[0]] + dp[i];\n        }\n        return dp[amount];\n    };"
+  },
+  "functionSignature": {
+    "cpp": "bool solve(vector<int>& nums);",
+    "java": "public boolean solve(int[] nums);",
+    "python": "def solve(self, nums: list[int]) -> bool:",
+    "javascript": "var solve = function(nums);"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def change(self, amount: int, coins: list[int]) -> int:\n        dp = [[0] * (len(coins) + 1) for _ in range(amount + 1)]\n        for i in range(amount + 1):\n            for j in range(len(coins) + 1):\n                if i == 0:\n                    dp[i][j] = 1\n                elif not coins or j == 0:\n                    dp[i][j] = 0\n                elif coins[j - 1] > i:\n                    dp[i][j] = dp[i][j - 1]\n                else:\n                    dp[i][j] = dp[i - coins[j - 1]][j - 1] + dp[i][j - 1]\n        return dp[amount][len(coins)]",
+    "cpp": "// Solution",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "3\n1 2 5",
+      "output": "3",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "3\n2",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

@@ -1,0 +1,161 @@
+{
+  "_id": "d962254c2d4cec13c169e61b",
+  "title": "Implementing Authorization with Role-Based Access Control",
+  "slug": "implementing-authorization-with-role-based-access-control-medium-authorization",
+  "difficulty": "Medium",
+  "topics": [
+    "AUTHORIZATION"
+  ],
+  "statement": "Implement a role-based access control system for a fictional e-commerce platform. The platform has three roles: admin, manager, and employee. Admins have full access to all resources, managers can view and modify customer data, and employees can only view their own customer data.\n\nThe API should have the following endpoints:\n\n* GET /api/customers: Returns a list of all customers.\n* GET /api/customers/{id}: Returns a specific customer by id.\n* POST /api/customers: Creates a new customer.\n* PATCH /api/customers/{id}: Updates an existing customer.\n\nYou will need to implement authentication and authorization using JSON Web Tokens (JWT) and Role-Based Access Control (RBAC).\n\nYou can use the following users for testing:\n\n* admin: username='admin', password='password', role='admin'\n* manager: username='manager', password='password', role='manager'\n* employee: username='employee', password='password', role='employee'\n\nNote: You will need to add the body-parser middleware to parse JSON requests.",
+  "constraints": [
+    "Must use only the provided starter code as a basis for your solution.",
+    "Must implement authentication using JWT.",
+    "Must implement RBAC to restrict access to resources based on user roles."
+  ],
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/api/customers",
+      "description": "Returns a list of all customers. Requires admin or manager role."
+    },
+    {
+      "method": "GET",
+      "path": "/api/customers/{id}",
+      "description": "Returns a specific customer by id. Requires admin, manager, or employee role."
+    },
+    {
+      "method": "POST",
+      "path": "/api/customers",
+      "description": "Creates a new customer. Requires admin or manager role."
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/customers/{id}",
+      "description": "Updates an existing customer. Requires admin or manager role."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\"name\": \"ecommerce-api\",\"version\": \"1.0.0\",\"main\": \"index.js\",\"scripts\": {\"start\": \"node index.js\"},\"dependencies\": {\"express\": \"^4.18.2\",\"body-parser\": \"^1.20.0\",\"jsonwebtoken\": \"^9.2.0\"}}",
+    "index.js": "const express = require('express');\nconst bodyParser = require('body-parser');\nconst jwt = require('jsonwebtoken');\n\nconst app = express();\napp.use(bodyParser.json());\n\nconst users = [\n\t{\n\t\tusername: 'admin',\n\t\tpassword: 'password',\n\t\tr ole: 'admin'\n\t},\n\t{\n\t\tusername: 'manager',\n\t\tpassword: 'password',\n\t\tr ole: 'manager'\n\t},\n\t{\n\t\tusername: 'employee',\n\t\tpassword: 'password',\n\t\tr ole: 'employee'\n\t}\n];\n\n// TODO: Implement authentication and authorization logic\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "GET",
+      "path": "/api/customers",
+      "headers": {
+        "Authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AbWFpbC5jb20iLCJyb2xlIjoiYWRtaW4ifQ.MF1w5BkzQ4zrKx6zZwTb8fQyVgjZ3T3T2Z6Q1u2p4w"
+      },
+      "expectedStatus": 200,
+      "expectedBody": [
+        {
+          "id": 1,
+          "username": "admin",
+          "email": "admin@example.com",
+          "role": "admin"
+        }
+      ],
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "POST",
+      "path": "/api/customers",
+      "headers": {
+        "Authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzdWJzZXJ2aWNlIiwiZW1haWwiOiJzdWJzZXJ2aWNlQGV4YW1wbGUuY29tIiwicm9sZSI6ImV4YW1wbGUiLCJleHBpcmVzIjoxNjM2NDIwMDIzLCJleHBpcmVzIjoxNjM2NDIwMDIzLCJleHBpcmVzIjoxNjM2NDIwMDIzLCJleHBpcmVzIjoxNjM2NDIwMDIzLCJleHBpcmVzIjoxNjM2NDIwMDIzLCJleHBpcmVzIjoxNjM2NDIwMDIzLCJleHBpcmVzIjoxNjM2NDIwMDIzLCJleHBpcmVzIjoxNjM2NDIwMDIzLCJleHBpcmVzIjoxNjM2NDIwMDIzLCJleHBpcmVzIjoxNjM2NDIwMDIzLCJleHBpcmVzIjoxNjM2NDIwMDIzLCJleHBpcmVzIjoxNjM2NDIwMDIzLCJleHBpcmVzIjoxNjM2NDIwMDIzLCJleHBpcmVzIjoxNjM2NDIwMDIzLCJleHBpcmVzIjoxNjM2NDIwMDIzLCJleHBpcmVzIjoxNjM2NDIwMDIzLCJleHBpcmVzIjoxNjM2NDIwMDIzLCJleHBpcmVzIjoxNjM2NDIwMDIzLCJleHBpcmVzIjoxNjM2NDIwMDIzLCJleHBpcmVzIjoxN"
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "id": 2,
+        "username": "new-user",
+        "email": "new-user@example.com",
+        "role": "manager"
+      },
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "GET",
+      "path": "/api/customers",
+      "headers": {
+        "Authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AbWFpbC5jb20iLCJyb2xlIjoiYWRtaW4ifQ.MF1w5BkzQ4zrKx6zZwTb8fQyVgjZ3T3T2Z6Q1u2p4w"
+      },
+      "expectedStatus": 200,
+      "expectedBody": [],
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "GET",
+      "path": "/api/customers/1",
+      "headers": {
+        "Authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AbWFpbC5jb20iLCJyb2xlIjoiYWRtaW4ifQ.MF1w5BkzQ4zrKx6zZwTb8fQyVgjZ3T3T2Z6Q1u2p4w"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "id": 1,
+        "username": "admin",
+        "email": "admin@example.com",
+        "role": "admin"
+      },
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "POST",
+      "path": "/api/customers",
+      "headers": {
+        "Authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AbWFpbC5jb20iLCJyb2xlIjoiYWRtaW4ifQ.MF1w5BkzQ4zrKx6zZwTb8fQyVgjZ3T3T2Z6Q1u2p4w"
+      },
+      "expectedStatus": 403,
+      "expectedBody": {},
+      "isVisible": false
+    },
+    {
+      "id": "h_tc4",
+      "method": "PATCH",
+      "path": "/api/customers/1",
+      "headers": {
+        "Authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AbWFpbC5jb20iLCJyb2xlIjoiYWRtaW4ifQ.MF1w5BkzQ4zrKx6zZwTb8fQyVgjZ3T3T2Z6Q1u2p4w"
+      },
+      "expectedStatus": 403,
+      "expectedBody": {},
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "rbac",
+    "abac",
+    "middleware",
+    "roles",
+    "permissions",
+    "protected-routes",
+    "guards",
+    "authorization",
+    "jwt",
+    "express"
+  ]
+}

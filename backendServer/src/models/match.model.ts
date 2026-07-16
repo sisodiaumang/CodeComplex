@@ -23,7 +23,7 @@ const matchSchema =
                     "DSA",
                     "FRONTEND",
                     "BACKEND",
-                    "FULLSTACK",
+                    "PROJECTS",
                     "PROMPT_WAR",
                     "BUG_FIX"
                 ]

@@ -1,0 +1,158 @@
+{
+  "_id": "a2eb3947b3cea54c96cb4a3a",
+  "title": "Reversible Flawed Merge Sort on Doubly Linked List",
+  "slug": "reversible-flawed-merge-sort-on-doubly-linked-list-bugfix-hard-linked-list-2",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "LINKED_LIST",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "linked_list"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given a doubly linked list, you want to perform a Reversible Merge Sort on it. The merge sort works as follows:\nIt takes two halves of the list and sorts them recursively.\nThen it merges the two sorted halves, ensuring that the result is still sorted.\nHowever, your code has a bug that prevents it from merging the two sorted halves correctly.",
+    "inputFormat": "You will be given a doubly linked list with n nodes, where each node contains an integer value. The nodes are 1-indexed.",
+    "outputFormat": "You should return the head of the sorted doubly linked list.",
+    "notes": "The merge function should be reversible, meaning that after sorting, given a node, you should be able to find the original position of that node in the unsorted list.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "4\n1 2 3 4",
+        "output": "1 2 3 4",
+        "explanation": "The input is a doubly linked list with four nodes (1, 2, 3, 4)"
+      },
+      {
+        "input": "5\n5 2 8 1 3",
+        "output": "1 2 3 5 8",
+        "explanation": "The input is a doubly linked list with five nodes (5, 2, 8, 1, 3)"
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "The problem with your merge function is that it doesn't correctly merge two sorted halves."
+    }
+  ],
+  "editorial": {
+    "title": "Reversible Merge Sort",
+    "intuition": "To perform a reversible merge sort, you need to split the list into two halves, sort them, and then merge them back together.",
+    "bruteForce": "You can use a simple merge sort algorithm to sort the list, but this will not be reversible.",
+    "betterSolution": "To make the merge function reversible, you need to keep track of the original position of each node in the unsorted list.",
+    "optimalSolution": "Create a function that splits the list into two halves, sorts them recursively, and then merges them back together while keeping track of the original position of each node.",
+    "proofOfCorrectness": "We can prove that the merge function is reversible by showing that it correctly maps each node to its original position in the unsorted list.",
+    "dryRun": "To dry run this solution, you can create a small input and manually go through the sorting process to verify that it is reversible.",
+    "commonMistakes": [
+      "not keeping track of original position",
+      "not merging correctly"
+    ],
+    "timeComplexity": "O(n log n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    ListNode* sortList(ListNode* head);\n};\n\nclass ListNode {\npublic:\n    int val;\n    ListNode *next, *prev;\n};",
+    "java": "public class Solution {\npublic:\n    ListNode sortList(ListNode head);\n}\n\npublic class ListNode {\npublic:\n    int val;\n    ListNode next, prev;\n}",
+    "python": "class Solution:\n    def sortList(self, head: ListNode) -> ListNode:\n        # TODO: implement\n        pass",
+    "javascript": "class Solution {\n    mergeSort(head) {\n        // TODO: implement\n        return head;\n    }\n}\nclass ListNode {\n    constructor(val) {\n        this.val = val;\n        this.next = null;\n        this.prev = null;\n    }\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    ListNode* sortList(ListNode* head) {\n        if (!head) return head;\n        ListNode* fast = head;\n        ListNode* slow = head;\n        while (fast->next && fast->next->next) {\n            fast = fast->next->next;\n            slow = slow->next;\n        }\n        ListNode* second = slow->next;\n        slow->next = nullptr;\n        return mergeLists(head, second);\n    }\n\n    ListNode* mergeLists(ListNode* a, ListNode* b) {\n        if (!a) return b;\n        if (!b) return a;\n        if (a->val < b->val) {\n            a->next = mergeLists(a->next, b);\n            return a;\n        } else {\n            b->next = mergeLists(a, b->next);\n            return b;\n        }\n    }\n};",
+    "java": "public class Solution {\npublic:\n    ListNode sortList(ListNode head) {\n        if (head == null) return head;\n        ListNode fast = head;\n        ListNode slow = head;\n        while (fast.next != null && fast.next.next != null) {\n            fast = fast.next.next;\n            slow = slow.next;\n        }\n        ListNode second = slow.next;\n        slow.next = null;\n        return mergeLists(head, second);\n    }\n\n    ListNode mergeLists(ListNode a, ListNode b) {\n        if (a == null) return b;\n        if (b == null) return a;\n        if (a.val < b.val) {\n            a.next = mergeLists(a.next, b);\n            return a;\n        } else {\n            b.next = mergeLists(a, b.next);\n            return b;\n        }\n    }\n}",
+    "python": "class Solution:\n    def sortList(self, head: ListNode) -> ListNode:\n        if not head: return head\n        fast = head\n        slow = head\n        while fast.next and fast.next.next:\n            fast = fast.next.next\n            slow = slow.next\n        second = slow.next\n        slow.next = None\n        return self.mergeLists(head, second)\n\n    def mergeLists(self, a: ListNode, b: ListNode) -> ListNode:\n        if not a: return b\n        if not b: return a\n        if a.val < b.val:\n            a.next = self.mergeLists(a.next, b)\n            return a\n        else:\n            b.next = self.mergeLists(a, b.next)\n            return b\n",
+    "javascript": "class Solution {\n    mergeSort(head) {\n        if (!head) return head;\n        let fast = head;\n        let slow = head;\n        while (fast.next && fast.next.next) {\n            fast = fast.next.next;\n            slow = slow.next;\n        }\n        let second = slow.next;\n        slow.next = null;\n        return this.mergeLists(head, second);\n    }\n\n    mergeLists(a, b) {\n        if (!a) return b;\n        if (!b) return a;\n        if (a.val < b.val) {\n            a.next = this.mergeLists(a.next, b);\n            return a;\n        } else {\n            b.next = this.mergeLists(a, b.next);\n            return b;\n        }\n    }\n}"
+  },
+  "functionSignature": {
+    "cpp": "ListNode* sortList(ListNode* head)",
+    "java": "ListNode sortList(ListNode head)",
+    "python": "def sortList(self, head: ListNode) -> ListNode",
+    "javascript": "mergeSort(head)"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def sortList(self, head: ListNode) -> ListNode:\n        if not head: return head\n        if len(head) == 1: return head\n\n        mid = self.getMiddle(head)\n        mid_prev = self.getPrevNode(head, mid)\n\n        second = mid.next\n        mid.next = None\n        second_prev = mid_prev\n\n        left = self.sortList(head)\n        right = self.sortList(second)\n\n        return self.merge(left, right)\n\n    def getMiddle(self, head: ListNode) -> ListNode:\n        slow = head\n        fast = head\n        while fast.next and fast.next.next:\n            slow = slow.next\n            fast = fast.next.next\n        return slow\n\n    def getPrevNode(self, head: ListNode, node: ListNode) -> ListNode:\n        current = head\n        while current.next != node:\n            current = current.next\n        return current\n\n    def merge(self, a: ListNode, b: ListNode) -> ListNode:\n        dummy = ListNode(0)\n        current = dummy\n        while a and b:\n            if a.val < b.val:\n                current.next = a\n                a = a.next\n            else:\n                current.next = b\n                b = b.next\n            current = current.next\n        if a:\n            current.next = a\n        else:\n            current.next = b\n        return dummy.next\n",
+    "cpp": "class Solution {\npublic:\n    ListNode* sortList(ListNode* head) {\n        if (!head) return head;\n        if (head->next == nullptr) return head;\n\n        ListNode* mid = getMiddle(head);\n        ListNode* mid_prev = getPrevNode(head, mid);\n\n        ListNode* second = mid->next;\n        mid->next = nullptr;\n        mid_prev->next = nullptr;\n\n        ListNode* left = sortList(head);\n        ListNode* right = sortList(second);\n\n        return merge(left, right);\n    }\n\n    ListNode* getMiddle(ListNode* head) {\n        ListNode* slow = head;\n        ListNode* fast = head;\n        while (fast->next && fast->next->next) {\n            slow = slow->next;\n            fast = fast->next->next;\n        }\n        return slow;\n    }\n\n    ListNode* getPrevNode(ListNode* head, ListNode* node) {\n        ListNode* current = head;\n        while (current->next != node) {\n            current = current->next;\n        }\n        return current;\n    }\n\n    ListNode* merge(ListNode* a, ListNode* b) {\n        ListNode dummy(0);\n        ListNode* current = &dummy;\n        while (a && b) {\n            if (a->val < b->val) {\n                current->next = a;\n                a = a->next;\n            } else {\n                current->next = b;\n                b = b->next;\n            }\n            current = current->next;\n        }\n        if (a) {\n            current->next = a;\n        } else {\n            current->next = b;\n        }\n        return dummy.next;\n    }\n};",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2000,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "4\n1 2 3 4",
+      "output": "1 2 3 4",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "5\n5 2 8 1 3",
+      "output": "1 2 3 5 8",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

@@ -1,0 +1,136 @@
+{
+  "title": "Fixing a Broken Express Middleware Stack",
+  "subCategory": "Express Middleware",
+  "statement": {
+    "markdown": "Implement a basic Express API endpoint with a single route that handles GET requests to the root URL ('/'). This route should have two middleware functions attached: one that logs the incoming request and another that checks if the request's Accept header contains 'application/json'. If it does, the next function in the stack should be called, otherwise, it should return a 406 Not Acceptable response. However, the current implementation has a logical bug that causes the 406 response to be returned even when the Accept header contains 'application/json'.",
+    "inputFormat": "A string containing the Accept header value (e.g., 'application/json', '*/*', etc.)",
+    "outputFormat": "A string indicating the response status code (e.g., '200 OK', '406 Not Acceptable', etc.)",
+    "notes": "Note that the middleware functions should be attached to the route in the correct order to ensure the 406 response is not triggered accidentally.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "No constraint on input length"
+      }
+    ],
+    "examples": [
+      {
+        "input": "application/json",
+        "output": "200 OK",
+        "explanation": "The Accept header contains 'application/json', so the next function in the stack should be called."
+      },
+      {
+        "input": "*/*",
+        "output": "406 Not Acceptable",
+        "explanation": "The Accept header does not contain 'application/json', so the 406 response should be returned."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 10,
+    "points": 30,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "EXPRESS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "express"
+    ],
+    "interviewFrequency": 1,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Review the middleware stack and ensure the 406 response is not triggered accidentally."
+    }
+  ],
+  "editorial": {
+    "title": "Fixing the Middleware Stack",
+    "intuition": "The key to solving this problem is to understand the order of operations in the middleware stack and how the 406 response is triggered.",
+    "bruteForce": "One way to approach this problem is to manually implement each middleware function and attach them to the route in the correct order.",
+    "betterSolution": "However, this approach can be error-prone and time-consuming. A better solution is to rethink the logic of the middleware stack and ensure that the 406 response is only triggered when necessary.",
+    "optimalSolution": "The optimal solution is to move the 406 response logic to the beginning of the middleware stack, so that it is only triggered when the Accept header does not contain 'application/json'.",
+    "proofOfCorrectness": "This solution is correct because it ensures that the 406 response is only triggered when the Accept header does not contain 'application/json'.",
+    "dryRun": "Here's a step-by-step example run of the corrected middleware stack:",
+    "commonMistakes": [
+      "Attaching the 406 response logic to the end of the middleware stack",
+      "Not checking the Accept header correctly"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "var express = require('express');\nvar app = express();\napp.get('/', function(req, res) {\n    // Middleware function 1: log the incoming request\n    console.log('Request received');\n    // Middleware function 2: check if the Accept header contains 'application/json'\n    if (req.accepts('application/json')) {\n        // Next function in the stack should be called\n    } else {\n        // 406 response should be returned\n    }\n});",
+    "python": "from fastapi import FastAPI\napp = FastAPI()\n@app.get('/')\ndef handle_request(req: Request):\n    # Middleware function 1: log the incoming request\n    print('Request received')\n    # Middleware function 2: check if the Accept header contains 'application/json'\n    if req.headers.get('Accept') == 'application/json':\n        # Next function in the stack should be called\n        return {'message': 'Hello World'}\n    else:\n        # 406 response should be returned\n        return {'status_code': 406, 'message': 'Not Acceptable'}"
+  },
+  "buggyStarterCode": {
+    "javascript": "var express = require('express');\nvar app = express();\napp.get('/', function(req, res) {\n    // Middleware function 1: log the incoming request\n    console.log('Request received');\n    // Middleware function 2: check if the Accept header contains 'application/json'\n    if (req.accepts('application/json')) {\n        // 406 response should be returned instead\n        return res.status(406).send('Not Acceptable');\n    } else {\n        // Next function in the stack should be called\n    }\n});",
+    "python": "from fastapi import FastAPI\napp = FastAPI()\n@app.get('/')\ndef handle_request(req: Request):\n    # Middleware function 1: log the incoming request\n    print('Request received')\n    # Middleware function 2: check if the Accept header contains 'application/json'\n    if req.headers.get('Accept') == 'application/json':\n        # 406 response should be returned instead\n        return {'status_code': 406, 'message': 'Not Acceptable'}\n    else:\n        # Next function in the stack should be called\n        return {'message': 'Hello World'}"
+  },
+  "functionSignature": {
+    "javascript": "var handleRequest = function(req, res) {\n    // Your code here\n};",
+    "python": "def handle_request(req: Request):\n    # Your code here"
+  },
+  "solutions": {
+    "javascript": "// Solution\nvar express = require('express');\nvar app = express();\napp.get('/', function(req, res) {\n    // Middleware function 1: log the incoming request\n    console.log('Request received');\n    // 406 response logic should be moved to the beginning of the middleware stack\n    if (!req.accepts('application/json')) {\n        return res.status(406).send('Not Acceptable');\n    }\n    // Next function in the stack should be called\n});",
+    "python": "from fastapi import FastAPI\napp = FastAPI()\n@app.get('/')\ndef handle_request(req: Request):\n    # Middleware function 1: log the incoming request\n    print('Request received')\n    # 406 response logic should be moved to the beginning of the middleware stack\n    if req.headers.get('Accept') != 'application/json':\n        return {'status_code': 406, 'message': 'Not Acceptable'}\n    # Next function in the stack should be called\n    return {'message': 'Hello World'}"
+  },
+  "judgeConfig": {
+    "timeLimit": 1,
+    "memoryLimit": 64,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "application/json",
+      "output": "200 OK",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "*/*",
+      "output": "406 Not Acceptable",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "_id": "f503fca99da98e71a3f081b5",
+  "slug": "fixing-a-broken-express-middleware-stack-bugfix-easy-express",
+  "mode": "bug_fix",
+  "category": "EXPRESS",
+  "difficulty": "Easy"
+}

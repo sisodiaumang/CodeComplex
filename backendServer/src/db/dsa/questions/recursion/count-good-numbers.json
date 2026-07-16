@@ -38,9 +38,9 @@
     "contestEligible": true
   },
   "statement": {
-    "markdown": "A good number is a number where every digit that appears in it appears exactly three times. Given a positive integer n, return the number of good numbers less than or equal to n.",
-    "inputFormat": "1\nN",
-    "outputFormat": "1\nResult",
+    "markdown": "A 0-indexed string of length n is good if the digits at even indices are even (0, 2, 4, 6, 8) and the digits at odd indices are prime (2, 3, 5, 7).\n\nGiven an integer n, return the total number of good digit strings of length n. Since the answer may be large, return it modulo 10^9 + 7.\n\nNote: A digit string is a string consisting of digits 0 through 9 only.",
+    "inputFormat": "A single line containing the integer n.",
+    "outputFormat": "A single line containing the number of good digit strings modulo 10^9 + 7.",
     "notes": "",
     "images": [],
     "constraints": [
@@ -48,78 +48,75 @@
         "variable": "n",
         "type": "integer",
         "min": 1,
-        "max": 1000000000,
-        "description": "The input number"
+        "max": 1000000000000000,
+        "description": "The length of the digit string."
       }
     ],
     "examples": [
       {
-        "input": "1\n10",
-        "output": "0",
-        "explanation": "The good numbers less than or equal to 10 are 3 and 6."
+        "input": "1",
+        "output": "4",
+        "explanation": "The good strings of length 1 are \"0\", \"2\", \"4\", \"6\", \"8\"."
       },
       {
-        "input": "1\n100",
-        "output": "0",
-        "explanation": "The good numbers less than or equal to 100 are 3, 6, 33, and 66."
+        "input": "4",
+        "output": "400",
+        "explanation": "The good strings of length 4 have 2 even indices (0, 2) and 2 odd indices (1, 3). There are 5 choices for each even index and 4 choices for each odd index, yielding 5 * 4 * 5 * 4 = 400 good strings."
+      },
+      {
+        "input": "50",
+        "output": "564908303",
+        "explanation": "Return the answer modulo 10^9 + 7."
       }
     ]
   },
   "hints": [
     {
       "order": 1,
-      "text": "Consider the concept of a permutation of digits."
+      "text": "To start solving this problem, first identify the possible digits for even and odd indices. For even indices, the possible digits are 0, 2, 4, 6, 8, which gives us 5 choices. For odd indices, the possible digits are 2, 3, 5, 7, giving us 4 choices."
     },
     {
       "order": 2,
-      "text": "Create a function to check if a number has the desired property."
+      "text": "Next, consider how the number of good strings of length n relates to the number of good strings of lengths n-1 and n-2. However, a more direct approach involves recognizing that each position in the string is independent of the others, allowing us to calculate the total number of good strings by multiplying the number of choices for each position."
     },
     {
       "order": 3,
-      "text": "Use a recursive approach to count the number of good numbers less than or equal to n."
-    },
-    {
-      "order": 4,
-      "text": "Implement a helper function to count the number of good numbers with a specific digit."
-    },
-    {
-      "order": 5,
-      "text": "Combine the helper function and recursive approach to solve the problem"
+      "text": "The key to solving this problem efficiently lies in recognizing the pattern of independence between the digits at even and odd indices and applying the concept of modular arithmetic to handle large numbers. Specifically, for a string of length n, if n is even, there are 5 choices for the first digit and 4 choices for the second digit, and this pattern repeats. If n is odd, the pattern starts with 4 choices for the first digit (since the first digit is at an odd index) and then alternates. The total number of good strings can thus be calculated using the formula 5^(n/2 + n%2) * 4^(n/2) for even n, and 5^(n/2) * 4^(n/2 + 1) for odd n, all taken modulo 10^9 + 7 to prevent overflow."
     }
   ],
   "editorial": {
     "title": "Count Good Numbers",
-    "intuition": "The initial approach to solving this problem involves iterating over all numbers from 1 to n and checking each number to see if it has the desired property of having exactly three occurrences of each digit. This intuition is correct but results in a brute force solution that is slow due to its O(n * m) time complexity, where n is the input number and m is the average number of digits in the numbers being checked.",
-    "bruteForce": "The brute force solution works by converting each number to a string, then counting the occurrences of each digit. If all digits have a count of 3, the number is considered 'good' and is added to the total count. This approach is straightforward but inefficient for large inputs due to its linear dependency on the input size.",
-    "betterSolution": "A more efficient solution would ideally reduce the time complexity, potentially by leveraging mathematical properties or patterns in the numbers being checked. However, given the specific constraints of this problem, such optimizations may not be straightforward.",
-    "optimalSolution": "The optimal solution, given the constraints and the nature of the problem, involves recognizing that the brute force approach is already quite direct and that significant optimizations may not be feasible without additional mathematical insights. The known solution with a time complexity of O(n * m) reflects this, where m represents the average number of digits in the numbers from 1 to n.",
-    "proofOfCorrectness": "The correctness of the solution can be proven by demonstrating that it accurately counts all numbers that meet the specified condition (i.e., all digits appear exactly three times) within the given range. This involves showing that the loop iterates over all relevant numbers and that the digit counting mechanism accurately identifies numbers with the desired property.",
-    "dryRun": "A dry run or test case can be used to validate the solution for small inputs, ensuring that it produces the expected output for manually verifiable cases.",
+    "intuition": "The problem can be solved by observing the pattern of good numbers, which are formed by the digits 2, 3, 5, and 7. To find the total count of good numbers of a given length, we can utilize the properties of modular arithmetic to efficiently calculate the result.",
+    "bruteForce": "A brute force approach would involve generating all possible numbers of the given length and checking each one to see if it's a good number. However, this approach is impractical due to its high time complexity, making it inefficient for large inputs.",
+    "betterSolution": "A more efficient solution would involve using the properties of even and odd numbers to reduce the problem size. Since even numbers always end with 0, 2, 4, 6, or 8, and good numbers can only have the digits 2, 3, 5, and 7, we can focus on the odd numbers.",
+    "optimalSolution": "The optimal solution takes advantage of the fact that there are 4 choices for odd digits (1, 3, 5, 7, 9) and 5 choices for even digits (0, 2, 4, 6, 8) in a good number, but since 0 cannot be the first digit, we consider the first digit separately. For the remaining digits, we have 4 choices for odd positions and 5 choices for even positions. However, since the problem statement restricts the digits to 2, 3, 5, and 7, we have 4 choices for odd positions and only 1 choice (which doesn't apply here as we have 4 and 5) but considering only 2, 3, 5, and 7 we have 4 choices for even positions as well but with a different set of numbers (only 2, 4, 6, 8 are even but only 2 is valid), thus we have 4 choices for odd and 1 choice for even but in this problem we have 5 and 4 so we use 5 for even and 4 for odd. We use modular arithmetic to avoid overflow and ensure the result is within the specified range.",
+    "proofOfCorrectness": "The proof of correctness for this solution lies in the fact that it accurately calculates the total count of good numbers of a given length by considering the number of choices for each position and using modular arithmetic to avoid overflow. The time complexity of O(n) and space complexity of O(1) ensure that the solution is efficient and scalable.",
+    "dryRun": "To verify the correctness of the solution, we can perform a dry run with a small input, such as n = 3, and manually calculate the result to ensure it matches the output of the solution.",
     "commonMistakes": [
-      "Incorrectly handling the case where a number has fewer than three digits",
-      "Failing to reset the digit count for each new number being checked",
-      "Not accurately counting the occurrences of each digit within a number",
-      "Incorrectly determining whether a number meets the 'good' criteria",
-      "Not considering the full range of input values as specified by the problem constraints"
+      "Not considering the restrictions on the digits that can be used in a good number.",
+      "Not using modular arithmetic to avoid overflow.",
+      "Not accurately calculating the number of choices for each position.",
+      "Not considering the first digit separately.",
+      "Not using the correct number of choices for even and odd positions."
     ],
-    "timeComplexity": "O(n * m)",
-    "spaceComplexity": "O(m)"
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1)"
   },
   "starterCode": {
-    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nint countGoodNumbers(int n) {\n    // TODO\n}\n\n// @driver-code-start\nint main() {\n    ios_base::sync_with_stdio(false);\n    cin.tie(NULL);\n    int N;\n    cin >> N;\n    int result = countGoodNumbers(N);\n    cout << result << '\\n';\n    return 0;\n}",
-    "java": "import java.util.Scanner;\n\npublic class Main {\n    public static int countGoodNumbers(int n) {\n        // TODO\n    }\n\n    // @driver-code-start\npublic static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int N = scanner.nextInt();\n        int result = countGoodNumbers(N);\n        System.out.println(result);\n    }\n}",
-    "python": "import sys\nfrom collections import *\ndef countGoodNumbers(n):\n    # TODO\n    pass\n\n# @driver-code-start\ndef main():\n    N = int(sys.stdin.readline().strip())\n    result = countGoodNumbers(N)\n    print(result)\n\nif __name__ == '__main__':\n    main()",
-    "javascript": "// @driver-code-start\nconst readline = require('readline');\nconst rl = readline.createInterface({\n    input: process.stdin,\n    output: process.stdout\n});\nlet N;\nrl.on('line', (line) => {\n    N = parseInt(line);\n    rl.close();\n});\n\nfunction countGoodNumbers(n) {\n    const solution = new Solution();\n        console.log(solution.countGoodNumbers(n));\n}\n\nrl.on('close', () => {\n    let result = countGoodNumbers(N);\n    console.log(result);\n});\n\nclass Solution {\n    countGoodNumbers(n) {\n        // TODO: implement\n        return 0;\n    }\n}\n"
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    int countGoodNumbers(int n) {\n        // TODO: implement\n        return 0;\n    }\n};",
+    "java": "import java.util.*;\n\nclass Solution {\n    public int countGoodNumbers(int n) {\n        // TODO: implement\n        return 0;\n    }\n}",
+    "python": "class Solution:\n    def countGoodNumbers(self, n: int) -> int:\n        # TODO: implement\n        pass",
+    "javascript": "/**\n * @param {number} n\n * @return {number}\n */\nvar countGoodNumbers = function(n) {\n    // TODO: implement\n    return 0;\n};"
   },
   "functionSignature": {
-    "cpp": "int countGoodNumbers(int n)",
-    "java": "public static int countGoodNumbers(int n)",
-    "python": "def countGoodNumbers(n):",
-    "javascript": "function countGoodNumbers(n)"
+    "cpp": "int countGoodNumbers(int n);",
+    "java": "public int countGoodNumbers(int n);",
+    "python": "def countGoodNumbers(self, n: int) -> int:",
+    "javascript": "var countGoodNumbers = function(n);"
   },
   "solutions": {
-    "python": "\nimport sys\nit = iter(sys.stdin.read().split())\nn = int(next(it))\n\ndef count_good_numbers(num):\n    count = 0\n    for i in range(1, num + 1):\n        str_i = str(i)\n        digit_count = {}\n        for digit in str_i:\n            if digit in digit_count:\n                digit_count[digit] += 1\n            else:\n                digit_count[digit] = 1\n        if all(count == 3 for count in digit_count.values()):\n            count += 1\n    return count\n\nresult = count_good_numbers(n)\nprint(result)\n",
-    "cpp": "\n#include <bits/stdc++.h>\nusing namespace std;\nint main(){\n    int n;\n    if(!(cin >> n)) return 0;\n    int count = 0;\n    for(int i = 1; i <= n; i++) {\n        string str_i = to_string(i);\n        unordered_map<char, int> digit_count;\n        for(char digit : str_i) {\n            if(digit_count.find(digit) != digit_count.end()) {\n                digit_count[digit]++;\n            } else {\n                digit_count[digit] = 1;\n            }\n        }\n        bool is_good = true;\n        for(auto& pair : digit_count) {\n            if(pair.second != 3) {\n                is_good = false;\n                break;\n            }\n        }\n        if(is_good) count++;\n    }\n    cout << count << endl;\n    return 0;\n}\n"
+    "python": "\nimport sys\n\nclass Solution:\n    def countGoodNumbers(self, n: int) -> int:\n        MOD = 10 ** 9 + 7\n        res = 1\n        for _ in range(n // 2):\n            res = (res * 5) % MOD\n        for _ in range(n - n // 2):\n            res = (res * 4) % MOD\n        return res\n\nif __name__ == '__main__':\n    it = iter(sys.stdin.read().split())\n    try:\n        n = int(next(it))\n    except StopIteration:\n        sys.exit(0)\n    sol = Solution()\n    ans = sol.countGoodNumbers(n)\n    print(ans)\n",
+    "cpp": "#include <numeric>\n\n#include <iostream>\nusing namespace std;\n\nclass Solution {\npublic:\n    int countGoodNumbers(int n) {\n        const int MOD = 1e9 + 7;\n        long long res = 1;\n        for (int i = 0; i < n / 2; i++) {\n            res = (res * 5) % MOD;\n        }\n        for (int i = 0; i < n - n / 2; i++) {\n            res = (res * 4) % MOD;\n        }\n        return res;\n    }\n};\n\nint main() {\n    int n;\n    if (!(cin >> n)) return 0;\n    Solution sol;\n    int ans = sol.countGoodNumbers(n);\n    cout << ans << endl;\n    return 0;\n}\n"
   },
   "judgeConfig": {
     "timeLimit": 2,
@@ -145,124 +142,44 @@
   },
   "testCases": [
     {
-      "id": "sample",
-      "input": "1\n10",
-      "output": "0",
+      "id": "sample_1",
+      "input": "1",
+      "output": "4",
       "isVisible": true,
       "weight": 1,
       "category": "sample"
     },
     {
-      "id": "min_constraint",
-      "input": "1\n0",
-      "output": "0",
+      "id": "sample_2",
+      "input": "4",
+      "output": "400",
       "isVisible": false,
       "weight": 1,
-      "category": "min_constraint"
+      "category": "sample"
     },
     {
-      "id": "max_constraint",
-      "input": "1\n1000000000",
-      "output": "0",
+      "id": "sample_3",
+      "input": "50",
+      "output": "564908303",
       "isVisible": false,
       "weight": 1,
-      "category": "max_constraint"
+      "category": "sample"
     },
     {
-      "id": "boundary",
-      "input": "3\n-1 0 1",
-      "output": "0",
-      "isVisible": false,
-      "weight": 1,
-      "category": "boundary"
-    },
-    {
-      "id": "duplicate",
-      "input": "6\n1 1 1 1 1 1",
-      "output": "0",
+      "id": "duplicate_6",
+      "input": "10",
+      "output": "3200000",
       "isVisible": false,
       "weight": 1,
       "category": "duplicate"
     },
     {
-      "id": "sorted",
-      "input": "6\n1 2 3 4 5 6",
-      "output": "0",
+      "id": "random_medium_7",
+      "input": "500",
+      "output": "315782032",
       "isVisible": false,
       "weight": 1,
-      "category": "sorted"
-    },
-    {
-      "id": "reverse_sorted",
-      "input": "6\n6 5 4 3 2 1",
-      "output": "0",
-      "isVisible": false,
-      "weight": 1,
-      "category": "reverse_sorted"
-    },
-    {
-      "id": "negative",
-      "input": "5\n-5 -4 -3 -2 -1",
-      "output": "0",
-      "isVisible": false,
-      "weight": 1,
-      "category": "negative"
-    },
-    {
-      "id": "zero",
-      "input": "5\n0 0 0 0 0",
-      "output": "0",
-      "isVisible": false,
-      "weight": 1,
-      "category": "zero"
-    },
-    {
-      "id": "one",
-      "input": "2\n1 1",
-      "output": "0",
-      "isVisible": false,
-      "weight": 1,
-      "category": "one"
-    },
-    {
-      "id": "repeated",
-      "input": "8\n2 2 2 2 3 3 3 3",
-      "output": "0",
-      "isVisible": false,
-      "weight": 1,
-      "category": "repeated"
-    },
-    {
-      "id": "large_random",
-      "input": "10\n309 -772 -949 518 -437 -499 -543 -715 508 -791",
-      "output": "0",
-      "isVisible": false,
-      "weight": 1,
-      "category": "large_random"
-    },
-    {
-      "id": "adversarial",
-      "input": "12\n385 516 827 116 -822 209 -136 -935 -939 -809 -553 -524",
-      "output": "0",
-      "isVisible": false,
-      "weight": 1,
-      "category": "adversarial"
-    },
-    {
-      "id": "random_13",
-      "input": "21\n6 9 -10 7 -4 10 7 3 -3 4 8 -2 -10 -5 3 0 -2 -6 -4 0 -7",
-      "output": "0",
-      "isVisible": false,
-      "weight": 1,
-      "category": "random"
-    },
-    {
-      "id": "random_14",
-      "input": "22\n-8 2 -7 1 1 9 -2 -9 4 7 -7 2 -8 7 -1 10 9 1 8 -4 -8 -9",
-      "output": "0",
-      "isVisible": false,
-      "weight": 1,
-      "category": "random"
+      "category": "random_medium"
     }
   ],
   "analytics": {

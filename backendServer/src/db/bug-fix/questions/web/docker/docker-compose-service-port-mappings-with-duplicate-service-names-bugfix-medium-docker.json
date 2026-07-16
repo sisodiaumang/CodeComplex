@@ -1,0 +1,147 @@
+{
+  "title": "Docker Compose Service Port Mappings with Duplicate Service Names",
+  "subCategory": "Docker port mapping",
+  "statement": {
+    "markdown": "Given a Docker Compose file as a string, validate that service port mappings are correctly defined. A service port mapping is considered invalid if it has duplicate service names. For example, the following Docker Compose file is invalid:\n\nversion: '3'\n\nservices:\n  web:\n    image: web\n    ports:\n      - 80:80\n  web:\n    image: web\n    ports:\n      - 443:443\n\nYour function should return `false` for the above Docker Compose file and `true` for the following valid file:\n\nversion: '3'\n\nservices:\n  web:\n    image: web\n    ports:\n      - 80:80\n  db:\n    image: db\n    ports:\n      - 5432:5432\n\nYou can assume that the input Docker Compose file is a valid YAML string.",
+    "inputFormat": "A string representing a Docker Compose file in YAML format.",
+    "outputFormat": "A boolean indicating whether the service port mappings are valid.",
+    "notes": "You can use the `yaml` module to parse the input string as a YAML document.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of services in the Docker Compose file."
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of port mappings per service."
+      }
+    ],
+    "examples": [
+      {
+        "input": "version: '3'\n\nservices:\n  web:\n    image: web\n    ports:\n      - 80:80\n  web:\n    image: web\n    ports:\n      - 443:443",
+        "output": "false",
+        "explanation": "The `web` service has duplicate port mappings, which is invalid."
+      },
+      {
+        "input": "version: '3'\n\nservices:\n  web:\n    image: web\n    ports:\n      - 80:80\n  db:\n    image: db\n    ports:\n      - 5432:5432",
+        "output": "true",
+        "explanation": "The `web` and `db` services have unique port mappings, which is valid."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DOCKER"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "docker"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the `yaml` module to parse the input string as a YAML document."
+    },
+    {
+      "order": 2,
+      "text": "Iterate over the services in the Docker Compose file and check for duplicate service names."
+    }
+  ],
+  "editorial": {
+    "title": "Docker Compose Service Port Mappings with Duplicate Service Names",
+    "intuition": "The key insight here is to parse the input string as a YAML document and then iterate over the services to check for duplicate service names.",
+    "bruteForce": "One possible approach is to manually parse the YAML string and then use a data structure such as a set to keep track of service names.",
+    "betterSolution": "A better approach is to use the `yaml` module to parse the input string as a YAML document and then use a dictionary to map service names to their corresponding port mappings.",
+    "optimalSolution": "The optimal solution is to use the `yaml` module to parse the input string as a YAML document and then use a dictionary to map service names to their corresponding port mappings. This approach has a time complexity of O(n) where n is the number of services in the Docker Compose file.",
+    "proofOfCorrectness": "The proof of correctness is that the solution correctly identifies duplicate service names and returns false for invalid Docker Compose files.",
+    "dryRun": "Here's an example dry run:\n\nInput:\nversion: '3'\n\nservices:\n  web:\n    image: web\n    ports:\n      - 80:80\n  web:\n    image: web\n    ports:\n      - 443:443\n\nOutput:\nfalse\n\nThis dry run shows that the solution correctly identifies the duplicate service name `web` and returns false for the invalid Docker Compose file.",
+    "commonMistakes": [
+      "Failing to parse the input string as a YAML document.",
+      "Not checking for duplicate service names."
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "function validateDockerComposeFile(composeFile) {\n  // Your code here\n}\n\nmodule.exports = validateDockerComposeFile;",
+    "python": "import yaml\n\nclass Solution:\n  def __init__(self):\n    pass\n\n  def validate_docker_compose_file(self, compose_file):\n    # Your code here\n\ndef main():\n  solution = Solution()\n  # Read input from stdin\n  # Call the validate_docker_compose_file method\n  # Print output to stdout"
+  },
+  "buggyStarterCode": {
+    "javascript": "function validateDockerComposeFile(composeFile) {\n  const yamlConfig = YAML.parse(composeFile);\n  const services = yamlConfig.services;\n\n  for (const service of services) {\n    const ports = service.ports;\n    const serviceName = service.name;\n\n    for (const port of ports) {\n      if (serviceName === port.name) {\n        return false;\n      }\n    }\n  }\n\n  return true;\n\nmodule.exports = validateDockerComposeFile;",
+    "python": "import yaml\n\nclass Solution:\n  def __init__(self):\n    pass\n\n  def validate_docker_compose_file(self, compose_file):\n    yamlConfig = yaml.safe_load(compose_file)\n    services = yamlConfig['services']\n\n    for service in services.values():\n      ports = service['ports']\n      serviceName = service['name']\n\n      for port in ports:\n        if serviceName == port['name']:\n          return False\n\n    return True\n\ndef main():\n  solution = Solution()\n  # Read input from stdin\n  # Call the validate_docker_compose_file method\n  # Print output to stdout"
+  },
+  "functionSignature": {
+    "javascript": "var validateDockerComposeFile = function(composeFile);\n",
+    "python": "def validate_docker_compose_file(self, compose_file: str) -> bool:"
+  },
+  "solutions": {
+    "javascript": "// Solution\nvar validateDockerComposeFile = function(composeFile) {\n  const yamlConfig = YAML.parse(composeFile);\n  const services = yamlConfig.services;\n\n  const serviceNameSet = new Set();\n\n  for (const service of services) {\n    const ports = service.ports;\n    const serviceName = service.name;\n\n    if (serviceNameSet.has(serviceName)) {\n      return false;\n    }\n\n    serviceNameSet.add(serviceName);\n  }\n\n  return true;\n};\n\nmodule.exports = validateDockerComposeFile;",
+    "python": "import yaml\n\nclass Solution:\n  def __init__(self):\n    pass\n\n  def validate_docker_compose_file(self, compose_file):\n    yamlConfig = yaml.safe_load(compose_file)\n    services = yamlConfig['services']\n\n    serviceNameSet = set()\n\n    for service in services.values():\n      ports = service['ports']\n      serviceName = service['name']\n\n      if serviceName in serviceNameSet:\n        return False\n\n      serviceNameSet.add(serviceName)\n\n    return True\n\ndef main():\n  solution = Solution()\n  # Read input from stdin\n  # Call the validate_docker_compose_file method\n  # Print output to stdout"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "version: '3'\n\nservices:\n  web:\n    image: web\n    ports:\n      - 80:80\n  web:\n    image: web\n    ports:\n      - 443:443",
+      "output": "false",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "version: '3'\n\nservices:\n  web:\n    image: web\n    ports:\n      - 80:80\n  db:\n    image: db\n    ports:\n      - 5432:5432",
+      "output": "true",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "_id": "fb741b7101a76b763872fc2e",
+  "slug": "docker-compose-service-port-mappings-with-duplicate-service-names-bugfix-medium-docker",
+  "mode": "bug_fix",
+  "category": "DOCKER",
+  "difficulty": "Medium"
+}

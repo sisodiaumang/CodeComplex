@@ -1,0 +1,52 @@
+{
+  "_id": "d63958224b3d21f300d0e653",
+  "title": "Multi-Select Tag Input",
+  "slug": "js-tag-input",
+  "difficulty": "Hard",
+  "topics": [
+    "JAVASCRIPT"
+  ],
+  "statement": {
+    "markdown": "## Multi-Select Tag Input Component\n\nBuild an interactive text input component that adds and removes values as tag badges.\n\n### Requirements:\n1. **Add Tags**: Typing in the field and pressing `Enter` (or typing a comma `,`) should create a new tag badge. Clear input text field afterward.\n2. **Prevent Duplicates**: Enforce unique values. Do not add tags that match existing tag labels case-insensitively.\n3. **Remove Tags**: Clicking a tiny `x` delete icon inside a tag badge must remove that tag from the list. Focus input field back after deletions."
+  },
+  "constraints": [
+    "Must correctly handle keydown codes for Enter and Comma keys",
+    "Must prevent empty values or whitespace-only tags from being added"
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "html": "<div class=\"p-6 bg-slate-900 min-h-[250px] flex items-center justify-center font-sans\">\n  <div class=\"w-full max-w-sm p-5 bg-slate-800 border border-slate-700 rounded-xl shadow-xl text-white\">\n    <label class=\"block text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wider\">Skill Tags</label>\n    <div id=\"tags-wrapper\" class=\"flex flex-wrap gap-2 p-2 bg-slate-950 border border-slate-700 rounded-lg focus-within:border-indigo-500\">\n      <input id=\"tag-input\" type=\"text\" class=\"flex-1 min-w-[120px] bg-transparent text-sm text-white focus:outline-none\" placeholder=\"Add tag...\" />\n    </div>\n  </div>\n</div>",
+    "css": "",
+    "javascript": "const wrapper = document.getElementById('tags-wrapper');\nconst tagInput = document.getElementById('tag-input');\n\n// Implement tag adding (Enter/Comma), duplicates checking, and tag deletion here\n"
+  },
+  "gradingCriteria": [
+    {
+      "id": "tags_creation",
+      "description": "Verify Enter and Comma trigger clean tag elements without duplicates.",
+      "weight": 60
+    },
+    {
+      "id": "tags_deletion",
+      "description": "Verify clicking delete tags removes elements and resets active inputs focus.",
+      "weight": 40
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "html",
+      "css",
+      "javascript"
+    ],
+    "referenceSolution": "const wrapper = document.getElementById('tags-wrapper');\nconst tagInput = document.getElementById('tag-input');\nconst tagsSet = new Set();\n\nfunction createTag(val) {\n  const label = val.trim();\n  if (!label || tagsSet.has(label.toLowerCase())) return;\n\n  tagsSet.add(label.toLowerCase());\n\n  const span = document.createElement('span');\n  span.className = 'flex items-center gap-1.5 px-2.5 py-1 bg-indigo-600 text-xs font-bold rounded-md border border-indigo-500 select-none';\n  \n  const textNode = document.createTextNode(label);\n  span.appendChild(textNode);\n\n  const removeBtn = document.createElement('button');\n  removeBtn.className = 'hover:text-red-300 font-bold focus:outline-none';\n  removeBtn.textContent = '×';\n  removeBtn.addEventListener('click', () => {\n    tagsSet.delete(label.toLowerCase());\n    span.remove();\n    tagInput.focus();\n  });\n\n  span.appendChild(removeBtn);\n  wrapper.insertBefore(span, tagInput);\n}\n\ntagInput.addEventListener('keydown', (e) => {\n  if (e.key === 'Enter' || e.key === ',') {\n    e.preventDefault();\n    const val = tagInput.value.replace(/,/g, '').trim();\n    if (val) {\n      createTag(val);\n      tagInput.value = '';\n    }\n  }\n});"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

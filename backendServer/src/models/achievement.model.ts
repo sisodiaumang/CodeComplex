@@ -55,6 +55,14 @@ const achievementSchema =
                 type: Number,
                 default: 0,
                 min: 0
+            },
+
+            mascotReward: {
+                name: { type: String },
+                icon: { type: String },
+                description: { type: String },
+                type: { type: String },
+                rarity: { type: String }
             }
 
         },

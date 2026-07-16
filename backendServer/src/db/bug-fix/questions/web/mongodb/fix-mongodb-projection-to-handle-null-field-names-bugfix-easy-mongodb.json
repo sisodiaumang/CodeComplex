@@ -1,0 +1,141 @@
+{
+  "title": "Fix MongoDB Projection to Handle Null Field Names",
+  "subCategory": "MongoDB Projection",
+  "statement": {
+    "markdown": "Write a MongoDB projection function that takes a MongoDB query and a list of field names as input and returns a new query with the specified fields projected. If a field name is null, it should be ignored. The function should handle cases where the list of field names is empty or contains duplicate field names.",
+    "inputFormat": "A MongoDB query object and a list of field names.",
+    "outputFormat": "A new MongoDB query object with the specified fields projected.",
+    "notes": "The function should return a new query object without modifying the original query.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "fieldNames",
+        "type": "integer",
+        "min": 0,
+        "max": 10
+      },
+      {
+        "variable": "query",
+        "type": "integer",
+        "min": 0,
+        "max": 10000
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"query\": {\"name\": \"John\"}, \"fieldNames\": ['name', null, 'age']}",
+        "output": "{\"query\": {\"name\": \"John\", \"age\": \"John\"}}",
+        "explanation": "The function should ignore the null field name and project the 'name' and 'age' fields."
+      },
+      {
+        "input": "{\"query\": {\"name\": \"John\"}, \"fieldNames\": []}",
+        "output": "{\"query\": {}}",
+        "explanation": "The function should return an empty query object if the list of field names is empty."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 10,
+    "points": 30,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "MONGODB"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "mongodb"
+    ],
+    "interviewFrequency": 1,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Check if the field name is null before projecting it."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// Implement the projectFields function",
+    "python": "class Solution:\n    def projectFields(self, query, fieldNames):\n        \"\"\"\n        This function projects the specified fields from the MongoDB query.\n        \"\"\"\n        pass"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Implement the projectFields function\nfunction projectFields(query, fieldNames) {\n  if (fieldNames.includes(null)) {\n    return query;\n  } else {\n    return { ...query, ...fieldNames.reduce((acc, field) => {\n      acc[field] = query[field];\n      return acc;\n    }, {})};\n  }\n}",
+    "python": "class Solution:\n    def projectFields(self, query, fieldNames):\n        \"\"\"\n        This function projects the specified fields from the MongoDB query.\n        \"\"\"\n        if null in fieldNames:\n            return query\n        else:\n            return {**query, **{field: query[field] for field in fieldNames if field is not None}}"
+  },
+  "functionSignature": {
+    "javascript": "function projectFields(query, fieldNames) {\n}",
+    "python": "def projectFields(self, query, fieldNames):"
+  },
+  "solutions": {
+    "javascript": "// Implement the projectFields function\nfunction projectFields(query, fieldNames) {\n  return fieldNames.filter(field => field !== null).reduce((acc, field) => {\n    acc[field] = query[field];\n    return acc;\n  }, {});\n}",
+    "python": "class Solution:\n    def projectFields(self, query, fieldNames):\n        \"\"\"\n        This function projects the specified fields from the MongoDB query.\n        \"\"\"\n        return {field: query[field] for field in fieldNames if field is not None}"
+  },
+  "judgeConfig": {
+    "timeLimit": 1,
+    "memoryLimit": 128,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": false,
+    "ratingEnabled": false,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"query\": {\"name\": \"John\"}, \"fieldNames\": ['name', null, 'age']}",
+      "output": "{\"query\": {\"name\": \"John\", \"age\": \"John\"}}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"query\": {\"name\": \"John\"}, \"fieldNames\": []}",
+      "output": "{\"query\": {}}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "3ca47d0a23d212f0d543430d",
+  "slug": "fix-mongodb-projection-to-handle-null-field-names-bugfix-easy-mongodb",
+  "mode": "bug_fix",
+  "category": "MONGODB",
+  "difficulty": "Easy"
+}

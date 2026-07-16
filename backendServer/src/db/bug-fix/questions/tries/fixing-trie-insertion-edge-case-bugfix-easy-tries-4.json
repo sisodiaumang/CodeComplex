@@ -1,0 +1,158 @@
+{
+  "_id": "037e8cc830aac08ef57cb376",
+  "title": "Fixing Trie Insertion Edge Case",
+  "slug": "fixing-trie-insertion-edge-case-bugfix-easy-tries-4",
+  "difficulty": "Easy",
+  "category": "DSA",
+  "subCategory": "TRIE",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "trie"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given a Trie data structure, insert multiple words into the Trie using the `insert` function. However, the function currently fails to handle a specific edge case where a word's prefix is already present in the Trie but the word itself is not.",
+    "inputFormat": "A list of words to be inserted into the Trie.",
+    "outputFormat": "Whether the insertion was successful for each word.",
+    "notes": "The Trie is initialized with an empty root node.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "insert [\"apple\", \"app\", \"orange\"]",
+        "output": "true false true",
+        "explanation": "The word \"app\" shares a prefix with existing word \"apple\" but is not inserted."
+      },
+      {
+        "input": "insert [\"cat\", \"at\"]",
+        "output": "true false",
+        "explanation": "The word \"at\" shares a prefix with existing word \"cat\" but is not inserted."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Check for existing words in the Trie before inserting new words"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial",
+    "intuition": "Insert words into the Trie while checking for existing words.",
+    "bruteForce": "Perform a depth-first search of the Trie to check for existing words.",
+    "betterSolution": "Utilize a Trie's built-in properties to efficiently check for existing words.",
+    "optimalSolution": "Use a prefix search to check for existing words before inserting new words.",
+    "proofOfCorrectness": "Verify the correctness of the optimal solution.",
+    "dryRun": "Walk through an example of inserting words into the Trie.",
+    "commonMistakes": [
+      "Incorrectly handling edge cases",
+      "Failing to check for existing words"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "class Trie { public: bool insert(string word) { // TODO: implement } };",
+    "java": "public class Trie { public boolean insert(String word) { // TODO: implement } }",
+    "python": "class Trie: def insert(self, word: str) -> bool: pass",
+    "javascript": "function Trie() { this.insert = function(word) { // TODO: implement } }"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Trie { public: bool insert(string word) { if (root == nullptr) root = new TrieNode(); bool inserted = false; for (int i = 0; i < word.size(); i++) { inserted = true; root->children[word[i] - 'a'].insert(word.substr(i + 1)); } return true; } private: TrieNode* root; };",
+    "java": "public class Trie { public boolean insert(String word) { if (root == null) root = new TrieNode(); boolean inserted = false; for (int i = 0; i < word.length(); i++) { inserted = true; root.children[word.charAt(i) - 'a'].insert(word.substring(i + 1)); } return true; } private TrieNode root; }",
+    "python": "class Trie: def insert(self, word: str) -> bool: if not self.root: self.root = TrieNode() inserted = False for i in range(len(word)): inserted = True self.root.children[word[i] - 'a'].insert(word[i + 1:]) return True",
+    "javascript": "function Trie() { this.insert = function(word) { if (!this.root) this.root = new TrieNode(); var inserted = false; for (var i = 0; i < word.length; i++) { inserted = true; this.root.children[word.charCodeAt(i) - 'a'].insert(word.slice(i + 1)); } return true; } }"
+  },
+  "functionSignature": {
+    "cpp": "bool insert(string word);",
+    "java": "boolean insert(String word);",
+    "python": "def insert(self, word: str) -> bool:",
+    "javascript": "var insert = function(word);"
+  },
+  "solutions": {
+    "python": "class Trie: def insert(self, word: str) -> bool: if not self.root: self.root = TrieNode() for ch in word: if ch not in self.root.children: self.root.children[ch] = TrieNode() self.root = self.root.children[ch] return True\n\ndef create_trie(lst): trie = Trie() for word in lst: trie.insert(word) return trie\n\n# Test the function\ntrie = create_trie(['apple', 'app', 'orange'])\nprint(trie.insert('at'))  # Should print: False",
+    "cpp": "class Trie { public: bool insert(string word) { if (!root) root = new TrieNode(); for (char ch : word) { if (root->children.find(ch) == root->children.end()) root->children[ch] = new TrieNode(); root = root->children[ch]; } return true; } private: TrieNode* root; };",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "3\napple\ncat\nat",
+      "output": "true false false",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_hidden_generated",
+      "input": "3\napple\ncat\nat",
+      "output": "true false false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

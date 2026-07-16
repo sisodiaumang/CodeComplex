@@ -1,0 +1,165 @@
+{
+  "_id": "1bf9fba9b632c7d2c1a9c8df",
+  "title": "Building a Simple Bookstore with ORM",
+  "slug": "building-a-simple-bookstore-with-orm-easy-orm",
+  "difficulty": "Easy",
+  "topics": [
+    "ORM"
+  ],
+  "statement": "Create a RESTful API for a simple bookstore using Express and Sequelize. The bookstore has two resources: books and authors. Implement endpoints for CRUD operations on both resources. Ensure that all endpoints return the expected responses, including HTTP status codes and JSON output.",
+  "constraints": [
+    "Must use Sequelize as the ORM tool.",
+    "Use the in-memory database provided."
+  ],
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/api/books",
+      "description": "Retrieve a list of all books. Response should contain a list of book objects in JSON format."
+    },
+    {
+      "method": "GET",
+      "path": "/api/books/1",
+      "description": "Retrieve a book by its ID. Response should contain a single book object in JSON format."
+    },
+    {
+      "method": "POST",
+      "path": "/api/books",
+      "description": "Create a new book. Request body should contain the book's title, author ID, and publication year. Response should contain the newly created book with its ID."
+    },
+    {
+      "method": "PUT",
+      "path": "/api/books/1",
+      "description": "Update an existing book. Request body should contain the updated book's title, author ID, and publication year. Response should contain the updated book with its ID."
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/books/1",
+      "description": "Delete a book by its ID. Response should contain a success message."
+    },
+    {
+      "method": "GET",
+      "path": "/api/authors",
+      "description": "Retrieve a list of all authors. Response should contain a list of author objects in JSON format."
+    },
+    {
+      "method": "GET",
+      "path": "/api/authors/1",
+      "description": "Retrieve an author by its ID. Response should contain a single author object in JSON format."
+    },
+    {
+      "method": "POST",
+      "path": "/api/authors",
+      "description": "Create a new author. Request body should contain the author's name and birth year. Response should contain the newly created author with its ID."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\n  \"name\": \"bookstore\",\n  \"version\": \"1.0.0\",\n  \"main\": \"index.js\",\n  \"scripts\": {\n    \"start\": \"node index.js\"\n  },\n  \"dependencies\": {\n    \"express\": \"^4.18.2\",\n    \"sequelize\": \"^6.7.2\",\n    \"sequelize-cli\": \"^6.2.0\",\n    \"pg\": \"^8.7.3\"\n  }\n}",
+    "index.js": "const express = require('express');\nconst app = express();\napp.use(express.json());\n\nconst Sequelize = require('sequelize');\nconst sequelize = new Sequelize('postgresql://localhost/bookstore');\n\n// Create models\nconst Book = sequelize.define('Book', {\n  id: {\n    type: Sequelize.INTEGER,\n    primaryKey: true,\n    autoIncrement: true\n  },\n  title: {\n    type: Sequelize.STRING\n  },\n  authorId: {\n    type: Sequelize.INTEGER\n  },\n  publicationYear: {\n    type: Sequelize.INTEGER\n  }\n});\n\nconst Author = sequelize.define('Author', {\n  id: {\n    type: Sequelize.INTEGER,\n    primaryKey: true,\n    autoIncrement: true\n  },\n  name: {\n    type: Sequelize.STRING\n  },\n  birthYear: {\n    type: Sequelize.INTEGER\n  }\n});\n\n// TODO: Implement endpoints\n\napp.listen(3000, () => console.log('Server running on port 3000'));\n"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "GET",
+      "path": "/api/books",
+      "expectedStatus": 200,
+      "expectedBody": [
+        {
+          "id": 1,
+          "title": "Book 1",
+          "authorId": 1,
+          "publicationYear": 2000
+        }
+      ],
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "POST",
+      "path": "/api/books",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "title": "New Book",
+        "authorId": 1,
+        "publicationYear": 2020
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "id": 2,
+        "title": "New Book",
+        "authorId": 1,
+        "publicationYear": 2020
+      },
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "GET",
+      "path": "/api/books/1",
+      "expectedStatus": 200,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "PUT",
+      "path": "/api/books/1",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "title": "Updated Book",
+        "authorId": 1,
+        "publicationYear": 2010
+      },
+      "expectedStatus": 200,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "DELETE",
+      "path": "/api/books/1",
+      "expectedStatus": 200,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "mongoose",
+    "prisma",
+    "sequelize",
+    "typeorm",
+    "drizzle",
+    "relations",
+    "populate",
+    "schema",
+    "migration",
+    "orm",
+    "database",
+    "crud",
+    "rest-api"
+  ]
+}

@@ -1,0 +1,152 @@
+{
+  "_id": "1abf370c9de6b6a9e4741bc2",
+  "title": "Implement a Rate-Limited Book API with Authentication",
+  "slug": "implement-a-rate-limited-book-api-with-authentication-medium-node-js",
+  "difficulty": "Medium",
+  "topics": [
+    "NODE_JS"
+  ],
+  "statement": "Implement a RESTful API to manage a collection of books using Node.js and Express. The API must be rate-limited to prevent brute-force attacks and support basic authentication. \n\n    **Endpoints**\n    - POST /api/books: Create a new book. The request body must contain the book's title, author, and publication year. A 201 response code is expected with the newly created book's ID in the response body.\n    - GET /api/books/:id: Retrieve a book by its ID. A 200 response code is expected with the book's details in the response body.\n    - GET /api/books: Retrieve a list of all books. A 200 response code is expected with a list of books in the response body.\n    \n    **Authentication**\n    Basic authentication is required for all endpoints. The username and password must be provided in the `Authorization` header.\n    \n    **Rate Limiting**\n    The API is rate-limited to 5 requests per minute per user. If the rate limit is exceeded, a 429 response code is expected.\n    \n    **Error Handling**\n    If a book with the same ID already exists, a 409 response code is expected. If a book's ID is invalid, a 400 response code is expected. If authentication fails, a 401 response code is expected.",
+  "constraints": [
+    "Must use only the in-memory array provided in the starter code.",
+    "Must implement rate limiting using the `rate-limiter-flexible` package."
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/books",
+      "description": "Create a new book. The request body must contain the book's title, author, and publication year. A 201 response code is expected with the newly created book's ID in the response body."
+    },
+    {
+      "method": "GET",
+      "path": "/api/books/:id",
+      "description": "Retrieve a book by its ID. A 200 response code is expected with the book's details in the response body."
+    },
+    {
+      "method": "GET",
+      "path": "/api/books",
+      "description": "Retrieve a list of all books. A 200 response code is expected with a list of books in the response body."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\"name\":\"book-api\",\"version\":\"1.0.0\",\"main\":\"index.js\",\"scripts\":{\"start\":\"node index.js\"},\"dependencies\":{\"express\":\"^4.18.2\",\"rate-limiter-flexible\":\"^3.0.0\"},\"rate-limiter-flexible\":{\"keyPrefix\":\"book-api\"}}",
+    "index.js": "const express = require('express');\nconst rateLimiterFlexible = require('rate-limiter-flexible');\nconst books = [];\n\nconst app = express();\nconst rl = rateLimiterFlexible.getRateLimiter();\n\napp.use(express.json());\n\n// TODO: Implement authentication middleware\n\n// TODO: Implement rate limiting middleware\n\n// TODO: Implement book endpoints\n\napp.listen(3000, () => console.log('Server running on port 3000'))"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "POST",
+      "path": "/api/books",
+      "headers": {
+        "Authorization": "Basic dXNlcm5hbWU6cGFzc3dvcmQ=",
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "title": "Book Title",
+        "author": "Book Author",
+        "publicationYear": 2022
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "id": 1
+      },
+      "expectedBodySchema": null,
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "GET",
+      "path": "/api/books/1",
+      "headers": {
+        "Authorization": "Basic dXNlcm5hbWU6cGFzc3dvcmQ="
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "id": 1,
+        "title": "Book Title",
+        "author": "Book Author",
+        "publicationYear": 2022
+      },
+      "expectedBodySchema": null,
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "POST",
+      "path": "/api/books",
+      "headers": {
+        "Authorization": "Basic dXNlcm5hbWU6cGFzc3dvcmQ=",
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "title": "Book Title",
+        "author": "Book Author"
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "GET",
+      "path": "/api/books/invalid-id",
+      "headers": {
+        "Authorization": "Basic dXNlcm5hbWU6cGFzc3dvcmQ="
+      },
+      "expectedStatus": 404,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "POST",
+      "path": "/api/books",
+      "headers": {
+        "Authorization": "Basic invalid-username:invalid-password"
+      },
+      "body": {
+        "title": "Book Title",
+        "author": "Book Author",
+        "publicationYear": 2022
+      },
+      "expectedStatus": 401,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "event-loop",
+    "streams",
+    "buffers",
+    "file-system",
+    "process",
+    "child-process",
+    "worker-threads",
+    "cluster",
+    "timers",
+    "rate-limiting",
+    "authentication",
+    "express",
+    "node.js"
+  ]
+}

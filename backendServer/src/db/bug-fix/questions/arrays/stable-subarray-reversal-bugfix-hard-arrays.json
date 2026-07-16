@@ -1,0 +1,153 @@
+{
+  "_id": "8de10884311036cb193b3491",
+  "title": "Stable Subarray Reversal",
+  "slug": "stable-subarray-reversal-bugfix-hard-arrays",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "Array",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "array"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given an integer array, determine the minimum number of subarray reversals required to make the entire array stable, meaning that for any indices `i` and `j` where `i < j`, the array remains sorted after reversing the subarray `nums[i..j]. A subarray is considered stable if the subsequence of indices are sorted in ascending order.",
+    "inputFormat": "The first line of input contains an integer `t` denoting the number of test cases. For each test case, the first line contains an integer `n`, the size of the array. The subsequent line contains `n` space-separated integers representing the array elements.",
+    "outputFormat": "For each test case, output the minimum number of subarray reversals required to make the entire array stable.",
+    "notes": "The array may contain duplicate elements. The length of the array `n` will be between 1 and 10000.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "1\\n5\\n5 4 3 2 1",
+        "output": "2",
+        "explanation": "One of the possible stable sequences is [5,4,3,2,1]. We need to reverse the subarray [5,4,3,2,1] to get it stable."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Think about how you can identify a stable subarray."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial Solution",
+    "intuition": "The idea is to maintain a list of subarray reversals.",
+    "bruteForce": "The brute force approach involves trying all possible subarray reversals and checking if the resulting array is stable.",
+    "betterSolution": "We can use a more efficient approach involving two pointers and a boolean array.",
+    "optimalSolution": "The optimal solution involves using a two-pointer technique to identify subarray reversals and a boolean array to track the stability of subarrays.",
+    "proofOfCorrectness": "The correctness of the solution can be proven by showing that all possible subarray reversals are considered and that the resulting array is stable.",
+    "dryRun": "A dry run of the solution involves walking through a sample test case and identifying the steps involved in the solution.",
+    "commonMistakes": [
+      "Mistaking a subarray reversal for a stable subarray.",
+      "Failing to consider all possible subarray reversals."
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n   int minReversals(std::vector<int>& nums);\n};",
+    "java": "public class Solution {\npublic int minReversals(int[] nums);\n}",
+    "python": "class Solution:\n    def minReversals(self, nums: list[int]) -> int:\n        # TODO: implement",
+    "javascript": "function Solution() {\n  return {\n    minReversals: function(nums) {\n      // TODO: implement\n    }\n  };\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n   int minReversals(std::vector<int>& nums) {\n      int count = 0;\n      for (int i = 0; i < nums.size(); i++) {\n         if (i > 0 && nums[i] < nums[i - 1]) {\n            count++;\n         }\n      }\n      return count;\n   }\n};",
+    "java": "public class Solution {\npublic int minReversals(int[] nums) {\n   int count = 0;\n   for (int i = 0; i < nums.length; i++) {\n      if (i > 0 && nums[i] < nums[i - 1]) {\n         count++;\n      }\n   }\n   return count;\n}",
+    "python": "class Solution:\n    def minReversals(self, nums: list[int]) -> int:\n        count = 0\n        for i in range(len(nums)):\n            if i > 0 and nums[i] < nums[i - 1]:\n                count++\n        return count",
+    "javascript": "function Solution() {\n  return {\n    minReversals: function(nums) {\n      let count = 0;\n      for (let i = 0; i < nums.length; i++) {\n         if (i > 0 && nums[i] < nums[i - 1]) {\n            count++;\n         }\n      }\n      return count;\n    }\n  };\n}"
+  },
+  "functionSignature": {
+    "cpp": "bool solve(vector<int>& nums);",
+    "java": "public boolean solve(int[] nums);",
+    "python": "def solve(self, nums: list[int]) -> bool:",
+    "javascript": "var solve = function(nums);"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def minReversals(self, nums: list[int]) -> int:\n        def is_stable(nums):\n            for i in range(len(nums) - 1):\n                if nums[i] > nums[i + 1]:\n                    return False\n            return True\n        count = 0\n        for i in range(len(nums)):\n            if not is_stable(nums[:i] + nums[i + 1:]):\n                count += 1\n                if i < len(nums) - 1:\n                    nums[i:i + 2] = nums[i + 2:i:-1]\n        return count\n    @staticmethod\n    def main():\n        import sys\n        for line in sys.stdin.readline().splitlines():\n            nums = list(map(int, line.split()))\n            solution = Solution()\n            print(solution.minReversals(nums))",
+    "cpp": "class Solution {\npublic:\n   int minReversals(std::vector<int>& nums) {\n      std::vector<bool> visited(nums.size(), false);\n      int count = 0;\n      for (int i = 0; i < nums.size(); i++) {\n         if (!visited[i]) {\n            std::vector<int> subarray;\n            for (int j = i; !visited[j] && j < nums.size(); j++) {\n               subarray.push_back(nums[j]);\n               visited[j] = true;\n               if (j > 0 && subarray[subarray.size() - 1] < subarray[subarray.size() - 2]) {\n                  count++;\n               }\n            }\n         }\n      }\n      return count;\n   }\n};",
+    "javascript": "// Solution",
+    "java": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "1\\n5\\n5 4 3 2 1",
+      "output": "2",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "2\\n3\\n3 2 1\\n5\\n1 2 3 4 5",
+      "output": "3\\n0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

@@ -1,0 +1,151 @@
+{
+  "title": "Docker Compose Port Mapping Validation with Port Collision",
+  "subCategory": "Docker Port Mapping",
+  "statement": {
+    "markdown": "Given a Docker Compose configuration file as a string, validate whether the port mappings between services are valid. A port mapping is valid if the exposed port number is not used by another service. The validation should be case-insensitive and support port ranges (e.g., 3000-4000).",
+    "inputFormat": "A string representing the Docker Compose configuration file contents.",
+    "outputFormat": "A boolean indicating whether the port mappings are valid. If invalid, return `false`.",
+    "notes": "You can assume that each service name is unique, and port ranges are inclusive.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 100,
+        "description": "Number of services in the configuration file"
+      },
+      {
+        "variable": "services",
+        "type": "integer",
+        "min": 1,
+        "max": 100,
+        "description": "Number of services with port mappings"
+      }
+    ],
+    "examples": [
+      {
+        "input": "version: '3'\n\nservices:\n  web1:\n    ports:\n      - 80:80\n  web2:\n    ports:\n      - 3000-4000:3000-4000\n",
+        "output": "true",
+        "explanation": "Port 80 is used by web1 and does not conflict with web2."
+      },
+      {
+        "input": "version: '3'\n\nservices:\n  web1:\n    ports:\n      - 80:80\n  web2:\n    ports:\n      - 80:80\n",
+        "output": "false",
+        "explanation": "Port 80 is used by both web1 and web2."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 60,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DOCKER"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "docker"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 1,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Split the configuration file into individual services."
+    },
+    {
+      "order": 2,
+      "text": "Extract the port mappings for each service."
+    },
+    {
+      "order": 3,
+      "text": "Check for port collisions by comparing the exposed ports."
+    }
+  ],
+  "editorial": {
+    "title": "Docker Compose Port Mapping Validation",
+    "intuition": "You need to validate the port mappings between services in the Docker Compose configuration file.",
+    "bruteForce": "You can use a brute-force approach by iterating over each service and checking for port collisions.",
+    "betterSolution": "You can use a more efficient approach by parsing the configuration file and storing the port mappings in a data structure.",
+    "optimalSolution": "The optimal solution involves parsing the configuration file, using a set to store unique exposed ports, and checking for port collisions.",
+    "proofOfCorrectness": "The function is correct when it returns true for valid port mappings and false for invalid port mappings.",
+    "dryRun": "You can run the function with the example inputs to test its correctness.",
+    "commonMistakes": [
+      "Not handling port ranges correctly",
+      "Not checking for case-insensitivity"
+    ],
+    "timeComplexity": "O(n*m)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "function validatePortMappings(config) {\n  // Your code here\n}",
+    "python": "class Solution:\n  def validate_port_mappings(self, config: str) -> bool:\n    # Your code here\n"
+  },
+  "buggyStarterCode": {
+    "javascript": "function validatePortMappings(config) {\n  const services = config.split('service:');\n  let ports = {};\n\n  services.forEach((service, index) => {\n    const serviceConfig = service.trim().split('\\n');\n    const serviceName = serviceConfig[0].trim();\n    const portRange = serviceConfig[2].trim().split('-');\n\n    if (portRange[0] === portRange[1]) {\n      ports[serviceName] = parseInt(portRange[0]);\n    } else {\n      ports[serviceName] = Array.from({ length: portRange[1] - portRange[0] + 1 }, (_, i) => i + portRange[0]);\n    }\n  });\n\n  Object.keys(ports).forEach((serviceName) => {\n    const exposedPorts = ports[serviceName];\n    Object.keys(ports).forEach((otherServiceName) => {\n      if (serviceName !== otherServiceName) {\n        const otherExposedPorts = ports[otherServiceName];\n        exposedPorts.forEach((port) => {\n          if (otherExposedPorts.includes(port)) {\n            return false;\n          }\n        });\n      }\n    });\n  });\n\n  return true;\n}\n",
+    "python": "class Solution:\n  def validate_port_mappings(self, config: str) -> bool:\n    services = config.split('service:');\n    ports = {}\n\n    for service in services:\n      service_config = service.strip().split('\\n');\n      service_name = service_config[0].strip();\n      port_range = service_config[2].strip().split('-');\n\n      if port_range[0] == port_range[1]:\n        ports[service_name] = int(port_range[0]);\n      else:\n        ports[service_name] = list(range(int(port_range[0]), int(port_range[1]) + 1));\n\n    for service_name in ports:\n      exposed_ports = ports[service_name];\n      for other_service_name in ports:\n        if service_name != other_service_name:\n          other_exposed_ports = ports[other_service_name];\n          exposed_ports.forEach(lambda port: other_exposed_ports.includes(port) or return False);\n    return True;"
+  },
+  "functionSignature": {
+    "javascript": "function validatePortMappings(config) {\n  // Your code here\n}",
+    "python": "class Solution:\n  def validate_port_mappings(self, config: str) -> bool:\n    # Your code here\n"
+  },
+  "solutions": {
+    "javascript": "// Create a map to store exposed ports and their corresponding service names\nlet exposedPorts = new Map();\n\nfunction validatePortMappings(config) {\n  // Split the configuration file into individual services\n  const services = config.split('service:');\n  let ports = {};\n\n  services.forEach((service, index) => {\n    const serviceConfig = service.trim().split('\\n');\n    const serviceName = serviceConfig[0].trim();\n    const portRange = serviceConfig[2].trim().split('-');\n\n    // Extract port mappings for each service\n    const exposedPort = parseInt(portRange[0]);\n\n    // Check if the exposed port is already used by another service\n    if (exposedPorts.has(exposedPort)) {\n      return false;\n    }\n\n    // Add the exposed port to the map with its service name\n    exposedPorts.set(exposedPort, serviceName);\n\n    // Store the port mappings in the ports object\n    ports[serviceName] = exposedPort;\n  });\n\n  // Check for port collisions\n  for (const [port, service] of exposedPorts) {\n    for (const otherService in ports) {\n      if (service !== otherService) {\n        const otherPort = ports[otherService];\n        if (port === otherPort) {\n          return false;\n        }\n      }\n    }\n  }\n\n  return true;\n}\n",
+    "python": "import re\nfrom typing import Dict, List\n\nclass Solution:\n  def validate_port_mappings(self, config: str) -> bool:\n    # Create a dictionary to store exposed ports and their corresponding service names\n    exposed_ports = {}\n\n    # Split the configuration file into individual services\n    services = config.split('service:');\n    ports = {}\n\n    for service in services:\n      service_config = service.strip().split('\\n');\n      service_name = service_config[0].strip();\n      port_range = service_config[2].strip().split('-');\n\n      # Extract port mappings for each service\n      exposed_port = int(port_range[0]);\n\n      # Check if the exposed port is already used by another service\n      if exposed_port in exposed_ports:\n        return False;\n\n      # Add the exposed port to the dictionary with its service name\n      exposed_ports[exposed_port] = service_name;\n\n      # Store the port mappings in the ports dictionary\n      ports[service_name] = exposed_port;\n\n    # Check for port collisions\n    for port in exposed_ports:\n      for other_service in ports:\n        if exposed_ports[port] != other_service:\n          other_port = ports[other_service]\n          if port == other_port:\n            return False;\n    return True;"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "version: '3'\n\nservices:\n  web1:\n    ports:\n      - 80:80\n  web2:\n    ports:\n      - 3000-4000:3000-4000\n",
+      "output": "true",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "version: '3'\n\nservices:\n  web1:\n    ports:\n      - 80:80\n  web2:\n    ports:\n      - 80:80\n",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "0803f469e6b5059972e70ce5",
+  "slug": "docker-compose-port-mapping-validation-with-port-collision-bugfix-hard-docker",
+  "mode": "bug_fix",
+  "category": "DOCKER",
+  "difficulty": "Hard"
+}

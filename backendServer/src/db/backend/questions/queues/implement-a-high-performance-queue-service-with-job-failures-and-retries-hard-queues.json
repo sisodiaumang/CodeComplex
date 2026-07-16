@@ -1,0 +1,127 @@
+{
+  "_id": "1ce6f71b9d14e2f0c346fb42",
+  "title": "Implement a High-Performance Queue Service with Job Failures and Retries",
+  "slug": "implement-a-high-performance-queue-service-with-job-failures-and-retries-hard-queues",
+  "difficulty": "Hard",
+  "topics": [
+    "QUEUES"
+  ],
+  "statement": "Design and implement a high-performance queue service using BullMQ that supports job failures, retries, and a custom scheduling mechanism. The service must be able to handle concurrent job submissions, manage job states, and provide a simple API for creating and monitoring jobs.\n\nEndpoints:\n\n* `POST /queues/{queueName}/jobs`: Create a new job in the specified queue with a given payload and scheduling information. The payload must contain the job's data, the retry count, the maximum retry count, and the delay between retries.\n* `GET /queues/{queueName}/jobs/{jobId}`: Retrieve the status and details of a specific job in the specified queue.\n* `GET /queues/{queueName}/jobs/failure`: Get a list of all failed jobs in the specified queue.\n\nConstraints:\n\n* The service must use BullMQ as the underlying message broker.\n* The maximum number of concurrent job executions is limited to 10.\n* The service must be able to handle jobs with payloads up to 10MB in size.\n* The `POST /queues/{queueName}/jobs` endpoint must return an HTTP status of 201 on successful job creation, with the job's ID in the response body.",
+  "constraints": [
+    "Must use BullMQ as the underlying message broker",
+    "Maximum 10 concurrent job executions",
+    "Handle jobs with payloads up to 10MB in size"
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/queues/{queueName}/jobs",
+      "description": "Create a new job in the specified queue with a given payload and scheduling information.\n\nQuery Parameters:\n\n* `queueName`: The name of the queue to create the job in.\n\nRequest Body:\n\n* `data`: The job's data (string or JSON object).\n* `retryCount`: The initial retry count.\n* `maxRetryCount`: The maximum retry count.\n* `delay`: The delay between retries in milliseconds.\n\nResponse:\n\n* `201 Created`: Job created successfully, with the job's ID in the response body.\n* `400 Bad Request`: Invalid payload or scheduling information.\n* `500 Internal Server Error`: Job creation failed due to an internal error."
+    },
+    {
+      "method": "GET",
+      "path": "/queues/{queueName}/jobs/{jobId}",
+      "description": "Retrieve the status and details of a specific job in the specified queue.\n\nQuery Parameters:\n\n* `queueName`: The name of the queue containing the job.\n* `jobId`: The ID of the job to retrieve.\n\nResponse:\n\n* `200 OK`: Job retrieved successfully, with its status and details in the response body.\n* `404 Not Found`: Job not found in the specified queue.\n* `500 Internal Server Error`: Job retrieval failed due to an internal error."
+    },
+    {
+      "method": "GET",
+      "path": "/queues/{queueName}/jobs/failure",
+      "description": "Get a list of all failed jobs in the specified queue.\n\nQuery Parameters:\n\n* `queueName`: The name of the queue containing the failed jobs.\n\nResponse:\n\n* `200 OK`: List of failed jobs retrieved successfully, with their status and details in the response body.\n* `404 Not Found`: No failed jobs found in the specified queue.\n* `500 Internal Server Error`: Failed job retrieval failed due to an internal error."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\"name\": \"queue-service\",\n  \"version\": \"1.0.0\",\n  \"main\": \"index.js\",\n  \"scripts\": {\n    \"start\": \"node index.js\"\n  },\n  \"dependencies\": {\n    \"bullmq\": \"^4.16.0\",\n    \"express\": \"^4.18.2\"\n  }\n}",
+    "index.js": "const express = require('express');\nconst { BullQueue, BullQueueManager } = require('bullmq');\n\nconst app = express();\napp.use(express.json());\n\n// Initialize BullMQ queues\nconst queueManager = new BullQueueManager();\nconst highPriorityQueue = queueManager.createQueue('high-priority');\nconst lowPriorityQueue = queueManager.createQueue('low-priority');\n\n// TODO: Implement job creation and retrieval endpoints\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "POST",
+      "path": "/queues/high-priority/jobs",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "data": "test job data",
+        "retryCount": 2,
+        "maxRetryCount": 5,
+        "delay": 1000
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "jobId": "some-job-id"
+      },
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "GET",
+      "path": "/queues/high-priority/jobs/some-job-id",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "status": "pending",
+        "data": "test job data"
+      },
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "POST",
+      "path": "/queues/high-priority/jobs",
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "GET",
+      "path": "/queues/high-priority/jobs/some-non-existent-job-id",
+      "expectedStatus": 404,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "GET",
+      "path": "/queues/high-priority/jobs/failure",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "jobs": []
+      },
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "bullmq",
+    "rabbitmq",
+    "kafka",
+    "background-jobs",
+    "workers",
+    "retry",
+    "delayed-jobs",
+    "queues",
+    "message-broker",
+    "job-scheduling"
+  ]
+}

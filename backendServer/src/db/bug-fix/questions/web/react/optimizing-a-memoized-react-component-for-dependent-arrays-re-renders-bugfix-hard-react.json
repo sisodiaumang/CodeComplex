@@ -1,0 +1,141 @@
+{
+  "title": "Optimizing a Memoized React Component for Dependent Arrays Re-renders",
+  "subCategory": "State Management",
+  "statement": {
+    "markdown": "Given a Memoized React component `useMemo` hook with `deps` array containing an object with nested array property references, fix the bug causing it to re-render unnecessarily on state changes. The component uses the `useState` hook to manage its internal state and should only re-render when required. The goal is to optimize the component to update correctly when the dependent arrays change.",
+    "inputFormat": "A React functional component with a `useState` hook and a `useMemo` hook with a `deps` array containing an object with nested array property references.",
+    "outputFormat": "A debugged React functional component with the optimized `useMemo` hook and `deps` array.",
+    "notes": "Ensure the component updates correctly when the dependent arrays change and does not re-render unnecessarily.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10
+      },
+      {
+        "variable": "obj",
+        "type": "object",
+        "min": 0,
+        "max": 10
+      }
+    ],
+    "examples": [
+      {
+        "input": "const obj = { arr: [1, 2, 3] }",
+        "output": "const memoizedArray = useMemo(() => [...obj.arr], [obj.arr])",
+        "explanation": "The component should re-render when the `obj.arr` array changes."
+      },
+      {
+        "input": "const obj = { arr: [1, 2, 3], nestedArr: [obj.arr] }",
+        "output": "const memoizedArray = useMemo(() => [...obj.arr], [obj.arr, obj.nestedArr])",
+        "explanation": "The component should re-render when either the `obj.arr` or `obj.nestedArr` arrays change."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "REACT"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "react"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the `JSON.stringify()` method to compare the state of the dependent arrays."
+    }
+  ],
+  "editorial": {
+    "title": "Optimizing Memoized Components with Dependent Arrays",
+    "intuition": "When using the `useMemo` hook with `deps` array containing objects with nested array property references, ensure to update the dependent arrays correctly to avoid unnecessary re-renders.",
+    "bruteForce": "One possible solution is to use the `JSON.stringify()` method to compare the state of the dependent arrays.",
+    "betterSolution": "Use a library like `deep-equal` to compare the state of the dependent arrays.",
+    "optimalSolution": "Implement a custom equality function to compare the state of the dependent arrays.",
+    "proofOfCorrectness": "The component updates correctly when the dependent arrays change and does not re-render unnecessarily.",
+    "dryRun": "Step-by-step example run to demonstrate the correct behavior.",
+    "commonMistakes": [
+      "Comparing arrays using the `===` operator",
+      "Not updating dependent arrays correctly"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "import React, { useState, useMemo } from 'react';\nconst MyComponent = () => {\n  const [obj, setObj] = useState({ arr: [1, 2, 3] });\n  const memoizedArray = useMemo(() => [...obj.arr], [obj]);\n  return (\n    <div>Re-renders: {memoizedArray}</div>\n  );\n};\nexport default MyComponent;",
+    "python": "class MyComponent:\n  def __init__(self):\n    self.obj = {'arr': [1, 2, 3]}\n  def render(self):\n    self.memoized_array = self.memoized_array(self.obj['arr'])\n    return f'Re-renders: {self.memoized_array}'"
+  },
+  "buggyStarterCode": {
+    "javascript": "import React, { useState, useMemo } from 'react';\nconst MyComponent = () => {\n  const [obj, setObj] = useState({ arr: [1, 2, 3] });\n  const memoizedArray = useMemo(() => [...obj.arr], [obj]); // BUG: obj is an object, not an array\n  return (\n    <div>Re-renders: {memoizedArray}</div>\n  );\n};\nexport default MyComponent;",
+    "python": "class MyComponent:\n  def __init__(self):\n    self.obj = {'arr': [1, 2, 3]}\n  def render(self):\n    self.memoized_array = self.memoized_array(self.obj['arr'])\n    return f'Re-renders: {self.memoized_array}'"
+  },
+  "functionSignature": {
+    "javascript": "var solve = function(s);",
+    "python": "def solve(self, s: str) -> bool:"
+  },
+  "solutions": {
+    "javascript": "// Solution\nimport React, { useState, useMemo } from 'react';\nconst MyComponent = () => {\n  const [obj, setObj] = useState({ arr: [1, 2, 3] });\n  const memoizedArray = useMemo(() => [...obj.arr], [obj.arr]);\n  return (\n    <div>Re-renders: {memoizedArray}</div>\n  );\n};\nexport default MyComponent;",
+    "python": "class MyComponent:\n  def __init__(self):\n    self.obj = {'arr': [1, 2, 3]}\n  def render(self):\n    self.memoized_array = self.memoized_array(self.obj['arr'])\n    return f'Re-renders: {self.memoized_array}'"
+  },
+  "judgeConfig": {
+    "timeLimit": 2000,
+    "memoryLimit": 65536,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "const obj = { arr: [1, 2, 3] };",
+      "output": "Re-renders: [1, 2, 3]",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "const obj = { arr: [1, 2, 3], nestedArr: [obj.arr] };",
+      "output": "Re-renders: [1, 2, 3]",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "525be0ee3fe27d697c25556f",
+  "slug": "optimizing-a-memoized-react-component-for-dependent-arrays-re-renders-bugfix-hard-react",
+  "mode": "bug_fix",
+  "category": "REACT",
+  "difficulty": "Hard"
+}

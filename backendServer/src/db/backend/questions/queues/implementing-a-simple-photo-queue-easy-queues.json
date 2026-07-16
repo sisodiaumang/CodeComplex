@@ -1,0 +1,157 @@
+{
+  "_id": "4207d6cd2aa2a3418f93806e",
+  "title": "Implementing a Simple Photo Queue",
+  "slug": "implementing-a-simple-photo-queue-easy-queues",
+  "difficulty": "Easy",
+  "topics": [
+    "QUEUES"
+  ],
+  "statement": "Design and implement a RESTful API for a photo processing service. The API should allow adding photos to a queue for processing, retrieving the status of a photo in the queue, and retrieving the processed photo. If a photo has not been processed yet, the status should be 'pending'. Once a photo has been processed, the status should be 'done'. If there are any errors during processing, the status should be 'error'. The processed photo should be stored in the queue until a user requests it. When a user requests a photo, the processed version should be returned, or an error message if the photo has not been processed yet or there was an error during processing.\n\nYou should implement the following endpoints:\n\n- `POST /api/photos`: Add a new photo to the queue for processing.\n- `GET /api/photos/:id`: Retrieve the status of a photo in the queue.\n- `GET /api/photos/:id/processed`: Retrieve the processed photo if it has been processed.\n\nNote: You can assume that the processing of a photo takes some time, but for the purpose of this exercise, you can simulate this delay by sleeping for 2 seconds when processing a photo. You do not need to implement any persistent storage for the queue. You can use an in-memory array to store the queue.\n\nConstraints:\n- Must use only the in-memory array provided for storing the queue.\n- Must not store any sensitive data.\n\nEndpoints:\n\n- `POST /api/photos`: Add a new photo to the queue for processing.\n- `GET /api/photos/:id`: Retrieve the status of a photo in the queue.\n- `GET /api/photos/:id/processed`: Retrieve the processed photo if it has been processed.\n",
+  "constraints": [
+    "Must use only the in-memory array provided for storing the queue.",
+    "Must not store any sensitive data."
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/photos",
+      "description": "Add a new photo to the queue for processing. Request Body: { id: number, photo: string }, Response: { status: string }"
+    },
+    {
+      "method": "GET",
+      "path": "/api/photos/:id",
+      "description": "Retrieve the status of a photo in the queue. Query Parameters: id: number, Response: { status: string }"
+    },
+    {
+      "method": "GET",
+      "path": "/api/photos/:id/processed",
+      "description": "Retrieve the processed photo if it has been processed. Query Parameters: id: number, Response: { photo: string, status: string }"
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\"name\": \"photo-queue\",\n  \"version\": \"1.0.0\",\n  \"main\": \"index.js\",\n  \"scripts\": {\n    \"start\": \"node index.js\"\n  },\n  \"dependencies\": {\n    \"express\": \"^4.18.2\"\n  }\n}",
+    "index.js": "const express = require('express');\nconst app = express();\napp.use(express.json());\n\nconst queue = [];\n\napp.post('/api/photos', (req, res) => {\n    // TODO: Add photo to queue\n});\n\napp.get('/api/photos/:id', (req, res) => {\n    // TODO: Retrieve status of photo in queue\n});\n\napp.get('/api/photos/:id/processed', (req, res) => {\n    // TODO: Retrieve processed photo from queue\n});\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "POST",
+      "path": "/api/photos",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "id": 1,
+        "photo": "https://example.com/photo1.jpg"
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "status": "pending"
+      },
+      "expectedBodySchema": null,
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "GET",
+      "path": "/api/photos/1",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "status": "pending"
+      },
+      "expectedBodySchema": null,
+      "isVisible": true
+    },
+    {
+      "id": "v_tc3",
+      "method": "GET",
+      "path": "/api/photos/1/processed",
+      "expectedStatus": 404,
+      "expectedBody": {
+        "error": "Photo not processed"
+      },
+      "expectedBodySchema": null,
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "POST",
+      "path": "/api/photos",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "id": 2,
+        "photo": "https://example.com/photo2.jpg"
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "status": "pending"
+      },
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "GET",
+      "path": "/api/photos/2",
+      "params": {
+        "id": 2
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "status": "done"
+      },
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "GET",
+      "path": "/api/photos/2/processed",
+      "params": {
+        "id": 2
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "photo": "https://example.com/photo2_processed.jpg",
+        "status": "done"
+      },
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "bullmq",
+    "rabbitmq",
+    "kafka",
+    "background-jobs",
+    "workers",
+    "retry",
+    "delayed-jobs",
+    "queues",
+    "easy",
+    "express",
+    "nodejs"
+  ]
+}

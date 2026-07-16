@@ -1,0 +1,58 @@
+{
+  "_id": "1936d5559d4ca422673c0595",
+  "title": "Branded Types",
+  "slug": "type-branded-types",
+  "difficulty": "Hard",
+  "topics": [
+    "TYPESCRIPT"
+  ],
+  "statement": {
+    "markdown": "## Branded Types\n### Requirements\n1. Create a branded type for a person with properties `name` and `age`.\n2. Create an array of branded types and use the `infer` keyword to extract the type within the array.\n3. Use the `infer` keyword to create a union type of branded types.\n4. Create a function that accepts a branded type as an argument and returns a formatted string with the `name` and `age` properties.\n5. Add a constraint to the branded type to ensure it has at least 1 property with an `age` property."
+  },
+  "constraints": [
+    "No third-party libraries can be used.",
+    "All branded types must have at least one property with an `age` property."
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "typescript": "BrandedType: type BrandedType<T> = { type: T; data: T; };\n\ntype Person = BrandedType<{ name: string; age: number; }>;\n\nfunction createPerson(name: string, age: number): Person {\n    return { type: 'Person', data: { name, age } };\n}\n\nfunction getAge(person: Person) {\n    return person.data.age;\n}\nUnionType: \ntype UnionType<T> = T extends { type: infer U } ? U : never;"
+  },
+  "gradingCriteria": [
+    {
+      "id": "TypeInference",
+      "description": "Using `infer` to extract the type within the array.",
+      "weight": 30
+    },
+    {
+      "id": "UnionType",
+      "description": "Using `infer` to create a union type of branded types.",
+      "weight": 25
+    },
+    {
+      "id": "Functionality",
+      "description": "Creating a function that accepts a branded type as an argument and returns a formatted string.",
+      "weight": 20
+    },
+    {
+      "id": "Constraints",
+      "description": "Adding a constraint to the branded type to ensure it has at least 1 property with an `age` property.",
+      "weight": 25
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "typescript"
+    ],
+    "referenceSolution": "BrandedType: type BrandedType<T> = {\n    type: T['type'],\n    data: T['data'],\n};\n\n\ntype Person = BrandedType<{\n    type: 'Person',\n    data: {\n        name: string;\n        age: number;\n    }\n}>;\n\n\ntyope People = BrandedType<{\n    type: 'People',\n    data: Person[];\n}>;\n\ntype UnionPerson = UnionType<Person>;\n\nfunction createPerson(name: string, age: number): People {\n    return {\n        type: 'People',\n        data: [{\n            type: 'Person',\n            data: {\n                name,\n                age\n            }\n        }],\n    };\n}\n\ntype Constraints<T> = T extends {\n    type: 'Person',\n    data: {\n        age: number;\n    },\n    [K in keyof T]?: K extends 'data'\n        ? {\n            [L in keyof T['data']]: L extends 'age'\n                ? never\n                : T['data'][L]\n        }\n        : never\n} ? {\n    [K in keyof T]: K extends 'data'\n        ? {\n            [L in keyof T['data']]: L extends 'age'\n                ? never\n                : T['data'][L]\n        }\n        : T[K]\n}\n: never;\n\nfunction getAge(person: Constraints<Person>): number {\n    return person.data.age;\n}\nConstraints: \ntype Constraints<T> = T extends {\n    type: 'Person',\n    data: {\n        age: number;\n    },\n    [K in keyof T]?: K extends 'data'\n        ? {\n            [L in keyof T['data']]: L extends 'age'\n                ? never\n                : T['data'][L]\n        }\n        : never\n} ? {\n    [K in keyof T]: K extends 'data'\n        ? {\n            [L in keyof T['data']]: L extends 'age'\n                ? never\n                : T['data'][L]\n        }\n        : T[K]\n}\n: never;"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

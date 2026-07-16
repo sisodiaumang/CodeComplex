@@ -1,0 +1,150 @@
+{
+  "_id": "6b4a9fd6aaf27bb88aba76b9",
+  "title": "Invalid Trie Prefix Search",
+  "slug": "invalid-trie-prefix-search-bugfix-hard-tries",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "TRIE",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "trie"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Solve the problem and fix the bugs.",
+    "inputFormat": "Input will consist of two lines: the first line contains a positive integer n, the number of queries. The second line contains n space-separated strings.",
+    "outputFormat": "For each string, print yes if the string is a prefix of some word in the Trie, otherwise print no.",
+    "notes": "The input is guaranteed to be in the correct format.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 100000,
+        "description": "Number of queries"
+      }
+    ],
+    "examples": [
+      {
+        "input": "5\napple\ntable\ncat\nhello\nworld\n",
+        "output": "yes\nno\nno\nyes\nyes\n",
+        "explanation": "apple and world are prefixes of words in the Trie while table, cat and hello are not."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Check if the given string exists in the Trie before returning yes."
+    }
+  ],
+  "editorial": {
+    "title": "Invalid Trie Prefix Search",
+    "intuition": "intuition details.",
+    "bruteForce": "brute Force details.",
+    "betterSolution": "",
+    "optimalSolution": "optimal Solution details.",
+    "proofOfCorrectness": "proof Of Correctness details.",
+    "dryRun": "dry Run details.",
+    "commonMistakes": [],
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    bool search(const string &word) {\n        // TODO: implement\n    }\n};",
+    "java": "public class Solution {\npublic:\n    boolean search(String word) {\n        // TODO: implement\n    }\n}",
+    "python": "class Solution:\n    def search(self, word: str) -> bool:\n        # TODO: implement\n        pass",
+    "javascript": "function search(word) {\n    // TODO: implement\n} "
+  },
+  "buggyStarterCode": {
+    "cpp": "class TrieNode {\n public:\n  int count; // count of children\n  bool isEndOfWord; // True if the node represents the end of a word\n};\n\nclass Solution {\n public:\n  bool search(const string &word) {\n   TrieNode *root = new TrieNode;\n   for(char &c : word) {\n    if(root->isEndOfWord) return true;\n    root = root->child[c - 'a'];\n   }\n   return false;\n  }\n};",
+    "java": "public class TrieNode {\n public:\n  int count; // count of children\n  boolean isEndOfWord; // True if the node represents the end of a word\n};\n\nclass Solution {\n public:\n  boolean search(String word) {\n   TrieNode root = new TrieNode();\n   for(char c : word.toCharArray()) {\n    if(root.isEndOfWord) return true;\n    root = root.child[c - 'a'];\n   }\n   return false;\n  }\n}",
+    "python": "class TrieNode:\n  def __init__(self):\n    self.count = 0\n    self.is_end_of_word = False\n\nclass Solution:\n  def search(self, word: str) -> bool:\n   root = TrieNode()\n   for c in word:\n    if root.is_end_of_word:\n     return True\n    root = root.child[c - 'a']\n   return False",
+    "javascript": "function TrieNode() {\n  this.count = 0;\n  this.isEndOfWord = false;\n}\nclass Solution {\n  search(word) {\n   let root = new TrieNode();\n   for(let c of word) {\n    if(root.isEndOfWord) return true;\n    root = root.child[c.charCodeAt(0) - 'a'.charCodeAt(0)];\n   }\n   return false;\n  }\n}"
+  },
+  "functionSignature": {
+    "cpp": "bool search(const string &word);",
+    "java": "boolean search(String word);",
+    "python": "def search(self, word: str) -> bool;",
+    "javascript": "search(word);"
+  },
+  "solutions": {
+    "python": "import sys\n\nclass TrieNode:\n    def __init__(self):\n        self.count = 0\n        self.is_end_of_word = False\n        self.children = {}\n\nclass Trie:\n    def __init__(self):\n        self.root = TrieNode()\n\n    def insert(self, word):\n        node = self.root\n        for ch in word:\n            if ch not in node.children:\n                node.children[ch] = TrieNode()\n            node = node.children[ch]\n        node.is_end_of_word = True\n\nclass Solution:\n    def __init__(self):\n        self.trie = Trie()\n\n    def search(self, word):\n        node = self.trie.root\n        for ch in word:\n            if ch not in node.children:\n                return False\n            node = node.children[ch]\n        return True\n\nsolution = Solution()\nline = sys.stdin.readline().strip()\n\nn = int(line)\nfor _ in range(n):\n    line = sys.stdin.readline().strip()\n    word = line\n    if solution.search(word):\n        print('yes')\n    else:\n        print('no')",
+    "cpp": "#include <iostream>\n#include <string>\n#include <vector>\n\nusing namespace std;\n\nclass TrieNode {\n public:\n  int count;\n  bool isEndOfWord;\n  TrieNode* child[26];\n};\n\nclass Trie {\n public:\n  TrieNode* root;\n  Trie() { root = new TrieNode(); }\n\n  void insert(const string &word) {\n   TrieNode *node = root;\n   for(char ch : word) {\n    if(node->child[ch - 'a'] == nullptr) {\n     node->child[ch - 'a'] = new TrieNode();\n    }\n    node = node->child[ch - 'a'];\n   }\n   node->isEndOfWord = true;\n  }\n\n  bool search(const string &word) {\n   TrieNode *node = root;\n   for(char ch : word) {\n    if(node->child[ch - 'a'] == nullptr) {\n     return false;\n    }\n    node = node->child[ch - 'a'];\n   }\n   return true;\n  }\n};\n\nclass Solution {\n public:\n  Trie trie;\n\n  void solve() {\n   int n;\n   cin >> n;\n   for(int i = 0; i < n; i++) {\n    string word;\n    cin >> word;\n    if(trie.search(word)) {\n     cout << \"yes\" << endl;\n    } else {\n     cout << \"no\" << endl;\n    }\n   }\n  }\n};\n\nint main() {\n Solution solution;\n solution.solve();\n return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5\napple\ntable\ncat\nhello\nworld\n",
+      "output": "yes\nno\nno\nyes\nyes\n",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "10\ncar\nbus\nplane\ntrain\napple\norange\ngrape\npine\npear\nmango\n",
+      "output": "yes\nno\nyes\nyes\nyes\nno\nno\nno\nno\nno\n",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

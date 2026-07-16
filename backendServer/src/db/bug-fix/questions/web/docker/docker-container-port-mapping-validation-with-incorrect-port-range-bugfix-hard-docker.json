@@ -1,0 +1,153 @@
+{
+  "title": "DOCKER Container Port Mapping Validation with Incorrect Port Range",
+  "subCategory": "DOCKER Container Port Mapping",
+  "statement": {
+    "markdown": "Write a function to validate container port mappings in a Docker Compose file. The function should take a list of container ports and their corresponding host ports as input and return `true` if the port mappings are valid and `false` otherwise. A port mapping is considered valid if the host port is greater than or equal to the container port and the host port is between 1 and 65535. Additionally, a port mapping is invalid if the container port and host port are the same.",
+    "inputFormat": "A list of tuples, where each tuple contains a container port and a host port. The container port is an integer between 1 and 32767, and the host port is an integer between 1 and 65535.",
+    "outputFormat": "A boolean value indicating whether the port mappings are valid or not.",
+    "notes": "The function should handle duplicate container ports, but the host ports should be unique.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of port mappings"
+      }
+    ],
+    "examples": [
+      {
+        "input": "[[8080, 8080], [8081, 8082], [8083, 8083]]",
+        "output": "false",
+        "explanation": "The container port and host port are the same in the third port mapping, which is invalid."
+      },
+      {
+        "input": "[[8080, 8081], [8082, 8082], [8083, 8084]]",
+        "output": "false",
+        "explanation": "The host port is less than the container port in the first port mapping, which is invalid."
+      },
+      {
+        "input": "[[8080, 8081], [8082, 8083], [8084, 8085]]",
+        "output": "true",
+        "explanation": "All port mappings are valid."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DOCKER"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "docker"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text: Check for duplicate container ports and ensure the host port is greater than or equal to the container port."
+    },
+    {
+      "order": 2,
+      "text": "Second hint text: Check if the host port is between 1 and 65535 and not the same as the container port."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "function validatePortMappings(portMappings) { ",
+    "python": "class Solution: def validatePortMappings(self, portMappings): "
+  },
+  "buggyStarterCode": {
+    "javascript": "function validatePortMappings(portMappings) { let valid = true; for (let i = 0; i < portMappings.length; i++) { let containerPort = portMappings[i][0]; let hostPort = portMappings[i][1]; if (containerPort > hostPort) { valid = false; break; } } return valid; }",
+    "python": "class Solution: def validatePortMappings(self, portMappings): valid = True; for containerPort, hostPort in portMappings: if containerPort > hostPort: valid = False; break; return valid;"
+  },
+  "functionSignature": {
+    "javascript": "function validatePortMappings(portMappings);",
+    "python": "def validatePortMappings(self, portMappings):"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction validatePortMappings(portMappings) {\n    let valid = true;\n    let hostPorts = new Set();\n    for (let i = 0; i < portMappings.length; i++) {\n        let containerPort = portMappings[i][0];\n        let hostPort = portMappings[i][1];\n        if (containerPort > hostPort) {\n            valid = false;\n            break;\n        }\n        if (hostPort < 1 || hostPort > 65535) {\n            valid = false;\n            break;\n        }\n        if (hostPorts.has(hostPort)) {\n            valid = false;\n            break;\n        }\n        hostPorts.add(hostPort);\n    }\n    return valid;\n}",
+    "python": "class Solution:\n    def validatePortMappings(self, portMappings):\n        valid = True\n        hostPorts = set()\n        for containerPort, hostPort in portMappings:\n            if containerPort > hostPort:\n                valid = False\n                break\n            if hostPort < 1 or hostPort > 65535:\n                valid = False\n                break\n            if hostPort in hostPorts:\n                valid = False\n                break\n            hostPorts.add(hostPort)\n        return valid;"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "[[8080, 8080], [8081, 8082], [8083, 8083]]",
+      "output": "false",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "[[8080, 8081], [8082, 8082], [8083, 8084]]",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    },
+    {
+      "id": "tc_3",
+      "input": "[[8080, 8081], [8082, 8083], [8084, 8085]]",
+      "output": "true",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "_id": "d1c37283d997ad61a10036c8",
+  "slug": "docker-container-port-mapping-validation-with-incorrect-port-range-bugfix-hard-docker",
+  "mode": "bug_fix",
+  "category": "DOCKER",
+  "difficulty": "Hard"
+}

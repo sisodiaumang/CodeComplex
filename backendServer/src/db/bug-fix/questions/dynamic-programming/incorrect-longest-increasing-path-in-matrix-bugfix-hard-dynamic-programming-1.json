@@ -1,0 +1,153 @@
+{
+  "_id": "cdd6438fbfeae2119b6e54eb",
+  "title": "Incorrect Longest Increasing Path in Matrix",
+  "slug": "incorrect-longest-increasing-path-in-matrix-bugfix-hard-dynamic-programming-1",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "DP/Matrix",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "dp"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given a square matrix `matrix` where each element is a non-negative integer, find the **longest increasing path** from any cell to any cell diagonally or horizontally/vertically next to it. The path must be monotonically increasing, i.e., the value of the next cell in the path must be greater than or equal to the current cell.",
+    "inputFormat": "Input is a 2D list of integers `matrix` representing the square matrix.",
+    "outputFormat": "The function should return the maximum length of the longest increasing path in the matrix.",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of matrix"
+      }
+    ],
+    "examples": [
+      {
+        "input": "[[9,9,4],[6,6,8],[2,1,1]],[[3,4,5,2],[3,1,2,3],[1,2,3,4],[2,3,4,5]]",
+        "output": "4,9",
+        "explanation": ""
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "To find the maximum increasing path, consider each cell as the starting point."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial",
+    "intuition": "Use a depth-first search approach to traverse the matrix and find the maximum increasing path.",
+    "bruteForce": "Brute force approach: Try all possible paths from each cell.",
+    "betterSolution": "Use DFS with memoization to store the maximum increasing path length for each cell.",
+    "optimalSolution": "Sort each row in the matrix in descending order and then perform a level order traversal to find the maximum increasing path.",
+    "proofOfCorrectness": "proof Of Correctness details.",
+    "dryRun": "dry Run details.",
+    "commonMistakes": [
+      "Inconsistent memoization",
+      "Incorrect DFS traversal"
+    ],
+    "timeComplexity": "O(n*n*logn)",
+    "spaceComplexity": "O(n*n)"
+  },
+  "starterCode": {
+    "cpp": "class Solution { public: int longestIncreasingPath(vector<vector<int>>& matrix) { /* TODO: implement */ } };",
+    "java": "public class Solution { public int longestIncreasingPath(int[][] matrix) { /* TODO: implement */ } }",
+    "python": "class Solution: def longestIncreasingPath(self, matrix: List[List[int]]) -> int: pass",
+    "javascript": "function longestIncreasingPath(matrix) { /* TODO: implement */ return 0; }"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution { public: int longestIncreasingPath(vector<vector<int>>& matrix) { int n = matrix.size(); int res = INT_MIN; for (int i = 0; i < n; i++) { for (int j = 0; j < n; j++) { int count = 0; if (i > 0 && matrix[i][j] > matrix[i-1][j]) count++; if (j > 0 && matrix[i][j] > matrix[i][j-1]) count++; res = max(res, count); } } return res; } };",
+    "java": "public class Solution { public int longestIncreasingPath(int[][] matrix) { int n = matrix.length; int res = Integer.MIN_VALUE; for (int i = 0; i < n; i++) { for (int j = 0; j < n; j++) { int count = 0; if (i > 0 && matrix[i][j] > matrix[i-1][j]) count++; if (j > 0 && matrix[i][j] > matrix[i][j-1]) count++; res = Math.max(res, count); } } return res; } }",
+    "python": "class Solution: def longestIncreasingPath(self, matrix: List[List[int]]) -> int: n = len(matrix); res = 1; for i in range(n): for j in range(n): count = 0; if i > 0 and matrix[i][j] > matrix[i-1][j]: count++; if j > 0 and matrix[i][j] > matrix[i][j-1]: count++; res = max(res, count); return res;",
+    "javascript": "function longestIncreasingPath(matrix) { let n = matrix.length; let res = 0; for (let i = 0; i < n; i++) { for (let j = 0; j < n; j++) { let count = 0; if (i > 0 && matrix[i][j] > matrix[i-1][j]) count++; if (j > 0 && matrix[i][j] > matrix[i][j-1]) count++; res = Math.max(res, count); } } return res; }"
+  },
+  "functionSignature": {
+    "cpp": "bool solve(vector<int>& nums);",
+    "java": "public boolean solve(int[] nums);",
+    "python": "def solve(self, nums: list[int]) -> bool:",
+    "javascript": "var solve = function(nums);"
+  },
+  "solutions": {
+    "python": "from typing import List\nclass Solution:\n  def longestIncreasingPath(self, matrix: List[List[int]]) -> int:\n    n = len(matrix)\n    @functools.lru_cache(None)\n    def dfs(i, j):\n      res = 1\n      for di, dj in [(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (-1, -1), (1, -1), (-1, 1)]:\n        ni, nj = i + di, j + dj\n        if 0 <= ni < n and 0 <= nj < n and matrix[ni][nj] > matrix[i][j]:\n          res = max(res, dfs(ni, nj) + 1)\n      return res\n    res = 0\n    for i in range(n):\n      for j in range(n):\n        res = max(res, dfs(i, j))\n    return res\n# read inputs\nn = int(input())\nmatrix = [[int(x) for x in input().split()] for _ in range(n)]\nprint(Solution().longestIncreasingPath(matrix))",
+    "java": "// read inputs\nint n = Integer.parseInt(readLine());\nmatrix = new int[n][n];\nfor (int i = 0; i < n; i++) {\n  String[] s = readLine().split(\");\n  for (int j = 0; j < n; j++) {\n    matrix[i][j] = Integer.parseInt(s[j]);\n  }\n}\npublic class Main {\n  public static void main(String[] args) {\n    Solution solution = new Solution();\n    println(solution.longestIncreasingPath(matrix));\n  }\n}\nclass Solution {\n  public int longestIncreasingPath(int[][] matrix) {\n    int n = matrix.length;\n    int res = 0;\n    for (int i = 0; i < n; i++) {\n      for (int j = 0; j < n; j++) {\n        res = Math.max(res, dfs(i, j));\n      }\n    }\n    return res;\n  }\n\n  int[][] memo = new int[n][n];\n  public int dfs(int i, int j) {\n    if (memo[i][j] != 0) return memo[i][j];\n    int res = 1;\n    for (int[] d : new int[][] {{1, 0}, {-1, 0}, {0, 1}, {0, -1}, {1, 1}, {-1, -1}, {1, -1}, {-1, 1}}) {\n      int ni = i + d[0];\n      int nj = j + d[1];\n      if (0 <= ni && ni < n && 0 <= nj && nj < n && matrix[ni][nj] > matrix[i][j]) {\n        res = Math.max(res, dfs(ni, nj) + 1);\n      }\n    }\n    return memo[i][j] = res;\n  }\n}",
+    "cpp": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "[3,4,5,2],[3,1,2,3],[1,2,3,4],[2,3,4,5]",
+      "output": "4",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "[9,9,4],[6,6,8],[2,1,1]",
+      "output": "4",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

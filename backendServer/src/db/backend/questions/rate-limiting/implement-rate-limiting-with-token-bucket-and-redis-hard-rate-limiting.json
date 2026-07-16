@@ -1,0 +1,161 @@
+{
+  "_id": "febf1a3b3d02dbe260a693b8",
+  "title": "Implement Rate Limiting with Token Bucket and Redis",
+  "slug": "implement-rate-limiting-with-token-bucket-and-redis-hard-rate-limiting",
+  "difficulty": "Hard",
+  "topics": [
+    "RATE_LIMITING"
+  ],
+  "statement": "Create a rate limiting system that uses the Token Bucket algorithm to determine the maximum burst rate and maximum window size. Use Redis as the storage for token bucket values. Implement API endpoints to calculate the remaining tokens for a given ID, increment tokens for a given ID, and check if the given ID has exceeded the rate limit. The system should handle concurrent requests, and the rate limit should be enforced across multiple requests with the same ID. Ensure the API endpoints respond with the correct status code and body for different scenarios. Note that the rate limit system should be able to handle different window sizes and burst rates for different IDs. You will need to design and implement a Redis pipeline to efficiently store and retrieve token bucket values. Implement the Redis pipeline using the Redis client provided by the 'redis' package in Node.js.\n\nDesign choices and considerations:\n- Store token bucket values in Redis with a TTL (time to live) equal to the window size.\n- Use a Redis pipeline to store and retrieve token bucket values. This will improve performance by reducing the number of round trips to Redis.\n- Handle concurrent requests by using Redis transactions.\n- Ensure the system can handle different window sizes and burst rates for different IDs.\n\nEndpoint descriptions:\n- **GET /api/ratelimit/{id}**: Returns the remaining tokens for the given ID.\n- **POST /api/ratelimit/{id}/increment**: Increments the tokens for the given ID by the burst rate. If the ID does not exist, creates a new token bucket with the default window size and burst rate.\n- **POST /api/ratelimit/{id}/check**: Checks if the given ID has exceeded the rate limit. If the ID has exceeded the rate limit, returns a 429 Too Many Requests status code. Otherwise, returns a 200 OK status code.\n\nYou will need to implement the Redis pipeline and the rate limiting logic to ensure the system works correctly. Make sure to test your implementation thoroughly with different scenarios and edge cases.",
+  "constraints": [
+    "Must use the Token Bucket algorithm with window size and burst rate.",
+    "Must use Redis as the storage for token bucket values.",
+    "Must implement a Redis pipeline to efficiently store and retrieve token bucket values."
+  ],
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/api/ratelimit/{id}",
+      "description": "Returns the remaining tokens for the given ID. Status code: 200 OK, Body: { remainingTokens: number }"
+    },
+    {
+      "method": "POST",
+      "path": "/api/ratelimit/{id}/increment",
+      "description": "Increments the tokens for the given ID by the burst rate. Status code: 201 Created, Body: { success: boolean }"
+    },
+    {
+      "method": "POST",
+      "path": "/api/ratelimit/{id}/check",
+      "description": "Checks if the given ID has exceeded the rate limit. Status code: 429 Too Many Requests, Body: { error: string } if exceeded, 200 OK, Body: { success: boolean } otherwise"
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": {
+      "name": "rate-limit-system",
+      "version": "1.0.0",
+      "main": "index.js",
+      "scripts": {
+        "start": "node index.js"
+      },
+      "dependencies": {
+        "express": "^4.18.2",
+        "redis": "^3.1.2"
+      }
+    },
+    "index.js": "const express = require('express');\nconst redis = require('redis');\nconst app = express();\napp.use(express.json());\n\nconst redisClient = redis.createClient();\nconst redisPipeline = redis.createPipeline();\n\n// TODO: Implement rate limiting logic and Redis pipeline\napp.get('/api/ratelimit/:id', (req, res) => {\n  // TODO: Return remaining tokens for the given ID\n});\napp.post('/api/ratelimit/:id/increment', (req, res) => {\n  // TODO: Increment tokens for the given ID\n});\napp.post('/api/ratelimit/:id/check', (req, res) => {\n  // TODO: Check if the given ID has exceeded the rate limit\n});\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "vc1",
+      "method": "GET",
+      "path": "/api/ratelimit/123",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "remainingTokens": 100
+      },
+      "isVisible": true
+    },
+    {
+      "id": "vc2",
+      "method": "POST",
+      "path": "/api/ratelimit/123/increment",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {},
+      "expectedStatus": 201,
+      "expectedBody": {
+        "success": true
+      },
+      "isVisible": true
+    },
+    {
+      "id": "vc3",
+      "method": "POST",
+      "path": "/api/ratelimit/123/check",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {},
+      "expectedStatus": 200,
+      "expectedBody": {
+        "success": true
+      },
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "hc1",
+      "method": "GET",
+      "path": "/api/ratelimit/456",
+      "expectedStatus": 404,
+      "expectedBody": {
+        "error": "ID not found"
+      },
+      "isVisible": false
+    },
+    {
+      "id": "hc2",
+      "method": "POST",
+      "path": "/api/ratelimit/456/increment",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {},
+      "expectedStatus": 429,
+      "expectedBody": {
+        "error": "Rate limit exceeded"
+      },
+      "isVisible": false
+    },
+    {
+      "id": "hc3",
+      "method": "POST",
+      "path": "/api/ratelimit/456/check",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {},
+      "expectedStatus": 429,
+      "expectedBody": {
+        "error": "Rate limit exceeded"
+      },
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "sliding-window",
+    "token-bucket",
+    "fixed-window",
+    "leaky-bucket",
+    "redis",
+    "express-rate-limit",
+    "rate-limiting",
+    "express"
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "_id": "6b8ce5be5c9a6619b2d73ad4",
+  "title": "React Collapsible Accordion",
+  "slug": "react-accordion",
+  "difficulty": "Easy",
+  "topics": [
+    "REACT",
+    "REACT_ACCORDION"
+  ],
+  "statement": {
+    "markdown": "## React Collapsible Accordion Component\n\nImplement a collapsible Accordion component using React and Tailwind CSS. The component should present a vertical list of expandable items.\n\n### Requirements:\n1. **Toggle Behavior**: Clicking the header of an item expands or collapses its content panel.\n2. **Expansion Modes**:\n   - By default, expanding one item should collapse all other active items (single mode).\n   - Support a `allowMultiple` boolean prop that allows multiple items to remain expanded simultaneously.\n3. **Icons**: Display a chevron arrow icon next to the header that rotates 180 degrees when expanded.\n4. **Styling**: Use Tailwind CSS for borders, paddings, hover states, and smooth transition animations.\n"
+  },
+  "constraints": [
+    "Must be fully responsive",
+    "Must use React state hooks",
+    "Must style elements with Tailwind CSS"
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "html": "",
+    "css": "",
+    "react": "import React, { useState } from 'react';\n\nexport default function Accordion({ items, allowMultiple = false }) {\n  // Implement collapsible accordion here\n  return (\n    <div className=\"w-full max-w-md border border-gray-200 rounded-lg overflow-hidden\">\n      {/* Items list */}\n    </div>\n  );\n}"
+  },
+  "gradingCriteria": [
+    {
+      "id": "functional_correctness",
+      "description": "Check if the component state is managed properly and fulfills all interaction criteria.",
+      "weight": 50
+    },
+    {
+      "id": "accessibility_focus",
+      "description": "Verify that keyboard focus, event handlers, and ARIA roles match custom specifications.",
+      "weight": 30
+    },
+    {
+      "id": "code_cleanliness",
+      "description": "Verify proper component code design structure and clean state structures.",
+      "weight": 20
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "react",
+      "tailwind"
+    ],
+    "referenceSolution": "import React, { useState } from 'react';\n\nexport default function Accordion({ items, allowMultiple = false }) {\n  const [activeIndices, setActiveIndices] = useState([]);\n\n  const toggleIndex = (index) => {\n    if (allowMultiple) {\n      if (activeIndices.includes(index)) {\n        setActiveIndices(activeIndices.filter(i => i !== index));\n      } else {\n        setActiveIndices([...activeIndices, index]);\n      }\n    } else {\n      setActiveIndices(activeIndices.includes(index) ? [] : [index]);\n    }\n  };\n\n  return (\n    <div className=\"w-full max-w-md border border-gray-200 rounded-lg overflow-hidden bg-white shadow-sm\">\n      {items.map((item, idx) => {\n        const isExpanded = activeIndices.includes(idx);\n        return (\n          <div key={idx} className=\"border-b border-gray-100 last:border-0\">\n            <button\n              onClick={() => toggleIndex(idx)}\n              className=\"w-full flex items-center justify-between px-5 py-4 text-left font-medium text-gray-800 hover:bg-gray-50 transition-colors\"\n            >\n              <span>{item.header}</span>\n              <svg\n                className={`w-4 h-4 text-gray-500 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}\n                fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" strokeWidth={2}\n              >\n                <path strokeLinecap=\"round\" strokeLinejoin=\"round\" d=\"M19 9l-7 7-7-7\" />\n              </svg>\n            </button>\n            <div className={`transition-all duration-300 overflow-hidden ${isExpanded ? 'max-h-96 px-5 py-4 border-t border-gray-50 bg-gray-50/50' : 'max-h-0'}`}>\n              <p className=\"text-gray-600 text-sm leading-relaxed\">{item.content}</p>\n            </div>\n          </div>\n        );\n      })}\n    </div>\n  );\n}"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

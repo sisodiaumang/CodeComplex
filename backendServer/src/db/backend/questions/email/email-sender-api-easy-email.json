@@ -1,0 +1,123 @@
+{
+  "_id": "55892526736b04097774d39c",
+  "title": "Email Sender API",
+  "slug": "email-sender-api-easy-email",
+  "difficulty": "Easy",
+  "topics": [
+    "EMAIL"
+  ],
+  "statement": "Implement a simple email sender API using the Nodemailer library. The API should have two endpoints: `POST /api/send-email` to send an email and `GET /api/test-email` to verify the email functionality without sending a real email. The email should be sent from a fixed sender address to a fixed recipient address. The payload for the `POST /api/send-email` endpoint should contain the email subject and body. The API should handle errors and return a success or failure response.",
+  "constraints": [
+    "Must use the Nodemailer library for sending emails",
+    "Must use the Express framework for implementing the API"
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/send-email",
+      "description": "Sends an email with the specified subject and body. The API expects a JSON payload with the following structure: `{\"subject\": \"Email Subject\", \"body\": \"Email Body\"}`"
+    },
+    {
+      "method": "GET",
+      "path": "/api/test-email",
+      "description": "Verifies the email functionality without sending a real email. Returns a success response if the API is configured correctly"
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\"name\": \"email-sender-api\",\"version\": \"1.0.0\",\"main\": \"index.js\",\"scripts\": {\"start\": \"node index.js\"},\"dependencies\": {\"express\": \"^4.18.2\",\"nodemailer\": \"^6.7.5\"}}",
+    "index.js": "const express = require('express');\nconst nodemailer = require('nodemailer');\nconst app = express();\napp.use(express.json());\n\nconst transporter = nodemailer.createTransport({\n    host: 'smtp.example.com',\n    port: 587,\n    secure: false,\n    auth: {\n        user: 'sender@example.com',\n        pass: 'password'\n    }\n});\n\napp.post('/api/send-email', (req, res) => {\n    // TODO: Implement email sending logic\n});\n\napp.get('/api/test-email', (req, res) => {\n    // TODO: Implement test email logic\n});\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/api/test-email",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "POST",
+      "path": "/api/send-email",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "subject": "Test Email",
+        "body": "Hello, World!"
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "success": true
+      },
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "GET",
+      "path": "/api/test-email",
+      "expectedStatus": 200,
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "POST",
+      "path": "/api/send-email",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "subject": "Invalid Email"
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "POST",
+      "path": "/api/send-email",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "InvalidKey": "Invalid Value"
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "GET",
+      "path": "/api/test-email",
+      "expectedStatus": 404,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "nodemailer",
+    "resend",
+    "smtp",
+    "templates",
+    "otp",
+    "verification",
+    "password-reset",
+    "email",
+    "express"
+  ]
+}

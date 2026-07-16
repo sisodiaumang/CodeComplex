@@ -1,0 +1,149 @@
+{
+  "title": "Preventing Cross-Site Scripting (XSS) Attacks in Express API",
+  "subCategory": "Route Parameter Validation",
+  "statement": {
+    "markdown": "Implement a secure route parameter validation mechanism for your Express API. The /users/:id endpoint should accept only numeric IDs. However, the current implementation is vulnerable to Cross-Site Scripting (XSS) attacks due to a logical bug in the middleware function. Your task is to fix this bug and ensure that only numeric values are accepted as route parameters.",
+    "inputFormat": "The input will be a string representing the API request path.",
+    "outputFormat": "The output should be a boolean indicating whether the route parameter is valid or not.",
+    "notes": "Make sure to handle edge cases, such as empty strings and decimal numbers.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Route parameter ID"
+      }
+    ],
+    "examples": [
+      {
+        "input": "/users/123",
+        "output": "true",
+        "explanation": "Numeric ID is valid"
+      },
+      {
+        "input": "/users/abc",
+        "output": "false",
+        "explanation": "Non-numeric string is invalid"
+      },
+      {
+        "input": "/users/",
+        "output": "false",
+        "explanation": "Empty string is invalid"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 60,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "EXPRESS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "express"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use a regular expression to validate the route parameter."
+    }
+  ],
+  "editorial": {
+    "title": "Secure Route Parameter Validation in Express API",
+    "intuition": "The middleware function should check if the route parameter is a numeric value using a regular expression.",
+    "bruteForce": "Use a simple if-else statement to check for numeric values, but this approach may lead to issues with edge cases.",
+    "betterSolution": "Use the `isNaN` function to check if the route parameter is not a number.",
+    "optimalSolution": "Use a regular expression to match only numeric values, including negative numbers and decimals.",
+    "proofOfCorrectness": "The regular expression should match the expected pattern of numeric values.",
+    "dryRun": "Test the middleware function with various inputs, including valid and invalid numeric values.",
+    "commonMistakes": [
+      "Using a simple if-else statement to check for numeric values",
+      "Not handling edge cases"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "const express = require('express'); const app = express(); app.get('/users/:id', (req, res) => { // implement the middleware function here });",
+    "python": "from flask import Flask, request; app = Flask(__name__); @app.route('/users/<id>', methods=['GET']) def get_user(id): # implement the middleware function here"
+  },
+  "buggyStarterCode": {
+    "javascript": "const express = require('express'); const app = express(); app.get('/users/:id', (req, res) => { const id = parseInt(req.params.id); if (isNaN(id)) { res.send('Invalid ID'); } else { res.send('Valid ID'); } });",
+    "python": "from flask import Flask, request; app = Flask(__name__); @app.route('/users/<id>', methods=['GET']) def get_user(id): if not id.isdigit(): return 'Invalid ID'; return 'Valid ID';"
+  },
+  "functionSignature": {
+    "javascript": "const validateRouteParameter = (req, res) => { // implement the middleware function here };",
+    "python": "def validate_route_parameter(id): # implement the middleware function here"
+  },
+  "solutions": {
+    "javascript": "// Solution\nconst express = require('express'); const app = express(); app.get('/users/:id', (req, res) => { const id = parseInt(req.params.id); if (isNaN(id) || id < 0) { res.status(400).send('Invalid ID'); } else { res.send('Valid ID'); } });",
+    "python": "from flask import Flask, request; app = Flask(__name__); @app.route('/users/<id>', methods=['GET']) def get_user(id): if id == '' or not id.isdigit(): return 'Invalid ID', 400; return 'Valid ID';"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "/users/123",
+      "output": "Valid ID",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "/users/abc",
+      "output": "Invalid ID",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_3",
+      "input": "/users/",
+      "output": "Invalid ID",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "_id": "1fe6780d56212f8a01f3ee2a",
+  "slug": "preventing-cross-site-scripting-xss-attacks-in-express-api-bugfix-hard-express",
+  "mode": "bug_fix",
+  "category": "EXPRESS",
+  "difficulty": "Hard"
+}

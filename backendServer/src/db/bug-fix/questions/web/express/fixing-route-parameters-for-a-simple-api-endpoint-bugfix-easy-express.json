@@ -1,0 +1,139 @@
+{
+  "title": "Fixing Route Parameters for a Simple API Endpoint",
+  "subCategory": "Route Parameters",
+  "statement": {
+    "markdown": "Write a bug-fix implementation for the given Express route. The route is designed to handle GET requests to '/users/{id}' and return a user object with the provided ID. However, the current implementation has a logical bug that prevents it from returning the correct user object. Your task is to identify and fix this bug.",
+    "inputFormat": "The input will be a JSON object containing a 'path' property with the route path, and a 'params' property with the route parameters.",
+    "outputFormat": "The output should be a JSON object with the user object, or an error message if the user is not found.",
+    "notes": "Assume that the user data is stored in an array of objects, where each object has an 'id' property and a 'name' property.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of users in the database"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"path\": '/users/1', \"params\": {\"id\": 1}}",
+        "output": "{\"name\": \"John Doe\", \"id\": 1}",
+        "explanation": "Return the user object with ID 1"
+      },
+      {
+        "input": "{\"path\": '/users/2', \"params\": {\"id\": 2}}",
+        "output": "{\"name\": \"Jane Doe\", \"id\": 2}",
+        "explanation": "Return the user object with ID 2"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 10,
+    "points": 30,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "EXPRESS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "express"
+    ],
+    "interviewFrequency": 1,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Check the route parameters and the user data array for any issues."
+    }
+  ],
+  "editorial": {
+    "title": "Fixing Route Parameters for a Simple API Endpoint",
+    "intuition": "The bug is likely related to the way the route parameters are being accessed or used.",
+    "bruteForce": "Try to debug the code step by step to identify the issue.",
+    "betterSolution": "Use a more robust approach to handle route parameters and user data.",
+    "optimalSolution": "Use Express's built-in route parameter handling and iterate over the user data array to find the matching user.",
+    "proofOfCorrectness": "Verify that the corrected code returns the correct user object for each test case.",
+    "dryRun": "Run the corrected code with each test case input to ensure it produces the expected output.",
+    "commonMistakes": [
+      "Not checking for route parameter errors",
+      "Not iterating over the user data array"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "const express = require('express');\nconst app = express().use(express.json());\n\nconst userData = [\n  { id: 1, name: 'John Doe' },\n  { id: 2, name: 'Jane Doe' }\n];\n\napp.get('/users/:id', (req, res) => {\n  const { id } = req.params;\n  // BUG FIX ME\n  res.json();\n});\n\nconst server = app.listen(3000, () => {\n  console.log('Server listening on port 3000');\n});"
+  },
+  "buggyStarterCode": {
+    "javascript": "const express = require('express');\nconst app = express().use(express.json());\n\nconst userData = [\n  { id: 1, name: 'John Doe' },\n  { id: 2, name: 'Jane Doe' }\n];\n\napp.get('/users/:id', (req, res) => {\n  const { id } = req.params;\n  const user = userData.find((user) => user.id === parseInt(id));\n  if (!user) {\n    res.json({ error: 'User not found' });\n  } else {\n    res.json(user);\n  }\n  // BUG: incorrect logic\n  res.json({ error: 'Error finding user' });\n});\n\nconst server = app.listen(3000, () => {\n  console.log('Server listening on port 3000');\n});"
+  },
+  "functionSignature": {
+    "javascript": "app.get('/users/:id', (req, res) => {\n  // BUG FIX ME\n})"
+  },
+  "solutions": {
+    "javascript": "// Solution\nconst express = require('express');\nconst app = express().use(express.json());\n\nconst userData = [\n  { id: 1, name: 'John Doe' },\n  { id: 2, name: 'Jane Doe' }\n];\n\napp.get('/users/:id', (req, res) => {\n  const { id } = req.params;\n  const user = userData.find((user) => user.id === parseInt(id));\n  if (!user) {\n    res.status(404).json({ error: 'User not found' });\n  } else {\n    res.json(user);\n  }\n});\n\nconst server = app.listen(3000, () => {\n  console.log('Server listening on port 3000');\n});"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"path\": '/users/1', \"params\": {\"id\": 1}}",
+      "output": "{\"name\": \"John Doe\", \"id\": 1}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "{\"path\": '/users/2', \"params\": {\"id\": 2}}",
+      "output": "{\"name\": \"Jane Doe\", \"id\": 2}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_1",
+      "input": "{\"path\": '/users/3', \"params\": {\"id\": 3}}",
+      "output": "{\"error\": \"User not found\"}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "b55e6c56ea84dccfe9051c50",
+  "slug": "fixing-route-parameters-for-a-simple-api-endpoint-bugfix-easy-express",
+  "mode": "bug_fix",
+  "category": "EXPRESS",
+  "difficulty": "Easy"
+}

@@ -1,0 +1,62 @@
+{
+  "_id": "e7e675acb4f2b24f7c6b86db",
+  "title": "Accessible Error Summary",
+  "slug": "acce-accessible-error-summary",
+  "difficulty": "Easy",
+  "topics": [
+    "ACCESSIBILITY"
+  ],
+  "statement": {
+    "markdown": "## Build an Accessible Error Summary\n\n### Requirements\n1. The error summary should have a clear heading that indicates the type of error (e.g., 'Validation Errors', 'System Errors', etc).\n2. Each error must have a specific description, which should be visible to the user.\n3. The error summary should be accessible and usable by screen readers.\n4. The error summary should be displayed only when there are errors to display."
+  },
+  "constraints": [
+    "The entire application should be styled using Tailwind CSS.",
+    "The error summary should be displayed using a dialog box."
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "html": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Error Summary</title>\n    <script src=\"https://cdn.tailwindcss.com\"></script>\n</head>\n<body>\n\n    <!-- The error summary will be displayed here -->\n\n    <!-- Import the JavaScript file that will handle the error summary -->\n    <script src=\"error-summary.js\"></script>\n</body>\n</html>",
+    "css": ".error-summary {\n    @apply fixed z-10 inset-0 overflow-y-auto;\n    outline-none focus:outline-none transition duration-100 ease-in-out\n}\n.error-summary::before {\n    @apply fixed inset-0 bg-gray-900/75 transition duration-300 ease-in-out\n}\n.error-summary-dialog {\n    @apply relative mx-auto my-6 max-w-md bg-white rounded-2xl shadow-md;\n    padding: 6px;\n    transform: scale(1.02)\n}\n",
+    "javascript": "// TODO: build the error summary dialog, populate it with the list of\n// errors, give it an accessible heading and role, move keyboard focus\n// into it when it's shown, and only render it when there are errors\n"
+  },
+  "gradingCriteria": [
+    {
+      "id": "1",
+      "description": "Error summary is displayed with a clear heading.",
+      "weight": 20
+    },
+    {
+      "id": "2",
+      "description": "Each error has a specific description visible to the user.",
+      "weight": 30
+    },
+    {
+      "id": "3",
+      "description": "Error summary is accessible and usable by screen readers.",
+      "weight": 20
+    },
+    {
+      "id": "4",
+      "description": "Error summary is displayed only when there are errors to display.",
+      "weight": 30
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "html",
+      "css",
+      "javascript"
+    ],
+    "referenceSolution": "html: <!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Error Summary</title>\n    <script src=\"https://cdn.tailwindcss.com\"></script>\n</head>\n<body>\n\n    <!-- The error summary will be displayed here -->\n    <div class=\"error-summary fixed z-10 inset-0 overflow-y-auto\">\n        <div class=\"error-summary::before fixed inset-0 bg-gray-900/75 transition duration-300 ease-in-out\"></div>\n        <div class=\"error-summary-dialog relative mx-auto my-6 max-w-md bg-white rounded-2xl shadow-md\">\n            <h2 class=\"text-lg font-bold mb-4\">Validation Errors</h2>\n            <ul>\n                <li>Username is required</li>\n                <li>Password is required</li>\n            </ul>\n        </div>\n    </div>\n\n    <!-- Import the JavaScript file that will handle the error summary -->\n    <script src=\"error-summary.js\"></script>\n</body>\n</html>\njavascript: document.addEventListener('DOMContentLoaded', function() {\n    const errorSummary = document.querySelector('.error-summary');\n\n    // Check if there are any errors to display\n    if (localStorage.getItem(\"errors\") !== null) {\n        const errors = JSON.parse(localStorage.getItem(\"errors\"));\n        const errorSummaryDialog = document.querySelector('.error-summary-dialog');\n\n        // Display the error summary\n        errorSummaryDialog.innerHTML += '<h2>Validation Errors</h2>';\n        errors.forEach(error => {\n            const errorListItem = document.createElement(\"li\");\n            errorListItem.textContent = error;\n            errorSummaryDialog.appendChild(errorListItem);\n        });\n        errorSummaryDialog.style.transform = \"scale(1)\";\n        errorSummary.style.opacity = 1;\n    }\n\n    // Add event listener to close the error summary\n    const closeButton = document.querySelector(\".close-button\");\n    closeButton.addEventListener(\"click\", function() {\n        errorSummary.style.opacity = 0;\n        setTimeout(function() {\n            errorSummary.style.display = \"none\";\n        }, 100);\n    });\n});\njavascript2: const closeButton = document.createElement(\"button\");\n    closeButton.textContent = \"Close\";\n    closeButton.classList.add(\"close-button\");\n    errorSummaryDialog.appendChild(closeButton);"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

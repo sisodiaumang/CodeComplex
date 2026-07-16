@@ -1,0 +1,162 @@
+{
+  "_id": "be3f4e173ba91a478f85f492",
+  "title": "Incorrect Max Heap Maintenance Due to Unordered Node Swapping",
+  "slug": "incorrect-max-heap-maintenance-due-to-unordered-node-swapping-bugfix-hard-heaps",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "HEAP",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 100,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "heap"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Implement a function to maintain a max heap for a list of elements. The function should take an array of integers as input, maintain a max heap, and return the max heap array after heapification. However, there is a bug in the implementation that causes the function to incorrectly swap nodes, leading to an incorrect max heap.",
+    "inputFormat": "An array of integers representing the input elements.",
+    "outputFormat": "The max heap array after heapification.",
+    "notes": "The input array may contain duplicate elements. The implementation should handle this case correctly.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "[5, 3, 1, 2, 7]",
+        "output": "[7, 5, 3, 2, 1]",
+        "explanation": "Heapify the array to maintain max heap property"
+      },
+      {
+        "input": "[10, 20, 15, 5, 30]",
+        "output": "[30, 20, 15, 10, 5]",
+        "explanation": "Heapify the array to maintain max heap property"
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Review the heapification process to identify the incorrect swapping of nodes."
+    },
+    {
+      "order": 2,
+      "text": "Check the implementation for the case where two elements are swapped in the max heap."
+    }
+  ],
+  "editorial": {
+    "title": "Correcting the Max Heap Implementation",
+    "intuition": "The key to maintaining a max heap is to ensure that the parent node is always greater than or equal to its child node. The current implementation incorrectly swaps nodes, violating this property.",
+    "bruteForce": "A brute force approach would involve comparing each pair of nodes in the heap to ensure the max heap property is maintained.",
+    "betterSolution": "",
+    "optimalSolution": "The optimal solution involves identifying the incorrect swapping of nodes and correcting it. This can be done by iterating through the heap and ensuring that the parent node is always greater than or equal to its child node.",
+    "proofOfCorrectness": "The corrected implementation ensures that the max heap property is maintained throughout the heapification process.",
+    "dryRun": "Example heap: [5, 3, 1, 2, 7]. Swap nodes 3 and 1, and verify that the heap is still a max heap.",
+    "commonMistakes": [
+      "Incorrectly swapping nodes in the heap",
+      "Failing to maintain the max heap property"
+    ],
+    "timeComplexity": "O(n log n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    vector<int> heapify(vector<int>& nums) {\n        // TODO: implement\n        return nums;\n    }\n};",
+    "java": "public class Solution {\npublic:\n    int[] heapify(int[] nums) {\n        // TODO: implement\n        return nums;\n    }\n}",
+    "python": "class Solution:\n    def heapify(self, nums: list[int]) -> list[int]:\n        # TODO: implement\n        pass",
+    "javascript": "function heapify(nums) {\n    // TODO: implement\n    return nums;\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    vector<int> heapify(vector<int>& nums) {\n        for (int i = 0; i < nums.size(); i++) {\n            for (int j = 0; j < nums.size(); j++) {\n                if (nums[i] < nums[j]) {\n                    swap(nums[i], nums[j]);\n                }\n            }\n        }\n        return nums;\n    }\n};",
+    "java": "public class Solution {\npublic static int[] heapify(int[] nums) {\n    for (int i = 0; i < nums.length; i++) {\n        for (int j = 0; j < nums.length; j++) {\n            if (nums[i] < nums[j]) {\n                swap(nums, i, j);\n            }\n        }\n    }\n    return nums;\n}\nprivate static void swap(int[] nums, int i, int j) {\n    int temp = nums[i];\n    nums[i] = nums[j];\n    nums[j] = temp;\n}}",
+    "python": "class Solution:\n    def heapify(self, nums: list[int]) -> list[int]:\n        for i in range(len(nums)): \n            for j in range(len(nums)): \n                if nums[i] < nums[j]: \n                    nums[i], nums[j] = nums[j], nums[i]\n        return nums;",
+    "javascript": "function heapify(nums) {\n    for (let i = 0; i < nums.length; i++) {\n        for (let j = 0; j < nums.length; j++) {\n            if (nums[i] < nums[j]) {\n                [nums[i], nums[j]] = [nums[j], nums[i]];\n            }\n        }\n    }\n    return nums;\n}"
+  },
+  "functionSignature": {
+    "cpp": "vector<int> heapify(vector<int>& nums);",
+    "java": "int[] heapify(int[] nums);",
+    "python": "def heapify(self, nums: list[int]) -> list[int]:",
+    "javascript": "function heapify(nums);"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def heapify(self, nums: list[int]) -> list[int]:\n        n = len(nums)\n        for i in range(n // 2 - 1, -1, -1):\n            self.heapify_helper(nums, i, n)\n        return nums\n\n    def heapify_helper(self, nums, i, n):\n        largest = i\n        left = 2 * i + 1\n        right = 2 * i + 2\n\n        if left < n and nums[left] > nums[largest]:\n            largest = left\n        if right < n and nums[right] > nums[largest]:\n            largest = right\n\n        if largest != i:\n            nums[i], nums[largest] = nums[largest], nums[i]\n            self.heapify_helper(nums, largest, n)\n\n        return nums\n\ndef main():\n    s = Solution()\n    nums = [5, 3, 1, 2, 7]\n    result = s.heapify(nums)\n    print(result)\n",
+    "cpp": "// main.cpp\n#include <iostream>\n#include <vector>\nusing namespace std;\nclass Solution {\npublic:\n    vector<int> heapify(vector<int>& nums) {\n        int n = nums.size();\n        for (int i = n / 2 - 1; i >= 0; i--) {\n            heapify_helper(nums, i, n);\n        }\n        return nums;\n\n    def heapify_helper(nums, i, n):\n        int largest = i;\n        int left = 2 * i + 1;\n        int right = 2 * i + 2;\n\n        if left < n && nums[left] > nums[largest]:\n            largest = left;\n        if right < n && nums[right] > nums[largest]:\n            largest = right;\n\n        if largest != i:\n            swap(nums[i], nums[largest]);\n            heapify_helper(nums, largest, n);\n\n        return nums;\n\n    void printVector(const vector<int>& vec) {\n        cout << '[';\n        for (int i = 0; i < vec.size(); i++) {\n            cout << vec[i];\n            if (i != vec.size() - 1) {\n                cout << ', ';\n            }\n        }\n        cout << ']' << endl;\n    }\n\npublic:\n    void run() {\n        int n;\n        cin >> n;\n        vector<int> nums(n);\n\n        for (int i = 0; i < n; i++) {\n            cin >> nums[i];\n        }\n\n        vector<int> result = heapify(nums);\n        printVector(result);\n\n    }\n};\n\ndef int main() {\n    Solution run;\n    run.run();\n    return 0;\n}\n",
+    "java": "// Solution.java\npublic class Solution {\n    public static int[] heapify(int[] nums) {\n        int n = nums.length;\n        for (int i = n / 2 - 1; i >= 0; i--) {\n            heapify_helper(nums, i, n);\n        }\n        return nums;\n\n    private static void heapify_helper(int[] nums, int i, int n) {\n        int largest = i;\n        int left = 2 * i + 1;\n        int right = 2 * i + 2;\n\n        if (left < n && nums[left] > nums[largest]) {\n            largest = left;\n        }\n        if (right < n && nums[right] > nums[largest]) {\n            largest = right;\n        }\n\n        if (largest != i) {\n            swap(nums, i, largest);\n            heapify_helper(nums, largest, n);\n        }\n        return;\n    }\n\n    private static void swap(int[] nums, int i, int j) {\n        int temp = nums[i];\n        nums[i] = nums[j];\n        nums[j] = temp;\n    }\n\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        System.out.println(\"Enter the number of elements: \");\n        int n = scanner.nextInt();\n        int[] nums = new int[n];\n\n        for (int i = 0; i < n; i++) {\n            System.out.println(\"Enter element \" + (i + 1) + \":\");\n            nums[i] = scanner.nextInt();\n        }\n\n        int[] result = heapify(nums);\n        System.out.println(\"Max Heap: \");\n        for (int i = 0; i < n; i++) {\n            System.out.print(result[i] + \" \");\n        }\n        System.out.println();\n    }\n}",
+    "javascript": "function heapify(nums) {\n    let n = nums.length;\n    for (let i = Math.floor(n / 2) - 1; i >= 0; i--) {\n        heapify_helper(nums, i, n);\n    }\n    return nums;\n\n    function heapify_helper(nums, i, n) {\n        let largest = i;\n        let left = 2 * i + 1;\n        let right = 2 * i + 2;\n\n        if (left < n && nums[left] > nums[largest]) {\n            largest = left;\n        }\n        if (right < n && nums[right] > nums[largest]) {\n            largest = right;\n        }\n\n        if (largest != i) {\n            [nums[i], nums[largest]] = [nums[largest], nums[i]];\n            heapify_helper(nums, largest, n);\n        }\n        return nums;\n    }\n}\n\n// Read input from user\nconst readline = require('readline').createInterface({ input: process.stdin, output: process.stdout });\n\nlet n;\nreadline.question('Enter the number of elements: ', input => {\n    n = parseInt(input);\n    let nums = new Array(n);\n\n    readline.question('Enter elements (space-separated): ', input2 => {\n        let inputArray = input2.split(' ').map(Number);\n        for (let i = 0; i < inputArray.length; i++) {\n            nums[i] = inputArray[i];\n        }\n\n        let result = heapify(nums);\n        console.log(\"Max Heap: \");\n        console.log(result);\n        readline.close();\n    });\n});"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "1\n",
+      "output": "1\n",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "2\n",
+      "output": "2\n",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

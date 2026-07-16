@@ -1,0 +1,53 @@
+{
+  "_id": "23e372e4976dd2c1999d7129",
+  "title": "React Color Picker Slider",
+  "slug": "react-color-slider",
+  "difficulty": "Medium",
+  "topics": [
+    "REACT",
+    "REACT_COLOR_SLIDER"
+  ],
+  "statement": {
+    "markdown": "## React Color HSL Slider Picker\n\nImplement a custom color picker where color hues, saturations, and lightness (HSL) values are controlled using slider inputs.\n\n### Requirements:\n1. **Interactive HSL Sliders**: Three distinct range sliders mapping to Hue (0-360), Saturation (0-100%), and Lightness (0-100%).\n2. **Visual Color Preview**: Display a circular/rectangular color box previewing the current active HSL selection.\n3. **Hex Output**: Automatically convert and display the selected color value as its HEX translation string (e.g. `#38bdf8`).\n"
+  },
+  "constraints": [
+    "Must be fully responsive",
+    "Must utilize React state variables",
+    "Must style layers with Tailwind CSS"
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "html": "",
+    "css": "",
+    "react": "import React, { useState } from 'react';\n\nexport default function ColorSliderPicker() {\n  // Implement HSL color sliders picker here\n  return null;\n}"
+  },
+  "gradingCriteria": [
+    {
+      "id": "functional_correctness",
+      "description": "Verify that the interactive props, callbacks, and element structures work cleanly.",
+      "weight": 60
+    },
+    {
+      "id": "code_cleanliness",
+      "description": "Verify state structure designs and clean Tailwind CSS layouts.",
+      "weight": 40
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "react",
+      "tailwind"
+    ],
+    "referenceSolution": "import React, { useState } from 'react';\n\nexport default function ColorSliderPicker() {\n  const [h, setH] = useState(180);\n  const [s, setS] = useState(50);\n  const [l, setL] = useState(50);\n\n  // Convert HSL to HEX helper function\n  const hslToHex = (h, s, l) => {\n    s /= 100;\n    l /= 100;\n    const a = s * Math.min(l, 1 - l);\n    const f = (n) => {\n      const k = (n + h / 30) % 12;\n      const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);\n      return Math.round(255 * color).toString(16).padStart(2, \"0\");\n    };\n    return `#${f(0)}${f(8)}${f(4)}`;\n  };\n\n  const hexVal = hslToHex(h, s, l);\n\n  return (\n    <div className=\"w-80 border border-gray-250 rounded-2xl p-5 bg-white shadow-md font-sans\">\n      {/* Color Preview Box */}\n      <div\n        className=\"w-full h-32 rounded-xl mb-6 shadow-inner border border-gray-100 flex items-center justify-center transition-colors\"\n        style={{ backgroundColor: `hsl(${h}, ${s}%, ${l}%)` }}\n      >\n        <span className=\"bg-white/90 text-gray-800 text-xs font-mono font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-sm\">\n          {hexVal}\n        </span>\n      </div>\n\n      {/* Sliders */}\n      <div className=\"flex flex-col gap-4 text-xs font-bold text-gray-500 uppercase\">\n        <div>\n          <div className=\"flex justify-between mb-1\">\n            <span>Hue</span>\n            <span className=\"font-mono text-gray-700\">{h}°</span>\n          </div>\n          <input type=\"range\" min=\"0\" max=\"360\" value={h} onChange={(e) => setH(Number(e.target.value))} className=\"w-full accent-purple-500\" />\n        </div>\n\n        <div>\n          <div className=\"flex justify-between mb-1\">\n            <span>Saturation</span>\n            <span className=\"font-mono text-gray-700\">{s}%</span>\n          </div>\n          <input type=\"range\" min=\"0\" max=\"100\" value={s} onChange={(e) => setS(Number(e.target.value))} className=\"w-full accent-purple-500\" />\n        </div>\n\n        <div>\n          <div className=\"flex justify-between mb-1\">\n            <span>Lightness</span>\n            <span className=\"font-mono text-gray-700\">{l}%</span>\n          </div>\n          <input type=\"range\" min=\"0\" max=\"100\" value={l} onChange={(e) => setL(Number(e.target.value))} className=\"w-full accent-purple-500\" />\n        </div>\n      </div>\n    </div>\n  );\n}"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

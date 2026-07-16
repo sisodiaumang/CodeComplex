@@ -1,0 +1,143 @@
+{
+  "title": "Fixing CSS Pseudo-Element Styles with Inconsistent Box Model",
+  "subCategory": "CSS Box Model",
+  "statement": {
+    "markdown": "You're given a CSS selector string and a list of rules. Your task is to parse the CSS selector and apply the rules to generate the final CSS styles. The styles should be in the following format: `selector { property: value; }`. The rules are in the format of a dictionary where the key is the property name and the value is the property value. However, there's a bug in the code that causes the box model properties (border, padding, margin, width, height) to be applied inconsistently. Your task is to fix the bug and make sure the box model properties are applied correctly.",
+    "inputFormat": "A CSS selector string and a list of rules in a dictionary format",
+    "outputFormat": "A string representing the final CSS styles in the format `selector { property: value; }`",
+    "notes": "The CSS selector can contain pseudo-elements and the rules dictionary can contain multiple properties.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 100,
+        "description": "Number of rules"
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 1,
+        "max": 100,
+        "description": "Number of properties per rule"
+      }
+    ],
+    "examples": [
+      {
+        "input": "div > p, div > span {\n  border: 1px solid black;\n  padding: 10px;\n}\n{ \"border\": \"2px dotted red\", \"padding\": \"20px\" }",
+        "output": "div > p, div > span {\n  border: 2px dotted red;\n  padding: 20px;\n}",
+        "explanation": "The box model properties (border, padding) are applied consistently"
+      },
+      {
+        "input": "div > p {\n  margin: 10px;\n  width: 100px;\n}\n{ \"margin\": \"20px\", \"width\": \"200px\" }",
+        "output": "div > p {\n  margin: 20px;\n  width: 200px;\n}",
+        "explanation": "The box model properties (margin, width) are applied consistently"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "CSS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "css"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Check the box model properties in the rules dictionary"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(n*m)",
+    "spaceComplexity": "O(n*m)"
+  },
+  "starterCode": {
+    "javascript": "function parseCss(selector, rules) {\n  // Your code here\n}\nconsole.log(parseCss('div > p', {'border': '1px solid black', 'padding': '10px'}));",
+    "python": "class Solution:\n  def parse_css(self, selector, rules):\n    # Your code here\n  def main(self):\n    print(self.parse_css('div > p', {'border': '1px solid black', 'padding': '10px'}))"
+  },
+  "buggyStarterCode": {
+    "javascript": "function parseCss(selector, rules) {\n  let styles = {};\n  for (let rule in rules) {\n    if (rule.startsWith('border')) {\n      styles['border'] = rules[rule];\n    } else if (rule.startsWith('padding')) {\n      // Don't update padding style if it's already defined\n      if (!styles['padding']) {\n        styles['padding'] = rules[rule];\n      }\n    } else {\n      styles[rule] = rules[rule];\n    }\n  }\n  return `${selector} { ${Object.keys(styles).map(k => `${k}: ${styles[k]};`).join(' ')} }`;\n}\nconsole.log(parseCss('div > p', {'border': '1px solid black', 'padding': '10px', 'padding': '20px'}));",
+    "python": "class Solution:\n  def parse_css(self, selector, rules):\n    styles = {}\n    for rule, value in rules.items():\n      if rule.startswith('border'):\n        styles['border'] = value\n      elif rule.startswith('padding'):\n        # Don't update padding style if it's already defined\n        if 'padding' not in styles:\n          styles['padding'] = value\n      else:\n        styles[rule] = value\n    return f\"{selector} {{ {', '.join(f\"{k}: {styles[k]};\") for k in styles} }}\"\n  def main(self):\n    print(self.parse_css('div > p', {'border': '1px solid black', 'padding': '10px', 'padding': '20px'}))"
+  },
+  "functionSignature": {
+    "javascript": "function parseCss(selector, rules) {\n  // Your code here\n}",
+    "python": "class Solution:\n  def parse_css(self, selector, rules):\n    # Your code here\n"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction parseCss(selector, rules) {\n  let styles = {};\n  for (let rule in rules) {\n    styles[rule] = rules[rule];\n  }\n  return `${selector} { ${Object.keys(styles).map(k => `${k}: ${styles[k]};`).join(' ')} }`;\n}\nconsole.log(parseCss('div > p', {'border': '1px solid black', 'padding': '10px', 'margin': '10px'}));",
+    "python": "class Solution:\n  def parse_css(self, selector, rules):\n    styles = {}\n    for rule, value in rules.items():\n      styles[rule] = value\n    return f\"{selector} {{ {', '.join(f\"{k}: {styles[k]};\") for k in styles} }}\"\n  def main(self):\n    print(self.parse_css('div > p', {'border': '1px solid black', 'padding': '10px', 'margin': '10px'}))"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "div > p, div > span {\n  border: 1px solid black;\n  padding: 10px;\n}\n{ \"border\": \"2px dotted red\", \"padding\": \"20px\" }",
+      "output": "div > p, div > span {\n  border: 2px dotted red;\n  padding: 20px;\n}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "div > p {\n  margin: 10px;\n  width: 100px;\n}\n{ \"margin\": \"20px\", \"width\": \"200px\" }",
+      "output": "div > p {\n  margin: 20px;\n  width: 200px;\n}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "d3415f77ad115b9a4bf4e7b7",
+  "slug": "fixing-css-pseudo-element-styles-with-inconsistent-box-model-bugfix-medium-css",
+  "mode": "bug_fix",
+  "category": "CSS",
+  "difficulty": "Medium"
+}

@@ -1,0 +1,143 @@
+{
+  "title": "Fixing Node.js Express Middleware for Route Parameter Validation in JSON Body",
+  "subCategory": "Express Middleware",
+  "statement": {
+    "markdown": "You are given a Node.js Express application with a middleware function that handles JSON requests and validates route parameters. However, the middleware function has a logical bug that causes it to incorrectly validate route parameters. Your task is to fix the bug and ensure that the middleware function correctly validates route parameters in JSON requests.",
+    "inputFormat": "The input will be a JSON object with route parameters.",
+    "outputFormat": "The output will be a boolean indicating whether the route parameters are valid.",
+    "notes": "Note that the middleware function should only consider the JSON body of the request when validating route parameters.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of route parameters"
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of JSON body keys"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"id\": 123, \"name\": \"John\"}",
+        "output": "true",
+        "explanation": "Route parameters are valid"
+      },
+      {
+        "input": "{\"id\": 123, \"name\": \"Jane\"}",
+        "output": "false",
+        "explanation": "Route parameters are invalid"
+      },
+      {
+        "input": "{\"age\": 30, \"city\": \"New York\"}",
+        "output": "false",
+        "explanation": "Route parameters are not present in JSON body"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 75,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "NODE_JS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "node_js"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Review the middleware function's implementation and identify the logical bug."
+    }
+  ],
+  "editorial": {
+    "title": "Fixing the Middleware Function",
+    "intuition": "The middleware function should only consider the JSON body of the request when validating route parameters.",
+    "bruteForce": "The brute force approach would be to manually validate each route parameter in the middleware function.",
+    "betterSolution": "A better solution would be to use a validation library such as Joi to validate the route parameters.",
+    "optimalSolution": "The optimal solution would be to use a middleware function that can validate route parameters based on a configuration object.",
+    "proofOfCorrectness": "The proof of correctness would be to show that the middleware function correctly validates route parameters in all test cases.",
+    "dryRun": "Run the middleware function with sample inputs to verify its correctness.",
+    "commonMistakes": [
+      "Not considering the JSON body of the request",
+      "Incorrectly validating route parameters"
+    ],
+    "timeComplexity": "O(n + m)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "function validateRouteParameters(req, res, next) {\n  const routeParams = req.params;\n  const jsonBody = req.body;\n  // TO DO: Implement route parameter validation\n  next();\n}"
+  },
+  "buggyStarterCode": {
+    "javascript": "function validateRouteParameters(req, res, next) {\n  const routeParams = req.params;\n  const jsonBody = req.body;\n  for (const key in jsonBody) {\n    // BUG: Incorrectly validating route parameters\n    if (key !== 'id' && jsonBody[key] === jsonBody['id']) {\n      next(new Error('Invalid route parameters'));\n      return;\n    }\n  }\n  next();\n}"
+  },
+  "functionSignature": {
+    "javascript": "function validateRouteParameters(req, res, next) {\n  // TO DO: Implement route parameter validation\n}"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction validateRouteParameters(req, res, next) {\n  const routeParams = req.params;\n  const jsonBody = req.body;\n  if (Object.keys(jsonBody).length !== Object.keys(routeParams).length) {\n    next(new Error('Invalid route parameters'));\n    return;\n  }\n  for (const key in jsonBody) {\n    if (jsonBody[key] !== routeParams[key]) {\n      next(new Error('Invalid route parameters'));\n      return;\n    }\n  }\n  next();\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 3,
+    "memoryLimit": 512,
+    "supportedLanguages": [
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 2
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"id\": 123, \"name\": \"John\"}",
+      "output": "true",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"id\": 123, \"name\": \"Jane\"}",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "a045d0dd78555296aea460cf",
+  "slug": "fixing-nodejs-express-middleware-for-route-parameter-validation-in-json-body-bugfix-hard-node_js",
+  "mode": "bug_fix",
+  "category": "NODE_JS",
+  "difficulty": "Hard"
+}

@@ -1,0 +1,163 @@
+{
+  "_id": "4657e40d9030a7a9ee71ea34",
+  "title": "Faulty Trie Deletion with Prefix Auto Completion",
+  "slug": "faulty-trie-deletion-with-prefix-auto-completion-bugfix-hard-tries",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "TRIE",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 30,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "trie"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given a non-empty string `prefix` and a `root` node of a Trie, delete all keys that have `prefix` as a prefix. Implement this function in the given code. The function should return `true` if the Trie is empty after deletion, `false` otherwise.\n\nNote: The Trie data structure is implemented in the given code. You should not modify it.",
+    "inputFormat": "One line string input, e.g., \"root\"",
+    "outputFormat": "A boolean value indicating whether the Trie is empty after deletion",
+    "notes": "Time complexity: O(|prefix| + |Trie|) where |prefix| is the length of the prefix and |Trie| is the number of nodes in the Trie.\n\nSpace complexity: O(1)",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "a",
+        "output": "False",
+        "explanation": "Deletion of key 'a' without prefix 'a' doesn't empty the Trie"
+      },
+      {
+        "input": "ab",
+        "output": "False",
+        "explanation": "Deletion of key 'ab' without prefix 'ab' doesn't empty the Trie"
+      },
+      {
+        "input": "a",
+        "output": "True",
+        "explanation": "Deletion of key 'a' with prefix 'a' empties the Trie"
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text: Consider handling the case when the prefix is an empty string"
+    }
+  ],
+  "editorial": {
+    "title": "Faulty Trie Deletion with Prefix Auto Completion",
+    "intuition": "We should delete all keys that have the given prefix as a prefix using a recursive approach.",
+    "bruteForce": "The brute force approach is to traverse the Trie from the root node and delete all nodes that have the prefix as a prefix.",
+    "betterSolution": "",
+    "optimalSolution": "To optimize the solution, we can use a recursive approach to traverse the Trie and delete all nodes that have the given prefix as a prefix. We should also handle the case when the prefix is an empty string.",
+    "proofOfCorrectness": "proof Of Correctness details.",
+    "dryRun": "Step-by-step example run: If the given prefix is 'a', we should delete the node 'a' in the Trie. Then if the Trie is empty, we should return True; otherwise, we should return False.",
+    "commonMistakes": [
+      "Mistake 1: Not handling the case when the prefix is an empty string",
+      "Mistake 2: Not deleting all nodes that have the prefix as a prefix"
+    ],
+    "timeComplexity": "O(|prefix| + |Trie|)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "cpp": "class TrieNode {\npublic:\n\tTrieNode() {}\n\tTrieNode(char ch) { value = ch; isEndOfWord = false; }\n\n\tTrieNode** children; // BUGGY: Missing size information\n\tbool isEndOfWord;\n};\n\nclass Solution {\npublic:\n\tvoid insert(TrieNode** root, string word);\n\tbool search(TrieNode** root, string word);\n\tvoid deleteWithPrefix(TrieNode** root, string prefix);\n};",
+    "java": "class TrieNode {\npublic:\n\tTrieNode() {}\n\tTrieNode(char ch) {\tvalue = ch; isEndOfWord = false; }\n\n\tTrieNode[] children; // BUGGY: Missing size information\n\tboolean isEndOfWord;\n};\n\nclass Solution {\npublic:\n\tvoid insert(TrieNode root, String word);\n\tboolean search(TrieNode root, String word);\n\tvoid deleteWithPrefix(TrieNode root, String prefix);\n};",
+    "python": "class TrieNode:\n\tdef __init__(self):\n\t\tpass\n\tdef __init__(self, ch):\n\t\tself.value = ch\n\t\tself.isEndOfWord = False\n\t\tself.children = None # BUGGY: Missing size information\n\nclass Solution:\n\tdef insert(self, root, word):\n\t\tpass\n\tdef search(self, root, word):\n\t\treturn False\n\tdef deleteWithPrefix(self, root, prefix):\n\t\treturn False",
+    "javascript": "class TrieNode {\npublic:\n\tconstructor() {}\n\tconstructor(ch) {\tthis.value = ch; this.isEndOfWord = false; }\n\n\tTrieNode[] children; // BUGGY: Missing size information\n\tboolean isEndOfWord;\n};\n\nclass Solution {\npublic:\n\tvoid insert(TrieNode root, string word);\n\tboolean search(TrieNode root, string word);\n\tvoid deleteWithPrefix(TrieNode root, string prefix);\n};"
+  },
+  "buggyStarterCode": {
+    "cpp": "void Solution::deleteWithPrefix(TrieNode** root, string prefix) {\n\tif (!prefix.empty()) {\n\t\tTrieNode* current = root;\n\t\tfor (int i = 0; i < prefix.size(); i++) {\n\t\t\tcurrent = current->children[prefix[i] - 'a'];\n\t\t}\n\t\tif (current->isEndOfWord) {\n\t\t\t// Delete all nodes with this prefix\n\t\t\tfor (int i = 0; i < prefix.size(); i++) {\n\t\t\t\tcurrent = current->children[prefix[i] - 'a'];\n\t\t\t\tcurrent->isEndOfWord = false;\n\t\t\t}\n\t\t}\n\t}\n}",
+    "java": "void Solution.deleteWithPrefix(TrieNode root, String prefix) {\n\tif (!prefix.isEmpty()) {\n\t\tTrieNode current = root;\n\t\tfor (int i = 0; i < prefix.length(); i++) {\n\t\t\tcurrent = current.children[prefix.charAt(i) - 'a'];\n\t\t}\n\t\tif (current.isEndOfWord) {\n\t\t\t// Delete all nodes with this prefix\n\t\t\tfor (int i = 0; i < prefix.length(); i++) {\n\t\t\t\tcurrent = current.children[prefix.charAt(i) - 'a'];\n\t\t\t\tcurrent.isEndOfWord = false;\n\t\t\t}\n\t\t}\n\t}\n}",
+    "python": "def Solution.deleteWithPrefix(self, root, prefix):\n\tif prefix:\n\t\tcurrent = root\n\t\tfor i in range(prefix):\n\t\t\tcurrent = current.children[prefix[i] - 'a']\n\t\tif current.isEndOfWord:\n\t\t\t# Delete all nodes with this prefix\n\t\t\tfor i in range(prefix):\n\t\t\t\tcurrent = current.children[prefix[i] - 'a']\n\t\t\t\tcurrent.isEndOfWord = False\n\t\telse:\n\t\t\tbreak\n\t\tself.deleteWithPrefix(current, prefix)",
+    "javascript": "Solution.prototype.deleteWithPrefix = function(root, prefix) {\n\tif (prefix.length) {\n\t\tvar current = root;\n\t\tfor (var i = 0; i < prefix.length; i++) {\n\t\t\tcurrent = current.children[prefix[i] - 'a'];\n\t\t}\n\t\tif (current.isEndOfWord) {\n\t\t\t// Delete all nodes with this prefix\n\t\t\tfor (var i = 0; i < prefix.length; i++) {\n\t\t\t\tcurrent = current.children[prefix[i] - 'a'];\n\t\t\t\tcurrent.isEndOfWord = false;\n\t\t\t}\n\t\t}\n\t}\n}"
+  },
+  "functionSignature": {
+    "cpp": "void deleteWithPrefix(TrieNode** root, string prefix);",
+    "java": "void deleteWithPrefix(TrieNode root, String prefix);",
+    "python": "def deleteWithPrefix(self, root, prefix):",
+    "javascript": "void deleteWithPrefix(TrieNode root, string prefix);"
+  },
+  "solutions": {
+    "python": "class Solution:\n\tdef insert(self, root, word):\n\t\tcurrent = root\n\t\tfor ch in word:\n\t\t\tif not current.children.has_key(ch):\n\t\t\t\tcurrent.children[ch] = TrieNode(ch)\n\t\t\tcurrent = current.children[ch]\n\t\tcurrent.isEndOfWord = True\n\n\tdef search(self, root, word):\n\t\tcurrent = root\n\t\tfor ch in word:\n\t\t\tif not current.children.has_key(ch):\n\t\t\t\treturn False\n\t\t\tcurrent = current.children[ch]\n\t\treturn current.isEndOfWord\n\n\tdef deleteWithPrefix(self, root, prefix):\n\t\tif prefix:\n\t\t\tcurrent = root\n\t\t\tfor ch in prefix:\n\t\t\t\tcurrent = current.children[ch]\n\t\t\tif current.isEndOfWord:\n\t\t\t\t# Delete all nodes with this prefix\n\t\t\t\tself._deleteWithPrefix(current, prefix)\n\t\t\t\treturn\n\n\tdef _deleteWithPrefix(self, current, prefix):\n\t\tif not prefix:\n\t\t\t# The end of the prefix, remove it\n\t\t\tcurrent.isEndOfWord = False\n\t\t\tcurrent.value = ''\n\t\t\treturn\n\t\tch = prefix[0]\n\t\tself._deleteWithPrefix(current.children[ch], prefix[1:])\n\n\tdef isTrieEmpty(self, root):\n\t\tif not root:\n\t\t\treturn True\n\t\treturn not root.isEndOfWord",
+    "cpp": "class Solution {\npublic:\n\tvoid insert(TrieNode** root, string word) {\n\t\tTrieNode* current = *root;\n\t\tfor (int i = 0; i < word.length(); i++) {\n\t\t\tif (!current->children[word[i] - 'a'])\n\t\t\t\tcurrent->children[word[i] - 'a'] = new TrieNode(word[i]);\n\t\t\tcurrent = current->children[word[i] - 'a'];\n\t\t}\n\t\tcurrent->isEndOfWord = true;\n\t}\n\n\tbool search(TrieNode** root, string word) {\n\t\tTrieNode* current = *root;\n\t\tfor (int i = 0; i < word.length(); i++) {\n\t\t\tif (!current->children[word[i] - 'a'])\n\t\t\t\treturn false;\n\t\t\tcurrent = current->children[word[i] - 'a'];\n\t\t}\n\t\treturn current->isEndOfWord;\n\t}\n\n\tvoid deleteWithPrefix(TrieNode** root, string prefix) {\n\t\tif (prefix.empty())\n\t\t\treturn;\n\t\tTrieNode* current = *root;\n\t\tfor (int i = 0; i < prefix.length(); i++)\n\t\t\tcurrent = current->children[prefix[i] - 'a'];\n\t\tif (current->isEndOfWord)\n\t\t\tself._deleteWithPrefix(current, prefix);\n\t}\n\n\tvoid _deleteWithPrefix(TrieNode* current, string prefix) {\n\t\tif (prefix.empty())\n\t\t{\n\t\t\tcurrent->isEndOfWord = false;\n\t\t\tcurrent->value = '';\n\t\t\treturn;\n\t\t}\n\t\tstring ch = prefix[0];\n\t\t_deleteWithPrefix(current->children[ch], prefix.substr(1));\n\t}\n\n\tbool isTrieEmpty(TrieNode** root) {\n\t\tif (!*root)\n\t\t\treturn true;\n\t\treturn !(*root)->isEndOfWord;\n\t}\n};",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "a\nabc",
+      "output": "False",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "abc\ndef",
+      "output": "False",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

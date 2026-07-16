@@ -1,0 +1,98 @@
+{
+  "_id": "735b15ad9e2293c9a5a8b01b",
+  "title": "Implement a Simple Cache to Retrieve Book Titles",
+  "slug": "implement-a-simple-cache-to-retrieve-book-titles-easy-caching",
+  "difficulty": "Easy",
+  "topics": [
+    "CACHING"
+  ],
+  "statement": "Create a RESTful API using Express.js to manage a collection of books. The API should implement caching to improve performance. When a book title is requested, the API should return the title immediately if it exists in the cache. Otherwise, it should retrieve the title from a mock database, store it in the cache, and return the title. There is only one endpoint: GET /api/books/:bookId.\n\nYour task is to implement the caching logic to improve performance. You can use a simple in-memory cache (e.g., JavaScript objects) or a more robust cache system (e.g., Redis). Please note that this is an easy difficulty level, so focus on implementing a basic caching mechanism.\n\n**Requirements:**\n\n* Implement the GET /api/books/:bookId endpoint.\n* Use caching to improve performance.\n* Handle cases where the bookId is not found in the cache or database.\n\n**Hint:**\nYou can use the `express.json()` middleware to parse JSON bodies. For caching, you can use a simple JavaScript object to store book titles and their IDs.\n\n**Mock Database:**\nThe mock database contains the following book titles:\n```json\n{\n    'book1': 'To Kill a Mockingbird',\n    'book2': '1984',\n    'book3': 'The Catcher in the Rye'\n}\n```\n",
+  "constraints": [
+    "Must use a caching mechanism to improve performance",
+    "Should handle cases where bookId is not found in the cache or database"
+  ],
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/api/books/:bookId",
+      "description": "Retrieve the title of a book with the given ID. If the book is not found in the cache or database, return a 404 status code."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\n  \"name\": \"book-api\",\n  \"version\": \"1.0.0\",\n  \"main\": \"index.js\",\n  \"scripts\": {\n    \"start\": \"node index.js\"\n  },\n  \"dependencies\": {\n    \"express\": \"^4.18.2\"\n  }\n}",
+    "index.js": "const express = require('express');\nconst app = express();\napp.use(express.json());\n\n// TODO: Implement caching and book title retrieval\n\nconst BOOKS = {\n    'book1': 'To Kill a Mockingbird',\n    'book2': '1984',\n    'book3': 'The Catcher in the Rye'\n};\nconst cache = {};\n\napp.get('/api/books/:bookId', (req, res) => {\n    // TODO: Implement caching and book title retrieval\n});\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));\n"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "GET",
+      "path": "/api/books/book2",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "title": "1984"
+      },
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "GET",
+      "path": "/api/books/book4",
+      "expectedStatus": 404,
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "GET",
+      "path": "/api/books/book1",
+      "expectedStatus": 200,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "GET",
+      "path": "/api/books/book3",
+      "expectedStatus": 200,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "GET",
+      "path": "/api/books/book5",
+      "expectedStatus": 404,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "redis",
+    "cache-aside",
+    "write-through",
+    "ttl",
+    "invalidation",
+    "memory-cache",
+    "cache",
+    "caching"
+  ]
+}

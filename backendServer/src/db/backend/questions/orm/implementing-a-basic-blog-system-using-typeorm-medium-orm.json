@@ -1,0 +1,148 @@
+{
+  "_id": "d1301edfd0a9ecc571dd562d",
+  "title": "Implementing a Basic Blog System using TypeORM",
+  "slug": "implementing-a-basic-blog-system-using-typeorm-medium-orm",
+  "difficulty": "Medium",
+  "topics": [
+    "ORM"
+  ],
+  "statement": "Create a RESTful API to manage a simple blog system using TypeORM. The system should allow creating, reading, updating, and deleting (CRUD) blog posts. Each post should have a title, content, and author.\n\nThe API should also have a health check endpoint to verify server startup.\n\n**Endpoints:**\n\n* `GET /api/posts`: Retrieve a list of all blog posts.\n* `GET /api/posts/:id`: Retrieve a single blog post by its ID.\n* `POST /api/posts`: Create a new blog post.\n* `PUT /api/posts/:id`: Update an existing blog post.\n* `DELETE /api/posts/:id`: Delete a blog post.\n* `GET /api/health`: Verify server startup.\n\n**Constraints:**\n\n* The database connection should be in-memory.\n* Use TypeORM to interact with the database.\n* Use the `express.json()` middleware to parse JSON request bodies.\n* Implement pagination for the `GET /api/posts` endpoint to limit the result to 10 items per page.\n* Implement error handling for cases where the requested post ID is not found.\n\n**API Request and Response Examples:**\n\n* `GET /api/posts`:\n  + Request: No body\n  + Response: `200 OK` with a list of blog posts\n* `POST /api/posts`:\n  + Request: `application/json` with `title`, `content`, and `author`\n  + Response: `201 Created` with the created post\n* `GET /api/posts/1`:\n  + Request: No body\n  + Response: `200 OK` with the post\n* `PUT /api/posts/1`:\n  + Request: `application/json` with `title`, `content`, and `author`\n  + Response: `200 OK` with the updated post\n* `DELETE /api/posts/1`:\n  + Request: No body\n  + Response: `200 OK` with no body\n\n**Database Schema:**\n\nThe `posts` table should have the following columns:\n\n* `id`: The unique ID of the post\n* `title`: The title of the post\n* `content`: The content of the post\n* `author`: The author of the post\n",
+  "constraints": [
+    "Must use only the in-memory array or mock database provided",
+    "Use TypeORM to interact with the database"
+  ],
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/api/posts",
+      "description": "Retrieve a list of all blog posts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/posts/:id",
+      "description": "Retrieve a single blog post by its ID"
+    },
+    {
+      "method": "POST",
+      "path": "/api/posts",
+      "description": "Create a new blog post"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/posts/:id",
+      "description": "Update an existing blog post"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/posts/:id",
+      "description": "Delete a blog post"
+    },
+    {
+      "method": "GET",
+      "path": "/api/health",
+      "description": "Verify server startup"
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\n  \"name\": \"blog-api\",\n  \"version\": \"1.0.0\",\n  \"main\": \"index.js\",\n  \"scripts\": {\n    \"start\": \"node index.js\"\n  },\n  \"dependencies\": {\n    \"express\": \"^4.18.2\",\n    \"typeorm\": \"^0.3.6\"\n  }\n}",
+    "index.js": "const express = require('express');\nconst { createConnection } = require('typeorm');\nconst app = express();\napp.use(express.json());\n\n// TODO: Implement database connection and endpoints\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/api/health",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "GET",
+      "path": "/api/posts",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "posts": [
+          {
+            "id": 1,
+            "title": "Post 1",
+            "content": "Content 1",
+            "author": "Author 1"
+          }
+        ]
+      },
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "POST",
+      "path": "/api/posts",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "title": "New Post",
+        "content": "New Content",
+        "author": "New Author"
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "id": 2,
+        "title": "New Post",
+        "content": "New Content",
+        "author": "New Author"
+      },
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "GET",
+      "path": "/api/posts/999",
+      "expectedStatus": 404,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "GET",
+      "path": "/api/posts/999",
+      "expectedStatus": 404,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "DELETE",
+      "path": "/api/posts/999",
+      "expectedStatus": 404,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "mongoose",
+    "prisma",
+    "sequelize",
+    "typeorm",
+    "drizzle",
+    "relations",
+    "populate",
+    "schema",
+    "migration",
+    "orm",
+    "crud",
+    "api"
+  ]
+}

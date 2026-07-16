@@ -1,0 +1,173 @@
+{
+  "_id": "239d905173bfcd5532b1b316",
+  "title": "Implementing Token Bucket Rate Limiting for an API",
+  "slug": "implementing-token-bucket-rate-limiting-for-an-api-medium-rate-limiting",
+  "difficulty": "Medium",
+  "topics": [
+    "RATE_LIMITING"
+  ],
+  "statement": "Create a RESTful API to manage a collection of books using Express.js that implements token bucket rate limiting to prevent excessive requests from any IP address. The API should allow users to retrieve the collection of books, add a new book, and update or delete an existing book. You must adhere to the provided starter code and handle invalid requests, rate limit exceeded errors, and missing or invalid headers.",
+  "constraints": [
+    "Must use token bucket algorithm for rate limiting",
+    "Must validate input data using JSON schema",
+    "Must handle invalid requests and rate limit exceeded errors"
+  ],
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/api/books",
+      "description": "Retrieve the collection of books. Optional query parameters: limit (int) and offset (int)."
+    },
+    {
+      "method": "POST",
+      "path": "/api/books",
+      "description": "Add a new book. Request body: { id: int, title: string, author: string }. Expected response: 201 Created with a JSON body containing the added book's ID."
+    },
+    {
+      "method": "GET",
+      "path": "/api/books/:id",
+      "description": "Retrieve a book by its ID. Expected response: 200 OK with a JSON body containing the book."
+    },
+    {
+      "method": "PUT",
+      "path": "/api/books/:id",
+      "description": "Update an existing book. Request body: { id: int, title: string, author: string }. Expected response: 200 OK with a JSON body containing the updated book."
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/books/:id",
+      "description": "Delete a book by its ID. Expected response: 200 OK."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\"name\":\"rate-limiting-api\",\"version\":\"1.0.0\",\"main\":\"index.js\",\"scripts\":{\"start\":\"node index.js\"},\"dependencies\":{\"express\":\"^4.18.2\",\"jsonwebtoken\":\"^8.5.1\",\"jws\":\"^1.2.0\",\"nano-id\":\"^2.0.0\"}}",
+    "index.js": "const express = require('express');\nconst app = express();\napp.use(express.json());\nconst { TokenBucket } = require('rate-limiter-flexible');\nconst rateLimiter = new TokenBucket({\n  points: 10,\n  duration: 60\n});\nconst nanoId = require('nano-id');\nconst books = [];\n\napp.use((req, res, next) => {\n  rateLimiter.consume(req.ip)\n    .then(() => next())\n    .catch(err => res.status(429).send({\n      error: 'Rate limit exceeded'\n    }));\n});\n\napp.get('/api/books', (req, res) => {\n  // TODO: Implement endpoint\n});\napp.post('/api/books', (req, res) => {\n  // TODO: Implement endpoint\n});\napp.get('/api/books/:id', (req, res) => {\n  // TODO: Implement endpoint\n});\napp.put('/api/books/:id', (req, res) => {\n  // TODO: Implement endpoint\n});\napp.delete('/api/books/:id', (req, res) => {\n  // TODO: Implement endpoint\n});\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "GET",
+      "path": "/api/books",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "success": true,
+        "books": []
+      },
+      "expectedBodySchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "books": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          }
+        },
+        "required": [
+          "success",
+          "books"
+        ]
+      },
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "POST",
+      "path": "/api/books",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "id": 1,
+        "title": "Book 1",
+        "author": "Author 1"
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "success": true,
+        "id": 1
+      },
+      "expectedBodySchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "id": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "success",
+          "id"
+        ]
+      },
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "GET",
+      "path": "/api/books",
+      "expectedStatus": 200,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "POST",
+      "path": "/api/books",
+      "body": {
+        "id": 1,
+        "title": "Book 1"
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "GET",
+      "path": "/api/books/999",
+      "expectedStatus": 404,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "sliding-window",
+    "token-bucket",
+    "fixed-window",
+    "leaky-bucket",
+    "redis",
+    "express-rate-limit",
+    "rate-limiting",
+    "express-js",
+    "api-design"
+  ]
+}

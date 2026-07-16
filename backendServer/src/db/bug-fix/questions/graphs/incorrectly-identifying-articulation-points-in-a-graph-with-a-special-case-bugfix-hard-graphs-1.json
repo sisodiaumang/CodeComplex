@@ -1,0 +1,160 @@
+{
+  "_id": "7937501be0f328ae57b7295a",
+  "title": "Incorrectly Identifying Articulation Points in a Graph with a Special Case",
+  "slug": "incorrectly-identifying-articulation-points-in-a-graph-with-a-special-case-bugfix-hard-graphs-1",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "BFS/DFS",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 60,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "graph"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Articulation points are the vertices in a graph from which removal would disconnect the graph. Given a connected undirected graph with n vertices and m edges, find all the articulation points in the graph.",
+    "inputFormat": "The first line of input contains two integers n and m representing the number of vertices and edges in the graph. Then m lines follow. Each line contains three integers u, v, and w representing an edge between two vertices u and v of weight w.",
+    "outputFormat": "Print all the articulation points in the graph.",
+    "notes": "If the graph is not connected, print nothing. The graph will have at least 2 vertices. The graph may contain self-loops or multiple edges between the same pair of vertices.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 2,
+        "max": 10000,
+        "description": "Number of vertices"
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 1,
+        "max": 100000,
+        "description": "Number of edges"
+      }
+    ],
+    "examples": [
+      {
+        "input": "0",
+        "output": "0",
+        "explanation": ""
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "intuition details.",
+    "bruteForce": "brute Force details.",
+    "betterSolution": "",
+    "optimalSolution": "optimal Solution details.",
+    "proofOfCorrectness": "proof Of Correctness details.",
+    "dryRun": "dry Run details.",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(...) ",
+    "spaceComplexity": "O(...)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    bool solve(vector<int>& nums) {\n        // TODO: implement\n        return false;\n    }\n};",
+    "java": "class Solution {\n    public boolean solve(int[] nums) {\n        // TODO: implement\n        return false;\n    }\n}",
+    "python": "class Solution:\n    def solve(self, nums: list[int]) -> bool:\n        # TODO: implement\n        pass",
+    "javascript": "var solve = function(nums) {\n    // TODO: implement\n    return false;\n};"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    vector<int> findArticulationPoints(int n, vector<vector<int>>& edges) {\n        vector<int> result;\n        bool isVisiting[n] = {false};\n        bool isArticulationPoint[n] = {false};\n        vector<int> discoveryTime;\n        vector<int> low;\n\n        function<void(int)> dfs = [&](int node) {\n            discoveryTime.push_back(node);\n            low[node] = node;\n            int childCount = 0;\n\n            for (int i = 0; i < edges[node].size(); i++) {\n                int adjacentNode = edges[node][i];\n                if (!isVisiting[adjacentNode]) {\n                    isVisiting[adjacentNode] = true;\n                    dfs(adjacentNode);\n                    low[node] = min(low[node], low[adjacentNode]);\n                    childCount++;\n                    if (discoveryTime[node] < low[adjacentNode]) {\n                        // Corrected: isArticulationPoint[node] = true;\n                        // BUG INTRODUCED HERE\n                        isArticulationPoint[node] = false;\n                    }\n                }\n                else if (low[adjacentNode] >= discoveryTime[node]) {\n                    low[node] = min(low[node], low[adjacentNode]);\n                }\n            }\n\n            if (node == 0 && childCount > 1) {\n                isArticulationPoint[node] = true;\n            }\n        };\n\n        for (int i = 0; i < n; i++) {\n            isVisiting[i] = false;\n        }\n\n        dfs(0);\n\n        for (int i = 0; i < n; i++) {\n            if (isArticulationPoint[i]) {\n                result.push_back(i);\n            }\n        }\n\n        return result;\n    }\n};",
+    "java": "class Solution {\n    public boolean solve(int[] nums) {\n        // Buggy code\n        return false;\n    }\n}",
+    "python": "class Solution:\n    def findArticulationPoints(self, n: int, edges: List[List[int]]) -> List[int]:\n        result = []\n        isVisiting = [False] * n\n        isArticulationPoint = [False] * n\n        discoveryTime = []\n        low = [0] * n\n\n        def dfs(node: int) -> None:\n            discoveryTime.append(node)\n            low[node] = node\n            childCount = 0\n\n            for i in range(len(edges[node])):\n                adjacentNode = edges[node][i]\n                if not isVisiting[adjacentNode]:\n                    isVisiting[adjacentNode] = True\n                    dfs(adjacentNode)\n                    low[node] = min(low[node], low[adjacentNode])\n                    childCount += 1\n                    if discoveryTime[node] < low[adjacentNode]:\n                        # Corrected: isArticulationPoint[node] = True\n                        # BUG INTRODUCED HERE\n                        isArticulationPoint[node] = False\n                else:\n                    if low[adjacentNode] >= discoveryTime[node]:\n                        low[node] = min(low[node], low[adjacentNode])\n\n            if node == 0 and childCount > 1:\n                isArticulationPoint[node] = True\n\n        for i in range(n):\n            isVisiting[i] = False\n\n        dfs(0)\n\n        for i in range(n):\n            if isArticulationPoint[i]:\n                result.append(i)\n\n        return result\n",
+    "javascript": "function findArticulationPoints(n, edges) {\n    let result = []; let isVisiting = new Array(n).fill(false);\n    let isArticulationPoint = new Array(n).fill(false);\n    let discoveryTime = []; let low = new Array(n).fill(0);\n\n    function dfs(node) {\n        discoveryTime.push(node);\n        low[node] = node;\n        let childCount = 0;\n\n        for (let i = 0; i < edges[node].length; i++) {\n            let adjacentNode = edges[node][i];\n            if (!isVisiting[adjacentNode]) {\n                isVisiting[adjacentNode] = true;\n                dfs(adjacentNode);\n                low[node] = Math.min(low[node], low[adjacentNode]);\n                childCount++;\n                if (discoveryTime[node] < low[adjacentNode]) {\n                    // Corrected: isArticulationPoint[node] = true;\n                    // BUG INTRODUCED HERE\n                    isArticulationPoint[node] = false;\n                }\n            }\n            else if (low[adjacentNode] >= discoveryTime[node]) {\n                low[node] = Math.min(low[node], low[adjacentNode]);\n            }\n        }\n\n        if (node == 0 && childCount > 1) {\n            isArticulationPoint[node] = true;\n        }\n    };\n\n    for (let i = 0; i < n; i++) {\n        isVisiting[i] = false;\n    }\n\n    dfs(0);\n\n    for (let i = 0; i < n; i++) {\n        if (isArticulationPoint[i]) {\n            result.push(i);\n        }\n    }\n\n    return result;\n}\n"
+  },
+  "functionSignature": {
+    "cpp": "bool solve(vector<int>& nums);",
+    "java": "public boolean solve(int[] nums);",
+    "python": "def solve(self, nums: list[int]) -> bool:",
+    "javascript": "var solve = function(nums);"
+  },
+  "solutions": {
+    "python": "from typing import List\n\nclass Solution:\n    def findArticulationPoints(self, n: int, edges: List[List[int]]) -> List[int]:\n        result = []\n        isVisiting = [False] * n\n        isArticulationPoint = [False] * n\n        discoveryTime = []\n        low = [0] * n\n\n        def dfs(node: int) -> None:\n            discoveryTime.append(node)\n            low[node] = node\n            childCount = 0\n\n            for i in range(len(edges[node])):\n                adjacentNode = edges[node][i]\n                if not isVisiting[adjacentNode]:\n                    isVisiting[adjacentNode] = True\n                    dfs(adjacentNode)\n                    low[node] = min(low[node], low[adjacentNode])\n                    childCount += 1\n                    if discoveryTime[node] < low[adjacentNode]:\n                        isArticulationPoint[node] = True\n                else:\n                    if low[adjacentNode] >= discoveryTime[node]:\n                        low[node] = min(low[node], low[adjacentNode])\n\n            if node == 0 and childCount > 1:\n                isArticulationPoint[node] = True\n\n        for i in range(n):\n            isVisiting[i] = False\n\n        discoveryTime = []\n\n        def readInput():\n            n, m = map(int, input().split())\n            edges = [[] for _ in range(n)]\n\n            for i in range(m):\n                u, v, w = map(int, input().split())\n                edges[u].append(v)\n                edges[v].append(u)\n\n            dfs(0)\n\n            for i in range(n):\n                if isArticulationPoint[i]:\n                    result.append(i)\n\n            return result\n\n\n        result = readInput()\n\n        return result\n\n\nif __name__ == '__main__':\n    T = 1\n    for _ in range(T):\n        n, m = map(int, input().split())\n        result = findArticulationPoints(n, [[] for _ in range(n)])\n        print(*result)\n\n",
+    "cpp": "#include<iostream>\n#include<vector>\n#include<map>\nusing namespace std;\n\nclass Solution {\npublic:\n    vector<int> findArticulationPoints(int n, vector<vector<int>>& edges) {\n        vector<int> result;\n        bool isVisiting[n] = {false};\n        bool isArticulationPoint[n] = {false};\n        vector<int> discoveryTime;\n        vector<int> low;\n\n        function<void(int)> dfs = [&](int node) {\n            discoveryTime.push_back(node);\n            low[node] = node;\n            int childCount = 0;\n\n            for (int i = 0; i < edges[node].size(); i++) {\n                int adjacentNode = edges[node][i];\n                if (!isVisiting[adjacentNode]) {\n                    isVisiting[adjacentNode] = true;\n                    dfs(adjacentNode);\n                    low[node] = min(low[node], low[adjacentNode]);\n                    childCount++;\n                    if (discoveryTime[node] < low[adjacentNode]) {\n                        isArticulationPoint[node] = true;\n                    }\n                }\n                else if (low[adjacentNode] >= discoveryTime[node]) {\n                    low[node] = min(low[node], low[adjacentNode]);\n                }\n            }\n\n            if (node == 0 && childCount > 1) {\n                isArticulationPoint[node] = true;\n            }\n        };\n\n        for (int i = 0; i < n; i++) {\n            isVisiting[i] = false;\n        }\n\n        dfs(0);\n\n        for (int i = 0; i < n; i++) {\n            if (isArticulationPoint[i]) {\n                result.push_back(i);\n            }\n        }\n\n        return result;\n    }\n};\n\nint main() {\n    int n, m;\n    cin >> n >> m;\n    vector<vector<int>> edges(n);\n\n    for (int i = 0; i < m; i++) {\n        int u, v, w;\n        cin >> u >> v >> w;\n        edges[u].push_back(v);\n        edges[v].push_back(u);\n    }\n\n    Solution sol;\n    vector<int> result = sol.findArticulationPoints(n, edges);\n\n    for (int i = 0; i < result.size(); i++) {\n        cout << result[i] << ' '; \n    }\n\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "0",
+      "output": "0",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "0",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

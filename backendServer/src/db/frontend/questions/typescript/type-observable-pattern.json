@@ -1,0 +1,64 @@
+{
+  "_id": "32dc85d31a58be21a79b20bb",
+  "title": "Observable Pattern",
+  "slug": "type-observable-pattern",
+  "difficulty": "Hard",
+  "topics": [
+    "TYPESCRIPT"
+  ],
+  "statement": {
+    "markdown": "## Observable Pattern: Implement the Observer pattern in TypeScript, allowing multiple observers to subscribe to and receive updates from a subject. The subject should be able to add and remove observers.\n### Requirements\n\n1. Implement the Subject interface with a method to add observers and a method to notify all observers.\n2. Implement the Observer interface with a method to update observers when notified by the subject.\n3. Create a concrete subject class (e.g., WeatherStation) that extends the Subject interface and maintains a list of observers.\n4. Create two concrete observer classes (e.g., TemperatureDisplay and HumidityDisplay) that implement the Observer interface.\n5. The subject should notify all observers when its state changes."
+  },
+  "constraints": [
+    "No external libraries (e.g., rxjs) should be used.",
+    "The solution should compile and run without errors.",
+    "The solution should demonstrate the Observer pattern correctly."
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "typescript": "interface Subject<T> {\n  add(observer: Observer<T>): void;\n  remove(observer: Observer<T>): void;\n  notify(): void;\n}\n\ninterface Observer<T> {\n  update(data: T): void;\n}\n\nclass SubjectImpl<T> implements Subject<T> {\n  private observers: Observer<T>[];\n  constructor() {\n    this.observers = [];\n  }\n  add(observer: Observer<T>): void {\n    this.observers.push(observer);\n  }\n  remove(observer: Observer<T>): void {\n    this.observers = this.observers.filter((o) => o !== observer);\n  }\n  notify(): void {"
+  },
+  "gradingCriteria": [
+    {
+      "id": "1",
+      "description": "Correctly implements the Subject interface",
+      "weight": 20
+    },
+    {
+      "id": "2",
+      "description": "Correctly implements the Observer interface",
+      "weight": 20
+    },
+    {
+      "id": "3",
+      "description": "Demonstrates the Observer pattern correctly",
+      "weight": 30
+    },
+    {
+      "id": "4",
+      "description": "Does not use external libraries",
+      "weight": 10
+    },
+    {
+      "id": "5",
+      "description": "Compiles and runs without errors",
+      "weight": 20
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "typescript"
+    ],
+    "referenceSolution": "interface Subject<T> {\n  add(observer: Observer<T>): void;\n  remove(observer: Observer<T>): void;\n  notify(): void;\n}\n\ninterface Observer<T> {\n  update(data: T): void;\n}\n\nclass SubjectImpl<T> implements Subject<T> {\n  private observers: Observer<T>[];\n  private data: T;\n  constructor() {\n    this.observers = [];\n    this.data = null;\n  }\n  add(observer: Observer<T>): void {\n    this.observers.push(observer);\n  }\n  remove(observer: Observer<T>): void {\n    this.observers = this.observers.filter((o) => o !== observer);\n  }\n  setData(data: T): void {\n    this.data = data;\n    this.notify();\n  }\n  private notify(): void {\n    this.observers.forEach((observer) => observer.update(this.data));\n  }\n\nclass WeatherStation implements Subject<number> {\n  private temperature: number;\n  constructor() {\n    this.temperature = 0;\n  }\n  getTemperature(): number {\n    return this.temperature;\n  }\n  setTemperature(temp: number): void {\n    this.temperature = temp;\n    subject.setData(temp);\n  }\n\nclass TemperatureDisplay implements Observer<number> {\n  update(data: number): void {\n    console.log(`Temperature display updated: ${data}°C`);\n  }\n}\n\nclass HumidityDisplay implements Observer<number> {\n  update(data: number): void {\n    console.log(`Humidity display updated: ${data}%`);\n  }\n}\n\nclass Main {\n  static main(): void {\n    const subject = new SubjectImpl<number>();\n    const weatherStation = new WeatherStation();\n    weatherStation.setTemperature(22);\n    const temperatureDisplay = new TemperatureDisplay();\n    const humidityDisplay = new HumidityDisplay();\n    subject.add(temperatureDisplay);\n    subject.add(humidityDisplay);\n    weatherStation.setTemperature(25);\n    subject.remove(humidityDisplay);\n    weatherStation.setTemperature(30);\n  }\n}\nMain.main();\n"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

@@ -1,0 +1,130 @@
+{
+  "_id": "750a64de268a1e1163417ecc",
+  "title": "Email Verification System",
+  "slug": "email-verification-system-hard-email",
+  "difficulty": "Hard",
+  "topics": [
+    "EMAIL"
+  ],
+  "statement": "Build a robust email verification system using Nodemailer. Implement APIs to send verification emails with unique tokens and verify user input tokens. The system should handle rate limiting, prevent brute-force attacks, and store email verification status in memory for this challenge.",
+  "constraints": [
+    "Must use only the in-memory array or mock database provided for email verification status",
+    "Rate limit should be enforced on email sending to prevent brute-force attacks"
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/email/send-verification-email",
+      "description": "Sends a verification email to the provided email address. The email contains a unique token that can be used to verify the email address. The API should respond with the token sent to the user and store the email verification status in memory."
+    },
+    {
+      "method": "POST",
+      "path": "/api/email/verify-email",
+      "description": "Verifies the provided token and updates the email verification status in memory. The API should respond with the verification status."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\"name\":\"email-verification-system\",\"version\":\"1.0.0\",\"main\":\"index.js\",\"scripts\":{\"start\":\"node index.js\"},\"dependencies\":{\"express\":\"^4.18.2\",\"nodemailer\":\"^6.7.7\",\"rate-limiter-flexible\":\"^3.0.0\"}}",
+    "index.js": "const express = require('express');const app = express();const nodemailer = require('nodemailer');const { RateLimiterMemory } = require('rate-limiter-flexible');const { nanoid } = require('nanoid');const emails = [];const limiter = new RateLimiterMemory({points: 10, duration: 1});app.use(express.json());const transporter = nodemailer.createTransport({host: \"smtp.example.com\", port: 587, auth: {user: \"username\", pass: \"password\"}});const getVerificationToken = () => {return nanoid(32);}const sendVerificationEmail = async (email) => {try {const token = getVerificationToken();const mailOptions = {from: \"example@example.com\", to: email, subject: \"Email Verification\", text: `Your verification token is: ${token}`};await transporter.sendMail(mailOptions);return token;} catch (error) {console.error(error);return null;}}app.post(\"/api/email/send-verification-email\", async (req, res) => {if (await limiter.consume(req.body.email)) {const token = await sendVerificationEmail(req.body.email);if (token) {emails[req.body.email] = {token, verified: false};res.json({token});} else {res.status(500).json({error: \"Failed to send verification email\"})}} else {res.status(429).json({error: \"Rate limit exceeded\"})}});app.post(\"/api/email/verify-email\", async (req, res) => {const email = req.body.email;const token = req.body.token;if (emails[email]) {if (emails[email].token === token) {emails[email].verified = true;res.json({verified: true});} else {res.status(401).json({error: \"Invalid token\"})}} else {res.status(404).json({error: \"Email not found\"})}});const PORT = process.env.PORT || 3000;app.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "POST",
+      "path": "/api/email/send-verification-email",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "email": "user@example.com"
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "token": "valid_token"
+      },
+      "expectedBodySchema": null,
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "POST",
+      "path": "/api/email/verify-email",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "email": "user@example.com",
+        "token": "valid_token"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "verified": true
+      },
+      "expectedBodySchema": null,
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "POST",
+      "path": "/api/email/send-verification-email",
+      "body": {
+        "email": "invalid_email"
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "POST",
+      "path": "/api/email/verify-email",
+      "body": {
+        "email": "user@example.com",
+        "token": "invalid_token"
+      },
+      "expectedStatus": 401,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "POST",
+      "path": "/api/email/send-verification-email",
+      "expectedStatus": 429,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "nodemailer",
+    "resend",
+    "smtp",
+    "templates",
+    "otp",
+    "verification",
+    "password-reset",
+    "email",
+    "rate-limiting",
+    "security"
+  ]
+}

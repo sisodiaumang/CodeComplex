@@ -1,0 +1,140 @@
+{
+  "title": "Fix MongoDB Aggregation Pipeline to Ignore Embedded Fields with Optional Keys",
+  "subCategory": "MongoDB Aggregation Pipeline",
+  "statement": {
+    "markdown": "Write a MongoDB aggregation pipeline that flattens a nested array of objects into a single array of objects. The nested array is optional and can contain any number of objects. The pipeline should ignore any embedded fields that are not required. For example, if the input is `[{a: 1, b: {c: 2, d: 3}}, {a: 4, b: {c: 5, e: 6}}]`, the output should be `[ {a: 1, c: 2}, {a: 4, c: 5} ]`.",
+    "inputFormat": "An array of objects where each object can have a nested array of objects or not.",
+    "outputFormat": "A single array of objects with the required fields flattened from the nested array.",
+    "notes": "The pipeline should use the `$project` stage to flatten the nested array and ignore any embedded fields that are not required. The pipeline should also use the `$unwind` stage to handle optional nested arrays.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The maximum number of objects in the input array."
+      }
+    ],
+    "examples": [
+      {
+        "input": "[{a: 1, b: {c: 2, d: 3}}, {a: 4, b: {c: 5, e: 6}}]",
+        "output": "[ {a: 1, c: 2}, {a: 4, c: 5} ]",
+        "explanation": "The pipeline should flatten the nested array and ignore the embedded fields `d` and `e`."
+      },
+      {
+        "input": "[]",
+        "output": "[]",
+        "explanation": "The pipeline should return an empty array if the input array is empty."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "MONGODB"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "mongodb"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the `$project` stage to flatten the nested array and ignore any embedded fields that are not required."
+    },
+    {
+      "order": 2,
+      "text": "Use the `$unwind` stage to handle optional nested arrays."
+    }
+  ],
+  "editorial": {
+    "title": "Fix MongoDB Aggregation Pipeline",
+    "intuition": "The pipeline should use the `$project` stage to flatten the nested array and ignore any embedded fields that are not required.",
+    "bruteForce": "One possible brute force solution is to use the `$addFields` stage to add a new field that contains the flattened array, and then use the `$project` stage to remove the original nested array.",
+    "betterSolution": "",
+    "optimalSolution": "The optimal solution is to use the `$project` stage to flatten the nested array and ignore any embedded fields that are not required, and then use the `$group` stage to group the objects by the required fields.",
+    "proofOfCorrectness": "The proof of correctness is to show that the pipeline returns the expected output for the given input.",
+    "dryRun": "To dry run the pipeline, you can use the MongoDB shell or a MongoDB driver to execute the pipeline on a sample input.",
+    "commonMistakes": [
+      "forgetting to use the `$project` stage",
+      "forgetting to use the `$unwind` stage"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "function fixPipeline(input) {\n  // Your code here\n  return output;\n}\n",
+    "python": "class Solution:\n  def fix_pipeline(self, input):\n    # Your code here\n    return output;"
+  },
+  "buggyStarterCode": {
+    "javascript": "function fixPipeline(input) {\n  var output = []; // Initialize output array\n  for (var i = 0; i < input.length; i++) {\n    var obj = input[i];\n    if ('b' in obj) {\n      var nestedArray = obj['b'];\n      for (var j = 0; j < nestedArray.length; j++) {\n        var nestedObj = nestedArray[j];\n        output.push({ a: obj.a, c: nestedObj.c });\n      }\n    } else {\n      output.push({ a: obj.a, c: obj.c });\n    }\n  }\n  return output;\n}\n",
+    "python": "class Solution:\n  def fix_pipeline(self, input):\n    output = []\n    for obj in input:\n      if 'b' in obj:\n        nested_array = obj['b']\n        for nested_obj in nested_array:\n          output.append({ 'a': obj['a'], 'c': nested_obj['c'] })\n      else:\n        output.append({ 'a': obj['a'], 'c': obj['c'] })\n    return output;"
+  },
+  "functionSignature": {
+    "javascript": "function fixPipeline(input);",
+    "python": "def fix_pipeline(self, input):"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction fixPipeline(input) {\n  var output = [];\n  for (var i = 0; i < input.length; i++) {\n    var obj = input[i];\n    if ('b' in obj) {\n      var nestedArray = obj['b'];\n      for (var j = 0; j < nestedArray.length; j++) {\n        var nestedObj = nestedArray[j];\n        output.push({ a: obj.a, c: nestedObj.c });\n      }\n    } else {\n      output.push({ a: obj.a });\n    }\n  }\n  return output;\n}\n",
+    "python": "class Solution:\n  def fix_pipeline(self, input):\n    output = []\n    for obj in input:\n      if 'b' in obj:\n        nested_array = obj['b']\n        for nested_obj in nested_array:\n          output.append({ 'a': obj['a'], 'c': nested_obj['c'] })\n      else:\n        output.append({ 'a': obj['a'] })\n    return output;"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "[{a: 1, b: {c: 2, d: 3}}, {a: 4, b: {c: 5, e: 6}}]",
+      "output": "[ {a: 1, c: 2}, {a: 4, c: 5} ]",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "[]",
+      "output": "[]",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "dc6e539b03a8fb94afcbe902",
+  "slug": "fix-mongodb-aggregation-pipeline-to-ignore-embedded-fields-with-optional-keys-bugfix-hard-mongodb",
+  "mode": "bug_fix",
+  "category": "MONGODB",
+  "difficulty": "Hard"
+}

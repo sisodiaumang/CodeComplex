@@ -1,0 +1,64 @@
+{
+  "_id": "c0a2736daff3940d86421218",
+  "title": "Accessible Context Menu",
+  "slug": "acce-accessible-context-menu",
+  "difficulty": "Medium",
+  "topics": [
+    "ACCESSIBILITY"
+  ],
+  "statement": {
+    "markdown": "Users should be able to access your web application's context menu without relying on visual cues.\nYour context menu should be navigable using a keyboard and have a clear focus state.\nYour context menu should be dismissible using the 'Escape' key or the close button.\nYour context menu should stay open even if the user clicks outside of it."
+  },
+  "constraints": [
+    "Use Tailwind CSS for styling.",
+    "Do not use any external libraries or frameworks.",
+    "Your solution should work on desktop and laptop computers with Windows, macOS, and Linux operating systems.",
+    "Your solution should be optimized for ARIA compliance."
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "html": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <title>Accessible Context Menu</title>\n  <link rel=\"stylesheet\" href=\"styles.css\">\n</head>\n<body>\n  <button id=\"open-menu\">Open Context Menu</button>\n  <div id=\"context-menu\" role=\"menu\" aria-hidden=\"true\">\n    <ul role=\"menuitems\">\n      <li role=\"menuitem\" tabindex=\"-1\"><button id=\"item1\">Item 1</button></li>\n      <li role=\"menuitem\" tabindex=\"-1\"><button id=\"item2\">Item 2</button></li>\n      <li role=\"menuitem\" tabindex=\"-1\"><button id=\"item3\">Item 3</button></li>\n      <li role=\"menuitem\" tabindex=\"-1\"><button id=\"close-menu\">Close</button></li>\n    </ul>\n  </div>\n  <script src=\"script.js\"></script>\n</body>\n</html>",
+    "css": ".context-menu {\n  display: none;\n  position: absolute;\n  background-color: #f0f0f0;\n  border: 1px solid #ccc;\n  padding: 10px;\n  border-radius: 5px;\n}\n.context-menu ul {\n  list-style: none;\n  padding: 0;\n  margin: 0;\n}\n.context-menu li {\n  margin-bottom: 10px;\n}\n.context-menu button {\n  width: 100%;\n  padding: 10px;\n  background-color: transparent;\n  border: none;\n  cursor: pointer;\n}\n",
+    "javascript": "// Add your JavaScript code here"
+  },
+  "gradingCriteria": [
+    {
+      "id": "accessibility",
+      "description": "The context menu is navigable using a keyboard and has a clear focus state.",
+      "weight": 30
+    },
+    {
+      "id": "dismissal",
+      "description": "The context menu is dismissible using the 'Escape' key or the close button.",
+      "weight": 20
+    },
+    {
+      "id": "persistent",
+      "description": "The context menu stays open even if the user clicks outside of it.",
+      "weight": 20
+    },
+    {
+      "id": "ui",
+      "description": "The context menu has a visually appealing design.",
+      "weight": 30
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "html",
+      "css",
+      "javascript"
+    ],
+    "referenceSolution": "html: <!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <title>Accessible Context Menu</title>\n  <link rel=\"stylesheet\" href=\"styles.css\">\n</head>\n<body>\n  <button id=\"open-menu\">Open Context Menu</button>\n  <div id=\"context-menu\" role=\"menu\" aria-hidden=\"true\" class=\"context-menu\">\n    <ul role=\"menuitems\" class=\"menu-items\">\n      <li role=\"menuitem\" tabindex=\"-1\"><button id=\"item1\" class=\"menu-item\">Item 1</button></li>\n      <li role=\"menuitem\" tabindex=\"-1\"><button id=\"item2\" class=\"menu-item\">Item 2</button></li>\n      <li role=\"menuitem\" tabindex=\"-1\"><button id=\"item3\" class=\"menu-item\">Item 3</button></li>\n      <li role=\"menuitem\" tabindex=\"-1\"><button id=\"close-menu\" class=\"menu-item close-menu\">Close</button></li>\n    </ul>\n  </div>\n  <script src=\"script.js\"></script>\n</body>\n</html>\ncss: .context-menu {\n  display: none;\n  position: absolute;\n  background-color: #f0f0f0;\n  border: 1px solid #ccc;\n  padding: 10px;\n  border-radius: 5px;\n  z-index: 1000;\n}\n.context-menu.menu-open {\n  display: block;\n}\n.context-menu ul {\n  list-style: none;\n  padding: 0;\n  margin: 0;\n}\n.context-menu li {\n  margin-bottom: 10px;\n}\n.context-menu button {\n  width: 100%;\n  padding: 10px;\n  background-color: transparent;\n  border: none;\n  cursor: pointer;\n}\n.close-menu {\n  position: absolute;\n  top: 10px;\n  right: 10px;\n}\n\njs: /**\n    * Open the context menu on button click\n    */\n  document.getElementById(\"open-menu\").addEventListener(\"click\", function() {\n    var contextMenu = document.getElementById(\"context-menu\");\n    contextMenu.setAttribute(\"aria-hidden\", false);\n    contextMenu.classList.add(\"menu-open\");\n  });\n\n  /**\n    * Close the context menu on close button click or Escape key press\n    */\n  var closeMenuButton = document.getElementById(\"close-menu\");\n  closeMenuButton.addEventListener(\"click\", function() {\n    var contextMenu = document.getElementById(\"context-menu\");\n    contextMenu.setAttribute(\"aria-hidden\", true);\n    contextMenu.classList.remove(\"menu-open\");\n  });\n\n  document.addEventListener(\"keydown\", function(e) {\n    if (e.key === \"Escape\") {\n      var contextMenu = document.getElementById(\"context-menu\");\n      contextMenu.setAttribute(\"aria-hidden\", true);\n      contextMenu.classList.remove(\"menu-open\");\n    }\n  });\n  // Listen for clicks outside the menu\n  document.addEventListener(\"click\", function(e) {\n    if (!e.target.closest(\"button#open-menu\") && !e.target.closest(\"div#context-menu\")) {\n      var contextMenu = document.getElementById(\"context-menu\");\n      contextMenu.setAttribute(\"aria-hidden\", true);\n      contextMenu.classList.remove(\"menu-open\");\n    }\n  });"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

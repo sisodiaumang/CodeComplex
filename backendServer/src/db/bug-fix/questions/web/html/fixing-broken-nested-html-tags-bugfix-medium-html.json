@@ -1,0 +1,145 @@
+{
+  "title": "Fixing Broken Nested HTML Tags",
+  "subCategory": "HTML Parsing",
+  "statement": {
+    "markdown": "Given a string representing a nested HTML structure, your task is to fix the broken tags and return the corrected string. A tag is considered broken if it is not properly closed, or if it has an invalid closing tag. For example, `<div><p>Hello World</div>` is a broken tag because the `<p>` tag is not closed. Another example, `<div><p>Hello World</div><p>` is broken because the closing tag for `<p>` should be `</p>`. However, if a tag is properly closed like `<div><p>Hello World</p></div>`, it is considered valid.",
+    "inputFormat": "A string representing the nested HTML structure",
+    "outputFormat": "The corrected string with all broken tags fixed",
+    "notes": "You should not remove any valid tags, only fix the broken ones.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of characters in the input string is at most 10,000."
+      }
+    ],
+    "examples": [
+      {
+        "input": "<div><p>Hello World</div>",
+        "output": "<div><p>Hello World</p></div>",
+        "explanation": "The closing tag for the <div> should be before the closing tag for the <p>"
+      },
+      {
+        "input": "<div><p>Hello World</div><p>",
+        "output": "<div><p>Hello World</p></p>",
+        "explanation": "The closing tag for the <p> should be before the invalid closing tag for <p>"
+      },
+      {
+        "input": "<p>Hello World</p><div>",
+        "output": "<p>Hello World</p><div></div>",
+        "explanation": "The closing tag for the <div> should be after the closing tag for the <p>"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "HTML"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "html"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use a stack data structure to keep track of the opening tags."
+    },
+    {
+      "order": 2,
+      "text": "When you encounter a closing tag, check if it matches the top of the stack."
+    }
+  ],
+  "editorial": {
+    "title": "Fixing Nested HTML Tags",
+    "intuition": "Use a stack data structure to keep track of the opening tags. When you encounter a closing tag, check if it matches the top of the stack. If it does, pop the top of the stack. If it doesn't, add the closing tag to the stack.",
+    "bruteForce": "Brute force approach: Parse the string character by character and check for valid closing tags.",
+    "betterSolution": "Use a stack data structure to keep track of the opening tags.",
+    "optimalSolution": "Iterate over the string and use a stack to keep track of the opening tags. When you encounter a closing tag, check if it matches the top of the stack and pop it if it does.",
+    "proofOfCorrectness": "The correct approach is to use a stack data structure to keep track of the opening tags and iterate over the string. This way, we can ensure that all tags are properly closed.",
+    "dryRun": "Step-by-step example run: Start with an empty stack. Iterate over the string and add opening tags to the stack. When you encounter a closing tag, check if it matches the top of the stack and pop it if it does.",
+    "commonMistakes": [
+      "Not using a stack data structure",
+      "Not checking if the closing tag matches the top of the stack"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "function fixNestedTags(s) {\n  // Your code here\n}\n",
+    "python": "class Solution:\n  def fix_nested_tags(self, s: str) -> str:\n    pass"
+  },
+  "buggyStarterCode": {
+    "javascript": "function fixNestedTags(s) {\n  let stack = [];\n  for (let i = 0; i < s.length; i++) {\n    let char = s[i];\n    if (char === '<') {\n      let tag = '';\n      while (s[i] !== '>') {\n        tag += s[i++];\n      }\n      if (tag[0] === '/') {\n        // Do nothing\n      } else {\n        stack.push(tag);\n      }\n    }\n  }\n  return s;\n}\n",
+    "python": "class Solution:\n  def fix_nested_tags(self, s: str) -> str:\n    stack = []\n    for i in range(len(s)):\n      char = s[i]\n      if char === '<':\n        tag = ''\n        while s[i] !== '>':\n          tag += s[i]\n          i += 1\n        if tag[0] === '/':\n          # Do nothing\n        else:\n          stack.append(tag)\n    return s"
+  },
+  "functionSignature": {
+    "javascript": "var fixNestedTags = function(s) {",
+    "python": "def fix_nested_tags(self, s: str) -> str:"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction fixNestedTags(s) {\n  let stack = [];\n  let result = '';\n  let inTag = false;\n  for (let i = 0; i < s.length; i++) {\n    let char = s[i];\n    if (char === '<') {\n      inTag = true;\n    } else if (char === '>') {\n      inTag = false;\n      result += '</' + stack.pop() + '>\n';\n    } else if (inTag) {\n      result += char;\n    }\n  }\n  return result;\n}\n",
+    "python": "// Solution\nclass Solution:\n  def fix_nested_tags(self, s: str) -> str:\n    stack = []\n    result = ''\n    in_tag = False\n    for i in range(len(s)):\n      char = s[i]\n      if char === '<':\n        in_tag = True\n      elif char === '>':\n        in_tag = False\n        result += '</' + stack.pop() + '>\n'\n      elif in_tag:\n        result += char\n    return result"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "<div><p>Hello World</div>",
+      "output": "<div><p>Hello World</p></div>",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "<div><p>Hello World</div><p>",
+      "output": "<div><p>Hello World</p></p>",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "a4d212cc1f478052483041c5",
+  "slug": "fixing-broken-nested-html-tags-bugfix-medium-html",
+  "mode": "bug_fix",
+  "category": "HTML",
+  "difficulty": "Medium"
+}

@@ -1,0 +1,136 @@
+{
+  "title": "Fixing Unnecessary Re-renders in a Memoized React Component with Changing Array References",
+  "subCategory": "Memoization in React Components",
+  "statement": {
+    "markdown": "You are given a React functional component called `MemoizedComponent` that uses React's `useCallback` hook to memoize a function that depends on the component's state. The `useCallback` hook is used to prevent unnecessary re-renders of the component when the state changes. However, the memoized function is not properly handling changes to the component's state when the state contains arrays. As a result, the component is re-rendering unnecessarily when the array references change. Your task is to fix the bug and prevent unnecessary re-renders of the component.",
+    "inputFormat": "The component's state is an object with a `numbers` property that is an array of numbers.",
+    "outputFormat": "The component should only re-render when the `numbers` array changes.",
+    "notes": "The `useCallback` hook is used to memoize the function that depends on the component's state.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The length of the `numbers` array in the component's state."
+      }
+    ],
+    "examples": [
+      {
+        "input": "initialState = { numbers: [1, 2, 3] }",
+        "output": "The component should not re-render.",
+        "explanation": "The `numbers` array is not being modified."
+      },
+      {
+        "input": "initialState = { numbers: [1, 2, 3] }; updateState = () => { initialState.numbers.push(4); };",
+        "output": "The component should re-render.",
+        "explanation": "The `numbers` array is being modified by adding a new element."
+      },
+      {
+        "input": "initialState = { numbers: [1, 2, 3] }; updateState = () => { initialState.numbers = [1, 2, 3, 4]; };",
+        "output": "The component should not re-render.",
+        "explanation": "The `numbers` array is being replaced with a new array, but the references are the same."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 100,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "REACT"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "react"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the `useCallback` hook with a dependency array that includes the `numbers` array."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial: Fixing Unnecessary Re-renders in a Memoized React Component",
+    "intuition": "The `useCallback` hook is used to memoize the function that depends on the component's state.",
+    "bruteForce": "Use the `useCallback` hook with a dependency array that includes all state variables.",
+    "betterSolution": "Use the `useCallback` hook with a dependency array that includes the `numbers` array only.",
+    "optimalSolution": "Use the `useCallback` hook with a dependency array that includes the `numbers` array and a shallow equality check to prevent unnecessary re-renders.",
+    "proofOfCorrectness": "The `useCallback` hook with a dependency array that includes the `numbers` array and a shallow equality check ensures that the function is only re-memoized when the `numbers` array changes.",
+    "dryRun": "Step-by-step example run with a component state that contains an array of numbers.",
+    "commonMistakes": [
+      "Not using the `useCallback` hook",
+      "Not including the `numbers` array in the dependency array"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "import React, { useCallback } from 'react';\n\nconst MemoizedComponent = () => {\n  const [state, setState] = React.useState({ numbers: [1, 2, 3] });\n  const updateState = useCallback(() => {\n    setState({ numbers: [...state.numbers, 4] });\n  }, []);\n  return <>Update state</>;\n};\n\nexport default MemoizedComponent;"
+  },
+  "buggyStarterCode": {
+    "javascript": "import React, { useCallback } from 'react';\n\nconst MemoizedComponent = () => {\n  const [state, setState] = React.useState({ numbers: [1, 2, 3] });\n  const updateState = useCallback(() => {\n    setState({ numbers: [...state.numbers, 4] });\n  }, []);\n  return <>Update state</>;\n};\n\nexport default MemoizedComponent;"
+  },
+  "functionSignature": {
+    "javascript": "const MemoizedComponent = () => { ... }"
+  },
+  "solutions": {
+    "javascript": "// Your solution here"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "initialState = { numbers: [1, 2, 3] }",
+      "output": "The component should not re-render.",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "initialState = { numbers: [1, 2, 3] }; updateState = () => { initialState.numbers.push(4); };",
+      "output": "The component should re-render.",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "758453dcb9d91ba20a795ee0",
+  "slug": "fixing-unnecessary-re-renders-in-a-memoized-react-component-with-changing-array-references-bugfix-hard-react",
+  "mode": "bug_fix",
+  "category": "REACT",
+  "difficulty": "Hard"
+}

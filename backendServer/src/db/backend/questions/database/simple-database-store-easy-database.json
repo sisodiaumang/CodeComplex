@@ -1,0 +1,138 @@
+{
+  "_id": "1292d58d94f426f5472eeacc",
+  "title": "Simple Database Store",
+  "slug": "simple-database-store-easy-database",
+  "difficulty": "Easy",
+  "topics": [
+    "DATABASE"
+  ],
+  "statement": "Implement a simple RESTful API to store and retrieve books. The API should support creating new books, listing all books, and retrieving a book by its ID.\n\n**Endpoints to implement:**\n\n### Create a new book\n\n* `POST /api/books` - Create a new book with the provided title and author.\n  * Payload: `{ title: string, author: string }`",
+  "constraints": [
+    "Must use the in-memory array provided as the database.",
+    "Must handle cases where creating a book with an existing ID fails.",
+    "Must handle cases where retrieving a non-existent book fails."
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/books",
+      "description": "Create a new book with the provided title and author."
+    },
+    {
+      "method": "GET",
+      "path": "/api/books",
+      "description": "List all books."
+    },
+    {
+      "method": "GET",
+      "path": "/api/books/:id",
+      "description": "Retrieve a book by its ID."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\n  \"name\": \"book-store\",\n  \"version\": \"1.0.0\",\n  \"main\": \"index.js\",\n  \"scripts\": {\n    \"start\": \"node index.js\"\n  },\n  \"dependencies\": {\n    \"express\": \"^4.18.2\"\n  }\n}",
+    "index.js": "const express = require('express');\nconst app = express();\napp.use(express.json());\n\nconst books = [\n  // Add some example books here\n];\n\n// TODO: Implement endpoint to create a new book\n// TODO: Implement endpoint to list all books\n// TODO: Implement endpoint to retrieve a book by its ID\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "POST",
+      "path": "/api/books",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "title": "The Great Gatsby",
+        "author": "F. Scott Fitzgerald"
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "id": "1",
+        "title": "The Great Gatsby",
+        "author": "F. Scott Fitzgerald"
+      },
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "GET",
+      "path": "/api/books",
+      "expectedStatus": 200,
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "POST",
+      "path": "/api/books",
+      "body": {
+        "title": "To Kill a Mockingbird",
+        "author": "Harper Lee"
+      },
+      "expectedStatus": 201,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "GET",
+      "path": "/api/books/1",
+      "expectedStatus": 200,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "GET",
+      "path": "/api/books/999",
+      "expectedStatus": 404,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc4",
+      "method": "POST",
+      "path": "/api/books",
+      "body": {
+        "title": "The Great Gatsby"
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "sql",
+    "nosql",
+    "transactions",
+    "indexing",
+    "aggregation",
+    "joins",
+    "relationships",
+    "normalization",
+    "denormalization",
+    "acid",
+    "cap-theorem",
+    "database",
+    "crud",
+    "restful-api"
+  ]
+}

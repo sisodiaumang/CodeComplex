@@ -1,0 +1,142 @@
+{
+  "title": "Fixing Middleware Order for a Basic Express API",
+  "subCategory": "Routing",
+  "statement": {
+    "markdown": "Write a route middleware stack for a basic Express API that handles authentication and rate limiting. The authentication middleware should be placed after the rate limiting middleware to prevent brute-force attacks. If the rate limit is exceeded, the user should be redirected to a 'rate-limited' page.",
+    "inputFormat": "A string containing the user's IP address and a JSON object with rate limiting settings.",
+    "outputFormat": "A string indicating whether the user is authenticated and the remaining rate limit.",
+    "notes": "Use the `express-rate-limit` library to handle rate limiting.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "maxRate",
+        "type": "integer",
+        "min": 1,
+        "max": 10,
+        "description": "Maximum rate limit"
+      },
+      {
+        "variable": "maxBurst",
+        "type": "integer",
+        "min": 1,
+        "max": 10,
+        "description": "Maximum burst limit"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"ip\":\"192.168.1.1\",\"rateLimit\":{\"maxRate\":5,\"maxBurst\":10}}",
+        "output": "{\"authenticated\":true,\"remainingRateLimit\":5}",
+        "explanation": "User is authenticated and has 5 remaining rate limit"
+      },
+      {
+        "input": "{\"ip\":\"192.168.1.1\",\"rateLimit\":{\"maxRate\":5,\"maxBurst\":10}}",
+        "output": "{\"authenticated\":false,\"remainingRateLimit\":0}",
+        "explanation": "User is rate limited and cannot access the API"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "EXPRESS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "express"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the `express-rate-limit` library to handle rate limiting"
+    },
+    {
+      "order": 2,
+      "text": "Make sure to place the authentication middleware after the rate limiting middleware"
+    }
+  ],
+  "editorial": {
+    "title": "Optimal Solution",
+    "intuition": "The key to this problem is to place the authentication middleware after the rate limiting middleware to prevent brute-force attacks.",
+    "bruteForce": "A brute force approach would be to implement rate limiting and authentication from scratch, but this would be inefficient and prone to errors.",
+    "betterSolution": "Use the `express-rate-limit` library to handle rate limiting and place the authentication middleware after the rate limiting middleware.",
+    "optimalSolution": "The optimal solution is to use the `express-rate-limit` library and place the authentication middleware after the rate limiting middleware.",
+    "proofOfCorrectness": "By placing the authentication middleware after the rate limiting middleware, we can prevent brute-force attacks and ensure the security of the API.",
+    "dryRun": "Here's an example of how the optimal solution would work:",
+    "commonMistakes": [
+      "Placing the authentication middleware before the rate limiting middleware",
+      "Not using the `express-rate-limit` library"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "// Import required modules\nconst express = require('express');\nconst rateLimit = require('express-rate-limit');\nconst authenticate = (req, res, next) => {\n  // TO DO: Implement authentication middleware\n  next();\n};\nconst rateLimitMiddleware = rateLimit({\n  // TO DO: Implement rate limiting middleware\n});\n\n// Define routes\nconst app = express();\napp.get('/', rateLimitMiddleware, authenticate, (req, res) => {\n  // TO DO: Handle route\n});\napp.listen(3000, () => {\n  console.log('Server listening on port 3000');\n});"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Import required modules\nconst express = require('express');\nconst rateLimit = require('express-rate-limit');\nconst authenticate = (req, res, next) => {\n  // TO DO: Implement authentication middleware\n  next();\n};\nconst rateLimitMiddleware = rateLimit({\n  maxRate: 5,\n  maxBurst: 10,\n  windowMs: 15 * 60 * 1000,\n});\n\n// Define routes\nconst app = express();\napp.get('/', authenticate, rateLimitMiddleware, (req, res) => {\n  // TO DO: Handle route\n  res.status(200).send({ authenticated: true, remainingRateLimit: 5 });\n});\napp.listen(3000, () => {\n  console.log('Server listening on port 3000');\n});"
+  },
+  "functionSignature": {
+    "javascript": "const rateLimitMiddleware = rateLimit({\n  maxRate: number,\n  maxBurst: number,\n  windowMs: number\n});"
+  },
+  "solutions": {
+    "javascript": "// Import required modules\nconst express = require('express');\nconst rateLimit = require('express-rate-limit');\nconst authenticate = (req, res, next) => {\n  // TO DO: Implement authentication middleware\n  next();\n};\nconst rateLimitMiddleware = rateLimit({\n  maxRate: 5,\n  maxBurst: 10,\n  windowMs: 15 * 60 * 1000,\n});\n\n// Define routes\nconst app = express();\napp.use(rateLimitMiddleware);\napp.use(authenticate);\napp.get('/', (req, res) => {\n  // TO DO: Handle route\n  res.status(200).send({ authenticated: true, remainingRateLimit: 5 });\n});\napp.listen(3000, () => {\n  console.log('Server listening on port 3000');\n});"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "tc_1",
+      "input": "{\"ip\":\"192.168.1.1\",\"rateLimit\":{\"maxRate\":5,\"maxBurst\":10}}",
+      "output": "{\"authenticated\":true,\"remainingRateLimit\":5}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"ip\":\"192.168.1.1\",\"rateLimit\":{\"maxRate\":5,\"maxBurst\":10}}",
+      "output": "{\"authenticated\":false,\"remainingRateLimit\":0}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "22fcdf6debfb18131bef2693",
+  "slug": "fixing-middleware-order-for-a-basic-express-api-bugfix-medium-express",
+  "mode": "bug_fix",
+  "category": "EXPRESS",
+  "difficulty": "Medium"
+}

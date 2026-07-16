@@ -1,0 +1,123 @@
+{
+  "_id": "adf4dc5fb59d24e5f0c232ec",
+  "title": "Redis Job Queue and Pub/Sub System",
+  "slug": "redis-job-queue-and-pubsub-system-hard-redis",
+  "difficulty": "Hard",
+  "topics": [
+    "REDIS"
+  ],
+  "statement": "Implement a Redis-based job queue and pub/sub system for a microservices architecture. Your API should support two endpoints: `POST /jobs` to enqueue a job, and `GET /stats` to retrieve Redis statistics for monitoring. Additionally, your system should use Redis pub/sub to broadcast job completion events to listening services. You will need to utilize Redis's built-in job queue (also known as a 'queue') and publish/subscribe features.",
+  "constraints": [
+    "Must use the redis client provided in the starter code",
+    "Must implement Redis pub/sub for broadcasting job completion events"
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/jobs",
+      "description": "Enqueue a job into the Redis job queue.\n\n Request Body:\n\t{ \"type\": \"STRING\", \"data\": \"any string\" }\n\n Response:\n\t{ \"jobId\": \"job-id\" }"
+    },
+    {
+      "method": "GET",
+      "path": "/stats",
+      "description": "Retrieve Redis statistics for monitoring. Response is in JSON format."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\n  \"name\": \"redis-system\",\n  \"version\": \"1.0.0\",\n  \"main\": \"index.js\",\n  \"scripts\": {\n    \"start\": \"node index.js\"\n  },\n  \"dependencies\": {\n    \"express\": \"^4.18.2\",\n    \"redis\": \"^3.1.2\"\n  }\n}",
+    "index.js": "const express = require('express');\nconst Redis = require('redis');\n\nconst client = Redis.createClient({\n  host: '127.0.0.1',\n  port: 6379\n});\n\nconst app = express();\napp.use(express.json());\n\napp.post('/jobs', (req, res) => {\n  // TODO: Enqueue the job into Redis\n});\n\napp.get('/stats', (req, res) => {\n  // TODO: Retrieve Redis statistics\n});\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "POST",
+      "path": "/jobs",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "type": "STRING",
+        "data": "Hello, world!"
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "jobId": "job-id"
+      },
+      "expectedBodySchema": null,
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "GET",
+      "path": "/stats",
+      "expectedStatus": 200,
+      "expectedBody": {},
+      "expectedBodySchema": null,
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "POST",
+      "path": "/jobs",
+      "body": {
+        "type": "STRING",
+        "data": ""
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "GET",
+      "path": "/stats",
+      "expectedStatus": 500,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "POST",
+      "path": "/jobs",
+      "body": {
+        "type": "OBJECT",
+        "data": {}
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "pub/sub",
+    "cache",
+    "sessions",
+    "rate-limiting",
+    "leaderboard",
+    "streams",
+    "redis",
+    "queue",
+    "pubsub",
+    "system-design"
+  ]
+}

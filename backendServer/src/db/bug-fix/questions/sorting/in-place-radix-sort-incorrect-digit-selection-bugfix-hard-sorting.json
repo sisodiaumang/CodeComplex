@@ -1,0 +1,153 @@
+{
+  "_id": "55c82d384db3d10a9e9645c0",
+  "title": "In-Place Radix Sort: Incorrect Digit Selection",
+  "slug": "in-place-radix-sort-incorrect-digit-selection-bugfix-hard-sorting",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "Sorting",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 60,
+    "points": 100,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "sorting"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Radix sort is a non-comparative integer sorting algorithm. It works by grouping numbers by individual digits starting from the least significant digit. Implement an efficient in-place radix sort function for integers.\n\nThe function should sort the array in ascending order, and the input array is guaranteed to contain only non-negative integers.\n\nHowever, the given implementation has a bug in selecting the least significant non-zero digit for radix sort. Fix the bug to make the function work correctly.",
+    "inputFormat": "A non-empty list of non-negative integers.",
+    "outputFormat": "The sorted list of non-negative integers in ascending order.",
+    "notes": "You can assume the input array will contain integers within the range 0 to 2^31 - 1.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "Input: [170, 45, 75, 90, 802, 24, 2, 66]",
+        "output": "Output: [2, 24, 45, 66, 75, 90, 170, 802]",
+        "explanation": "Radix sort groups the input elements in a way that the output elements are sorted in ascending order."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text - Review the implementation of finding the least significant non-zero digit"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial Title",
+    "intuition": "Explanation of the correct approach - Identify the radix sort algorithm's core mechanism and its application to integers.",
+    "bruteForce": "Brute force approach - Radix sort implementation without optimizations.",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details - Efficient in-place radix sort implementation with least significant non-zero digit selection.",
+    "proofOfCorrectness": "Correctness proof - Proof that the optimal solution correctly sorts the input array.",
+    "dryRun": "Step-by-step example run - A detailed example of the optimal solution's execution.",
+    "commonMistakes": [
+      "Incorrectly identifying the radix sort algorithm's core mechanism",
+      "Insufficient analysis of the least significant non-zero digit"
+    ],
+    "timeComplexity": "O(nk)",
+    "spaceComplexity": "O(n + k)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n bool radixSort(vector<int>& nums) {\n // TODO: implement\n return false;\n }\n};",
+    "java": "public class Solution {\npublic boolean radixSort(int[] nums) {\n // TODO: implement\n return false;\n }\n}",
+    "python": "class Solution:\n    def radixSort(self, nums: list[int]) -> bool:\n        # TODO: implement\n        return False",
+    "javascript": "function radixSort(nums) {\n    // TODO: implement\n    return false;\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n bool radixSort(vector<int>& nums) {\n int maxDigit = 0;\n for (int i = 0; i < nums.size(); ++i) {\n while (nums[i] != 0) {\n maxDigit = max(maxDigit, (int)(log10(nums[i]) + 1));\n }\n }\n int exp = 1;\n while (exp < maxDigit) {\n int[] count = new int[10];\n for (int i = 0; i < nums.size(); ++i) {\n count[(nums[i] / exp) % 10]++;\n }\n for (int i = 1; i < 10; ++i) {\n count[i] += count[i - 1];\n }\n for (int i = nums.size() - 1; i >= 0; --i) {\n int digit = (nums[i] / exp) % 10;\n nums[count[digit] - 1] = nums[i];\n count[digit]--;\n }\n exp *= 10;\n }\n for (int i = 0; i < nums.size(); ++i) {\n nums[i] = nums[i] / exp;\n }\n return true;\n }\n};",
+    "java": "public class Solution {\npublic boolean radixSort(int[] nums) {\n int maxDigit = 0;\n for (int i = 0; i < nums.length; ++i) {\n while (nums[i] != 0) {\n maxDigit = Math.max(maxDigit, (int)(Math.log10(nums[i]) + 1));\n }\n }\n int exp = 1;\n while (exp < maxDigit) {\n int[] count = new int[10];\n for (int i = 0; i < nums.length; ++i) {\n count[(nums[i] / exp) % 10]++;\n }\n for (int i = 1; i < 10; ++i) {\n count[i] += count[i - 1];\n }\n for (int i = nums.length - 1; i >= 0; --i) {\n int digit = (nums[i] / exp) % 10;\n nums[count[digit] - 1] = nums[i];\n count[digit]--;\n }\n exp *= 10;\n }\n for (int i = 0; i < nums.length; ++i) {\n nums[i] = nums[i] / exp;\n }\n return true;\n }\n}",
+    "python": "class Solution:\n    def radixSort(self, nums: list[int]) -> bool:\n        max_digit = 0\n        for num in nums:\n            while num != 0:\n                max_digit = max(max_digit, len(str(num)))\n            nums[num] = None\n        exp = 1\n        while exp < max_digit:\n            count = [0]*10\n            for num in nums:\n                count[(num // exp) % 10] += 1\n            for i in range(1, 10):\n                count[i] += count[i - 1]\n            for i in range(len(nums) - 1, -1, -1):\n                digit = (nums[i] // exp) % 10\n                nums[count[digit] - 1] = nums[i]\n                count[digit] -= 1\n            exp *= 10\n        for i in range(len(nums)):\n            nums[i] //= exp\n        return True",
+    "javascript": "function radixSort(nums) {\n    let maxDigit = 0;\n    for (let i = 0; i < nums.length; ++i) {\n        while (nums[i] != 0) {\n            maxDigit = Math.max(maxDigit, Math.floor(Math.log10(nums[i]) + 1));\n        }\n    }\n    let exp = 1;\n    while (exp < maxDigit) {\n        let count = new Array(10).fill(0);\n        for (let i = 0; i < nums.length; ++i) {\n            count[(nums[i] / exp) % 10]++;\n        }\n        for (let i = 1; i < 10; ++i) {\n            count[i] += count[i - 1];\n        }\n        for (let i = nums.length - 1; i >= 0; --i) {\n            let digit = (nums[i] / exp) % 10;\n            nums[count[digit] - 1] = nums[i];\n            count[digit]--;\n        }\n        exp *= 10;\n    }\n    for (let i = 0; i < nums.length; ++i) {\n        nums[i] = nums[i] / exp;\n    }\n    return true;\n}"
+  },
+  "functionSignature": {
+    "cpp": "bool radixSort(vector<int>& nums)",
+    "java": "boolean radixSort(int[] nums)",
+    "python": "def radixSort(self, nums: list[int]) -> bool:",
+    "javascript": "function radixSort(nums)"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def radixSort(self, nums: list[int]) -> bool:\n        if len(nums) <= 1:\n            return True\n\n        max_digit = max(map(len, map(str, nums)))\n\n        exp = 1\n        while exp <= max_digit:\n            buckets = [[] for _ in range(10)]\n            for num in nums:\n                digit = int(str(num)[-(exp - 1)])\n                buckets[digit].append(num)\n            nums.clear()\n            for bucket in buckets:\n                nums.extend(bucket)\n            exp *= 10\n        return True\n\n    def main(self):\n        nums = [170, 45, 75, 90, 802, 24, 2, 66]\n        if self.radixSort(nums):\n            print(nums)\n        else:\n            print('No solution exists')",
+    "cpp": "// -*- coding: utf-8 -*-\n#include <iostream>\n#include <vector>\nusing namespace std;\n\nint main() {\n    Solution solver;\n    vector<int> nums = {170, 45, 75, 90, 802, 24, 2, 66};\n    if (solver.radixSort(nums)) {\n        for (int num : nums) {\n            cout << num << \" \";\n        }\n        cout << endl;\n    } else {\n        cout << \"No solution exists\" << endl;\n    }\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 3,
+    "memoryLimit": 512,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "1\n170 45 75 90 802 24 2 66",
+      "output": "2 24 45 66 75 90 170 802",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "8\n10 50 20 40 30 60 80 90",
+      "output": "10 20 30 40 50 60 80 90",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

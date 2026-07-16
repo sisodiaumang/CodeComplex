@@ -1,0 +1,160 @@
+{
+  "_id": "460be1d4f87dbcd9a2026681",
+  "title": "Maximum Number of Coins Within Capacity",
+  "slug": "maximum-number-of-coins-within-capacity-bugfix-medium-greedy-algorithms",
+  "difficulty": "Medium",
+  "category": "DSA",
+  "subCategory": "GREEDY",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "greedy"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Solve the problem and fix the bugs.",
+    "inputFormat": "",
+    "outputFormat": "",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "capacity",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Capacity of the bag"
+      },
+      {
+        "variable": "coins",
+        "type": "array",
+        "min": 1,
+        "max": 10000,
+        "description": "Array of coin denominations"
+      }
+    ],
+    "examples": [
+      {
+        "input": "5\n1 20 50 100\n",
+        "output": "3",
+        "explanation": ""
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use dynamic programming to solve this problem"
+    }
+  ],
+  "editorial": {
+    "title": "Maximum Number of Coins Within Capacity Editorial",
+    "intuition": "The problem is a classic example of a dynamic programming problem",
+    "bruteForce": "The brute force approach would be to try every possible combination of coins and return the maximum number of coins that can be put in the bag",
+    "betterSolution": "We can use dynamic programming to solve this problem in O(n*m) time",
+    "optimalSolution": "The optimal solution uses a 2D table to store the maximum number of coins that can be put in the bag for each subproblem",
+    "proofOfCorrectness": "The dynamic programming approach ensures that we consider every possible combination of coins and return the maximum number of coins that can be put in the bag",
+    "dryRun": "To solve the problem, we create a 2D table dp where dp[i][j] is the maximum number of coins that can be put in a bag of capacity j using the first i coin denominations",
+    "commonMistakes": [
+      "not considering every possible subproblem",
+      "not using dynamic programming"
+    ],
+    "timeComplexity": "O(n*m)",
+    "spaceComplexity": "O(n*m)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    int bag(int capacity, vector<int> coins) {\n        // TODO: implement\n    }\n};",
+    "java": "public class Solution {\npublic:\n    int bag(int capacity, int[] coins) {\n        // TODO: implement\n    }\n}",
+    "python": "class Solution:\n    def bag(self, capacity: int, coins: list[int]) -> int:\n        # TODO: implement\n        pass",
+    "javascript": "function bag(capacity, coins) {\n    // TODO: implement\n    return;\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    int bag(int capacity, vector<int> coins) {\n        if (capacity < 0 || coins.empty()) return 0;\n        int dp[coins.size()][capacity + 1];\n        for (int i = 0; i <= capacity; i++) dp[0][i] = 0;\n        return dp[coins.size()][capacity];\n    }\n};",
+    "java": "public class Solution {\npublic:\n    int bag(int capacity, int[] coins) {\n        if (capacity < 0 || coins.length == 0) return 0;\n        int[][] dp = new int[coins.length][capacity + 1];\n        for (int i = 0; i <= capacity; i++) dp[0][i] = 0;\n        return dp[coins.length][capacity];\n    }\n}",
+    "python": "class Solution:\n    def bag(self, capacity: int, coins: list[int]) -> int:\n        if capacity < 0 or not coins:\n            return 0\n        dp = [[0] * (capacity + 1) for _ in range(len(coins))]\n        for i in range(capacity + 1):\n            dp[0][i] = 0\n        return dp[-1][-1]",
+    "javascript": "function bag(capacity, coins) {\n    if (capacity < 0 || coins.length == 0) return 0;\n    let dp = Array(coins.length).fill(0).map(() => Array(capacity + 1).fill(0));\n    for (let i = 0; i <= capacity; i++) dp[0][i] = 0;\n    return dp[-1][-1];\n}"
+  },
+  "functionSignature": {
+    "cpp": "int bag(int capacity, vector<int> coins)",
+    "java": "int bag(int capacity, int[] coins)",
+    "python": "int bag(self, capacity: int, coins: list[int]) -> int",
+    "javascript": "int bag(capacity, coins)"
+  },
+  "solutions": {
+    "python": "from typing import List\n\nclass Solution:\n    def bag(self, capacity: int, coins: List[int]) -> int:\n        if capacity < 0 or not coins:\n            return 0\n        dp = [[0] * (capacity + 1) for _ in range(len(coins))]\n        for i in range(len(coins)):\n            for j in range(capacity + 1):\n                if i == 0 or j < coins[i - 1]:\n                    dp[i][j] = dp[i - 1][j]\n                else:\n                    dp[i][j] = max(dp[i - 1][j], dp[i - 1][j - coins[i - 1]] + 1)\n        return dp[-1][-1]\n\n\nif __name__ == '__main__':\n    s = Solution()\n    capacity = int(input())\n    coins = list(map(int, input().split()))\n    print(s.bag(capacity, coins))",
+    "cpp": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nclass Solution {\npublic:\n    int bag(int capacity, vector<int> coins) {\n        if (capacity < 0 || coins.empty()) return 0;\n        dp = Array(coins.size()).fill(0).map(() => Array(capacity + 1).fill(0));\n        for (int i = 0; i < coins.size(); i++) {\n            for (int j = 0; j <= capacity; j++) {\n                if (i == 0 || j < coins[i]) {\n                    dp[i][j] = dp[i - 1][j];\n                } else {\n                    dp[i][j] = max(dp[i - 1][j], dp[i - 1][j - coins[i]] + 1);\n                }\n            }\n        }\n        return dp.back().back();\n    }\nprivate:\n    vector<vector<int>> dp;\n};\n\nint main() {\n    Solution s;\n    int capacity;\n    cin >> capacity;\n    int n;\n    cin >> n;\n    vector<int> coins(n);\n    for (int i = 0; i < n; i++) {\n        cin >> coins[i];\n    }\n    cout << s.bag(capacity, coins) << endl;\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2000,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5\n1 20 50 100\n",
+      "output": "3",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "10\n1 5 10 25 50\n",
+      "output": "3",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

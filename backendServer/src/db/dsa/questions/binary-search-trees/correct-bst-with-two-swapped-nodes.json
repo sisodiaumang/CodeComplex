@@ -1,0 +1,198 @@
+{
+  "_id": "correct-bst-with-two-swapped-nodes",
+  "title": "Correct BST with Two Swapped Nodes",
+  "slug": "correct-bst-with-two-swapped-nodes",
+  "difficulty": "Hard",
+  "category": "TREE",
+  "subCategory": "Practice Problems",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 40,
+    "points": 500,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "BINARY SEARCH TREES"
+    ],
+    "patterns": [
+      "BINARY TREE",
+      "SWAPPED NODES",
+      "CORRECT BST"
+    ],
+    "prerequisites": [
+      "CHECK IF BINARY TREE IS BST"
+    ],
+    "variants": [],
+    "tags": [
+      "BINARY TREE",
+      "BINARY SEARCH TREE",
+      "SWAPPED NODES",
+      "CORRECT BST",
+      "PRACTICE PROBLEM"
+    ],
+    "keywords": [
+      "BINARY SEARCH TREE",
+      "INORDER TRAVERSAL",
+      "SWAPPED NODES"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "You are given the root of a binary search tree (BST), where exactly two nodes of the tree have been swapped. You need to recover the tree and return its root. The number of nodes in the tree is in the range [2, 1000]. -100 <= Node.val <= 1000 All the values of the BST are unique. The input tree is valid, i.e., it satisfies the BST property.",
+    "inputFormat": "The number of nodes in the tree (n)\nThe nodes of the tree in pre-order traversal (n lines)",
+    "outputFormat": "The root node of the corrected BST in pre-order traversal",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 2,
+        "max": 1000,
+        "description": "Number of nodes in the tree"
+      },
+      {
+        "variable": "Node.val",
+        "type": "integer",
+        "min": -100,
+        "max": 1000,
+        "description": "Value of each node in the tree"
+      }
+    ],
+    "examples": [
+      {
+        "input": "7\n4 2 7 1 3 6 8",
+        "output": "8 7 6 4 3 2 1",
+        "explanation": "Swap nodes with values 4 and 7"
+      },
+      {
+        "input": "3\n2 1 3",
+        "output": "3 2 1",
+        "explanation": "Swap nodes with values 2 and 1"
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "The problem involves a binary search tree where exactly two nodes have been swapped. Think about how you can use the properties of a BST to identify the swapped nodes."
+    },
+    {
+      "order": 2,
+      "text": "In-order traversal of a BST visits nodes in ascending order. Consider how the in-order traversal of the given tree could help in identifying the swapped nodes."
+    },
+    {
+      "order": 3,
+      "text": "The in-order traversal will give you a sequence of numbers that are not in order due to the two swapped nodes. You need to find the pair of elements that are out of order and swap them back to correct the tree."
+    }
+  ],
+  "editorial": {
+    "title": "Fixing a Binary Search Tree with Two Swapped Nodes",
+    "intuition": "A BST’s in‑order traversal must be strictly increasing. When two nodes are swapped, the sorted order is broken at one or two adjacent pairs. By walking the in‑order list once we can locate the offending nodes and swap them back, restoring the BST without rebuilding it.",
+    "bruteForce": "A naïve approach is to rebuild the BST from scratch after each possible swap of two nodes, then check if the tree satisfies the BST property. This guarantees correctness because every configuration is examined, but it is prohibitively slow: for n nodes there are O(n²) pairs to try, and each rebuild costs O(n log n), leading to O(n³ log n) time—far beyond the limits for n up to 1000.",
+    "betterSolution": "The key observation is that the in‑order sequence of a BST is sorted. Swapping two nodes disturbs this order only at the positions where the larger value precedes the smaller one. Thus, a single linear scan of the in‑order list is enough to identify the two misplaced nodes, after which a single value swap restores the tree.",
+    "optimalSolution": "Collect all nodes in in‑order order. Scan the list; whenever a node’s value exceeds the next node’s value, record the pair. The first such inversion gives the first candidate (x). If a second inversion occurs, the second candidate (y) is the node after that inversion; otherwise y is the node at the first inversion’s right side. Finally, swap x.val and y.val. This runs in O(n) time and O(n) space, matching the known optimal complexity.",
+    "proofOfCorrectness": "In a correct BST, the in‑order sequence is strictly increasing. Swapping two nodes can create either one or two inversions: if the swapped nodes are adjacent, only one inversion appears; if they are separated, two inversions appear. The first inversion’s left node must be one of the swapped nodes (the larger value), and the second inversion’s right node must be the other swapped node (the smaller value). By swapping these two nodes’ values we eliminate both inversions, yielding a sorted sequence, which implies the tree satisfies the BST property. No other nodes are affected, so the tree is restored correctly.",
+    "dryRun": "Consider the tree with values 1,3,4,2,5. In‑order gives [1,3,4,2,5]. The first inversion is 4>2, so x=4. A second inversion occurs at 2<5? No, so y=2. Swapping 4 and 2 yields [1,2,4,3,5]—still not sorted. However, the correct swap is between 3 and 2. The algorithm detects the first inversion at 4>2, sets x=4, then finds a second inversion at 3>2? Actually the in‑order list is [1,3,4,2,5]; after swapping 3 and 2 we get [1,2,4,3,5] which still has an inversion 4>3. The algorithm would then swap 4 and 3, restoring the BST. This demonstrates the two‑inversion case and the necessity of swapping the correct pair.",
+    "commonMistakes": [
+      "Assuming a single inversion always indicates the two swapped nodes; fails when nodes are non‑adjacent.\nRebuilding the BST after each swap instead of swapping values in place.\nUsing a stack for in‑order traversal but forgetting to store node references.\nSwapping values of the wrong nodes when only one inversion is found.\nNot handling the case where the swapped nodes are the leftmost and rightmost nodes.\nUsing recursion for in‑order on a deep tree and causing stack overflow."
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass TreeNode {\npublic:\n    int val;\n    TreeNode *left;\n    TreeNode *right;\n    TreeNode() : val(0), left(NULL), right(NULL) {}\n    TreeNode(int x) : val(x), left(NULL), right(NULL) {}\n};\n\nclass Solution {\npublic:\n    TreeNode* recoverTree(TreeNode* root) {\n        // TODO: implement\n        return root;\n    }\n};",
+    "java": "import java.util.*;\n\nclass TreeNode {\n    int val;\n    TreeNode left;\n    TreeNode right;\n    TreeNode(int x) { val = x; }\n}\n\nclass Solution {\n    public TreeNode recoverTree(TreeNode root) {\n        // TODO: implement\n        return root;\n    }\n}",
+    "python": "class TreeNode:\n    def __init__(self, x):\n        self.val = x\n        self.left = None\n        self.right = None\n\nclass Solution:\n    def recoverTree(self, root: TreeNode) -> TreeNode:\n        # TODO: implement\n        pass",
+    "javascript": "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n\n/**\n * @param {TreeNode} root\n * @return {TreeNode}\n */\nvar recoverTree = function(root) {\n    // TODO: implement\n    return root;\n};"
+  },
+  "functionSignature": {
+    "cpp": "TreeNode* recoverTree(TreeNode* root);",
+    "java": "public TreeNode recoverTree(TreeNode root);",
+    "python": "def recoverTree(self, root: TreeNode) -> TreeNode:",
+    "javascript": "var recoverTree = function(root);"
+  },
+  "solutions": {
+    "python": "import sys\n\nclass TreeNode:\n    def __init__(self, val=0, left=None, right=None):\n        self.val = val\n        self.left = left\n        self.right = right\n\nclass Solution:\n    def recoverTree(self, root: TreeNode) -> TreeNode:\n        def inorder(root):\n            return inorder(root.left) + [root.val] + inorder(root.right) if root else []\n\n        def recover(root, nodes):\n            if root:\n                recover(root.left, nodes)\n                root.val = nodes.pop(0)\n                recover(root.right, nodes)\n\n        nodes = sorted(inorder(root))\n        recover(root, nodes)\n        return root\n\nif __name__ == '__main__':\n    it = iter(sys.stdin.read().split())\n    try:\n        n = int(next(it))\n        root = TreeNode()\n        stack = [root]\n        for _ in range(n):\n            val = int(next(it))\n            node = TreeNode(val)\n            if stack[-1].val == 0:\n                stack[-1].val = val\n            elif stack[-1].left is None:\n                stack[-1].left = node\n                stack.append(node)\n            else:\n                stack[-1].right = node\n                stack.pop()\n                while stack and stack[-1].right is not None:\n                    stack.pop()\n        sol = Solution()\n        ans = sol.recoverTree(root)\n        def preorder(root):\n            return [root.val] + preorder(root.left) + preorder(root.right) if root else []\n        print(' '.join(map(str, preorder(root))))\n    except StopIteration:\n        sys.exit(0)",
+    "cpp": "#include <numeric>\n#include <bits/stdc++.h>\nusing namespace std;\n\nstruct TreeNode {\n    int val;\n    TreeNode *left;\n    TreeNode *right;\n    TreeNode() : val(0), left(nullptr), right(nullptr) {}\n    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}\n    TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}\n};\n\nclass Solution {\npublic:\n    TreeNode* recoverTree(TreeNode* root) {\n        vector<int> nodes;\n        inorder(root, nodes);\n        sort(nodes.begin(), nodes.end());\n        recover(root, nodes);\n        return root;\n    }\n\nprivate:\n    void inorder(TreeNode* root, vector<int>& nodes) {\n        if (root) {\n            inorder(root->left, nodes);\n            nodes.push_back(root->val);\n            inorder(root->right, nodes);\n        }\n    }\n\n    void recover(TreeNode* root, vector<int>& nodes) {\n        if (root) {\n            recover(root->left, nodes);\n            root->val = nodes.front();\n            nodes.erase(nodes.begin());\n            recover(root->right, nodes);\n        }\n    }\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int n;\n    cin >> n;\n    TreeNode* root = new TreeNode();\n    stack<TreeNode*> stack;\n    stack.push(root);\n    for (int i = 0; i < n; i++) {\n        int val;\n        cin >> val;\n        TreeNode* node = new TreeNode(val);\n        if (stack.top()->val == 0) {\n            stack.top()->val = val;\n        } else if (stack.top()->left == nullptr) {\n            stack.top()->left = node;\n            stack.push(node);\n        } else {\n            stack.top()->right = node;\n            stack.pop();\n            while (!stack.empty() && stack.top()->right != nullptr) {\n                stack.pop();\n            }\n        }\n    }\n    Solution sol;\n    TreeNode* ans = sol.recoverTree(root);\n    function<void(TreeNode*)> preorder = [&](TreeNode* root) {\n        if (root) {\n            cout << root->val << ' ';\n            preorder(root->left);\n            preorder(root->right);\n        }\n    };\n    preorder(ans);\n    cout << '\\n';\n    return 0;\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.5
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5\n4 2 7 1 3 6 8",
+      "output": "7 4 3 2 1",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "3\n2 1 3",
+      "output": "3 2 1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint_3",
+      "input": "2\n1\n2",
+      "output": "2 1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "duplicate_5",
+      "input": "5\n1 2 2 4 5",
+      "output": "5 4 2 2 1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "duplicate"
+    },
+    {
+      "id": "random_medium_6",
+      "input": "10\n10 5 3 8 4 7 9 2 6 1",
+      "output": "10 9 8 7 6 5 4 3 2 1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "random_medium"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

@@ -1,0 +1,153 @@
+{
+  "title": "Validating Nested HTML Tags with Strict Tag Names",
+  "subCategory": "HTML Validation",
+  "statement": {
+    "markdown": "Write a function to validate whether a given string of HTML tags is valid. A string of HTML tags is valid if it consists of well-formed HTML elements, i.e., each opening tag is followed by a corresponding closing tag. The function should return true if the input string is valid, false otherwise. Note that the function should be case-sensitive and assume that the input string only contains alphanumeric characters, spaces, and '<' and '>' characters.",
+    "inputFormat": "A string of HTML tags",
+    "outputFormat": "True if the input string is valid, false otherwise",
+    "notes": "The function should be able to handle nested tags.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The maximum number of characters in the input string"
+      }
+    ],
+    "examples": [
+      {
+        "input": "<div><p>Hello World!</p></div>",
+        "output": "true",
+        "explanation": "This is a valid HTML string with nested tags."
+      },
+      {
+        "input": "<div><p>Hello World!</p>",
+        "output": "false",
+        "explanation": "This is an invalid HTML string because the closing tag is missing."
+      },
+      {
+        "input": "<div><p>Hello World!</div>",
+        "output": "false",
+        "explanation": "This is an invalid HTML string because the closing tag is not properly nested."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "HTML"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "html"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use a stack data structure to keep track of the opening tags."
+    },
+    {
+      "order": 2,
+      "text": "Iterate over the string and check if each opening tag matches the corresponding closing tag."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial",
+    "intuition": "The key insight is to use a stack to keep track of the opening tags.",
+    "bruteForce": "One approach is to use a regex pattern to match the HTML string, but this would be inefficient.",
+    "betterSolution": "Using a stack is a much more efficient approach.",
+    "optimalSolution": "Push each opening tag onto the stack and pop the stack when a closing tag is found.",
+    "proofOfCorrectness": "The function is correct because it checks for both well-formedness and proper nesting.",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Not using a stack",
+      "Not checking for proper nesting"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// Write a function to validate whether a given string of HTML tags is valid.\n// A string of HTML tags is valid if it consists of well-formed HTML elements,\n// i.e., each opening tag is followed by a corresponding closing tag.\n// The function should return true if the input string is valid, false otherwise.\nfunction isValidHtml(s) {\n    // TODO: Implement the function\n}\n",
+    "python": "class Solution:\n    def isValidHtml(self, s: str) -> bool:\n        # TODO: Implement the function\n        pass\n"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Write a function to validate whether a given string of HTML tags is valid.\n// A string of HTML tags is valid if it consists of well-formed HTML elements,\n// i.e., each opening tag is followed by a corresponding closing tag.\n// The function should return true if the input string is valid, false otherwise.\nfunction isValidHtml(s) {\n    let stack = [];\n    for (let i = 0; i < s.length; i++) {\n        if (s[i] === '<') {\n            let j = i + 1;\n            let tagName = '';\n            while (j < s.length && s[j] !== '>') {\n                tagName += s[j++];\n            }\n            stack.push(tagName);\n        }\n    }\n    let isValid = true;\n    for (let i = 0; i < stack.length; i++) {\n        if (stack[i] === 'div') {\n            isValid = false;\n            break;\n        }\n    }\n    return isValid;\n}\n",
+    "python": "class Solution:\n    def isValidHtml(self, s: str) -> bool:\n        stack = []\n        for char in s:\n            if char == '<':\n                tag_name = ''\n                i = s.find('>', s.index(char) + 1)\n                if i != -1:\n                    tag_name = s[s.index(char) + 1:i]\n                    stack.append(tag_name)\n        for tag in stack:\n            if tag == 'div':\n                return False\n        return True\n"
+  },
+  "functionSignature": {
+    "javascript": "function isValidHtml(s) { ... }",
+    "python": "def isValidHtml(self, s: str) -> bool: ..."
+  },
+  "solutions": {
+    "javascript": "// Write a function to validate whether a given string of HTML tags is valid.\n// A string of HTML tags is valid if it consists of well-formed HTML elements,\n// i.e., each opening tag is followed by a corresponding closing tag.\n// The function should return true if the input string is valid, false otherwise.\nfunction isValidHtml(s) {\n    let stack = [];\n    let i = 0;\n    while (i < s.length) {\n        if (s[i] === '<') {\n            let j = i + 1;\n            let tagName = '';\n            while (j < s.length && s[j] !== '>') {\n                tagName += s[j++];\n            }\n            stack.push(tagName);\n            i = j;\n        } else if (s[i] === '>') {\n            i++;\n        } else {\n            i++;\n        }\n    }\n    while (stack.length > 0) {\n        let tagName = stack.pop();\n        if (tagName !== 'div' && tagName !== 'p') {\n            return false;\n        }\n    }\n    return true;\n}\n",
+    "python": "class Solution:\n    def isValidHtml(self, s: str) -> bool:\n        stack = []\n        i = 0\n        while i < len(s):\n            if s[i] == '<':\n                j = s.find('>', i + 1)\n                if j != -1:\n                    tag_name = s[i + 1:j]\n                    stack.append(tag_name)\n                    i = j\n                else:\n                    i += 1\n            elif s[i] == '>':\n                i += 1\n            else:\n                i += 1\n        while len(stack) > 0:\n            tag_name = stack.pop()\n            if tag_name not in ['div', 'p']:\n                return False\n        return True\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "<div><p>Hello World!</p></div>",
+      "output": "true",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "<div><p>Hello World!</p>",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    },
+    {
+      "id": "tc_3",
+      "input": "<div><p>Hello World!</div>",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "b5591a432c6b57d59fd26e5a",
+  "slug": "validating-nested-html-tags-with-strict-tag-names-bugfix-medium-html",
+  "mode": "bug_fix",
+  "category": "HTML",
+  "difficulty": "Medium"
+}

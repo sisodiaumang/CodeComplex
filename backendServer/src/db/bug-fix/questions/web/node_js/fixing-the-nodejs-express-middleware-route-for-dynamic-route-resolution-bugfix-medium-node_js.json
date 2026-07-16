@@ -1,0 +1,126 @@
+{
+  "title": "Fixing the Node.js Express Middleware Route for Dynamic Route Resolution",
+  "subCategory": "Express Middleware",
+  "statement": {
+    "markdown": "Implement a Node.js Express middleware route that dynamically resolves routes using a provided mapping object. The middleware function should take an Express router instance and an object mapping route patterns to handler functions. The handler functions should be executed when the corresponding route is accessed. However, there is a bug in the provided middleware implementation that prevents dynamic route resolution. Fix the bug to ensure the middleware correctly resolves routes and executes the corresponding handler functions.",
+    "inputFormat": "The input will be an object containing an Express router instance and a mapping object with route patterns as keys and handler functions as values.",
+    "outputFormat": "The output will be the Express router instance with the dynamic route resolution middleware function attached.",
+    "notes": "Ensure the middleware function correctly resolves routes and executes the corresponding handler functions. The middleware function should not interfere with existing route handlers.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 1000,
+        "description": "Maximum number of routes in the mapping object"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{router: {get: function(req, res) { res.send('Hello World!'); }}, routes: { '/': function(req, res) { res.send('Home'); } }}",
+        "output": "{get: function(req, res) { res.send('Hello World!'); }, post: function(req, res) { res.send('POST'); }, put: function(req, res) { res.send('PUT'); }}",
+        "explanation": "The middleware function should attach the provided handler functions to the Express router instance at the corresponding routes."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 60,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "NODE_JS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "node_js"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Review the provided middleware implementation and identify the bug preventing dynamic route resolution."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial: Fixing the Node.js Express Middleware Route",
+    "intuition": "The middleware function should iterate over the mapping object and attach the handler functions to the Express router instance at the corresponding routes.",
+    "bruteForce": "The brute force approach would involve manually attaching each handler function to the Express router instance at the corresponding route using the router[verb] method (e.g., router.get, router.post).",
+    "betterSolution": "A better solution would involve using a loop to iterate over the mapping object and attach each handler function to the Express router instance at the corresponding route.",
+    "optimalSolution": "The optimal solution would involve using the router.use method to attach a middleware function that resolves the dynamic route and executes the corresponding handler function.",
+    "proofOfCorrectness": "The middleware function correctly resolves routes and executes the corresponding handler functions.",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Not iterating over the mapping object",
+      "Not attaching handler functions to the Express router instance"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "function attachDynamicRoutes(router, routes) {\n  // Attach dynamic routes\n}\n\n// Export the attachDynamicRoutes function\nmodule.exports = attachDynamicRoutes;"
+  },
+  "buggyStarterCode": {
+    "javascript": "function attachDynamicRoutes(router, routes) {\n  for (let route in routes) {\n    // BUG: Assuming the route is a string and not a regex pattern\n    router.get(route, routes[route]);\n  }\n}\n\n// Export the attachDynamicRoutes function\nmodule.exports = attachDynamicRoutes;"
+  },
+  "functionSignature": {
+    "javascript": "function attachDynamicRoutes(router, routes) {\n  // Attach dynamic routes\n}"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction attachDynamicRoutes(router, routes) {\n  for (let route in routes) {\n    // Fix: Use the router.use method to attach a middleware function that resolves the dynamic route\n    router.use(route, (req, res, next) => {\n      routes[route](req, res, next);\n    });\n  }\n}\n\n// Export the attachDynamicRoutes function\nmodule.exports = attachDynamicRoutes;\n\n// Example usage:\nconst express = require('express');\nconst router = express.Router();\nconst attachDynamicRoutes = require('./attachDynamicRoutes');\n\nconst routes = {\n  '/': (req, res, next) => res.send('Home'),\n  '/about': (req, res, next) => res.send('About')\n};\n\nattachDynamicRoutes(router, routes);\n\nrouter.listen(3000, () => {\n  console.log('Server listening on port 3000');\n});\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 3,
+    "memoryLimit": 128,
+    "supportedLanguages": [
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{router: {}, routes: { '/': (req, res) => res.send('Home'), '/about': (req, res) => res.send('About') }}",
+      "output": "{get: (req, res) => res.send('Home'), post: (req, res) => res.send('POST'), put: (req, res) => res.send('PUT')}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{router: {get: () => 'Hello World!'}, routes: { '/': (req, res) => res.send('Home'), '/about': (req, res) => res.send('About') }}",
+      "output": "{get: (req, res) => res.send('Hello World!'), post: (req, res) => res.send('POST'), put: (req, res) => res.send('PUT')}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "052bb14c80a70cdb58101137",
+  "slug": "fixing-the-nodejs-express-middleware-route-for-dynamic-route-resolution-bugfix-medium-node_js",
+  "mode": "bug_fix",
+  "category": "NODE_JS",
+  "difficulty": "Medium"
+}

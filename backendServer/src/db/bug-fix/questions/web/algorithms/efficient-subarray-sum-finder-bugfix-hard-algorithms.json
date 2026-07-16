@@ -1,0 +1,145 @@
+{
+  "title": "Efficient Subarray Sum Finder",
+  "subCategory": "Dynamic Programming",
+  "statement": {
+    "markdown": "Write an efficient algorithm to find all subarrays with a sum of zero in a given array of integers. For example, in the array [4, -3, -1, -2, 5, -3, 4], the subarrays with a sum of zero are [-2, 5, -3], [-3, 4], and [-1, 3].",
+    "inputFormat": "An array of integers",
+    "outputFormat": "A list of subarrays with a sum of zero",
+    "notes": "The algorithm should handle arrays with both positive and negative numbers and should be efficient enough to handle large arrays.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of the input array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "[-2, 5, -3, 1, 4, -3, 4, -1, 2]",
+        "output": "[[-2, 5, -3], [-3, 4], [-1, 3]]",
+        "explanation": ""
+      },
+      {
+        "input": "[0, 0, 0, 0, 0]",
+        "output": "[[], [0], [0, 0], [0, 0, 0], [0, 0, 0, 0]]",
+        "explanation": ""
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 60,
+    "premium": true,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "ALGORITHMS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "algorithms"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use a prefix sum array to efficiently calculate the sum of each subarray"
+    }
+  ],
+  "editorial": {
+    "title": "Efficient Subarray Sum Finder",
+    "intuition": "The idea is to use a prefix sum array to efficiently calculate the sum of each subarray.",
+    "bruteForce": "Brute force approach: O(n^3) time complexity",
+    "betterSolution": "Using a prefix sum array: O(n^2) time complexity",
+    "optimalSolution": "Optimal solution using a prefix sum array and a hashmap: O(n^2) time complexity",
+    "proofOfCorrectness": "proof Of Correctness details.",
+    "dryRun": "dry Run details.",
+    "commonMistakes": [
+      "Incorrectly calculating the sum of each subarray"
+    ],
+    "timeComplexity": "O(n^2)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "// TODO: implement findZeroSumSubarrays function",
+    "java": "// TODO: implement findZeroSumSubarrays function",
+    "python": "def findZeroSumSubarrays(nums):",
+    "javascript": "// TODO: implement findZeroSumSubarrays function"
+  },
+  "buggyStarterCode": {
+    "cpp": "return result;",
+    "java": "return result;",
+    "python": "return result;",
+    "javascript": "return result;"
+  },
+  "functionSignature": {
+    "cpp": "vector<vector<int>> findZeroSumSubarrays(vector<int> nums);",
+    "java": "List<List<Integer>> findZeroSumSubarrays(List<Integer> nums);",
+    "python": "def findZeroSumSubarrays(nums: List[int]): List[List[int]]:",
+    "javascript": "function findZeroSumSubarrays(nums: number[]): number[][];"
+  },
+  "solutions": {
+    "cpp": "// Solution\n#include <iostream>\n#include <vector>\n#include <unordered_map>\n\nint main() {\n    std::vector<int> nums = {4, -3, -1, -2, 5, -3, 4};\n    std::vector<std::vector<int>> result = findZeroSumSubarrays(nums);\n    for (const auto& subarray : result) {\n        for (int num : subarray) {\n            std::cout << num << ' '; \n        }\n        std::cout << '\n';\n    }\n    return 0;\n}\n\nvector<vector<int>> findZeroSumSubarrays(vector<int> nums) {\n    int n = nums.size();\n    vector<vector<int>> result;\n    unordered_map<int, int> sumMap;\n    int prefixSum = 0;\n    sumMap[prefixSum] = -1;\n\n    for (int i = 0; i < n; i++) {\n        prefixSum += nums[i];\n        if (sumMap.find(prefixSum) != sumMap.end()) {\n            result.push_back(vector<int>(nums.begin() + sumMap[prefixSum] + 1, nums.begin() + i + 1));\n        }\n        sumMap[prefixSum] = i;\n    }\n    return result;\n}\n",
+    "java": "// Solution\nimport java.util.ArrayList;\nimport java.util.Collections;\nimport java.util.HashMap;\nimport java.util.List;\nimport java.util.Map;\n\npublic class Main {\n    public static void main(String[] args) {\n        List<Integer> nums = new ArrayList<>(Arrays.asList(4, -3, -1, -2, 5, -3, 4));\n        List<List<Integer>> result = findZeroSumSubarrays(nums);\n        for (List<Integer> subarray : result) {\n            for (Integer num : subarray) {\n                System.out.print(num + ' '); \n            }\n            System.out.println();\n        }\n    }\n\n    public static List<List<Integer>> findZeroSumSubarrays(List<Integer> nums) {\n        int n = nums.size();\n        List<List<Integer>> result = new ArrayList<>();\n        Map<Integer, Integer> sumMap = new HashMap<>();\n        int prefixSum = 0;\n        sumMap.put(prefixSum, -1);\n\n        for (int i = 0; i < n; i++) {\n            prefixSum += nums.get(i);\n            if (sumMap.containsKey(prefixSum)) {\n                result.add(Collections.singletonList(nums.get(sumMap.get(prefixSum) + 1)));\n                result.add(nums.subList(sumMap.get(prefixSum) + 1, i + 1));\n            }\n            sumMap.put(prefixSum, i);\n        }\n        return result;\n    }\n}",
+    "python": "// Solution\nimport sys\nfrom typing import List\n\ndef findZeroSumSubarrays(nums: List[int]) -> List[List[int]]:\n    n = len(nums)\n    result = []\n    sumMap = {}\n    prefixSum = 0\n    sumMap[prefixSum] = -1\n\n    for i in range(n):\n        prefixSum += nums[i]\n        if prefixSum in sumMap:\n            result.append(nums[sumMap[prefixSum] + 1:i + 1])\n        sumMap[prefixSum] = i\n    return result\n\nn = int(sys.stdin.readline())\nnums = list(map(int, sys.stdin.readline().split()))\nresult = findZeroSumSubarrays(nums)\nfor subarray in result:\n    print(*subarray)\n",
+    "javascript": "// Solution\nfunction findZeroSumSubarrays(nums) {\n    let n = nums.length;\n    let result = [];\n    let sumMap = {};\n    let prefixSum = 0;\n    sumMap[prefixSum] = -1;\n\n    for (let i = 0; i < n; i++) {\n        prefixSum += nums[i];\n        if (prefixSum in sumMap) {\n            result.push(nums.slice(sumMap[prefixSum] + 1, i + 1));\n        }\n        sumMap[prefixSum] = i;\n    }\n    return result;\n}\n\nlet input = readline().split(' ').map(Number);\nlet result = findZeroSumSubarrays(input);\nfor (let subarray of result) {\n    print(subarray.join(' '));\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "-2 5 -3 1 4 -3 4 -1 2",
+      "output": "[-2, 5, -3] [-3, 4] [-1, 3]",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "0 0 0 0 0",
+      "output": "[[], [0], [0, 0], [0, 0, 0], [0, 0, 0, 0]]",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "51ac3edaf9ddc967d95a20d7",
+  "slug": "efficient-subarray-sum-finder-bugfix-hard-algorithms",
+  "mode": "bug_fix",
+  "category": "ALGORITHMS",
+  "difficulty": "Hard"
+}

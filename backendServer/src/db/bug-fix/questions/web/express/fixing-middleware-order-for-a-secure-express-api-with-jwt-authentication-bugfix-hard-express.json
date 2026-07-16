@@ -1,0 +1,143 @@
+{
+  "title": "Fixing Middleware Order for a Secure Express API with JWT Authentication",
+  "subCategory": "Security and Authentication",
+  "statement": {
+    "markdown": "You are given an Express API that uses JWT (JSON Web Token) authentication. The JWT token is sent in the `Authorization` header of the request. The API has a `verifyToken` middleware function that checks the token for validity. However, the middleware function is currently being called after the route handler, which means the route handler is being called even if the token is invalid. Fix the middleware order to ensure that the route handler is only called if the token is valid.",
+    "inputFormat": "A request to the API with a JWT token in the `Authorization` header.",
+    "outputFormat": "A JSON response with the request data or an error message if the token is invalid.",
+    "notes": "The `verifyToken` middleware function should be called before the route handler.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "timeout",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Maximum time in milliseconds for the API to respond."
+      },
+      {
+        "variable": "maxBodySize",
+        "type": "integer",
+        "min": 1,
+        "max": 1048576,
+        "description": "Maximum size in bytes for the request body."
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"Authorization\": \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c\"}\n{\"username\": \"john\", \"email\": \"john@example.com\"}",
+        "output": "{\"username\": \"john\", \"email\": \"john@example.com\"}",
+        "explanation": "The JWT token is valid, so the route handler returns the request data."
+      },
+      {
+        "input": "{\"Authorization\": \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c\"}\n{\"username\": \"john\", \"email\": \"john@example.com\"}",
+        "output": "{\"error\": \"Invalid token\"}",
+        "explanation": "The JWT token is invalid, so the route handler returns an error message."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 100,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "EXPRESS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "express"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "The middleware order is incorrect, which is causing the route handler to be called even if the token is invalid."
+    }
+  ],
+  "editorial": {
+    "title": "Fixing Middleware Order for a Secure Express API with JWT Authentication",
+    "intuition": "The `verifyToken` middleware function should be called before the route handler to ensure that the token is valid before calling the route handler.",
+    "bruteForce": "One possible brute force approach is to call the `verifyToken` middleware function after the route handler, but this is not a secure solution.",
+    "betterSolution": "The better solution is to move the `verifyToken` middleware function before the route handler.",
+    "optimalSolution": "The optimal solution is to call the `verifyToken` middleware function at the beginning of the middleware chain, before any other middleware functions, to ensure that the token is valid before calling the route handler.",
+    "proofOfCorrectness": "The proof of correctness is that the `verifyToken` middleware function checks the token for validity, and if it is invalid, it returns an error message. If the token is valid, it calls the route handler.",
+    "dryRun": "Step-by-step example run: 1. The client sends a request to the API with a JWT token in the `Authorization` header. 2. The `verifyToken` middleware function checks the token for validity. 3. If the token is invalid, it returns an error message. 4. If the token is valid, it calls the route handler. 5. The route handler returns the request data.",
+    "commonMistakes": [
+      "Calling the `verifyToken` middleware function after the route handler",
+      "Not checking the token for validity before calling the route handler"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "// Define the verifyToken middleware function\nfunction verifyToken(req, res, next) {\n    // Check the token for validity\n    if (req.headers.authorization !== 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c') {\n        return res.status(401).send({ error: 'Invalid token' });\n    }\n    next();\n}\n\n// Define the route handler\nfunction routeHandler(req, res) {\n    // Return the request data\n    res.send(req.body);\n}\n\n// Export the route handler\nmodule.exports = routeHandler;",
+    "python": "// Define the verifyToken middleware function\ndef verify_token(req, res, next):\n    # Check the token for validity\n    if req.headers.get('Authorization') != 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c':\n        return res.status(401).send({'error': 'Invalid token'})\n    next()\n\n# Define the route handler\ndef route_handler(req, res):\n    # Return the request data\n    res.send(req.body)\n\n# Export the route handler\nfrom flask import Flask, request\napp = Flask(__name__)\napp.before_request(verify_token)\napp.add_url_rule('/', view_func=route_handler, methods=['POST'])"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Define the route handler\nfunction routeHandler(req, res) {\n    // Check the token for validity\n    if (req.headers.authorization !== 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c') {\n        return res.status(401).send({ error: 'Invalid token' });\n    }\n    // Return the request data\n    res.send(req.body);\n}\n\n// Export the route handler\nmodule.exports = routeHandler;",
+    "python": "// Define the route handler\ndef route_handler(req, res):\n    # Check the token for validity\n    if req.headers.get('Authorization') != 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c':\n        return res.status(401).send({'error': 'Invalid token'})\n    # Return the request data\n    res.send(req.body)\n\n# Export the route handler\nfrom flask import Flask, request\napp = Flask(__name__)\napp.add_url_rule('/', view_func=route_handler, methods=['POST'])"
+  },
+  "functionSignature": {
+    "javascript": "function routeHandler(req, res) {\n    //\n}",
+    "python": "def route_handler(req, res):\n    #"
+  },
+  "solutions": {
+    "javascript": "// Define the verifyToken middleware function\nfunction verifyToken(req, res, next) {\n    // Check the token for validity\n    if (req.headers.authorization !== 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c') {\n        return res.status(401).send({ error: 'Invalid token' });\n    }\n    // Call the next middleware function\n    next();\n}\n\n// Define the route handler\nfunction routeHandler(req, res) {\n    // Return the request data\n    res.send(req.body);\n}\n\n// Use the verifyToken middleware function before the route handler\napp.use('/api', verifyToken);",
+    "python": "// Define the verifyToken middleware function\ndef verify_token(req, res, next):\n    # Check the token for validity\n    if req.headers.get('Authorization') != 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c':\n        return res.status(401).send({'error': 'Invalid token'})\n    # Call the next middleware function\n    next()\n\n# Define the route handler\ndef route_handler(req, res):\n    # Return the request data\n    res.send(req.body)\n\n# Use the verifyToken middleware function before the route handler\nfrom flask import Flask, request\napp = Flask(__name__)\napp.before_request(verify_token)\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 5,
+    "memoryLimit": 64,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"Authorization\": \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c\"}\n{\"username\": \"john\", \"email\": \"john@example.com\"}",
+      "output": "{\"username\": \"john\", \"email\": \"john@example.com\"}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"Authorization\": \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c\"}\n{\"username\": \"john\", \"email\": \"john@example.com\"}",
+      "output": "{\"error\": \"Invalid token\"}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "8c000b3e2d2a3a13cc406131",
+  "slug": "fixing-middleware-order-for-a-secure-express-api-with-jwt-authentication-bugfix-hard-express",
+  "mode": "bug_fix",
+  "category": "EXPRESS",
+  "difficulty": "Hard"
+}

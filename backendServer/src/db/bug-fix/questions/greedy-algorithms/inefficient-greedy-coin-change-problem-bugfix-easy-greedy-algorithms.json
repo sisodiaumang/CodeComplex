@@ -1,0 +1,165 @@
+{
+  "_id": "59b11d3a825377486700fe7d",
+  "title": "Inefficient Greedy Coin Change Problem",
+  "slug": "inefficient-greedy-coin-change-problem-bugfix-easy-greedy-algorithms",
+  "difficulty": "Easy",
+  "category": "DSA",
+  "subCategory": "GREEDY",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 10,
+    "points": 30,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "greedy"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Solve the problem and fix the bugs.",
+    "inputFormat": "On the first line, you have a positive integer n, the number of coins. On the second line, you have n space-separated integers representing the coins' denominations. After that, you have an integer x, the maximum amount you need to make change for.",
+    "outputFormat": "You should output the minimum number of coins of the given denominations required to make change for x, or -1 if it's impossible.",
+    "notes": "You can't make change for any amount greater than x.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      },
+      {
+        "variable": "x",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Maximum amount to make change for"
+      }
+    ],
+    "examples": [
+      {
+        "input": "4\n10 20 50 100\n120",
+        "output": "3",
+        "explanation": "You can make 120 with 1 50-denomination coin, 1 20-denomination coin, and 1 10-denomination coin."
+      },
+      {
+        "input": "3\n100 100 100\n101",
+        "output": "-1",
+        "explanation": "You can't make 101 with just 100-denomination coins."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Think about how you can make the maximum amount with the fewest coins."
+    }
+  ],
+  "editorial": {
+    "title": "Optimal Solution",
+    "intuition": "To make the optimal solution, you can use the well-known Greedy Algorithm for Coin Change Problem.",
+    "bruteForce": "You can make a brute force solution by trying all possible combinations of coins and checking if you can make the target amount.",
+    "betterSolution": "There isn't a better known solution for this specific problem.",
+    "optimalSolution": "You can sort the coin denominations in descending order and start checking each one from the largest to the smallest.",
+    "proofOfCorrectness": "This solution follows the greedy choice property. By choosing the largest coin that does not exceed the remaining target, we ensure that we use the fewest coins to reach the target amount.",
+    "dryRun": "Start with the following input: 4\n10 20 50 100\n120. The optimal solution is 1 50-denomination coin, 1 20-denomination coin, and 1 10-denomination coin.",
+    "commonMistakes": [
+      "Using a brute force approach",
+      "Not implementing the Greedy Algorithm correctly"
+    ],
+    "timeComplexity": "O(n log n)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    int solve(vector<int>& coins, int x);\n};",
+    "java": "public class Solution {\npublic:\n    int solve(int[] coins, int x);\n};",
+    "python": "class Solution:\n    def solve(self, coins: list[int], x: int) -> int:",
+    "javascript": "function solve(coins, x) {"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    int solve(vector<int>& coins, int x) {\n        sort(coins.begin(), coins.end());\n        int result = 0;\n        for (int coin : coins) {\n            while (x >= coin) {\n                x -= coin;\n                result++;\n            }\n        }\n        return result;\n    }\n};",
+    "java": "public class Solution {\npublic:\n    int solve(int[] coins, int x) {\n        Arrays.sort(coins);\n        int result = 0;\n        for (int coin : coins) {\n            while (x >= coin) {\n                x -= coin;\n                result++;\n            }\n        }\n        return result;\n    }\n};",
+    "python": "class Solution:\n    def solve(self, coins: list[int], x: int) -> int:\n        coins.sort()\n        result = 0\n        for coin in coins:\n            while x >= coin:\n                x -= coin\n                result++\n        return result",
+    "javascript": "function solve(coins, x) {\n    coins.sort((a, b) => b - a);\n    let result = 0;\n    for (const coin of coins) {\n        while (x >= coin) {\n            x -= coin;\n            result++;\n        }\n    }\n    return result;\n}"
+  },
+  "functionSignature": {
+    "cpp": "int solve(vector<int>& coins, int x);",
+    "java": "int solve(int[] coins, int x);",
+    "python": "def solve(self, coins: list[int], x: int) -> int:",
+    "javascript": "int solve(coins, x);"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def solve(self, coins: list[int], x: int) -> int:\n        coins.sort(reverse=True)\n        result = 0\n        for coin in coins:\n            count = x // coin\n            if count > 0:\n                x -= count * coin\n                result += count\n        return result if x == 0 else -1\n\n\nif __name__ == '__main__':\n    import sys\n    from collections import Counter\n\n    s = Solution()\n    for _ in range(int(sys.stdin.readline())):\n        n, x = map(int, sys.stdin.readline().split())\n        coins = list(map(int, sys.stdin.readline().split()))\n        result = s.solve(coins, x)\n        print(result)\n",
+    "cpp": "#include <bits/stdc++.h>\n\n#define ll long long\n#define MOD 1000000007\n#define MAXN 100000\n#define INF 100000000000000000\n\nusing namespace std;\n\nclass Solution {\npublic:\n    int solve(vector<int>& coins, int x) {\n        sort(coins.begin(), coins.end(), greater<int>());\n        int result = 0;\n        for (int coin : coins) {\n            int count = x / coin;\n            if (count > 0) {\n                x -= count * coin;\n                result += count;\n            }\n        }\n        return x == 0 ? result : -1;\n    }\n};\n\nint main() {\n    ios_base::sync_with_stdio(false);\n    cin.tie(NULL);\n    Solution s;\n    int t;\n    cin >> t;\n    while (t--) {\n        int n, x;\n        cin >> n >> x;\n        vector<int> coins(n);\n        for (int& coin : coins) {\n            cin >> coin;\n        }\n        cout << s.solve(coins, x) << endl;\n    }\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 1,
+    "memoryLimit": 128,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "4\n10 20 50 100\n120",
+      "output": "3",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "3\n100 100 100\n101",
+      "output": "-1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

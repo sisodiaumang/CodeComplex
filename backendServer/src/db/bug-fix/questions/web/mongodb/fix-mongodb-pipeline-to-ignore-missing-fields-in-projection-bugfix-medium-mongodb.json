@@ -1,0 +1,147 @@
+{
+  "title": "Fix MongoDB Pipeline to Ignore Missing Fields in Projection",
+  "subCategory": "MongoDB Aggregation Pipeline",
+  "statement": {
+    "markdown": "Given a MongoDB collection with documents containing various fields, write a function to create an aggregation pipeline that projects only the specified fields. The function should handle cases where the fields are missing from the documents.",
+    "inputFormat": "A MongoDB collection with documents containing various fields.",
+    "outputFormat": "An aggregation pipeline that projects only the specified fields.",
+    "notes": "The function should not raise any errors when the fields are missing from the documents.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of documents in the collection"
+      },
+      {
+        "variable": "fields",
+        "type": "array",
+        "min": 1,
+        "max": 10,
+        "description": "Array of field names to project"
+      }
+    ],
+    "examples": [
+      {
+        "input": "db.users.find().toArray()",
+        "output": "[{\"_id\":\"5f9cda87c4c4a50081d4b5e5\",\"name\":\"John Doe\",\"email\":\"john@example.com\"},{\"_id\":\"5f9cda87c4c4a50081d4b5e6\",\"name\":\"Jane Doe\",\"email\":\"jane@example.com\"}]",
+        "explanation": "Project only the 'name' and 'email' fields"
+      },
+      {
+        "input": "db.users.find().toArray()",
+        "output": "[{\"_id\":\"5f9cda87c4c4a50081d4b5e5\",\"name\":\"John Doe\",\"email\":\"john@example.com\"},{\"_id\":\"5f9cda87c4c4a50081d4b5e6\",\"name\":\"Jane Doe\",\"email\":\"jane@example.com\"}]",
+        "explanation": "Project only the 'name' field"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "MONGODB"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "mongodb"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the '$project' aggregation operator to project the specified fields"
+    },
+    {
+      "order": 2,
+      "text": "Use the '$ifNull' aggregation operator to handle missing fields"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial: Fixing the Aggregation Pipeline",
+    "intuition": "The aggregation pipeline should project only the specified fields and handle cases where the fields are missing.",
+    "bruteForce": "Use a loop to project each field individually.",
+    "betterSolution": "Use the '$project' aggregation operator with the '$ifNull' operator to handle missing fields.",
+    "optimalSolution": "Use the '$project' aggregation operator with the '$ifNull' operator and the '$addFields' operator to handle missing fields.",
+    "proofOfCorrectness": "The aggregation pipeline should return the documents with only the specified fields.",
+    "dryRun": "Run the aggregation pipeline on a sample collection to test the solution.",
+    "commonMistakes": [
+      "Not handling missing fields",
+      "Not using the '$project' aggregation operator"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "// Define the aggregation pipeline",
+    "python": "class Solution:\n    def solve(self):\n        # Define the aggregation pipeline"
+  },
+  "buggyStarterCode": {
+    "javascript": "function solve() {\n    var pipeline = [\n        {\n            $project: {\n                name: 1,\n                email: 1\n            }\n        }\n    ];\n    return pipeline;\n}",
+    "python": "class Solution:\n    def solve(self):\n        pipeline = [\n            {\n                '$project': {\n                    'name': 1,\n                    'email': 1\n                }\n            }\n        ]\n        return pipeline"
+  },
+  "functionSignature": {
+    "javascript": "function solve() {}",
+    "python": "def solve(self):\n    pass"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction solve() {\n    var pipeline = [\n        {\n            $project: {\n                name: 1,\n                email: 1\n            }\n        },\n        {\n            $addFields: {\n                name: { $ifNull: ['$name', ''] }\n            }\n        }\n    ];\n    return pipeline;\n}",
+    "python": "class Solution:\n    def solve(self):\n        pipeline = [\n            {\n                '$project': {\n                    'name': 1,\n                    'email': 1\n                }\n            },\n            {\n                '$addFields': {\n                    'name': {'$ifNull': ['$name', '']} \n                }\n            }\n        ]\n        return pipeline"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "db.users.find().toArray()",
+      "output": "[{\"_id\":\"5f9cda87c4c4a50081d4b5e5\",\"name\":\"John Doe\",\"email\":\"john@example.com\"},{\"_id\":\"5f9cda87c4c4a50081d4b5e6\",\"name\":\"Jane Doe\",\"email\":\"jane@example.com\"}]",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "db.users.find().toArray()",
+      "output": "[{\"_id\":\"5f9cda87c4c4a50081d4b5e5\",\"name\":\"John Doe\",\"email\":\"john@example.com\"},{\"_id\":\"5f9cda87c4c4a50081d4b5e6\",\"name\":\"Jane Doe\",\"email\":\"jane@example.com\"}]",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "dfb176f1ae954a78e1d038d5",
+  "slug": "fix-mongodb-pipeline-to-ignore-missing-fields-in-projection-bugfix-medium-mongodb",
+  "mode": "bug_fix",
+  "category": "MONGODB",
+  "difficulty": "Medium"
+}

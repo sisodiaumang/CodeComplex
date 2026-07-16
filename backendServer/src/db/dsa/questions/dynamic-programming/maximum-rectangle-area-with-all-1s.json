@@ -1,0 +1,205 @@
+{
+  "_id": "maximum-rectangle-area-with-all-1s",
+  "title": "Maximum Rectangle Area with All 1s",
+  "slug": "maximum-rectangle-area-with-all-1s",
+  "difficulty": "Hard",
+  "category": "DP",
+  "subCategory": "DP on Squares",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 25,
+    "points": 500,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "Dynamic Programming",
+      "DP on Squares"
+    ],
+    "patterns": [
+      "Maximum Rectangle",
+      "Area with 1s"
+    ],
+    "prerequisites": [
+      "Dynamic Programming Basics",
+      "DP on Rectangles"
+    ],
+    "variants": [],
+    "tags": [
+      "Rectangle",
+      "Area",
+      "1s",
+      "DP",
+      "Hard"
+    ],
+    "keywords": [
+      "Maximum",
+      "Rectangle",
+      "Area",
+      "Dynamic",
+      "Programming",
+      "DP",
+      "Squares",
+      "1s",
+      "Hard"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "Given an `m x n` binary matrix `matrix`, find the area of the largest rectangle containing only 1s and return it.\n\n**Example 1:**\n\n```\nInput: matrix = [[1,0,1,0,0],[1,0,1,1,1],[1,1,1,1,1],[1,0,0,1,0]]\nOutput: 6\nExplanation: The above is the input matrix. The grey area is the largest rectangle with all 1s, which has an area of 6 units.\n```\n\n\n**Example 2:**\n\n```\nInput: matrix = [[0,0,1],[0,0,1]]\nOutput: 2\n```\n\n\n**Constraints:**\n\n* `m == matrix.length`\n* `n == matrix[0].length`\n* `1 <= m, n <= 200`\n* `matrix[i][j]` is either 0 or 1.",
+    "inputFormat": "m n\nmatrix",
+    "outputFormat": "area",
+    "notes": "The input matrix will be given in row-major order, with each row on a new line and elements separated by spaces.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 1,
+        "max": 200,
+        "description": "number of rows in the matrix"
+      },
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 200,
+        "description": "number of columns in the matrix"
+      }
+    ],
+    "examples": [
+      {
+        "input": "4 5\n1 0 1 0 0\n1 0 1 1 1\n1 1 1 1 1\n1 0 0 1 0",
+        "output": "6",
+        "explanation": "The largest rectangle with all 1s has an area of 6 units."
+      },
+      {
+        "input": "2 3\n0 0 1\n0 0 1",
+        "output": "2",
+        "explanation": "The largest rectangle with all 1s has an area of 2 units."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "The problem involves finding the maximum area of a rectangle within a binary matrix, where the rectangle can only contain 1s. Consider how you can use the rows of the matrix to help find this rectangle."
+    },
+    {
+      "order": 2,
+      "text": "For each row, consider treating it as the bottom of a potential rectangle and find the maximum width of 1s that can form a rectangle with that row as the bottom. This might involve looking at the columns and how they contribute to potential rectangles."
+    },
+    {
+      "order": 3,
+      "text": "The problem can be approached by using a histogram-based method. For each row, calculate the height of 1s up to that row for each column. Then, for each row, use a stack-based approach or a similar method to find the maximum area of the rectangle that can be formed using the heights calculated."
+    }
+  ],
+  "editorial": {
+    "title": "Maximum Rectangle Area with All 1s – From Brute Force to a Linear Scan",
+    "intuition": "The problem asks for the largest all‑ones sub‑matrix. A naïve approach would enumerate every rectangle, check its contents, and keep the best. That works but explodes combinatorially. The key insight is that if we look at each row as a base and treat the column counts of consecutive 1s above it as histogram heights, the largest rectangle in the matrix becomes the largest rectangle in that histogram. This reduces a 2‑D search to a 1‑D problem that can be solved in linear time with a stack.",
+    "bruteForce": "A straightforward brute force would iterate over all pairs of rows (top and bottom) and all pairs of columns (left and right), then verify that every cell inside the rectangle is 1. There are O(m²n²) possible rectangles, and each check can take up to O(mn) time, leading to an O(m³n³) algorithm in the worst case. Even with optimisations like prefix sums to check a rectangle in O(1), the overall complexity remains O(m²n²), which is far too slow for the 200×200 limit.",
+    "betterSolution": "The optimal strategy treats each row as the base of a histogram. For every column we maintain the number of consecutive 1s ending at the current row. With these heights we can compute the largest rectangle in that histogram in O(n) time using a monotonic stack. Repeating this for all m rows gives an overall O(mn) time solution and O(n) additional space.",
+    "optimalSolution": "For each row i, update an array heights[j] = heights[j] + 1 if matrix[i][j]==1 else 0. Then call largestRectangleArea(heights) which uses a stack to find the maximal rectangle in the histogram. Track the maximum over all rows and return it.",
+    "proofOfCorrectness": "Any maximal all‑ones rectangle must have its bottom edge on some row r. When processing row r, the heights array records exactly the vertical span of 1s for every column up to r. Therefore the rectangle’s width and height correspond to a rectangle in the histogram of row r. The stack algorithm enumerates all possible heights and widths that can be formed with contiguous columns, guaranteeing that the true maximal rectangle for that row is found. Since we consider every row as a potential bottom, the global maximum over all rows is the overall maximal rectangle in the matrix.",
+    "dryRun": "Consider a 3×4 matrix:\n[[1,0,1,1],[1,1,1,1],[0,1,1,1]]\nRow 0 heights: [1,0,1,1] → max area 2\nRow 1 heights: [2,1,2,2] → max area 4 (columns 1–3)\nRow 2 heights: [0,2,3,3] → max area 6 (columns 1–3). The algorithm returns 6, which is correct.",
+    "commonMistakes": [
+      "Assuming the histogram method works only for binary matrices with no zeros inside the rectangle; it actually handles any binary matrix.\nUsing a stack that pops when heights are equal instead of strictly greater, which can miss valid rectangles.\nForgetting to append a sentinel 0 height to flush remaining stack entries.\nUpdating heights incorrectly when encountering a 0 (should reset to 0, not subtract).\nNot resetting the stack between rows.\nMisinterpreting the width calculation: it should be i if stack empty, else i - stack[-1] - 1."
+    ],
+    "timeComplexity": "O(m * n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\nclass Solution {\npublic:\n    int maximalRectangle(vector<vector<char>>& matrix) {\n        // TODO: implement\n        return 0;\n    }\n};",
+    "java": "import java.util.*;\nclass Solution {\n    public int maximalRectangle(char[][] matrix) {\n        // TODO: implement\n        return 0;\n    }\n}",
+    "python": "class Solution:\n    def maximalRectangle(self, matrix: list[list[str]]) -> int:\n        # TODO: implement\n        pass",
+    "javascript": "/**\n * @param {string[]}\n * @return {number}\n */\nvar maximalRectangle = function(matrix) {\n    // TODO: implement\n    return 0;\n};"
+  },
+  "functionSignature": {
+    "cpp": "int maximalRectangle(vector<vector<char>>& matrix);",
+    "java": "public int maximalRectangle(char[][] matrix);",
+    "python": "def maximalRectangle(self, matrix: list[list[str]]) -> int:",
+    "javascript": "var maximalRectangle = function(matrix);"
+  },
+  "solutions": {
+    "python": "import sys\n\nclass Solution:\n    def maximalRectangle(self, matrix: list[list[str]]) -> int:\n        if not matrix:\n            return 0\n\n        m, n = len(matrix), len(matrix[0])\n        height = [0] * (n + 1)\n        ans = 0\n\n        for row in matrix:\n            for i in range(n):\n                height[i] = height[i] + 1 if row[i] == '1' else 0\n            stack = []\n            for i in range(n + 1):\n                while stack and height[i] < height[stack[-1]]:\n                    h = height[stack.pop()]\n                    w = i if not stack else i - stack[-1] - 1\n                    ans = max(ans, h * w)\n                stack.append(i)\n        return ans\n\nif __name__ == '__main__':\n    it = iter(sys.stdin.read().split())\n    try:\n        m = int(next(it))\n        n = int(next(it))\n        matrix = [[next(it) for _ in range(n)] for _ in range(m)]\n    except StopIteration:\n        sys.exit(0)\n    sol = Solution()\n    ans = sol.maximalRectangle(matrix)\n    print(ans)",
+    "cpp": "#include <numeric>\n#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    int maximalRectangle(vector<vector<char>>& matrix) {\n        if (matrix.empty()) {\n            return 0;\n        }\n\n        int m = matrix.size(), n = matrix[0].size();\n        vector<int> height(n + 1, 0);\n        int ans = 0;\n\n        for (const auto& row : matrix) {\n            for (int i = 0; i < n; ++i) {\n                height[i] = row[i] == '1' ? height[i] + 1 : 0;\n            }\n            stack<int> stk;\n            for (int i = 0; i <= n; ++i) {\n                while (!stk.empty() && height[i] < height[stk.top()]) {\n                    int h = height[stk.top()]; stk.pop();\n                    int w = stk.empty() ? i : i - stk.top() - 1;\n                    ans = max(ans, h * w);\n                }\n                stk.push(i);\n            }\n        }\n        return ans;\n    }\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int m, n;\n    cin >> m >> n;\n    vector<vector<char>> matrix(m, vector<char>(n));\n    for (int i = 0; i < m; ++i) {\n        for (int j = 0; j < n; ++j) {\n            cin >> matrix[i][j];\n        }\n    }\n    Solution sol;\n    int ans = sol.maximalRectangle(matrix);\n    cout << ans << \"\\n\";\n    return 0;\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.5
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "4 5\n1 0 1 0 0\n1 0 1 1 1\n1 1 1 1 1\n1 0 0 1 0",
+      "output": "6",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "2 3\n0 0 1\n0 0 1",
+      "output": "2",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint_3",
+      "input": "1 1\n1",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "boundary_4",
+      "input": "1 5\n1 1 1 1 1",
+      "output": "5",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    },
+    {
+      "id": "duplicate_5",
+      "input": "3 3\n0 0 0\n0 0 0\n0 0 0",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "duplicate"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

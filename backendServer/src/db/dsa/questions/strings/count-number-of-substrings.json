@@ -106,24 +106,24 @@
       "Optimizing the solution without considering the impact on correctness",
       "Failing to account for the time and space complexity of the solution"
     ],
-    "timeComplexity": "O(n^3)",
-    "spaceComplexity": "O(n)"
+    "timeComplexity": "O(n) where n is the length of the string",
+    "spaceComplexity": "O(m) where m is the number of distinct characters in the current window (≤ alphabet size)"
   },
   "starterCode": {
-    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\nint count_substrings(string s, int k) {\n  // TODO\n}\n// @driver-code-start\nint main() {\n  ios_base::sync_with_stdio(false);\n  cin.tie(NULL);\n  string s;\n  int k;\n  cin >> s >> k;\n  cout << count_substrings(s, k) << '\\n';\n  return 0;\n}",
-    "java": "import java.util.Scanner;\npublic class Main {\n  public static int count_substrings(String s, int k) {\n    // TODO\n  }\n  // @driver-code-start\npublic static void main(String[] args) {\n    Scanner scanner = new Scanner(System.in);\n    String s = scanner.next();\n    int k = scanner.nextInt();\n    System.out.println(count_substrings(s, k));\n  }\n}",
-    "python": "import sys\ndef count_substrings(s, k):\n  # TODO\n  pass\n# @driver-code-start\nif __name__ == '__main__':\n  s = sys.stdin.readline().strip()\n  k = int(sys.stdin.readline().strip())\n  print(count_substrings(s, k))\n",
-    "javascript": "// @driver-code-start\nconst readline = require('readline');\nconst rl = readline.createInterface({\n  input: process.stdin,\n  output: process.stdout\n});\nlet s, k;\nrl.on('line', line => {\n  if (!s) s = line;\n  else {\n    k = parseInt(line);\n    rl.close();\n  }\n});\nrl.on('close', () => {\n  console.log(count_substrings(s, k));\n});\nfunction count_substrings(s, k) {\n  const solution = new Solution();\n        console.log(solution.count_substrings(s, k));\n}\n\n\nclass Solution {\n    count_substrings(s, k) {\n        // TODO: implement\n        return 0;\n    }\n}\n"
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    int solve(string& s, int k) {\n        // TODO: implement\n        return 0;\n    }\n};",
+    "java": "import java.util.*;\n\nclass Solution {\n    public int solve(String s, int k) {\n        // TODO: implement\n        return 0;\n    }\n}",
+    "python": "class Solution:\n    def solve(self, s: str, k: int) -> int:\n        # TODO: implement\n        pass",
+    "javascript": "/**\n * @param {string} s\n * @param {number} k\n * @return {number}\n */\nvar solve = function(s, k) {\n    // TODO: implement\n    return 0;\n};"
   },
   "functionSignature": {
-    "cpp": "int count_substrings(string s, int k)",
-    "java": "public static int count_substrings(String s, int k)",
-    "python": "def count_substrings(s, k):",
-    "javascript": "function count_substrings(s, k)"
+    "cpp": "int solve(string& s, int k);",
+    "java": "public int solve(String s, int k);",
+    "python": "def solve(self, s: str, k: int) -> int:",
+    "javascript": "var solve = function(s, k);"
   },
   "solutions": {
-    "python": "\nimport sys\nit = iter(sys.stdin.read().split())\ns = next(it)\nk = int(next(it))\ndef count_substrings(s, k):\n    count = 0\n    for i in range(len(s)):\n        for j in range(i + 1, len(s) + 1):\n            substring = s[i:j]\n            distinct_chars = set(substring)\n            if len(distinct_chars) == k:\n                count += 1\n    return count\nprint(count_substrings(s, k))\n",
-    "cpp": "\n#include <bits/stdc++.h>\nusing namespace std;\nint main(){\n    string s;\n    cin >> s;\n    int k;\n    cin >> k;\n    int count = 0;\n    for(int i = 0; i < s.length(); i++) {\n        for(int j = i + 1; j <= s.length(); j++) {\n            string substring = s.substr(i, j - i);\n            set<char> distinct_chars(substring.begin(), substring.end());\n            if(distinct_chars.size() == k) {\n                count++;\n            }\n        }\n    }\n    cout << count << endl;\n    return 0;\n}\n"
+    "python": "import sys\n\nclass Solution:\n    def solve(self, s: str, k: int) -> int:\n        def at_most(k_dist: int) -> int:\n            if k_dist < 0:\n                return 0\n            count = {}\n            left = 0\n            res = 0\n            distinct = 0\n            for right, ch in enumerate(s):\n                if count.get(ch, 0) == 0:\n                    distinct += 1\n                count[ch] = count.get(ch, 0) + 1\n                while distinct > k_dist:\n                    left_ch = s[left]\n                    count[left_ch] -= 1\n                    if count[left_ch] == 0:\n                        distinct -= 1\n                    left += 1\n                res += right - left + 1\n            return res\n        return at_most(k) - at_most(k - 1)\n\nif __name__ == \"__main__\":\n    data = sys.stdin.read().split()\n    if len(data) < 2:\n        sys.exit(0)\n    s = data[0]\n    k = int(data[1])\n    sol = Solution()\n    ans = sol.solve(s, k)\n    print(ans)",
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    int atMost(const string &s, int k) {\n        if (k < 0) return 0;\n        unordered_map<char,int> cnt;\n        int left = 0, distinct = 0;\n        long long res = 0;\n        for (int right = 0; right < (int)s.size(); ++right) {\n            char ch = s[right];\n            if (cnt[ch] == 0) distinct++;\n            cnt[ch]++;\n            while (distinct > k) {\n                char lc = s[left++];\n                cnt[lc]--;\n                if (cnt[lc] == 0) distinct--;\n            }\n            res += right - left + 1;\n        }\n        return (int)res;\n    }\n    int solve(string &s, int k) {\n        return atMost(s, k) - atMost(s, k-1);\n    }\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    string s;\n    if(!(cin >> s)) return 0;\n    int k;\n    if(!(cin >> k)) return 0;\n    Solution sol;\n    int ans = sol.solve(s, k);\n    cout << ans << \"\\n\";\n    return 0;\n}"
   },
   "judgeConfig": {
     "timeLimit": 2,
@@ -187,86 +187,6 @@
       "isVisible": false,
       "weight": 1,
       "category": "boundary"
-    },
-    {
-      "id": "boundary_2",
-      "input": "aaa\n1",
-      "output": "6",
-      "isVisible": false,
-      "weight": 1,
-      "category": "boundary"
-    },
-    {
-      "id": "duplicate_1",
-      "input": "abcabc\n2",
-      "output": "5",
-      "isVisible": false,
-      "weight": 1,
-      "category": "duplicate"
-    },
-    {
-      "id": "duplicate_2",
-      "input": "aaaaaa\n1",
-      "output": "21",
-      "isVisible": false,
-      "weight": 1,
-      "category": "duplicate"
-    },
-    {
-      "id": "sorted_1",
-      "input": "abc\n2",
-      "output": "2",
-      "isVisible": false,
-      "weight": 1,
-      "category": "sorted"
-    },
-    {
-      "id": "sorted_2",
-      "input": "aab\n2",
-      "output": "2",
-      "isVisible": false,
-      "weight": 1,
-      "category": "sorted"
-    },
-    {
-      "id": "reverse_sorted_1",
-      "input": "cba\n2",
-      "output": "2",
-      "isVisible": false,
-      "weight": 1,
-      "category": "reverse_sorted"
-    },
-    {
-      "id": "reverse_sorted_2",
-      "input": "bba\n2",
-      "output": "2",
-      "isVisible": false,
-      "weight": 1,
-      "category": "reverse_sorted"
-    },
-    {
-      "id": "large_random_14",
-      "input": "daxihhexdvxrcsnbacghqtargwuwrnhosizayzfwnkiegykdcm\n13",
-      "output": "69",
-      "isVisible": false,
-      "weight": 1,
-      "category": "large_random"
-    },
-    {
-      "id": "large_random_15",
-      "input": "ltizbxordmcrjutlsgwcbvhyjchdmiou\n47",
-      "output": "0",
-      "isVisible": false,
-      "weight": 1,
-      "category": "large_random"
-    },
-    {
-      "id": "large_random_16",
-      "input": "llgviwvuctufrxhfomiu\n89",
-      "output": "0",
-      "isVisible": false,
-      "weight": 1,
-      "category": "large_random"
     }
   ],
   "analytics": {

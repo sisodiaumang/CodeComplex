@@ -1,0 +1,152 @@
+{
+  "title": "Fixing the Node.js Express Middleware for Static File Serving",
+  "subCategory": "Express Routing",
+  "statement": {
+    "markdown": "Implement an Express middleware function `serveStaticFiles` that serves static files from a given directory. The middleware should serve files with the `.js` extension in the root directory of the Express application. The function should handle both GET and HEAD requests. The function should not serve files outside the root directory. The function should serve the `index.js` file as the default file when a directory is requested. The function should handle cases where the requested file is not found and return a 404 status code.",
+    "inputFormat": "The middleware function should be called with the Express application object, the directory path, and the HTTP request and response objects.",
+    "outputFormat": "The middleware function should return a boolean value indicating whether the request was handled or not. If a file is served, the function should return `true`. Otherwise, it should return `false`.",
+    "notes": "The function should not serve files outside the root directory. The function should serve the `index.js` file as the default file when a directory is requested.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of files in the directory"
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 1,
+        "max": 1000,
+        "description": "Number of directories"
+      }
+    ],
+    "examples": [
+      {
+        "input": "GET /static/index.js HTTP/1.1\r\nAccept: */*\r\n\r\n",
+        "output": "HTTP/1.1 200 OK\r\nContent-Type: text/javascript\r\n\r\n",
+        "explanation": "Serve the index.js file in the static directory"
+      },
+      {
+        "input": "GET /static/non_existent_file.js HTTP/1.1\r\nAccept: */*\r\n\r\n",
+        "output": "HTTP/1.1 404 Not Found\r\n\r\n",
+        "explanation": "Serve a 404 status code when the file is not found"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "NODE_JS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "node_js"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Handle both GET and HEAD requests"
+    },
+    {
+      "order": 2,
+      "text": "Serve files with the .js extension in the root directory"
+    },
+    {
+      "order": 3,
+      "text": "Return a 404 status code when the file is not found"
+    }
+  ],
+  "editorial": {
+    "title": "Implementing the `serveStaticFiles` Middleware Function",
+    "intuition": "The `serveStaticFiles` function should handle both GET and HEAD requests and serve files with the .js extension in the root directory. It should return a 404 status code when the file is not found.",
+    "bruteForce": "One approach is to use the `fs` module to read the contents of the directory and serve the files. However, this approach is inefficient and may lead to performance issues.",
+    "betterSolution": "A better approach is to use the `express.static` middleware function to serve static files. This approach is more efficient and scalable.",
+    "optimalSolution": "The optimal solution is to implement a custom `serveStaticFiles` middleware function that handles both GET and HEAD requests, serves files with the .js extension in the root directory, and returns a 404 status code when the file is not found.",
+    "proofOfCorrectness": "The proof of correctness is based on the fact that the `serveStaticFiles` function handles both GET and HEAD requests, serves files with the .js extension in the root directory, and returns a 404 status code when the file is not found.",
+    "dryRun": "Step-by-step example run: 1. Handle the GET or HEAD request 2. Check if the file exists in the root directory 3. Serve the file if it exists 4. Return a 404 status code if the file does not exist",
+    "commonMistakes": [
+      "Failing to handle both GET and HEAD requests",
+      "Failing to serve files with the .js extension in the root directory",
+      "Failing to return a 404 status code when the file is not found"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(m)"
+  },
+  "starterCode": {
+    "javascript": "function serveStaticFiles(app, directory) {\n\t// TO DO: implement the serveStaticFiles middleware function\n}\n",
+    "python": "class Solution:\n\tdef serveStaticFiles(self, app, directory):\n\t\t# TO DO: implement the serveStaticFiles middleware function\n"
+  },
+  "buggyStarterCode": {
+    "javascript": "function serveStaticFiles(app, directory) {\n\tif (directory !== '/') {\n\t\treturn false;\n\t}\n\tvar file = require('fs').readFileSync(directory + 'index.js', 'utf8');\n\tapp.get('*', (req, res) => {\n\t\tres.send(file);\n\t});\n\treturn true;\n}\n",
+    "python": "class Solution:\n\tdef serveStaticFiles(self, app, directory):\n\t\tif directory != '/':\n\t\t\treturn False\n\t\tfile = open(directory + 'index.js', 'r').read()\n\t\tapp.get('*', self.handle_request)\n\t\treturn True\n\n\tdef handle_request(self, req, res):\n\t\tres.send(file)\n"
+  },
+  "functionSignature": {
+    "javascript": "function serveStaticFiles(app, directory)",
+    "python": "def serveStaticFiles(self, app, directory)"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction serveStaticFiles(app, directory) {\n\tif (directory !== '/') {\n\t\treturn false;\n\t}\n\tvar file = require('fs').readFileSync(directory + 'index.js', 'utf8');\n\tapp.get('*', (req, res) => {\n\t\tif (req.path === '/') {\n\t\t\tres.send(file);\n\t\t} else {\n\t\t\tres.status(404).send('Not Found');\n\t\t}\n\t});\n\treturn true;\n}\n",
+    "python": "class Solution:\n\tdef serveStaticFiles(self, app, directory):\n\t\tif directory != '/':\n\t\t\treturn False\n\t\tfile = open(directory + 'index.js', 'r').read()\n\t\tapp.get('*', self.handle_request)\n\t\treturn True\n\n\tdef handle_request(self, req, res):\n\t\tif req.path == '/':\n\t\t\tres.send(file)\n\t\telse:\n\t\t\tres.status(404).send('Not Found')\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "GET /static/index.js HTTP/1.1\r\nAccept: */*\r\n\r\n",
+      "output": "HTTP/1.1 200 OK\r\nContent-Type: text/javascript\r\n\r\n",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "GET /static/non_existent_file.js HTTP/1.1\r\nAccept: */*\r\n\r\n",
+      "output": "HTTP/1.1 404 Not Found\r\n\r\n",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "e6b862ee582bd07b21b9a2e9",
+  "slug": "fixing-the-nodejs-express-middleware-for-static-file-serving-bugfix-medium-node_js",
+  "mode": "bug_fix",
+  "category": "NODE_JS",
+  "difficulty": "Medium"
+}

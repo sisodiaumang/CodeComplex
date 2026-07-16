@@ -1,0 +1,153 @@
+{
+  "_id": "d13a3c3d2086bbbfbeea37f2",
+  "title": "Recover the Heap After Deletion of Duplicate Elements",
+  "slug": "recover-the-heap-after-deletion-of-duplicate-elements-bugfix-medium-heaps-2",
+  "difficulty": "Medium",
+  "category": "DSA",
+  "subCategory": "Heap",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "heap"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Recover the heap after the deletion of duplicate elements. Given an array of integers, for each duplicate element in the array, remove one occurrence from the array. Then, build the heap from the modified array. Return the heap as an array of integers.",
+    "inputFormat": "An integer count followed by a line of integers separated by spaces. The integers are in the range of 1 to n",
+    "outputFormat": "The recovered heap as a line of integers separated by spaces",
+    "notes": "The input array may have duplicate elements.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "5\n3 5 3 7 3",
+        "output": "3 5 7",
+        "explanation": "Input: [3, 5, 3, 7, 3]. Remove the duplicates and build the heap: [3, 5, 7]."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Start by removing duplicate elements from the array."
+    }
+  ],
+  "editorial": {
+    "title": "Recover the Heap After Deletion of Duplicate Elements",
+    "intuition": "To solve this problem, we need to remove the duplicates from the array and then build the heap.",
+    "bruteForce": "brute Force details.",
+    "betterSolution": "",
+    "optimalSolution": "Use a set to remove duplicates and then build the heap.",
+    "proofOfCorrectness": "proof Of Correctness details.",
+    "dryRun": "dry Run details.",
+    "commonMistakes": [
+      "Not removing duplicates",
+      "Not building the heap correctly"
+    ],
+    "timeComplexity": "O(n log n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    void recoverHeap(vector<int>& nums);\n};",
+    "java": "public class Solution {\npublic:\n    public void recoverHeap(int[] nums);\n}",
+    "python": "class Solution:\n    def recoverHeap(self, nums: list[int]) -> None:\n        pass",
+    "javascript": "const recoverHeap = (nums) => {};"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    void recoverHeap(vector<int>& nums) {\n        unordered_set<int> seen;\n        for (auto& num : nums) {\n            if (seen.find(num) == seen.end()) {\n                seen.insert(num);\n            } else {\n                nums.erase(remove(nums.begin(), nums.end(), num), nums.end());\n            }\n        }\n        for (int i = nums.size() / 2 - 1; i >= 0; --i) {\n            heapify(nums, i);\n        }\n    }\n\n    void heapify(vector<int>& nums, int i) {\n        int smallest = i;\n        int left = 2 * i + 1;\n        int right = 2 * i + 2;\n        if (left < nums.size() && nums[left] < nums[smallest]) {\n            smallest = left;\n        }\n        if (right < nums.size() && nums[right] < nums[smallest]) {\n            smallest = right;\n        }\n        if (smallest != i) {\n            swap(nums[i], nums[smallest]);\n            heapify(nums, smallest);\n        }\n    }\n};",
+    "java": "public class Solution {\npublic:\n    public void recoverHeap(int[] nums) {\n        Set<Integer> seen = new HashSet<>();\n        for (int num : nums) {\n            if (!seen.contains(num)) {\n                seen.add(num);\n            } else {\n                int index = 0;\n                for (int i = 0; i < nums.length; i++) {\n                    if (nums[i] == num) {\n                        nums[index++] = nums[i];\n                    }\n                }\n                for (int i = nums.length - 1; i >= 0; i--) {\n                    nums[i] = 0;\n                }\n            }\n        }\n        for (int i = nums.length / 2 - 1; i >= 0; i--) {\n            heapify(nums, i);\n        }\n    }\n\n    public void heapify(int[] nums, int i) {\n        int smallest = i;\n        int left = 2 * i + 1;\n        int right = 2 * i + 2;\n        if (left < nums.length && nums[left] < nums[smallest]) {\n            smallest = left;\n        }\n        if (right < nums.length && nums[right] < nums[smallest]) {\n            smallest = right;\n        }\n        if (smallest != i) {\n            swap(nums[i], nums[smallest]);\n            heapify(nums, smallest);\n        }\n    }\n\n    private void swap(int[] nums, int i, int j) {\n        int temp = nums[i];\n        nums[i] = nums[j];\n        nums[j] = temp;\n    }\n}",
+    "python": "class Solution:\n    def recoverHeap(self, nums: list[int]) -> None:\n        seen = set()\n        for num in nums:\n            if num not in seen:\n                seen.add(num)\n            else:\n                nums.remove(num)\n        for i in range(len(nums) // 2 - 1, -1, -1):\n            self.heapify(nums, i)\n\n    def heapify(self, nums, i):\n        smallest = i\n        left = 2 * i + 1\n        right = 2 * i + 2\n        if left < len(nums) and nums[left] < nums[smallest]:\n            smallest = left\n        if right < len(nums) and nums[right] < nums[smallest]:\n            smallest = right\n        if smallest != i:\n            nums[i], nums[smallest] = nums[smallest], nums[i]\n            self.heapify(nums, smallest)",
+    "javascript": "const recoverHeap = (nums) => {\n    const seen = new Set();\n    for (let i = 0; i < nums.length; i++) {\n        if (!seen.has(nums[i])) {\n            seen.add(nums[i]);\n        } else {\n            nums.splice(nums.indexOf(nums[i]), 1);\n        }\n    }\n    for (let i = Math.floor(nums.length / 2) - 1; i >= 0; i--) {\n        this.heapify(nums, i);\n    }\n}\n\nrecoverHeap.heapy = (nums, i) => {\n    let smallest = i;\n    let left = 2 * i + 1;\n    let right = 2 * i + 2;\n    if (left < nums.length && nums[left] < nums[smallest]) {\n        smallest = left;\n    }\n    if (right < nums.length && nums[right] < nums[smallest]) {\n        smallest = right;\n    }\n    if (smallest != i) {\n        [nums[i], nums[smallest]] = [nums[smallest], nums[i]];\n        this.heapify.heapy(nums, smallest);\n    }\n}"
+  },
+  "functionSignature": {
+    "cpp": "void recoverHeap(vector<int>& nums);",
+    "java": "public void recoverHeap(int[] nums);",
+    "python": "def recoverHeap(self, nums: list[int]) -> None:",
+    "javascript": "const recoverHeap = (nums) => {};"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def recoverHeap(self, nums: list[int]) -> None:\n        seen = set()\n        for num in nums:\n            if num not in seen:\n                seen.add(num)\n            else:\n                nums.remove(num)\n        for i in range(len(nums) // 2 - 1, 0, -1):\n            self.heapify(nums, i)\n\n    def heapify(self, nums, i):\n        smallest = i\n        left = 2 * i + 1\n        right = 2 * i + 2\n        if left < len(nums) and nums[left] < nums[smallest]:\n            smallest = left\n        if right < len(nums) and nums[right] < nums[smallest]:\n            smallest = right\n        if smallest != i:\n            nums[i], nums[smallest] = nums[smallest], nums[i]\n            self.heapify(nums, smallest)\n\nimport sys\nfor _ in range(int(input())):\n    n = int(input())\n    nums = list(map(int, input().split()))\n    solution = Solution()\n    solution.recoverHeap(nums)\n    print(*nums)\n",
+    "cpp": "// Don't forget to return the result.\n// Use cout instead of print for C++\nclass Solution {\npublic:\n    void recoverHeap(vector<int>& nums) {\n        unordered_set<int> seen;\n        for (auto& num : nums) {\n            if (seen.find(num) == seen.end()) {\n                seen.insert(num);\n            } else {\n                nums.erase(remove(nums.begin(), nums.end(), num), nums.end());\n            }\n        }\n        for (int i = nums.size() / 2 - 1; i >= 0; --i) {\n            heapify(nums, i);\n        }\n        return nums;\n    }\n\n    void heapify(vector<int>& nums, int i) {\n        int smallest = i;\n        int left = 2 * i + 1;\n        int right = 2 * i + 2;\n        if (left < nums.size() && nums[left] < nums[smallest]) {\n            smallest = left;\n        }\n        if (right < nums.size() && nums[right] < nums[smallest]) {\n            smallest = right;\n        }\n        if (smallest != i) {\n            swap(nums[i], nums[smallest]);\n            heapify(nums, smallest);\n        }\n    }\n\n    void swap(vector<int>& nums, int i, int j) {\n        int temp = nums[i];\n        nums[i] = nums[j];\n        nums[j] = temp;\n    }\n};\n\nint main() {\n    int t;\n    cin >> t;\n    while (t--) {\n        int n;\n        cin >> n;\n        vector<int> nums(n);\n        for (int i = 0; i < n; i++) {\n            cin >> nums[i];\n        }\n        Solution solution;\n        vector<int> result = solution.recoverHeap(nums);\n        for (int num : result) {\n            cout << num << ' ';\n        }\n        cout << endl;\n    }\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2000,
+    "memoryLimit": 65536,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5\n3 5 3 7 3",
+      "output": "3 5 7",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "3\n4 5 4",
+      "output": "4 5",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

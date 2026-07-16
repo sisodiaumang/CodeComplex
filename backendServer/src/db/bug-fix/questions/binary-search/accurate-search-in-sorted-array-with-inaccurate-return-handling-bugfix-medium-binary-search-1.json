@@ -1,0 +1,162 @@
+{
+  "_id": "e4fc6a7f27e8b99b8cac37b7",
+  "title": "Accurate Search in Sorted Array with Inaccurate Return Handling",
+  "slug": "accurate-search-in-sorted-array-with-inaccurate-return-handling-bugfix-medium-binary-search-1",
+  "difficulty": "Medium",
+  "category": "DSA",
+  "subCategory": "BINARY_SEARCH",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 75,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "binary_search"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "**Problem Statement:**\nYou're given a sorted array of integers. Implement a binary search function that searches for a target element. The function should return `True` if the target is found, and `False` otherwise.\n**Note:** If the target is found, the function should return `True` immediately. However, if the target is not found, the function should perform one additional operation after the search is complete (i.e., it should return the maximum element in the array).",
+    "inputFormat": "Input is a sorted array of integers `nums` and a target integer `target`.",
+    "outputFormat": "Return `True` if the target is found; otherwise, return `False` and the maximum element in the array.",
+    "notes": "This problem requires accurate handling of the return value based on the search result.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "1\n3 5 7 9 10 11 16 21 32 43 50\n23",
+        "output": "False 50",
+        "explanation": "Target 23 is not found in the array."
+      },
+      {
+        "input": "1\n3 5 7 9 10 11 16 21 32 43 50\n11",
+        "output": "True",
+        "explanation": "Target 11 is found in the array."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Consider the edge cases when the target is found or not found in the array."
+    },
+    {
+      "order": 2,
+      "text": "Think about how to accurately handle the return value based on the search result."
+    }
+  ],
+  "editorial": {
+    "title": "Accurate Binary Search in Sorted Array",
+    "intuition": "To solve this problem, you need to write a binary search function that finds the target element in the sorted array. When the target is found, return `True`. However, when the target is not found, the function should return `False` and the maximum element in the array.",
+    "bruteForce": "You can implement a brute-force solution by iterating through the entire array to search for the target element.",
+    "betterSolution": "To improve the efficiency, use binary search to find the target element in the sorted array.",
+    "optimalSolution": "In the optimal solution, you need to accurately handle the return value based on the search result. When the target is found, return `True` immediately. When the target is not found, return `False` and the maximum element in the array.",
+    "proofOfCorrectness": "The correctness of the solution can be proved by analyzing the time and space complexity.",
+    "dryRun": "Suppose you have a sorted array `[3, 5, 7, 9, 10, 11, 16, 21, 32, 43, 50]` and a target `23`. The binary search function should find that the target is not in the array and return `False` along with the maximum element `50`.",
+    "commonMistakes": [
+      "Failing to handle the return value accurately based on the search result.",
+      "Not considering the edge cases when the target is found or not found in the array."
+    ],
+    "timeComplexity": "O(log n)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\nbool solve(vector<int>& nums, int target);\n};",
+    "java": "public class Solution {\npublic:\nboolean solve(int[] nums, int target);\n}",
+    "python": "class Solution:\n\tdef solve(self, nums: list[int], target: int) -> bool:\n\t\t# TODO: implement\n\t\treturn False",
+    "javascript": "function solve(nums, target) {\n\t// TODO: implement\n\treturn false;"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\nbool solve(vector<int>& nums, int target) {\n\tint left = -1;\n\tint right = nums.size() - 1;\n\twhile (left <= right) {\n\t\tint mid = left + (right - left) / 2;\n\t\tif (nums[mid] == target) {\n\t\t\treturn true;\n\t\t}else if (mid < right && nums[mid + 1] > target) {\n\t\t\treturn false;\n\t\t}else if (mid > left && nums[mid - 1] < target) {\n\t\t\treturn false;\n\t\t}else {\n\t\t\tleft = mid + 1;\n\t\t}\n\t}\n\t// This is the incorrect part: return the maximum element instead of False.\n\treturn nums.back();\n}\n};",
+    "java": "public class Solution {\npublic boolean solve(int[] nums, int target) {\n\tint left = -1;\n\tint right = nums.length - 1;\n\twhile (left <= right) {\n\t\tint mid = left + (right - left) / 2;\n\t\tif (nums[mid] == target) {\n\t\t\treturn true;\n\t\t}else if (mid < right && nums[mid + 1] > target) {\n\t\t\treturn false;\n\t\t}else if (mid > left && nums[mid - 1] < target) {\n\t\t\treturn false;\n\t\t}else {\n\t\t\tleft = mid + 1;\n\t\t}\n\t}\n\t// This is the incorrect part: return the maximum element instead of False.\n\treturn nums[nums.length - 1];\n}",
+    "python": "class Solution:\n\tdef solve(self, nums: list[int], target: int) -> bool:\n\t\tleft = -1\n\t\tright = len(nums) - 1\n\t\twhile left <= right:\n\t\t\tmid = left + (right - left) // 2\n\t\t\tif nums[mid] == target:\n\t\t\t\treturn True\n\t\t\telif mid < right and nums[mid + 1] > target:\n\t\t\t\treturn False\n\t\t\telif mid > left and nums[mid - 1] < target:\n\t\t\t\treturn False\n\t\t\tleft = mid + 1\n\t\tif nums:\n\t\t\treturn False\n\t\treturn nums[-1]",
+    "javascript": "function solve(nums, target) {\n\tlet left = -1;\n\tlet right = nums.length - 1;\n\twhile (left <= right) {\n\t\tlet mid = left + (right - left) / 2;\n\t\tif (nums[mid] == target) {\n\t\t\treturn true;\n\t\t}else if (mid < right && nums[mid + 1] > target) {\n\t\t\treturn false;\n\t\t}else if (mid > left && nums[mid - 1] < target) {\n\t\t\treturn false;\n\t\t}else {\n\t\t\tleft = mid + 1;\n\t\t}\n\t}\n\t// This is the incorrect part: return the maximum element instead of False.\n\treturn nums[nums.length - 1];"
+  },
+  "functionSignature": {
+    "cpp": "bool solve(vector<int>& nums, int target);",
+    "java": "boolean solve(int[] nums, int target);",
+    "python": "def solve(self, nums: list[int], target: int) -> bool:",
+    "javascript": "function solve(nums, target) {\n\treturn "
+  },
+  "solutions": {
+    "python": "class Solution:\n\tdef solve(self, nums: list[int], target: int) -> bool:\n\t\tleft = 0\n\t\tright = len(nums) - 1\n\t\twhile left <= right:\n\t\t\tmid = left + (right - left) // 2\n\t\t\tif nums[mid] == target:\n\t\t\t\treturn True\n\t\t\telif mid < right and nums[mid + 1] > target:\n\t\t\t\treturn False\n\t\t\telif mid > left and nums[mid - 1] < target:\n\t\t\t\treturn False\n\t\t\tleft = mid + 1\n\t\tif left > right:\n\t\t\tif nums:\n\t\t\t\treturn False, max(nums)\n\t\t\telse:\n\t\t\t\treturn False\n\t\treturn True",
+    "cpp": "// Complete the main function to read input and call the Solution.solve method.\n#include <iostream>\n#include <vector>\nusing namespace std;\n\nint main() {\n\tint n;\n\tcin >> n;\n\tvector<int> nums(n);\n\tfor (int i = 0; i < n; i++) {\n\t\tcin >> nums[i];\n\t}\n\tint target;\n\tcin >> target;\n\tsolution.solve(nums, target);\n\treturn 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "4\n1 3 5 9\n3",
+      "output": "True",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "5\n2 5 7 9 11\n10",
+      "output": "False 11",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

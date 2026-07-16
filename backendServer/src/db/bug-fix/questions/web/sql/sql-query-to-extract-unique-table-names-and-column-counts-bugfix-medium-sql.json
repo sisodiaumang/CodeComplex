@@ -1,0 +1,136 @@
+{
+  "title": "SQL Query to Extract Unique Table Names and Column Counts",
+  "subCategory": "SQL Parser",
+  "statement": {
+    "markdown": "Write a SQL query that takes a string of comma-separated table names as input and returns a list of tuples containing the unique table names and their respective column counts. For example, if the input is `table1, table2, table3`, the output should be `[('table1', 5), ('table2', 3), ('table3', 2)]`. Note that the column counts are arbitrary and only used for demonstration purposes. Additionally, assume that each table has a unique set of columns.",
+    "inputFormat": "A string of comma-separated table names, e.g. `table1, table2, table3`.",
+    "outputFormat": "A list of tuples containing the unique table names and their respective column counts, e.g. `[('table1', 5), ('table2', 3), ('table3', 2)]`.",
+    "notes": "You can assume that the input string is not empty and does not contain any duplicates. Also, the column counts are arbitrary and only used for demonstration purposes.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The maximum number of table names in the input string."
+      }
+    ],
+    "examples": [
+      {
+        "input": "table1, table2, table3",
+        "output": "[('table1', 5), ('table2', 3), ('table3', 2)]",
+        "explanation": "For the input `table1, table2, table3`, the output is `[('table1', 5), ('table2', 3), ('table3', 2)]`. Note that the column counts are arbitrary and only used for demonstration purposes."
+      },
+      {
+        "input": "table4, table5, table6",
+        "output": "[('table4', 7), ('table5', 4), ('table6', 6)]",
+        "explanation": "For the input `table4, table5, table6`, the output is `[('table4', 7), ('table5', 4), ('table6', 6)]`. Note that the column counts are arbitrary and only used for demonstration purposes."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "SQL"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "sql"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use a SQL query to extract the table names and column counts. Consider using the `INFORMATION_SCHEMA` tables."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial: SQL Query to Extract Unique Table Names and Column Counts",
+    "intuition": "The key to this problem is to use a SQL query to extract the table names and column counts. One way to do this is to use the `INFORMATION_SCHEMA` tables, which provide metadata about the database schema.",
+    "bruteForce": "A brute-force approach would involve creating a separate SQL query for each table to extract the column counts. However, this would be inefficient and prone to errors.",
+    "betterSolution": "A better solution would be to use a single SQL query that extracts the table names and column counts in a single pass.",
+    "optimalSolution": "The optimal solution would be to use a SQL query that uses the `INFORMATION_SCHEMA` tables to extract the table names and column counts. For example, the following SQL query could be used: `SELECT table_name, COUNT(*) as column_count FROM INFORMATION_SCHEMA.COLUMNS GROUP BY table_name`.",
+    "proofOfCorrectness": "The proof of correctness for this solution involves showing that the SQL query extracts the correct table names and column counts. This can be done by analyzing the query plan and verifying that the results match the expected output.",
+    "dryRun": "A dry run of this solution would involve testing the SQL query with a small dataset to ensure that it produces the correct output.",
+    "commonMistakes": [
+      "Using a brute-force approach",
+      "Failing to use the `INFORMATION_SCHEMA` tables"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// This is a skeleton function to solve the problem. You need to fill in the implementation.\nfunction solve(sql) {\n  // TO DO: implement the solution\n}\n",
+    "python": "class Solution:\n  def solve(self, sql):\n    # TO DO: implement the solution\n    pass"
+  },
+  "buggyStarterCode": {
+    "javascript": "// This is a buggy function to solve the problem.\nfunction solve(sql) {\n  const tables = sql.split(',');\n  const result = [];\n  for (const table of tables) {\n    const columns = db.query(`SELECT * FROM ${table}`); // <--- This line is buggy\n    result.push([table, columns.length]);\n  }\n  return result;\n}",
+    "python": "class Solution:\n  def solve(self, sql):\n    tables = sql.split(',');\n    result = [];\n    for table in tables:\n      columns = db.query(`SELECT * FROM ${table}`); # <--- This line is buggy\n      result.append((table, len(columns)));"
+  },
+  "functionSignature": {
+    "javascript": "var solve = function(sql);",
+    "python": "def solve(self, sql: str) -> list:"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction solve(sql) {\n  const tables = sql.split(',');\n  const result = {};\n  for (const table of tables) {\n    const columns = db.query(`SELECT * FROM ${table}`);\n    result[table] = columns.length;\n  }\n  return Object.keys(result).map(table => [table, result[table]]);\n}",
+    "python": "class Solution:\n  def solve(self, sql):\n    tables = sql.split(',');\n    result = {}\n    for table in tables:\n      columns = db.query(f'SELECT * FROM {table}')\n      result[table] = len(columns)\n    return list(result.items())"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "table1, table2, table3",
+      "output": "[['table1', 5], ['table2', 3], ['table3', 2]]",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "table4, table5, table6",
+      "output": "[['table4', 7], ['table5', 4], ['table6', 6]]",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "70e1856153754ae76f4682d9",
+  "slug": "sql-query-to-extract-unique-table-names-and-column-counts-bugfix-medium-sql",
+  "mode": "bug_fix",
+  "category": "SQL",
+  "difficulty": "Medium"
+}

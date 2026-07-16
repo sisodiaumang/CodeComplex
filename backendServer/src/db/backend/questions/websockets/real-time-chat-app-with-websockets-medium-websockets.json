@@ -1,0 +1,126 @@
+{
+  "_id": "17b9b1016ca359d62cd19d69",
+  "title": "Real-time Chat App with WebSockets",
+  "slug": "real-time-chat-app-with-websockets-medium-websockets",
+  "difficulty": "Medium",
+  "topics": [
+    "WEBSOCKETS"
+  ],
+  "statement": "Develop a real-time chat application using WebSockets. The application should establish a WebSocket connection for each user, broadcast messages to all connected users, and handle disconnections. Implement a WebSocket endpoint for users to send messages and one for real-time message updates.",
+  "constraints": [
+    "Must use WebSockets for real-time communication",
+    "Must broadcast messages to all connected users"
+  ],
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/api/chat",
+      "description": "Establish a WebSocket connection with the server"
+    },
+    {
+      "method": "POST",
+      "path": "/api/chat/messages",
+      "description": "Send a message to the server via WebSocket. The request body should contain the sender's username and the message text."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\n  \"name\": \"websocket-chat\",\n  \"version\": \"1.0.0\",\n  \"main\": \"index.js\",\n  \"scripts\": {\n    \"start\": \"node index.js\"\n  },\n  \"dependencies\": {\n    \"express\": \"^4.18.2\",\n    \"ws\": \"^8.5.3\"\n  }\n}",
+    "index.js": "const express = require('express');\nconst WebSocket = require('ws');\nconst wss = new WebSocket.Server({ path: '/api/chat' });\nconst app = express();\napp.use(express.json());\n\napp.get('/api/chat', (req, res) => {\n  res.writeHead(200);\n  res.end();\n});\n\n// Establish WebSocket connections and broadcast messages\nwss.on('connection', (ws) => {\n  console.log('Client connected');\n  // TODO: Handle messages and disconnections\n});\n\napp.post('/api/chat/messages', (req, res) => {\n  // TODO: Send message to all connected users\n  res.writeHead(201);\n  res.end();\n});\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/api/chat",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "GET",
+      "path": "/api/chat",
+      "headers": {
+        "Connection": "Upgrade",
+        "Upgrade": "websocket",
+        "Sec-WebSocket-Version": "13",
+        "Sec-WebSocket-Key": "dGhlIHNhbXBsZSBub25jZQ=="
+      },
+      "expectedStatus": 101,
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "POST",
+      "path": "/api/chat/messages",
+      "headers": {
+        "Connection": "Upgrade",
+        "Upgrade": "websocket",
+        "Sec-WebSocket-Version": "13",
+        "Sec-WebSocket-Key": "dGhlIHNhbXBsZSBub25jZQ==",
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "username": "JohnDoe",
+        "message": "Hello, world!"
+      },
+      "expectedStatus": 201,
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "POST",
+      "path": "/api/chat/messages",
+      "headers": {
+        "Connection": "close"
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "POST",
+      "path": "/api/chat/messages",
+      "body": {
+        "username": null,
+        "message": "Invalid message"
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "GET",
+      "path": "/api/chat",
+      "expectedStatus": 401,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "socket.io",
+    "rooms",
+    "namespaces",
+    "events",
+    "real-time-chat",
+    "broadcasting",
+    "websockets",
+    "real-time",
+    "chat",
+    "websocket-connection"
+  ]
+}

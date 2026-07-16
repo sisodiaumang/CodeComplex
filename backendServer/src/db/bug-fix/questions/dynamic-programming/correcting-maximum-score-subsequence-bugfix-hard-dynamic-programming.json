@@ -1,0 +1,160 @@
+{
+  "_id": "7e75270422708e121a14c95f",
+  "title": "Correcting Maximum Score Subsequence",
+  "slug": "correcting-maximum-score-subsequence-bugfix-hard-dynamic-programming",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "DP",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "dp"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given an array of non-negative integers and a target sum, implement a dynamic programming algorithm to calculate the maximum score that can be achieved by selecting a subset of elements such that the sum of the selected elements is equal to the target sum. The maximum score is the sum of the scores of the selected elements.",
+    "inputFormat": "The first line of input contains an integer n, which is the number of elements in the array. The following line contains n space-separated integers representing the array elements. The next line contains an integer target, which is the target sum.",
+    "outputFormat": "Print the maximum score that can be achieved.",
+    "notes": "The algorithm should work in O(n*target) time complexity and O(n*target) space complexity.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      },
+      {
+        "variable": "target",
+        "type": "integer",
+        "min": 1,
+        "max": 100000,
+        "description": "Target sum"
+      }
+    ],
+    "examples": [
+      {
+        "input": "4\n10 20 30 40\n50",
+        "output": "60",
+        "explanation": "Select 10, 20, and 30 to get a maximum score of 60."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text: The maximum score can be calculated by considering each element in the array and deciding whether to include it in the selected subset or not."
+    }
+  ],
+  "editorial": {
+    "title": "Dynamic Programming Algorithm for Maximum Score Subsequence",
+    "intuition": "The problem can be solved using a dynamic programming approach by creating a 2D table where each cell [i][j] represents the maximum score that can be achieved by considering the i-th element and a sum of j.",
+    "bruteForce": "A brute force approach would involve trying all possible subsets of elements and calculating their sum. This approach would result in a time complexity of O(2^n), which is inefficient for large arrays.",
+    "betterSolution": "The dynamic programming approach has a time complexity of O(n*target) and a space complexity of O(n*target).",
+    "optimalSolution": "The optimal solution involves filling up the dp table in a bottom-up manner, where each cell [i][j] is filled based on the maximum score that can be achieved from the previous cells.",
+    "proofOfCorrectness": "The correctness of the algorithm can be proven by considering the base cases and the recurrence relation.",
+    "dryRun": "To understand the algorithm, consider a dry run with a small input array and a target sum.",
+    "commonMistakes": [
+      "Not considering all possible subsets of elements in the brute force approach",
+      "Not using a 2D table to store intermediate results in the dynamic programming approach"
+    ],
+    "timeComplexity": "O(n*target)",
+    "spaceComplexity": "O(n*target)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    int maxScore(int* nums, int n, int target) {\n        // TODO: implement\n    }\n};",
+    "java": "public class Solution {\npublic int maxScore(int[] nums, int n, int target) {\n    // TODO: implement\n}\n}",
+    "python": "class Solution:\n    def max_score(self, nums: list[int], n: int, target: int) -> int:\n        # TODO: implement\n        pass\n",
+    "javascript": "var solve = function(nums) {\n    // TODO: implement\n};"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    int maxScore(int* nums, int n, int target) {\n        if (n == 0 || target == 0) return 0;\n        int dp[n+1][target+1];\n        for (int i = 0; i <= n; i++) {\n            for (int j = 0; j <= target; j++) {\n                if (i > 0) dp[i][j] = dp[i-1][j];\n                if (j >= nums[i-1]) dp[i][j] = max(dp[i][j], dp[i-1][j-nums[i-1]] + nums[i-1]);\n            }\n        }\n        return dp[n][target];\n    }\n};",
+    "java": "public class Solution {\npublic int maxScore(int[] nums, int n, int target) {\n    if (n == 0 || target == 0) return 0;\n    int[][] dp = new int[n+1][target+1];\n    for (int i = 0; i <= n; i++) {\n        for (int j = 0; j <= target; j++) {\n            if (i > 0) dp[i][j] = dp[i-1][j];\n            if (j >= nums[i-1]) dp[i][j] = Math.max(dp[i][j], dp[i-1][j-nums[i-1]] + nums[i-1]);\n        }\n    }\n    return dp[n][target];\n}",
+    "python": "class Solution:\n    def max_score(self, nums: list[int], n: int, target: int) -> int:\n        if n == 0 or target == 0:\n            return 0\n        dp = [[0] * (target+1) for _ in range(n+1)]\n        for i in range(n+1):\n            for j in range(target+1):\n                if i > 0: dp[i][j] = dp[i-1][j]\n                if j >= nums[i-1]: dp[i][j] = max(dp[i][j], dp[i-1][j-nums[i-1]] + nums[i-1])\n        return dp[n][target]",
+    "javascript": "var solve = function(nums) {\n    if (nums.length == 0 || target == 0) return 0;\n    var dp = new Array(nums.length + 1).fill(0).map(() => new Array(target + 1).fill(0))\n    for (var i = 0; i <= nums.length; i++) {\n        for (var j = 0; j <= target; j++) {\n            if (i > 0) dp[i][j] = dp[i-1][j];\n            if (j >= nums[i-1]) dp[i][j] = Math.max(dp[i][j], dp[i-1][j-nums[i-1]] + nums[i-1]);\n        }\n    }\n    return dp[nums.length][target];\n};"
+  },
+  "functionSignature": {
+    "cpp": "int maxScore(int* nums, int n, int target);",
+    "java": "int maxScore(int[] nums, int n, int target);",
+    "python": "def max_score(self, nums: list[int], n: int, target: int) -> int;",
+    "javascript": "var solve = function(nums);"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def max_score(self, nums: list[int], n: int, target: int) -> int:\n        if n == 0 or target == 0:\n            return 0\n        dp = [[0] * (target+1) for _ in range(n+1)]\n        for i in range(1, n+1):\n            for j in range(1, target+1):\n                if j >= nums[i-1]: dp[i][j] = max(dp[i-1][j], dp[i-1][j-nums[i-1]] + nums[i-1])\n                else: dp[i][j] = dp[i-1][j]\n        return dp[n][target]",
+    "cpp": "class Solution {\npublic:\n    int maxScore(int* nums, int n, int target) {\n        if (n == 0 || target == 0) return 0;\n        int dp[n+1][target+1] = {{0}};\n        for (int i = 1; i <= n; i++) {\n            for (int j = 1; j <= target; j++) {\n                if (j >= nums[i-1]) dp[i][j] = max(dp[i-1][j], dp[i-1][j-nums[i-1]] + nums[i-1]);\n                else dp[i][j] = dp[i-1][j];\n            }\n        }\n        return dp[n][target];\n    }\n};",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2000,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 50,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 50,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "4\n10 20 30 40\n50",
+      "output": "60",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_hidden_generated",
+      "input": "4\n10 20 30 40\n50",
+      "output": "60",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

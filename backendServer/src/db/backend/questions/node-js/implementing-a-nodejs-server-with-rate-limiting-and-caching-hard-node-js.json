@@ -1,0 +1,125 @@
+{
+  "_id": "d29edad3c9cf8f6a680e2395",
+  "title": "Implementing a Node.js Server with Rate Limiting and Caching",
+  "slug": "implementing-a-nodejs-server-with-rate-limiting-and-caching-hard-node-js",
+  "difficulty": "Hard",
+  "topics": [
+    "NODE_JS"
+  ],
+  "statement": "Your task is to create a Node.js server using Express that implements rate limiting and caching. The server should have two endpoints: \"/api/users\" and \"/api/users/:id\". The first endpoint should retrieve a list of users and apply rate limiting to prevent excessive requests. The second endpoint should retrieve a specific user by ID and also apply rate limiting. Additionally, implement caching for all endpoints using Redis.\n\nImplement the following requirements:\n\n* Use the \"express-rate-limit\" package for rate limiting.\n* Use the \"redis\" package for caching.\n* Handle errors properly for all endpoints.\n* Test the endpoints with the provided test cases.\n\nNote: This challenge requires a good understanding of rate limiting, caching, and error handling in Node.js.",
+  "constraints": [
+    "Must use the \"express-rate-limit\" package for rate limiting.",
+    "Must use the \"redis\" package for caching.",
+    "Must handle errors properly for all endpoints."
+  ],
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/api/users",
+      "description": "Retrieve a list of users. The response body should contain an array of user objects. The rate limit should be 5 requests per minute per IP address."
+    },
+    {
+      "method": "GET",
+      "path": "/api/users/:id",
+      "description": "Retrieve a specific user by ID. The response body should contain a user object. The rate limit should be 5 requests per minute per IP address."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\"name\": \"rate-limiting-app\",\"version\": \"1.0.0\",\"main\": \"index.js\",\"scripts\": {\"start\": \"node index.js\"},\"dependencies\": {\"express\": \"^4.18.2\",\"express-rate-limit\": \"^5.1.0\",\"redis\": \"^3.0.2\",\"redis-rate-limiter\": \"^2.0.2\"}}",
+    "index.js": "const express = require('express');\nconst Redis = require('redis');\nconst RedisLimiter = require('redis-rate-limiter');\nconst app = express();\napp.use(express.json());\nconst redisClient = Redis.createClient();\nconst limiter = new RedisLimiter(redisClient, { max: 5, duration: 1 * 60 * 1000 });\n\n// TODO: Implement rate limiting and caching for users endpoint\n// TODO: Implement rate limiting and caching for user by ID endpoint\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "GET",
+      "path": "/api/users",
+      "headers": {},
+      "body": {},
+      "expectedStatus": 200,
+      "expectedBody": {
+        "users": []
+      },
+      "expectedBodySchema": null,
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "GET",
+      "path": "/api/users/1",
+      "headers": {},
+      "body": {},
+      "expectedStatus": 200,
+      "expectedBody": {
+        "user": {}
+      },
+      "expectedBodySchema": null,
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "GET",
+      "path": "/api/users",
+      "headers": {},
+      "expectedStatus": 429,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "GET",
+      "path": "/api/users/1",
+      "headers": {},
+      "expectedStatus": 429,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "GET",
+      "path": "/api/users",
+      "headers": {},
+      "expectedStatus": 200,
+      "expectedBody": {
+        "users": []
+      },
+      "expectedBodySchema": null,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "event-loop",
+    "streams",
+    "buffers",
+    "file-system",
+    "process",
+    "child-process",
+    "worker-threads",
+    "cluster",
+    "timers",
+    "rate-limiting",
+    "Node.js",
+    "caching",
+    "error-handling"
+  ]
+}

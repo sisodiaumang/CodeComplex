@@ -1,0 +1,160 @@
+{
+  "_id": "1d53af585cdc3ebd6fdaeda4",
+  "title": "Incorrect Coin Exchange for Staggered Denominations",
+  "slug": "incorrect-coin-exchange-for-staggered-denominations-bugfix-hard-dynamic-programming",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "DP",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 70,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "dp"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "You are given an array of coins and a target amount. The coins array contains the denominations of coins in your currency, and your task is to determine the minimum number of coins needed to make change for the target amount. Note that you can use each coin denomination any number of times. The catch here is that the coins array may contain staggered denominations, where larger denominations occur at odd indices. In such cases, you must use the smaller denomination of the same coin type at even indices.",
+    "inputFormat": "Input consists of two lines. The first line contains the size of the coins array and the target amount separated by a space. The second line contains the coins array.",
+    "outputFormat": "Output the minimum number of coins needed to make the target amount.",
+    "notes": "Note that you can use each coin denomination any number of times.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      },
+      {
+        "variable": "amount",
+        "type": "integer",
+        "min": 1,
+        "max": 10000000,
+        "description": "Target amount"
+      }
+    ],
+    "examples": [
+      {
+        "input": "4 10\n3 2 1 5",
+        "output": "2",
+        "explanation": "To make 10 cents change, we need 2 coins of denomination 5 cents each."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First, try to understand the problem and the constraints."
+    }
+  ],
+  "editorial": {
+    "title": "Incorrect Coin Exchange for Staggered Denominations Editorial",
+    "intuition": "The key to solving this problem is to understand the pattern of the coins array and to handle the staggered denominations correctly.",
+    "bruteForce": "A brute-force approach would involve trying all possible combinations of coins to find the minimum number of coins needed to make the target amount.",
+    "betterSolution": "To improve upon the brute-force approach, we can use dynamic programming to store the minimum number of coins needed to make each amount up to the target amount.",
+    "optimalSolution": "We can use a 2D DP table to store the minimum number of coins needed to make each amount up to the target amount for each coin denomination.",
+    "proofOfCorrectness": "We can prove the correctness of the solution by showing that the DP table is filled correctly and that the minimum number of coins needed to make the target amount is stored in the DP table.",
+    "dryRun": "To test the solution, we can use a dry run with a small input and verify that the solution works correctly.",
+    "commonMistakes": [
+      "Not handling the staggered denominations correctly",
+      "Not filling the DP table correctly"
+    ],
+    "timeComplexity": "O(n * amount)",
+    "spaceComplexity": "O(n * amount)"
+  },
+  "starterCode": {
+    "cpp": "class Solution { public:\n    int solve(vector<int>& coins, int amount) {\n        // TODO: implement\n    }\n};",
+    "java": "public class Solution {\n    public int solve(int[] coins, int amount) {\n        // TODO: implement\n    }\n}",
+    "python": "class Solution:\n    def solve(self, coins, amount):\n        # TODO: implement\n        pass",
+    "javascript": "var solve = function(coins, amount) {\n    // TODO: implement\n};"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\n    public:\n    int solve(vector<int>& coins, int amount) {\n        if (amount == 0) return 0;\n        int result = INT_MAX;\n        for (int i = 0; i < coins.size(); i++) {\n            if (coins[i] > amount) break;\n            result = min(result, solve(coins, amount - coins[i]) + (i % 2 == 1 ? 1 : 2));\n        }\n        return result;\n    }\n};",
+    "java": "public class Solution {\n    public int solve(int[] coins, int amount) {\n        if (amount == 0) return 0;\n        int result = Integer.MAX_VALUE;\n        for (int i = 0; i < coins.length; i++) {\n            if (coins[i] > amount) break;\n            result = Math.min(result, solve(coins, amount - coins[i]) + (i % 2 == 1 ? 1 : 2));\n        }\n        return result;\n    }\n}",
+    "python": "class Solution:\n    def solve(self, coins, amount):\n        if amount == 0:\n            return 0\n        result = float('inf')\n        for i in range(len(coins)):\n            if coins[i] > amount:\n                break\n            result = min(result, self.solve(coins, amount - coins[i]) + (i % 2 == 1 and 1 or 2))\n        return result",
+    "javascript": "var solve = function(coins, amount) {\n    if (amount == 0) return 0;\n    var result = Infinity;\n    for (var i = 0; i < coins.length; i++) {\n        if (coins[i] > amount) break;\n        result = Math.min(result, solve(coins, amount - coins[i]) + (i % 2 == 1 ? 1 : 2));\n    }\n    return result;\n};"
+  },
+  "functionSignature": {
+    "cpp": "int solve(vector<int>& coins, int amount);",
+    "java": "int solve(int[] coins, int amount);",
+    "python": "def solve(self, coins: list[int], amount: int) -> int:",
+    "javascript": "var solve = function(coins, amount);"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def solve(self, coins, amount):\n        dp = [[0] * (amount + 1) for _ in range(len(coins) + 1)]\n        for i in range(1, len(coins) + 1):\n            if i % 2 == 0:\n                dp[i - 1][0] = 0\n            for j in range(1, amount + 1):\n                if coins[i - 1] > j:\n                    dp[i][j] = dp[i - 1][j]\n                else:\n                    dp[i][j] = min(dp[i - 1][j], dp[i - 1][j - coins[i - 1]] + 1)\n        return dp[-1][-1]\n\nif __name__ == '__main__':\n    coins = [3, 2, 1, 5]\n    amount = 10\n    solution = Solution()\n    print(solution.solve(coins, amount))",
+    "cpp": "// Solution",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "4 10\n3 2 1 5",
+      "output": "2",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "5 15\n1 2 3 5 10",
+      "output": "3",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

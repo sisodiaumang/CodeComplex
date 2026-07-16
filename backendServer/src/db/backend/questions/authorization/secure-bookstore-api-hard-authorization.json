@@ -1,0 +1,196 @@
+{
+  "_id": "41b7d01f963373ba80bc22a3",
+  "title": "Secure Bookstore API",
+  "slug": "secure-bookstore-api-hard-authorization",
+  "difficulty": "Hard",
+  "topics": [
+    "AUTHORIZATION"
+  ],
+  "statement": "Implement a secure bookstore API with authorization and role-based access control. The API should have the following endpoints:\n\n**Protected Endpoints**\n\n*   `GET /books`: Returns a list of all books in the store.\n*   `GET /books/{bookId}`: Returns a specific book by its ID.\n*   `POST /books`: Creates a new book in the store.\n*   `PUT /books/{bookId}`: Updates an existing book in the store.\n*   `DELETE /books/{bookId}`: Deletes a book from the store.\n\n**Login Endpoint**\n\n*   `POST /login`: Returns a JWT token upon successful login.\n\n**Authorization**\n\n*   The API should have two roles: `admin` and `reader`.\n*   The `admin` role should have full access to all endpoints.\n*   The `reader` role should only be able to read books (GET /books and GET /books/{bookId}).\n\n**Implement the following features**\n\n*   JWT token validation using the `jsonwebtoken` library.\n*   Middleware to check the JWT token and authorize the user based on their role.\n*   Error handling and logging.\n\n**Constraints**\n\n*   The API should use the `jsonwebtoken` library for JWT token validation.\n*   The API should use a mock in-memory database for storing books.\n*   The API should have a maximum of 10 concurrent requests.\n*   The API should return a 401 Unauthorized response if the JWT token is invalid or missing.\n\n**Visible Test Cases**\n\n| Id | Method | Path | Body | Expected Status | Expected Body |\n| --- | --- | --- | --- | --- | --- |\n| v_tc1 | POST | /login | {\"username\": \"admin\", \"password\": \"password\"} | 200 | {\"token\": \"...\"} |\n| v_tc2 | GET | /books |  | 200 | [{\"id\": 1, \"title\": \"Book 1\"}] |\n| v_tc3 | GET | /books/1 |  | 200 | {\"id\": 1, \"title\": \"Book 1\"} |\n| v_tc4 | POST | /books | {\"title\": \"New Book\"} | 201 | {\"id\": 2, \"title\": \"New Book\"} |\n| v_tc5 | PUT | /books/1 | {\"title\": \"Updated Book\"} | 200 | {\"id\": 1, \"title\": \"Updated Book\"} |\n\n**Hidden Test Cases**\n\n| Id | Method | Path | Expected Status |\n| --- | --- | --- | --- |\n| h_tc1 | GET | /books | 401 |\n| h_tc2 | GET | /books/1 | 401 |\n| h_tc3 | POST | /books | 401 |\n| h_tc4 | PUT | /books/1 | 401 |\n| h_tc5 | DELETE | /books/1 | 401 |\n",
+  "constraints": [
+    "Must use only the in-memory array or mock database provided",
+    "The API should use the jsonwebtoken library for JWT token validation"
+  ],
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/books",
+      "description": "Returns a list of all books in the store"
+    },
+    {
+      "method": "GET",
+      "path": "/books/{bookId}",
+      "description": "Returns a specific book by its ID"
+    },
+    {
+      "method": "POST",
+      "path": "/books",
+      "description": "Creates a new book in the store"
+    },
+    {
+      "method": "PUT",
+      "path": "/books/{bookId}",
+      "description": "Updates an existing book in the store"
+    },
+    {
+      "method": "DELETE",
+      "path": "/books/{bookId}",
+      "description": "Deletes a book from the store"
+    },
+    {
+      "method": "POST",
+      "path": "/login",
+      "description": "Returns a JWT token upon successful login"
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": {
+      "name": "bookstore-api",
+      "version": "1.0.0",
+      "main": "index.js",
+      "scripts": {
+        "start": "node index.js"
+      },
+      "dependencies": {
+        "express": "^4.18.2",
+        "jsonwebtoken": "^8.5.1"
+      }
+    },
+    "index.js": "const express = require('express');\nconst jsonwebtoken = require('jsonwebtoken');\nconst app = express();\napp.use(express.json());\nconst books = [\n  { id: 1, title: 'Book 1' }\n];\n\n// TODO: Implement endpoints\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "POST",
+      "path": "/login",
+      "body": {
+        "username": "admin",
+        "password": "password"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "token": "..."
+      },
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "GET",
+      "path": "/books",
+      "expectedStatus": 200,
+      "expectedBody": [
+        {
+          "id": 1,
+          "title": "Book 1"
+        }
+      ],
+      "isVisible": true
+    },
+    {
+      "id": "v_tc3",
+      "method": "GET",
+      "path": "/books/1",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "id": 1,
+        "title": "Book 1"
+      },
+      "isVisible": true
+    },
+    {
+      "id": "v_tc4",
+      "method": "POST",
+      "path": "/books",
+      "body": {
+        "title": "New Book"
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "id": 2,
+        "title": "New Book"
+      },
+      "isVisible": true
+    },
+    {
+      "id": "v_tc5",
+      "method": "PUT",
+      "path": "/books/1",
+      "body": {
+        "title": "Updated Book"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "id": 1,
+        "title": "Updated Book"
+      },
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "GET",
+      "path": "/books",
+      "expectedStatus": 401,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "GET",
+      "path": "/books/1",
+      "expectedStatus": 401,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "POST",
+      "path": "/books",
+      "expectedStatus": 401,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc4",
+      "method": "PUT",
+      "path": "/books/1",
+      "expectedStatus": 401,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc5",
+      "method": "DELETE",
+      "path": "/books/1",
+      "expectedStatus": 401,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "rbac",
+    "abac",
+    "middleware",
+    "roles",
+    "permissions",
+    "protected-routes",
+    "guards"
+  ]
+}

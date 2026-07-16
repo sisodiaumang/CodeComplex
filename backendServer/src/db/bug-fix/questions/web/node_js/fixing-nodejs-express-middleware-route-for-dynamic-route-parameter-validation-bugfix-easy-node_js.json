@@ -1,0 +1,143 @@
+{
+  "title": "Fixing Node.js Express Middleware Route for Dynamic Route Parameter Validation",
+  "subCategory": "Express Routing",
+  "statement": {
+    "markdown": "Write a Node.js Express middleware route that handles dynamic route parameters for API endpoints. The route should validate the route parameter using a regular expression and return an error if the validation fails. The middleware function should be reusable and accept an optional callback function.",
+    "inputFormat": "The input is an HTTP request object and a string representing the route parameter.",
+    "outputFormat": "The output is an HTTP response object or null if validation is successful.",
+    "notes": "The route parameter should be validated using a regular expression that matches a specific format (e.g., YYYY-MM-DD).",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of API requests"
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of route parameters"
+      }
+    ],
+    "examples": [
+      {
+        "input": "GET /users/:id HTTP/1.1\r\n\r\n",
+        "output": "200 OK\r\n\r\nUser ID: 123\r\n",
+        "explanation": "Validation successful, returns the user ID"
+      },
+      {
+        "input": "GET /users/:id HTTP/1.1\r\n\r\n",
+        "output": "400 Bad Request\r\n\r\nInvalid route parameter\r\n",
+        "explanation": "Validation failed, returns an error"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 10,
+    "points": 20,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "NODE_JS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "node_js"
+    ],
+    "interviewFrequency": 1,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use a regular expression to validate the route parameter"
+    }
+  ],
+  "editorial": {
+    "title": "Fixing Node.js Express Middleware Route for Dynamic Route Parameter Validation",
+    "intuition": "Use a reusable middleware function to validate the route parameter",
+    "bruteForce": "Use a simple if-else statement to check if the route parameter matches a specific format",
+    "betterSolution": "Use a regular expression to validate the route parameter and improve code reusability",
+    "optimalSolution": "Create a reusable middleware function that accepts an optional callback function and returns an HTTP response object or null if validation is successful",
+    "proofOfCorrectness": "The middleware function should return null if validation is successful and an HTTP response object with a 400 status code if validation fails",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Not validating the route parameter",
+      "Not using a reusable middleware function"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "// Define a reusable middleware function",
+    "python": "// Define a class with a method for validating route parameters"
+  },
+  "buggyStarterCode": {
+    "javascript": "const express = require('express');\nconst app = express();\n\nfunction validateRouteParameter(req, res, next) {\n  const routeParam = req.params.id;\n  if (routeParam === '123') {\n    next();\n  } else {\n    res.status(400).send({ error: 'Invalid route parameter' });\n  }\n}\n\napp.get('/users/:id', validateRouteParameter, (req, res) => {\n  res.send({ userId: req.params.id });\n});\n\napp.listen(3000, () => {\n  console.log('Server listening on port 3000');\n});",
+    "python": "import re\nfrom flask import Flask, request, jsonify\n\napp = Flask(__name__)\n\nclass ValidateRouteParameter:\n    def __init__(self, id):\n        self.id = id\n\n    def validate(self):\n        if self.id == '123':\n            return True\n        else:\n            return False\n\n@app.route('/users/<id>', methods=['GET'])\ndef get_user(id):\n    validator = ValidateRouteParameter(id)\n    if validator.validate():\n        return jsonify({ 'user_id': id })\n    else:\n        return jsonify({ 'error': 'Invalid route parameter' }), 400\n\nif __name__ == '__main__':\n    app.run(port=3000)"
+  },
+  "functionSignature": {
+    "javascript": "function validateRouteParameter(req, res, next)",
+    "python": "class ValidateRouteParameter:\n    def __init__(self, id):\n        pass\n    def validate(self):"
+  },
+  "solutions": {
+    "javascript": "// Solution",
+    "python": "import re\nfrom flask import Flask, request, jsonify\n\napp = Flask(__name__)\n\ndef validate_route_parameter(id):\n    pattern = r'^\\d{3}$'\n    if re.match(pattern, id):\n        return jsonify({ 'user_id': id })\n    else:\n        return jsonify({ 'error': 'Invalid route parameter' }), 400\n\n@app.route('/users/<id>', methods=['GET'])\ndef get_user(id):\n    return validate_route_parameter(id)\n\nif __name__ == '__main__':\n    app.run(port=3000)"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "GET /users/123 HTTP/1.1\r\n\r\n",
+      "output": "200 OK\r\n\r\nUser ID: 123\r\n",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "GET /users/abc HTTP/1.1\r\n\r\n",
+      "output": "400 Bad Request\r\n\r\nInvalid route parameter\r\n",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "283e6104164c64b2571eba27",
+  "slug": "fixing-nodejs-express-middleware-route-for-dynamic-route-parameter-validation-bugfix-easy-node_js",
+  "mode": "bug_fix",
+  "category": "NODE_JS",
+  "difficulty": "Easy"
+}

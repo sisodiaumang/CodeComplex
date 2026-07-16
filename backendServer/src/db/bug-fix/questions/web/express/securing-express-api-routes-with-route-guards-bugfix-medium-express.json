@@ -1,0 +1,131 @@
+{
+  "title": "Securing Express API Routes with Route Guards",
+  "subCategory": "Authentication and Authorization",
+  "statement": {
+    "markdown": "Write a bug-fix code to secure an Express API by implementing route guards to restrict access to routes based on user roles. The API has three routes: `/users`, `/orders`, and `/admin`. The `/users` route is accessible to all users, the `/orders` route is accessible to users with the `customer` role, and the `/admin` route is accessible to users with the `admin` role.",
+    "inputFormat": "The input will be a JSON object with user roles and API routes.",
+    "outputFormat": "The output should be a JSON object with the secured API routes.",
+    "notes": "Ensure that the route guards are correctly implemented to restrict access to the API routes based on user roles.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of API routes"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"routes\": [\"/users\", \"/orders\", \"/admin\"], \"roles\": {\"/users\": \"all\", \"/orders\": \"customer\", \"/admin\": \"admin\"}, \"users\": [{\"role\": \"all\"}, {\"role\": \"customer\"}, {\"role\": \"admin\"}]}",
+        "output": "{\"/users\": true, \"/orders\": true, \"/admin\": true}",
+        "explanation": "The output indicates that all API routes are accessible to the users with the corresponding roles."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "EXPRESS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "express"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the `express.Router()` method to create separate routes for each user role."
+    }
+  ],
+  "editorial": {
+    "title": "Securing Express API Routes with Route Guards Editorial",
+    "intuition": "The correct approach is to use route guards to restrict access to the API routes based on user roles.",
+    "bruteForce": "One possible brute-force solution is to implement a separate route for each user role, but this would lead to a complex and hard-to-maintain codebase.",
+    "betterSolution": "A better solution is to use route guards to restrict access to the API routes based on user roles.",
+    "optimalSolution": "The optimal solution is to use the `express.Router()` method to create separate routes for each user role and then use route guards to restrict access to the API routes based on user roles.",
+    "proofOfCorrectness": "The correctness of the solution can be proven by testing it with different user roles and API routes.",
+    "dryRun": "A dry run of the solution would involve testing it with different user roles and API routes to ensure that it correctly restricts access to the API routes based on user roles.",
+    "commonMistakes": [
+      "Implementing a separate route for each user role",
+      "Not using route guards to restrict access to the API routes"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(m)"
+  },
+  "starterCode": {
+    "javascript": "const express = require('express'); const app = express(); const router = express.Router();",
+    "python": "import express from 'express'; app = express(); router = express.Router();"
+  },
+  "buggyStarterCode": {
+    "javascript": "const express = require('express'); const app = express(); const router = express.Router(); app.use('/users', router.get('/', (req, res) => res.send('Hello, World!'))); app.use('/orders', router.get('/', (req, res) => res.send('Hello, Orders!'))); app.use('/admin', router.get('/', (req, res) => res.send('Hello, Admin!')));",
+    "python": "import express from 'express'; app = express(); router = express.Router(); app.use('/users', router.get('/', lambda req, res: res.send('Hello, World!'))); app.use('/orders', router.get('/', lambda req, res: res.send('Hello, Orders!'))); app.use('/admin', router.get('/', lambda req, res: res.send('Hello, Admin!')));"
+  },
+  "functionSignature": {
+    "javascript": "function secureRoutes(routes, roles, users) { }",
+    "python": "def secure_routes(routes, roles, users): pass"
+  },
+  "solutions": {
+    "javascript": "// Solution",
+    "python": "import sys import express from 'express'; app = express(); router = express.Router(); def secure_routes(routes, roles, users): for route in routes: if roles[route] == 'all': app.use(route, router.get('/', lambda req, res: res.send('Hello, World!'))); elif roles[route] == 'customer': app.use(route, router.get('/', lambda req, res: res.send('Hello, Orders!'))); elif roles[route] == 'admin': app.use(route, router.get('/', lambda req, res: res.send('Hello, Admin!'))); users.forEach(user => { if user.role == roles[route]: print(f'User {user.role} has access to route {route}'); }); return app; users = [{'role': 'all'}, {'role': 'customer'}, {'role': 'admin'}]; routes = ['/users', '/orders', '/admin']; roles = {'/users': 'all', '/orders': 'customer', '/admin': 'admin'}; app = secure_routes(routes, roles, users); app.listen(3000, () => console.log('Server listening on port 3000'));"
+  },
+  "judgeConfig": {
+    "timeLimit": 1000,
+    "memoryLimit": 128,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"routes\": [\"/users\", \"/orders\", \"/admin\"], \"roles\": {\"/users\": \"all\", \"/orders\": \"customer\", \"/admin\": \"admin\"}, \"users\": [{\"role\": \"all\"}, {\"role\": \"customer\"}, {\"role\": \"admin\"}]}",
+      "output": "{\"/users\": true, \"/orders\": true, \"/admin\": true}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"routes\": [\"/users\", \"/orders\", \"/admin\"], \"roles\": {\"/users\": \"all\", \"/orders\": \"customer\", \"/admin\": \"admin\"}, \"users\": [{\"role\": \"admin\"}, {\"role\": \"customer\"}, {\"role\": \"all\"}]}",
+      "output": "{\"/users\": false, \"/orders\": false, \"/admin\": true}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "57c65ba62e1cd2033c2f4318",
+  "slug": "securing-express-api-routes-with-route-guards-bugfix-medium-express",
+  "mode": "bug_fix",
+  "category": "EXPRESS",
+  "difficulty": "Medium"
+}

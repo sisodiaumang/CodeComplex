@@ -1,0 +1,136 @@
+{
+  "title": "Fixing a Node.js Express Middleware for Dynamic Route Parameter Validation",
+  "subCategory": "Express Middleware Route Parameter Validation",
+  "statement": {
+    "markdown": "Write a Node.js Express middleware function to validate dynamic route parameters in a REST API. The function should expect the route parameter 'id' to be a positive integer and return an error if it's not. If the 'id' is valid, proceed with the request. The route parameter 'name' is optional and can be any string. Test the function with sample inputs.",
+    "inputFormat": "Route parameter 'id' and 'name' as URL query parameters",
+    "outputFormat": "Error message or null if the 'id' is valid",
+    "notes": "The function should handle both GET and POST requests. The function should time out after 2 seconds if it doesn't receive a response within that time.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Route parameter 'id'"
+      }
+    ],
+    "examples": [
+      {
+        "input": "GET /users/1?name=John HTTP/1.1\r\nHost: example.com\r\n\r\n",
+        "output": "null",
+        "explanation": "Valid 'id' and optional 'name'"
+      },
+      {
+        "input": "POST /users/abc?name=Jane HTTP/1.1\r\nHost: example.com\r\n\r\n",
+        "output": "Error: Invalid 'id'",
+        "explanation": "Invalid 'id'"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "NODE_JS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "node_js"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use a regular expression to validate the 'id' parameter. Consider using a middleware function to validate the route parameters before proceeding with the request."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(...) ",
+    "spaceComplexity": "O(...)"
+  },
+  "starterCode": {
+    "javascript": "const express = require('express');\nconst app = express();\n\napp.use((req, res, next) => {\n    const id = req.params.id;\n    const name = req.query.name;\n\n    // Your code here to validate 'id' and 'name'\n    next();\n});\n\napp.get('/users/:id', (req, res) => {\n    res.send(\"User \" + req.params.id);\n});\n\napp.listen(3000, () => {\n    console.log('Server listening on port 3000');\n});",
+    "python": "class Solution:\n    def __init__(self):\n        pass\n\n    def solve(self):\n        # Your code here\n        pass\n\nif __name__ == '__main__':\n    import sys\n    import io\n\n    input = sys.stdin.readline\n    output = io.StringIO()\n\n    solution = Solution()\n    solution.solve()\n\n    print(output.getvalue(), end=\"\")"
+  },
+  "buggyStarterCode": {
+    "javascript": "const express = require('express');\nconst app = express();\n\napp.use((req, res, next) => {\n    const id = req.params.id;\n    const name = req.query.name;\n\n    if (name && !isNaN(id)) {\n        next();\n    } else if (name) {\n        next();\n    } else {\n        res.status(400).send('Invalid route parameters');\n    }\n});\n\napp.get('/users/:id', (req, res) => {\n    res.send(\"User \" + req.params.id);\n});\n\napp.listen(3000, () => {\n    console.log('Server listening on port 3000');\n});",
+    "python": "class Solution:\n    def __init__(self):\n        pass\n\n    def solve(self):\n        # Your code here\n        pass\n\nif __name__ == '__main__':\n    import sys\n    import io\n\n    input = sys.stdin.readline\n    output = io.StringIO()\n\n    solution = Solution()\n    solution.solve()\n\n    print(output.getvalue(), end=\"\")"
+  },
+  "functionSignature": {
+    "javascript": "app.use((req, res, next) => {\n    // Your code here\n    next();\n});",
+    "python": "def solve(self):\n    # Your code here\n    pass"
+  },
+  "solutions": {
+    "javascript": "// Solution\nconst express = require('express');\nconst app = express();\n\napp.use((req, res, next) => {\n    const id = req.params.id;\n    const name = req.query.name;\n\n    if (isNaN(id)) {\n        res.status(400).send('Error: Invalid 'id'');\n    } else {\n        next();\n    }\n});\n\napp.listen(3000, () => {\n    console.log('Server listening on port 3000');\n});",
+    "python": "class Solution:\n    def __init__(self):\n        pass\n\n    def solve(self):\n        import re\n        # Read from stdin\n        for _ in range(int(input())):\n            id, name = input().split(' ') if name else input().split(' ') \n            # Your code here\n            if not id.isdigit():\n                print('Error: Invalid id')\n            else:\n                print('null')\n\nif __name__ == '__main__':\n    import sys\n    import io\n\n    input = sys.stdin.readline\n    output = io.StringIO()\n\n    solution = Solution()\n    solution.solve()\n\n    print(output.getvalue(), end=\"\")"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "GET /users/1?name=John HTTP/1.1\\r\\nHost: example.com\\r\\n\\r\\n",
+      "output": "null",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "POST /users/abc?name=Jane HTTP/1.1\\r\\nHost: example.com\\r\\n\\r\\n",
+      "output": "Error: Invalid 'id'",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "a4b6b99cec16dc9f8fec5a16",
+  "slug": "fixing-a-nodejs-express-middleware-for-dynamic-route-parameter-validation-bugfix-hard-node_js",
+  "mode": "bug_fix",
+  "category": "NODE_JS",
+  "difficulty": "Hard"
+}

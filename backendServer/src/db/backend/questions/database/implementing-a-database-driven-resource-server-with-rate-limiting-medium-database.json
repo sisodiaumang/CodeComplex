@@ -1,0 +1,153 @@
+{
+  "_id": "122ce434dc5e2de51c0d82f9",
+  "title": "Implementing a Database-Driven Resource Server with Rate Limiting",
+  "slug": "implementing-a-database-driven-resource-server-with-rate-limiting-medium-database",
+  "difficulty": "Medium",
+  "topics": [
+    "DATABASE"
+  ],
+  "statement": "Create an Express.js server that connects to an in-memory SQLite database and handles CRUD operations for users. Implement rate limiting to prevent excessive requests. Ensure API endpoints are properly secured via authentication (using basic auth) and handle edge cases. Expose endpoints for user creation, retrieval, and deletion. Use the provided starter code as a foundation.",
+  "constraints": [
+    "Must use an in-memory SQLite database provided by the `sqlite3` package",
+    "Must implement rate limiting using the `express-rate-limit` package"
+  ],
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/api/users",
+      "description": "Retrieve a list of users in the database. Supports pagination (page and limit query parameters). Returns a JSON array of user objects."
+    },
+    {
+      "method": "GET",
+      "path": "/api/users/:id",
+      "description": "Retrieve a user by their ID. Returns a single user object or 404 if not found."
+    },
+    {
+      "method": "POST",
+      "path": "/api/users",
+      "description": "Create a new user. Requires a JSON body with `username` and `password` properties. Returns the created user ID on success."
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/users/:id",
+      "description": "Delete a user by their ID. Returns a success message on success or 404 if not found."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\n  \"name\": \"resource-server\",\n  \"version\": \"1.0.0\",\n  \"main\": \"index.js\",\n  \"scripts\": {\n    \"start\": \"node index.js\"\n  },\n  \"dependencies\": {\n    \"express\": \"^4.18.2\",\n    \"sqlite3\": \"^5.0.2\",\n    \"express-rate-limit\": \"^5.1.3\",\n    \"basic-auth-middleware\": \"^1.0.0\"\n  }\n}",
+    "index.js": "const express = require('express');\nconst sqlite3 = require('sqlite3').verbose();\nconst rateLimit = require('express-rate-limit');\nconst basicAuth = require('basic-auth-middleware');\n\nconst app = express();\napp.use(express.json());\napp.use(basicAuth({\n  auth: {\n    username: 'admin',\n    password: 'password'\n  }\n}));\napp.use(express.json());\nconst db = new sqlite3.Database(':memory:');\n\n// Create users table\ndb.serialize(() => {\n  db.run('CREATE TABLE users (\n    id INTEGER PRIMARY KEY,\n    username TEXT NOT NULL,\n    password TEXT NOT NULL\n  )');\n});\n\nconst limiter = rateLimit({\n  windowMs: 15 * 60 * 1000,\n  max: 100\n});\napp.use(limiter);\n\n// TODO: Implement API endpoints\n\nclass User {\n  constructor(id, username, password) {\n    this.id = id;\n    this.username = username;\n    this.password = password;\n  }\n}\n\nclass Users {\n  constructor(db) {\n    this.db = db;\n  }\n\n  // TODO: Implement CRUD operations\n}\n\nconst users = new Users(db);\napp.listen(3000, () => console.log('Server running on port 3000'))"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "GET",
+      "path": "/api/users",
+      "headers": {
+        "Authorization": "Basic QWxhZGprakdFRReGR5ZGF0YQ=="
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "users": [
+          {
+            "id": 1,
+            "username": "admin",
+            "password": "password"
+          },
+          {
+            "id": 2,
+            "username": "user",
+            "password": "password"
+          }
+        ]
+      },
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "POST",
+      "path": "/api/users",
+      "headers": {
+        "Authorization": "Basic QWxhZGprakdFRReGR5ZGF0YQ=="
+      },
+      "body": {
+        "username": "newuser",
+        "password": "password"
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "id": 3
+      },
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "GET",
+      "path": "/api/users/999",
+      "expectedStatus": 404,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "DELETE",
+      "path": "/api/users/999",
+      "headers": {
+        "Authorization": "Basic QWxhZGprakdFRReGR5ZGF0YQ=="
+      },
+      "expectedStatus": 404,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "POST",
+      "path": "/api/users",
+      "headers": {
+        "Authorization": "Basic QWxhZGprakdFRReGR5ZGF0YQ=="
+      },
+      "body": {
+        "username": "newuser"
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "sql",
+    "nosql",
+    "transactions",
+    "indexing",
+    "aggregation",
+    "joins",
+    "relationships",
+    "normalization",
+    "denormalization",
+    "acid",
+    "cap-theorem",
+    "database",
+    "rate-limiting",
+    "authentication",
+    "sqlite"
+  ]
+}

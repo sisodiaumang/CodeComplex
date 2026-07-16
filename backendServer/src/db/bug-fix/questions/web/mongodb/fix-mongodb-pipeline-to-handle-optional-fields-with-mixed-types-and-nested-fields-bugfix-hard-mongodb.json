@@ -1,0 +1,140 @@
+{
+  "title": "Fix MongoDB Pipeline to Handle Optional Fields with Mixed Types and Nested Fields",
+  "subCategory": "MongoDB Aggregation Pipeline",
+  "statement": {
+    "markdown": "Write a MongoDB aggregation pipeline that takes a collection of user documents and returns a new collection with the following fields: `name` (string), `age` (number), and `address` (object with `street` and `city` fields). The `age` field should be calculated only if it is present in the original document. The `address` field should be created only if the `address` field is present in the original document, and it should contain the `street` and `city` fields. If the `address` field is not present, the `street` and `city` fields should be set to `null`.",
+    "inputFormat": "Collection of user documents as JSON",
+    "outputFormat": "New collection with the required fields",
+    "notes": "The pipeline should handle optional fields with mixed types and nested fields.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Minimum number of documents in the input collection"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{ \"name\": \"John\", \"age\": 30, \"address\": { \"street\": \"123 Main St\", \"city\": \"Anytown\" } }",
+        "output": "{ \"name\": \"John\", \"age\": 30, \"address\": { \"street\": \"123 Main St\", \"city\": \"Anytown\" } }",
+        "explanation": "Example input with all required fields"
+      },
+      {
+        "input": "{ \"name\": \"Jane\", \"address\": { \"street\": \"456 Elm St\", \"city\": \"Othertown\" } }",
+        "output": "{ \"name\": \"Jane\", \"age\": null, \"address\": { \"street\": \"456 Elm St\", \"city\": \"Othertown\" } }",
+        "explanation": "Example input with only the `address` field"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 75,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "MONGODB"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "mongodb"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the `$cond` operator to calculate the `age` field only if it is present in the original document."
+    },
+    {
+      "order": 2,
+      "text": "Use the `$ifNull` operator to set the `street` and `city` fields to `null` if the `address` field is not present in the original document."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial Solution",
+    "intuition": "The pipeline should use the `$cond` operator to calculate the `age` field only if it is present in the original document, and the `$ifNull` operator to set the `street` and `city` fields to `null` if the `address` field is not present.",
+    "bruteForce": "One possible approach is to use multiple `$project` stages to calculate the `age` field and create the `address` field separately.",
+    "betterSolution": "",
+    "optimalSolution": "The optimal solution uses a single `$project` stage with multiple expressions to calculate the required fields.",
+    "proofOfCorrectness": "The solution correctly handles optional fields with mixed types and nested fields.",
+    "dryRun": "dry Run details.",
+    "commonMistakes": [
+      "Not using the `$cond` operator to calculate the `age` field",
+      "Not using the `$ifNull` operator to set the `street` and `city` fields to `null`"
+    ],
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "// Define the aggregation pipeline function",
+    "python": "def aggregate_pipeline(collection):\n    # Define the pipeline stages\n    pipeline = [\n        # Define the project stage with the required fields\n        {\n            '$project': {\n                'name': 1,\n                'age': {'$cond': {'if': '$age', 'then': '$age', 'else': None}},\n                'address': {'$ifNull': ['$address', {'street': None, 'city': None}]}\n            }\n        }\n    ]"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Define the aggregation pipeline function\nfunction aggregate_pipeline(collection) {\n    // Define the pipeline stages\n    var pipeline = [\n        // Define the project stage with the required fields\n        {\n            '$project': {\n                'name': 1,\n                'age': '$age',\n                'address': {'$ifNull': ['$address', {'street': 'unknown', 'city': 'unknown'}]}\n            }\n        }\n    ];\n    // Execute the pipeline and return the result\n    return db.collection.aggregate(pipeline);\n}",
+    "python": "class Solution:\n    def aggregate_pipeline(self, nums: list[int]) -> bool:\n        # Buggy code\n        pass"
+  },
+  "functionSignature": {
+    "javascript": "function aggregate_pipeline(collection) {\n    // Implementation\n}",
+    "python": "def aggregate_pipeline(self, nums: list[int]) -> bool:"
+  },
+  "solutions": {
+    "javascript": "// Solution function implementation\nfunction aggregate_pipeline(collection) {\n    // Define the pipeline stages\n    var pipeline = [\n        // Define the project stage with the required fields\n        {\n            '$project': {\n                'name': 1,\n                'age': {'$cond': {'if': {'$exists': '$age'}, 'then': '$age', 'else': None}},\n                'address': {'$ifNull': ['$address', {'street': None, 'city': None}]}\n            }\n        }\n    ];\n    // Execute the pipeline and return the result\n    return db.collection.aggregate(pipeline);\n}\n",
+    "python": "def aggregate_pipeline(collection):\n    # Define the pipeline stages\n    pipeline = [\n        # Define the project stage with the required fields\n        {\n            '$project': {\n                'name': 1,\n                'age': {'$cond': {'if': {'$exists': '$age'}, 'then': '$age', 'else': None}},\n                'address': {'$ifNull': ['$address', {'street': None, 'city': None}]}\n            }\n        }\n    ]\n    # Execute the pipeline and return the result\n    return list(db.collection.aggregate(pipeline))"
+  },
+  "judgeConfig": {
+    "timeLimit": 3,
+    "memoryLimit": 512,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{ \"name\": \"John\", \"age\": 30, \"address\": { \"street\": \"123 Main St\", \"city\": \"Anytown\" } }",
+      "output": "{ \"name\": \"John\", \"age\": 30, \"address\": { \"street\": \"123 Main St\", \"city\": \"Anytown\" } }",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{ \"name\": \"Jane\", \"address\": { \"street\": \"456 Elm St\", \"city\": \"Othertown\" } }",
+      "output": "{ \"name\": \"Jane\", \"age\": null, \"address\": { \"street\": \"456 Elm St\", \"city\": \"Othertown\" } }",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "546ce8d5bf633eaf16fb6d1f",
+  "slug": "fix-mongodb-pipeline-to-handle-optional-fields-with-mixed-types-and-nested-fields-bugfix-hard-mongodb",
+  "mode": "bug_fix",
+  "category": "MONGODB",
+  "difficulty": "Hard"
+}

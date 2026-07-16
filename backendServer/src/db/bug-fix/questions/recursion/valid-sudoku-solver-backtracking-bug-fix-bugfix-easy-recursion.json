@@ -1,0 +1,157 @@
+{
+  "_id": "70721fe038f4ba4c2f49ba23",
+  "title": "Valid Sudoku Solver Backtracking Bug Fix",
+  "slug": "valid-sudoku-solver-backtracking-bug-fix-bugfix-easy-recursion",
+  "difficulty": "Easy",
+  "category": "DSA",
+  "subCategory": "BACKTRACKING",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 10,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "backtracking"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Solve the problem and fix the bugs.",
+    "inputFormat": "The input will be a 1D array of 81 integers representing a 9x9 Sudoku grid.",
+    "outputFormat": "The output should be a boolean indicating whether the Sudoku grid is valid according to Sudoku rules.",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 81,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "[5,3,0,0,7,0,0,0,0]",
+        "output": "true",
+        "explanation": "A valid Sudoku board."
+      },
+      {
+        "input": "[5,3,0,0,7,0,0,0,5]",
+        "output": "false",
+        "explanation": "An invalid Sudoku board."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Check if the current cell's number is already present in the current row, column or 3x3 box."
+    }
+  ],
+  "editorial": {
+    "title": "Valid Sudoku Solver Backtracking Editorials",
+    "intuition": "The backtracking algorithm tries all possible values for each cell from 1 to 9.",
+    "bruteForce": "The brute force approach tries all possible values for each cell from 1 to 9.",
+    "betterSolution": "Use a set or hash map to keep track of the values in the current row, column and 3x3 box.",
+    "optimalSolution": "Use a set or hash map to keep track of the values in the current row, column and 3x3 box.",
+    "proofOfCorrectness": "The backtracking algorithm will find the first valid assignment for all cells.",
+    "dryRun": "dry Run details.",
+    "commonMistakes": [
+      "Not checking if the current cell's number is already present in the current row, column or 3x3 box."
+    ],
+    "timeComplexity": "O(9^(n*n))",
+    "spaceComplexity": "O(n*n)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    bool isValidSudoku(vector<int>& board);\n};\n// TODO: implement",
+    "java": "public class Solution {\n    public boolean isValidSudoku(int[] board);\n}\n// TODO: implement",
+    "python": "class Solution:\n    def is_valid_sudoku(self, board):\n        pass\n# TODO: implement",
+    "javascript": "function isValidSudoku(board) {\n    return true;\n}\n// TODO: implement"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    bool isValidSudoku(vector<int>& board) {\n        for (int i = 0; i < 9; i++) {\n            for (int j = 0; j < 9; j++) {\n                if (board[i * 9 + j] == 0) continue;\n                for (int k = 0; k < 9; k++) {\n                    if (board[i * 9 + k] == board[i * 9 + j]) return false;\n                }\n            }\n        }\n        return true;\n    }\n};",
+    "java": "public class Solution {\n    public boolean isValidSudoku(int[] board) {\n        for (int i = 0; i < 81; i++) {\n            if (board[i] == 0) continue;\n            for (int j = 0; j < 81; j++) {\n                if (board[i] == board[j]) return false;\n            }\n        }\n        return true;\n    }\n}",
+    "python": "class Solution:\n    def is_valid_sudoku(self, board):\n        for i in range(81):\n            if board[i] == 0: continue\n            for j in range(81):\n                if board[i] == board[j]: return False\n        return True",
+    "javascript": "function isValidSudoku(board) {\n    for (let i = 0; i < 81; i++) {\n        if (board[i] === 0) continue;\n        for (let j = 0; j < 81; j++) {\n            if (board[i] === board[j]) return false;\n        }\n    }\n    return true;\n}"
+  },
+  "functionSignature": {
+    "cpp": "bool solve(vector<int>& board);",
+    "java": "boolean solve(int[] board);",
+    "python": "def solve(self, board: list[int]) -> bool:",
+    "javascript": "var solve = function(board);"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def is_valid_sudoku(self, board):\n        for i in range(9):\n            num_set = set()\n            for j in range(9):\n                num = board[i * 9 + j]\n                if num != 0 and num in num_set:\n                    return False\n                num_set.add(num)\n        for i in range(9):\n            num_set = set()\n            for j in range(9):\n                num = board[j * 9 + i]\n                if num != 0 and num in num_set:\n                    return False\n                num_set.add(num)\n        for i in range(0, 9, 3):\n            for j in range(0, 9, 3):\n                num_set = set()\n                for k in range(3):\n                    for l in range(3):\n                        num = board[i * 9 + j + k * 9 + l]\n                        if num != 0 and num in num_set:\n                            return False\n                        num_set.add(num)\n        return True",
+    "cpp": "class Solution {\npublic:\n    bool isValidSudoku(vector<int>& board) {\n        for (int i = 0; i < 9; i++) {\n            set<int> row, col; row.insert(0); col.insert(0);\n            for (int j = 0; j < 9; j++) {\n                int num = board[i * 9 + j];\n                if (num != 0 && row.find(num) != row.end()) return false;\n                row.insert(num);\n                num = board[j * 9 + i];\n                if (num != 0 && col.find(num) != col.end()) return false;\n                col.insert(num);\n            }\n        }\n        for (int i = 0; i < 9; i += 3) {\n            for (int j = 0; j < 9; j += 3) {\n                set<int> box;\n                box.insert(0);\n                for (int k = 0; k < 3; k++) {\n                    for (int l = 0; l < 3; l++) {\n                        int num = board[i * 9 + j + k * 9 + l];\n                        if (num != 0 && box.find(num) != box.end()) return false;\n                        box.insert(num);\n                    }\n                }\n            }\n        }\n        return true;\n    }\n};",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 1,
+    "memoryLimit": 128,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "[5,3,0,0,7,0,0,0,0]",
+      "output": "true",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "[5,3,0,0,7,0,0,0,5]",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

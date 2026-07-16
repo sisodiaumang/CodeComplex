@@ -36,37 +36,30 @@
     "contestEligible": false
   },
   "statement": {
-    "markdown": "Implement a stack using two queues. A stack is a Last In First Out (LIFO) data structure, whereas a queue is a First In First Out (FIFO) data structure. You must use only standard queue operations (enqueue and dequeue) to implement a stack.",
-    "inputFormat": "The input consists of a series of operations on the stack. The first line contains an integer 'n', the number of operations. Then, 'n' lines follow, each containing a string representing an operation. The operations can be 'push x' to push an element 'x' onto the stack, 'pop' to remove the top element from the stack, or 'top' to retrieve the top element of the stack without removing it.",
-    "outputFormat": "For each 'top' operation, print the top element of the stack. For each 'pop' operation, if the stack is not empty, print nothing; if the stack is empty, print 'Invalid Operation'.",
+    "markdown": "Implement a stack using queue(s). The stack must support standard operations: push (push element x onto stack), pop (remove and return the top element), and top (return the top element without removing it). If the stack is empty, pop and top should return -1.",
+    "inputFormat": "The first line contains an integer Q, representing the number of queries.\nEach of the next Q lines contains a query: either 'push x', 'pop', or 'top'.",
+    "outputFormat": "For each 'pop' or 'top' query, print the returned value on a new line.",
     "notes": "",
     "images": [],
     "constraints": [
       {
-        "variable": "n",
+        "variable": "Q",
         "type": "integer",
         "min": 1,
         "max": 1000,
-        "description": "The number of operations."
-      },
-      {
-        "variable": "x",
-        "type": "integer",
-        "min": -10000,
-        "max": 10000,
-        "description": "The element to be pushed onto the stack."
+        "description": "Number of queries"
       }
     ],
     "examples": [
       {
         "input": "5\npush 1\npush 2\ntop\npop\ntop",
-        "output": "2\r\n1",
-        "explanation": "The stack is implemented using two queues. The 'push' operations add elements to the stack, 'top' retrieves the top element, and 'pop' removes the top element."
+        "output": "2\r\n2\r\n1",
+        "explanation": "push 1: stack={1}\npush 2: stack={1, 2}\ntop: returns 2\npop: removes and returns 2, stack={1}\ntop: returns 1"
       },
       {
         "input": "4\npush 1\npop\npop\ntop",
-        "output": "Invalid Operation\r\nInvalid Operation",
-        "explanation": "When the stack is empty, 'pop' and 'top' operations should return 'Invalid Operation'."
+        "output": "1\r\n-1\r\n-1",
+        "explanation": "push 1: stack={1}\npop: removes and returns 1, stack={}\npop: empty stack, returns -1\ntop: empty stack, returns -1"
       }
     ]
   },
@@ -99,24 +92,24 @@
       "Not considering the amortized time complexity, which can lead to an incorrect assessment of the solution's efficiency.",
       "Incorrectly handling edge cases, such as popping from an empty stack."
     ],
-    "timeComplexity": "O(n)",
-    "spaceComplexity": "O(n)"
+    "timeComplexity": "O(Q * N)",
+    "spaceComplexity": "O(N)"
   },
   "starterCode": {
-    "cpp": "class Stack {\nprivate:\n    queue<int> q1;\n    queue<int> q2;\npublic:\n    void push(int x);\n    void pop();\n    int top();\n};\n\n// @driver-code-start\nint main() {\n    ios_base::sync_with_stdio(false);\n    cin.tie(NULL);\n    Stack stack;\n    int n;\n    cin >> n;\n    while (n--) {\n        string operation;\n        cin >> operation;\n        if (operation == \"push\") {\n            int x;\n            cin >> x;\n            stack.push(x);\n        } else if (operation == \"pop\") {\n            stack.pop();\n        } else if (operation == \"top\") {\n            cout << stack.top() << endl;\n        }\n    }\n    return 0;\n}",
-    "java": "public class Stack {\n    private java.util.Queue<Integer> q1;\n    private java.util.Queue<Integer> q2;\n\n    public void push(int x);\n    public void pop();\n    public int top();\n}\n\n// @driver-code-start\npublic class Main {\n    public static void main(String[] args) {\n        java.util.Scanner scanner = new java.util.Scanner(System.in);\n        Stack stack = new Stack();\n        int n = scanner.nextInt();\n        while (n-- > 0) {\n            String operation = scanner.next();\n            if (operation.equals(\"push\")) {\n                int x = scanner.nextInt();\n                stack.push(x);\n            } else if (operation.equals(\"pop\")) {\n                stack.pop();\n            } else if (operation.equals(\"top\")) {\n                System.out.println(stack.top());\n            }\n        }\n    }\n}",
-    "python": "class Stack:\n    def __init__(self):\n        self.q1 = []\n        self.q2 = []\n\n    def push(self, x: int) -> None:\n        pass\n    def pop(self) -> None:\n        pass\n    def top(self) -> int:\n        pass\n\n# @driver-code-start\nimport sys\nit = iter(sys.stdin.read().split())\nn = int(next(it))\nstack = Stack()\nfor _ in range(n):\n    op = next(it)\n    if op == 'push':\n        x = int(next(it))\n        stack.push(x)\n    elif op == 'pop':\n        stack.pop()\n    elif op == 'top':\n        print(stack.top())",
-    "javascript": "class Stack {\n    constructor() {\n        this.q1 = [];\n        this.q2 = [];\n    }\n\n    push(x);\n    pop();\n    top();\n}\n\n// @driver-code-start\nconst readline = require('readline').createInterface({\n    input: process.stdin,\n    output: process.stdout\n});\nlet i = 0;\nlet n;\nlet stack = new Stack();\nreadline.on('line', line => {\n    if (i === 0) {\n        n = parseInt(line);\n    } else {\n        let op = line.split(' ')[0];\n        if (op === 'push') {\n            let x = parseInt(line.split(' ')[1]);\n            stack.push(x);\n        } else if (op === 'pop') {\n            stack.pop();\n        } else if (op === 'top') {\n            console.log(stack.top());\n        }\n    }\n    i++;\n    if (i > n) {\n        readline.close();\n    }\n});"
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass MyStack {\npublic:\n    queue<int> q1;\n    queue<int> q2;\n    int top_element;\n\n    MyStack() {\n        top_element = -1;\n    }\n\n    void push(int x) {\n        // TODO: implement\n    }\n\n    int pop() {\n        // TODO: implement\n        return -1;\n    }\n\n    int top() {\n        // TODO: implement\n        return -1;\n    }\n};",
+    "java": "import java.util.*;\n\nclass MyStack {\n    private Queue<Integer> q1;\n    private Queue<Integer> q2;\n    private int top_element;\n\n    public MyStack() {\n        q1 = new LinkedList<>();\n        q2 = new LinkedList<>();\n        top_element = -1;\n    }\n\n    public void push(int x) {\n        // TODO: implement\n    }\n\n    public int pop() {\n        // TODO: implement\n        return -1;\n    }\n\n    public int top() {\n        // TODO: implement\n        return -1;\n    }\n}",
+    "python": "from collections import deque\nfrom typing import List\n\nclass MyStack:\n\n    def __init__(self):\n        self.q1 = deque()\n        self.q2 = deque()\n        self.top_element = -1\n\n    def push(self, x: int) -> None:\n        # TODO: implement\n        pass\n\n    def pop(self) -> int:\n        # TODO: implement\n        return -1\n\n    def top(self) -> int:\n        # TODO: implement\n        return -1",
+    "javascript": "/**\n * @class MyStack\n */\nclass MyStack {\n    constructor() {\n        this.q1 = [];\n        this.q2 = [];\n        this.top_element = -1;\n    }\n\n    /**\n     * @param {number} x\n     * @return {void}\n     */\n    push(x) {\n        // TODO: implement\n    }\n\n    /**\n     * @return {number}\n     */\n    pop() {\n        // TODO: implement\n        return -1;\n    }\n\n    /**\n     * @return {number}\n     */\n    top() {\n        // TODO: implement\n        return -1;\n    }\n}"
   },
   "functionSignature": {
-    "cpp": "class Stack {\nprivate:\n    queue<int> q1;\n    queue<int> q2;\npublic:\n    void push(int x);\n    void pop();\n    int top();\n};",
-    "java": "public class Stack {\n    private Queue<Integer> q1;\n    private Queue<Integer> q2;\n\n    public void push(int x);\n    public void pop();\n    public int top();\n}",
-    "python": "class Stack:\n    def __init__(self):\n        self.q1 = deque()\n        self.q2 = deque()\n\n    def push(self, x: int) -> None:\n    def pop(self) -> None:\n    def top(self) -> int:",
-    "javascript": "class Stack {\n    constructor() {\n        this.q1 = [];\n        this.q2 = [];\n    }\n\n    push(x);\n    pop();\n    top();\n}"
+    "cpp": "void push(int x); int pop(); int top();",
+    "java": "public void push(int x); public int pop(); public int top();",
+    "python": "def push(self, x: int) -> None; def pop(self) -> int; def top(self) -> int;",
+    "javascript": "push(x); pop(); top();"
   },
   "solutions": {
-    "python": "import sys\nit = iter(sys.stdin.read().split())\nn = int(next(it))\nq1 = []\nq2 = []\nfor _ in range(n):\n    op = next(it)\n    if op == 'push':\n        x = int(next(it))\n        q2.append(x)\n        while q1:\n            q2.append(q1.pop(0))\n        q1, q2 = q2, q1\n    elif op == 'pop':\n        if q1:\n            q1.pop(0)\n        else:\n            print('Invalid Operation')\n    elif op == 'top':\n        if q1:\n            print(q1[0])\n        else:\n            print('Invalid Operation')",
-    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\nint main() {\n    int n;\n    cin >> n;\n    queue<int> q1, q2;\n    for (int i = 0; i < n; i++) {\n        string op;\n        cin >> op;\n        if (op == \"push\") {\n            int x;\n            cin >> x;\n            q2.push(x);\n            while (!q1.empty()) {\n                q2.push(q1.front());\n                q1.pop();\n            }\n            swap(q1, q2);\n        } else if (op == \"pop\") {\n            if (!q1.empty()) {\n                q1.pop();\n            } else {\n                cout << \"Invalid Operation\" << endl;\n            }\n        } else if (op == \"top\") {\n            if (!q1.empty()) {\n                cout << q1.front() << endl;\n            } else {\n                cout << \"Invalid Operation\" << endl;\n            }\n        }\n    }\n    return 0;\n}"
+    "python": "\nimport sys\nfrom collections import deque\n\nclass Solution:\n    def __init__(self):\n        self.q = deque()\n\n    def push(self, x: int) -> None:\n        self.q.append(x)\n        for _ in range(len(self.q) - 1):\n            self.q.append(self.q.popleft())\n\n    def pop(self) -> int:\n        if not self.q:\n            return -1\n        return self.q.popleft()\n\n    def top(self) -> int:\n        if not self.q:\n            return -1\n        return self.q[0]\n\nif __name__ == '__main__':\n    it = iter(sys.stdin.read().split())\n    try:\n        Q = int(next(it))\n    except StopIteration:\n        sys.exit(0)\n    sol = Solution()\n    for _ in range(Q):\n        query = next(it)\n        if query == 'push':\n            x = int(next(it))\n            sol.push(x)\n        elif query == 'pop':\n            print(sol.pop())\n        elif query == 'top':\n            print(sol.top())\n   ",
+    "cpp": "#include <numeric>\n\n#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    queue<int> q;\n\n    void push(int x) {\n        q.push(x);\n        for (int i = 0; i < q.size() - 1; i++) {\n            q.push(q.front());\n            q.pop();\n        }\n    }\n\n    int pop() {\n        if (q.empty()) {\n            return -1;\n        }\n        int res = q.front();\n        q.pop();\n        return res;\n    }\n\n    int top() {\n        if (q.empty()) {\n            return -1;\n        }\n        return q.front();\n    }\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int Q;\n    if (!(cin >> Q)) return 0;\n    Solution sol;\n    for (int i = 0; i < Q; i++) {\n        string query;\n        if (!(cin >> query)) return 0;\n        if (query == \"push\") {\n            int x;\n            if (!(cin >> x)) return 0;\n            sol.push(x);\n        } else if (query == \"pop\") {\n            cout << sol.pop() << \"\\n\";\n        } else if (query == \"top\") {\n            cout << sol.top() << \"\\n\";\n        }\n    }\n    return 0;\n}\n   "
   },
   "judgeConfig": {
     "timeLimit": 2,
@@ -144,7 +137,7 @@
     {
       "id": "sample_1",
       "input": "5\npush 1\npush 2\ntop\npop\ntop",
-      "output": "2\r\n1",
+      "output": "2\r\n2\r\n1",
       "isVisible": true,
       "weight": 1,
       "category": "sample"
@@ -152,114 +145,34 @@
     {
       "id": "sample_2",
       "input": "4\npush 1\npop\npop\ntop",
-      "output": "Invalid Operation\r\nInvalid Operation",
+      "output": "1\r\n-1\r\n-1",
       "isVisible": false,
       "weight": 1,
       "category": "sample"
     },
     {
-      "id": "min_constraint_3",
-      "input": "5\npush -10000\ntop\npop\npush -10000\npop",
-      "output": "-10000",
-      "isVisible": false,
-      "weight": 1,
-      "category": "min_constraint"
-    },
-    {
       "id": "boundary_4",
-      "input": "3\npush 10000\ntop\npop",
-      "output": "10000",
+      "input": "5\npush 1\npush 2\npush 3\npop\ntop",
+      "output": "3\r\n2",
       "isVisible": false,
       "weight": 1,
       "category": "boundary"
     },
     {
       "id": "duplicate_5",
-      "input": "4\npush 1\npush 1\ntop\npop",
-      "output": "1",
+      "input": "4\npush 1\npush 1\npop\ntop",
+      "output": "1\r\n1",
       "isVisible": false,
       "weight": 1,
       "category": "duplicate"
     },
     {
       "id": "random_medium_6",
-      "input": "6\npush 10\npush 20\ntop\npop\npush 30\ntop",
-      "output": "20\r\n30",
+      "input": "7\npush 5\npush 3\npop\npush 7\npush 8\npop\ntop",
+      "output": "3\r\n8\r\n7",
       "isVisible": false,
       "weight": 1,
       "category": "random_medium"
-    },
-    {
-      "id": "sorted_7",
-      "input": "5\npush 1\npush 2\npush 3\ntop\npop",
-      "output": "3",
-      "isVisible": false,
-      "weight": 1,
-      "category": "sorted"
-    },
-    {
-      "id": "reverse_sorted_8",
-      "input": "5\npush 3\npush 2\npush 1\ntop\npop",
-      "output": "1",
-      "isVisible": false,
-      "weight": 1,
-      "category": "reverse_sorted"
-    },
-    {
-      "id": "repeated_9",
-      "input": "6\npush 1\npush 1\npush 1\ntop\npop\ntop",
-      "output": "1\r\n1",
-      "isVisible": false,
-      "weight": 1,
-      "category": "repeated"
-    },
-    {
-      "id": "random_medium_10",
-      "input": "7\npush 5\npush -3\npush 100\npop\ntop\npush 20\ntop",
-      "output": "-3\r\n20",
-      "isVisible": false,
-      "weight": 1,
-      "category": "random_medium"
-    },
-    {
-      "id": "zero_11",
-      "input": "5\npush 0\ntop\npop\ntop\npop",
-      "output": "0\r\nInvalid Operation\r\nInvalid Operation",
-      "isVisible": false,
-      "weight": 1,
-      "category": "zero"
-    },
-    {
-      "id": "one_12",
-      "input": "3\npush 1\ntop\npop",
-      "output": "1",
-      "isVisible": false,
-      "weight": 1,
-      "category": "one"
-    },
-    {
-      "id": "negative_13",
-      "input": "4\npush -10\npush -20\ntop\npop",
-      "output": "-20",
-      "isVisible": false,
-      "weight": 1,
-      "category": "negative"
-    },
-    {
-      "id": "random_medium_14",
-      "input": "8\npush 10\npush 20\ntop\npop\npush -5\ntop\npop\npop",
-      "output": "20\r\n-5",
-      "isVisible": false,
-      "weight": 1,
-      "category": "random_medium"
-    },
-    {
-      "id": "adversarial_16",
-      "input": "10\npush 1\npop\ntop\npop\npush 2\npush 3\npop\npop\ntop\npop",
-      "output": "Invalid Operation\r\nInvalid Operation\r\nInvalid Operation\r\nInvalid Operation",
-      "isVisible": false,
-      "weight": 1,
-      "category": "adversarial"
     }
   ],
   "analytics": {

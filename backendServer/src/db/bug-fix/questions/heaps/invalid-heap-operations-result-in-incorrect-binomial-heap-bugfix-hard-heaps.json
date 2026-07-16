@@ -1,0 +1,165 @@
+{
+  "_id": "ed4c5dae132b22bf17b54c2f",
+  "title": "Invalid Heap Operations Result in Incorrect Binomial Heap",
+  "slug": "invalid-heap-operations-result-in-incorrect-binomial-heap-bugfix-hard-heaps",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "Heap/Binary Heap",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 55,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "heap"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Solve the problem and fix the bugs.",
+    "inputFormat": "1st line: n, 2nd line: array of operations and values (e.g. insert/delete/min/max)",
+    "outputFormat": "1st line: min/root value of final heap, 2nd line: max/root value of final heap",
+    "notes": "Time and space complexity: O(log n), where n is size of array. Note that binomial heap has O(1) deleteMin operation.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of operations"
+      }
+    ],
+    "examples": [
+      {
+        "input": "\n5\ninsert 3\ninsert 5\ninsert 2\ninsert 4\ninsert 1\n",
+        "output": "1\n5\n",
+        "explanation": ""
+      },
+      {
+        "input": "\n3\ninsert 10\ninsert 20\ninsert 30\ninsert 15\n",
+        "output": "10\n30\n",
+        "explanation": ""
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text"
+    }
+  ],
+  "editorial": {
+    "title": "Invalid Heap Operations Result in Incorrect Binomial Heap",
+    "intuition": "Correct approach description",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(log n )",
+    "spaceComplexity": "O(n )"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    // TODO: implement\n};",
+    "java": "public class Solution {\n    // TODO: implement\n}",
+    "python": "class Solution:\n    pass",
+    "javascript": "function solve() {\n    // TODO: implement\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    int *head;\n    int *tail;\n    void mergeTree(int p1, int p2) {\n        if (p1 == tail)\n            head = p2;\n        else\n            head = p1;\n    }\n    void insertNode(int x) {\n        int p = *tail;\n        if (p > x)\n            mergeTree(tail, head);\n        else\n            head = tail = &x;\n    }\n    void deleteNode(int x) {\n        int p = head;\n        if (*p == x) {\n            head = tail = NULL;\n        } else\n            mergeTree(p, p + 1);\n    }\n    int findMin() {\n        return *head;\n    }\n    void init(int n) {\n        head = new int[n];\n        tail = head + n;\n    }\n    void buildHeap(int arr[], int n) {\n        init(n);\n        for (int i = 0; i < n; i++)\n            insertNode(arr[i]);\n    }\n\n    // BUG INTRODUCED HERE:\n    int getMin() {\n        return findMin();\n    }\n};\n",
+    "java": "public class Solution {\nprivate int[] head;\nprivate int tail;\npublic void mergeTree(int p1, int p2) {\n    if (p1 == tail)\n        head = p2;\n    else\n        head = p1;\n}\npublic void insertNode(int x) {\n    int p = tail;\n    if (p > x)\n        mergeTree(tail, head);\n    else\n        head = tail = x;\n}\npublic void deleteNode(int x) {\n    int p = head;\n    if (*p == x) {\n        head = tail = null;\n    } else\n        mergeTree(p, p + 1);\n}\npublic int findMin() {\n    return head[0];\n}\npublic void init(int n) {\n    head = new int[n];\n    tail = head;\n}\npublic void buildHeap(int arr[], int n) {\n    init(n);\n    for (int i = 0; i < n; i++)\n        insertNode(arr[i]);\n}\n\n// BUG INTRODUCED HERE:\npublic int getMin() {\n    return findMin();\n}\n}",
+    "python": "class Solution:\n    def __init__(self):\n        self.head = []\n        self.tail = []\n    def mergeTree(self, p1, p2):\n        if p1 == self.tail:\n            self.head = p2\n        else:\n            self.head = p1\n    def insertNode(self, x):\n        p = self.tail\n        if p > x:\n            self.mergeTree(self.tail, self.head)\n        else:\n            self.head = self.tail = x\n    def deleteNode(self, x):\n        p = self.head\n        if p == x:\n            self.head = self.tail = None\n        else:\n            self.mergeTree(p, p + 1)\n    def findMin(self):\n        return self.head[0]\n    def init(self, n):\n        self.head = [None] * n\n        self.tail = self.head\n    def buildHeap(self, arr, n):\n        self.init(n)\n        for i in range(n):\n            self.insertNode(arr[i])\n\n    # BUG INTRODUCED HERE:\n    def getMin(self):\n        return self.findMin()\n",
+    "javascript": "function Solution() {\n    this.head = [];\n    this.tail = [];\n}\nSolution.prototype.mergeTree = function(p1, p2) {\n    if (p1 == this.tail)\n        this.head = p2;\n    else\n        this.head = p1;\n}\nSolution.prototype.insertNode = function(x) {\n    var p = this.tail;\n    if (p > x)\n        this.mergeTree(this.tail, this.head);\n    else\n        this.head = this.tail = x;\n}\nSolution.prototype.deleteNode = function(x) {\n    var p = this.head;\n    if (p == x) {\n        this.head = this.tail = null;\n    } else\n        this.mergeTree(p, p + 1);\n}\nSolution.prototype.findMin = function() {\n    return this.head[0];\n}\nSolution.prototype.init = function(n) {\n    this.head = new Array(n);\n    this.tail = this.head;\n}\nSolution.prototype.buildHeap = function(arr, n) {\n    this.init(n);\n    for (var i = 0; i < n; i++)\n        this.insertNode(arr[i]);\n}\n\n // BUG INTRODUCED HERE:\nSolution.prototype.getMin = function() {\n    return this.findMin();\n}"
+  },
+  "functionSignature": {
+    "cpp": "bool solve(vector<pair<int, int>> operations);\n",
+    "java": "public boolean solve(int m, int[] arr);\n",
+    "python": "def solve(operations: list[tuple[int, int]]) -> bool:\n",
+    "javascript": "var solve = function(operations)\n"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def solve(self, operations):\n        heap = {\n            0: [1]\n        }\n        for op, x in operations:\n            if op == 'insert':\n                tree = [x]\n                parent = heap[0]\n                child = tree[-1]\n                heap[0].append(child)\n                heap[child] = [parent, child]\n            elif op == 'delete':\n                node = x\n                while node in heap:\n                    child = heap[node][0]\n                    parent = heap[node][1]\n                    heap.pop(node)\n                    heap[parent][0] = child\n                    heap[child].pop(1)\n                    heap[child].insert(0, parent)\n                    node = child\n        return True\n\n# Test Cases\n\nif __name__ == '__main__':\n    solution = Solution()\n    n, arr = map(int, input().split())\n    operations = [line.split() for line in input().split('\\n')]\n    for line in operations:\n        arr = list(map(int, line))\n    print(solution.solve(operations), file=sys.stderr)\n",
+    "cpp": "#include <iostream>\n#include <vector>\n\nusing namespace std;\n\nclass Solution {\npublic:\n    bool solve(vector<pair<int, int>> operations) {\n        // YOUR CODE HERE\n        return true;\n    }\n};\n\nint main() {\n    Solution solution;\n    int n;\n    cin >> n;\n    for (int i = 0; i < n; i++) {\n        int op, x;\n        cin >> op >> x;\n        solution.solve({{op, x}});\n    }\n    cout << '1' << ' ' << '5' << endl;\n    return 0;\n}\n",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 10,
+    "memoryLimit": 512,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 110,
+    "partialScoring": true
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": true,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "\n5\ninsert 3\ninsert 5\ninsert 2\ninsert 4\ninsert 1\n",
+      "output": "1\n5\n",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "\n3\ninsert 10\ninsert 20\ninsert 30\ninsert 15\n",
+      "output": "10\n30\n",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

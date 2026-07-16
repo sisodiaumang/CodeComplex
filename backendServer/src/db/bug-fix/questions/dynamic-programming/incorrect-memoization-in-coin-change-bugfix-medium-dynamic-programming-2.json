@@ -1,0 +1,161 @@
+{
+  "_id": "781b8a5448479bc13919f702",
+  "title": "Incorrect Memoization in Coin Change",
+  "slug": "incorrect-memoization-in-coin-change-bugfix-medium-dynamic-programming-2",
+  "difficulty": "Medium",
+  "category": "DSA",
+  "subCategory": "DP",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "dp"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given an integer array `coins` representing coins of different denominations and an integer `amount` that represents the total amount we want to make change for, return the number of combinations that sum up to the `amount`. The order of the coins doesn't matter. Your algorithm should run in O(n*amount) time complexity.\n\nHowever, the following code has a bug that prevents it from passing all test cases. Can you identify the bug and fix it?\n\n**Note**: You can assume the given `coins` array is sorted in ascending order and the `amount` is a positive integer.\n\n**Example**:\n\nInput: `coins = [1, 2, 5]`, `amount = 11`\nOutput: `4` (the combinations are `[5,5,1]`, `[5,1,1,1,1,1,1], [1,1,1,1,1,1,1,1,1,1,1]`, `[1,1,1,1,1,2`] ).",
+    "inputFormat": "coins: an integer array, amount: an integer",
+    "outputFormat": "the number of combinations that sum up to the `amount`",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      },
+      {
+        "variable": "amount",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The total amount we want to make change for"
+      }
+    ],
+    "examples": [
+      {
+        "input": "coins = [1, 2, 5], amount = 11\n",
+        "output": "4\n",
+        "explanation": ""
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "The issue with the code lies in the use of memoization. The memoization matrix `dp` is initialized with `dp[i][j] = 0` for all `i` and `j`. However, this initialization is incorrect and leads to incorrect results."
+    }
+  ],
+  "editorial": {
+    "title": "Incorrect Memoization in Coin Change",
+    "intuition": "Use a memoization table `dp` of size `(n+1) x (amount+1)` to store the number of combinations that sum up to `i` using the first `j` coins.",
+    "bruteForce": "Brute force solution with time complexity O(n*amount^2) by trying all possible combinations and counting the number of valid ones.",
+    "betterSolution": "Use memoization to store the intermediate results and avoid redundant calculations.",
+    "optimalSolution": "The optimal solution uses a bottom-up dynamic programming approach with memoization to solve the problem in O(n*amount) time complexity.",
+    "proofOfCorrectness": "The correctness of the solution can be proved by induction on the amount `i`.",
+    "dryRun": "A dry run of the solution with `coins = [1, 2, 5]` and `amount = 11` should output the correct result `4`.",
+    "commonMistakes": [
+      "Incorrect memoization",
+      "Redundant calculations",
+      "Wrong initialization of `dp`"
+    ],
+    "timeComplexity": "O(n*amount)",
+    "spaceComplexity": "O(n*amount)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    int change(int amount, int* coins, int coinsSize) {\n        // TODO: implement\n    }\n};",
+    "java": "public class Solution {\npublic:\n    int change(int amount, int[] coins) {\n        // TODO: implement\n    }\n}",
+    "python": "class Solution:\n    def change(self, amount: int, coins: List[int]) -> int:\n        # TODO: implement\n        pass",
+    "javascript": "function change(amount, coins) {\n    // TODO: implement\n    return 0;\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    int change(int amount, int* coins, int coinsSize) {\n        int dp[coinsSize+1][amount+1];\n        for (int i = 0; i < coinsSize+1; i++) {\n            for (int j = 0; j < amount+1; j++) {\n                dp[i][j] = 0;\n            }\n        }\n        for (int j = 0; j < amount+1; j++) {\n            dp[0][j] = 1;\n        }\n        for (int i = 1; i < coinsSize+1; i++) {\n            for (int j = 1; j < amount+1; j++) {\n                if (j >= coins[i-1]) {\n                    dp[i][j] = dp[i-1][j] + dp[i][j-coins[i-1]];\n                } else {\n                    dp[i][j] = dp[i-1][j];\n                }\n            }\n        }\n        return dp[coinsSize][amount];\n    }\n};",
+    "java": "public class Solution {\npublic:\n    int change(int amount, int[] coins) {\n        int[][] dp = new int[coins.length+1][amount+1];\n        for (int i = 0; i < coins.length+1; i++) {\n            for (int j = 0; j < amount+1; j++) {\n                dp[i][j] = 0;\n            }\n        }\n        for (int j = 0; j < amount+1; j++) {\n            dp[0][j] = 1;\n        }\n        for (int i = 1; i < coins.length+1; i++) {\n            for (int j = 1; j < amount+1; j++) {\n                if (j >= coins[i-1]) {\n                    dp[i][j] = dp[i-1][j] + dp[i][j-coins[i-1]];\n                } else {\n                    dp[i][j] = dp[i-1][j];\n                }\n            }\n        }\n        return dp[coins.length][amount];\n    }\n}",
+    "python": "class Solution:\n    def change(self, amount: int, coins: List[int]) -> int:\n        dp = [[0]*(amount+1) for _ in range(len(coins)+1)]\n        for i in range(len(coins)+1):\n            for j in range(amount+1):\n                dp[i][j] = 0\n        for j in range(amount+1):\n            dp[0][j] = 1\n        for i in range(1, len(coins)+1):\n            for j in range(1, amount+1):\n                if j >= coins[i-1]:\n                    dp[i][j] = dp[i-1][j] + dp[i][j-coins[i-1]]\n                else:\n                    dp[i][j] = dp[i-1][j]\n        return dp[len(coins)][amount]",
+    "javascript": "function change(amount, coins) {\n    let dp = Array(coins.length+1).fill(0).map(() => Array(amount+1).fill(0));\n    for (let i = 0; i < coins.length+1; i++) {\n        for (let j = 0; j < amount+1; j++) {\n            dp[i][j] = 0;\n        }\n    }\n    for (let j = 0; j < amount+1; j++) {\n        dp[0][j] = 1;\n    }\n    for (let i = 1; i < coins.length+1; i++) {\n        for (let j = 1; j < amount+1; j++) {\n            if (j >= coins[i-1]) {\n                dp[i][j] = dp[i-1][j] + dp[i][j-coins[i-1]];\n            } else {\n                dp[i][j] = dp[i-1][j];\n            }\n        }\n    }\n    return dp[coins.length][amount];\n}"
+  },
+  "functionSignature": {
+    "cpp": "int change(int amount, int* coins, int coinsSize);",
+    "java": "public int change(int amount, int[] coins);",
+    "python": "def change(self, amount: int, coins: List[int]) -> int:",
+    "javascript": "var change = function(amount, coins);"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def change(self, amount: int, coins: List[int]) -> int:\n        dp = [[0]*(amount+1) for _ in range(len(coins)+1)]\n        for i in range(len(coins)+1):\n            dp[i][0] = 1\n        for j in range(1, amount+1):\n            dp[0][j] = 0\n        for i in range(1, len(coins)+1):\n            for j in range(1, amount+1):\n                if j >= coins[i-1]:\n                    dp[i][j] = dp[i-1][j] + dp[i][j-coins[i-1]]\n                else:\n                    dp[i][j] = dp[i-1][j]\n        return dp[len(coins)][amount]\n\nif __name__ == '__main__':\n    coins = [1, 2, 5]\n    amount = 11\n    solution = Solution()\n    print(solution.change(amount, coins))\n",
+    "cpp": "class Solution {\npublic:\n    int change(int amount, int* coins, int coinsSize) {\n        int dp[coinsSize+1][amount+1];\n        for (int i = 0; i <= coinsSize; i++) {\n            dp[i][0] = 1;\n        }\n        for (int j = 1; j <= amount; j++) {\n            dp[0][j] = 0;\n        }\n        for (int i = 1; i <= coinsSize; i++) {\n            for (int j = 1; j <= amount; j++) {\n                if (j >= coins[i-1]) {\n                    dp[i][j] = dp[i-1][j] + dp[i][j-coins[i-1]];\n                } else {\n                    dp[i][j] = dp[i-1][j];\n                }\n            }\n        }\n        return dp[coinsSize][amount];\n    }\n};\n\nint main() {\n    Solution solution;\n    int coins[] = {1, 2, 5};\n    int coinsSize = sizeof(coins)/sizeof(coins[0]);\n    int amount = 11;\n    std::cout << solution.change(amount, coins, coinsSize) << std::endl;\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "coins = [1, 2, 5] amount = 11\n",
+      "output": "4\n",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_hidden_generated",
+      "input": "coins = [1, 2, 5] amount = 11\n",
+      "output": "4\n",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

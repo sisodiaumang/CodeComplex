@@ -1,0 +1,153 @@
+{
+  "_id": "e9583a72fd2daaa4d2c21a27",
+  "title": "Recover the Heap After In-Place Heapsort",
+  "slug": "recover-the-heap-after-in-place-heapsort-bugfix-medium-heaps",
+  "difficulty": "Medium",
+  "category": "DSA",
+  "subCategory": "Heapsort",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 60,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "heap"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given a binary heap represented as an array `nums`, implement a function to recover the heap after performing in-place heapsort. The input array may not be a valid binary heap initially.\n\nExample:\n\n    Input: `nums = [5, 3, 8, 4, 2]`\n\n    Output: `[2, 3, 4, 5, 8]`",
+    "inputFormat": "Input is a list of integers.",
+    "outputFormat": "Output is the array in heap order.",
+    "notes": "Do not use any extra space. The function should modify the input array in-place.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "5\n3 8 4 2 5",
+        "output": "5\n2 3 4 5 8",
+        "explanation": "Perform in-place heapsort on the input array"
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text"
+    }
+  ],
+  "editorial": {
+    "title": "Recover the Heap After In-Place Heapsort",
+    "intuition": "To recover the heap after in-place heapsort, we can first perform heapsort on the input array, then restore the original heap properties.",
+    "bruteForce": "Perform heapsort on the input array using a recursive approach.",
+    "betterSolution": "Use a loop to perform heapsort on the input array.",
+    "optimalSolution": "Use a binary heap data structure to perform heapsort on the input array.",
+    "proofOfCorrectness": "Verify that the restored heap is indeed a valid binary heap.",
+    "dryRun": "Perform heapsort on a sample input array, then restore the original heap properties.",
+    "commonMistakes": [
+      "Incorrect heap property maintenance",
+      "Insufficient time complexity optimization"
+    ],
+    "timeComplexity": "O(n log n)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    void recoverHeap(vector<int>& nums);\n};\n",
+    "java": "public class Solution {\n    public void recoverHeap(int[] nums);\n}\n",
+    "python": "class Solution:\n    def recoverHeap(self, nums: list[int]): ...\n    pass\n",
+    "javascript": "function recoverHeap(nums) {}\n"
+  },
+  "buggyStarterCode": {
+    "cpp": "void Solution::recoverHeap(vector<int>& nums) {\n    for (int i = 1; i < nums.size(); i++) {\n        int j = nums.size() - i - 1;\n        while (j >= 0) {\n            if (nums[j] < nums[j + 1]) {\n                swap(nums[j], nums[j + 1]);\n            }\n            j--;\n        }\n    }\n    for (int i = 1; i <= nums.size() / 2; i++) {\n        heapify(nums, 0, i);\n    }\n}\nvoid Solution::heapify(vector<int>& nums, int i, int n) {\n    if (2 * i + 1 >= n) return;\n    int max = i;\n    int left = 2 * i + 1;\n    int right = 2 * i + 2;\n    if (nums[left] > nums[max]) {\n        max = left;\n    }\n    if (right < n && nums[right] > nums[max]) {\n        max = right;\n    }\n    if (max != i) {\n        swap(nums[i], nums[max]);\n        heapify(nums, max, n);\n    }\n}\n",
+    "java": "public void recoverHeap(int[] nums) {\n    for (int i = 1; i < nums.length; i++) {\n        int j = nums.length - i - 1;\n        while (j >= 0) {\n            if (nums[j] < nums[j + 1]) {\n                swap(nums[j], nums[j + 1]);\n            }\n            j--;\n        }\n    }\n    for (int i = 1; i <= nums.length / 2; i++) {\n        heapify(nums, 0, i);\n    }\n}\nprivate void heapify(int[] nums, int i, int n) {\n    if (2 * i + 1 >= n) return;\n    int max = i;\n    int left = 2 * i + 1;\n    int right = 2 * i + 2;\n    if (nums[left] > nums[max]) {\n        max = left;\n    }\n    if (right < n && nums[right] > nums[max]) {\n        max = right;\n    }\n    if (max != i) {\n        swap(nums[i], nums[max]);\n        heapify(nums, max, n);\n    }\n}\n",
+    "python": "def recoverHeap(self, nums: list[int]) -> None:\n    for i in range(1, len(nums)):\n        j = len(nums) - i - 1\n        while j >= 0:\n            if nums[j] < nums[j + 1]:\n                nums[j], nums[j + 1] = nums[j + 1], nums[j]\n            j -= 1\n        for i in range(1, len(nums) // 2 + 1):\n            self.heapify(nums, 0, i)\n\ndef heapify(self, nums: list[int], i: int, n: int) -> None:\n    if 2 * i + 1 >= n:\n        return\n    max_idx = i\n    left_idx = 2 * i + 1\n    right_idx = 2 * i + 2\n    if nums[left_idx] > nums[max_idx]:\n        max_idx = left_idx\n    if right_idx < n and nums[right_idx] > nums[max_idx]:\n        max_idx = right_idx\n    if max_idx != i:\n        nums[i], nums[max_idx] = nums[max_idx], nums[i]\n        self.heapify(nums, max_idx, n)\n",
+    "javascript": "function recoverHeap(nums) {\n    for (let i = 1; i < nums.length; i++) {\n        let j = nums.length - i - 1;\n        while (j >= 0) {\n            if (nums[j] < nums[j + 1]) {\n                [nums[j], nums[j + 1]] = [nums[j + 1], nums[j]];\n            }\n            j--;\n        }\n    }\n    for (let i = 1; i <= Math.floor(nums.length / 2); i++) {\n        heapify(nums, 0, i);\n    }\n}\nfunction heapify(nums, i, n) {\n    if (2 * i + 1 >= n) return;\n    let max = i;\n    let left = 2 * i + 1;\n    let right = 2 * i + 2;\n    if (nums[left] > nums[max]) {\n        max = left;\n    }\n    if (right < n && nums[right] > nums[max]) {\n        max = right;\n    }\n    if (max != i) {\n        [nums[i], nums[max]] = [nums[max], nums[i]];\n        heapify(nums, max, n);\n    }\n}"
+  },
+  "functionSignature": {
+    "cpp": "void recoverHeap(vector<int>& nums);",
+    "java": "public void recoverHeap(int[] nums);",
+    "python": "def recoverHeap(self, nums: list[int]) -> None:",
+    "javascript": "function recoverHeap(nums);"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def recoverHeap(self, nums: list[int]) -> None:\n        for i in range(1, len(nums)):\n            j = len(nums) - i - 1\n            while j >= 0:\n                if nums[j] < nums[j + 1]:\n                    nums[j], nums[j + 1] = nums[j + 1], nums[j]\n                j -= 1\n            for i in range(1, len(nums) // 2 + 1):\n                self.heapify(nums, 0, i)\n\ndef heapify(self, nums: list[int], i: int, n: int) -> None:\n    if 2 * i + 1 >= n:\n        return\n    max_idx = i\n    left_idx = 2 * i + 1\n    right_idx = 2 * i + 2\n    if nums[left_idx] > nums[max_idx]:\n        max_idx = left_idx\n    if right_idx < n and nums[right_idx] > nums[max_idx]:\n        max_idx = right_idx\n    if max_idx != i:\n        nums[i], nums[max_idx] = nums[max_idx], nums[i]\n        self.heapify(nums, max_idx, n)\n\n\n\nclass Solution:\n    def recoverHeap(self, nums: list[int]) -> None:\n        heap = []\n        for num in reversed(nums):\n            heap.append(num)\n            self.heapify(heap, 0, len(heap))\n        nums[:] = list(reversed(heap))\n\ndef heapify(self, nums: list[int], i: int, n: int) -> None:\n    if 2 * i + 1 >= n:\n        return\n    max_idx = i\n    left_idx = 2 * i + 1\n    right_idx = 2 * i + 2\n    if nums[left_idx] > nums[max_idx]:\n        max_idx = left_idx\n    if right_idx < n and nums[right_idx] > nums[max_idx]:\n        max_idx = right_idx\n    if max_idx != i:\n        nums[i], nums[max_idx] = nums[max_idx], nums[i]\n        self.heapify(nums, max_idx, n)",
+    "cpp": "// Solution",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5\n3 8 4 2 5",
+      "output": "5\n2 3 4 5 8",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_hidden_generated",
+      "input": "5\n3 8 4 2 5",
+      "output": "5\n2 3 4 5 8",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

@@ -1,0 +1,162 @@
+{
+  "_id": "c2d4e8b1cd51485fe24e5770",
+  "title": "Invalidate Stack Elements: Miscounted Elements in Dynamic Array",
+  "slug": "invalidate-stack-elements-miscounted-elements-in-dynamic-array-bugfix-hard-stack-queue",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "STACK/Dynamic Array",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "stack"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given a sequence of push and pop operations, validate whether the stack elements satisfy the condition. If at any point the number of pop operations exceeds the number of push operations or the stack is not empty at the end, return False. Otherwise, return True.",
+    "inputFormat": "A sequence of integers, where 1 represents a push operation and -1 represents a pop operation",
+    "outputFormat": "A boolean value indicating whether the stack elements are valid",
+    "notes": "Note that the sequence of operations may contain multiple push and pop operations. The stack initially has no elements.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "1 1 1 -1 1 -1 -1",
+        "output": "true",
+        "explanation": ""
+      },
+      {
+        "input": "-1 1 1 -1 1 -1 -1",
+        "output": "false",
+        "explanation": ""
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Analyze the push and pop operations separately"
+    },
+    {
+      "order": 2,
+      "text": "Use a dynamic array to simulate the stack"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(n) ",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "class Solution { public: bool validateStackSequences(vector<int>& pushed, vector<int>& popped); };",
+    "java": "public class Solution { public boolean validateStackSequences(int[] pushed, int[] popped); }",
+    "python": "class Solution: def validateStackSequences(self, pushed: list[int], popped: list[int]) -> bool:",
+    "javascript": "function validateStackSequences(pushed, popped) { "
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution { public: bool validateStackSequences(vector<int>& pushed, vector<int>& popped) { int len = pushed.size(); int j = len - 1; stack<int> st; for (int i = 0; i < len; i++) { if (pushed[i] == -1) { while (!st.empty() && !popped[i] == -st.top()) st.pop(); if (st.top() == popped[i]) st.pop(); } else { st.push(pushed[i]); } } return st.empty() && i == j; } };",
+    "java": "public class Solution { public boolean validateStackSequences(int[] pushed, int[] popped) { int len = pushed.length; int j = len - 1; for (int i = 0; i < len; i++) { if (pushed[i] == -1) { while (!stack.empty() && !popped[i] == -(stack.peek())) stack.pop(); if (stack.peek() == popped[i]) stack.pop(); } else { stack.push(pushed[i]); } } return stack.empty() && i == j; } }",
+    "python": "class Solution: def validateStackSequences(self, pushed: list[int], popped: list[int]) -> bool: len_pushed = len(pushed); j = len_pushed - 1; st = []; for i in range(len_pushed): if pushed[i] == -1: while not st and popped[i] != -st[-1]: st.pop(); if st[-1] == popped[i]: st.pop(); else: st.append(pushed[i]); return not st and i == j;",
+    "javascript": "function validateStackSequences(pushed, popped) { var len_pushed = pushed.length; var j = len_pushed - 1; var st = []; for (var i = 0; i < len_pushed; i++) { if (pushed[i] == -1) { while (!st.length && popped[i] != -st[st.length - 1]) st.pop(); if (st[st.length - 1] == popped[i]) st.pop(); else { st.push(pushed[i]); } } } return !st.length && i == j; }"
+  },
+  "functionSignature": {
+    "cpp": "bool validateStackSequences(vector<int>& pushed, vector<int>& popped);",
+    "java": "boolean validateStackSequences(int[] pushed, int[] popped);",
+    "python": "def validateStackSequences(self, pushed: list[int], popped: list[int]) -> bool;",
+    "javascript": "var validateStackSequences = function(pushed, popped) { "
+  },
+  "solutions": {
+    "python": "class Solution: def validateStackSequences(self, pushed: list[int], popped: list[int]) -> bool: len_pushed = len(pushed); stack = []; i = 0; j = len_pushed - 1; while i <= j: if pushed[i] == -1: while stack and stack[-1] != popped[j]: stack.pop(); stack.pop(); j -= 1; else: stack.append(pushed[i]); i += 1; return not stack;\n\nif __name__ == '__main__':\n    import sys\n    input = sys.stdin.readline\n    t = int(input())\n    for _ in range(t):\n        pushed = list(map(int, input().split()))\n        popped = list(map(int, input().split()))\n        solution = Solution()\n        print(solution.validateStackSequences(pushed, popped))",
+    "cpp": "class Solution { public: bool validateStackSequences(vector<int>& pushed, vector<int>& popped) { int len = pushed.size(); stack<int> st; int i = 0, j = len - 1; while (i <= j) { if (pushed[i] == -1) { while (!st.empty() && st.top() != popped[j]) st.pop(); if (st.empty() || st.top() != popped[j]) j--; else st.pop(); } else { st.push(pushed[i]); i++; } } return st.empty(); } }; \n\nint main() {\n    ios_base::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int t;\n    cin >> t;\n    while (t--) {\n        int n;\n        cin >> n;\n        vector<int> pushed(n), popped(n);\n        for (int i = 0; i < n; i++)\n            cin >> pushed[i];\n        for (int i = 0; i < n; i++)\n            cin >> popped[i];\n        Solution solution;\n        cout << (solution.validateStackSequences(pushed, popped) ? \"Yes\" : \"No\") << \\n;}\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "1\n1 1 1 -1 1 -1 -1",
+      "output": "Yes",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "-1 1 1 -1 1 -1 -1",
+      "output": "No",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

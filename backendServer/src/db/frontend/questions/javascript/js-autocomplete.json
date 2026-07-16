@@ -1,0 +1,52 @@
+{
+  "_id": "5913b0c7bb706683595f5fb7",
+  "title": "Autocomplete Input Box",
+  "slug": "js-autocomplete",
+  "difficulty": "Hard",
+  "topics": [
+    "JAVASCRIPT"
+  ],
+  "statement": {
+    "markdown": "## Interactive Autocomplete Input Box\n\nBuild an autocomplete text input field that suggests results from a static array of values.\n\n### Requirements:\n1. **Dynamic Suggestions**: When typing in the input field, filter suggestions from the local fruits array case-insensitively and display them in a list below the input.\n2. **Empty Queries Handling**: If the input is empty or contains only whitespace, hide the suggestion list container completely.\n3. **Suggestion Click Selection**: Clicking a suggestion item must populate the input field with the item's text, clear the suggestion list, and hide the suggestion dropdown list."
+  },
+  "constraints": [
+    "Must use dynamic event handlers to update the suggestions list",
+    "Must handle empty queries by hiding the suggestion list container"
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "html": "<div class=\"flex flex-col items-center justify-center min-h-[300px] bg-slate-900 font-sans p-4\">\n  <div class=\"w-full max-w-sm p-5 bg-slate-800 rounded-2xl border border-slate-700 shadow-xl relative\">\n    <label class=\"block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wider\">Search Fruits</label>\n    <input type=\"text\" id=\"search-input\" class=\"w-full px-3 py-2 bg-slate-950 text-white border border-slate-700 rounded-lg focus:outline-none focus:border-indigo-500 text-sm\" placeholder=\"Type fruit name...\" autocomplete=\"off\" />\n    <ul id=\"suggestions-list\" class=\"absolute left-5 right-5 mt-1 bg-slate-950 border border-slate-700 rounded-lg shadow-2xl max-h-40 overflow-y-auto hidden z-20 divide-y divide-slate-800\"></ul>\n  </div>\n</div>",
+    "css": "",
+    "javascript": "const fruits = [\n  'Apple', 'Banana', 'Blueberry', 'Cherry', 'Coconut', \n  'Grape', 'Lemon', 'Mango', 'Orange', 'Peach', \n  'Pineapple', 'Raspberry', 'Strawberry', 'Watermelon'\n];\n\nconst searchInput = document.getElementById('search-input');\nconst suggestionsList = document.getElementById('suggestions-list');\n\n// Implement autocomplete search matching and click triggers here\n"
+  },
+  "gradingCriteria": [
+    {
+      "id": "functional_correctness",
+      "description": "Verify suggestions are filtered accurately based on query inputs, suggestions show/hide correctly, and clicks select items.",
+      "weight": 60
+    },
+    {
+      "id": "code_cleanliness",
+      "description": "Verify proper DOM rendering, event listeners (input and click), clear selection paths, and styling state changes.",
+      "weight": 40
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "html",
+      "css",
+      "javascript"
+    ],
+    "referenceSolution": "const fruits = [\n  'Apple', 'Banana', 'Blueberry', 'Cherry', 'Coconut', \n  'Grape', 'Lemon', 'Mango', 'Orange', 'Peach', \n  'Pineapple', 'Raspberry', 'Strawberry', 'Watermelon'\n];\n\nconst searchInput = document.getElementById('search-input');\nconst suggestionsList = document.getElementById('suggestions-list');\n\nsearchInput.addEventListener('input', () => {\n  const query = searchInput.value.toLowerCase().trim();\n  suggestionsList.innerHTML = '';\n\n  if (!query) {\n    suggestionsList.classList.add('hidden');\n    return;\n  }\n\n  const matches = fruits.filter(f => f.toLowerCase().includes(query));\n  if (matches.length === 0) {\n    suggestionsList.classList.add('hidden');\n    return;\n  }\n\n  matches.forEach(match => {\n    const li = document.createElement('li');\n    li.className = 'px-3 py-2 text-sm text-slate-300 hover:bg-indigo-600 hover:text-white cursor-pointer select-none';\n    li.textContent = match;\n    li.addEventListener('click', () => {\n      searchInput.value = match;\n      suggestionsList.classList.add('hidden');\n      suggestionsList.innerHTML = '';\n    });\n    suggestionsList.appendChild(li);\n  });\n\n  suggestionsList.classList.remove('hidden');\n});"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

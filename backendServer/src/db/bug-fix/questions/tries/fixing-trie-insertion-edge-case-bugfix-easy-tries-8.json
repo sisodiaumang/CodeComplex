@@ -1,0 +1,153 @@
+{
+  "_id": "7594049ff3031d76a84a3681",
+  "title": "Fixing Trie Insertion Edge Case",
+  "slug": "fixing-trie-insertion-edge-case-bugfix-easy-tries-8",
+  "difficulty": "Easy",
+  "category": "DSA",
+  "subCategory": "TRIE",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "trie"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given a Trie data structure, implement an insert method that inserts a word into the Trie. However, there is a bug in the implementation that occurs when the input word has a duplicate key. In such cases, the implementation should ignore the duplicate key and continue with the rest of the word.\n\nAssumptions:\n- Nodes in the Trie are initially empty.\n- Each node has a set of children nodes (i.e., the 26 letters of the alphabet).\n- Each node has a flag to mark the end of a word.\n\nYour task is to fix the buggy insert method so that it correctly handles duplicate keys.\n\nExample input:\n3\nhello\nworld\nhello\n\nExpected output:\ntrue\ntrue\nfalse",
+    "inputFormat": "The first line contains the number of test cases. Each test case consists of a single line containing a word to be inserted into the Trie.",
+    "outputFormat": "For each test case, print true if the word is inserted successfully, and false otherwise.",
+    "notes": "Note that the Trie is not provided in the input, but you should implement it according to the problem description.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "3\nhello\nworld\nhello",
+        "output": "true\ntrue\nfalse",
+        "explanation": "The output shows that the word 'hello' is inserted twice without any issues, but the second insertion of 'hello' is ignored because it's a duplicate key."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Check the insert method to see where the bug is introduced."
+    }
+  ],
+  "editorial": {
+    "title": "Fixing Trie Insertion Edge Case",
+    "intuition": "The bug is introduced when checking if a node already exists in the Trie.",
+    "bruteForce": "Brute force approach would be to always insert a new node when checking for existing nodes.",
+    "betterSolution": "A better solution would be to check if the node already exists and only insert a new node if it doesn't.",
+    "optimalSolution": "The optimal solution involves checking if the node exists using a set to keep track of existing nodes.",
+    "proofOfCorrectness": "The proof of correctness involves demonstrating that the insert method correctly handles duplicate keys.",
+    "dryRun": "Step-by-step example run of the corrected insert method.",
+    "commonMistakes": [
+      "not checking if node exists",
+      "not ignoring duplicate keys"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "class TrieNode {\n  map<char, TrieNode*> children;\n  bool endOfWord;\n};\n\nclass Trie {\n  unordered_map<string, TrieNode*> root;\n\npublic:\n  bool insert(const string& word) {\n    // TODO: implement the insert method\n  }\n};",
+    "java": "class TrieNode {\n  Map<Character, TrieNode> children;\n  boolean endOfWord;\n};\n\nclass Trie {\n  Map<String, TrieNode> root;\n\npublic:\n  boolean insert(String word) {\n    // TODO: implement the insert method\n  }\n};",
+    "python": "class TrieNode:\n  def __init__(self):\n    self.children = {}\n    self.endOfWord = False\n\nclass Trie:\n  def __init__(self):\n    self.root = {}\n\n  def insert(self, word):\n    # TODO: implement the insert method\n    pass",
+    "javascript": "class TrieNode {\n  constructor() {\n    this.children = {};\n    this.endOfWord = false;\n  }\n}\n\nclass Trie {\n  constructor() {\n    this.root = {};\n  }\n\n  insert(word) {\n    // TODO: implement the insert method\n  }\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class TrieNode {\n  map<char, TrieNode*> children;\n  bool endOfWord;\n};\n\nclass Trie {\n  unordered_map<string, TrieNode*> root;\n\npublic:\n  bool insert(const string& word) {\n    TrieNode* node = root[\"\"];\n    for (char c : word) {\n      node = node->children[c];\n      if (!node) node = new TrieNode();\n    }\n    root[word] = node;\n  }\n};",
+    "java": "class TrieNode {\n  Map<Character, TrieNode> children;\n  boolean endOfWord;\n};\n\nclass Trie {\n  Map<String, TrieNode> root;\n\npublic:\n  boolean insert(String word) {\n    TrieNode node = root.get(\"\");\n    for (char c : word.toCharArray()) {\n      node = node.getChildren().get(c);\n      if (node == null) node = new TrieNode();\n    }\n    root.put(word, node);\n  }\n};",
+    "python": "class TrieNode:\n  def __init__(self):\n    self.children = {}\n    self.endOfWord = False\n\nclass Trie:\n  def __init__(self):\n    self.root = {}\n\n  def insert(self, word):\n    node = self.root.get('', None)\n    for c in word:\n      node = node.get(c)\n      if node is None:\n        node = TrieNode()\n    self.root[word] = node\n",
+    "javascript": "class TrieNode {\n  constructor() {\n    this.children = {};\n    this.endOfWord = false;\n  }\n}\n\nclass Trie {\n  constructor() {\n    this.root = {};\n  }\n\n  insert(word) {\n    let node = this.root[''];\n    for (let c of word) {\n      node = node.children[c];\n      if (!node) node = new TrieNode();\n    }\n    this.root[word] = node;\n  }\n}"
+  },
+  "functionSignature": {
+    "cpp": "bool insert(string &word);",
+    "java": "boolean insert(String word);",
+    "python": "def insert(self, word: str) -> None:",
+    "javascript": "insert(word);"
+  },
+  "solutions": {
+    "python": "from collections import defaultdict\n\nclass TrieNode:\n  def __init__(self):\n    self.children = defaultdict(TrieNode)\n    self.endOfWord = False\n\nclass Trie:\n  def __init__(self):\n    self.root = TrieNode()\n\n  def insert(self, word):\n    node = self.root\n    for c in word:\n      node = node.children[c]\n    node.endOfWord = True\n\ndef main():\n  trie = Trie()\n  for _ in range(int(input())):\n    trie.insert(input())\n\n  for _ in range(int(input())):\n    word = input()\n    print(trie.root.endOfWord)\n\nif __name__ == '__main__':\n  main()\n",
+    "cpp": "#include <iostream>\n#include <string>\n\nclass TrieNode {\n  std::unordered_map<char, TrieNode*> children;\n  bool endOfWord;\n};\n\nclass Trie {\n  TrieNode* root;\n\npublic:\n  Trie() : root(new TrieNode()) {}\n\n  void insert(const std::string& word) {\n    TrieNode* node = root;\n    for (char c : word) {\n      node = node->children[c];\n      if (!node) node = new TrieNode();\n    }\n    node->endOfWord = true;\n  }\n\n  ~Trie() {\n    std::unordered_map<char, TrieNode*> next_level;\n    std::function<void(TrieNode*)> dfs = [&](TrieNode* node) {\n      for (auto& child : node->children) {\n        dfs(child.second);\n      }\n      next_level.erase(node);\n    };\n    dfs(root);\n    delete root;\n  }\n};\n\nint main()\n{\n  Trie trie;\n  int t;\n  std::cin >> t;\n  while (t--) {\n    std::string word;\n    std::cin >> word;\n    trie.insert(word);\n  }\n\n  int q;\n  std::cin >> q;\n  while (q--) {\n    std::string word;\n    std::cin >> word;\n    std::cout << (trie.root->endOfWord ? \"true\" : \"false\") << std::endl;\n  }\n\n  return 0;\n}\n",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2000,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "3\nhello\nworld\nhello",
+      "output": "true\ntrue\nfalse",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "5\nhello\nworld\nhello\nworld\nworld",
+      "output": "true\ntrue\nfalse\ntrue\nfalse",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

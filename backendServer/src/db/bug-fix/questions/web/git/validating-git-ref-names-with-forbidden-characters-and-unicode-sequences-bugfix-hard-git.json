@@ -1,0 +1,153 @@
+{
+  "title": "Validating Git Ref Names with Forbidden Characters and Unicode Sequences",
+  "subCategory": "Git Ref Name Validation",
+  "statement": {
+    "markdown": "Write a function that validates a given Git ref name. The function should return `true` if the ref name is valid, and `false` otherwise. A valid ref name must not contain any of the following characters: `@`, `!`, `,`, `[`, `]`, `,`, `` (space), `` (tab), `` (newline), `` (carriage return), `` (form feed), `:`, `<`, `>`, `` (tilde). Additionally, a valid ref name must not contain any invalid Unicode sequences. To check for invalid Unicode sequences, you can use the `punycode.ucs2.encode()` method in JavaScript or the `unicodedata.normalize()` function in Python. Note that this function should only check the ref name itself and not any additional metadata.",
+    "inputFormat": "A string representing the Git ref name to be validated.",
+    "outputFormat": "A boolean indicating whether the ref name is valid or not.",
+    "notes": "When using `punycode.ucs2.encode()` in JavaScript, be aware that it may throw an error if the input string contains invalid Unicode sequences. You should handle this situation accordingly.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The input string length should not exceed 10000 characters."
+      }
+    ],
+    "examples": [
+      {
+        "input": "feature/new-feature",
+        "output": "true",
+        "explanation": "The ref name 'feature/new-feature' is valid because it does not contain any forbidden characters or Unicode sequences."
+      },
+      {
+        "input": "feature/new-feature@",
+        "output": "false",
+        "explanation": "The ref name 'feature/new-feature@' is invalid because it contains the forbidden character '@'."
+      },
+      {
+        "input": "0",
+        "output": "false",
+        "explanation": "The ref name '' is invalid because it is empty."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 100,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "GIT"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "git"
+    ],
+    "interviewFrequency": 1,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text: Check the ref name against the list of forbidden characters."
+    },
+    {
+      "order": 2,
+      "text": "Second hint text: Use the `punycode.ucs2.encode()` method in JavaScript or the `unicodedata.normalize()` function in Python to check for invalid Unicode sequences."
+    }
+  ],
+  "editorial": {
+    "title": "Validating Git Ref Names with Forbidden Characters and Unicode Sequences",
+    "intuition": "To validate the ref name, we need to check it against the list of forbidden characters and invalid Unicode sequences.",
+    "bruteForce": "We can iterate over the ref name and check each character against the forbidden characters. If we find a forbidden character, we can immediately return false. We can also use regular expressions to simplify the process.",
+    "betterSolution": "We can use the `punycode.ucs2.encode()` method in JavaScript or the `unicodedata.normalize()` function in Python to check for invalid Unicode sequences. This will allow us to handle the Unicode validation in a more efficient way.",
+    "optimalSolution": "We can use a combination of the two approaches above to create an efficient and robust solution.",
+    "proofOfCorrectness": "The solution is correct because it checks the ref name against the list of forbidden characters and invalid Unicode sequences, and returns the correct result based on these checks.",
+    "dryRun": "Let's consider the input 'feature/new-feature'. The solution will check that the ref name does not contain any forbidden characters and will pass the Unicode validation. Since the ref name is valid, the solution will return true.",
+    "commonMistakes": [
+      "Not checking for invalid Unicode sequences",
+      "Not handling the case where the ref name is empty"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "// Define a function to validate the ref name\nvar validateRefName = function(refName) {\n    // Check for invalid Unicode sequences using punycode\n    try {\n        punycode.ucs2.encode(refName);\n    } catch (e) {\n        return false;\n    }\n\n    // Check against forbidden characters\n    if (/[!@,\\[\\]\\s\\t\\n\\r\\~\\:\\<\\>]/.test(refName)) {\n        return false;\n    }\n\n    return true;\n};\n",
+    "python": "class Solution:\n    def validateRefName(self, refName: str) -> bool:\n        # Check for invalid Unicode sequences using unicodedata\n        try:\n            unicodedata.normalize('NFKC', refName)\n        except unicodedata.NormalizeError:\n            return False\n\n        # Check against forbidden characters\n        if any(c in refName for c in '!@,\\[\\]\\s\\t\\n\\r~:\\<\\>'): return False\n\n        return True;"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Define a function to validate the ref name\nvar validateRefName = function(refName) {\n    // Check for invalid Unicode sequences using punycode\n    try {\n        var encodedRefName = punycode.ucs2.encode(refName);\n        // Check if the encoded string is longer than the original string\n        if (encodedRefName.length > refName.length) {\n            return false;\n        }\n    } catch (e) {\n        return false;\n    }\n\n    // Check against forbidden characters\n    if (/[!@,\\[\\]\\s\\t\\n\\r\\~\\:\\<\\>]/.test(refName)) {\n        return false;\n    }\n\n    return true;\n};\n",
+    "python": "class Solution:\n    def validateRefName(self, refName: str) -> bool:\n        # Check for invalid Unicode sequences using unicodedata\n        try:\n            unicodedata.normalize('NFKC', refName)\n        except unicodedata.NormalizeError:\n            return False\n\n        # Check against forbidden characters\n        if any(c in refName for c in '!@,\\[\\]\\s\\t\\n\\r~:\\<\\>'): return False\n\n        # Check if the length of the encoded string is longer than the original string\n        if len(unicodedata.normalize('NFKC', refName).encode('utf-8')) > len(refName.encode('utf-8')):\n            return False\n\n        return True;"
+  },
+  "functionSignature": {
+    "javascript": "var validateRefName = function(refName);",
+    "python": "def validateRefName(self, refName: str) -> bool:"
+  },
+  "solutions": {
+    "javascript": "// Solution\n// Define a function to validate the ref name\nvar validateRefName = function(refName) {\n    // Check for invalid Unicode sequences using punycode\n    try {\n        punycode.ucs2.encode(refName);\n    } catch (e) {\n        return false;\n    }\n\n    // Check against forbidden characters\n    if (/[!@,\\[\\]\\s\\t\\n\\r\\~\\:\\<\\>]/.test(refName)) {\n        return false;\n    }\n\n    return true;\n};",
+    "python": "class Solution:\n    def validateRefName(self, refName: str) -> bool:\n        # Check for invalid Unicode sequences using unicodedata\n        try:\n            unicodedata.normalize('NFKC', refName)\n        except unicodedata.NormalizeError:\n            return False\n\n        # Check against forbidden characters\n        if any(c in refName for c in '!@,\\[\\]\\s\\t\\n\\r~:\\<\\>'): return False\n\n        return True;"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "feature/new-feature",
+      "output": "true",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "feature/new-feature@",
+      "output": "false",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_3",
+      "input": "0",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "_id": "b73efd090026733e8b892728",
+  "slug": "validating-git-ref-names-with-forbidden-characters-and-unicode-sequences-bugfix-hard-git",
+  "mode": "bug_fix",
+  "category": "GIT",
+  "difficulty": "Hard"
+}

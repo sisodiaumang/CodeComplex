@@ -1,0 +1,138 @@
+{
+  "_id": "0caba4265be0892495338051",
+  "title": "Email Verification Service",
+  "slug": "email-verification-service-easy-email",
+  "difficulty": "Easy",
+  "topics": [
+    "EMAIL"
+  ],
+  "statement": "Implement a simple email verification service using Express. Users can verify their email addresses by sending a verification code via email. The provided email should have a verification token that users can enter to confirm their email address. The service should support sending emails with verification tokens using a mock SMTP server for the purpose of this challenge.",
+  "constraints": [
+    "Must use only the in-memory array or mock database provided",
+    "Must implement email sending using a mock SMTP server"
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/email/generate-token",
+      "description": "Generate an email verification token for a user with the provided email address. The response includes the email address and the generated verification token. The user should receive an email at the provided email address with the verification token.",
+      "body": {
+        "email": "user@example.com"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/email/verify-token",
+      "description": "Verify the email verification token provided. If the token is valid, return the user's email address. Otherwise, return an error message.",
+      "body": {
+        "token": "verification-token",
+        "email": "user@example.com"
+      }
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\"name\": \"email-service\",\"version\": \"1.0.0\",\"main\": \"index.js\",\"scripts\": {\"start\": \"node index.js\"},\"dependencies\": {\"express\": \"^4.18.2\",\"nodemailer\": \"^6.7.4\"}}",
+    "index.js": "const express = require('express');\nconst app = express();\napp.use(express.json());\nconst nodemailer = require('nodemailer');\nconst transporter = nodemailer.createTransport({\n  host: 'smtp.example.com',\n  port: 587,\n  auth: {\n    user: 'username',\n    pass: 'password'\n  }\n});\n\nconst users = [];\n\n// TODO: Implement endpoints\napp.listen(3000, () => console.log('Server running on port 3000'));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "POST",
+      "path": "/api/email/generate-token",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "email": "test@example.com"
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "email": "test@example.com",
+        "token": "generated-token"
+      },
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "POST",
+      "path": "/api/email/verify-token",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "token": "generated-token",
+        "email": "test@example.com"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "email": "test@example.com"
+      },
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "POST",
+      "path": "/api/email/generate-token",
+      "body": {
+        "email": ""
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "POST",
+      "path": "/api/email/verify-token",
+      "body": {
+        "token": "",
+        "email": ""
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "POST",
+      "path": "/api/email/verify-token",
+      "body": {
+        "token": "invalid-token",
+        "email": "test@example.com"
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "nodemailer",
+    "resend",
+    "smtp",
+    "templates",
+    "otp",
+    "verification",
+    "password-reset",
+    "email"
+  ]
+}

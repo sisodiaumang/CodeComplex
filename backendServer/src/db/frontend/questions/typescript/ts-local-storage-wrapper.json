@@ -1,0 +1,48 @@
+{
+  "_id": "736811f3ce14a0d4cb0c83ef",
+  "title": "Type-Safe Storage Wrapper",
+  "slug": "ts-local-storage-wrapper",
+  "difficulty": "Easy",
+  "topics": [
+    "TYPESCRIPT"
+  ],
+  "statement": {
+    "markdown": "## Type-Safe LocalStorage Wrapper\n\nCreate a strongly-typed wrapper around the browser's `localStorage` API.\n\n### Requirements:\n1. **Typed Operations**: Implement `getItem(key)` and `setItem(key, value)`, where `key` and `value` are constrained to match a schema type you define.\n2. **JSON Serialization**: Automatically `JSON.stringify` values on save and `JSON.parse` them on read, without throwing if a stored value is missing or malformed.\n3. **Key Safety**: `key` should only accept keys that exist in the schema \u2014 passing an invalid key should be a compile-time TypeScript error."
+  },
+  "constraints": [
+    "Must wrap native window.localStorage",
+    "API must assert type assertions matching parameters"
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "typescript": "interface Schema {\n  theme: 'light' | 'dark';\n  userId: number;\n  rememberMe: boolean;\n}\n\nexport class SafeStorage {\n  // Implement typesafe localStorage wrapper here\n}\n"
+  },
+  "gradingCriteria": [
+    {
+      "id": "serialization_correctness",
+      "description": "Verify storage wrapper safely parses/stringifies complex JSON nodes.",
+      "weight": 50
+    },
+    {
+      "id": "compilation_safety",
+      "description": "Verify type check assertions restrict key definitions appropriately.",
+      "weight": 50
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "typescript"
+    ],
+    "referenceSolution": "interface Schema {\n  theme: 'light' | 'dark';\n  userId: number;\n  rememberMe: boolean;\n}\n\nexport class SafeStorage {\n  getItem<K extends keyof Schema>(key: K): Schema[K] | null {\n    try {\n      const data = localStorage.getItem(key as string);\n      return data ? JSON.parse(data) : null;\n    } catch {\n      return null;\n    }\n  }\n\n  setItem<K extends keyof Schema>(key: K, value: Schema[K]): void {\n    try {\n      localStorage.setItem(key as string, JSON.stringify(value));\n    } catch {\n      // ignore\n    }\n  }\n\n  removeItem<K extends keyof Schema>(key: K): void {\n    localStorage.removeItem(key as string);\n  }\n}"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

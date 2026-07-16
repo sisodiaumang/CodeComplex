@@ -21,10 +21,30 @@ import {
   Card,
   EmptyState,
   Input,
+  Skeleton,
   Spinner,
 } from "@/components/ui";
 
 type Tab = "friends" | "incoming" | "outgoing";
+
+function PlayerListSkeleton() {
+  return (
+    <ul className="divide-y divide-border/60">
+      {Array.from({ length: 3 }).map((_, i) => (
+        <li key={i} className="flex items-center justify-between gap-2 px-5 py-4">
+          <div className="flex items-center gap-3">
+            <Skeleton className="h-8 w-8 rounded-full" />
+            <div className="space-y-1.5">
+              <Skeleton className="h-4 w-28" />
+              <Skeleton className="h-3.5 w-20" />
+            </div>
+          </div>
+          <Skeleton className="h-8 w-20 rounded-md" />
+        </li>
+      ))}
+    </ul>
+  );
+}
 
 export default function FriendsPage() {
   const [tab, setTab] = useState<Tab>("friends");
@@ -133,7 +153,7 @@ export default function FriendsPage() {
         {search.trim().length >= 2 && (
           <div className="border-t border-border">
             {searchQuery.isLoading ? (
-              <Spinner />
+              <PlayerListSkeleton />
             ) : results.length === 0 ? (
               <p className="px-5 py-4 text-[15px] text-text-muted">
                 No players match &ldquo;{search.trim()}&rdquo;.
@@ -187,7 +207,7 @@ export default function FriendsPage() {
       <Card>
         {tab === "friends" &&
           (friendsQuery.isLoading ? (
-            <Spinner />
+            <PlayerListSkeleton />
           ) : friends.length === 0 ? (
             <EmptyState
               icon={<Users className="size-6" />}
@@ -224,7 +244,7 @@ export default function FriendsPage() {
 
         {tab === "incoming" &&
           (incomingQuery.isLoading ? (
-            <Spinner />
+            <PlayerListSkeleton />
           ) : incoming.length === 0 ? (
             <EmptyState
               icon={<UserPlus className="size-6" />}
@@ -266,7 +286,7 @@ export default function FriendsPage() {
 
         {tab === "outgoing" &&
           (outgoingQuery.isLoading ? (
-            <Spinner />
+            <PlayerListSkeleton />
           ) : outgoing.length === 0 ? (
             <EmptyState
               icon={<UserPlus className="size-6" />}

@@ -1,0 +1,136 @@
+{
+  "title": "DOCKER Network Port Exclusion Bug Fixer",
+  "subCategory": "Docker port mapping",
+  "statement": {
+    "markdown": "Given a Docker container configuration with multiple port mappings, write a function that excludes a specified port range from the exposed ports. The function should return the updated list of exposed ports after exclusion.\n\n**Example Input:\"\n`docker-compose.yml`\n\nversion: '3.8'\n\nservices:\n  web:\n    image: web:latest\n    ports:\n      - 8080:8080\n      - 8081:8081\n      - 8082:8082\n\nexposed_ports:\n  - 8080\n  - 8081\n  - 8082\n  - 8083\n\n**Example Output:\"\n`updated_ports`\n\n[8080, 8081, 8082]\n\n**Constraints:\"\n- The input is a valid Docker configuration file.\n- The port range to be excluded is always at the end of the exposed ports list.\n- The excluded port range starts with a number that is equal to the last exposed port number plus one.\n- The excluded port range includes the last exposed port number plus one.\n- The excluded port range does not overlap with any other port range in the input.\n\n**Notes:\"\n- The input file can contain multiple services and port mappings.\n- The function should only exclude the specified port range from the exposed ports and not affect any other port mappings.\n- The updated list of exposed ports should be returned in the same order as the original list.\n- The function should handle cases where the excluded port range is empty (i.e., the last exposed port number is equal to the last exposed port number plus one).",
+    "inputFormat": "docker-compose.yml",
+    "outputFormat": "list of integers",
+    "notes": "This function should be able to handle large input files with multiple services and port mappings.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of exposed ports"
+      }
+    ],
+    "examples": [
+      {
+        "input": "version: '3.8'\n\nservices:\n  web:\n    image: web:latest\n    ports:\n      - 8080:8080\n      - 8081:8081\n      - 8082:8082\n\nexposed_ports:\n  - 8080\n  - 8081\n  - 8082\n  - 8083\n",
+        "output": "[8080, 8081, 8082]",
+        "explanation": "The function excludes the port range [8083] from the exposed ports."
+      },
+      {
+        "input": "version: '3.8'\n\nservices:\n  web:\n    image: web:latest\n    ports:\n      - 8080:8080\n      - 8081:8081\n      - 8082:8082\n\nexposed_ports:\n  - 8080\n  - 8081\n  - 8082\n",
+        "output": "[8080, 8081, 8082]",
+        "explanation": "The function excludes the empty port range [] from the exposed ports."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 100,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DOCKER"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "docker"
+    ],
+    "interviewFrequency": 1,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "The excluded port range starts with a number that is equal to the last exposed port number plus one."
+    }
+  ],
+  "editorial": {
+    "title": "DOCKER Network Port Exclusion Bug Fixer Editorial",
+    "intuition": "The function should iterate over the exposed ports list and exclude the specified port range.",
+    "bruteForce": "The brute force approach would be to iterate over the exposed ports list and exclude the specified port range by checking each port individually.",
+    "betterSolution": "The better solution would be to use the `slice()` method to exclude the specified port range from the exposed ports list.",
+    "optimalSolution": "The optimal solution would be to use the `slice()` method and the `last()` method to exclude the specified port range from the exposed ports list.",
+    "proofOfCorrectness": "The function is correct because it excludes the specified port range from the exposed ports list and returns the updated list in the same order as the original list.",
+    "dryRun": "Example dry run:\nInput: `version: '3.8'\n\nservices:\n  web:\n    image: web:latest\n    ports:\n      - 8080:8080\n      - 8081:8081\n      - 8082:8082\n\nexposed_ports:\n  - 8080\n  - 8081\n  - 8082\n  - 8083\n`\nOutput: `[8080, 8081, 8082]`",
+    "commonMistakes": [
+      "Not excluding the entire port range",
+      "Not returning the updated list in the same order as the original list"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "function excludePortRange(input) {\n  // Your code here\n}\n",
+    "python": "class Solution:\n  def exclude_port_range(self, input_str):\n    # Your code here\n"
+  },
+  "buggyStarterCode": {
+    "javascript": "function excludePortRange(input) {\n  let exposedPorts = input.exposed_ports;\n  let lastPort = exposedPorts[exposedPorts.length - 1];\n  let excludedRange = lastPort + 1;\n  for (let i = 0; i < exposedPorts.length; i++) {\n    if (exposedPorts[i] === excludedRange) {\n      exposedPorts.splice(i, 1);\n    }\n  }\n  return exposedPorts;\n}\n",
+    "python": "class Solution:\n  def exclude_port_range(self, input_str):\n    exposed_ports = input_str.split('\\n')[4].split(' ')[1].split('\\n')[0].split(' ')[1:]\n    last_port = int(exposed_ports[-1])\n    excluded_range = last_port + 1\n    for i in range(len(exposed_ports) - 1, -1, -1):\n      if int(exposed_ports[i]) === excluded_range:\n        exposed_ports.pop(i)\n    return exposed_ports\n"
+  },
+  "functionSignature": {
+    "javascript": "function excludePortRange(input) {\n}\n",
+    "python": "class Solution:\n  def exclude_port_range(self, input_str):\n"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction excludePortRange(input) {\n  let exposedPorts = input.exposed_ports;\n  let lastPort = exposedPorts[exposedPorts.length - 1];\n  let excludedRange = lastPort + 1;\n  return exposedPorts.slice(0, -1);\n}\n",
+    "python": "class Solution:\n  def exclude_port_range(self, input_str):\n    exposed_ports = input_str.split('\\n')[4].split(' ')[1].split('\\n')[0].split(' ')[1:]\n    return exposed_ports[:-1]\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "version: '3.8'\n\nservices:\n  web:\n    image: web:latest\n    ports:\n      - 8080:8080\n      - 8081:8081\n      - 8082:8082\n\nexposed_ports:\n  - 8080\n  - 8081\n  - 8082\n  - 8083\n",
+      "output": "[8080, 8081, 8082]",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "version: '3.8'\n\nservices:\n  web:\n    image: web:latest\n    ports:\n      - 8080:8080\n      - 8081:8081\n      - 8082:8082\n\nexposed_ports:\n  - 8080\n  - 8081\n  - 8082\n",
+      "output": "[8080, 8081, 8082]",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "326010f08edd1282904e9ca4",
+  "slug": "docker-network-port-exclusion-bug-fixer-bugfix-hard-docker",
+  "mode": "bug_fix",
+  "category": "DOCKER",
+  "difficulty": "Hard"
+}

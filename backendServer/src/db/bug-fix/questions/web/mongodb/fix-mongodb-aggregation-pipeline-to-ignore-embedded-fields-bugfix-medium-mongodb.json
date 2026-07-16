@@ -1,0 +1,135 @@
+{
+  "title": "Fix MongoDB Aggregation Pipeline to Ignore Embedded Fields",
+  "subCategory": "MongoDB Aggregation Pipeline",
+  "statement": {
+    "markdown": "Write a MongoDB aggregation pipeline to ignore embedded fields in a collection. The pipeline should only project the 'name' and 'age' fields from the 'user' collection, ignoring any nested fields like 'address' or 'phone'. For example, if a document looks like this: `{ 'name': 'John', 'age': 30, 'address': { 'street': '123 Main St', 'city': 'Anytown', 'state': 'CA', 'zip': '12345' } }`, the pipeline should output `'name': 'John', 'age': 30`.",
+    "inputFormat": "The input will be a MongoDB collection with documents containing various fields, including 'name' and 'age'.",
+    "outputFormat": "The output should be an array of objects, each containing the 'name' and 'age' fields from the corresponding input document.",
+    "notes": "The pipeline should handle documents with missing or null 'name' or 'age' fields without throwing an error.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Maximum number of documents in the input collection"
+      }
+    ],
+    "examples": [
+      {
+        "input": "[{'name': 'John', 'age': 30, 'address': {'street': '123 Main St', 'city': 'Anytown', 'state': 'CA', 'zip': '12345'}}, {'name': 'Jane', 'age': null, 'address': {'street': '456 Elm St', 'city': 'Othertown', 'state': 'NY', 'zip': '67890'}}]",
+        "output": "[{'name': 'John', 'age': 30}, {'name': 'Jane', 'age': null}]",
+        "explanation": "The pipeline should ignore the 'address' field and only project the 'name' and 'age' fields."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "MONGODB"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "mongodb"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the '$project' stage to specify the fields to include in the output."
+    },
+    {
+      "order": 2,
+      "text": "Use the '$and' operator to combine multiple conditions in the '$project' stage."
+    }
+  ],
+  "editorial": {
+    "title": "Fixing the MongoDB Aggregation Pipeline",
+    "intuition": "The pipeline should use the '$project' stage to specify the fields to include in the output, and use the '$and' operator to combine multiple conditions.",
+    "bruteForce": "One possible brute-force solution is to use multiple '$project' stages to exclude each field individually.",
+    "betterSolution": "",
+    "optimalSolution": "The optimal solution is to use a single '$project' stage with the '$and' operator to exclude all nested fields.",
+    "proofOfCorrectness": "The optimal solution will correctly ignore all nested fields and only project the 'name' and 'age' fields.",
+    "dryRun": "To test the solution, run the pipeline on a sample collection and verify that it produces the expected output.",
+    "commonMistakes": [
+      "Forgetting to include the '$and' operator",
+      "Including unnecessary fields in the '$project' stage"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "// Define the MongoDB aggregation pipeline",
+    "python": "class Solution:\n    def solve(self):\n        pipeline = []\n        # Implement the pipeline here"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Define the MongoDB aggregation pipeline\nconst pipeline = [\n  // Project the 'name' and 'age' fields\n  { $project: { name: 1, age: 1 } }\n];\n\n// Define the collection to aggregate\nconst collection = [\n  { name: 'John', age: 30, address: { street: '123 Main St', city: 'Anytown', state: 'CA', zip: '12345' } }\n];",
+    "python": "class Solution:\n    def solve(self):\n        pipeline = [\n            # Project the 'name' and 'age' fields\n            { '$project': { 'name': 1, 'age': 1, 'address': 1 } }\n        ]\n\n        # Define the collection to aggregate\n        collection = [\n            { 'name': 'John', 'age': 30, 'address': { 'street': '123 Main St', 'city': 'Anytown', 'state': 'CA', 'zip': '12345' } }\n        ]"
+  },
+  "functionSignature": {
+    "javascript": "const solve = function(collection) {\n    // Implement the aggregation pipeline here\n};",
+    "python": "def solve(self, collection):\n    # Implement the aggregation pipeline here"
+  },
+  "solutions": {
+    "javascript": "// Define the MongoDB aggregation pipeline\nconst pipeline = [\n  // Project the 'name' and 'age' fields, excluding the 'address' field\n  { $project: { name: 1, age: 1, address: 0 } }\n];\n\n// Define the collection to aggregate\nconst collection = [\n  { name: 'John', age: 30, address: { street: '123 Main St', city: 'Anytown', state: 'CA', zip: '12345' } }\n];\n\n// Implement the aggregation pipeline\nconst result = collection.aggregate(pipeline);\n\n// Print the result\nconsole.log(result);\n",
+    "python": "class Solution:\n    def solve(self):\n        pipeline = [\n            # Project the 'name' and 'age' fields, excluding the 'address' field\n            { '$project': { 'name': 1, 'age': 1, 'address': 0 } }\n        ]\n\n        # Define the collection to aggregate\n        collection = [\n            { 'name': 'John', 'age': 30, 'address': { 'street': '123 Main St', 'city': 'Anytown', 'state': 'CA', 'zip': '12345' } }\n        ]\n\n        # Implement the aggregation pipeline\n        result = list(collection.aggregate(pipeline))\n\n        # Print the result\n        print(result)"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "[{'name': 'John', 'age': 30, 'address': {'street': '123 Main St', 'city': 'Anytown', 'state': 'CA', 'zip': '12345'}}, {'name': 'Jane', 'age': null, 'address': {'street': '456 Elm St', 'city': 'Othertown', 'state': 'NY', 'zip': '67890'}}]",
+      "output": "[{'name': 'John', 'age': 30}, {'name': 'Jane', 'age': null}]",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "[{'name': 'Bob', 'age': 40, 'address': {'street': '789 Oak St', 'city': 'Anothertown', 'state': 'GA', 'zip': '23456'}}, {'name': 'Alice', 'age': 20, 'address': null}]",
+      "output": "[{'name': 'Bob', 'age': 40}, {'name': 'Alice', 'age': 20}]",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "a7c3b521ac0bb54357a629d5",
+  "slug": "fix-mongodb-aggregation-pipeline-to-ignore-embedded-fields-bugfix-medium-mongodb",
+  "mode": "bug_fix",
+  "category": "MONGODB",
+  "difficulty": "Medium"
+}

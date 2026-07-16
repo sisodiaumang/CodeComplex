@@ -1,0 +1,67 @@
+{
+  "_id": "313bda1e688e8d6c57914b1f",
+  "title": "Advanced Multi-Factor Authentication Dashboard with Real-Time OTP Validation",
+  "slug": "advanced-multi-factor-authentication-dashboard-with-real-time-otp-validation-hard-auth",
+  "difficulty": "Hard",
+  "topics": [
+    "AUTH"
+  ],
+  "statement": {
+    "markdown": "## Projects Challenge: Advanced Multi-Factor Authentication Dashboard with Real-Time OTP Validation\n\nYour objective is to build a fully functional, highly interactive React component representing the target design mockup.\n\n### 🎨 Color Palette\n* `#B7D7CD`\n* `#C06C88`\n* `#411C56`\n\n### 📐 Target Design Mockup\nUse the visual mockup shown in the panel to guide your coordinate alignment, container proportions, and spacing.\n\n### 📌 Target Design SVG Source\nThe target geometry is defined by the following SVG vector graphic (viewable by the LLM judge):\n```xml\n<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300'><rect x='20' y='20' width='360' height='260' rx='10' fill='#B7D7CD'/><path d='M 120 80 A 140 140 0 0 1 220 80' stroke='#C06C88' stroke-width='4' fill='none'/><text x='100' y='120' font-size='24' fill='#411C56'>Multi-Factor Authentication</text><g transform='translate(190, 120)'><rect x='0' y='0' width='150' height='24' rx='4' fill='#B7D7CD'/><text x='10' y='18' font-size='18' fill='#C06C88'>QR Code Scanner</text></g><g transform='translate(20, 200)'><rect x='0' y='0' width='240' height='40' rx='4' fill='#B7D7CD'/><text x='10' y='26' font-size='18' fill='#C06C88'>User Information</text></g></svg>\n```\n\n### ⚙️ Requirements\n1. Match the visual presentation (layout, alignment, borders, colors) of the mockup.\n2. Implement all necessary React state variables, event handlers, and input bindings to make the page interactive.\n3. Make sure all interactive controls (buttons, forms, checkboxes, sliders) update the view correctly.\n"
+  },
+  "constraints": [
+    "Must use real-time OTP validation with dynamic user information updates",
+    "Must include a QR code scanner with interactive scanning and decoding",
+    "Must be fully interactive with state updates and handlers"
+  ],
+  "referenceAssets": [
+    {
+      "url": "http://localhost:8000/public/mockups/advanced-multi-factor-authentication-dashboard-with-real-time-otp-validation-hard-auth.svg",
+      "caption": "Recreate target design: Advanced Multi-Factor Authentication Dashboard with Real-Time OTP Validation"
+    }
+  ],
+  "starterCode": {
+    "react": "import React, { useState, useEffect } from 'react';\nimport axios from 'axios';\n\nconst App = () => {\n  const [user, setUser] = useState({});\n  const [otp, setOtp] = useState('');\n  const [qrCode, setQrCode] = useState(null);\n\n  useEffect(() => {\n    axios.get('https://api.example.com/user')\n      .then(res => setUser(res.data))\n      .catch(err => console.error(err));\n  }, []);\n\n  const handleSubmit = (e) => {\n    e.preventDefault();\n    axios.post('https://api.example.com/otp', { otp })\n      .then(res => console.log(res.data))\n      .catch(err => console.error(err));\n  };\n\n  const handleScan = (e) => {\n    e.preventDefault();\n    axios.get('https://api.example.com/qr-code', { responseType: 'blob' })\n      .then(res => setQrCode(URL.createObjectURL(res.data)))\n      .catch(err => console.error(err));\n  };\n\n  return (\n    <div className=\"min-h-screen bg-[#090a0f] text-white p-4 flex items-center justify-center\">\n      <div className=\"bg-white shadow-md p-4 rounded-md w-full max-w-md\">\n        <h2 className=\"text-lg font-bold mb-4\">Multi-Factor Authentication</h2>\n        <form onSubmit={handleSubmit}>\n          <label className=\"block mb-2\">OTP:</label>\n          <input type=\"text\" value={otp} onChange={(e) => setOtp(e.target.value)} className=\"block w-full p-2 mb-4\"/>\n          <button type=\"submit\" className=\"bg-[#C06C88] hover:bg-[#B7D7CD] text-white font-bold py-2 px-4 rounded\">Submit</button>\n        </form>\n        <div className=\"mt-4\">\n          <button onClick={handleScan} className=\"bg-[#B7D7CD] hover:bg-[#C06C88] text-white font-bold py-2 px-4 rounded\">Scan QR Code</button>\n          {qrCode && <img src={qrCode} alt=\"QR Code\" className=\"mb-4\"/>}\n        </div>\n        <div className=\"bg-[#B7D7CD] shadow-md p-4 rounded-md w-full max-w-md mt-4\">\n          <h2 className=\"text-lg font-bold mb-4\">User Information</h2>\n          <ul>\n            {Object.keys(user).map((key) => (\n              <li key={key}>{key}: {user[key]}</li>\n            ))}\n          </ul>\n        </div>\n      </div>\n    </div>\n  );\n};\n\nexport default App;"
+  },
+  "gradingCriteria": [
+    {
+      "id": "visual_fidelity",
+      "description": "Evaluate how closely the layout, colors, and positioning match the target visual mockup.",
+      "weight": 30
+    },
+    {
+      "id": "interactive_features",
+      "description": "Verify interactive state updates, form logic, active selections, and handlers.",
+      "weight": 40
+    },
+    {
+      "id": "real_time_otp_validation",
+      "description": "Evaluate the real-time OTP validation functionality and dynamic user information updates.",
+      "weight": 30
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "react"
+    ]
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "tags": [
+    "frontend",
+    "react",
+    "projects",
+    "auth",
+    "color:#B7D7CD",
+    "color:#C06C88",
+    "color:#411C56"
+  ]
+}

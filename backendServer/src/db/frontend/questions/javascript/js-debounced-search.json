@@ -1,0 +1,52 @@
+{
+  "_id": "81d48d52c0c803bc9465f640",
+  "title": "Debounced Search Input",
+  "slug": "js-debounced-search",
+  "difficulty": "Medium",
+  "topics": [
+    "JAVASCRIPT"
+  ],
+  "statement": {
+    "markdown": "## Debounced Search Input & Throttled Action\n\nBuild a search input field that displays the debounced query value only after 300ms of inactivity. Additionally, implement an action button that is throttled to increment a click counter at most once every 1000ms.\n\n### Requirements:\n1. **Debounce Output**: Input key-events should update the debounced value text container after exactly 300ms of inactivity.\n2. **Throttle Button**: Fast clicking on the action button should only register one counter increment per 1000ms window.\n3. **DOM Updates**: Ensure correct selector selection and output rendering."
+  },
+  "constraints": [
+    "Must implement custom debounce and throttle timer logic",
+    "Do not use third-party libraries like Lodash"
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "html": "<div class=\"p-6 bg-slate-800 rounded-xl max-w-md mx-auto text-white font-sans border border-slate-700 shadow-md\">\n  <label class=\"block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wider\">Search Query</label>\n  <input id=\"search-input\" type=\"text\" class=\"w-full p-2 bg-slate-950 border border-slate-700 text-white rounded mb-4 focus:outline-none focus:border-indigo-500\" placeholder=\"Type to search...\" />\n  <div class=\"text-sm text-slate-400\">Debounced Value: <span id=\"debounced-output\" class=\"text-white font-mono\">-</span></div>\n  <button id=\"action-btn\" class=\"mt-6 w-full bg-indigo-600 p-2.5 rounded font-bold hover:bg-indigo-500 transition-colors\">Submit (Throttled)</button>\n  <div class=\"text-sm text-slate-400 mt-2\">Successful Submissions: <span id=\"click-counter\" class=\"text-white font-mono\">0</span></div>\n</div>",
+    "css": "",
+    "javascript": "const searchInput = document.getElementById('search-input');\nconst debouncedOutput = document.getElementById('debounced-output');\nconst actionBtn = document.getElementById('action-btn');\nconst clickCounter = document.getElementById('click-counter');\n\n// Implement debounce (300ms) and throttle (1000ms) handlers here\n"
+  },
+  "gradingCriteria": [
+    {
+      "id": "debounce_correctness",
+      "description": "Verify input debounces value update and does not trigger prematurely.",
+      "weight": 50
+    },
+    {
+      "id": "throttle_correctness",
+      "description": "Verify submission click increments are throttled to once per second.",
+      "weight": 50
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "html",
+      "css",
+      "javascript"
+    ],
+    "referenceSolution": "const searchInput = document.getElementById('search-input');\nconst debouncedOutput = document.getElementById('debounced-output');\nconst actionBtn = document.getElementById('action-btn');\nconst clickCounter = document.getElementById('click-counter');\n\nlet debounceTimer;\nsearchInput.addEventListener('input', () => {\n  clearTimeout(debounceTimer);\n  debounceTimer = setTimeout(() => {\n    debouncedOutput.textContent = searchInput.value || '-';\n  }, 300);\n});\n\nlet throttleTimer = false;\nlet clicks = 0;\nactionBtn.addEventListener('click', () => {\n  if (throttleTimer) return;\n  clicks++;\n  clickCounter.textContent = clicks;\n  throttleTimer = true;\n  setTimeout(() => {\n    throttleTimer = false;\n  }, 1000);\n});"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

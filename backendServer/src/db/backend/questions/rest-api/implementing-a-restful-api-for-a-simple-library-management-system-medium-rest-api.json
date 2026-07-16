@@ -1,0 +1,138 @@
+{
+  "_id": "b2ef8d01d4024cf17dfd5063",
+  "title": "Implementing a RESTful API for a Simple Library Management System",
+  "slug": "implementing-a-restful-api-for-a-simple-library-management-system-medium-rest-api",
+  "difficulty": "Medium",
+  "topics": [
+    "REST_API"
+  ],
+  "statement": "Develop a RESTful API for a library management system. The API should handle CRUD operations for books and authors. The API should also include pagination and filtering by author name.\n\n   The API should have the following endpoints:\n\n   - GET /api/books: Returns a list of all books with pagination (limit 10, offset 0). The response should include the author name.\n   - GET /api/books?author=John%20Doe: Returns a list of all books written by John Doe with pagination (limit 10, offset 0).\n   - GET /api/books/:id: Returns a single book by ID.\n   - POST /api/books: Creates a new book. The request body should include the book title, author name, and publication year.\n   - PUT /api/books/:id: Updates a single book. The request body should include the book title, author name, and publication year.\n   - DELETE /api/books/:id: Deletes a single book.\n\n   Constraints:\n\n   - The API should use a mock database to store books and authors.\n   - The API should handle pagination and filtering correctly.\n   - The API should validate the request body for POST and PUT requests.\n\n   Use the Express.js framework and Node.js runtime to develop the API.",
+  "constraints": [
+    "Must use a mock database to store books and authors",
+    "Must handle pagination and filtering correctly"
+  ],
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/api/books",
+      "description": "Returns a list of all books with pagination (limit 10, offset 0)"
+    },
+    {
+      "method": "GET",
+      "path": "/api/books?author=John%20Doe",
+      "description": "Returns a list of all books written by John Doe with pagination (limit 10, offset 0)"
+    },
+    {
+      "method": "GET",
+      "path": "/api/books/:id",
+      "description": "Returns a single book by ID"
+    },
+    {
+      "method": "POST",
+      "path": "/api/books",
+      "description": "Creates a new book. The request body should include the book title, author name, and publication year"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/books/:id",
+      "description": "Updates a single book. The request body should include the book title, author name, and publication year"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/books/:id",
+      "description": "Deletes a single book"
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\"name\": \"library-api\",\"version\": \"1.0.0\",\"main\": \"index.js\",\"scripts\": {\"start\": \"node index.js\"},\"dependencies\": {\"express\": \"^4.18.2\"}}",
+    "index.js": "const express = require('express');\nconst app = express();\napp.use(express.json());\n\nconst books = [\n  { id: 1, title: 'Book 1', author: 'John Doe', publicationYear: 2020 },\n  { id: 2, title: 'Book 2', author: 'Jane Doe', publicationYear: 2021 }\n];\n\n// TODO: Implement endpoints\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/api/health",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "GET",
+      "path": "/api/books",
+      "expectedStatus": 200,
+      "expectedBody": "{\"books\": [{\"id\": 1, \"title\": \"Book 1\", \"author\": \"John Doe\", \"publicationYear\": 2020}, {\"id\": 2, \"title\": \"Book 2\", \"author\": \"Jane Doe\", \"publicationYear\": 2021}]}",
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "GET",
+      "path": "/api/books?author=John%20Doe",
+      "expectedStatus": 200,
+      "expectedBody": "{\"books\": [{\"id\": 1, \"title\": \"Book 1\", \"author\": \"John Doe\", \"publicationYear\": 2020}]}",
+      "isVisible": true
+    },
+    {
+      "id": "v_tc3",
+      "method": "POST",
+      "path": "/api/books",
+      "body": "{\"title\": \"New Book\", \"author\": \"John Doe\", \"publicationYear\": 2022}",
+      "expectedStatus": 201,
+      "expectedBody": "{\"id\": 3, \"title\": \"New Book\", \"author\": \"John Doe\", \"publicationYear\": 2022}",
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "GET",
+      "path": "/api/books/999",
+      "expectedStatus": 404,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "PUT",
+      "path": "/api/books/999",
+      "body": "{\"title\": \"Updated Book\", \"author\": \"John Doe\", \"publicationYear\": 2022}",
+      "expectedStatus": 404,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "DELETE",
+      "path": "/api/books/999",
+      "expectedStatus": 404,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "crud",
+    "rest-principles",
+    "http-methods",
+    "status-codes",
+    "headers",
+    "query-parameters",
+    "pagination",
+    "filtering",
+    "sorting",
+    "versioning",
+    "api-design",
+    "idempotency",
+    "rest",
+    "api"
+  ]
+}

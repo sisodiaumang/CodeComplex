@@ -1,0 +1,157 @@
+{
+  "title": "Optimizing a Memoized React Component for Dependent Arrays",
+  "subCategory": "Memoization in React Components",
+  "statement": {
+    "markdown": "You are tasked with creating a memoized React component that displays a list of items based on the user's input. The component's state includes an array of items and a search query. The component should update the list of items when the search query changes. However, the list of items should only be recalculated when the search query is updated, not when the array of items changes. However, the current implementation has a bug that causes the list of items to be recalculated unnecessarily.",
+    "inputFormat": "The input will be an object with two properties: `items` and `searchQuery`.",
+    "outputFormat": "The output should be a list of items that match the search query.",
+    "notes": "The component should use the `useMemo` hook to memoize the list of items.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The maximum number of items in the array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"items\": [1, 2, 3, 4, 5], \"searchQuery\": \"3\"}",
+        "output": "[3]",
+        "explanation": "The list of items should only include the item that matches the search query"
+      },
+      {
+        "input": "{\"items\": [1, 2, 3, 4, 5], \"searchQuery\": \"10\"}",
+        "output": "0",
+        "explanation": "There are no items that match the search query"
+      },
+      {
+        "input": "{\"items\": [1, 2, 3, 4, 5], \"searchQuery\": \"\"}",
+        "output": "1\n2\n3\n4\n5",
+        "explanation": "The list of items should include all items when the search query is empty"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "REACT"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "react"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the `useMemo` hook to memoize the list of items"
+    },
+    {
+      "order": 2,
+      "text": "Make sure to include the `searchQuery` in the dependency array"
+    },
+    {
+      "order": 3,
+      "text": "Check the implementation of the `Array.prototype.filter` method"
+    }
+  ],
+  "editorial": {
+    "title": "Optimizing a Memoized React Component",
+    "intuition": "The key to solving this problem is to use the `useMemo` hook to memoize the list of items. This will ensure that the list is only recalculated when the search query changes.",
+    "bruteForce": "One possible approach is to use the `Array.prototype.filter` method to create a new list of items that match the search query. However, this approach will not work because it will create a new list of items on every render, which is inefficient.",
+    "betterSolution": "A better approach is to use the `useMemo` hook to memoize the list of items. This will ensure that the list is only recalculated when the search query changes.",
+    "optimalSolution": "The optimal solution is to use the `useMemo` hook with a dependency array that includes the `searchQuery`. This will ensure that the list of items is only recalculated when the search query changes.",
+    "proofOfCorrectness": "The proof of correctness is that the list of items will only be recalculated when the search query changes. This is because the `useMemo` hook is used with a dependency array that includes the `searchQuery`.",
+    "dryRun": "Here's an example of how the `useMemo` hook can be used to memoize the list of items:",
+    "commonMistakes": [
+      "Not including the `searchQuery` in the dependency array",
+      "Not using the `useMemo` hook to memoize the list of items"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "import React, { useState, useMemo } from 'react';\n\nfunction MyComponent({ items, searchQuery }) {\n  const [list, setList] = useState([]);\n\n  useEffect(() => {\n    const newList = items.filter(item => item.toString().includes(searchQuery.toString()));\n    setList(newList);\n  }, [items]);\n\n  return (\n    <div>\n      {list.map(item => \n        <div key={item}>{item}</div>\n      )}\n    </div>\n  );\n}\n",
+    "python": "class MyComponent:\n  def __init__(self, items, search_query):\n    self.items = items\n    self.search_query = search_query\n    self.list = []\n\n  def render(self):\n    self.list = [item for item in self.items if str(item).includes(str(self.search_query))]\n    return [\n      div(item) for item in self.list\n    ]"
+  },
+  "buggyStarterCode": {
+    "javascript": "import React, { useState, useMemo } from 'react';\n\nfunction MyComponent({ items, searchQuery }) {\n  const [list, setList] = useState([]);\n\n  useEffect(() => {\n    const newList = items.filter(item => item.toString().includes(searchQuery.toString()));\n    setList(newList);\n  }, [items, searchQuery]);\n\n  return (\n    <div>\n      {list.map(item => \n        <div key={item}>{item}</div>\n      )}\n    </div>\n  );\n}\n",
+    "python": "class MyComponent:\n  def __init__(self, items, search_query):\n    self.items = items\n    self.search_query = search_query\n    self.list = []\n\n  def render(self):\n    self.list = [item for item in self.items if str(item).includes(str(self.search_query))]\n    return [\n      div(item) for item in self.list\n    ]"
+  },
+  "functionSignature": {
+    "javascript": "function MyComponent({ items, searchQuery }) {\n  // ...",
+    "python": "class MyComponent:\n  def __init__(self, items, search_query):\n    # ...\n  def render(self):\n    # ..."
+  },
+  "solutions": {
+    "javascript": "// Optimized solution using useMemo and dependency array\nconst MyComponent = ({ items, searchQuery }) => {\n  const list = useMemo(() => items.filter(item => item.toString().includes(searchQuery.toString())), [searchQuery]);\n  return (\n    <div>\n      {list.map(item => \n        <div key={item}>{item}</div>\n      )}\n    </div>\n  );\n};\n",
+    "python": "class MyComponent:\n  def __init__(self, items, search_query):\n    self.items = items\n    self.search_query = search_query\n\n  def render(self):\n    list = [item for item in self.items if str(item).includes(str(self.search_query))]\n    return [\n      div(item) for item in list\n    ]"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"items\": [1, 2, 3, 4, 5], \"searchQuery\": \"3\"}",
+      "output": "[3]",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"items\": [1, 2, 3, 4, 5], \"searchQuery\": \"10\"}",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    },
+    {
+      "id": "tc_3",
+      "input": "{\"items\": [1, 2, 3, 4, 5], \"searchQuery\": \"\"}",
+      "output": "1\n2\n3\n4\n5",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "_id": "6848575576d8a4d380aeadd3",
+  "slug": "optimizing-a-memoized-react-component-for-dependent-arrays-bugfix-medium-react",
+  "mode": "bug_fix",
+  "category": "REACT",
+  "difficulty": "Medium"
+}

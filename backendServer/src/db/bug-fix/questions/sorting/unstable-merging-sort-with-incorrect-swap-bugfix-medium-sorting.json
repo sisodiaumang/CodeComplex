@@ -1,0 +1,153 @@
+{
+  "_id": "c32856f0a5be820440027f40",
+  "title": "Unstable Merging Sort with Incorrect Swap",
+  "slug": "unstable-merging-sort-with-incorrect-swap-bugfix-medium-sorting",
+  "difficulty": "Medium",
+  "category": "DSA",
+  "subCategory": "Merging Sort",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "sorting"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given an array of integers `nums`, implement merging sort to sort it in non-decreasing order. The function `sortArray` should return a new sorted array. However, the implementation contains a logical error.",
+    "inputFormat": "An array of integers `nums` with at least one element.",
+    "outputFormat": "A new sorted array of integers.",
+    "notes": "The implementation should use the merging sort algorithm and return a new sorted array. The logical error is related to the way the merge process is implemented.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "[4, 2, 6, 1, 5, 3]",
+        "output": "[1, 2, 3, 4, 5, 6]",
+        "explanation": "The function sorts the input array in non-decreasing order."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Verify the merge implementation to identify the logical error."
+    }
+  ],
+  "editorial": {
+    "title": "Merging Sort: Correct Implementation",
+    "intuition": "The merging sort algorithm sorts the input array by dividing it into two halves and recursively sorting each half before merging them.",
+    "bruteForce": "Iterate through the input array to find incorrect merges.",
+    "betterSolution": "Verify the merge process to ensure correct data merging.",
+    "optimalSolution": "Implement the merging sort algorithm correctly.",
+    "proofOfCorrectness": "Verify that the merging sort implementation is correct.",
+    "dryRun": "Example run through the merging sort algorithm.",
+    "commonMistakes": [
+      "Incorrectly merging data",
+      "Missing edge cases"
+    ],
+    "timeComplexity": "O(n log n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "// TODO: implement merging sort algorithm",
+    "java": "// TODO: implement merging sort algorithm",
+    "python": "class Solution:",
+    "javascript": "function mergeSort(arr) { // TODO: implement merging sort algorithm"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution { public: vector<int> sortArray(vector<int>& nums) { if (nums.size() < 2) return nums; vector<int> left(nums.begin(), nums.begin() + nums.size() / 2), right(nums.begin() + nums.size() / 2, nums.end()); merge(left, right, nums.begin()); return nums; } };",
+    "java": "class Solution { public int[] sortArray(int[] nums) { if (nums.length < 2) return nums; int[] left = Arrays.copyOfRange(nums, 0, nums.length / 2), right = Arrays.copyOfRange(nums, nums.length / 2, nums.length); merge(left, right, nums); return nums; } }",
+    "python": "class Solution: def sortArray(self, nums: list[int]) -> list[int]: if len(nums) < 2: return nums left, right = nums[:len(nums) // 2], nums[len(nums) // 2:] merge(left, right, nums); return nums;",
+    "javascript": "function mergeSort(arr) { if (arr.length < 2) return arr; let left = arr.slice(0, arr.length / 2), right = arr.slice(arr.length / 2); merge(left, right, arr); return arr; }"
+  },
+  "functionSignature": {
+    "cpp": "vector<int> sortArray(vector<int>& nums);",
+    "java": "int[] sortArray(int[] nums);",
+    "python": "def sortArray(self, nums: list[int]) -> list[int]:",
+    "javascript": "var mergeSort = function(arr)"
+  },
+  "solutions": {
+    "python": "import sys\nfrom typing import List\n\nclass Solution:\n    def merge(self, nums1: List[int], m: int, nums2: List[int], n: int) -> None:\n        i, j = m - 1, n - 1\n        k = m + n - 1\n        while i >= 0 and j >= 0:\n            if nums1[i] > nums2[j]:\n                nums1[k] = nums1[i]\n                i -= 1\n            else:\n                nums1[k] = nums2[j]\n                j -= 1\n            k -= 1\n\n    def sortArray(self, nums: List[int]) -> List[int]:\n        if len(nums) < 2:\n            return nums\n\n        mid = len(nums) // 2\n        left, right = nums[:mid], nums[mid:]\n\n        self.merge(left, len(left), right, len(right), nums)\n\n        return nums\n\n# driver code to test the function\nif __name__ == '__main__':\n    nums = [4, 2, 6, 1, 5, 3]\n    solution = Solution()\n    sorted_nums = solution.sortArray(nums)\n    print(sorted_nums)\n    assert sorted_nums == [1, 2, 3, 4, 5, 6], f'Expected [1, 2, 3, 4, 5, 6], got {sorted_nums}\n",
+    "cpp": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nvoid merge(vector<int>& nums, int left, int right)\n{\n    int i = left, j = right, k = left + right - 1;\n    while (i < left + left && j < right)\n    {\n        if (nums[i] > nums[j])\n            nums[k--] = nums[i--];\n        else\n            nums[k--] = nums[j--];\n    }\n\n    while (i < left + left)\n    {\n        nums[k--] = nums[i--];\n    }\n\n    while (j < right)\n    {\n        nums[k--] = nums[j--];\n    }\n}\n\nvector<int> sortArray(vector<int>& nums)\n{\n    if (nums.size() < 2)\n        return nums;\n\n    int mid = nums.size() / 2;\n\n    vector<int> left(nums.begin(), nums.begin() + mid), right(nums.begin() + mid, nums.end());\n\n    merge(left, left.begin(), right, right.begin(), nums.begin() + mid);\n\n    return nums;\n}\n\nint main()\n{\n    vector<int> nums = {4, 2, 6, 1, 5, 3};\n    sortArray(nums);\n    for (int i = 0; i < nums.size(); i++)\n        cout << nums[i] << ' '; \n    cout << endl;\n\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "6",
+      "output": "1 2 3 4 5 6",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_hidden_generated",
+      "input": "6",
+      "output": "1 2 3 4 5 6",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

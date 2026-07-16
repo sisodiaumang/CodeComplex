@@ -1,0 +1,149 @@
+{
+  "title": "Fixing Route Parameters for a Simple Express API Endpoint",
+  "subCategory": "Route Parameters",
+  "statement": {
+    "markdown": "Given a simple Express API endpoint that handles GET requests to retrieve user data by ID, identify and fix the bug in the route parameter handling. The endpoint should return the user data with the matching ID, or an error message if the ID is not found. Ensure that the endpoint handles invalid input cases, such as non-numeric IDs or IDs outside the valid range.",
+    "inputFormat": "The input will be a string representing the user ID, which is a numeric value.",
+    "outputFormat": "The output should be a JSON object containing the user data, or an error message if the ID is invalid or not found.",
+    "notes": "You should assume that the user data is stored in an in-memory storage for simplicity.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "id",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Valid user ID range"
+      }
+    ],
+    "examples": [
+      {
+        "input": "123",
+        "output": "{\"name\":\"John\",\"email\":\"john@example.com\"}",
+        "explanation": "Retrieve user data with ID 123"
+      },
+      {
+        "input": "abc",
+        "output": "{\"error\":\"Invalid ID\"}",
+        "explanation": "Invalid user ID (non-numeric)"
+      },
+      {
+        "input": "99999",
+        "output": "{\"error\":\"User not found\"}",
+        "explanation": "User ID outside valid range"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "EXPRESS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "express"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Check the route parameter parsing logic for errors"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial: Route Parameter Handling in Express API",
+    "intuition": "The bug is likely in the route parameter parsing logic, which should handle invalid input cases.",
+    "bruteForce": "One possible approach is to manually parse the route parameter using regular expressions or a dedicated parsing library.",
+    "betterSolution": "A more elegant solution would be to use Express's built-in support for route parameters, which automatically parses the ID as a numeric value.",
+    "optimalSolution": "The optimal solution would be to combine the two approaches, using Express's built-in support for route parameters and manually validating the ID range.",
+    "proofOfCorrectness": "The proof of correctness involves demonstrating that the fixed endpoint handles all possible input cases correctly.",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Inadequate input validation",
+      "Incorrect route parameter parsing"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "const express = require('express');\nconst app = express();\napp.get('/users/:id', (req, res) => {\n  const id = req.params.id;\n  // TO DO: Fix the bug here\n  res.json({});\n});\napp.listen(3000, () => {\n  console.log('Server listening on port 3000');\n});",
+    "python": "from fastapi import FastAPI\napp = FastAPI()\n@app.get('/users/{id}')\ndef get_user(id: int):\n  # TO DO: Fix the bug here\n  return {}"
+  },
+  "buggyStarterCode": {
+    "javascript": "const express = require('express');\nconst app = express();\napp.get('/users/:id', (req, res) => {\n  const id = req.params.id;\n  if (isNaN(id)) {\n    res.json({ error: 'Invalid ID' });\n  } else {\n    // TO DO: Fix the bug here\n    res.json({});\n  }\n});\napp.listen(3000, () => {\n  console.log('Server listening on port 3000');\n});",
+    "python": "from fastapi import FastAPI\napp = FastAPI()\n@app.get('/users/{id}')\ndef get_user(id: int):\n  if id < 1 or id > 10000:\n    return { 'error': 'User not found' }\n  # TO DO: Fix the bug here\n  return {}"
+  },
+  "functionSignature": {
+    "javascript": "app.get('/users/:id', (req, res) => { ... });",
+    "python": "@app.get('/users/{id}')\ndef get_user(id: int) -> dict: ..."
+  },
+  "solutions": {
+    "javascript": "// Solution\nconst express = require('express');\nconst app = express();\napp.get('/users/:id', (req, res) => {\n  const id = parseInt(req.params.id);\n  if (isNaN(id) || id < 1 || id > 10000) {\n    res.json({ error: 'Invalid ID or user not found' });\n  } else {\n    // Simulate user data retrieval\n    const userData = { name: 'John', email: 'john@example.com' };\n    res.json(userData);\n  }\n});\napp.listen(3000, () => {\n  console.log('Server listening on port 3000');\n});",
+    "python": "from fastapi import FastAPI\napp = FastAPI()\n@app.get('/users/{id}')\ndef get_user(id: int):\n  try:\n    id = int(id)\n  except ValueError:\n    return { 'error': 'Invalid ID' }\n  if id < 1 or id > 10000:\n    return { 'error': 'User not found' }\n  # Simulate user data retrieval\n  return { 'name': 'John', 'email': 'john@example.com' }"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "123",
+      "output": "{\"name\":\"John\",\"email\":\"john@example.com\"}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "abc",
+      "output": "{\"error\":\"Invalid ID\"}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    },
+    {
+      "id": "tc_3",
+      "input": "99999",
+      "output": "{\"error\":\"User not found\"}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "e749deed09312751d863e805",
+  "slug": "fixing-route-parameters-for-a-simple-express-api-endpoint-bugfix-medium-express",
+  "mode": "bug_fix",
+  "category": "EXPRESS",
+  "difficulty": "Medium"
+}

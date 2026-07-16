@@ -1,0 +1,131 @@
+{
+  "title": "Fixing Inconsistent Type Inference for a Generic Math Calculator",
+  "subCategory": "Type Inference",
+  "statement": {
+    "markdown": "Write a TypeScript function `Calculator<T>` that takes a generic type `T` and performs basic arithmetic operations: addition, subtraction, multiplication, and division. The function should return the result of the last operation. However, the current implementation has a bug that causes type inference issues. Fix the bug to ensure the function works correctly for different types.",
+    "inputFormat": "The input will be two numbers and an operator (+, -, *, /).",
+    "outputFormat": "The function should return the result of the last operation.",
+    "notes": "Note that division by zero is not handled.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of test cases"
+      }
+    ],
+    "examples": [
+      {
+        "input": "5 + 3\n3 - 2\n2 * 4\n6 / 2",
+        "output": "8\n1\n8\n3",
+        "explanation": "Example usage of the Calculator function"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "TYPESCRIPT"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "typescript"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use generics to ensure type safety"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial: Fixing Inconsistent Type Inference for a Generic Math Calculator",
+    "intuition": "The bug arises from inconsistent type inference when performing arithmetic operations. We need to ensure that the types are correctly inferred for each operation.",
+    "bruteForce": "One approach is to manually specify the types for each operation, but this can lead to boilerplate code and reduced flexibility.",
+    "betterSolution": "A better solution is to use generics to ensure type safety and consistency across all operations.",
+    "optimalSolution": "The optimal solution involves using generics to define the Calculator class and then using a union type to handle the different operations.",
+    "proofOfCorrectness": "The proof of correctness involves demonstrating that the function works correctly for different types and operations.",
+    "dryRun": "Step-by-step example run: (1) Define the Calculator class with generics, (2) Use a union type to handle the different operations, and (3) Test the function with different inputs.",
+    "commonMistakes": [
+      "Inconsistent type inference",
+      "Lack of generics"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "// Define the Calculator class with generics\nclass Calculator<T> {\n  add(x: T, y: T): T {\n    return x + y;\n  }\n  subtract(x: T, y: T): T {\n    return x - y;\n  }\n  multiply(x: T, y: T): T {\n    return x * y;\n  }\n  divide(x: T, y: T): T {\n    return x / y;\n  }\n}\n",
+    "python": "class Calculator:\n  def __init__(self):\n    pass\n  def add(self, x, y):\n    return x + y\n  def subtract(self, x, y):\n    return x - y\n  def multiply(self, x, y):\n    return x * y\n  def divide(self, x, y):\n    return x / y\n"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Define the Calculator class with generics\nclass Calculator<T> {\n  add(x: T, y: T): T {\n    return x + y as T;\n  }\n  subtract(x: T, y: T): T {\n    return x - y as T;\n  }\n  multiply(x: T, y: T): T {\n    return x * y as T;\n  }\n  divide(x: T, y: T): T {\n    return x / y as T;\n  }\n  lastOperation(): T {\n    // This is the problematic line\n    if (typeof this.result === 'number') {\n      return this.result;\n    } else {\n      return this.result as T;\n    }\n  }\n\n  result: any;\n}\n",
+    "python": "class Calculator:\n  def __init__(self):\n    self.result = None\n  def add(self, x, y):\n    self.result = x + y\n    return self.result\n  def subtract(self, x, y):\n    self.result = x - y\n    return self.result\n  def multiply(self, x, y):\n    self.result = x * y\n    return self.result\n  def divide(self, x, y):\n    self.result = x / y\n    return self.result\n  def lastOperation(self):\n    # This is the problematic line\n    if isinstance(self.result, (int, float)):\n      return self.result\n    else:\n      return self.result\n"
+  },
+  "functionSignature": {
+    "javascript": "var calculator = new Calculator<number>();",
+    "python": "calculator = Calculator()"
+  },
+  "solutions": {
+    "javascript": "// Solution\nclass Calculator<T> {\n  add(x: T, y: T): T {\n    return x + y;\n  }\n  subtract(x: T, y: T): T {\n    return x - y;\n  }\n  multiply(x: T, y: T): T {\n    return x * y;\n  }\n  divide(x: T, y: T): T {\n    return x / y;\n  }\n  lastOperation(): T {\n    if (this.result !== undefined) {\n      return this.result as T;\n    } else {\n      throw new Error('No operation performed yet');\n    }\n  }\n\n  result: T | undefined;\n}\n",
+    "python": "class Calculator:\n  def __init__(self):\n    self.result = None\n  def add(self, x, y):\n    self.result = x + y\n    return self.result\n  def subtract(self, x, y):\n    self.result = x - y\n    return self.result\n  def multiply(self, x, y):\n    self.result = x * y\n    return self.result\n  def divide(self, x, y):\n    self.result = x / y\n    return self.result\n  def lastOperation(self):\n    if self.result is not None:\n      return self.result\n    else:\n      raise ValueError('No operation performed yet')\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 1000,
+    "memoryLimit": 65536,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5\n3\n2\n4\n+\n-\n*\n/\n",
+      "output": "8\n1\n8\n3\n",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "10\n2\n3\n4\n+\n-\n*\n/\n",
+      "output": "14\n8\n12\n2.5\n",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "8e295f8d1bef250408e6c452",
+  "slug": "fixing-inconsistent-type-inference-for-a-generic-math-calculator-bugfix-easy-typescript",
+  "mode": "bug_fix",
+  "category": "TYPESCRIPT",
+  "difficulty": "Easy"
+}

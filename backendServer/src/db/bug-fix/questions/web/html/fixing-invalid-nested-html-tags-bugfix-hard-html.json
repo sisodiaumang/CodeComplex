@@ -1,0 +1,153 @@
+{
+  "title": "Fixing Invalid Nested HTML Tags",
+  "subCategory": "Validation",
+  "statement": {
+    "markdown": "Write a function to validate the nested structure of HTML tags. The function should take a string of HTML tags as input and return `true` if the tags are valid and `false` otherwise. A tag is valid if it is properly nested and does not contain any invalid characters. For example, `<p><b>Hello</b> <i>World</i></p>` is a valid HTML tag, but `<p><b>Hello</b> <i>World</p>` is not.",
+    "inputFormat": "The input will be a string of HTML tags separated by spaces.",
+    "outputFormat": "The output will be a boolean value indicating whether the tags are valid.",
+    "notes": "You can assume that the input string will only contain letters, digits, and special characters.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 1000,
+        "description": "The number of HTML tags in the input string"
+      }
+    ],
+    "examples": [
+      {
+        "input": "<p><b>Hello</b> <i>World</i></p>",
+        "output": "true",
+        "explanation": "The tags are properly nested and do not contain any invalid characters."
+      },
+      {
+        "input": "<p><b>Hello</b> <i>World</p>",
+        "output": "false",
+        "explanation": "The tag <i>World</i> is not closed properly."
+      },
+      {
+        "input": "<p><b>Hello</b><i>World</i></p>",
+        "output": "false",
+        "explanation": "The tags are not properly nested."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 100,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "HTML"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "html"
+    ],
+    "interviewFrequency": 5,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text"
+    },
+    {
+      "order": 2,
+      "text": "Second hint text"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(...) ",
+    "spaceComplexity": "O(...)"
+  },
+  "starterCode": {
+    "javascript": "function validateHtmlTags(s) {\n  // Your code here\n}",
+    "python": "class Solution:\n  def validateHtmlTags(self, s: str) -> bool:\n    # Your code here\n    pass"
+  },
+  "buggyStarterCode": {
+    "javascript": "function validateHtmlTags(s) {\n  let stack = []; // Initialize an empty stack\n  for (let i = 0; i < s.length; i++) {\n    if (s[i] === '<') {\n      let tag = s.substring(i + 1, s.indexOf('>', i)); // Extract the tag name\n      stack.push(tag);\n    }\n  }\n  return stack.length === 0; // Return true if the stack is empty\n}",
+    "python": "class Solution:\n  def validateHtmlTags(self, s: str) -> bool:\n    stack = [] # Initialize an empty stack\n    for i in range(len(s)):\n      if s[i] === '<':\n        tag = s.substring(i + 1, s.index('>', i)) # Extract the tag name\n        stack.push(tag)\n    return stack.length === 0 # Return true if the stack is empty"
+  },
+  "functionSignature": {
+    "javascript": "function validateHtmlTags(s);",
+    "python": "def validateHtmlTags(self, s: str) -> bool:"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction validateHtmlTags(s) {\n  let stack = [];\n  let tags = s.split('<');\n  for (let i = 1; i < tags.length; i++) {\n    let tag = tags[i].split('>')[0];\n    if (!tag.startsWith('/')) {\n      stack.push(tag);\n    } else {\n      if (stack.length === 0 || stack.pop() !== tag.substring(1)) {\n        return false;\n      }\n    }\n  }\n  return stack.length === 0;\n}",
+    "python": "class Solution:\n  def validateHtmlTags(self, s: str) -> bool:\n    stack = []\n    tags = s.split('<')\n    for i in range(1, len(tags)):\n      tag = tags[i].split('>')[0]\n      if not tag.startswith('/'): # If the tag is not a closing tag\n        stack.append(tag)\n      else: # If the tag is a closing tag\n        if len(stack) === 0 or stack.pop() !== tag.substring(1): # Check if the stack is empty or the top of the stack does not match the closing tag\n          return False\n    return len(stack) === 0 # Return true if the stack is empty"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "<p><b>Hello</b> <i>World</i></p>",
+      "output": "true",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "<p><b>Hello</b> <i>World</p>",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    },
+    {
+      "id": "tc_3",
+      "input": "<p><b>Hello</b><i>World</i></p>",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "d4fc74d72389f0250f5a4ee3",
+  "slug": "fixing-invalid-nested-html-tags-bugfix-hard-html",
+  "mode": "bug_fix",
+  "category": "HTML",
+  "difficulty": "Hard"
+}

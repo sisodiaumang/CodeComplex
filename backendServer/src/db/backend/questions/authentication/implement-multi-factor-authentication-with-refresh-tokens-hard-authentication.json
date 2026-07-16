@@ -1,0 +1,174 @@
+{
+  "_id": "798f05952b9643b50f8fa79a",
+  "title": "Implement Multi-Factor Authentication with Refresh Tokens",
+  "slug": "implement-multi-factor-authentication-with-refresh-tokens-hard-authentication",
+  "difficulty": "Hard",
+  "topics": [
+    "AUTH"
+  ],
+  "statement": "Create a backend API that handles user authentication with multiple factors (password and OTP) and refresh tokens. The API should have endpoints for user registration, login, OTP generation, and refresh token renewal. Implement secure token generation, storage, and validation. Ensure proper error handling and edge cases for missing or invalid input.",
+  "constraints": [
+    "Must use the in-memory array of users provided",
+    "Use a library like `argon2` for password hashing"
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/users",
+      "description": "Create a new user with password and email. Input: JSON body with `email` and `password`. Output: JSON body with `id` and `refreshToken` on success. Status: 201 on success, 400 on invalid input"
+    },
+    {
+      "method": "POST",
+      "path": "/api/login",
+      "description": "Login with email and password. Input: JSON body with `email` and `password`. Output: JSON body with `refreshToken` and `OTP` on success. Status: 200 on success, 401 on invalid credentials"
+    },
+    {
+      "method": "POST",
+      "path": "/api/otp",
+      "description": "Generate an OTP for email verification. Input: JSON body with `email`. Output: JSON body with `OTP` on success. Status: 200 on success, 400 on invalid email"
+    },
+    {
+      "method": "POST",
+      "path": "/api/refresh-token",
+      "description": "Renew a refresh token. Input: JSON body with `refreshToken`. Output: JSON body with `newRefreshToken` on success. Status: 200 on success, 401 on invalid token"
+    },
+    {
+      "method": "POST",
+      "path": "/api/logout",
+      "description": "Logout and invalidate a refresh token. Input: JSON body with `refreshToken`. Output: Status: 204 on success, 401 on invalid token"
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": {
+      "name": "auth-app",
+      "version": "1.0.0",
+      "main": "index.js",
+      "scripts": {
+        "start": "node index.js"
+      },
+      "dependencies": {
+        "express": "^4.18.2",
+        "argon2": "^3.0.1",
+        "jsonwebtoken": "^9.0.0"
+      }
+    },
+    "index.js": "const express = require('express');\nconst app = express();\nconst argon2 = require(\"argon2\");\nconst jwt = require(\"jsonwebtoken\");\nconst users = [\n  {\n    id: 1,\n    email: 'user1@example.com',\n    password: argon2.hash('password123')\n  }\n];\n\napp.use(express.json());\n\napp.post('/api/users', (req, res) => {\n  // TODO: Implement user registration\n});\n\napp.post('/api/login', (req, res) => {\n  // TODO: Implement login with email and password\n});\n\napp.post('/api/otp', (req, res) => {\n  // TODO: Implement OTP generation\n});\n\napp.post('/api/refresh-token', (req, res) => {\n  // TODO: Implement refresh token renewal\n});\n\napp.post('/api/logout', (req, res) => {\n  // TODO: Implement logout and invalidate refresh token\n});\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "POST",
+      "path": "/api/users",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "email": "user2@example.com",
+        "password": "password456"
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "id": 2,
+        "refreshToken": "..."
+      },
+      "expectedBodySchema": null,
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "POST",
+      "path": "/api/login",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "email": "user1@example.com",
+        "password": "password123"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "refreshToken": "..."
+      },
+      "expectedBodySchema": null,
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "POST",
+      "path": "/api/otp",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "email": "invalid@example.com"
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "POST",
+      "path": "/api/refresh-token",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "refreshToken": "..."
+      },
+      "expectedStatus": 200,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "POST",
+      "path": "/api/logout",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "refreshToken": "..."
+      },
+      "expectedStatus": 204,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "jwt",
+    "access-token",
+    "refresh-token",
+    "sessions",
+    "cookies",
+    "otp",
+    "email-verification",
+    "password-reset",
+    "login",
+    "signup",
+    "logout",
+    "token-rotation",
+    "mfa",
+    "authentication"
+  ]
+}

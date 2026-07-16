@@ -1,0 +1,165 @@
+{
+  "_id": "f6f39374ba8ca142c528e183",
+  "title": "Invalid Substring with K Swaps",
+  "slug": "invalid-substring-with-k-swaps-bugfix-hard-strings",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "Sliding Window",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 75,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "string"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given two strings `s` and `t`, find the longest valid substring of `s` which can be made equal to `t` by swapping at most `k` characters of `s`. Note that swapping is done in place without moving characters outside the current substring window.",
+    "inputFormat": "Two strings `s` and `t` of lengths at most 10000 characters each, and an integer `k` of value at most 10000.",
+    "outputFormat": "Length of the longest valid substring of `s` which can be made equal to `t` by swapping at most `k` characters of `s`.",
+    "notes": "No additional notes.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Lengths of the input strings"
+      },
+      {
+        "variable": "k",
+        "type": "integer",
+        "min": 0,
+        "max": 10000,
+        "description": "Maximum allowed swaps"
+      }
+    ],
+    "examples": [
+      {
+        "input": "s= \"abc\", t= \"bac\" ,k = 0",
+        "output": "0",
+        "explanation": "No valid substring exists"
+      },
+      {
+        "input": "s= \"abcd\", t= \"bacd\" ,k = 1",
+        "output": "2",
+        "explanation": "Substring \"ac\" can be transformed into \"bc\" by swapping `a` and `b`."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use a sliding window to solve the problem efficiently."
+    }
+  ],
+  "editorial": {
+    "title": "Invalid Substring with K Swaps Editorial",
+    "intuition": "The key is to find the longest valid substring by comparing the frequency of characters in the sliding window with `t`. Use two pointers and a frequency array to efficiently find the valid substring.",
+    "bruteForce": "Brute force approach would involve checking every possible substring of `s` to see if it can be transformed into `t` by swapping up to `k` characters.",
+    "betterSolution": "Use a dictionary to store character frequencies for `t` to efficiently check if a character in the sliding window is present in `t`.",
+    "optimalSolution": "Maintain two pointers at the beginning and end of the sliding window, and for each character in the window, increment its frequency in the dictionary. This will allow us to efficiently check if a character is present in the sliding window.",
+    "proofOfCorrectness": "We know that the characters in the sliding window can be transformed into `t` by swapping up to `k` characters. If the frequency of a character in the sliding window is greater than its frequency in `t`, we know that we can swap it to make it equal to `t`.",
+    "dryRun": "Step-by-step example run: Initialize two pointers and a dictionary. Iterate through the string `s` with the sliding window. For each character, check if it is present in the dictionary and increment its frequency if it is.",
+    "commonMistakes": [
+      "not using a dictionary to store character frequencies",
+      "not maintaining two pointers for the sliding window"
+    ],
+    "timeComplexity": "O(n * k)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "// TODO: implement",
+    "java": "// TODO: implement",
+    "python": "class Solution:\n    def solve(self, s, t, k):\n        pass",
+    "javascript": "function solve(s, t, k) {\n    // TODO: implement\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    int solve(string s, string t, int k) {\n        int n = s.size();\n        int maxLen = 0;\n        for (int i = 0; i < n; i++) {\n            for (int j = i; j < n; j++) {\n                string temp = s.substr(i, j - i + 1);\n                int count = 0;\n                for (int z = 0; z < j - i + 1; z++) {\n                    if (temp[z] != t[z]) {\n                        count++;\n                    }\n                }\n                if (count <= k && j - i + 1 > maxLen) {\n                    maxLen = j - i + 1;\n                }\n            }\n        }\n        return maxLen;\n    }\n};",
+    "java": "public class Solution {\n    public int solve(String s, String t, int k) {\n        int n = s.length();\n        int maxLen = 0;\n        for (int i = 0; i < n; i++) {\n            for (int j = i; j < n; j++) {\n                String temp = s.substring(i, j + 1);\n                int count = 0;\n                for (int z = 0; z < j - i + 1; z++) {\n                    if (temp.charAt(z) != t.charAt(z)) {\n                        count++;\n                    }\n                }\n                if (count <= k && j - i + 1 > maxLen) {\n                    maxLen = j - i + 1;\n                }\n            }\n        }\n        return maxLen;\n    }\n}",
+    "python": "class Solution:\n    def solve(self, s, t, k):\n        n = len(s)\n        maxLen = 0\n        for i in range(n):\n            for j in range(i, n):\n                temp = s[i:j + 1]\n                count = 0\n                for z in range(j - i + 1):\n                    if temp[z] != t[z]:\n                        count++\n                if count <= k and j - i + 1 > maxLen:\n                    maxLen = j - i + 1\n        return maxLen",
+    "javascript": "function solve(s, t, k) {\n    var n = s.length;\n    var maxLen = 0;\n    for (var i = 0; i < n; i++) {\n        for (var j = i; j < n; j++) {\n            var temp = s.substring(i, j + 1);\n            var count = 0;\n            for (var z = 0; z < j - i + 1; z++) {\n                if (temp[z] != t[z]) {\n                    count++;\n                }\n            }\n            if (count <= k && j - i + 1 > maxLen) {\n                maxLen = j - i + 1;\n            }\n        }\n    }\n    return maxLen;\n}"
+  },
+  "functionSignature": {
+    "cpp": "int solve(string s, string t, int k);",
+    "java": "int solve(String s, String t, int k);",
+    "python": "def solve(self, s: str, t: str, k: int) -> int:",
+    "javascript": "var solve = function(s, t, k) {\n};"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def solve(self, s, t, k):\n        n = len(s)\n        maxLen = 0\n        for i in range(n):\n            for j in range(i, n):\n                temp = s[i:j + 1]\n                count = 0\n                for z in range(j - i + 1):\n                    if temp[z] != t[z]:\n                        count++\n                if count <= k and j - i + 1 > maxLen:\n                    maxLen = j - i + 1\n        return maxLen\n\nif __name__ == '__main__':\n    s = input()\n    t = input()\n    k = int(input())\n    solution = Solution()\n    print(solution.solve(s, t, k))",
+    "cpp": "// Full executable C++ solution file\n#include <iostream>\n#include <string>\n#include <algorithm>\n#include <vector>\n\nusing namespace std;\n\nclass Solution {\npublic:\n    int solve(string s, string t, int k) {\n        // implementation\n    }\n};\n\nint main() {\n    string s;\n    string t;\n    int k;\n    cin >> s >> t >> k;\n    Solution solution;\n    cout << solution.solve(s, t, k)\n;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 3,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "s= \"abc\", t= \"bac\" ,k = 0",
+      "output": "0",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "s= \"abcd\", t= \"bacd\" ,k = 1",
+      "output": "2",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

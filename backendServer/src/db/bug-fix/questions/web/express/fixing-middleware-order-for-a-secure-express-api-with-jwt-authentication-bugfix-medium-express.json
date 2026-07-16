@@ -1,0 +1,136 @@
+{
+  "title": "Fixing Middleware Order for a Secure Express API with JWT Authentication",
+  "subCategory": "Authentication and Authorization",
+  "statement": {
+    "markdown": "In this task, you are given an Express API that uses JWT (JSON Web Token) authentication to protect its routes. The API has a middleware chain that checks for the presence of a valid JWT token in the request headers. However, the middleware chain has been misordered, causing the token to be validated before the request body is parsed. This has resulted in a subtle bug where the API returns incorrect responses to certain requests. Your task is to fix the middleware order to ensure that the request body is parsed before the JWT token is validated.",
+    "inputFormat": "No input format",
+    "outputFormat": "The API should return a JSON response with the correct data",
+    "notes": "Time complexity: O(n), where n is the number of middleware functions",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of middleware functions"
+      }
+    ],
+    "examples": [
+      {
+        "input": "GET /users HTTP/1.1\nHost: example.com\nAuthorization: Bearer my-token\n",
+        "output": "{\"users\": [...]}",
+        "explanation": "The API should return a JSON response with the users data"
+      },
+      {
+        "input": "POST /users HTTP/1.1\nHost: example.com\nContent-Type: application/json\nAuthorization: Bearer my-token\n{\"name\": \"John Doe\"}\n",
+        "output": "{\"message\": \"User created successfully\"}",
+        "explanation": "The API should return a JSON response with the success message"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "EXPRESS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "express"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Check the order of the middleware functions"
+    }
+  ],
+  "editorial": {
+    "title": "Fixing Middleware Order for a Secure Express API with JWT Authentication",
+    "intuition": "The middleware chain should be ordered such that the request body is parsed before the JWT token is validated",
+    "bruteForce": "Try different orders of the middleware functions",
+    "betterSolution": "Use the built-in Express middleware functions to parse the request body",
+    "optimalSolution": "Use the built-in Express middleware functions to parse the request body and then the JWT token validation middleware",
+    "proofOfCorrectness": "The API should return the correct responses to the requests",
+    "dryRun": "Try running the API with different requests to test the middleware order",
+    "commonMistakes": [
+      "Incorrect middleware order",
+      "Missing middleware functions"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "// Import the required middleware functions\nconst express = require('express');\nconst jwt = require('jsonwebtoken');\n\n// Create an Express app\nconst app = express();\n\n// Middleware function to parse the request body\napp.use(express.json());\n\n// Middleware function to validate the JWT token\napp.use((req, res, next) => {\n    const token = req.header('Authorization');\n    if (!token) return res.status(401).send({ message: 'Unauthorized' });\n    try {\n        const decoded = jwt.verify(token, 'secret-key');\n        req.user = decoded;\n        next();\n    } catch (error) {\n        res.status(400).send({ message: 'Invalid token' });\n    }\n});\n\n// API route\napp.get('/users', (req, res) => {\n    // Return the users data\n    res.json({ users: [...] });\n});\n\n// Start the server\nconst port = 3000;\napp.listen(port, () => {\n    console.log(`Server listening on port ${port}`);\n});",
+    "python": "// Create a class to handle the API requests\nclass Solution:\n    def __init__(self):\n        self.app = None\n\n    def init_app(self):\n        # Import the required middleware functions\n        from flask import Flask, request, jsonify\n        from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity\n\n        # Create a Flask app\n        self.app = Flask(__name__)\n        JWTManager(self.app)\n\n        # Middleware function to parse the request body\n        self.app.config['JSONIFY_PRETTYPRINT_REGULAR'] = False\n        self.app.config['JSONIFY_MIMETYPE'] = 'application/json; charset=utf-8'\n        self.app.json_encoder = CustomJSONEncoder\n\n        # Middleware function to validate the JWT token\n        @self.app.before_request\n        def validate_token():\n            token = request.headers.get('Authorization')\n            if not token:\n                return jsonify({'message': 'Unauthorized'}), 401\n            try:\n                identity = get_jwt_identity()\n                request.user = identity\n                return None\n            except Exception as e:\n                return jsonify({'message': 'Invalid token'}), 400\n\n        # API route\n        @self.app.route('/users', methods=['GET'])\n        def get_users():\n            # Return the users data\n            return jsonify({'users': [...]})\n\n    def run(self):\n        # Start the server\n        self.app.run(debug=False)\n"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Import the required middleware functions\nconst express = require('express');\nconst jwt = require('jsonwebtoken');\n\n// Create an Express app\nconst app = express();\n\n// Middleware function to validate the JWT token\napp.use((req, res, next) => {\n    const token = req.header('Authorization');\n    if (!token) return res.status(401).send({ message: 'Unauthorized' });\n    try {\n        const decoded = jwt.verify(token, 'secret-key');\n        req.user = decoded;\n        next();\n    } catch (error) {\n        res.status(400).send({ message: 'Invalid token' });\n    }\n});\n\n// Middleware function to parse the request body\napp.use(express.json());\n\n// API route\napp.get('/users', (req, res) => {\n    // Return the users data\n    res.json({ users: [...] });\n});\n\n// Start the server\nconst port = 3000;\napp.listen(port, () => {\n    console.log(`Server listening on port ${port}`);\n});",
+    "python": "// Create a class to handle the API requests\nclass Solution:\n    def __init__(self):\n        self.app = None\n\n    def init_app(self):\n        # Import the required middleware functions\n        from flask import Flask, request, jsonify\n        from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity\n\n        # Create a Flask app\n        self.app = Flask(__name__)\n        JWTManager(self.app)\n\n        # Middleware function to validate the JWT token\n        @self.app.before_request\n        def validate_token():\n            token = request.headers.get('Authorization')\n            if not token:\n                return jsonify({'message': 'Unauthorized'}), 401\n            try:\n                identity = get_jwt_identity()\n                request.user = identity\n                return None\n            except Exception as e:\n                return jsonify({'message': 'Invalid token'}), 400\n\n        # API route\n        @self.app.route('/users', methods=['GET'])\n        def get_users():\n            # Return the users data\n            return jsonify({'users': [...]})\n\n    def run(self):\n        # Start the server\n        self.app.run(debug=False)\n"
+  },
+  "functionSignature": {
+    "javascript": "var solve = function() {",
+    "python": "def solve(self) {"
+  },
+  "solutions": {
+    "javascript": "// Corrected middleware order\nconst express = require('express');\nconst jwt = require('jsonwebtoken');\n\nconst app = express();\n\napp.use(express.json());\n\napp.use((req, res, next) => {\n    const token = req.header('Authorization');\n    if (!token) return res.status(401).send({ message: 'Unauthorized' });\n    try {\n        const decoded = jwt.verify(token, 'secret-key');\n        req.user = decoded;\n        next();\n    } catch (error) {\n        res.status(400).send({ message: 'Invalid token' });\n    }\n});\n\napp.get('/users', (req, res) => {\n    res.json({ users: [...] });\n});\n\nconst port = 3000;\napp.listen(port, () => {\n    console.log(`Server listening on port ${port}`);\n});",
+    "python": "// Corrected middleware order\nfrom flask import Flask, request, jsonify\nfrom flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity\n\nclass Solution:\n    def __init__(self):\n        self.app = None\n\n    def init_app(self):\n        # Create a Flask app\n        self.app = Flask(__name__)\n        JWTManager(self.app)\n\n        # Middleware function to parse the request body\n        self.app.config['JSONIFY_PRETTYPRINT_REGULAR'] = False\n        self.app.config['JSONIFY_MIMETYPE'] = 'application/json; charset=utf-8'\n        self.app.json_encoder = CustomJSONEncoder\n\n        # Middleware function to validate the JWT token\n        @self.app.before_request\n        def validate_token():\n            token = request.headers.get('Authorization')\n            if not token:\n                return jsonify({'message': 'Unauthorized'}), 401\n            try:\n                identity = get_jwt_identity()\n                request.user = identity\n                return None\n            except Exception as e:\n                return jsonify({'message': 'Invalid token'}), 400\n\n        # API route\n        @self.app.route('/users', methods=['GET'])\n        def get_users():\n            return jsonify({'users': [...]})\n\n    def run(self):\n        self.app.run(debug=False)\n\n# Driver code\nif __name__ == '__main__':\n    solution = Solution()\n    solution.init_app()\n    solution.run()"
+  },
+  "judgeConfig": {
+    "timeLimit": 3,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "GET /users HTTP/1.1\nHost: example.com\nAuthorization: Bearer my-token\n",
+      "output": "{\"users\": [...]}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "POST /users HTTP/1.1\nHost: example.com\nContent-Type: application/json\nAuthorization: Bearer my-token\n{\"name\": \"John Doe\"}\n",
+      "output": "{\"message\": \"User created successfully\"}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "c9881ad34fcd61126f147583",
+  "slug": "fixing-middleware-order-for-a-secure-express-api-with-jwt-authentication-bugfix-medium-express",
+  "mode": "bug_fix",
+  "category": "EXPRESS",
+  "difficulty": "Medium"
+}

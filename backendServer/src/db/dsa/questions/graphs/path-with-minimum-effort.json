@@ -1,0 +1,223 @@
+{
+  "_id": "path-with-minimum-effort",
+  "title": "Path with Minimum Effort",
+  "slug": "path-with-minimum-effort",
+  "difficulty": "Hard",
+  "category": "GRAPH",
+  "subCategory": "Shortest Path Algorithms",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 45,
+    "points": 600,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "Graphs",
+      "Shortest Path Algorithms"
+    ],
+    "patterns": [
+      "minimum effort",
+      "path",
+      "effort",
+      "grid"
+    ],
+    "prerequisites": [
+      "Dijkstra's algorithm",
+      "Graph traversal"
+    ],
+    "variants": [],
+    "tags": [
+      "Minimum Spanning Tree",
+      "Graph Theory",
+      "Shortest Path",
+      "Efficient Algorithms"
+    ],
+    "keywords": [
+      "minimum effort path",
+      "grid path",
+      "dijkstra's algorithm",
+      "shortest path algorithm",
+      "graph traversal",
+      "pathfinding"
+    ],
+    "interviewFrequency": 4,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "You are given a rectangular grid of size m × n where each cell (i, j) contains an integer height grid[i][j]. You can move from a cell to any of its four directly adjacent cells (up, down, left, right). The effort of a path is defined as the maximum absolute difference in heights between two consecutive cells along the path. Your task is to find a path from the top‑left cell (0, 0) to the bottom‑right cell (m‑1, n‑1) that minimizes this effort, and output that minimum possible effort.\n\n**Input Format**\n- The first line contains two space‑separated integers m and n, the number of rows and columns of the grid.\n- The second line contains a single integer k, the total number of height values (k = m × n).\n- The third line contains k space‑separated integers representing the grid values in row‑major order (first row left to right, then second row, and so on).\n\n**Output Format**\n- Output a single integer – the minimum possible effort required to travel from the top‑left to the bottom‑right cell.\n\n**Notes**\n- The effort of a path is the maximum absolute difference between heights of any two consecutive cells on that path.\n- You may revisit cells, but doing so never improves the minimum effort.\n- Efficient solutions typically use binary search combined with BFS/DFS, or Dijkstra's algorithm on a graph where edge weights are the absolute height differences.\n\n**Constraints**\n- 1 ≤ m ≤ 1000\n- 1 ≤ n ≤ 1000\n- k = m × n\n- 0 ≤ grid[i][j] ≤ 10^6\n- The total number of cells (m × n) will not exceed 10^6.\n\n**Examples**\n\n**Example 1**\nInput\n3 3\n9\n1 2 2 3 8 2 5 3 5\nOutput\n2\nExplanation\nOne optimal path is (0,0)→(0,1)→(1,1)→(2,1)→(2,2). The absolute differences along this path are 1, 0, 5, 2; the maximum is 2, which is the minimum possible effort.\n\n**Example 2**\nInput\n5 5\n25\n1 2 3 4 5 2 2 2 2 6 3 2 1 2 7 4 2 2 2 8 5 6 7 8 9\nOutput\n1\nExplanation\nA path exists where the height difference between any two consecutive cells never exceeds 1, so the minimum effort is 1.",
+    "inputFormat": "The first line contains two integers m and n.\nThe second line contains an integer k = m*n.\nThe third line contains k integers representing the grid in row‑major order.",
+    "outputFormat": "A single integer – the minimum effort required to travel from (0,0) to (m-1,n-1).",
+    "notes": "All height values are non‑negative and fit in 32‑bit signed integer range.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "m",
+        "type": "int",
+        "min": 1,
+        "max": 1000,
+        "description": "Number of rows"
+      },
+      {
+        "variable": "n",
+        "type": "int",
+        "min": 1,
+        "max": 1000,
+        "description": "Number of columns"
+      },
+      {
+        "variable": "grid[i][j]",
+        "type": "int",
+        "min": 0,
+        "max": 1000000,
+        "description": "Height of each cell"
+      }
+    ],
+    "examples": [
+      {
+        "input": "3 3\n9\n1 2 2 3 8 2 5 3 5",
+        "output": "2",
+        "explanation": "Minimum effort is 2 as explained in the statement."
+      },
+      {
+        "input": "5 5\n25\n1 2 3 4 5 2 2 2 2 6 3 2 1 2 7 4 2 2 2 8 5 6 7 8 9",
+        "output": "1",
+        "explanation": "A path with maximum step difference 1 exists, so answer is 1."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Consider the problem as finding the minimum maximum absolute difference in heights between two consecutive cells along a path from the top-left cell to the bottom-right cell."
+    },
+    {
+      "order": 2,
+      "text": "Think about how you can use the given constraints to limit the possible range of the minimum effort."
+    },
+    {
+      "order": 3,
+      "text": "The effort of a path is the maximum absolute difference between heights of any two consecutive cells on that path. Consider how this definition can be used to narrow down the possible values of the minimum effort."
+    },
+    {
+      "order": 4,
+      "text": "You can use a binary search approach to find the minimum effort. Think about how you can use the given constraints to determine the search range."
+    },
+    {
+      "order": 5,
+      "text": "The key to solving this problem is to use a binary search approach combined with a graph search algorithm, such as Dijkstra's algorithm, to efficiently explore the possible paths and find the minimum effort."
+    }
+  ],
+  "editorial": {
+    "title": "Path with Minimum Effort: From Brute Force to Dijkstra’s Insight",
+    "intuition": "The goal is to find a route from the top‑left to the bottom‑right of a grid where the largest height difference between consecutive cells along the path is as small as possible. The problem is a classic example of a minimax path problem, where the cost of a path is the maximum edge weight encountered. Recognizing that the cost function is non‑decreasing along any extension of a path allows us to apply a shortest‑path algorithm that handles non‑negative edge weights, namely Dijkstra’s algorithm.",
+    "bruteForce": "A straightforward brute‑force approach would enumerate every possible path from the start to the end, compute the maximum height difference for each, and keep the minimum of these values. Since the number of paths grows exponentially with the grid size, this method is correct but infeasible for grids larger than a few cells. Even a depth‑first search with pruning would still suffer from combinatorial explosion, leading to timeouts on the maximum 1000×1000 input size.",
+    "betterSolution": "A more efficient strategy is to perform a binary search over the answer: guess a maximum allowed effort, then check if a path exists that never exceeds this effort using a simple BFS or DFS. This reduces the problem to a feasibility test that runs in O(mn) time, and the binary search adds a logarithmic factor. However, the most elegant solution is to run Dijkstra’s algorithm directly on the grid, treating the effort to move to a neighbor as the edge weight. The priority queue always expands the cell with the currently smallest possible maximum effort, guaranteeing that when the destination is popped the optimal effort has been found.",
+    "optimalSolution": "The optimal algorithm is Dijkstra’s algorithm on a graph where each cell is a node and edges connect 4‑directionally adjacent cells. The edge weight is the absolute difference in heights. The algorithm maintains an effort matrix initialized to infinity, except for the start cell which is zero. A min‑heap stores tuples (current effort, x, y). When a cell is popped, if it is the destination we return its effort; otherwise we relax all neighbors by computing the maximum of the current effort and the edge weight to that neighbor. If this new effort is smaller than the neighbor’s stored effort, we update it and push the neighbor onto the heap. This guarantees that each cell is processed with its minimal possible effort, yielding the correct minimal maximum difference in O(mn log(mn)) time and O(mn) space.",
+    "proofOfCorrectness": "Dijkstra’s algorithm is correct for graphs with non‑negative edge weights and a cost defined as the maximum along a path. The key property is that once a node is extracted from the priority queue, the recorded effort is the smallest possible maximum difference for any path to that node. This follows from the fact that any alternative path to that node would have to pass through a node already processed with an effort no larger than the current one, and the maximum along that alternative cannot be smaller. Therefore, when the destination cell is extracted, its effort equals the minimal possible maximum difference over all paths, proving optimality.",
+    "dryRun": "Consider a 3×3 grid: [[1,2,2],[3,8,2],[5,3,5]]. The algorithm starts at (0,0) with effort 0. It pushes neighbors (1,0) and (0,1) with efforts 2 and 1 respectively. The heap pops (0,1) first (effort 1). From there it pushes (0,2) with effort 1 and (1,1) with effort 7. Next it pops (0,2) (effort 1), then (1,0) (effort 2). Continuing this process, the algorithm eventually reaches (2,2) with effort 2, which is the minimal maximum difference. The steps illustrate how the heap always expands the cell with the lowest current effort, ensuring optimality.",
+    "commonMistakes": [
+      "Assuming that the path with the smallest sum of differences is also the one with the smallest maximum difference; the two objectives differ.",
+      "Using a greedy step that always moves to the neighbor with the smallest local difference, which can lead to suboptimal global paths.",
+      "Implementing Dijkstra without checking that the popped effort matches the stored effort, causing unnecessary relaxations.",
+      "Ignoring the fact that the grid can be as large as 1000×1000, leading to O(mn²) or O(n³) solutions that time out.",
+      "Using recursion for DFS/BFS without tail‑recursion optimization, causing stack overflows on large grids.",
+      "Treating the problem as a standard shortest path with additive weights instead of a minimax problem, which invalidates the Dijkstra proof."
+    ],
+    "timeComplexity": "O(m * n * log(m * n)) where m and n are grid dimensions",
+    "spaceComplexity": "O(m * n) for the effort matrix and priority queue"
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    int minimumEffort(vector<vector<int>>& heights) {\n        // TODO: implement\n        return 0;\n    }\n};",
+    "java": "import java.util.*;\n\nclass Solution {\n    public int minimumEffort(int[][] heights) {\n        // TODO: implement\n        return 0;\n    }\n}",
+    "python": "class Solution:\n    def minimumEffort(self, heights: List[List[int]]) -> int:\n        # TODO: implement\n        pass",
+    "javascript": "/**\n * @param {number[][]} heights\n * @return {number}\n */\nvar minimumEffort = function(heights) {\n    // TODO: implement\n    return 0;\n};"
+  },
+  "functionSignature": {
+    "cpp": "int minimumEffort(vector<vector<int>>& heights);",
+    "java": "public int minimumEffort(int[][] heights);",
+    "python": "def minimumEffort(self, heights: list[list[int]]) -> int:",
+    "javascript": "var minimumEffort = function(heights);"
+  },
+  "solutions": {
+    "python": "import sys\nimport heapq\n\nclass Solution:\n    def minimumEffort(self, heights: list[list[int]]) -> int:\n        if not heights:\n            return 0\n        m, n = len(heights), len(heights[0])\n        dirs = [(1,0),(-1,0),(0,1),(0,-1)]\n        # Dijkstra where cost is max edge weight along path\n        effort = [[float('inf')]*n for _ in range(m)]\n        effort[0][0] = 0\n        heap = [(0,0,0)]  # (current effort, x, y)\n        while heap:\n            cur, x, y = heapq.heappop(heap)\n            if cur != effort[x][y]:\n                continue\n            if x == m-1 and y == n-1:\n                return cur\n            for dx, dy in dirs:\n                nx, ny = x+dx, y+dy\n                if 0 <= nx < m and 0 <= ny < n:\n                    diff = abs(heights[x][y] - heights[nx][ny])\n                    nxt = max(cur, diff)\n                    if nxt < effort[nx][ny]:\n                        effort[nx][ny] = nxt\n                        heapq.heappush(heap, (nxt, nx, ny))\n        return effort[m-1][n-1]\n\nif __name__ == '__main__':\n    data = sys.stdin.read().split()\n    if not data:\n        sys.exit(0)\n    it = iter(data)\n    m = int(next(it))\n    n = int(next(it))\n    k = int(next(it))  # equals m*n, can be ignored\n    vals = [int(next(it)) for _ in range(k)]\n    heights = [vals[i*n:(i+1)*n] for i in range(m)]\n    sol = Solution()\n    ans = sol.minimumEffort(heights)\n    print(ans)",
+    "cpp": "#include <numeric>\n#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    int minimumEffort(vector<vector<int>>& heights) {\n        int m = heights.size();\n        int n = heights[0].size();\n        const int INF = 1e9;\n        vector<vector<int>> effort(m, vector<int>(n, INF));\n        effort[0][0] = 0;\n        using T = tuple<int,int,int>; // effort, x, y\n        priority_queue<T, vector<T>, greater<T>> pq;\n        pq.emplace(0,0,0);\n        int dirs[4][2] = {{1,0},{-1,0},{0,1},{0,-1}};\n        while(!pq.empty()){\n            auto _tmp_binding_0 = pq.top(); auto cur = std::get<0>(_tmp_binding_0); auto x = std::get<1>(_tmp_binding_0); auto y = std::get<2>(_tmp_binding_0); pq.pop();\n            if (cur != effort[x][y]) continue;\n            if (x==m-1 && y==n-1) return cur;\n            for (auto &d: dirs){\n                int nx = x + d[0];\n                int ny = y + d[1];\n                if (nx<0||nx>=m||ny<0||ny>=n) continue;\n                int diff = abs(heights[x][y] - heights[nx][ny]);\n                int nxt = max(cur, diff);\n                if (nxt < effort[nx][ny]){\n                    effort[nx][ny] = nxt;\n                    pq.emplace(nxt, nx, ny);\n                }\n            }\n        }\n        return effort[m-1][n-1];\n    }\n};\n\nint main(){\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int m,n;\n    if(!(cin>>m>>n)) return 0;\n    int k; cin>>k; // k = m*n\n    vector<int> vals(k);\n    for(int i=0;i<k;i++) cin>>vals[i];\n    vector<vector<int>> heights(m, vector<int>(n));\n    for(int i=0;i<m;i++){\n        for(int j=0;j<n;j++){\n            heights[i][j] = vals[i*n + j];\n        }\n    }\n    Solution sol;\n    int ans = sol.minimumEffort(heights);\n    cout<<ans<<\"\\n\";\n    return 0;\n}\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.5
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "3 3\n9\n1 2 2 3 8 2 5 3 5",
+      "output": "2",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "5 5\n25\n1 2 3 4 5 2 2 2 2 6 3 2 1 2 7 4 2 2 2 8 5 6 7 8 9",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "random_medium_6",
+      "input": "10 10\n100\n3 6 0 5 9 8 1 7 2 4 10 11 13 15 14 12 16 18 17 19 20 22 21 23 25 24 26 28 27 30 29 31 33 32 34 36 35 38 37 40 39 42 41 44 43 46 45 48 47 50 49 52 51 54 53 55 57 56 59 58 61 60 63 62 65 64 67 66 69 68 71 70 73 72 75 74 77 76 79 78 81 80 83 82 85 84 87 86 89 88 91 90 93 92 95 94 97 96 99 98",
+      "output": "10",
+      "isVisible": false,
+      "weight": 1,
+      "category": "random_medium"
+    },
+    {
+      "id": "sorted_7",
+      "input": "3 3\n9\n0 1 2\n3 4 5\n6 7 8",
+      "output": "3",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sorted"
+    },
+    {
+      "id": "reverse_sorted_8",
+      "input": "3 3\n9\n8 7 6\n5 4 3\n2 1 0",
+      "output": "3",
+      "isVisible": false,
+      "weight": 1,
+      "category": "reverse_sorted"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

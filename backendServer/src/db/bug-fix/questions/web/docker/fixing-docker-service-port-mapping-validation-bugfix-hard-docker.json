@@ -1,0 +1,148 @@
+{
+  "title": "Fixing Docker Service Port Mapping Validation",
+  "subCategory": "Docker Port Mapping",
+  "statement": {
+    "markdown": "In this challenge, you will implement a function to validate Docker service port mappings. Given a service name and an array of port mappings, return `true` if the port mappings are valid and `false` otherwise. A valid port mapping is one where the container port is not already in use by another service with the same name and the exposed port is within the valid range of 1-65535.",
+    "inputFormat": "Input will be a string and an array of objects. Each object contains the service name, container port, and exposed port.",
+    "outputFormat": "Return a boolean value indicating whether the port mappings are valid.",
+    "notes": "Time complexity should be O(n), where n is the number of port mappings.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of port mappings"
+      }
+    ],
+    "examples": [
+      {
+        "input": "my_service, [{port: 80, containerPort: 8080, hostPort: 8080}, {port: 80, containerPort: 8081, hostPort: 8081}]",
+        "output": "false",
+        "explanation": "The container port 8080 is already in use by the same service."
+      },
+      {
+        "input": "my_service, [{port: 80, containerPort: 8080, hostPort: 8080}, {port: 80, containerPort: 8081, hostPort: 8081}]",
+        "output": "true",
+        "explanation": "The port mappings are valid."
+      },
+      {
+        "input": "my_service, [{port: 80, containerPort: 8080, hostPort: 65536}]",
+        "output": "false",
+        "explanation": "The exposed port is outside the valid range."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 100,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DOCKER"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "docker"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use a set to keep track of used container ports for each service name."
+    },
+    {
+      "order": 2,
+      "text": "Iterate through the port mappings and check the validity of each one."
+    }
+  ],
+  "editorial": {
+    "title": "Docker Service Port Mapping Validation",
+    "intuition": "The key to solving this problem is to use a data structure to keep track of used container ports for each service name.",
+    "bruteForce": "You can iterate through the port mappings and check the validity of each one, but this approach is not efficient for large inputs.",
+    "betterSolution": "Use a set to keep track of used container ports for each service name and iterate through the port mappings to check the validity of each one.",
+    "optimalSolution": "Create a set for each service name and iterate through the port mappings to check the validity of each one. Use the set to keep track of used container ports for each service name.",
+    "proofOfCorrectness": "The correctness of the solution can be proven by showing that the set is used to keep track of used container ports for each service name and that the iteration through the port mappings checks the validity of each one.",
+    "dryRun": "Run the solution with the following inputs: my_service, [{port: 80, containerPort: 8080, hostPort: 8080}, {port: 80, containerPort: 8081, hostPort: 8081}]",
+    "commonMistakes": [
+      "Not using a set to keep track of used container ports for each service name.",
+      "Not iterating through the port mappings to check the validity of each one."
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// Define a function to validate Docker service port mappings.\n// Return true if the port mappings are valid and false otherwise.\nfunction validatePortMappings(serviceName, portMappings) {\n  // Your code here\n}"
+  },
+  "buggyStarterCode": {
+    "javascript": "function validatePortMappings(serviceName, portMappings) {\n  let usedPorts = {};\n  for (let mapping of portMappings) {\n    if (mapping.port === mapping.containerPort) {\n      return false;\n    }\n    if (usedPorts[mapping.serviceName] && usedPorts[mapping.serviceName].includes(mapping.containerPort)) {\n      return false;\n    }\n    usedPorts[mapping.serviceName] = usedPorts[mapping.serviceName] || [];\n    usedPorts[mapping.serviceName].push(mapping.containerPort);\n  }\n  return true;\n}"
+  },
+  "functionSignature": {
+    "javascript": "function validatePortMappings(serviceName, portMappings)"
+  },
+  "solutions": {
+    "javascript": "// Define a function to validate Docker service port mappings.\nfunction validatePortMappings(serviceName, portMappings) {\n  let usedPorts = {};\n  for (let mapping of portMappings) {\n    if (mapping.port !== mapping.containerPort && mapping.containerPort < 1 || mapping.containerPort > 65535) {\n      return false;\n    }\n    if (usedPorts[serviceName] && usedPorts[serviceName].includes(mapping.containerPort)) {\n      return false;\n    }\n    usedPorts[serviceName] = usedPorts[serviceName] || [];\n    usedPorts[serviceName].push(mapping.containerPort);\n  }\n  return true;\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 1000,
+    "memoryLimit": 65536,
+    "supportedLanguages": [
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "my_service, [{port: 80, containerPort: 8080, hostPort: 8080}, {port: 80, containerPort: 8081, hostPort: 8081}]",
+      "output": "false",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "my_service, [{port: 80, containerPort: 8080, hostPort: 8080}, {port: 80, containerPort: 8081, hostPort: 8081}]",
+      "output": "true",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_3",
+      "input": "my_service, [{port: 80, containerPort: 8080, hostPort: 65536}]",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "_id": "085c2c2163e140ee24a61a6a",
+  "slug": "fixing-docker-service-port-mapping-validation-bugfix-hard-docker",
+  "mode": "bug_fix",
+  "category": "DOCKER",
+  "difficulty": "Hard"
+}

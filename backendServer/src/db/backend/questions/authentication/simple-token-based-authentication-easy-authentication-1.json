@@ -1,0 +1,134 @@
+{
+  "_id": "a1f39c7a774bd986a8c58c2a",
+  "title": "Simple Token-Based Authentication",
+  "slug": "simple-token-based-authentication-easy-authentication-1",
+  "difficulty": "Easy",
+  "topics": [
+    "AUTH"
+  ],
+  "statement": "Implement a basic authentication server that generates a token upon successful login and returns an error if provided credentials are incorrect. The token should be stored in memory for this example. When a valid token is provided in the Authorization header, allow access to a protected resource. You should also include a test case to verify that an expired token is not accepted.\n\n### Requirements\n\n* Create an endpoint `/login` that accepts a JSON object with `username` and `password` properties.\n* The endpoint should return a JSON object with a `token` property if the provided credentials are correct, otherwise return an error.\n* Create an endpoint `/protected` that requires a valid token to be provided in the Authorization header.\n* If the token is valid, the endpoint should return a JSON object with a `success` property. If the token is invalid, return an error.\n\n### Constraints\n\n* Use only the in-memory array provided.\n* Do not store any data on disk.\n* Assume the `username` and `password` are hardcoded for this example.",
+  "constraints": [
+    "Must use only the in-memory array provided",
+    "Do not store any data on disk"
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/login",
+      "description": "Requires a JSON object with `username` and `password` properties.\nIf the provided credentials are correct, returns a JSON object with a `token` property.\nIf the provided credentials are incorrect, returns an error."
+    },
+    {
+      "method": "GET",
+      "path": "/protected",
+      "description": "Requires a valid token to be provided in the Authorization header.\nIf the token is valid, returns a JSON object with a `success` property.\nIf the token is invalid, returns an error."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\n  \"name\": \"auth-app\",\n  \"version\": \"1.0.0\",\n  \"main\": \"index.js\",\n  \"scripts\": {\n    \"start\": \"node index.js\"\n  },\n  \"dependencies\": {\n    \"express\": \"^4.18.2\",\n    \"jsonwebtoken\": \"^8.5.1\",\n    \"uuid\": \"^8.3.2\"\n  }\n}",
+    "index.js": "const express = require('express');\nconst jwt = require('jsonwebtoken');\nconst uuid = require('uuid');\n\nconst app = express();\napp.use(express.json());\n\n// In-memory array of users\nconst users = [\n  { id: uuid(), username: 'user1', password: 'password1' }\n];\n\n// Generate a token for the user with the given username and password\nconst generateToken = (username, password) => {\n  const user = users.find(user => user.username === username && user.password === password);\n  if (!user) return null;\n  const token = jwt.sign({ id: user.id }, 'secret', { expiresIn: '1m' });\n  return token;\n};\n\n// TODO: Implement /login endpoint\n// TODO: Implement /protected endpoint\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "tc1",
+      "method": "POST",
+      "path": "/login",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "username": "user1",
+        "password": "password1"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "token": "some-token"
+      },
+      "isVisible": true
+    },
+    {
+      "id": "tc2",
+      "method": "GET",
+      "path": "/protected",
+      "headers": {
+        "Authorization": "Bearer some-token"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "success": true
+      },
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "tc3",
+      "method": "POST",
+      "path": "/login",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "username": "invalid-user",
+        "password": "invalid-password"
+      },
+      "expectedStatus": 401,
+      "isVisible": false
+    },
+    {
+      "id": "tc4",
+      "method": "GET",
+      "path": "/protected",
+      "headers": {
+        "Authorization": "Bearer invalid-token"
+      },
+      "expectedStatus": 401,
+      "isVisible": false
+    },
+    {
+      "id": "tc5",
+      "method": "GET",
+      "path": "/protected",
+      "headers": {},
+      "expectedStatus": 401,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "jwt",
+    "access-token",
+    "refresh-token",
+    "sessions",
+    "cookies",
+    "otp",
+    "email-verification",
+    "password-reset",
+    "login",
+    "signup",
+    "logout",
+    "token-rotation",
+    "mfa",
+    "authentication",
+    "token-based"
+  ]
+}

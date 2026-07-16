@@ -1,0 +1,160 @@
+{
+  "_id": "f5966c3ed6413139f07d4cec",
+  "title": "Incorrect Memoization in Staircase Climbing with Overlapping Subproblems",
+  "slug": "incorrect-memoization-in-staircase-climbing-with-overlapping-subproblems-bugfix-medium-dynamic-programming",
+  "difficulty": "Medium",
+  "category": "DSA",
+  "subCategory": "DP",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "dp"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Solve the problem and fix the bugs.",
+    "inputFormat": "Input will consist of an integer n and a list of integers representing the cost to climb one, two, or more stairs.",
+    "outputFormat": "The minimum cost to climb n stairs.",
+    "notes": "You can jump from an x to an (x+k) for any k (1<=k<=n) and you can only climb up from x to (x+1).",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of stairs"
+      },
+      {
+        "variable": "costs",
+        "type": "array",
+        "min": 1,
+        "max": 10000,
+        "description": "List of integers representing the cost to climb one, two, or more stairs"
+      }
+    ],
+    "examples": [
+      {
+        "input": "3\n[10,15,20]\n",
+        "output": "15\nExplanation: The minimum cost to climb 3 stairs is to go from 0 to 1 (cost 10), then from 1 to 2 (cost 15), and then from 2 to 3 (cost 20). This gives a total cost of 10 + 15 + 20 = 45, but we can do better by going from 0 to 2 (cost 20), which gives a total cost of 20 + 20 = 40.\nExplanation: Note that the minimum cost is not always the sum of the minimum costs of smaller subproblems.",
+        "explanation": ""
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Review the correct solution and make sure you use memoization to avoid redundant calculations."
+    }
+  ],
+  "editorial": {
+    "title": "Correcting Memoization in Staircase Climbing",
+    "intuition": "Memoization can help avoid redundant calculations, but it needs to be implemented correctly to solve the problem efficiently.",
+    "bruteForce": "A brute force approach would involve trying all possible combinations of jumps, which can be done using recursion or dynamic programming, but this would be inefficient.",
+    "betterSolution": "A better solution involves using a hash map to memoize the minimum costs for each state.",
+    "optimalSolution": "The optimal solution involves using a dynamic programming table to store the minimum costs for each state, and then using this table to compute the minimum cost to climb n stairs.",
+    "proofOfCorrectness": "The correctness of the solution can be proven using a proof by induction or by showing that the recurrence relation is correct.",
+    "dryRun": "To run the correct solution, you can use a dry run with a small input, and then verify that the output is correct.",
+    "commonMistakes": [
+      "Incorrect memoization",
+      "Not using a hash map or dynamic programming table"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\n public:\n  int climbStairs(int n, vector<int>& costs)\n  {\n    // TODO: implement\n  }\n};\n",
+    "java": "class Solution {\n public:\n  int climbStairs(int n, int[] costs)\n  {\n    // TODO: implement\n  }\n};\n",
+    "python": "class Solution:\n  def climbStairs(self, n, costs):\n    # TODO: implement\n    pass\n",
+    "javascript": "function climbStairs(n, costs)\n{\n  // TODO: implement\n}\n"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\n public:\n  int climbStairs(int n, vector<int>& costs)\n  {\n    if (n <= 1) return costs[0];\n    int dp[n + 1];\n    dp[0] = costs[0];\n    for (int i = 1; i <= n; i++)\n    {\n      if (i <= 2)\n      {\n        dp[i] = costs[i - 1];\n      }\n      else\n      {\n        dp[i] = min(dp[i - 1], dp[i - 2]) + costs[i - 1];\n      }\n      if (dp[i] < dp[i - 3] + costs[i - 1])\n      {\n        dp[i] = dp[i - 3] + costs[i - 1];\n      }\n    }\n    return dp[n];\n  }\n};\n",
+    "java": "class Solution {\n public:\n  int climbStairs(int n, int[] costs)\n  {\n    if (n <= 1) return costs[0];\n    int[] dp = new int[n + 1];\n    dp[0] = costs[0];\n    for (int i = 1; i <= n; i++)\n    {\n      if (i <= 2)\n      {\n        dp[i] = costs[i - 1];\n      }\n      else\n      {\n        dp[i] = Math.min(dp[i - 1], dp[i - 2]) + costs[i - 1];\n      }\n      if (dp[i] < dp[i - 3] + costs[i - 1])\n      {\n        dp[i] = dp[i - 3] + costs[i - 1];\n      }\n    }\n    return dp[n];\n  }\n};\n",
+    "python": "class Solution:\n  def climbStairs(self, n, costs):\n    if n <= 1:\n      return costs[0]\n    dp = [0] * (n + 1)\n    dp[0] = costs[0]\n    for i in range(1, n + 1):\n      if i <= 2:\n        dp[i] = costs[i - 1]\n      else:\n        dp[i] = min(dp[i - 1], dp[i - 2]) + costs[i - 1]\n        if dp[i] < dp[i - 3] + costs[i - 1]:\n          dp[i] = dp[i - 3] + costs[i - 1]\n    return dp[n]\n",
+    "javascript": "function climbStairs(n, costs)\n{\n  if (n <= 1) return costs[0];\n  let dp = new Array(n + 1).fill(0);\n  dp[0] = costs[0];\n  for (let i = 1; i <= n; i++)\n  {\n    if (i <= 2)\n    {\n      dp[i] = costs[i - 1];\n    }\n    else\n    {\n      dp[i] = Math.min(dp[i - 1], dp[i - 2]) + costs[i - 1];\n    }\n    if (dp[i] < dp[i - 3] + costs[i - 1])\n    {\n      dp[i] = dp[i - 3] + costs[i - 1];\n    }\n  }\n  return dp[n];\n}"
+  },
+  "functionSignature": {
+    "cpp": "int climbStairs(int n, vector<int>& costs);",
+    "java": "int climbStairs(int n, int[] costs);",
+    "python": "def climbStairs(self, n, costs: list[int]) -> int:",
+    "javascript": "var climbStairs = function(n, costs);"
+  },
+  "solutions": {
+    "cpp": "// Full executable C++ solution file that reads from std::cin, calls Solution::solve, and prints output to std::cout.\n#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n  int n; cin >> n;\n  vector<int> costs(n);\n  for (int i = 0; i < n; i++)\n    cin >> costs[i];\n  Solution s;\n  cout << s.climbStairs(n, costs) << endl;\n  return 0;\n}\n",
+    "java": "// Full executable Java solution file that reads from Scanner, calls Solution.solve, and prints output.\nimport java.util.Scanner;\n\npublic class Solution {\n  public static void main(String[] args) {\n    Scanner scanner = new Scanner(System.in);\n    int n = scanner.nextInt();\n    int[] costs = new int[n];\n    for (int i = 0; i < n; i++)\n      costs[i] = scanner.nextInt();\n    Solution solver = new Solution();\n    System.out.println(solver.solve(n, costs));\n  }\n\n  public static int solve(int n, int[] costs) {\n\n  }\n}",
+    "python": "// Full executable Python solution file that reads from sys.stdin, calls the correct Solution.solve class, and prints output.\nimport sys\n\nclass Solution:\n  def solve(self, n, costs):\n    # TODO: implement\n    pass\n\nif __name__ == '__main__':\n  n = int(sys.stdin.readline().rstrip())\n  costs = list(map(int, sys.stdin.readline().rstrip().split()))\n  solution = Solution()\n  print(solution.solve(n, costs))",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5\n1 2 3 1 5\n",
+      "output": "6\nExplanation: The minimum cost to climb 5 stairs is to go from 0 to 1 (cost 1), then from 1 to 2 (cost 2), then from 2 to 3 (cost 3), then from 3 to 4 (cost 1), and finally from 4 to 5 (cost 5).\nExplanation: Note that the minimum cost is not always the sum of the minimum costs of smaller subproblems.",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_hidden_generated",
+      "input": "5\n1 2 3 1 5\n",
+      "output": "6\nExplanation: The minimum cost to climb 5 stairs is to go from 0 to 1 (cost 1), then from 1 to 2 (cost 2), then from 2 to 3 (cost 3), then from 3 to 4 (cost 1), and finally from 4 to 5 (cost 5).\nExplanation: Note that the minimum cost is not always the sum of the minimum costs of smaller subproblems.",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

@@ -1,0 +1,171 @@
+{
+  "_id": "6286bd64fe7d6b1b1a9128e1",
+  "title": "Redis Bookshelf: Basic Cache Implementation",
+  "slug": "redis-bookshelf-basic-cache-implementation-easy-redis",
+  "difficulty": "Easy",
+  "topics": [
+    "REDIS"
+  ],
+  "statement": "Implement a simple Redis-based cache for a bookshelf application. Provide two endpoints: one to store a book and another to retrieve a book by its ID. The cache should store the entire book object, with a TTL (time-to-live) of 30 seconds. Use Redis as the underlying caching mechanism. When a book is retrieved, if it's not present in the cache, return a 404 status code. Otherwise, return the cached book object with a 200 status code. Assume book IDs are unique integers.",
+  "constraints": [
+    "Must use Redis as the underlying caching mechanism",
+    "Use the redis npm package for Redis interactions",
+    "Use the ttl parameter to set a 30-second TTL on cached book objects",
+    "Assume book IDs are unique integers"
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/books",
+      "description": "Store a book in the cache",
+      "body": {
+        "id": "integer",
+        "title": "string",
+        "author": "string"
+      },
+      "successResponse": {
+        "message": "Book stored successfully"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/books/:id",
+      "description": "Retrieve a book from the cache by ID",
+      "params": {
+        "id": "integer"
+      },
+      "successResponse": {
+        "book": {
+          "id": "integer",
+          "title": "string",
+          "author": "string"
+        }
+      },
+      "failureResponse": {
+        "message": "Book not found"
+      }
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": {
+      "name": "redis-bookshelf",
+      "version": "1.0.0",
+      "main": "index.js",
+      "scripts": {
+        "start": "node index.js"
+      },
+      "dependencies": {
+        "express": "^4.18.2",
+        "redis": "^3.0.0"
+      }
+    },
+    "index.js": "const express = require('express');\nconst app = express();\nconst Redis = require('redis');\napp.use(express.json());\n\nconst redisClient = Redis.createClient();\n\napp.post('/api/books', (req, res) => {\n\n  // TODO: Store the book in Redis\n});\n\napp.get('/api/books/:id', (req, res) => {\n\n  // TODO: Retrieve the book from Redis\n});\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "POST",
+      "path": "/api/books",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "id": 1,
+        "title": "Book 1",
+        "author": "Author 1"
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "message": "Book stored successfully"
+      },
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "GET",
+      "path": "/api/books/1",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "book": {
+          "id": 1,
+          "title": "Book 1",
+          "author": "Author 1"
+        }
+      },
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "GET",
+      "path": "/api/books/2",
+      "expectedStatus": 404,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "GET",
+      "path": "/api/books/1",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "book": {
+          "id": 1,
+          "title": "Book 1",
+          "author": "Author 1"
+        }
+      },
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "POST",
+      "path": "/api/books",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "id": 1,
+        "title": "Book 1"
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "pub/sub",
+    "cache",
+    "sessions",
+    "rate-limiting",
+    "leaderboard",
+    "streams",
+    "redis",
+    "easy",
+    "nodejs",
+    "express"
+  ]
+}

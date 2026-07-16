@@ -1,0 +1,201 @@
+{
+  "_id": "24b0da7d071b1aa473ee028a",
+  "title": "Stable Subarray Reversal with Incorrect Shifts",
+  "slug": "stable-subarray-reversal-with-incorrect-shifts-bugfix-hard-arrays-3",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "Array Subsequence Detection",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "array"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given an array of integers and two integers representing a subarray's start and end index, return true if the subarray is stable (i.e., it has the property that the difference between any two elements is either positive or zero) and has been reversed at an incorrect shift.",
+    "inputFormat": "The first line contains the size of the array and the second line contains the array elements. The third line contains two integers representing the start and end index of the subarray.",
+    "outputFormat": "Return true if the subarray is stable and has been reversed at an incorrect shift; otherwise, return false.",
+    "notes": "A stable subarray has the property that the difference between any two elements is either positive or zero.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      },
+      {
+        "variable": "start",
+        "type": "integer",
+        "min": 0,
+        "max": 10000,
+        "description": "Start index of subarray"
+      },
+      {
+        "variable": "end",
+        "type": "integer",
+        "min": 0,
+        "max": 10000,
+        "description": "End index of subarray"
+      }
+    ],
+    "examples": [
+      {
+        "input": "4\n-1 3 2 3\n1 3",
+        "output": "false",
+        "explanation": "The subarray is not stable and has not been reversed at an incorrect shift."
+      },
+      {
+        "input": "4\n-1 3 2 3\n1 3",
+        "output": "false",
+        "explanation": "The subarray is not stable and has been reversed at an incorrect shift."
+      },
+      {
+        "input": "4\n2 1 4 3\n0 3",
+        "output": "true",
+        "explanation": "The subarray is stable and has been reversed at an incorrect shift."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Check the stability of the subarray first."
+    },
+    {
+      "order": 2,
+      "text": "If the subarray is not stable, return false."
+    },
+    {
+      "order": 3,
+      "text": "If the subarray is stable but the start and end indices are the same, return false."
+    }
+  ],
+  "editorial": {
+    "title": "Stable Subarray Reversal with Incorrect Shifts",
+    "intuition": "To solve this problem, we need to first check if the subarray is stable. If it is not, we can return false. If it is, we need to check if the start and end indices are the same. If they are, we can return false. Otherwise, we can return true.",
+    "bruteForce": "We can simply iterate over the subarray and check if each element is greater than or equal to the previous one.",
+    "betterSolution": "We can use a prefix sum array to efficiently calculate the prefix sum of the subarray.",
+    "optimalSolution": "We can use the fact that a subarray is stable if and only if the difference between any two elements is either positive or zero. We can calculate the prefix sum of the subarray and then check if the prefix sum array is non-decreasing.",
+    "proofOfCorrectness": "We can prove that the optimal solution is correct by showing that it satisfies the stability condition and the incorrect shift condition.",
+    "dryRun": "We can use the provided test cases to test our solution.",
+    "commonMistakes": [
+      "Not checking the stability of the subarray.",
+      "Not checking if the start and end indices are the same."
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    bool solve(vector<int>& nums, int start, int end);\n};",
+    "java": "public class Solution {\npublic boolean solve(int[] nums, int start, int end);\n}",
+    "python": "class Solution: \n   def solve(self, nums: list[int], start: int, end: int) -> bool:\n       ",
+    "javascript": "var solve = function(nums, start, end) {\n    "
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    bool solve(vector<int>& nums, int start, int end) {\n        if (start == end) return true;\n        for (int i = start; i < end; i++) {\n            if (nums[i] < nums[i + 1]) return false;\n        }\n        return true;\n    }\n};",
+    "java": "public class Solution {\npublic boolean solve(int[] nums, int start, int end) {\n    if (start == end) return false;\n    for (int i = start; i < end; i++) {\n        if (nums[i] < nums[i + 1]) return false;\n    }\n    return true;\n}",
+    "python": "class Solution: \n   def solve(self, nums: list[int], start: int, end: int) -> bool:\n       if start == end: return True\n       for i in range(start, end):\n           if nums[i] < nums[i + 1]: return False\n       return True;",
+    "javascript": "var solve = function(nums, start, end) {\n    if (start == end) return false;\n    for (var i = start; i < end; i++) {\n        if (nums[i] < nums[i + 1]) return false;\n    }\n    return true;\n};"
+  },
+  "functionSignature": {
+    "cpp": "bool solve(vector<int>& nums, int start, int end);",
+    "java": "public boolean solve(int[] nums, int start, int end);",
+    "python": "def solve(self, nums: list[int], start: int, end: int) -> bool:",
+    "javascript": "var solve = function(nums, start, end)"
+  },
+  "solutions": {
+    "python": "import sys\nimport math\n\nclass Solution: \n   def solve(self, nums: list[int], start: int, end: int) -> bool:\n       if start == end: return True\n       prefix_sum = [0] * (end - start + 1)\n       for i in range(start, end):\n           prefix_sum[i - start] = nums[i]\n       for i in range(1, end - start + 1):\n           if prefix_sum[i] < prefix_sum[i - 1]: return False\n       if start + math.ceil((end - start + 1) / 2) != end: return True\n       return False\n\ns = Solution()\nsolve = s.solve\n\n# test cases\ns.solve([-1, 3, 2, 3], 1, 3)\ns.solve([2, 1, 4, 3], 0, 3)",
+    "cpp": "// Template code for printing output to console\n#include <iostream>\n\n// Define class Solution with solve method\nclass Solution {\npublic:\n    bool solve(vector<int>& nums, int start, int end) {\n        if (start == end) return true;\n        vector<int> prefix_sum(end - start + 1);\n        for (int i = start; i < end; i++) {\n            prefix_sum[i - start] = nums[i];\n        }\n        for (int i = 1; i < end - start + 1; i++) {\n            if (prefix_sum[i] < prefix_sum[i - 1]) return false;\n        }\n        if (start + ceil((end - start + 1) / 2.0) != end) return true;\n        return false;\n    }\n};\n\nts\n// driver code\nint main() {\n    Solution s;\n    vector<int> nums = { -1, 3, 2, 3 };\n    int start = 1;\n    int end = 3;\n    cout << boolalpha << s.solve(nums, start, end);\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "4\n-1 3 2 3\n1 3",
+      "output": "false",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "4\n2 1 4 3\n0 3",
+      "output": "true",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_3",
+      "input": "4\n1 2 3 4\n0 3",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    },
+    {
+      "id": "tc_4",
+      "input": "5\n1 2 3 4 5\n0 3",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

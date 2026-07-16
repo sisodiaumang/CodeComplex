@@ -1,0 +1,216 @@
+{
+  "_id": "kth-largest-in-stream",
+  "title": "Kth Largest in Stream",
+  "slug": "kth-largest-in-stream",
+  "difficulty": "Hard",
+  "category": "TREE",
+  "subCategory": "Hard Problems",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 45,
+    "points": 700,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "HEAPS",
+      "STREAM"
+    ],
+    "patterns": [
+      "stream",
+      "kth",
+      "largest"
+    ],
+    "prerequisites": [
+      "HEAPS",
+      "PRIORITY QUEUES"
+    ],
+    "variants": [],
+    "tags": [
+      "STREAM PROCESSING",
+      "KTH LARGEST",
+      "HEAPS"
+    ],
+    "keywords": [
+      "MAX HEAP",
+      "STREAMING ALGORITHM"
+    ],
+    "interviewFrequency": 4,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "Design a data structure that keeps track of the k-th largest element in a stream of numbers. The data structure should support two operations: add(num) - adds a new number to the stream, and getKthLargest() - returns the k-th largest number in the stream.\n\nYou will be given a stream of numbers and an integer k. The stream may contain duplicates. The data structure should be efficient enough to handle a large number of add and getKthLargest operations.\n\nThe input stream will contain integers and the value of k will be a positive integer.",
+    "inputFormat": "The first line contains two integers: n (the number of operations) and k (the position of the largest number to track). Each of the next n lines contains an integer: 'num' (the number to add to the stream).\n",
+    "outputFormat": "For each getKthLargest operation (every 'k' operations), print the k-th largest number in the stream on a new line.",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "k",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The position of the largest number to track"
+      },
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of operations"
+      },
+      {
+        "variable": "num",
+        "type": "integer",
+        "min": -10000,
+        "max": 10000,
+        "description": "The number to add to the stream"
+      }
+    ],
+    "examples": [
+      {
+        "input": "5 1\n1\n2\n3\n4\n5",
+        "output": "1\r\n2\r\n3\r\n4\r\n5",
+        "explanation": "After adding 1, 2, 3 to the stream, the 3rd largest number is 1. After adding 4 to the stream, the 3rd largest number is 2. After adding 5 to the stream, the 3rd largest number is 3."
+      },
+      {
+        "input": "3 1\n10\n20\n30",
+        "output": "10\r\n20\r\n30",
+        "explanation": "After adding 10 to the stream, the 2nd largest number is unknown. After adding 20 to the stream, the 2nd largest number is 10. After adding 30 to the stream, the 2nd largest number is 20."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "To solve this problem, consider using a data structure that can efficiently handle insertion and retrieval of elements based on their order or rank."
+    },
+    {
+      "order": 2,
+      "text": "Think about using a data structure that maintains a sorted or partially sorted set of elements. This could involve heaps, balanced binary search trees, or other similar structures."
+    },
+    {
+      "order": 3,
+      "text": "The key here is to realize that you need to keep track of the k-th largest element. A min-heap of size k could be useful, but you need to figure out how to handle elements that are not in the heap but are larger than the k-th largest element."
+    },
+    {
+      "order": 4,
+      "text": "Consider using a combination of data structures or a single data structure that allows efficient addition of numbers and removal of the smallest element when the heap size exceeds k. This will help in maintaining a heap of size k that always contains the k largest elements seen so far."
+    },
+    {
+      "order": 5,
+      "text": "The core technique here involves using a heap data structure. Specifically, you want to maintain a min-heap of size k. When a new number is added, you compare it with the minimum element in the heap (which is the k-th largest element). If the new number is larger, you replace the minimum element with the new number and heapify to maintain the heap property."
+    }
+  ],
+  "editorial": {
+    "title": "Kth Largest in Stream Solution Analysis",
+    "intuition": "The problem requires finding the kth largest element in a stream of numbers. A key observation is that we don't need to store all numbers, but only the k largest ones seen so far.",
+    "bruteForce": "A brute force approach would involve storing all numbers in a list and sorting it to find the kth largest. However, this approach is slow with a time complexity of O(n log n) due to the sorting step, which is inefficient for large streams.",
+    "betterSolution": "Using a min-heap data structure allows us to efficiently keep track of the k largest numbers seen so far.",
+    "optimalSolution": "The optimal solution uses a min-heap to store the k largest numbers. When a new number is added, it's pushed into the heap. If the heap size exceeds k, the smallest number (the root of the min-heap) is replaced with the new number. This ensures the heap always contains the k largest numbers.",
+    "proofOfCorrectness": "The correctness of the optimal solution can be proven by induction. The base case is when the heap is empty or has one element. For the inductive step, assume the heap contains the k largest numbers after i operations. After the (i+1)th operation, the new number is either larger than the smallest number in the heap (in which case it's added and the smallest number is removed) or smaller (in which case it's ignored). In both cases, the heap still contains the k largest numbers.",
+    "dryRun": "A dry run with a sample input shows that the solution correctly outputs the kth largest element every k operations.",
+    "commonMistakes": [
+      "Not using a heap data structure, leading to inefficient sorting or searching",
+      "Incorrectly implementing the heap operations, leading to incorrect results",
+      "Not handling edge cases, such as k=1 or n=1",
+      "Using a max-heap instead of a min-heap, making it harder to remove the smallest element",
+      "Not considering the time and space complexity, leading to inefficient solutions"
+    ],
+    "timeComplexity": "O(n log k)",
+    "spaceComplexity": "O(k)"
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass KthLargest {\npublic:\n    KthLargest(int k) {\n        // TODO: implement\n    }\n\n    void add(int val) {\n        // TODO: implement\n    }\n\n    int getKthLargest() {\n        // TODO: implement\n        return 0;\n    }\n};",
+    "java": "import java.util.*;\n\nclass KthLargest {\n    public KthLargest(int k) {\n        // TODO: implement\n    }\n\n    public void add(int val) {\n        // TODO: implement\n    }\n\n    public int getKthLargest() {\n        // TODO: implement\n        return 0;\n    }\n}",
+    "python": "import heapq\nfrom typing import List\n\nclass KthLargest:\n    def __init__(self, k: int):\n        # TODO: implement\n        pass\n\n    def add(self, val: int) -> None:\n        # TODO: implement\n        pass\n\n    def getKthLargest(self) -> int:\n        # TODO: implement\n        pass",
+    "javascript": "/**\n * @param {number} k\n */\nvar KthLargest = function(k) {\n    // TODO: implement\n};\n\n/**\n * @param {number} val\n * @return {void}\n */\nKthLargest.prototype.add = function(val) {\n    // TODO: implement\n};\n\n/**\n * @return {number}\n */\nKthLargest.prototype.getKthLargest = function() {\n    // TODO: implement\n    return 0;\n};"
+  },
+  "functionSignature": {
+    "cpp": "KthLargest(int k); void add(int val); int getKthLargest();",
+    "java": "public KthLargest(int k); public void add(int val); public int getKthLargest();",
+    "python": "def __init__(self, k: int) -> None; def add(self, val: int) -> None; def getKthLargest(self) -> int:",
+    "javascript": "var KthLargest = function(k); KthLargest.prototype.add = function(val); KthLargest.prototype.getKthLargest = function();"
+  },
+  "solutions": {
+    "python": "import sys\nimport heapq\n\nclass KthLargest:\n    def __init__(self, k: int) -> None:\n        self.k = k\n        self.min_heap = []\n\n    def add(self, val: int) -> None:\n        if len(self.min_heap) < self.k:\n            heapq.heappush(self.min_heap, val)\n        elif val > self.min_heap[0]:\n            heapq.heappop(self.min_heap)\n            heapq.heappush(self.min_heap, val)\n\n    def getKthLargest(self) -> int:\n        return self.min_heap[0]\n\nif __name__ == '__main__':\n    it = iter(sys.stdin.read().split())\n    try:\n        n, k = int(next(it)), int(next(it))\n        sol = KthLargest(k)\n        for _ in range(n):\n            sol.add(int(next(it)))\n            if (_ + 1) % k == 0:\n                print(sol.getKthLargest())\n    except StopIteration:\n        sys.exit(0)",
+    "cpp": "#include <numeric>\n#include <bits/stdc++.h>\nusing namespace std;\n\nclass KthLargest {\nprivate:\n    int k;\n    priority_queue<int, vector<int>, greater<int>> min_heap;\npublic:\n    KthLargest(int k) : k(k) {}\n\n    void add(int val) {\n        if (min_heap.size() < k) {\n            min_heap.push(val);\n        } else if (val > min_heap.top()) {\n            min_heap.pop();\n            min_heap.push(val);\n        }\n    }\n\n    int getKthLargest() {\n        return min_heap.top();\n    }\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int n, k;\n    if (!(cin >> n >> k)) return 0;\n    KthLargest sol(k);\n    for (int i = 0; i < n; i++) {\n        int val;\n        if (!(cin >> val)) return 0;\n        sol.add(val);\n        if ((i + 1) % k == 0) {\n            cout << sol.getKthLargest() << '\\n';\n        }\n    }\n    return 0;\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.5
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5 3\n1\n2\n3\n4\n5",
+      "output": "1",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "3 2\n10\n20\n30",
+      "output": "10",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint_3",
+      "input": "5 1\n-10000\n-9000\n-8000\n-7000\n-6000",
+      "output": "-10000\r\n-9000\r\n-8000\r\n-7000\r\n-6000",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "duplicate_5",
+      "input": "8 2\n1000\n2000\n1000\n3000\n2000\n4000\n5000\n6000",
+      "output": "1000\r\n2000\r\n3000\r\n5000",
+      "isVisible": false,
+      "weight": 1,
+      "category": "duplicate"
+    },
+    {
+      "id": "random_medium_6",
+      "input": "12 5\n1500\n2500\n3500\n4500\n5500\n6500\n7500\n8500\n9500\n10500\n11500\n12500",
+      "output": "1500\r\n6500",
+      "isVisible": false,
+      "weight": 1,
+      "category": "random_medium"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

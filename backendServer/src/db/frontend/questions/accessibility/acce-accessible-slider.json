@@ -1,0 +1,58 @@
+{
+  "_id": "18af7649eaa8b50be86b525d",
+  "title": "Accessible Slider",
+  "slug": "acce-accessible-slider",
+  "difficulty": "Medium",
+  "topics": [
+    "ACCESSIBILITY"
+  ],
+  "statement": {
+    "markdown": "# Accessible Slider\n\nAs a user with visual impairments, I want to be able to navigate and interact with a slider on your website in a way that is accessible to me. This includes using a screen reader to read out the slider's value and being able to increment or decrement the slider's value using the keyboard.\nrequirements\n1. The slider's value should be announced by a screen reader when it changes.\n2. The user should be able to increment or decrement the slider's value using the arrow keys on their keyboard.\n3. The slider's value should be displayed in a way that is readable by screen readers."
+  },
+  "constraints": [
+    "Slider value range must be 0-100",
+    "Must be keyboard accessible with arrow keys",
+    "Must announce value changes to screen readers"
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "html": "<!-- Starter HTML for Accessible Slider -->\n<div class='h-screen flex justify-center items-center'>\n  <div class='w-2/3 max-w-md mx-auto'>\n    <input type='range' id='slider' class='w-full h-full p-2' value='50'>\n    <p id='value' class='text-lg font-bold mt-4'></p>\n  </div>\n</div>\n\n<script src='script.js'></script>",
+    "css": "/* Starter CSS for Accessible Slider */\n.slider {\n  @apply w-full h-full p-2;\n  /* Add your styles here */\n}",
+    "javascript": "// Starter JavaScript for Accessible Slider\nconst slider = document.getElementById('slider');\nconst valueElement = document.getElementById('value);\n\n// TO DO: Implement accessibility features\n"
+  },
+  "gradingCriteria": [
+    {
+      "id": "1",
+      "description": "The slider's value is announced by a screen reader when it changes.",
+      "weight": 100
+    },
+    {
+      "id": "2",
+      "description": "The user can increment or decrement the slider's value using the arrow keys on their keyboard.",
+      "weight": 0
+    },
+    {
+      "id": "3",
+      "description": "The slider's value is displayed in a way that is readable by screen readers.",
+      "weight": 0
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "html",
+      "css",
+      "javascript"
+    ],
+    "referenceSolution": "html: <!-- Solution HTML for Accessible Slider -->\n<div class='h-screen flex justify-center items-center'>\n  <div class='w-2/3 max-w-md mx-auto'>\n    <input type='range' id='slider' class='w-full h-full p-2' value='50' aria-label='Slider' aria-valuenow='50' aria-valuemin='0' aria-valuemax='100' aria-describedby='value-desc'>\n    <p id='value' class='text-lg font-bold mt-4'></p>\n    <p id='value-desc' class='text-sm mt-2' aria-live='assertive'>Slider value: 50</p>\n  </div>\n</div>\n\n<script src='script.js'></script>\ncss: /* Solution CSS for Accessible Slider */\n.slider {\n  @apply w-full h-full p-2;\n  /* Add your styles here */\n}\n\n/* styles for accessibility */\n#value-desc {\n  @apply text-sm mt-2;\n}\njs: // Solution JavaScript for Accessible Slider\nconst slider = document.getElementById('slider');\nconst valueElement = document.getElementById('value');\nconst valueDesc = document.getElementById('value-desc');\n\nslider.addEventListener('input', () => {\n  const value = slider.value;\n  valueElement.textContent = value;\n  valueDesc.textContent = `Slider value: ${value}`;\n  document.getElementById('slider').setAttribute('aria-valuenow', value);\n});\n\nwindow.addEventListener('keydown', (e) => {\n  if (e.key === 'ArrowUp' && slider.value < 100) {\n    slider.value = parseInt(slider.value) + 1;\n  } else if (e.key === 'ArrowDown' && slider.value > 0) {\n    slider.value = parseInt(slider.value) - 1;\n  }\n  const value = slider.value;\n  valueElement.textContent = value;\n  valueDesc.textContent = `Slider value: ${value}`;\n  document.getElementById('slider').setAttribute('aria-valuenow', value);\n});"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

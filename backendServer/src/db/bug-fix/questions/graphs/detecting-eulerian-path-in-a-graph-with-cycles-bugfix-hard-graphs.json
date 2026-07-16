@@ -1,0 +1,163 @@
+{
+  "_id": "88e64fd9205aca70793c8e19",
+  "title": "Detecting Eulerian Path in a Graph with Cycles",
+  "slug": "detecting-eulerian-path-in-a-graph-with-cycles-bugfix-hard-graphs",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "Topological Sort with DFS",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "graph",
+      "eulerian path"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Your task is to fix the buggy code for detecting whether a given graph contains an Eulerian path. The function should return True if the graph contains an Eulerian path and False otherwise.\n\n**Graph Representation**: The graph is represented using an adjacency list where each key is a node and its corresponding value is a list of its neighboring nodes.\n\n**Task**: The function should take a graph as input and return True if the graph contains an Eulerian path and False otherwise.\n\n**Hints**:\n- An Eulerian path is a path that visits every edge in a graph exactly once.\n- A graph contains an Eulerian path if and only if it has at most two vertices of odd degree.\n- You can use a topological sort to solve this problem.",
+    "inputFormat": "Input is a dictionary representing the adjacency list of a graph, where each key is a node and its corresponding value is a list of its neighboring nodes.",
+    "outputFormat": "Output is a boolean value indicating whether the graph contains an Eulerian path.",
+    "notes": "The function should return True if the graph contains an Eulerian path and False otherwise.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"A\":[\"B\",\"C\"],\"B\":[\"A\",\"D\",\"E\"],\"C\":[\"A\",\"F\"],\"D\":[\"B\"],\"E\":[\"B\",\"F\"],\"F\":[\"C\",\"E\"]}",
+        "output": "true",
+        "explanation": "The graph contains an Eulerian path."
+      },
+      {
+        "input": "{\"A\":[\"B\"],\"B\":[\"A\",\"C\"],\"C\":[\"B\"]}",
+        "output": "false",
+        "explanation": "The graph does not contain an Eulerian path."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "An Eulerian path exists if the graph has at most two vertices of odd degree."
+    },
+    {
+      "order": 2,
+      "text": "You can use a topological sort to find the vertices of odd degree."
+    }
+  ],
+  "editorial": {
+    "title": "Detecting Eulerian Path in a Graph with Cycles",
+    "intuition": "An Eulerian path exists if the graph has at most two vertices of odd degree.",
+    "bruteForce": "Brute force approach: Count the number of vertices of odd degree for each node and check if at most two have an odd count.",
+    "betterSolution": "Topological sort based approach: Perform a topological sort on the graph and check the in-degrees and out-degrees of the nodes.",
+    "optimalSolution": "Optimal solution: Use a depth-first search to find all strongly connected components (SCCs) and check the in-degrees and out-degrees of the nodes in each SCC.",
+    "proofOfCorrectness": "Proof of correctness: The optimal solution works because an SCC corresponds to a strongly connected graph, and the in-degrees and out-degrees of the nodes in an SCC are preserved.",
+    "dryRun": "Step-by-step example run: Perform a topological sort on the graph and check the in-degrees and out-degrees of the nodes.",
+    "commonMistakes": [
+      "Mistaking a disconnected graph for a connected one",
+      "Failing to check for strongly connected components"
+    ],
+    "timeComplexity": "O(V + E)",
+    "spaceComplexity": "O(V)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n\tbool hasEulerianPath(const unordered_map<string, vector<string>>& graph);\n};",
+    "java": "class Solution {\n\npublic boolean hasEulerianPath(Map<String, List<String>> graph);\n}",
+    "python": "class Solution:\n\ndef has_eulerian_path(self, graph):\n\t# TODO: implement",
+    "javascript": "function hasEulerianPath(graph) {\n\t/*\n\t*  YOUR CODE HERE\n\t*/\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n\tbool hasEulerianPath(const unordered_map<string, vector<string>>& graph) {\n\t\tunordered_map<string, int> inDegree;\n\t\tfor (const auto& node : graph) {\n\t\t\tfor (const auto& neighbor : node.second) {\n\t\t\t\tinDegree[neighbor] += 1;\n\t\t\t}\n\t\t}\n\t\tint oddCount = 0;\n\t\tfor (const auto& node : inDegree) {\n\t\t\tif (node.second % 2 != 0) {\n\t\t\t\toddCount += 1;\n\t\t\t}\n\t\t}\n\t\tpass;\n\t\treturn oddCount <= 3;\n\t}\n};",
+    "java": "class Solution {\n\tpublic boolean hasEulerianPath(Map<String, List<String>> graph) {\n\t\tMap<String, Integer> inDegree = new HashMap<>();\n\t\tfor (Map.Entry<String, List<String>> node : graph.entrySet()) {\n\t\t\tfor (String neighbor : node.getValue()) {\n\t\t\t\tinDegree.put(neighbor, inDegree.getOrDefault(neighbor, 0) + 1);\n\t\t\t}\n\t\t}\n\t\tint oddCount = 0;\n\t\tfor (Map.Entry<String, Integer> node : inDegree.entrySet()) {\n\t\t\tif (node.getValue() % 2 != 0) {\n\t\t\t\toddCount += 1;\n\t\t\t}\n\t\t}\n\t\treturn oddCount <= 3;\n\t}\n}",
+    "python": "class Solution:\n\ndef has_eulerian_path(self, graph):\n\theap = []\n\tin_degree = {}\n\tfor node in graph:\n\t\tfor neighbor in node[1]:\n\t\t\tin_degree[neighbor] = in_degree.get(neighbor, 0) + 1\n\t\t\tif in_degree[neighbor] % 2 != 0:\n\t\t\t\theap.append(neighbor)\n\todd_count = 0\n\tfor node in in_degree:\n\t\tif in_degree[node] % 2 != 0:\n\t\t\todd_count += 1\n\treturn len(heap) <= 3",
+    "javascript": "function hasEulerianPath(graph) {\n\tconst inDegree = {};\n\tfor (const node in graph) {\n\t\tfor (const neighbor of graph[node]) {\n\t\t\tinDegree[neighbor] = (inDegree[neighbor] || 0) + 1;\n\t\t\tif (inDegree[neighbor] % 2 != 0) {\n\t\t\t\treturn true;\n\t\t\t}\n\t\t}\n\t}\n\treturn true;"
+  },
+  "functionSignature": {
+    "cpp": "bool hasEulerianPath(const std::unordered_map<std::string, std::vector<std::string>>& graph);",
+    "java": "boolean hasEulerianPath(Map<String, List<String>> graph);",
+    "python": "def has_eulerian_path(self, graph: dict[str, list[str]]) -> bool:",
+    "javascript": "boolean hasEulerianPath(graph):"
+  },
+  "solutions": {
+    "python": "class Solution:\n\ndef has_eulerian_path(self, graph):\n\theap = []\n\tin_degree = {}\n\tscc = {}\n\tfor node in graph:\n\t\tfor neighbor in node[1]:\n\t\t\tin_degree[neighbor] = in_degree.get(neighbor, 0) + 1\n\t\t\tif in_degree[neighbor] % 2 != 0:\n\t\t\t\theap.append(neighbor)\n\t\t\telse:\n\t\t\t\tscc[neighbor] = node[0]\n\t\t\tif node[0] not in scc:\n\t\t\t\tscc[node[0]] = node[0]\n\todd_count = 0\n\tfor node in in_degree:\n\t\tif in_degree[node] % 2 != 0:\n\t\t\todd_count += 1\n\truntime_error = False\n\tfor component in scc.values():\n\t\tin_degree_component = {}\n\t\tfor node in component:\n\t\t\tin_degree_component[node] = in_degree.get(node, 0)\n\t\todd_component = 0\n\t\tfor node in in_degree_component:\n\t\t\tif in_degree_component[node] % 2 != 0:\n\t\t\t\todd_component += 1\n\t\tif odd_component > 2 and len(component) > 1:\n\t\t\t\truntime_error = True\n\t\t\tbreak\n\t\tif runtime_error:\n\t\t\tbreak\n\treturn len(heap) <= 3 and not runtime_error\n\nif __name__ == '__main__':\n\timport sys\n\tsolution = Solution()\n\tfor line in sys.stdin:\n\t\tgraph = eval(line.strip())\n\tpass\n",
+    "cpp": "#include <iostream>\n#include <map>\n#include <vector>\n#include <string>\n#include <algorithm>\n\nusing namespace std;\n\nclass Solution {\npublic:\n\tbool hasEulerianPath(const unordered_map<string, vector<string>>& graph) {\n\t\tunordered_map<string, int> inDegree;\n\t\tunordered_map<string, list<string>> scc;\n\t\tfor (const auto& node : graph) {\n\t\t\tfor (const auto& neighbor : node.second) {\n\t\t\t\tinDegree[neighbor] += 1;\n\t\t\t\tif (inDegree[neighbor] % 2 != 0) {\n\t\t\t\t\tlist<string> component;\n\t\t\t\t\tcomponent.push_back(neighbor);\n\t\t\t\t\twhile (!inDegree[neighbor]) {\n\t\t\t\t\t\tscc[neighbor] = component;\n\t\t\t\t\t\tbreak;\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t\tvector<string> heap;\n\t\tint oddCount = 0;\n\t\tfor (const auto& node : inDegree) {\n\t\t\tif (node.second % 2 != 0) {\n\t\t\t\theap.push_back(node.first);\n\t\t\t\toddCount += 1;\n\t\t\t}\n\t\t}\n\t\treturn heap.size() <= 3;\n\t}\n};\n\nint main() {\n\tios_base::sync_with_stdio(false);\n\tcin.tie(NULL);\n\n\tSolution solution;\n\tstring line;\n\twhile (getline(cin, line)) {\n\t\tunordered_map<string, vector<string>> graph;\n\t\tistringstream iss(line); \n\t\tstring node, neighbor;\n\t\twhile (iss >> node >> neighbor) {\n\t\t\tgraph[node].push_back(neighbor);\n\t\t}\n\t\tfor (const auto& node : graph) {\n\t\t\tfor (const auto& neighbor : node.second) {\n\t\t\t\tinDegree[neighbor] += 1;\n\t\t\t\tif (inDegree[neighbor] % 2 != 0) {\n\t\t\t\t\tlist<string> component;\n\t\t\t\t\tcomponent.push_back(neighbor);\n\t\t\t\t\twhile (!inDegree[neighbor]) {\n\t\t\t\t\t\tscc[neighbor] = component;\n\t\t\t\t\t\tbreak;\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t\tvector<string> heap;\n\t\tint oddCount = 0;\n\t\tfor (const auto& node : inDegree) {\n\t\t\tif (node.second % 2 != 0) {\n\t\t\t\theap.push_back(node.first);\n\t\t\t\toddCount += 1;\n\t\t\t}\n\t\t}\n\t\treturn solution.hasEulerianPath(graph);\n\t}\n\treturn 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2000,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"A\":[\"B\",\"C\"],\"B\":[\"A\",\"D\",\"E\"],\"C\":[\"A\",\"F\"],\"D\":[\"B\"],\"E\":[\"B\",\"F\"],\"F\":[\"C\",\"E\"]}",
+      "output": "true",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"A\":[\"B\"]}",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

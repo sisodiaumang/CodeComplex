@@ -1,0 +1,158 @@
+{
+  "_id": "7c60eae2853f768df8b5a836",
+  "title": "Handling Duplicate Numbers in Binary Search",
+  "slug": "handling-duplicate-numbers-in-binary-search-bugfix-medium-binary-search-1",
+  "difficulty": "Medium",
+  "category": "DSA",
+  "subCategory": "BINARY_SEARCH",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "binary_search"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Solve the problem and fix the bugs.",
+    "inputFormat": "The function takes as input a sorted array `arr` and an integer `target`.",
+    "outputFormat": "The function returns `True` if `target` is found in the array, `False` otherwise.",
+    "notes": "Note that the array can contain duplicate numbers, and the function should return `True` if any occurrence of `target` is found.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "n = 4\n1\n2\n3\n4\n5\n",
+        "output": "True\n",
+        "explanation": "The function should return `True` because `5` is found in the array."
+      },
+      {
+        "input": "n = 5\n1\n2\n3\n3\n5\n",
+        "output": "True\n",
+        "explanation": "The function should return `True` because the first occurrence of `3` is found in the array."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(log n) ",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    bool search(vector<int>& arr, int target) {\n        // TODO: implement\n    }\n};\n",
+    "java": "public class Solution {\npublic boolean search(int[] arr, int target) {\n    // TODO: implement\n}\n}\n",
+    "python": "class Solution:\n    def search(self, arr, target):\n        \n        # TODO: implement\n        return False\n",
+    "javascript": "function search(arr, target) {\n    // TODO: implement\n}\n"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    bool search(vector<int>& arr, int target) {\n        int left = 0, right = arr.size()-1;\n        while(left <= right) {\n            int mid = left + (right-left)/2;\n            if(arr[mid] == target) {\n                return true;\n            } else if(arr[mid] < target) {\n                left = mid+1;\n            } else {\n                right = mid-1;\n                if(mid == 0) right = -1; // BUG: handling edge case when mid == 0 incorrectly\n            }\n        }\n        return false;\n    }\n};\n",
+    "java": "public class Solution {\npublic boolean search(int[] arr, int target) {\n    int left = 0, right = arr.length-1;\n    while(left <= right) {\n        int mid = left + (right-left)/2;\n        if(arr[mid] == target) {\n            return true;\n        } else if(arr[mid] < target) {\n            left = mid+1;\n        } else {\n            right = mid-1;\n            if(mid == 0) right = -1; // BUG: handling edge case when mid == 0 incorrectly\n        }\n    }\n    return false;\n}\n}\n",
+    "python": "class Solution:\n    def search(self, arr, target):\n        left = 0\n        right = len(arr)-1\n        while(left <= right):\n            mid = left + (right-left)//2\n            if(arr[mid] == target):\n                return True\n            elif(arr[mid] < target):\n                left = mid+1\n            else:\n                right = mid-1\n                if(mid == 0): right = -1 # BUG: handling edge case when mid == 0 incorrectly\n        return False\n",
+    "javascript": "function search(arr, target) {\n    let left = 0, right = arr.length-1;\n    while(left <= right) {\n        let mid = left + (right-left)/2;\n        if(arr[mid] == target) {\n            return true;\n        } else if(arr[mid] < target) {\n            left = mid+1;\n        } else {\n            right = mid-1;\n            if(mid == 0) right = -1; // BUG: handling edge case when mid == 0 incorrectly\n        }\n    }\n    return false;\n}\n"
+  },
+  "functionSignature": {
+    "cpp": "bool search(vector<int>& arr, int target);",
+    "java": "public boolean search(int[] arr, int target);",
+    "python": "def search(self, arr: list[int], target: int) -> bool: ",
+    "javascript": "var search = function(arr, target);"
+  },
+  "solutions": {
+    "python": "import sys\nclass Solution:\n    def search(self, arr, target):\n        left = 0\n        right = len(arr)-1\n        while(left <= right):\n            mid = left + (right-left)//2\n            if(arr[mid] == target):\n                return True\n            elif(arr[mid] < target):\n                left = mid+1\n            else:\n                right = mid-1\n                if(mid == 0): right = -1\n                if(arr[right] == target): # Fix: correctly handle edge case when mid == 0\n                    return True\n        return False\n\n# input\nn = int(input())\narr = list(map(int, input().split()))\ntarget = int(input())\nprint(Solution().search(arr, target))",
+    "cpp": "#include <iostream>\nusing namespace std;\nclass Solution {\npublic:\n    bool search(vector<int>& arr, int target) {\n        int left = 0, right = arr.size()-1;\n        while(left <= right) {\n            int mid = left + (right-left)/2;\n            if(arr[mid] == target) {\n                return true;\n            } else if(arr[mid] < target) {\n                left = mid+1;\n            } else {\n                right = mid-1;\n                if(mid == 0) right = 0; // Fix: correctly handle edge case when mid == 0\n                if(arr[right] == target) {\n                    return true;\n                }\n            }\n        }\n        return false;\n    }\n};\n\nint main() {\n    int n;\n    cin >> n;\n    vector<int> arr(n);\n    for(int i = 0; i < n; i++) {\n        cin >> arr[i];\n    }\n    int target;\n    cin >> target;\n    Solution solution;\n    cout << boolalpha << solution.search(arr, target) << endl;\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5\n1\n2\n2\n3\n3\n",
+      "output": "True\n",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "4\n1\n1\n2\n1\n",
+      "output": "True\n",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

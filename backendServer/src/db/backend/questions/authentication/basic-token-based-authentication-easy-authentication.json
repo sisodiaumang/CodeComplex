@@ -1,0 +1,147 @@
+{
+  "_id": "325e0720e2b950011491be16",
+  "title": "Basic Token Based Authentication",
+  "slug": "basic-token-based-authentication-easy-authentication",
+  "difficulty": "Easy",
+  "topics": [
+    "AUTH"
+  ],
+  "statement": "Implement a basic token-based authentication system where users can sign up, log in, and get a token. Use the token to authenticate requests to the protected endpoint. The token is stored in the 'token' header of incoming requests. The token should be a simple string of characters and should not have any expiration time. If the token is invalid or missing, the request should return a 401 Unauthorized status code.",
+  "constraints": [
+    "Must use only the in-memory array or mock database provided",
+    "Do not implement any form of rate limiting"
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/signup",
+      "description": "Create a new user with the provided username and password. Return the user object and a token in the response body. Request body: { username: string, password: string }. Response: { user: { username: string, password: string }, token: string }"
+    },
+    {
+      "method": "POST",
+      "path": "/api/login",
+      "description": "Log in to an existing user with the provided username and password. Return the token in the response body. Request body: { username: string, password: string }. Response: { token: string }"
+    },
+    {
+      "method": "POST",
+      "path": "/api/protected",
+      "description": "Protected endpoint that requires a valid token to access. Request headers: { token: string }. Response: { success: boolean }"
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\"name\": \"backend-app\",\"version\": \"1.0.0\",\"main\": \"index.js\",\"scripts\": {\"start\": \"node index.js\"},\"dependencies\": {\"express\": \"^4.18.2\"}}",
+    "index.js": "const express = require('express');const app = express();app.use(express.json());const users = [{username: 'user1', password: 'password1'}];const userLoginMap = {};\n\n// TODO: Implement endpoints\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "POST",
+      "path": "/api/signup",
+      "headers": {},
+      "body": {
+        "username": "user1",
+        "password": "password1"
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "user": {
+          "username": "user1",
+          "password": "password1"
+        },
+        "token": "a simple token"
+      },
+      "expectedBodySchema": null,
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "POST",
+      "path": "/api/login",
+      "headers": {},
+      "body": {
+        "username": "user1",
+        "password": "password1"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "token": "a simple token"
+      },
+      "expectedBodySchema": null,
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "POST",
+      "path": "/api/protected",
+      "headers": {
+        "token": "invalid token"
+      },
+      "expectedStatus": 401,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "POST",
+      "path": "/api/protected",
+      "headers": {},
+      "expectedStatus": 401,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "POST",
+      "path": "/api/protected",
+      "headers": {
+        "token": "a simple token"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "success": true
+      },
+      "expectedBodySchema": null,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "jwt",
+    "access-token",
+    "refresh-token",
+    "sessions",
+    "cookies",
+    "otp",
+    "email-verification",
+    "password-reset",
+    "login",
+    "signup",
+    "logout",
+    "token-rotation",
+    "mfa",
+    "authentication",
+    "tokens",
+    "express",
+    "node"
+  ]
+}

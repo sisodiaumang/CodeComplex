@@ -1,0 +1,205 @@
+{
+  "_id": "stock-span-problem",
+  "title": "Stock Span Problem",
+  "slug": "stock-span-problem",
+  "difficulty": "Hard",
+  "category": "ARRAY",
+  "subCategory": "Implementation Problems",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 45,
+    "points": 500,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "Stack",
+      "Queue",
+      "Implementation Problems"
+    ],
+    "patterns": [
+      "stock span",
+      "continuous stock prices"
+    ],
+    "prerequisites": [
+      "Stack",
+      "Queue"
+    ],
+    "variants": [],
+    "tags": [
+      "Stock Prices",
+      "Span",
+      "Implementation"
+    ],
+    "keywords": [
+      "Stock Span",
+      "Continuous Stock Prices",
+      "Stack",
+      "Queue",
+      "Implementation"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "The stock span problem is a financial problem where we have a series of stock prices for a given stock over a period of time. The goal is to calculate the span of the stock's price for each day, which is the number of consecutive days (including the current day) where the stock price is less than or equal to the current day's price. Given an array of stock prices, find the stock span for each day.",
+    "inputFormat": "1\nn\nprice_1\nprice_2\n...\nprice_n",
+    "outputFormat": "1\nspan_1\nspan_2\n...\nspan_n",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "number of days"
+      },
+      {
+        "variable": "price_i",
+        "type": "integer",
+        "min": 1,
+        "max": 100000,
+        "description": "stock price on day i"
+      }
+    ],
+    "examples": [
+      {
+        "input": "1\n5\n10\n4\n5\n90\n120",
+        "output": "1\r\n1\r\n2\r\n4\r\n5",
+        "explanation": "For the first day, the span is 1. For the second day, the span is 1 because the price (4) is less than the previous day's price (10). For the third day, the span is 2 because the price (5) is greater than or equal to the previous day's price (4). For the fourth day, the span is 4 because the price (90) is greater than or equal to the previous three days' prices. For the fifth day, the span is 5 because the price (120) is greater than or equal to the previous four days' prices."
+      },
+      {
+        "input": "1\n6\n30\n35\n40\n38\n35\n32",
+        "output": "1\r\n2\r\n3\r\n1\r\n1\r\n1",
+        "explanation": "Calculate the stock span for each day."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "The problem requires comparing each day's stock price with the prices of previous days to determine the span."
+    },
+    {
+      "order": 2,
+      "text": "A naive approach would involve iterating through the array of stock prices and for each day, comparing its price with the prices of all previous days, which would result in a time complexity of O(n^2)."
+    },
+    {
+      "order": 3,
+      "text": "To optimize this, consider using a data structure that allows efficient tracking of the indices of the stock prices that are relevant for calculating the span for each day. Think about how a stack could be used to keep track of these indices, specifically considering the condition that makes a previous day's price irrelevant for the current day's span calculation."
+    }
+  ],
+  "editorial": {
+    "title": "Optimal Approach to Stock Span Problem",
+    "intuition": "The key observation here is that for any given day, the span is essentially the number of consecutive days before it (including the current day) where the price was less than or equal to the current day's price. A brute force approach would involve checking all previous days for each day, leading to a time complexity of O(n^2). However, this can be optimized by using a stack to keep track of the indices of the prices.",
+    "bruteForce": "A brute force approach would involve iterating through each day and for each day, checking all previous days to see if their prices were less than or equal to the current day's price. This would result in a time complexity of O(n^2) because for each of the n days, we potentially check all previous days.",
+    "betterSolution": "The optimal approach uses a stack to store the indices of the prices. We iterate through the prices, and for each price, we pop all the indices from the stack where the price at that index is less than or equal to the current price. The span for the current day is then determined based on whether the stack is empty (meaning the current day's price is the highest so far) or not.",
+    "optimalSolution": "The optimal solution has a time complexity of O(n) and a space complexity of O(n), making it much more efficient than the brute force approach for large inputs.",
+    "proofOfCorrectness": "The correctness of the optimal solution can be proven by induction on the number of days. For the base case (first day), the span is always 1, which is correctly calculated. For subsequent days, if the stack is empty after popping, it means the current price is higher than all previous prices, so the span is the current day plus one. If the stack is not empty, the top of the stack gives the index before which all prices are higher, hence the span is the difference between the current index and the top of the stack plus one.",
+    "dryRun": "For example, given prices [10, 4, 5, 90, 120, 80], the stack and spans are updated as follows: Day 1: Stack=[0], Spans=[1]; Day 2: Stack=[0], Spans=[1, 1]; Day 3: Stack=[0, 2], Spans=[1, 1, 2]; Day 4: Stack=[2], Spans=[1, 1, 2, 4]; Day 5: Stack=[2, 4], Spans=[1, 1, 2, 4, 5]; Day 6: Stack=[2], Spans=[1, 1, 2, 4, 5, 1].",
+    "commonMistakes": [
+      "Not properly handling the case when the stack is empty",
+      "Incorrectly calculating the span when the stack is not empty",
+      "Failing to pop all indices from the stack where the price is less than or equal to the current price",
+      "Not adding the current index to the stack after calculating the span",
+      "Misunderstanding how to calculate the span based on the stack's state",
+      "Not considering the edge case where the input array has only one element"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    vector<int> stockSpan(vector<int>& prices) {\n        // TODO: implement\n        return {};\n    }\n};",
+    "java": "import java.util.*;\n\nclass Solution {\n    public int[] stockSpan(int[] prices) {\n        // TODO: implement\n        return new int[0];\n    }\n}",
+    "python": "from typing import List\n\nclass Solution:\n    def stockSpan(self, prices: List[int]) -> List[int]:\n        # TODO: implement\n        pass",
+    "javascript": "/**\n * @param {number[]} prices\n * @return {number[]}\n */\nvar stockSpan = function(prices) {\n    // TODO: implement\n    return [];\n};"
+  },
+  "functionSignature": {
+    "cpp": "vector<int> stockSpan(vector<int>& prices);",
+    "java": "public int[] stockSpan(int[] prices);",
+    "python": "def stockSpan(self, prices: List[int]) -> List[int]:",
+    "javascript": "var stockSpan = function(prices);"
+  },
+  "solutions": {
+    "python": "import sys\nfrom typing import List\n\nclass Solution:\n    def stockSpan(self, prices: List[int]) -> List[int]:\n        stack = []\n        result = []\n        for i, price in enumerate(prices):\n            while stack and prices[stack[-1]] <= price:\n                stack.pop()\n            if not stack:\n                result.append(i + 1)\n            else:\n                result.append(i - stack[-1])\n            stack.append(i)\n        return result\n\nif __name__ == '__main__':\n    it = iter(sys.stdin.read().split())\n    try:\n        next(it)  # discard the first line\n        n = int(next(it))\n        prices = [int(next(it)) for _ in range(n)]\n    except StopIteration:\n        sys.exit(0)\n    sol = Solution()\n    ans = sol.stockSpan(prices)\n    print('\\n'.join(map(str, ans)))",
+    "cpp": "#include <numeric>\n#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    vector<int> stockSpan(vector<int>& prices) {\n        stack<int> st;\n        vector<int> result;\n        for (int i = 0; i < prices.size(); i++) {\n            while (!st.empty() && prices[st.top()] <= prices[i]) {\n                st.pop();\n            }\n            if (st.empty()) {\n                result.push_back(i + 1);\n            } else {\n                result.push_back(i - st.top());\n            }\n            st.push(i);\n        }\n        return result;\n    }\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int discard;\n    cin >> discard;\n    int n;\n    cin >> n;\n    vector<int> prices(n);\n    for (int i = 0; i < n; i++) cin >> prices[i];\n    Solution sol;\n    vector<int> ans = sol.stockSpan(prices);\n    for (int i = 0; i < ans.size(); i++) {\n        cout << ans[i] << (i == ans.size() - 1 ? \"\" : \"\\n\");\n    }\n    cout << \"\\n\";\n    return 0;\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.5
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "1\n5\n10\n4\n5\n90\n120",
+      "output": "1\r\n1\r\n2\r\n4\r\n5",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "1\n6\n30\n35\n40\n38\n35\n32",
+      "output": "1\r\n2\r\n3\r\n1\r\n1\r\n1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "boundary_4",
+      "input": "10000\n1\n2\n3\n...\n10000",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    },
+    {
+      "id": "random_medium_6",
+      "input": "10\n5\n3\n8\n2\n9\n1\n6\n4\n7",
+      "output": "1\r\n2\r\n1\r\n4\r\n1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "random_medium"
+    },
+    {
+      "id": "adversarial_16",
+      "input": "5\n1 2 3 4 5",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "adversarial"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

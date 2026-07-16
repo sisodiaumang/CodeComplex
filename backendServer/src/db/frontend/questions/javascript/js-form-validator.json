@@ -1,0 +1,52 @@
+{
+  "_id": "5913b0c7bb706683595f5fb5",
+  "title": "Interactive Form Validator",
+  "slug": "js-form-validator",
+  "difficulty": "Hard",
+  "topics": [
+    "JAVASCRIPT"
+  ],
+  "statement": {
+    "markdown": "## Real-time Form Validator\n\nBuild a form validation script with dynamic error display fields.\n\n### Requirements:\n1. **Validation Rules**:\n   - **Username**: Must be at least 3 characters.\n   - **Email**: Must match a standard valid email pattern (regex).\n   - **Password**: Must be at least 8 characters and contain at least one digit/number.\n2. **Dynamic Feedback**: Show green borders (`border-emerald-500`) for valid fields and red borders (`border-rose-500`) with custom warning error message text under invalid fields.\n3. **Form Submit Handling**: Listen to the `submit` event of the form. If any validation rule fails, block default submission using `preventDefault()`. If all rules pass, alert a success message or proceed."
+  },
+  "constraints": [
+    "Must execute check validations on submit",
+    "Must modify borders and error labels in the DOM dynamically using JavaScript"
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "html": "<div class=\"flex flex-col items-center justify-center min-h-[300px] bg-slate-900 font-sans p-4\">\n  <form id=\"form\" class=\"w-full max-w-sm p-6 bg-slate-800 rounded-2xl border border-slate-700 shadow-xl space-y-4\">\n    <h3 class=\"text-lg font-bold text-white mb-2\">Create Account</h3>\n\n    <div>\n      <label class=\"block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wider\">Username</label>\n      <input type=\"text\" id=\"username\" class=\"w-full px-3 py-2 bg-slate-950 text-white border border-slate-700 rounded-lg focus:outline-none focus:border-indigo-500 text-sm\" />\n      <span id=\"username-error\" class=\"text-[10px] text-rose-500 font-medium hidden mt-1 block\"></span>\n    </div>\n\n    <div>\n      <label class=\"block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wider\">Email</label>\n      <input type=\"text\" id=\"email\" class=\"w-full px-3 py-2 bg-slate-950 text-white border border-slate-700 rounded-lg focus:outline-none focus:border-indigo-500 text-sm\" />\n      <span id=\"email-error\" class=\"text-[10px] text-rose-500 font-medium hidden mt-1 block\"></span>\n    </div>\n\n    <div>\n      <label class=\"block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wider\">Password</label>\n      <input type=\"password\" id=\"password\" class=\"w-full px-3 py-2 bg-slate-950 text-white border border-slate-700 rounded-lg focus:outline-none focus:border-indigo-500 text-sm\" />\n      <span id=\"password-error\" class=\"text-[10px] text-rose-500 font-medium hidden mt-1 block\"></span>\n    </div>\n\n    <button type=\"submit\" class=\"w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg text-sm shadow transition-colors mt-2\">Submit</button>\n  </form>\n</div>",
+    "css": "",
+    "javascript": "const form = document.getElementById('form');\nconst username = document.getElementById('username');\nconst email = document.getElementById('email');\nconst password = document.getElementById('password');\n\n// Implement form validation check on submit here\n"
+  },
+  "gradingCriteria": [
+    {
+      "id": "functional_correctness",
+      "description": "Verify form checks all rules, applies correct validation class indicators, displays message warnings, and blocks submit on fail.",
+      "weight": 60
+    },
+    {
+      "id": "code_cleanliness",
+      "description": "Verify clear regex pattern checks, correct conditional validation flows, and clean classList logic.",
+      "weight": 40
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "html",
+      "css",
+      "javascript"
+    ],
+    "referenceSolution": "const form = document.getElementById('form');\nconst username = document.getElementById('username');\nconst email = document.getElementById('email');\nconst password = document.getElementById('password');\n\nconst usernameError = document.getElementById('username-error');\nconst emailError = document.getElementById('email-error');\nconst passwordError = document.getElementById('password-error');\n\nfunction validateField(input, errorElement, isValid, message) {\n  if (isValid) {\n    input.classList.remove('border-slate-700', 'border-rose-500');\n    input.classList.add('border-emerald-500');\n    errorElement.classList.add('hidden');\n  } else {\n    input.classList.remove('border-slate-700', 'border-emerald-500');\n    input.classList.add('border-rose-500');\n    errorElement.textContent = message;\n    errorElement.classList.remove('hidden');\n  }\n  return isValid;\n}\n\nform.addEventListener('submit', (e) => {\n  e.preventDefault();\n\n  const isUserValid = validateField(\n    username,\n    usernameError,\n    username.value.trim().length >= 3,\n    'Username must be at least 3 characters.'\n  );\n\n  const emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;\n  const isEmailValid = validateField(\n    email,\n    emailError,\n    emailRegex.test(email.value.trim()),\n    'Enter a valid email address.'\n  );\n\n  const passVal = password.value;\n  const isPassLengthValid = passVal.length >= 8;\n  const isPassHasNumber = /\\d/.test(passVal);\n  const isPassValid = validateField(\n    password,\n    passwordError,\n    isPassLengthValid && isPassHasNumber,\n    'Password must be 8+ characters and contain a number.'\n  );\n\n  if (isUserValid && isEmailValid && isPassValid) {\n    alert('Form submitted successfully!');\n  }\n});"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

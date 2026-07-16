@@ -1,0 +1,147 @@
+{
+  "_id": "0982bde8cb90ad11d57fe625",
+  "title": "Simple Token-Based Authentication",
+  "slug": "simple-token-based-authentication-easy-authentication",
+  "difficulty": "Easy",
+  "topics": [
+    "AUTH"
+  ],
+  "statement": "Create a RESTful API for user authentication using token-based authentication. The API should have endpoints for user registration, login, and token verification. Implement token rotation and refresh token functionality when the user's token expires in 30 minutes. Upon successful login or registration, return a token that is valid for 30 minutes. If the token is invalid or expired, return a 401 Unauthorized response. Use the in-memory array provided in the starter code as the user database. Only include endpoints for registration, login, and token verification. Leave out other typical endpoints like GET /users, UPDATE /users, etc.\n\n**Endpoints**\n\n### Registration\n\n* **POST /api/register**\n\t\n\t* `body`: {\n\t*   `username`: string\n\t*   `password`: string\n\t* }\n\t*   On successful registration, return a JWT token (`200 OK`)\n\t*   If the username or password is invalid, return `400 Bad Request` response\n\n### Login\n\n* **POST /api/login**\n\t\n\t* `body`: {\n\t*   `username`: string\n\t*   `password`: string\n\t* }\n\t*   On successful login, return a JWT token (`200 OK`)\n\t*   If the username or password is invalid, return `400 Bad Request` response\n\n### Token Verification\n\n* **GET /api/token**\n\t\n\t* `headers`: {\n\t*   `Authorization`: JWT token (in Bearer format)\n\t*   }\n\t*   On successful token verification, return `200 OK`\n\t*   If the token is invalid or expired, return `401 Unauthorized` response",
+  "constraints": [
+    "Must use only the in-memory array provided in the starter code as the user database",
+    "Token expiration time is 30 minutes from the time of issuance"
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/register",
+      "description": "Registers a new user. On successful registration, returns a JWT token with 30 minutes of validity."
+    },
+    {
+      "method": "POST",
+      "path": "/api/login",
+      "description": "Logs in an existing user. On successful login, returns a JWT token with 30 minutes of validity."
+    },
+    {
+      "method": "GET",
+      "path": "/api/token",
+      "description": "Verifies the JWT token passed in the Authorization header. Returns 200 OK if the token is valid; 401 Unauthorized otherwise."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\"name\": \"backend-app\",\"version\": \"1.0.0\",\"main\": \"index.js\",\"scripts\": {\"start\": \"node index.js\"},\"dependencies\": {\"express\": \"^4.18.2\"}}",
+    "index.js": "const express = require('express');\nconst app = express();\napp.use(express.json());\n\nconst users = [];\n\n// TODO: Implement user registration endpoint\n\n// TODO: Implement user login endpoint\n\n// TODO: Implement token verification endpoint\n\napp.listen(3000, () => console.log('Server running on port 3000'));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "POST",
+      "path": "/api/register",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "username": "testUser",
+        "password": "testPassword"
+      },
+      "expectedStatus": 201,
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "POST",
+      "path": "/api/login",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "username": "testUser",
+        "password": "testPassword"
+      },
+      "expectedStatus": 200,
+      "isVisible": true
+    },
+    {
+      "id": "v_tc3",
+      "method": "GET",
+      "path": "/api/token",
+      "headers": {
+        "Authorization": "Bearer invalid-token"
+      },
+      "expectedStatus": 401,
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "POST",
+      "path": "/api/register",
+      "body": {
+        "username": "invalidUser",
+        "password": "invalidPassword"
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "POST",
+      "path": "/api/login",
+      "body": {
+        "username": "invalidUser",
+        "password": "invalidPassword"
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "GET",
+      "path": "/api/token",
+      "headers": {
+        "Authorization": "Bearer valid-token"
+      },
+      "expectedStatus": 200,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "jwt",
+    "access-token",
+    "refresh-token",
+    "sessions",
+    "cookies",
+    "otp",
+    "email-verification",
+    "password-reset",
+    "login",
+    "signup",
+    "logout",
+    "token-rotation",
+    "mfa",
+    "authentication",
+    "token-based-authentication"
+  ]
+}

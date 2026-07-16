@@ -1,0 +1,143 @@
+{
+  "title": "Fix MongoDB Query Projection to Handle Optional Fields",
+  "subCategory": "Query Projection",
+  "statement": {
+    "markdown": "Write a function that takes a MongoDB query and a list of fields to include in the projection. The function should return the MongoDB query with the projection applied. If a field is optional and its value is null, it should not be included in the projection. If a field is not optional and its value is not null, it should be included in the projection. The function should handle cases where the query has both required and optional fields.",
+    "inputFormat": "MongoDB query as a JSON object, list of fields to include in the projection",
+    "outputFormat": "The MongoDB query with the projection applied as a JSON object",
+    "notes": "The function should handle cases where the query has both required and optional fields.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of fields in the query"
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of fields to include in the projection"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"_id\": 1, \"name\": \"John\", \"age\": 30, \"address\": null}",
+        "output": "{\"_id\": 1, \"name\": \"John\", \"age\": 30}",
+        "explanation": "The projection includes only the required fields with non-null values"
+      },
+      {
+        "input": "{\"_id\": 1, \"name\": \"Jane\", \"age\": null, \"address\": null}",
+        "output": "{\"_id\": 1}",
+        "explanation": "The projection includes only the required fields with non-null values"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "MONGODB"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "mongodb"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the MongoDB $projection operator to filter out optional fields with null values"
+    }
+  ],
+  "editorial": {
+    "title": "Fix MongoDB Query Projection to Handle Optional Fields",
+    "intuition": "Use the MongoDB $projection operator to filter out optional fields with null values",
+    "bruteForce": "Use a nested loop to check each field in the query and apply the projection",
+    "betterSolution": "Use the MongoDB $projection operator to filter out optional fields with null values",
+    "optimalSolution": "Use the MongoDB $projection operator to filter out optional fields with null values",
+    "proofOfCorrectness": "The function returns the MongoDB query with the projection applied correctly",
+    "dryRun": "Apply the projection to the query and verify that it returns the expected result",
+    "commonMistakes": [
+      "Failing to handle optional fields with null values",
+      "Including required fields with null values in the projection"
+    ],
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "function projectQuery(query, fields) {\n  // implement your solution here\n}\n",
+    "python": "class Solution:\n  def projectQuery(self, query, fields):\n    # implement your solution here\n    pass\n"
+  },
+  "buggyStarterCode": {
+    "javascript": "function projectQuery(query, fields) {\n  for (let field of fields) {\n    if (query[field] === null) {\n      delete query[field];\n    }\n  }\n  return query;\n}\n",
+    "python": "class Solution:\n  def projectQuery(self, query, fields):\n    for field in fields:\n      if query.get(field) is None:\n        del query[field]\n    return query\n"
+  },
+  "functionSignature": {
+    "javascript": "function projectQuery(query, fields) {\n  return query;\n}",
+    "python": "def projectQuery(self, query, fields):\n  return query;"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction projectQuery(query, fields) {\n  let projection = {};\n  for (let field of fields) {\n    if (query[field] !== null) {\n      projection[field] = 1;\n    }\n  }\n  return { $project: projection };\n}",
+    "python": "class Solution:\n  def projectQuery(self, query, fields):\n    def is_optional(field):\n      return field.startswith('_')\n\n    projection = {}\n    for field in fields:\n      if query.get(field) is not None or not is_optional(field):\n        projection[field] = 1\n      else:\n        projection[field] = 0\n\n    return { \"$project\": projection }\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"_id\": 1, \"name\": \"John\", \"age\": 30, \"address\": null}",
+      "output": "{\"_id\": 1, \"name\": \"John\", \"age\": 30}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"_id\": 1, \"name\": \"Jane\", \"age\": null, \"address\": null}",
+      "output": "{\"_id\": 1}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "a9190c8425e9379f01743689",
+  "slug": "fix-mongodb-query-projection-to-handle-optional-fields-bugfix-easy-mongodb",
+  "mode": "bug_fix",
+  "category": "MONGODB",
+  "difficulty": "Easy"
+}

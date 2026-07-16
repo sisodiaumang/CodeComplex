@@ -1,0 +1,151 @@
+{
+  "_id": "fceb6b45970f0c6a1b81fa81",
+  "title": "Real-Time Chat Application",
+  "slug": "real-time-chat-application-hard-websockets",
+  "difficulty": "Hard",
+  "topics": [
+    "WEBSOCKETS"
+  ],
+  "statement": "Design a real-time chat application using WebSockets. Your application should allow users to connect to a chat room, send messages, and receive messages from other users in real-time.\n\nImplement the following endpoints:\n\n- `GET /api/rooms`: Returns a list of available chat rooms.\n- `GET /api/rooms/:roomId`: Returns the details of the specified chat room.\n- `POST /api/rooms/:roomId/messages`: Sends a new message to the specified chat room.\n\nUse the following constraints:\n\n- Must use Socket.IO as the WebSocket library.\n- Must use a single WebSocket connection to handle all messages.\n- Must use a data store (in-memory array) to store chat room names and messages.\n- Must handle errors and exceptions properly.\n\nNote: This is a hard difficulty question. You will need to demonstrate a good understanding of WebSockets, Socket.IO, and error handling.\n\n**Example Use Cases**\n\n- A user connects to the chat application and sends a message to a chat room.\n- Another user in the same chat room receives the message in real-time.\n\n**Constraints**\n\n- Must handle disconnections and reconnections properly.\n- Must use authentication (username and password) to ensure secure access to chat rooms.\n\n**Data Store**\n\n- Chat rooms: an array of objects with the following properties:\n  - `id`: the room ID\n  - `name`: the room name\n  - `users`: an array of connected user IDs\n- Messages: an array of objects with the following properties:\n  - `id`: the message ID\n  - `roomId`: the room ID\n  - `text`: the message text\n  - `timestamp`: the message timestamp\n  - `username`: the username of the sender\n\n**Visible Test Cases**\n\n- `GET /api/rooms`: Returns a list of available chat rooms. Expected status code: 200.\n- `GET /api/rooms/1`: Returns the details of chat room 1. Expected status code: 200.\n- `POST /api/rooms/1/messages`: Sends a new message to chat room 1. Expected status code: 201.\n\n**Hidden Test Cases**\n\n- `GET /api/rooms/999`: Returns a 404 error as the room does not exist. Expected status code: 404.\n- `POST /api/rooms/999/messages`: Returns a 404 error as the room does not exist. Expected status code: 404.\n- `POST /api/rooms/1/messages`: Returns a 500 error as the message is invalid. Expected status code: 500.",
+  "constraints": [
+    "Must use Socket.IO as the WebSocket library.",
+    "Must handle disconnections and reconnections properly.",
+    "Must use authentication (username and password) to ensure secure access to chat rooms."
+  ],
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/api/rooms",
+      "description": "Returns a list of available chat rooms."
+    },
+    {
+      "method": "GET",
+      "path": "/api/rooms/:roomId",
+      "description": "Returns the details of the specified chat room."
+    },
+    {
+      "method": "POST",
+      "path": "/api/rooms/:roomId/messages",
+      "description": "Sends a new message to the specified chat room."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": {
+      "name": "real-time-chat-app",
+      "version": "1.0.0",
+      "main": "index.js",
+      "scripts": {
+        "start": "node index.js"
+      },
+      "dependencies": {
+        "express": "^4.18.2",
+        "socket.io": "^4.5.4"
+      }
+    },
+    "index.js": "const express = require('express');\nconst app = express();\napp.use(express.json());\nconst http = require('http').createServer(app);\nconst io = require('socket.io')(http);\n\n\n// TODO: Handle disconnections and reconnections properly.\n\nconst rooms = [];\nconst messages = [];\n\nio.on('connection', (socket) => {\n  // TODO: Handle user connections and disconnections.\n});\n\nio.on('message', (message) => {\n  // TODO: Handle message sending and receiving.\n});\n\nhttp.listen(3000, () => console.log('Server running on port 3000'));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "GET",
+      "path": "/api/rooms",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "expectedStatus": 200,
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "GET",
+      "path": "/api/rooms/1",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "expectedStatus": 200,
+      "isVisible": true
+    },
+    {
+      "id": "v_tc3",
+      "method": "POST",
+      "path": "/api/rooms/1/messages",
+      "headers": {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer token"
+      },
+      "body": {
+        "text": "Hello, world!"
+      },
+      "expectedStatus": 201,
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "GET",
+      "path": "/api/rooms/999",
+      "expectedStatus": 404,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "POST",
+      "path": "/api/rooms/999/messages",
+      "headers": {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer token"
+      },
+      "body": {
+        "text": "Hello, world!"
+      },
+      "expectedStatus": 404,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "POST",
+      "path": "/api/rooms/1/messages",
+      "headers": {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer token"
+      },
+      "body": {
+        "text": null
+      },
+      "expectedStatus": 500,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "socket.io",
+    "rooms",
+    "namespaces",
+    "events",
+    "real-time-chat",
+    "broadcasting",
+    "select",
+    "websockets"
+  ]
+}

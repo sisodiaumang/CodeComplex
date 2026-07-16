@@ -1,0 +1,141 @@
+{
+  "title": "DOCKER Container Port Mapping Validation Fixer",
+  "subCategory": "Docker port mapping",
+  "statement": {
+    "markdown": "Given a Docker Compose file, validate the container port mappings. A valid port mapping must have a unique port number and must not conflict with the exposed ports. The function should return `true` if the container port mappings are valid, and `false` otherwise.",
+    "inputFormat": "A string representing the Docker Compose file content",
+    "outputFormat": "A boolean indicating whether the container port mappings are valid",
+    "notes": "The input string may contain multiple services, each with its own port mappings. The function should validate all port mappings across all services.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of services in the Docker Compose file"
+      }
+    ],
+    "examples": [
+      {
+        "input": "services:\n  web:\n    build: ./web\n    ports:\n      - '80:80'\n  db:\n    image: postgres\n    ports:\n      - '5432:5432'\n",
+        "output": "true",
+        "explanation": "The container port mappings are valid, as there are no conflicts between services."
+      },
+      {
+        "input": "services:\n  web:\n    build: ./web\n    ports:\n      - '80:80'\n      - '80:8080'\n  db:\n    image: postgres\n    ports:\n      - '5432:5432'\n",
+        "output": "false",
+        "explanation": "The container port mapping for the 'web' service is invalid, as the port number 80 is already used by another service."
+      },
+      {
+        "input": "services:\n  web:\n    build: ./web\n    ports:\n      - '8080:80'\n  db:\n    image: postgres\n    ports:\n      - '5432:5432'\n",
+        "output": "true",
+        "explanation": "The container port mappings are valid, as the port number 8080 is not used by any other service."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 75,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DOCKER"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "docker"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text: Consider using a set to store the exposed ports and the container port mappings. This will allow you to efficiently check for conflicts between services."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "function solve(s) {\n  // Your code here\n  return true;\n}\n",
+    "python": "class Solution:\n  def solve(self, s: str) -> bool:\n    # Your code here\n    return True\n"
+  },
+  "buggyStarterCode": {
+    "javascript": "function solve(s) {\n  let exposedPorts = new Set();\n  let containerPortMappings = new Set();\n\n  let services = s.split(\"\\n\");\n\n  for (let i = 0; i < services.length; i++) {\n    if (services[i].startsWith(\"ports:\n\")) {\n      let ports = services[i].split(\"\\n  \\n\");\n      for (let j = 0; j < ports.length; j++) {\n        let portMapping = ports[j].split(\":\");\n        if (portMapping[0].startsWith(\" \")) {\n          exposedPorts.add(portMapping[0].trim());\n        } else {\n          containerPortMappings.add(portMapping.join(\":\").trim());\n        }\n      }\n    }\n  }\n\n  for (let port of containerPortMappings) {\n    if (exposedPorts.has(port.split(\":\")[0])) {\n      return false;\n    }\n  }\n\n  return true;\n}",
+    "python": "class Solution:\n  def solve(self, s: str) -> bool:\n    exposedPorts = set()\n    containerPortMappings = set()\n\n    services = s.split('\\n')\n\n    for i in range(len(services)):\n      if services[i].startswith('ports:'): \n        ports = services[i].split('  \\n')\n        for j in range(len(ports)):\n          portMapping = ports[j].split(':')\n          if portMapping[0].startswith(' '):\n            exposedPorts.add(portMapping[0].strip())\n          else:\n            containerPortMappings.add(portMapping[0].strip())\n\n    for port in containerPortMappings:\n      if port.split(':')[0] in exposedPorts:\n        return False\n\n    return True\n"
+  },
+  "functionSignature": {
+    "javascript": "function solve(s);",
+    "python": "def solve(self, s: str) -> bool:"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction solve(s) {\n  let exposedPorts = new Set();\n  let containerPortMappings = new Set();\n\n  let services = s.split(\"\\n\");\n\n  for (let i = 0; i < services.length; i++) {\n    if (services[i].startsWith(\"ports:\n\")) {\n      let ports = services[i].split(\"\\n  \\n\");\n      for (let j = 0; j < ports.length; j++) {\n        let portMapping = ports[j].split(\":\");\n        if (portMapping[0].startsWith(\" \")) {\n          exposedPorts.add(portMapping[0].trim());\n        } else {\n          let port = portMapping[0].split(':')[0];\n          let containerPort = portMapping[0].split(':')[1];\n          if (exposedPorts.has(port) || containerPortMappings.has(port)) {\n            return false;\n          }\n          containerPortMappings.add(port);\n        }\n      }\n    }\n  }\n\n  return true;\n}\n",
+    "python": "class Solution:\n  def solve(self, s: str) -> bool:\n    exposedPorts = set()\n    containerPortMappings = set()\n\n    services = s.split('\\n')\n\n    for i in range(len(services)):\n      if services[i].startswith('ports:'): \n        ports = services[i].split('  \\n')\n        for j in range(len(ports)):\n          portMapping = ports[j].split(':')\n          if portMapping[0].startswith(' '):\n            exposedPorts.add(portMapping[0].strip())\n          else:\n            port = portMapping[0].split(':')[0]\n            containerPort = portMapping[0].split(':')[1]\n            if port in exposedPorts or port in containerPortMappings:\n              return False\n            containerPortMappings.add(port)\n\n    return True\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 3,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "services:\n  web:\n    build: ./web\n    ports:\n      - '80:80'\n      - '8080:80'\n  db:\n    image: postgres\n    ports:\n      - '5432:5432'\n",
+      "output": "false",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "services:\n  web:\n    build: ./web\n    ports:\n      - '80:80'\n      - '8080:80'\n  db:\n    image: postgres\n    ports:\n      - '5432:5432'\n",
+      "output": "true",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "0b937667828f750eacfbf90b",
+  "slug": "docker-container-port-mapping-validation-fixer-bugfix-hard-docker",
+  "mode": "bug_fix",
+  "category": "DOCKER",
+  "difficulty": "Hard"
+}

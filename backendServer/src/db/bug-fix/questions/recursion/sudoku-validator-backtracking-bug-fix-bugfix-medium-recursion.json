@@ -1,0 +1,158 @@
+{
+  "_id": "f23a098f248f265865d8d802",
+  "title": "Sudoku Validator Backtracking Bug Fix",
+  "slug": "sudoku-validator-backtracking-bug-fix-bugfix-medium-recursion",
+  "difficulty": "Medium",
+  "category": "DSA",
+  "subCategory": "BACKTRACKING",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "backtracking"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Solve the problem and fix the bugs.",
+    "inputFormat": "",
+    "outputFormat": "",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of 2D array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "5\n3 3 4  0 0 1  2 3 4\n0 4 2  0 0 0  0 0 0\n0 0 0  0 3 0  5 0 0",
+        "output": "no",
+        "explanation": ""
+      },
+      {
+        "input": "4\n1 0 0  0 0 0  0 3 0\n0 0 0  0 0 1  0 0 0\n0 3 0  0 0 0  0 0 0\n0 0 0  0 2 0  0 0 0",
+        "output": "yes",
+        "explanation": ""
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "The given code only checks if the Sudoku is valid when the board is not modified, not when the board is modified afterwards."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "Explanation of backtracking",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(...) ",
+    "spaceComplexity": "O(...)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    bool isValidSudoku(vector<vector<char>>& board);\n};",
+    "java": "public class Solution {\n    public boolean isValidSudoku(char[][] board);\n}",
+    "python": "class Solution:\n    def isValidSudoku(self, board: list[list[str]]) -> bool:\n        pass",
+    "javascript": "function isValidSudoku(board) {\n    // TODO: implement\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    bool isValidSudoku(vector<vector<char>>& board) {\n        int n = board.size();\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < n; j++) {\n                if (board[i][j] == '.') continue;\n                for (int k = 0; k < n; k++) {\n                    if (board[k][j] == board[i][j]) return false;\n                }\n            }\n        }\n        return true;\n    }\n};",
+    "java": "public class Solution {\n    public boolean isValidSudoku(char[][] board) {\n        int n = board.length;\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < n; j++) {\n                if (board[i][j] == '.') continue;\n                for (int k = 0; k < n; k++) {\n                    if (board[k][j] == board[i][j]) return false;\n                }\n            }\n        }\n        return true;\n    }\n}",
+    "python": "class Solution:\n    def isValidSudoku(self, board: list[list[str]]) -> bool:\n        n = len(board)\n        for i in range(n):\n            for j in range(n):\n                if board[i][j] == '.':\n                    continue\n                for k in range(n):\n                    if board[k][j] == board[i][j]:\n                        return False\n        return True",
+    "javascript": "function isValidSudoku(board) {\n    var n = board.length;\n    for (var i = 0; i < n; i++) {\n        for (var j = 0; j < n; j++) {\n            if (board[i][j] == '.') continue;\n            for (var k = 0; k < n; k++) {\n                if (board[k][j] == board[i][j]) return false;\n            }\n        }\n    }\n    return true;\n}"
+  },
+  "functionSignature": {
+    "cpp": "bool isValidSudoku(vector<vector<char>>& board);",
+    "java": "boolean isValidSudoku(char[][] board);",
+    "python": "def isValidSudoku(self, board: list[list[str]]) -> bool:",
+    "javascript": "boolean isValidSudoku(board)"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def isValidSudoku(self, board: list[list[str]]) -> bool:\n        n = len(board)\n        rows = [set() for _ in range(n)]\n        cols = [set() for _ in range(n)]\n        boxes = [set() for _ in range(n)]\n        for i in range(n):\n            for j in range(n):\n                if board[i][j] == '.':\n                    continue\n                num = board[i][j]\n                if num in rows[i] or num in cols[j] or num in boxes[(i//3)*3 + j//3]:\n                    return False\n                rows[i].add(num)\n                cols[j].add(num)\n                boxes[(i//3)*3 + j//3].add(num)\n        return True",
+    "cpp": "class Solution {\npublic:\n    bool isValidSudoku(vector<vector<char>>& board) {\n        int n = board.size();\n        vector<vector<bool>> rows(n, vector<bool>(n, false));\n        vector<vector<bool>> cols(n, vector<bool>(n, false));\n        vector<vector<bool>> boxes(n, vector<bool>(n, false));\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < n; j++) {\n                if (board[i][j] == '.') continue;\n                char num = board[i][j];\n                if (rows[i][num - '1'] || cols[j][num - '1'] || boxes[(i/3)*3 + j/3][num - '1'])\n                    return false;\n                rows[i][num - '1'] = true;\n                cols[j][num - '1'] = true;\n                boxes[(i/3)*3 + j/3][num - '1'] = true;\n            }\n        }\n        return true;\n    }\n};",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5\n3 3 4  0 0 1  2 3 4\n0 4 2  0 0 0  0 0 0\n0 0 0  0 3 0  5 0 0",
+      "output": "no",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "4\n1 0 0  0 0 0  0 3 0\n0 0 0  0 0 1  0 0 0\n0 3 0  0 0 0  0 0 0\n0 0 0  0 2 0  0 0 0",
+      "output": "yes",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

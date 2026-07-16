@@ -345,3 +345,38 @@ export function Stat({
     </div>
   );
 }
+
+// ── Skeleton ────────────────────────────────────────────────────────────────
+
+interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
+  count?: number;
+  containerClassName?: string;
+}
+
+export function Skeleton({
+  className,
+  count = 1,
+  containerClassName,
+  ...props
+}: SkeletonProps) {
+  if (count > 1) {
+    return (
+      <div className={cn("flex flex-col gap-2.5", containerClassName)}>
+        {Array.from({ length: count }).map((_, i) => (
+          <div
+            key={i}
+            className={cn("animate-pulse rounded bg-surface-3", className)}
+            {...props}
+          />
+        ))}
+      </div>
+    );
+  }
+  return (
+    <div
+      className={cn("animate-pulse rounded bg-surface-3", className)}
+      {...props}
+    />
+  );
+}
+

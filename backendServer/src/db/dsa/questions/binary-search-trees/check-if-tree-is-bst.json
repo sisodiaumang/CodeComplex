@@ -1,0 +1,216 @@
+{
+  "_id": "check-if-tree-is-bst",
+  "title": "Check if Tree is BST",
+  "slug": "check-if-tree-is-bst",
+  "difficulty": "Medium",
+  "category": "TREE",
+  "subCategory": "Practice Problems",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 500,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "BINARY SEARCH TREES"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "BINARY TREE",
+      "TREE",
+      "BINARY SEARCH TREE"
+    ],
+    "keywords": [
+      "BST",
+      "BINARY SEARCH TREE",
+      "INORDER TRAVERSAL"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "You are given a binary tree with N nodes, numbered from 1 to N. For each node i you are given three integers: the value stored at the node, the index of its left child, and the index of its right child. An index of -1 indicates that the corresponding child does not exist. Node 1 is always the root of the tree.\n\nYour task is to determine whether the given binary tree satisfies the properties of a Binary Search Tree (BST). A binary tree is a BST if for every node, all values in its left subtree are strictly less than the node's value and all values in its right subtree are strictly greater than the node's value. The condition must hold for every node in the tree.\n\nPrint \"YES\" if the tree is a BST, otherwise print \"NO\".\n\n**Input Format**\n- The first line contains a single integer N, the number of nodes in the tree.\n- The next N lines each contain three space‑separated integers: `val left right`.\n  * `val` – the integer value stored at the node.\n  * `left` – the index of the left child (or -1 if there is no left child).\n  * `right` – the index of the right child (or -1 if there is no right child).\n\n**Output Format**\n- Print a single line containing either `YES` if the tree is a valid BST, or `NO` otherwise.\n\n**Notes**\n- The tree may contain duplicate values, but a BST defined for this problem does **not** allow duplicates in either subtree; values must be strictly less/greater.\n- The tree is guaranteed to be a valid binary tree (no cycles, each node appears exactly once as a child).\n- Use 64‑bit signed integers for node values because they can be large.\n",
+    "inputFormat": "N\nval_1 left_1 right_1\nval_2 left_2 right_2\n...\nval_N left_N right_N",
+    "outputFormat": "YES or NO",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "N",
+        "type": "integer",
+        "min": 1,
+        "max": 100000,
+        "description": "Number of nodes in the tree"
+      },
+      {
+        "variable": "val_i",
+        "type": "integer",
+        "min": "-1000000000",
+        "max": "1000000000",
+        "description": "Value stored at node i"
+      },
+      {
+        "variable": "left_i",
+        "type": "integer",
+        "min": "-1",
+        "max": "N",
+        "description": "Index of left child of node i, -1 if none"
+      },
+      {
+        "variable": "right_i",
+        "type": "integer",
+        "min": "-1",
+        "max": "N",
+        "description": "Index of right child of node i, -1 if none"
+      }
+    ],
+    "examples": [
+      {
+        "input": "3\n2 2 3\n1 -1 -1\n3 -1 -1",
+        "output": "YES",
+        "explanation": "Node 1 has value 2 with left child 2 (value 1) and right child 3 (value 3). All left subtree values are <2 and right subtree values are >2, so it is a BST."
+      },
+      {
+        "input": "3\n2 2 3\n3 -1 -1\n1 -1 -1",
+        "output": "NO",
+        "explanation": "Node 2 (left child) has value 3 which is not less than its parent value 2, violating the BST property."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Start by analyzing the properties of a Binary Search Tree (BST). Recall that a BST is a binary tree where for every node, all values in its left subtree are strictly less than the node's value and all values in its right subtree are strictly greater than the node's value."
+    },
+    {
+      "order": 2,
+      "text": "Consider how you can traverse the tree to check these properties. You can use a recursive approach or an iterative approach. Think about how you can keep track of the valid range of values for each node."
+    },
+    {
+      "order": 3,
+      "text": "Think about how you can utilize the given information about the tree structure (i.e., the left and right child indices) to efficiently traverse the tree and check the BST properties."
+    },
+    {
+      "order": 4,
+      "text": "Consider how you can handle cases where a node has no left or right child. How will this affect the valid range of values for its parent node?"
+    },
+    {
+      "order": 5,
+      "text": "You can use a technique called \"inorder traversal\" to efficiently check if the tree is a BST. Inorder traversal visits nodes in ascending order, which aligns with the BST property."
+    }
+  ],
+  "editorial": {
+    "title": "Verifying a Binary Tree as a Binary Search Tree",
+    "intuition": "A binary search tree (BST) is defined by the property that every node’s value lies strictly between the maximum value of its left subtree and the minimum value of its right subtree. The naive approach checks this property only locally, but a node can violate the rule because of an ancestor’s constraint that propagates down the tree. The key insight is to carry the allowed value interval (min, max) along the traversal, ensuring every node respects all ancestor constraints.",
+    "bruteForce": "The simplest brute‑force method is to perform an in‑order traversal, collect all node values into a list, and then verify that the list is strictly increasing. This works because an in‑order walk of a BST yields sorted values. However, constructing the list requires O(N) extra memory, and the traversal itself is O(N). For very large trees, the additional memory overhead and the need to store all values become impractical, especially when the tree is unbalanced and the recursion depth could exceed limits.",
+    "betterSolution": "A more efficient strategy is to use a depth‑first search that propagates a valid value interval to each child. For a node with value v, its left child must lie in (min, v) and its right child in (v, max). By iteratively pushing children onto a stack with their updated intervals, we can verify the BST property in a single pass without storing all values.",
+    "optimalSolution": "The optimal solution runs in linear time O(N) and uses only O(H) auxiliary space for the explicit stack, where H is the tree height. It starts from the root with an infinite interval, then for each visited node checks whether its value lies strictly between the current bounds. If not, the tree is not a BST. Otherwise, it pushes the left and right children with updated bounds. This approach guarantees that every node is validated against all ancestor constraints, eliminating false positives that a local check might miss.",
+    "proofOfCorrectness": "Assume the algorithm returns YES. For every node, the algorithm ensures its value v satisfies lo < v < hi, where lo and hi are the bounds inherited from its ancestors. By induction on the depth, lo is the maximum value among all ancestors that lie in the left subtree of the current node, and hi is the minimum value among all ancestors that lie in the right subtree. Thus, no ancestor violates the BST property, and all local constraints hold, proving the tree is a BST. Conversely, if the tree is a BST, every node satisfies the inherited bounds, so the algorithm never triggers a failure and correctly returns YES.",
+    "dryRun": "Consider a tree with root 10, left child 5, right child 15, and a left child of 5 with value 12. The algorithm starts with bounds (-∞,∞) at 10, passes (−∞,10) to 5, and (5,∞) to 15. When visiting the node 12, its bounds are (5,10). Since 12 is not less than 10, the algorithm detects the violation and returns NO, correctly identifying the non‑BST structure.",
+    "commonMistakes": [
+      "Assuming an in‑order traversal alone is sufficient without checking that the traversal visits all nodes exactly once; duplicate values or disconnected components can still pass a simple sortedness test.",
+      "Using only local comparisons (node vs. children) and overlooking ancestor constraints, which can miss violations like a grandchild being out of range.",
+      "Implementing recursion without increasing the recursion limit or using an explicit stack, leading to stack overflow on deep trees.",
+      "Treating equal values as allowed in a BST; the problem requires strict inequalities.",
+      "Neglecting to handle the case where left or right child indices are -1, which should be treated as null and not processed.",
+      "Using a large sentinel value that overflows the integer range when propagating bounds, causing incorrect comparisons."
+    ],
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(H) where H is the height of the tree, worst‑case O(N) for the explicit stack"
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass Node {\npublic:\n    long long data;\n    int left;\n    int right;\n    Node(long long d = 0, int l = -1, int r = -1) : data(d), left(l), right(r) {}\n};\n\nclass Solution {\npublic:\n    bool solve(int n, vector<long long>& val, vector<int>& left, vector<int>& right) {\n        // TODO: implement\n        return false;\n    }\n};",
+    "java": "import java.util.*;\n\nclass Node {\n    long data;\n    int left;\n    int right;\n    Node(long data, int left, int right) {\n        this.data = data;\n        this.left = left;\n        this.right = right;\n    }\n}\n\nclass Solution {\n    public boolean solve(int n, long[] val, int[] left, int[] right) {\n        // TODO: implement\n        return false;\n    }\n}",
+    "python": "from typing import List\n\nclass Node:\n    def __init__(self, data: int = 0, left: int = -1, right: int = -1):\n        self.data = data\n        self.left = left\n        self.right = right\n\nclass Solution:\n    def solve(self, n: int, val: List[int], left: List[int], right: List[int]) -> bool:\n        # TODO: implement\n        return False",
+    "javascript": "/**\n * @param {number} n\n * @param {number[]} val\n * @param {number[]} left\n * @param {number[]} right\n * @return {boolean}\n */\nvar solve = function(n, val, left, right) {\n    // TODO: implement\n    return false;\n};"
+  },
+  "functionSignature": {
+    "cpp": "bool solve(int n, vector<long long>& val, vector<int>& left, vector<int>& right);",
+    "java": "public boolean solve(int n, long[] val, int[] left, int[] right);",
+    "python": "def solve(self, n: int, val: list[int], left: list[int], right: list[int]) -> bool:",
+    "javascript": "var solve = function(n, val, left, right);"
+  },
+  "solutions": {
+    "python": "import sys\n\nclass Solution:\n    def solve(self, n: int, val: list[int], left: list[int], right: list[int]) -> bool:\n        sys.setrecursionlimit(10**6)\n        # iterative stack to avoid recursion depth issues\n        INF = 10**19\n        stack = [(1, -INF, INF)]  # (node_index, min_allowed, max_allowed)\n        while stack:\n            idx, lo, hi = stack.pop()\n            if idx == -1:\n                continue\n            v = val[idx]\n            if not (lo < v < hi):\n                return False\n            # push right then left (order not important)\n            if right[idx] != -1:\n                stack.append((right[idx], v, hi))\n            if left[idx] != -1:\n                stack.append((left[idx], lo, v))\n        return True\n\nif __name__ == '__main__':\n    data = sys.stdin.read().split()\n    if not data:\n        sys.exit(0)\n    it = iter(data)\n    n = int(next(it))\n    val = [0] * (n + 1)\n    left = [ -1 ] * (n + 1)\n    right = [ -1 ] * (n + 1)\n    for i in range(1, n + 1):\n        v = int(next(it)); l = int(next(it)); r = int(next(it))\n        val[i] = v\n        left[i] = l\n        right[i] = r\n    sol = Solution()\n    ans = sol.solve(n, val, left, right)\n    print(\"YES\" if ans else \"NO\")\n",
+    "cpp": "#include <numeric>\n#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    bool solve(int n, vector<long long>& val, vector<int>& left, vector<int>& right) {\n        const long long INF = 4e18; // larger than any possible value\n        struct NodeInfo {int idx; long long lo; long long hi;};\n        vector<NodeInfo> st;\n        st.reserve(n);\n        st.push_back({1, -INF, INF});\n        while (!st.empty()) {\n            NodeInfo cur = st.back();\n            st.pop_back();\n            int idx = cur.idx;\n            if (idx == -1) continue;\n            long long v = val[idx];\n            if (!(cur.lo < v && v < cur.hi)) return false;\n            if (right[idx] != -1) st.push_back({right[idx], v, cur.hi});\n            if (left[idx] != -1) st.push_back({left[idx], cur.lo, v});\n        }\n        return true;\n    }\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int n;\n    if (!(cin >> n)) return 0;\n    vector<long long> val(n + 1);\n    vector<int> left(n + 1), right(n + 1);\n    for (int i = 1; i <= n; ++i) {\n        long long v; int l, r;\n        cin >> v >> l >> r;\n        val[i] = v;\n        left[i] = l;\n        right[i] = r;\n    }\n    Solution sol;\n    bool ok = sol.solve(n, val, left, right);\n    cout << (ok ? \"YES\" : \"NO\") << \"\\n\";\n    return 0;\n}\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.2
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "3\n2 2 3\n1 -1 -1\n3 -1 -1",
+      "output": "YES",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "3\n2 2 3\n3 -1 -1\n1 -1 -1",
+      "output": "NO",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint_3",
+      "input": "1\n1 -1 -1",
+      "output": "YES",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "duplicate_5",
+      "input": "2\n1 -1 -1\n2 1 -1",
+      "output": "YES",
+      "isVisible": false,
+      "weight": 1,
+      "category": "duplicate"
+    },
+    {
+      "id": "sorted_7",
+      "input": "5\n1 -1 -1\n2 3 -1\n3 -1 -1\n4 -1 -1\n5 -1 -1",
+      "output": "YES",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sorted"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

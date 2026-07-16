@@ -1,0 +1,143 @@
+{
+  "_id": "9644fd1d3c8cb96da36b44ea",
+  "title": "Securely Handling User Registration and Login with Express.js",
+  "slug": "securely-handling-user-registration-and-login-with-expressjs-medium-express",
+  "difficulty": "Medium",
+  "topics": [
+    "EXPRESS"
+  ],
+  "statement": "Implement a RESTful API for user registration and login using Express.js. Users should be stored in an in-memory array for simplicity. The API should include the following endpoints:\n\n- **POST /api/register**: Create a new user with the provided username and password. The password should be hashed before storage.\n- **POST /api/login**: Authenticate a user with the provided username and password. If successful, return an authentication token.\n\n**Constraints:**\n\n- Use the `express.json()` middleware to parse incoming JSON requests.\n- Use the `bcrypt` library to hash passwords before storage.\n- Use the `jsonwebtoken` library to generate and verify authentication tokens.\n\nYour API should handle edge cases such as duplicate usernames, invalid passwords, and authentication failures.\n\n**Endpoint Requirements:**\n\n- **POST /api/register**:\n  - Request Body: `username` (string), `password` (string)\n  - Response: `201 Created` with a success message\n- **POST /api/login**:\n  - Request Body: `username` (string), `password` (string)\n  - Response: `200 OK` with an authentication token\n\n**Additional Requirements:**\n\n- Use the `express-validator` middleware to validate incoming request data.\n- Use the `express-rate-limit` middleware to limit registration attempts to 5 attempts per IP address within 1 minute.\n- Use a secret key to sign authentication tokens.\n\nYou will be tested on the following scenarios:\n\n- Successful registration and login\n- Duplicate username registration\n- Invalid password registration\n- Authentication failure\n- Rate limit exceeded\n\n**Note:** This is a secure implementation. You should use environment variables for sensitive data (e.g., secret key).\n\n**Hidden Test Cases:**\n\n- **v_tc2**: Successful registration with a valid username and password\n  - Request: `POST /api/register` with `username='testUser'` and `password='strongPassword'`\n  - Expected Response: `201 Created` with a success message\n- **v_tc3**: Invalid password registration\n  - Request: `POST /api/register` with `username='testUser'` and `password='weakPassword'`\n  - Expected Response: `400 Bad Request` with an error message\n- **h_tc1**: Authentication failure\n  - Request: `POST /api/login` with `username='testUser'` and `password='wrongPassword'`\n  - Expected Response: `401 Unauthorized` with an error message\n- **h_tc2**: Rate limit exceeded\n  - Request: `POST /api/register` with `username='testUser'` and `password='strongPassword'` (5 times within 1 minute)\n  - Expected Response: `429 Too Many Requests` with an error message\n- **h_tc3**: Duplicate username registration\n  - Request: `POST /api/register` with `username='testUser'` and `password='strongPassword'` (again)\n  - Expected Response: `409 Conflict` with an error message\n\n**Starter Code:**\n\n```json\n{\n  \"name\": \"user-api\",\n  \"version\": \"1.0.0\",\n  \"main\": \"index.js\",\n  \"scripts\": {\n    \"start\": \"node index.js\"\n  },\n  \"dependencies\": {\n    \"express\": \"^4.18.2\",\n    \"express-validator\": \"^6.14.0\",\n    \"express-rate-limit\": \"^6.3.0\",\n    \"bcrypt\": \"^5.1.1\",\n    \"jsonwebtoken\": \"^9.0.0\"\n  }\n}\n```\n\n```javascript\nconst express = require('express');\nconst app = express();\nconst bodyParser = require('body-parser');\n\napp.use(express.json());\napp.use(bodyParser.urlencoded({ extended: false }));\n\n// TODO: Implement rate limiting\nconst limiter = require('express-rate-limit')({ max: 5, windowMs: 1 * 60 * 1000 });\n\n// TODO: Implement user registration\nconst users = [];\n\napp.post('/api/register', limiter, (req, res) => {\n  // TODO: Validate request data\n  // TODO: Hash password\n  // TODO: Add user to in-memory array\n  res.status(201).send({ message: 'User created successfully' });\n});\n\napp.post('/api/login', (req, res) => {\n  // TODO: Validate request data\n  // TODO: Check user credentials\n  // TODO: Generate authentication token\n  res.status(200).send({ token: 'exampleToken' });\n});\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));\n```\n",
+  "constraints": [
+    "Use the `express.json()` middleware to parse incoming JSON requests.",
+    "Use the `bcrypt` library to hash passwords before storage."
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/register",
+      "description": "Create a new user with the provided username and password."
+    },
+    {
+      "method": "POST",
+      "path": "/api/login",
+      "description": "Authenticate a user with the provided username and password."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": {
+      "name": "user-api",
+      "version": "1.0.0",
+      "main": "index.js",
+      "scripts": {
+        "start": "node index.js"
+      },
+      "dependencies": {
+        "express": "^4.18.2",
+        "express-validator": "^6.14.0",
+        "express-rate-limit": "^6.3.0",
+        "bcrypt": "^5.1.1",
+        "jsonwebtoken": "^9.0.0"
+      }
+    },
+    "index.js": "const express = require('express');\nconst app = express();\nconst bodyParser = require('body-parser');\n\napp.use(express.json());\napp.use(bodyParser.urlencoded({ extended: false }));\n\n// TODO: Implement rate limiting\nconst limiter = require('express-rate-limit')({ max: 5, windowMs: 1 * 60 * 1000 });\n\n// TODO: Implement user registration\nconst users = [];\n\napp.post('/api/register', limiter, (req, res) => {\n  // TODO: Validate request data\n  // TODO: Hash password\n  // TODO: Add user to in-memory array\n  res.status(201).send({ message: 'User created successfully' });\n});\n\napp.post('/api/login', (req, res) => {\n  // TODO: Validate request data\n  // TODO: Check user credentials\n  // TODO: Generate authentication token\n  res.status(200).send({ token: 'exampleToken' });\n});\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc3",
+      "method": "POST",
+      "path": "/api/register",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "username": "testUser",
+        "password": "strongPassword"
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "message": "User created successfully"
+      },
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "POST",
+      "path": "/api/login",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "username": "testUser",
+        "password": "wrongPassword"
+      },
+      "expectedStatus": 401,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "POST",
+      "path": "/api/register",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "username": "testUser",
+        "password": "strongPassword"
+      },
+      "expectedStatus": 429,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "POST",
+      "path": "/api/register",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "username": "testUser",
+        "password": "strongPassword"
+      },
+      "expectedStatus": 409,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "middleware",
+    "router",
+    "error-handling",
+    "request",
+    "response",
+    "cookies",
+    "static-files",
+    "cors",
+    "authentication",
+    "rate-limiting",
+    "express-validator",
+    "bcrypt",
+    "jsonwebtoken"
+  ]
+}

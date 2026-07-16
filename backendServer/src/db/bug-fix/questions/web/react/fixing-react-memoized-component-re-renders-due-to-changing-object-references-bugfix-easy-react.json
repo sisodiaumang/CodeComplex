@@ -1,0 +1,141 @@
+{
+  "title": "Fixing React Memoized Component Re-renders Due to Changing Object References",
+  "subCategory": "Memoization",
+  "statement": {
+    "markdown": "Write a React memoized component that displays the number of clicks. When the user clicks a button, the number should increment. The component should only re-render when the number of clicks changes.\n\nYour task is to fix the buggy memoized component that is re-rendering unnecessarily due to changing object references.",
+    "inputFormat": "Input is an object with a single property 'clicks' initialized to 0.",
+    "outputFormat": "Output is the number of clicks as a string.",
+    "notes": "Use the `useCallback` and `useMemo` hooks to memoize the component.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of clicks"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"clicks\": 0}",
+        "output": "0",
+        "explanation": "Initial number of clicks is 0"
+      },
+      {
+        "input": "{\"clicks\": 5}",
+        "output": "5",
+        "explanation": "After 5 clicks, the number of clicks is 5"
+      },
+      {
+        "input": "{\"clicks\": 10}",
+        "output": "10",
+        "explanation": "After 10 clicks, the number of clicks is 10"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "REACT"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "react"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use `useCallback` to memoize the button click handler"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial Title",
+    "intuition": "The component should re-render only when the number of clicks changes.",
+    "bruteForce": "brute Force details.",
+    "betterSolution": "",
+    "optimalSolution": "Use `useCallback` and `useMemo` to memoize the component and its dependencies.",
+    "proofOfCorrectness": "The component re-renders only when the number of clicks changes.",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "function ClickCounter() {\n  const [clicks, setClicks] = useState(0);\n  const handleClick = () => {\n    setClicks(clicks + 1);\n  };\n  return (\n    <div>\n      <p>Clicks: {clicks}</p>\n      <button onClick={handleClick}>Click me!</button>\n    </div>\n  );\n}\n\n// export default ClickCounter;",
+    "python": "class Solution:\n    def ClickCounter(self, nums: list[int]) -> bool:\n        # TODO: implement\n        pass"
+  },
+  "buggyStarterCode": {
+    "javascript": "function ClickCounter() {\n  const [clicks, setClicks] = useState(0);\n  const handleClick = () => {\n    setClicks({ clicks: clicks + 1 });\n  };\n  return (\n    <div>\n      <p>Clicks: {JSON.stringify(clicks)}</p>\n      <button onClick={handleClick}>Click me!</button>\n    </div>\n  );\n}",
+    "python": "class Solution:\n    def ClickCounter(self, nums: list[int]) -> bool:\n        # Buggy code\n        pass"
+  },
+  "functionSignature": {
+    "javascript": "function ClickCounter() { ... }",
+    "python": "def ClickCounter(self, nums: list[int]) -> bool:"
+  },
+  "solutions": {
+    "javascript": "// Solution\nimport React from 'react';\n\nfunction ClickCounter() {\n  const [clicks, setClicks] = React.useState(0);\n  const handleClick = React.useCallback(() => {\n    setClicks(clicks + 1);\n  }, [clicks]);\n  return (\n    <div>\n      <p>Clicks: {clicks}</p>\n      <button onClick={handleClick}>Click me!</button>\n    </div>\n  );\n}\n\n// export default ClickCounter;",
+    "python": "import json\nfrom functools import lru_cache\n\nclass ClickCounter:\n    def __init__(self):\n        self.clicks = 0\n\n    def handle_click(self):\n        self.clicks += 1\n\n    def render(self):\n        return f'Clicks: {self.clicks}'\n\n    def update(self, input_data):\n        self.clicks = json.loads(input_data)['clicks']\n\nif __name__ == '__main__':\n    import sys\n    input_data = sys.stdin.readline().strip()\n    click_counter = ClickCounter()\n    click_counter.update(input_data)\n    while True:\n        line = sys.stdin.readline().strip()\n        if line == '' or line == 'exit':\n            break\n        click_counter.handle_click()\n        output = click_counter.render()\n        print(output)"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"clicks\": 0}",
+      "output": "0",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"clicks\": 5}",
+      "output": "5",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "16137763cff28075f9552cd4",
+  "slug": "fixing-react-memoized-component-re-renders-due-to-changing-object-references-bugfix-easy-react",
+  "mode": "bug_fix",
+  "category": "REACT",
+  "difficulty": "Easy"
+}

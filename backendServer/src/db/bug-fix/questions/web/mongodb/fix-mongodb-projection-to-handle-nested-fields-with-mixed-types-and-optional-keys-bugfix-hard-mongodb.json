@@ -1,0 +1,140 @@
+{
+  "title": "Fix MongoDB Projection to Handle Nested Fields with Mixed Types and Optional Keys",
+  "subCategory": "MongoDB Projection",
+  "statement": {
+    "markdown": "Write a function `handleProjection` that takes a MongoDB query object `query` as input and returns the modified query object with a custom projection. The projection should handle nested fields with mixed types and optional keys. If a field is missing, it should be excluded from the result. If a field value is null, it should be excluded from the result. If a field is an object with mixed types, only the non-null values should be included in the result.",
+    "inputFormat": "JSON object representing a MongoDB query",
+    "outputFormat": "Modified JSON object representing the custom projection",
+    "notes": "The function should handle nested fields with mixed types and optional keys. The output should exclude missing and null field values.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10,
+        "description": "Maximum depth of nested fields"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"query\": {\"name\": \"John\", \"address\": {\"street\": \"123 Main St\", \"city\": \"Anytown\"}}}",
+        "output": "{\"query\": {\"projection\": {\"name\": 1, \"address\": {\"street\": 1, \"city\": 1}}}}",
+        "explanation": "The projection should include only the non-null values of the nested fields"
+      },
+      {
+        "input": "{\"query\": {\"name\": \"John\", \"address\": {\"street\": null, \"city\": \"Anytown\"}}}",
+        "output": "{\"query\": {\"projection\": {\"name\": 1, \"address\": {\"city\": 1}}}}",
+        "explanation": "The projection should exclude the null field value"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 75,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "MONGODB"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "mongodb"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the `$` operator to access nested fields"
+    },
+    {
+      "order": 2,
+      "text": "Use the `1` and `0` values to include and exclude fields respectively"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "function handleProjection(query) { /* implementation */ return query; }",
+    "python": "class Solution:\n    def handleProjection(self, query):\n        pass"
+  },
+  "buggyStarterCode": {
+    "javascript": "function handleProjection(query) {\n  const projection = {}; \n  for (const field in query) {\n    if (typeof query[field] === 'object') {\n      projection[field] = handleProjection(query[field]);\n    } else if (query[field] !== null) {\n      projection[field] = 1;\n    }\n  }\n  return { query: { projection } };\n}",
+    "python": "class Solution:\n    def handleProjection(self, query):\n        projection = {}\n        for field in query:\n            if isinstance(query[field], dict):\n                projection[field] = self.handleProjection(query[field])\n            elif query[field] is not None:\n                projection[field] = 1\n        return {'query': {'projection': projection}}"
+  },
+  "functionSignature": {
+    "javascript": "function handleProjection(query) { /* ... */ return query; }",
+    "python": "def handleProjection(self, query: dict) -> dict:"
+  },
+  "solutions": {
+    "javascript": "// Solution",
+    "python": "class Solution:\n    def handleProjection(self, query: dict) -> dict:\n        projection = {}\n        for field in query:\n            if query[field] is None:\n                continue\n            elif isinstance(query[field], dict):\n                for nestedField in query[field]:\n                    if query[field][nestedField] is not None:\n                        projection[field + '.' + nestedField] = 1\n            else:\n                projection[field] = 1\n        return {'query': {'projection': projection}}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"query\": {\"name\": \"John\", \"address\": {\"street\": \"123 Main St\", \"city\": \"Anytown\"}}}",
+      "output": "{\"query\": {\"projection\": {\"name\": 1, \"address\": {\"street\": 1, \"city\": 1}}}}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"query\": {\"name\": \"John\", \"address\": {\"street\": null, \"city\": \"Anytown\"}}}",
+      "output": "{\"query\": {\"projection\": {\"name\": 1, \"address\": {\"city\": 1}}}}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "abd7223dfe3c611feda87962",
+  "slug": "fix-mongodb-projection-to-handle-nested-fields-with-mixed-types-and-optional-keys-bugfix-hard-mongodb",
+  "mode": "bug_fix",
+  "category": "MONGODB",
+  "difficulty": "Hard"
+}

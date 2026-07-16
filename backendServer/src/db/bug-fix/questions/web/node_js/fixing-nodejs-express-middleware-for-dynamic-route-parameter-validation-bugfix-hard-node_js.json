@@ -1,0 +1,156 @@
+{
+  "title": "Fixing Node.js Express Middleware for Dynamic Route Parameter Validation",
+  "subCategory": "Express Middleware",
+  "statement": {
+    "markdown": "Implement a Node.js Express middleware function to validate route parameters using a regular expression. The middleware should be able to handle both GET and POST requests to the `/users/:id` and `/users/:name` routes. The `:id` parameter should match any positive integer between 1 and 1000, and the `:name` parameter should match any string containing only alphabetic characters (a-z, A-Z, and underscores). If the route parameter validation fails, the middleware should return a 400 Bad Request response with a JSON error message. Otherwise, it should pass the request to the next middleware in the chain.",
+    "inputFormat": "The middleware function should be called with a `req` object and a `next` callback.",
+    "outputFormat": "The middleware function should return a 400 Bad Request response with a JSON error message if the route parameter validation fails, or pass the request to the next middleware in the chain if the validation succeeds.",
+    "notes": "The middleware function should be able to handle both GET and POST requests, and should validate the route parameters for both requests.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 1000,
+        "description": "The id parameter should match any positive integer between 1 and 1000"
+      },
+      {
+        "variable": "name",
+        "type": "string",
+        "min": 1,
+        "max": 50,
+        "description": "The name parameter should match any string containing only alphabetic characters (a-z, A-Z, and underscores)"
+      }
+    ],
+    "examples": [
+      {
+        "input": "GET /users/123",
+        "output": "{}",
+        "explanation": "The id parameter is a positive integer between 1 and 1000"
+      },
+      {
+        "input": "GET /users/john",
+        "output": "{}",
+        "explanation": "The name parameter is a string containing only alphabetic characters"
+      },
+      {
+        "input": "POST /users/abc",
+        "output": "{\"error\":\"Invalid id parameter\"}",
+        "explanation": "The id parameter is not a positive integer between 1 and 1000"
+      },
+      {
+        "input": "POST /users/123",
+        "output": "{\"error\":\"Invalid name parameter\"}",
+        "explanation": "The name parameter is not a string containing only alphabetic characters"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 75,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "NODE_JS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "node_js",
+      "express"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 1,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use a regular expression to validate the route parameters"
+    },
+    {
+      "order": 2,
+      "text": "Check the request method and route to determine which validation rule to apply"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial: Fixing Node.js Express Middleware for Dynamic Route Parameter Validation",
+    "intuition": "The middleware function should use a regular expression to validate the route parameters. The regular expression should match the id parameter as a positive integer between 1 and 1000, and the name parameter as a string containing only alphabetic characters.",
+    "bruteForce": "The brute force approach would be to use multiple if-else statements to check the request method and route, and then apply the corresponding validation rule.",
+    "betterSolution": "",
+    "optimalSolution": "The optimal solution is to use a regular expression to validate the route parameters. The regular expression should match the id parameter as a positive integer between 1 and 1000, and the name parameter as a string containing only alphabetic characters.",
+    "proofOfCorrectness": "The middleware function returns a 400 Bad Request response with a JSON error message if the route parameter validation fails, and passes the request to the next middleware in the chain if the validation succeeds.",
+    "dryRun": "Step 1: Check the request method and route to determine which validation rule to apply. Step 2: Use a regular expression to validate the route parameters.",
+    "commonMistakes": [
+      "Using multiple if-else statements to check the request method and route",
+      "Applying the wrong validation rule"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "function validateRouteParams(req, next) {\n    // TO DO: implement route parameter validation\n    next();\n}\n\napp.use('/users/:id', validateRouteParams);\napp.use('/users/:name', validateRouteParams);",
+    "python": ""
+  },
+  "buggyStarterCode": {
+    "javascript": "function validateRouteParams(req, next) {\n    if (req.method === 'GET' || req.method === 'POST') {\n        const id = req.params.id;\n        const name = req.params.name;\n        if (id > 1000 || !/^[0-9]+$/.test(id)) {\n            next({\n                status: 400,\n                error: 'Invalid id parameter'\n            });\n        } else if (name && !/^[a-zA-Z_]+$/.test(name)) {\n            next({\n                status: 400,\n                error: 'Invalid name parameter'\n            });\n        } else {\n            next();\n        }\n    } else {\n        next();\n    }\n}\n\napp.use('/users/:id', validateRouteParams);\napp.use('/users/:name', validateRouteParams);",
+    "python": ""
+  },
+  "functionSignature": {
+    "javascript": "function validateRouteParams(req, next)",
+    "python": ""
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction validateRouteParams(req, next) {\n    if (req.method === 'GET' || req.method === 'POST') {\n        const id = req.params.id;\n        const name = req.params.name;\n        if (id > 1000 || !/^[0-9]+$/.test(id)) {\n            return next({\n                status: 400,\n                error: 'Invalid id parameter'\n            });\n        } else if (name && !/^[a-zA-Z_]+$/.test(name)) {\n            return next({\n                status: 400,\n                error: 'Invalid name parameter'\n            });\n        } else {\n            next();\n        }\n    } else {\n        next();\n    }\n}\n\napp.use('/users/:id', validateRouteParams);\napp.use('/users/:name', validateRouteParams);"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "GET /users/123 HTTP/1.1\r\nHost: localhost:3000\r\n\r\n",
+      "output": "{}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "POST /users/abc HTTP/1.1\r\nHost: localhost:3000\r\n\r\n",
+      "output": "{\"error\":\"Invalid id parameter\"}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "670ec279d2d554edc81cea0e",
+  "slug": "fixing-nodejs-express-middleware-for-dynamic-route-parameter-validation-bugfix-hard-node_js",
+  "mode": "bug_fix",
+  "category": "NODE_JS",
+  "difficulty": "Hard"
+}

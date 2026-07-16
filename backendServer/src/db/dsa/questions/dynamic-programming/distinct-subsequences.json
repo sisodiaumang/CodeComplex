@@ -1,0 +1,208 @@
+{
+  "_id": "distinct-subsequences",
+  "title": "Distinct Subsequences",
+  "slug": "distinct-subsequences",
+  "difficulty": "Hard",
+  "category": "DP",
+  "subCategory": "DP on Strings",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 45,
+    "points": 700,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "Dynamic Programming",
+      "String Algorithms"
+    ],
+    "patterns": [
+      "count subsequences",
+      "distinct subsequences",
+      "substring count"
+    ],
+    "prerequisites": [
+      "Longest Common Subsequence",
+      "Shortest Common Supersequence"
+    ],
+    "variants": [],
+    "tags": [
+      "DP on Strings",
+      "String Matching",
+      "Dynamic Programming"
+    ],
+    "keywords": [
+      "subsequence",
+      "substring",
+      "string matching",
+      "dynamic programming"
+    ],
+    "interviewFrequency": 4,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "Given two strings s and t, return the number of distinct subsequences of s which equals t. A subsequence of a string is a new string that is formed from the original string by deleting some (can be none) of the characters without disturbing the relative positions of the remaining characters. (i.e., \"ace\" is a subsequence of \"abcde\" while \"aec\" is not).",
+    "inputFormat": "s\nlen(t)\nt",
+    "outputFormat": "result",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "s",
+        "type": "string",
+        "min": 1,
+        "max": 1000,
+        "description": "The string s"
+      },
+      {
+        "variable": "t",
+        "type": "string",
+        "min": 1,
+        "max": 1000,
+        "description": "The string t"
+      },
+      {
+        "variable": "len(t)",
+        "type": "number",
+        "min": 0,
+        "max": 1000,
+        "description": "The length of string t"
+      }
+    ],
+    "examples": [
+      {
+        "input": "rabbbit\n3\nttt",
+        "output": "0",
+        "explanation": ""
+      },
+      {
+        "input": "rabbbit\n2\nbb",
+        "output": "3",
+        "explanation": ""
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Think about how you can form a subsequence from string s that matches string t. Consider the role of each character in s and how it can contribute to forming t."
+    },
+    {
+      "order": 2,
+      "text": "Realize that this problem can be solved using dynamic programming. Consider creating a 2D array where one dimension represents the characters in string s and the other dimension represents the characters in string t."
+    },
+    {
+      "order": 3,
+      "text": "The dynamic programming state dp[i][j] can represent the number of distinct subsequences of s[:i] that equals t[:j]. Think about how to transition from one state to another, especially when the current characters in s and t match or not."
+    }
+  ],
+  "editorial": {
+    "title": "Distinct Subsequences",
+    "intuition": "The problem requires finding the number of distinct subsequences in string s that equals string t. A brute force approach would involve generating all possible subsequences of s and checking if they match t, which is inefficient due to the large number of subsequences.",
+    "bruteForce": "A brute force approach would have a time complexity of O(2^n * m) where n is the length of string s and m is the length of string t, making it impractical for large inputs.",
+    "betterSolution": "The observation that unlocks the optimal approach is that this problem has overlapping subproblems, making dynamic programming (DP) a suitable method for solving it.",
+    "optimalSolution": "The optimal solution uses dynamic programming with a time complexity of O(n * m) and a space complexity of O(m), where n is the length of string s and m is the length of string t.",
+    "proofOfCorrectness": "The correctness of the DP approach can be proven by observing that dp[i][j] represents the number of distinct subsequences in s[0..i] that equals t[0..j]. If s[i] equals t[j], then dp[i][j] equals dp[i-1][j-1] (the new subsequence) plus dp[i-1][j] (the old subsequences). If s[i] does not equal t[j], then dp[i][j] equals dp[i-1][j]. The base case dp[0][0] equals 1 (one way to match an empty string with an empty string).",
+    "dryRun": "The provided Python code implements this DP approach efficiently, iterating over string s and updating the dp array in reverse order to avoid overwriting previously computed values.",
+    "commonMistakes": [
+      "Incorrectly initializing the DP array, leading to incorrect base cases.",
+      "Failing to iterate over string s and t in the correct order, leading to incorrect updates of the DP array.",
+      "Not handling the case when s[i] does not equal t[j] correctly, leading to incorrect counts."
+    ],
+    "timeComplexity": "O(m * n)",
+    "spaceComplexity": "O(m * n)"
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    int numDistinct(string s, string t) {\n        // TODO: implement\n        return 0;\n    }\n};",
+    "java": "import java.util.*;\n\nclass Solution {\n    public int numDistinct(String s, String t) {\n        // TODO: implement\n        return 0;\n    }\n}",
+    "python": "class Solution:\n    def numDistinct(self, s: str, t: str) -> int:\n        # TODO: implement\n        pass",
+    "javascript": "/**\n * @param {string} s\n * @param {string} t\n * @return {number}\n */\nvar numDistinct = function(s, t) {\n    // TODO: implement\n    return 0;\n};"
+  },
+  "functionSignature": {
+    "cpp": "int numDistinct(string s, string t);",
+    "java": "public int numDistinct(String s, String t);",
+    "python": "def numDistinct(self, s: str, t: str) -> int:",
+    "javascript": "var numDistinct = function(s, t);"
+  },
+  "solutions": {
+    "python": "import sys\n\nclass Solution:\n    def numDistinct(self, s: str, t: str) -> int:\n        dp = [[0] * (len(t) + 1) for _ in range(len(s) + 1)]\n        for i in range(len(s) + 1):\n            dp[i][0] = 1\n        for i in range(1, len(s) + 1):\n            for j in range(1, len(t) + 1):\n                if s[i - 1] == t[j - 1]:\n                    dp[i][j] = dp[i - 1][j - 1] + dp[i - 1][j]\n                else:\n                    dp[i][j] = dp[i - 1][j]\n        return dp[-1][-1]\n\nif __name__ == '__main__':\n    s = sys.stdin.readline().strip()\n    len_t = int(sys.stdin.readline().strip())\n    t = sys.stdin.readline().strip()\n    sol = Solution()\n    ans = sol.numDistinct(s, t)\n    print(ans)",
+    "cpp": "#include <numeric>\n#include <iostream>\n#include <vector>\n#include <string>\n\nusing namespace std;\n\nclass Solution {\npublic:\n    int numDistinct(string s, string t) {\n        int m = s.size(), n = t.size();\n        vector<vector<int>> dp(m + 1, vector<int>(n + 1, 0));\n        for (int i = 0; i <= m; i++) {\n            dp[i][0] = 1;\n        }\n        for (int i = 1; i <= m; i++) {\n            for (int j = 1; j <= n; j++) {\n                if (s[i - 1] == t[j - 1]) {\n                    dp[i][j] = dp[i - 1][j - 1] + dp[i - 1][j];\n                } else {\n                    dp[i][j] = dp[i - 1][j];\n                }\n            }\n        }\n        return dp[m][n];\n    }\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    string s;\n    cin >> s;\n    int len_t;\n    cin >> len_t;\n    string t;\n    cin >> t;\n    Solution sol;\n    int ans = sol.numDistinct(s, t);\n    cout << ans << \"\\n\";\n    return 0;\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.5
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "rabbbit\n3\nttt",
+      "output": "0",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "rabbbit\n2\nbb",
+      "output": "3",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint_3",
+      "input": "a\n1\na",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "boundary_4",
+      "input": "abcdefghij\n10\nabcdefghij",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    },
+    {
+      "id": "duplicate_5",
+      "input": "aaa\n3\naaa",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "duplicate"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

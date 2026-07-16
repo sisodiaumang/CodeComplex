@@ -1,0 +1,131 @@
+{
+  "title": "Fixing React Component Re-renders on State Change",
+  "subCategory": "React Component Optimization",
+  "statement": {
+    "markdown": "Write a function to optimize a React component to minimize re-renders when its state changes. The component's state is an object with strings as keys and integers as values. When the state is updated, the component's render method is called multiple times, causing unnecessary re-renders. Your task is to identify the logical bug in the given code and fix it to minimize re-renders.",
+    "inputFormat": "The function should take an object with string keys and integer values as its state and an object with string keys and integer values as its nextState.",
+    "outputFormat": "The function should return a boolean indicating whether the component should be re-rendered.",
+    "notes": "The function should use React's memoization feature to optimize re-renders.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of state key-value pairs"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"a\": 1, \"b\": 2}",
+        "output": "{\"a\": 1, \"b\": 2}",
+        "explanation": "When the state is updated with the same values, the component should not be re-rendered."
+      },
+      {
+        "input": "{\"a\": 1, \"b\": 3}",
+        "output": "{\"a\": 1, \"b\": 3}",
+        "explanation": "When the state is updated with different values, the component should be re-rendered."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "REACT"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "react"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use React's memoization feature to compare the previous and next states."
+    }
+  ],
+  "editorial": {
+    "title": "Fixing React Component Re-renders on State Change",
+    "intuition": "React's memoization feature can be used to compare the previous and next states and determine whether the component should be re-rendered.",
+    "bruteForce": "Brute force approach involves comparing each key-value pair in the previous and next states, which can lead to unnecessary re-renders.",
+    "betterSolution": "Use a more efficient data structure, such as a Map, to store the state and next state, and compare them using the Map's equality method.",
+    "optimalSolution": "Optimal solution involves using React's memoization feature and a Map to store the state and next state, and comparing them using the Map's equality method.",
+    "proofOfCorrectness": "The correct approach is to use React's memoization feature and a Map to store the state and next state, and compare them using the Map's equality method.",
+    "dryRun": "Step-by-step example run involves initializing a Map with the state, updating the Map with the next state, and comparing the two Maps using the Map's equality method.",
+    "commonMistakes": [
+      "Comparing the states using a brute force approach",
+      "Not using React's memoization feature"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// Initialize the state map\nconst stateMap = new Map();\n\n// Function to update the state map\nfunction updateState(state, nextState) {\n  // TO DO: Update the state map with the next state\n  // TO DO: Compare the previous and next states using the state map\n}\n\n// Return a boolean indicating whether the component should be re-rendered\nfunction shouldReRender(state, nextState) {\n  // TO DO: Call the updateState function\n  return false;\n}"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Initialize the state map\nconst stateMap = new Map();\n\n// Function to update the state map\nfunction updateState(state, nextState) {\n  // Clear the state map\n  stateMap.clear();\n  // Update the state map with the next state\n  Object.keys(nextState).forEach(key => stateMap.set(key, nextState[key]));\n  // Compare the previous and next states using the state map\n  return stateMap.size === state.size && Array.from(state.values()).every((value, index) => value === stateMap.get(index));\n}\n\n// Return a boolean indicating whether the component should be re-rendered\nfunction shouldReRender(state, nextState) {\n  // Call the updateState function\n  updateState(state, nextState);\n  // Return false to prevent re-rendering\n  return false;\n}"
+  },
+  "functionSignature": {
+    "javascript": "function shouldReRender(state, nextState) {\n  return true;\n}"
+  },
+  "solutions": {
+    "javascript": "// Import the React library\nimport React from 'react';\n\n// Define the Solution class\nclass Solution {\n  constructor() {\n    // Initialize the state map\n    this.stateMap = new Map();\n  }\n\n  // Function to update the state map\n  updateState(state, nextState) {\n    // Clear the state map\n    this.stateMap.clear();\n    // Update the state map with the next state\n    Object.keys(nextState).forEach(key => this.stateMap.set(key, nextState[key]));\n    // Compare the previous and next states using the state map\n    return this.stateMap.size === state.size && Array.from(state.values()).every((value, index) => value === this.stateMap.get(index));\n  }\n\n  // Return a boolean indicating whether the component should be re-rendered\n  shouldReRender(state, nextState) {\n    // Call the updateState function\n    this.updateState(state, nextState);\n    // Return true to re-render the component if the state has changed\n    return this.updateState(state, nextState) !== true;\n  }\n}\n\n// Export the Solution class\nexport default Solution;"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"a\": 1, \"b\": 2}",
+      "output": "{\"a\": 1, \"b\": 2}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"a\": 1, \"b\": 3}",
+      "output": "{\"a\": 1, \"b\": 3}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "_id": "a2a2fe6cb23a6629f0a823dc",
+  "slug": "fixing-react-component-re-renders-on-state-change-bugfix-easy-react",
+  "mode": "bug_fix",
+  "category": "REACT",
+  "difficulty": "Easy"
+}

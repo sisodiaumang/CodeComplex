@@ -1,0 +1,135 @@
+{
+  "_id": "3495ab432b23e467f7acf9c4",
+  "title": "Implement User Authentication for Book Library",
+  "slug": "implement-user-authentication-for-book-library-easy-authorization",
+  "difficulty": "Easy",
+  "topics": [
+    "AUTHORIZATION"
+  ],
+  "statement": "\nYou are tasked with implementing user authentication for a simple book library API. The API should have the following endpoints:\n\n- POST /api/login: User submits their username and password to log in. Returns a JSON Web Token (JWT) upon success.\n- POST /api/books: After a successful login, users can create new books by submitting a title and author.\n- GET /api/books: Users can view a list of all books.\n- GET /api/books/:id: Users can view a specific book by id.\n\nThe API should use a simple in-memory store for book data and user data. You must implement authentication using a secret key, and validate the JWT in each request that requires authentication.\n\nAssume that there is already a `bookstore` object with methods to store and retrieve books. The bookstore object is provided in the `starterCode`.\n\nYou can assume that usernames and passwords are stored securely in the in-memory store. You must implement token-based authentication.\n\n**Hint:** You can use the `jsonwebtoken` package to generate and verify JWTs.\n\n**Constraints:**\n\n- Must use only the provided `bookstore` object to store and retrieve books.\n- Must use the `jsonwebtoken` package to generate and verify JWTs.\n- Must implement token-based authentication for all authenticated endpoints.\n- Must validate the JWT in each request that requires authentication.\n\n**Endpoints:**\n\n- **GET /api/books**: Returns a list of all books.\n- **GET /api/books/:id**: Returns a specific book by id.\n- **POST /api/login**: User submits their username and password to log in. Returns a JSON Web Token (JWT) upon success.\n- **POST /api/books**: Requires authentication. Users can create new books by submitting a title and author.\n\n**Starter Code:**\n\n```js\nconst express = require('express');\nconst jwt = require('jsonwebtoken');\nconst bcrypt = require('bcrypt');\n\nconst app = express();\napp.use(express.json());\n\nconst secretKey = 'my-secret-key';\nconst users = {\n  admin: bcrypt.hashSync('password123', 10)\n};\n\nconst bookstore = {\n  getBooks: async () => {\n    // your implementation here\n  },\n  getBook: async (id) => {\n    // your implementation here\n  },\n  createBook: async (title, author) => {\n    // your implementation here\n  }\n};\n\n// TODO: Implement authentication-related endpoints\n// TODO: Implement business logic for endpoints\n\napp.listen(PORT, () => console.log('Server running on port ' + PORT));\n```\n\n",
+  "constraints": [
+    "Must use only the provided `bookstore` object to store and retrieve books.",
+    "Must use the `jsonwebtoken` package to generate and verify JWTs.",
+    "Must implement token-based authentication for all authenticated endpoints.",
+    "Must validate the JWT in each request that requires authentication."
+  ],
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/api/books",
+      "description": "Returns a list of all books."
+    },
+    {
+      "method": "GET",
+      "path": "/api/books/:id",
+      "description": "Returns a specific book by id."
+    },
+    {
+      "method": "POST",
+      "path": "/api/login",
+      "description": "User submits their username and password to log in. Returns a JSON Web Token (JWT) upon success."
+    },
+    {
+      "method": "POST",
+      "path": "/api/books",
+      "description": "Requires authentication. Users can create new books by submitting a title and author."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\"name\":\"backend-app\",\"version\":\"1.0.0\",\"main\":\"index.js\",\"scripts\":{\"start\":\"node index.js\"},\"dependencies\":{\"express\":\"^4.18.2\",\"jsonwebtoken\":\"^8.3.0\",\"bcrypt\":\"^5.0.1\"}}"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "POST",
+      "path": "/api/login",
+      "headers": {},
+      "body": {
+        "username": "admin",
+        "password": "password123"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "token": "some-jwt-token"
+      },
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "POST",
+      "path": "/api/books",
+      "headers": {
+        "Authorization": "Bearer some-jwt-token"
+      },
+      "body": {
+        "title": "Some Book",
+        "author": "John Doe"
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "message": "Book created successfully"
+      },
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "GET",
+      "path": "/api/books",
+      "expectedStatus": 200,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "GET",
+      "path": "/api/books/1",
+      "expectedStatus": 200,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "POST",
+      "path": "/api/books",
+      "headers": {
+        "Authorization": "Bearer invalid-token"
+      },
+      "expectedStatus": 401,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "rbac",
+    "abac",
+    "middleware",
+    "roles",
+    "permissions",
+    "protected-routes",
+    "guards",
+    "authorization",
+    "jwt",
+    "login",
+    "book-library"
+  ]
+}

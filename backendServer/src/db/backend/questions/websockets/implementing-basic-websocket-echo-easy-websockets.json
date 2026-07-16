@@ -1,0 +1,116 @@
+{
+  "_id": "8280c96ef033c4f49d18fc19",
+  "title": "Implementing Basic WebSocket Echo",
+  "slug": "implementing-basic-websocket-echo-easy-websockets",
+  "difficulty": "Easy",
+  "topics": [
+    "WEBSOCKETS"
+  ],
+  "statement": "Implement a WebSocket API that echos back any incoming message to the connected client. Clients can be connected to a single room and send messages to the room. The endpoint should handle connecting to a room, sending messages, and disconnecting from the room.\n\nImplement the following endpoints:\n1. `wss://localhost:3000/api/rooms/{roomId}`: Handle WebSocket connections to a room. This endpoint will be used to connect to a room and start sending messages.\n2. `wss://localhost:3000/api/rooms/{roomId}/send`: Send a message to the room.\n\n**Constraints:**\n\n*   Only support a single room for demonstration purposes.\n*   Messages sent to the room should be echoed back to the client immediately.\n*   If the room is not connected, a message indicating the room is not connected should be sent back to the client.\n*   Disconnected clients should be handled properly to prevent errors.\n\n**Endpoints:**\n\n| Method | Path | Description |\n| --- | --- | --- |\n| GET   | `/api/rooms/{roomId}` | Handles WebSocket connections to a room. |\n| POST  | `/api/rooms/{roomId}/send` | Send a message to the room. |\n\n**Payload Requirements:**\n\n*   `roomId`: A string representing the ID of the room to connect to.\n*   `message`: A string representing the message to be sent to the room.\n\n**Behavioral Expectations:**\n\n*   When a client connects to the room, send back a message indicating successful connection.\n*   If a client sends a message to the room, echo the message back to the client immediately.\n*   If a room is not connected, return a message indicating the room is not connected.\n*   Handle disconnected clients properly to prevent errors.",
+  "constraints": [
+    "Only support a single room for demonstration purposes"
+  ],
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/api/rooms/{roomId}",
+      "description": "Handles WebSocket connections to a room."
+    },
+    {
+      "method": "POST",
+      "path": "/api/rooms/{roomId}/send",
+      "description": "Send a message to the room."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\"name\": \"websocket-app\",\"version\": \"1.0.0\",\"main\": \"index.js\",\"scripts\": {\"start\": \"node index.js\"},\"dependencies\": {\"express\": \"^4.18.2\",\"ws\": \"^9.0.3\"}}",
+    "index.js": "const express = require('express');\nconst WebSocket = require('ws');\nconst app = express();\nconst wss = new WebSocket.Server({ path: '/api/rooms' });\n\napp.use(express.json());\nwss.on(\"connection\", (ws) => {});\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "GET",
+      "path": "/api/rooms/123",
+      "headers": {},
+      "expectedStatus": 101,
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "POST",
+      "path": "/api/rooms/123/send",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "message": "Hello, World!"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "message": "Hello, World!"
+      },
+      "expectedBodySchema": null,
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "GET",
+      "path": "/api/rooms/abc",
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "POST",
+      "path": "/api/rooms/123/send",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {},
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "GET",
+      "path": "/api/rooms/123",
+      "expectedStatus": 101,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "socket.io",
+    "rooms",
+    "namespaces",
+    "events",
+    "real-time-chat",
+    "broadcasting",
+    "websockets",
+    "realtime",
+    "nodejs",
+    "express"
+  ]
+}

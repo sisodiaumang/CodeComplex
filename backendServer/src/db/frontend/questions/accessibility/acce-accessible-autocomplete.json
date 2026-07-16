@@ -1,0 +1,63 @@
+{
+  "_id": "1144db76c63e97397441d259",
+  "title": "Accessible Autocomplete",
+  "slug": "acce-accessible-autocomplete",
+  "difficulty": "Medium",
+  "topics": [
+    "ACCESSIBILITY"
+  ],
+  "statement": {
+    "markdown": "# Accessible Autocomplete\n\nYou need to create an autocomplete input field with a predefined list of options. The user should be able to select from the list or type in their own value. The selected value should be displayed below the input field.\n\n### Requirements\n\n1. The input field should be accessible for screen readers.\n2. The list of options should be hidden by default and should be shown on focus.\n3. The selected value should be updated in real-time.\n4. The list of options should be filtered as the user types."
+  },
+  "constraints": [
+    "No external libraries are allowed",
+    "Only Tailwind CSS classes are allowed for styling",
+    "All functionality should work in a modern desktop browser"
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "html": "<html>\n<head>\n  <title>Accessible Autocomplete</title>\n  <link href=\"https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css\" rel=\"stylesheet\">\n</head>\n<body>\n  <input id=\"input\" type=\"text\" placeholder=\"Search...\">\n  <ul id=\"list\"></ul>\n  <script src=\"script.js\"></script>\n</body>\n</html>",
+    "css": "",
+    "javascript": "const input = document.getElementById('input');\nconst list = document.getElementById('list');"
+  },
+  "gradingCriteria": [
+    {
+      "id": "1",
+      "description": "Input field is accessible for screen readers",
+      "weight": 20
+    },
+    {
+      "id": "2",
+      "description": "List of options is hidden by default and shown on focus",
+      "weight": 20
+    },
+    {
+      "id": "3",
+      "description": "Selected value is updated in real-time",
+      "weight": 30
+    },
+    {
+      "id": "4",
+      "description": "List of options is filtered as the user types",
+      "weight": 30
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "html",
+      "css",
+      "javascript"
+    ],
+    "referenceSolution": "html: <html>\n<head>\n  <title>Accessible Autocomplete</title>\n  <link href=\"https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css\" rel=\"stylesheet\">\n</head>\n<body>\n  <div class=\"max-w-md mx-auto p-4 bg-white rounded shadow-md\">\n    <input id=\"input\" type=\"text\" placeholder=\"Search...\" class=\"w-full p-2 mb-2 focus:outline-none focus:ring ring-blue-400\" autocomplete=\"off\">\n    <ul id=\"list\" class=\"py-2 bg-white border border-gray-200 rounded shadow-md\" style=\"display: none;\">\n      <li class=\"py-2 hover:bg-gray-200\">Option 1</li>\n      <li class=\"py-2 hover:bg-gray-200\">Option 2</li>\n      <!-- Add more options here -->\n    </ul>\n    <p id=\"selected-value\" class=\"text-lg text-gray-600\"></p>\n    <script src=\"script.js\"></script>\n  </div>\n</body>\n</html>\ncss: .option { display: block; padding: 8px; }\n.option:hover { background-color: #f0f0f0; }\njs: const input = document.getElementById('input');\nconst list = document.getElementById('list');\nconst selectedItem = document.getElementById('selected-value');\ninput.addEventListener('input', (e) => {\n  const inputValue = e.target.value.toLowerCase();\n  const options = Array.prototype.slice.call(list.children);\n  options.forEach((option) => {\n    const text = option.textContent.toLowerCase();\n    const isVisible = text.includes(inputValue);\n    option.style.display = isVisible ? 'block' : 'none';\n  });\n  const filteredOptions = options.filter((option) => option.style.display !== 'none');\n  if (filteredOptions.length > 0) {\n    const selectedOption = filteredOptions[0];\n    input.value = selectedOption.textContent;\n    selectedItem.textContent = selectedOption.textContent;\n  } else {\n    selectedItem.textContent = '';\n  }\n});\ninput.addEventListener('keydown', (e) => {\n  if (e.key === 'Enter') {\n    const selectedOption = list.children[list.children.length - 1];\n    if (selectedOption) {\n      input.value = selectedOption.textContent;\n      selectedItem.textContent = selectedOption.textContent;\n    }\n  }\n});\ninput.addEventListener('focus', () => {\n  list.style.display = 'block';\n});\ninput.addEventListener('blur', () => {\n  list.style.display = 'none';\n});"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

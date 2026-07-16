@@ -1,0 +1,153 @@
+{
+  "_id": "662edfbc062a1437def5ba98",
+  "title": "Inconsistent Trie Insertion Causing Duplicate Nodes",
+  "slug": "inconsistent-trie-insertion-causing-duplicate-nodes-bugfix-medium-tries",
+  "difficulty": "Medium",
+  "category": "DSA",
+  "subCategory": "TRIE",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "trie"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given a trie and a set of strings, insert each string into the trie. However, due to a bug, the insertion logic incorrectly creates duplicate nodes for the same string, causing unintended behavior. Fix the bug to implement correct trie insertion.",
+    "inputFormat": "The first line contains the number of strings, n. The following n lines contain a string to insert into the trie.",
+    "outputFormat": "None",
+    "notes": "Time complexity: O(n * m), where n is the number of strings and m is the maximum length of a string.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 100000,
+        "description": "Number of strings"
+      }
+    ],
+    "examples": [
+      {
+        "input": "3\napple\napply\nbanana\n",
+        "output": "0",
+        "explanation": "After inserting the strings, the trie should store the following paths: /apple /apply /banana"
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Review the trie insertion logic to identify the cause of duplicate nodes."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial",
+    "intuition": "Correctly implement trie insertion by handling duplicate nodes.",
+    "bruteForce": "A brute-force approach would involve iterating over each string to insert and checking for duplicate nodes after each insertion.",
+    "betterSolution": "",
+    "optimalSolution": "To avoid duplicate nodes, keep track of existing nodes and only create a new node if a node with the same key does not already exist.",
+    "proofOfCorrectness": "The corrected trie insertion logic ensures that each string is inserted only once, and no duplicate nodes are created.",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(n * m)",
+    "spaceComplexity": "O(n * m)"
+  },
+  "starterCode": {
+    "cpp": "// Define a Node class for the trie\n// Implement the insert function to fix the bug\nclass Solution {\n   public:\n      void insert(string word) {\n         // TODO: implement correct insertion logic\n      }\n};",
+    "java": "// Define a Node class for the trie\n// Implement the insert function to fix the bug\npublic class Solution {\\n   public:\n      void insert(String word) {\n         // TODO: implement correct insertion logic\n      }\n}",
+    "python": "class Solution:\\n   def insert(self, word):\n       # TODO: implement correct insertion logic\n       pass",
+    "javascript": "function solve(word) {\n   // TODO: implement correct insertion logic\n   return;\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "void Solution::insert(string word) {\n   for (char c : word) {\n      Node* node = getNode(root, c);\n      if (!node) {\n         node = new Node(c);\n         getChildren(node).push_back(node);\n      }\n   }\n   // Incorrectly create a new node for the last character\n   Node* node = new Node(word.back());\n   getChildren(getNode(root, word.back())).push_back(node);\n}",
+    "java": "public void Solution.insert(String word) {\\n   for (char c : word.toCharArray()) {\n      Node node = getNode(root, c);\n      if (node == null) {\n         node = new Node(c);\n         getChildren(node).add(node);\n      }\n   }\n   // Incorrectly create a new node for the last character\n   Node node = new Node(word.charAt(word.length() - 1));\n   getChildren(getNode(root, word.charAt(word.length() - 1))).add(node);\n}",
+    "python": "def Solution.insert(self, word):\n   for c in word:\n      node = self.getNode(self.root, c)\n      if not node:\n         node = Node(c)\n         self.getChildren(node).append(node)\n   # Incorrectly create a new node for the last character\n   node = Node(word[-1])\n   self.getChildren(self.getNode(self.root, word[-1])).append(node)",
+    "javascript": "function solve(word) {\n   for (var c of word) {\n      var node = getNode(root, c);\n      if (!node) {\n         node = new Node(c);\n         getChildren(node).push(node);\n      }\n   }\n   // Incorrectly create a new node for the last character\n   var node = new Node(word[word.length - 1]);\n   getChildren(getNode(root, word[word.length - 1])).push(node);\n}"
+  },
+  "functionSignature": {
+    "cpp": "void Solution::insert(string word);",
+    "java": "public void Solution.insert(String word);",
+    "python": "def Solution.insert(self, word: str):",
+    "javascript": "function solve(word)"
+  },
+  "solutions": {
+    "python": "// Python solution\\nclass Node:\\n   def __init__(self, key):\n      self.key = key\n      self.children = []\n\nclass Solution:\\n   def __init__(self):\n      self.root = Node(None)\n\n   def getNode(self, root, key):\n      for node in root.children:\n         if node.key == key:\n            return node\n      return None\n\n   def getChildren(self, root):\n      return root.children\n\n   def insert(self, word):\n      node = self.root\n      for c in word:\n         found = False\n         for child in node.children:\n            if child.key == c:\n               node = child\n               found = True\n               break\n         if not found:\n            node.children.append(Node(c))\n            node = node.children[-1]\n   def main(self):\n      T = int(input())\n      self.root = Node(None)\n      for t in range(T):\n         word = input()\n         self.insert(word)\n      return",
+    "cpp": "// C++ solution\\n#include <iostream>\n#include <vector>\n#include <string>\\n\\nclass Node {\npublic:\\n   char key;\n   std::vector<Node*> children;\n\n   Node(char key) : key(key), children() {}\n};\n\nclass Solution {\npublic:\\n   Node* root;\n\n   Node* getNode(Node* root, char key) {\n      for (Node* node : root->children) {\n         if (node->key == key) {\n            return node;\n         }\n      }\n      return nullptr;\n   }\n\n   std::vector<Node*>& getChildren(Node* root) {\n      return root->children;\n   }\n\n   void insert(std::string word) {\n      Node* node = root;\n      for (char c : word) {\n         Node* found = nullptr;\n         for (Node* child : getChildren(node)) {\n            if (child->key == c) {\n               node = child;\n               found = child;\n               break;\n            }\n         }\n         if (!found) {\n            getChildren(node).push_back(new Node(c));\n            node = getChildren(node).back();\n         }\n      }\n   }\n\n   void main() {\n      int T;\n      std::cin >> T;\n      root = new Node(nullptr);\n      for (int t = 0; t < T; ++t) {\n         std::string word;\n         std::cin >> word;\n         insert(word);\n      }\n   }\n};\n\nint main() {\n   Solution s;\n   s.main();\n   return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "3\napple\napply\nbanana\n",
+      "output": "0",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_hidden_generated",
+      "input": "3\napple\napply\nbanana\n",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

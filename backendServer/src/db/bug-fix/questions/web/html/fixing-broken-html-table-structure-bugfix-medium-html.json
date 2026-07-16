@@ -1,0 +1,147 @@
+{
+  "title": "Fixing Broken HTML Table Structure",
+  "subCategory": "HTML",
+  "statement": {
+    "markdown": "Given an HTML table string, fix the table structure by properly nesting the tables and ensuring there are no orphaned table elements. The input string may contain broken table structures and missing closing tags.",
+    "inputFormat": "A string representing an HTML table structure",
+    "outputFormat": "The fixed HTML table structure as a string",
+    "notes": "Ensure that all table elements are properly nested and there are no orphaned elements. You may use a state machine or a stack-based approach to solve this problem.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The maximum number of table elements"
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The maximum depth of the table structure"
+      }
+    ],
+    "examples": [
+      {
+        "input": "<table><tr><td>Cell 1</td></tr><tr><td>Cell 2</td></table>",
+        "output": "<table><tr><td>Cell 1</td></tr><tr><td>Cell 2</td></tr></table>",
+        "explanation": "The input string has a single table and two table rows. The output string is the same, but with the table rows properly closed."
+      },
+      {
+        "input": "<table><tr><td>Cell 1</td></tr><table><tr><td>Cell 2</td></tr></table>",
+        "output": "<table><tr><td>Cell 1</td></tr><table><tr><td>Cell 2</td></tr></table>",
+        "explanation": "The input string has two tables, one inside the other. The output string is the same, but with the inner table properly closed."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "HTML"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "html"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Start by parsing the input string into a tree-like structure, where each node represents an HTML element."
+    },
+    {
+      "order": 2,
+      "text": "Use a stack-based approach to properly nest the table elements."
+    }
+  ],
+  "editorial": {
+    "title": "Fixing Broken HTML Table Structure",
+    "intuition": "The key to solving this problem is to properly nest the table elements. This can be achieved by using a stack to keep track of the opening and closing tags.",
+    "bruteForce": "One possible approach is to manually count the opening and closing tags and ensure that they match.",
+    "betterSolution": "",
+    "optimalSolution": "Create a stack to keep track of the opening tags. Whenever you encounter a closing tag, pop the corresponding opening tag from the stack. If the stack is empty when you encounter a closing tag, it means the tag is orphaned.",
+    "proofOfCorrectness": "The stack-based approach ensures that all table elements are properly nested and there are no orphaned elements.",
+    "dryRun": "Example run: Input: <table><tr><td>Cell 1</td></tr><table><tr><td>Cell 2</td></tr></table>. Output: <table><tr><td>Cell 1</td></tr><table><tr><td>Cell 2</td></tr></table>.",
+    "commonMistakes": [
+      "Failing to properly nest the table elements",
+      "Not handling orphaned elements correctly"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "function fixTableStructure(tableString) {\n  let stack = [];\n  let result = '';\n  for (let i = 0; i < tableString.length; i++) {\n    let char = tableString[i];\n    // Your code here\n  }\n  return result;\n}",
+    "python": "class Solution:\n  def fixTableStructure(self, table_string):\n    stack = []\n    result = ''\n    for char in table_string:\n      # Your code here\n    return result"
+  },
+  "buggyStarterCode": {
+    "javascript": "function fixTableStructure(tableString) {\n  let stack = [];\n  let result = '';\n  for (let i = 0; i < tableString.length; i++) {\n    let char = tableString[i];\n    if (char === '<') {\n      if (tableString[i + 1] === 't') {\n        stack.push('<table>);\n      }\n    }\n    result += char;\n  }\n  return result;\n}",
+    "python": "class Solution:\n  def fixTableStructure(self, table_string):\n    stack = []\n    result = ''\n    for char in table_string:\n      if char === '<':\n        if table_string[i + 1] === 't':\n          stack.append('<table>);\n      result += char;"
+  },
+  "functionSignature": {
+    "javascript": "function fixTableStructure(tableString) {\n  return tableString;\n}",
+    "python": "def fixTableStructure(self, table_string) -> str:"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction fixTableStructure(tableString) {\n  let stack = [];\n  let result = '';\n  for (let i = 0; i < tableString.length; i++) {\n    let char = tableString[i];\n    if (char === '<') {\n      if (tableString[i + 1] === 't') {\n        stack.push('<table>);\n      } else if (char === '/') {\n        stack.pop();\n      }\n    } else if (char === '>') {\n      if (stack.length > 0) {\n        result += '</' + stack.pop() + '>';\n      }\n    }\n    result += char;\n  }\n  return result;\n}",
+    "python": "class Solution:\n  def fixTableStructure(self, table_string) -> str:\n    stack = []\n    result = ''\n    for char in table_string:\n      if char === '<':\n        if table_string[i + 1] === 't':\n          stack.append('<table>);\n        else if char === '/':\n          stack.pop();\n      elif char === '>':\n        if stack:\n          result += '</' + stack.pop() + '>';\n      result += char;\n    return result;"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "<table><tr><td>Cell 1</td></tr><tr><td>Cell 2</td></table>",
+      "output": "<table><tr><td>Cell 1</td></tr><tr><td>Cell 2</td></tr></table>",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "<table><tr><td>Cell 1</td></tr><table><tr><td>Cell 2</td></tr></table>",
+      "output": "<table><tr><td>Cell 1</td></tr><table><tr><td>Cell 2</td></tr></table>",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "cafd417e9217fc34c21c4314",
+  "slug": "fixing-broken-html-table-structure-bugfix-medium-html",
+  "mode": "bug_fix",
+  "category": "HTML",
+  "difficulty": "Medium"
+}

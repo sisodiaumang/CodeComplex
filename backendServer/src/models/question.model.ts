@@ -253,7 +253,7 @@ const questionSchema = new mongoose.Schema<IQuestion>(
 
         difficulty: { type: String, enum: ["Easy", "Medium", "Hard"], required: true },
 
-        category: { type: String, required: true, trim: true, enum: ["ARRAY", "STRING", "GRAPH", "TREE", "GREEDY", "DP", "LINKED_LIST", "STACK", "QUEUE", "HEAP", "BINARY_SEARCH", "BACKTRACKING", "BIT_MANIPULATION", "MATH", "SORTING", "TRIE"] },
+        category: { type: String, required: true, trim: true, enum: ["ARRAY", "STRING", "GRAPH", "TREE", "GREEDY", "DP", "LINKED_LIST", "STACK", "QUEUE", "HEAP", "BINARY_SEARCH", "BACKTRACKING", "BIT_MANIPULATION", "MATH", "SORTING", "TRIE", "DSA", "ALGORITHMS", "JAVASCRIPT", "TYPESCRIPT", "REACT", "NODE_JS", "EXPRESS", "MONGODB", "SQL", "CSS", "HTML", "DOCKER", "GIT"] },
 
         subCategory: { type: String, default: "" },
 

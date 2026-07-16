@@ -1,0 +1,144 @@
+{
+  "title": "Preventing Middleware-Induced Route Conflicts in Express",
+  "subCategory": "Routing & Middleware",
+  "statement": {
+    "markdown": "Write a bug-fix for the given Express middleware code to prevent route conflicts. Given that the code has a logical error that causes routes to conflict, your task is to identify and fix the issue so that routes are handled correctly without conflicts.",
+    "inputFormat": "The input will be an HTTP request object.",
+    "outputFormat": "The output should be an HTTP response object.",
+    "notes": "The code is designed to handle GET and POST requests to the root URL and the /users URL.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of HTTP requests"
+      }
+    ],
+    "examples": [
+      {
+        "input": "GET / HTTP/1.1\r\nHost: localhost:3000\r\n\r\n",
+        "output": "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\nHello, Express!",
+        "explanation": "Example GET request to the root URL"
+      },
+      {
+        "input": "POST / HTTP/1.1\r\nHost: localhost:3000\r\n\r\n",
+        "output": "HTTP/1.1 405 Method Not Allowed\r\n\r\n",
+        "explanation": "Example POST request to the root URL"
+      },
+      {
+        "input": "GET /users HTTP/1.1\r\nHost: localhost:3000\r\n\r\n",
+        "output": "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\nUsers list",
+        "explanation": "Example GET request to the /users URL"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "EXPRESS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "express"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Review the provided middleware code for potential route conflicts."
+    }
+  ],
+  "editorial": {
+    "title": "Understanding Route Conflicts in Express",
+    "intuition": "Route conflicts occur when multiple route handlers are applied to the same route, causing unexpected behavior. To fix this issue, prioritize route handlers or adjust the middleware order to ensure routes are handled correctly.",
+    "bruteForce": "Brute-force solution involves listing all possible routes and handlers to identify conflicts.",
+    "betterSolution": "",
+    "optimalSolution": "Prioritize the order of route handlers or adjust middleware order to prevent conflicts.",
+    "proofOfCorrectness": "Correctness proof involves demonstrating that the optimal solution prevents route conflicts.",
+    "dryRun": "Step-by-step example run involves creating a dry-run environment to test the corrected middleware code.",
+    "commonMistakes": [
+      "Incorrect middleware order",
+      "Duplicate route handlers"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "// Define a middleware function to handle GET requests to the root URL\napp.get('/', (req, res) => {\n  res.send('Hello, Express!');\n});\n\n// Define a middleware function to handle POST requests to the root URL\napp.post('/', (req, res) => {\n  res.status(405).send('Method Not Allowed');\n});\n\n// Define a middleware function to handle GET requests to the /users URL\napp.get('/users', (req, res) => {\n  res.send('Users list');\n});"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Define a middleware function to handle GET requests to the root URL\napp.get('/', (req, res) => {\n  res.send('Hello, Express!');\n});\n\n// Define a middleware function to handle POST requests to the root URL\napp.post('/', (req, res) => {\n  res.send('Hello, Express!');\n});\n\n// Define a middleware function to handle GET requests to the /users URL\napp.get('/users', (req, res) => {\n  res.send('Users list');\n});"
+  },
+  "functionSignature": {
+    "javascript": "var express = require('express');\nvar app = express();"
+  },
+  "solutions": {
+    "javascript": "// Define a middleware function to handle GET requests to the root URL\napp.get('/', (req, res) => {\n  res.send('Hello, Express!');\n});\n\n// Define a middleware function to handle POST requests to the root URL\napp.post('/', (error, req, res) => {\n  res.status(405).send('Method Not Allowed');\n});\n\n// Define a middleware function to handle GET requests to the /users URL\napp.get('/users', (req, res) => {\n  res.send('Users list');\n});"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "GET / HTTP/1.1\r\nHost: localhost:3000\r\n\r\n",
+      "output": "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\nHello, Express!",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "POST / HTTP/1.1\r\nHost: localhost:3000\r\n\r\n",
+      "output": "HTTP/1.1 405 Method Not Allowed\r\n\r\n",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    },
+    {
+      "id": "tc_3",
+      "input": "GET /users HTTP/1.1\r\nHost: localhost:3000\r\n\r\n",
+      "output": "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\nUsers list",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "_id": "d2b50dc81862242053cc4e69",
+  "slug": "preventing-middleware-induced-route-conflicts-in-express-bugfix-easy-express",
+  "mode": "bug_fix",
+  "category": "EXPRESS",
+  "difficulty": "Easy"
+}

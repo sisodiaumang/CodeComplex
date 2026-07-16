@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const createRoomSchema = z.object({
     body: z.object({
-        battleType: z.enum(["DSA", "BUG_FIX", "BACKEND", "FRONTEND", "FULLSTACK", "PROMPT_WAR"]),
+        battleType: z.enum(["DSA", "BUG_FIX", "BACKEND", "FRONTEND", "PROJECTS", "PROMPT_WAR"]),
         difficulty: z.enum(["EASY", "MEDIUM", "HARD"]),
         topics: z.array(z.string().min(1)).min(1, "Select at least 1 topic"),
         maxTeamSize: z.number().min(1).max(5).optional(),

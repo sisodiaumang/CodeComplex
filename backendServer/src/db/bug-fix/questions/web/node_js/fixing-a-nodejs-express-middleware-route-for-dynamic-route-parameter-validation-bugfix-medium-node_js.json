@@ -1,0 +1,158 @@
+{
+  "title": "Fixing a Node.js Express Middleware Route for Dynamic Route Parameter Validation",
+  "subCategory": "Express Route Middleware",
+  "statement": {
+    "markdown": "Write a middleware function for a Node.js Express server to validate dynamic route parameters. The middleware function should check if the route parameter is a positive integer. If the parameter is not a positive integer, it should throw a 404 error with a custom error message. If the parameter is valid, it should call the next function in the middleware chain.",
+    "inputFormat": "A URL path with a dynamic route parameter, e.g., '/users/:id'",
+    "outputFormat": "An Express middleware function",
+    "notes": "The middleware function should be able to handle multiple routes with dynamic parameters. It should also be able to handle routes with no parameters.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Route parameter value"
+      },
+      {
+        "variable": "route",
+        "type": "string",
+        "min": 1,
+        "max": 100,
+        "description": "Route path"
+      },
+      {
+        "variable": "params",
+        "type": "object",
+        "min": 0,
+        "max": 10,
+        "description": "Route parameters object"
+      }
+    ],
+    "examples": [
+      {
+        "input": "/users/123",
+        "output": "0",
+        "explanation": "Valid route parameter"
+      },
+      {
+        "input": "/users/-1",
+        "output": "404 Not Found",
+        "explanation": "Invalid route parameter"
+      },
+      {
+        "input": "/users/abc",
+        "output": "404 Not Found",
+        "explanation": "Invalid route parameter"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "NODE_JS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "node_js"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the `req.params` object to access the route parameter"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial: Fixing a Node.js Express Middleware Route for Dynamic Route Parameter Validation",
+    "intuition": "The middleware function should validate the route parameter before calling the next function in the middleware chain.",
+    "bruteForce": "You can use a simple if-else statement to check if the route parameter is a positive integer.",
+    "betterSolution": "",
+    "optimalSolution": "Use a regular expression to check if the route parameter is a positive integer.",
+    "proofOfCorrectness": "The regular expression should match positive integers only.",
+    "dryRun": "Test the middleware function with different route parameters.",
+    "commonMistakes": [
+      "Not checking for positive integers",
+      "Not handling non-integer values"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "// Write a middleware function to validate dynamic route parameters\n// Use the req.params object to access the route parameter\n// Check if the route parameter is a positive integer\n// Call the next function in the middleware chain if valid"
+  },
+  "buggyStarterCode": {
+    "javascript": "function validateParam(req, res, next) {\n  const param = req.params.id;\n  // Check if the parameter is a positive integer\n  if (isNaN(param)) {\n    return next();\n  }\n  // Call the next function in the middleware chain\n  next();\n}\n\n// Use the middleware function to validate the route parameter\napp.get('/users/:id', validateParam, (req, res) => {\n  // Handle the request\n  res.send('Hello World');\n});"
+  },
+  "functionSignature": {
+    "javascript": "function validateParam(req, res, next)"
+  },
+  "solutions": {
+    "javascript": "function validateParam(req, res, next) {\n  const param = req.params.id;\n  // Check if the parameter is a positive integer\n  if (!/^[0-9]+$/.test(param)) {\n    return res.status(404).send('Not Found');\n  }\n  // Call the next function in the middleware chain\n  next();\n}\n\n// Use the middleware function to validate the route parameter\napp.get('/users/:id', validateParam, (req, res) => {\n  // Handle the request\n  res.send('Hello World');\n});"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "GET /users/123 HTTP/1.1\r\nHost: example.com\r\n\r\n",
+      "output": "Hello World\r\n\r\n",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "GET /users/-1 HTTP/1.1\r\nHost: example.com\r\n\r\n",
+      "output": "Not Found\r\n\r\n",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    },
+    {
+      "id": "tc_3",
+      "input": "GET /users/abc HTTP/1.1\r\nHost: example.com\r\n\r\n",
+      "output": "Not Found\r\n\r\n",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "527ac2edef0a35d589c5a2b5",
+  "slug": "fixing-a-nodejs-express-middleware-route-for-dynamic-route-parameter-validation-bugfix-medium-node_js",
+  "mode": "bug_fix",
+  "category": "NODE_JS",
+  "difficulty": "Medium"
+}

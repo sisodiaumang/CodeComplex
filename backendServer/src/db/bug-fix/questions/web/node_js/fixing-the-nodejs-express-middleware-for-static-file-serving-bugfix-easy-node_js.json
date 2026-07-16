@@ -1,0 +1,136 @@
+{
+  "title": "Fixing the Node.js Express Middleware for Static File Serving",
+  "subCategory": "Express Middleware",
+  "statement": {
+    "markdown": "In this task, you will be fixing a Node.js Express middleware to serve static files correctly. The middleware should serve files from the /public directory and serve index.html for any unknown routes. However, the current implementation has a logical bug.",
+    "inputFormat": "Input will be in the format of a URL path",
+    "outputFormat": "Output will be the contents of the requested file, or a 404 error message if the file is not found",
+    "notes": "The middleware should handle serving static files and redirecting unknown routes to index.html",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of test cases"
+      }
+    ],
+    "examples": [
+      {
+        "input": "/public/style.css",
+        "output": "Contents of public/style.css",
+        "explanation": "The middleware should serve the contents of public/style.css"
+      },
+      {
+        "input": "/unknown",
+        "output": "Contents of public/index.html",
+        "explanation": "The middleware should serve index.html for unknown routes"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "NODE_JS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "node_js"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Check the express.static middleware configuration"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial: Fixing the Node.js Express Middleware",
+    "intuition": "The middleware should serve static files from the /public directory and serve index.html for unknown routes. Check the express.static middleware configuration to fix the logical bug.",
+    "bruteForce": "One way to fix the middleware is to use the express.static middleware to serve static files and use a catch-all route to serve index.html for unknown routes.",
+    "betterSolution": "",
+    "optimalSolution": "Use the express.static middleware to serve static files and use a catch-all route to serve index.html for unknown routes.",
+    "proofOfCorrectness": "The middleware should serve static files and index.html correctly",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Forgetting to configure the express.static middleware",
+      "Using a catch-all route without serving index.html"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "// Import express framework\nconst express = require('express');\n\n// Create an express app\nconst app = express();\n\n// Configure the express.static middleware to serve static files from the /public directory\napp.use('/public', express.static('public'));\n\n// Configure a catch-all route to serve index.html\napp.get('*', (req, res) => {\n  res.sendFile('index.html', { root: __dirname + '/public' });\n});\n\n// Start the server on port 3000\nconst PORT = 3000;\napp.listen(PORT, () => {\n  console.log(`Server started on port ${PORT}`);\n});\n",
+    "python": "// Import the express module\nfrom flask import Flask\n\n// Create a Flask app\napp = Flask(__name__)\n\n// Configure the static folder to serve static files\napp.config['STATIC_FOLDER'] = 'public'\n\n// Use the static_folder to serve static files\napp.add_url_rule('/public/<path:path>', 'serve_static', build_only=True)\n\n// Configure a catch-all route to serve index.html\n@app.route('/', defaults={'path': ''})\n@app.route('/<path:path>')\ndef catch_all(path):\n    return app.send_static_file('index.html')\n\n// Run the app on port 3000\nif __name__ == '__main__':\n    app.run(port=3000)"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Import express framework\nconst express = require('express');\n\n// Create an express app\nconst app = express();\n\n// Configure the express.static middleware to serve static files from the /public directory\n// BUG: Incorrect configuration\napp.use('/public', express.static('/public/public'));\n\n// Configure a catch-all route to serve index.html\napp.get('*', (req, res) => {\n  res.sendFile('index.html', { root: __dirname });\n});\n\n// Start the server on port 3000\nconst PORT = 3000;\napp.listen(PORT, () => {\n  console.log(`Server started on port ${PORT}`);\n});\n",
+    "python": "// Import the express module\nfrom flask import Flask\n\n// Create a Flask app\napp = Flask(__name__)\n\n// Configure the static folder to serve static files\n// BUG: Incorrect configuration\napp.config['STATIC_FOLDER'] = '/public/public'\n\n// Use the static_folder to serve static files\napp.add_url_rule('/public/<path:path>', 'serve_static', build_only=True)\n\n// Configure a catch-all route to serve index.html\n@app.route('/', defaults={'path': ''})\n@app.route('/<path:path>')\ndef catch_all(path):\n    return app.send_static_file('index.html')\n\n// Run the app on port 3000\nif __name__ == '__main__':\n    app.run(port=3000)"
+  },
+  "functionSignature": {
+    "javascript": "// No function signature needed",
+    "python": "// No function signature needed"
+  },
+  "solutions": {
+    "javascript": "// Solution\nconst express = require('express');\nconst app = express();\napp.use(express.static('public'));\napp.get('*', (req, res) => {\n  res.sendFile('index.html', { root: __dirname + '/public' });\n});\nconst PORT = 3000;\napp.listen(PORT, () => {\n  console.log(`Server started on port ${PORT}`);\n});",
+    "python": "// Solution\nfrom flask import Flask\napp = Flask(__name__)\napp.config['STATIC_FOLDER'] = 'public'\napp.add_url_rule('/public/<path:path>', 'serve_static', build_only=True)\n@app.route('/', defaults={'path': ''})\n@app.route('/<path:path>')\ndef catch_all(path):\n    return app.send_static_file('index.html')\nif __name__ == '__main__':\n    app.run(port=3000)"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "/public/style.css",
+      "output": "Contents of public/style.css",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "/unknown",
+      "output": "Contents of public/index.html",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "c877b145a0e877b114d034e1",
+  "slug": "fixing-the-nodejs-express-middleware-for-static-file-serving-bugfix-easy-node_js",
+  "mode": "bug_fix",
+  "category": "NODE_JS",
+  "difficulty": "Easy"
+}

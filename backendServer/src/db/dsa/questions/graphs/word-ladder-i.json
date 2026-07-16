@@ -1,0 +1,221 @@
+{
+  "_id": "word-ladder-i",
+  "title": "Word Ladder I",
+  "slug": "word-ladder-i",
+  "difficulty": "Hard",
+  "category": "GRAPH",
+  "subCategory": "BFS / DFS Problems",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 500,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "Graphs",
+      "BFS",
+      "DFS"
+    ],
+    "patterns": [
+      "ladder",
+      "word",
+      "transformation"
+    ],
+    "prerequisites": [
+      "BFS",
+      "DFS",
+      "Graph Traversal"
+    ],
+    "variants": [],
+    "tags": [
+      "Graph",
+      "BFS",
+      "DFS",
+      "Word Ladder",
+      "Transformation"
+    ],
+    "keywords": [
+      "graph",
+      "bfs",
+      "dfs",
+      "queue",
+      "word",
+      "ladder",
+      "transformation",
+      "shortest",
+      "path"
+    ],
+    "interviewFrequency": 4,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "You are given two words, `beginWord` and `endWord`, and a dictionary containing `n` words. All words have the same length. In one transformation step you may change exactly one character of the current word to any other lowercase English letter, forming a new word. The new word must exist in the given dictionary. Find the length of the shortest transformation sequence from `beginWord` to `endWord`, where both the start and the end words are counted in the length. If no such sequence exists, output `0`.\n\nThe transformation must obey the following rules:\n* Each intermediate word must be present in the dictionary.\n* Only one character may be changed per step.\n* Words may be reused multiple times, but revisiting a word does not help to obtain a shorter path.\n\nThe problem can be solved efficiently with Breadth‑First Search (BFS) on an implicit graph where each node is a word and edges connect words that differ by exactly one character.\n\n### Input Format\nThe input is given via standard input (`stdin`).\n1. A line containing the string `beginWord`.\n2. A line containing the string `endWord`.\n3. A line containing an integer `n` – the number of words in the dictionary.\n4. `n` lines each containing one word of the dictionary.\n\n### Output Format\nPrint a single integer – the length of the shortest transformation sequence from `beginWord` to `endWord`. If such a sequence does not exist, print `0`.\n\n### Notes\n* The dictionary may contain `beginWord` and/or `endWord`. Their presence does not affect the definition of a valid transformation; only the existence of a path matters.\n* All words consist of lowercase English letters.\n* The length of each word is the same for the entire test case.\n\n### Constraints\n* `1 ≤ length of each word ≤ 10`\n* `1 ≤ n ≤ 10000`\n* All words contain only lowercase English letters.\n* `beginWord` and `endWord` have the same length as the dictionary words.\n\n### Examples\n**Example 1**\n```\nhit\ncog\n6\nhot\ndot\ndog\nlot\nlog\ncog\n```\n**Output**\n```\n5\n```\n**Explanation**\nOne shortest transformation is `hit → hot → dot → dog → cog`, which contains 5 words.\n\n**Example 2**\n```\nhit\nxyz\n5\nhot\ndot\ndog\nlot\nlog\n```\n**Output**\n```\n0\n```\n**Explanation**\n`endWord` `xyz` cannot be reached from `beginWord` using the given dictionary, so the answer is `0`.",
+    "inputFormat": "beginWord\nendWord\nn\nword_1\nword_2\n...\nword_n",
+    "outputFormat": "length_of_shortest_transformation_sequence_or_0",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "word length",
+        "type": "integer",
+        "min": 1,
+        "max": 10,
+        "description": "Length of each word"
+      },
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of words in the dictionary"
+      }
+    ],
+    "examples": [
+      {
+        "input": "hit\ncog\n6\nhot\ndot\ndog\nlot\nlog\ncog",
+        "output": "5",
+        "explanation": "Shortest path: hit -> hot -> dot -> dog -> cog (5 words)"
+      },
+      {
+        "input": "hit\nxyz\n5\nhot\ndot\ndog\nlot\nlog",
+        "output": "0",
+        "explanation": "endWord xyz is unreachable, so answer is 0"
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Start by understanding the rules of word transformation and how to build a valid sequence of transformations."
+    },
+    {
+      "order": 2,
+      "text": "Consider using a data structure to efficiently store and retrieve words from the dictionary, such as a set or a hash table."
+    },
+    {
+      "order": 3,
+      "text": "Think about how to efficiently traverse the implicit graph of words, where each node is a word and edges connect words that differ by exactly one character."
+    },
+    {
+      "order": 4,
+      "text": "Realize that Breadth-First Search (BFS) is a suitable algorithm for traversing this graph, as it allows you to explore all possible transformations at each level before moving on to the next level."
+    },
+    {
+      "order": 5,
+      "text": "Use BFS to find the shortest transformation sequence from beginWord to endWord, keeping track of the length of the sequence and returning 0 if no such sequence exists."
+    }
+  ],
+  "editorial": {
+    "title": "From Exhaustive Search to Bidirectional BFS: The Word Ladder Breakthrough",
+    "intuition": "The problem asks for the shortest transformation sequence from a start word to an end word, changing one letter at a time while staying within a given dictionary. A naïve approach would explore every possible word at each step, but the number of such words explodes exponentially with the word length. The key insight is that the graph of words is sparse: each word has at most L·25 neighbors (L is the word length). By pre‑computing all one‑letter‑wildcard patterns, we can jump directly to all valid neighbors in O(L) time per word, turning the search into a linear‑time BFS over the graph. This observation unlocks the optimal solution.",
+    "bruteForce": "A brute‑force solution would generate all possible words of the same length by iterating over every position and every letter, checking if the new word is in the dictionary, and recursively exploring each branch. While correct—every possible path is eventually examined—the time complexity is O(26^L · N) in the worst case, which is infeasible for the given limits. The algorithm would also need to keep track of visited words to avoid cycles, adding extra overhead.",
+    "betterSolution": "The optimal approach uses a breadth‑first search (BFS) over the implicit graph defined by the dictionary. The graph’s edges are defined by single‑letter differences. By creating a map from generic intermediate forms (e.g., \"h*t\" for \"hot\") to all words that match that form, we can retrieve all neighbors of a word in O(L) time. The BFS then visits each word at most once, guaranteeing the shortest path when the end word is first encountered. The algorithm runs in O(L·N) time and uses O(L·N) space for the intermediate map and the visited set.",
+    "optimalSolution": "The algorithm first verifies that the end word exists in the dictionary; if not, it immediately returns 0. It then builds a dictionary mapping every generic intermediate state to the list of words that can produce that state. A queue holds pairs of (current word, current depth). For each dequeued word, we generate all its intermediate states and iterate over the corresponding neighbor list. If a neighbor equals the end word, we return the current depth plus one. Otherwise, we enqueue unseen neighbors and mark them visited. If the queue empties without finding the end word, we return 0.",
+    "proofOfCorrectness": "BFS explores nodes in order of increasing distance from the start. Because we only enqueue a word the first time it is discovered, the depth recorded for any word is the length of the shortest path from the start to that word. When the end word is dequeued or found as a neighbor, the depth returned is therefore the minimal number of transformations required. The preprocessing step does not alter connectivity: it merely provides a constant‑time way to enumerate all valid neighbors, preserving the graph’s structure. Hence the algorithm always returns the length of the shortest transformation sequence, or 0 if none exists.",
+    "dryRun": "Consider begin=\"hit\", end=\"cog\", dictionary=[\"hot\",\"dot\",\"dog\",\"lot\",\"log\",\"cog\"]. The intermediate map contains entries like \"h*t\":[\"hit\",\"hot\"], \"*ot\":[\"hot\",\"dot\",\"lot\"], etc. BFS starts with \"hit\" at depth 1. Its neighbors are \"hot\" (depth 2). From \"hot\", neighbors \"dot\" and \"lot\" (depth 3). From \"dot\", neighbor \"dog\" (depth 4). From \"dog\", neighbor \"cog\" (depth 5). The algorithm returns 5, matching the known shortest sequence.",
+    "commonMistakes": [
+      "Assuming the dictionary is small enough to generate all 26^L words; this leads to exponential blowup.",
+      "Using DFS instead of BFS, which may find a longer path first and thus return an incorrect length.",
+      "Neglecting to check that the end word is present in the dictionary before starting the search.",
+      "Failing to mark words as visited when enqueued, causing revisits and infinite loops.",
+      "Building the intermediate map after the BFS starts, missing neighbor links for words not yet visited.",
+      "Using a single‑ended BFS without bidirectional optimization, which can be slower for very large dictionaries."
+    ],
+    "timeComplexity": "O(L * N) where L is word length and N is number of words (including beginWord), due to preprocessing all generic states and BFS traversal.",
+    "spaceComplexity": "O(L * N) for storing the intermediate generic state map and visited set."
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    int ladderLength(string beginWord, string endWord, vector<string>& wordList) {\n        // TODO: implement\n        return 0;\n    }\n};",
+    "java": "import java.util.*;\n\nclass Solution {\n    public int ladderLength(String beginWord, String endWord, List<String> wordList) {\n        // TODO: implement\n        return 0;\n    }\n}",
+    "python": "class Solution:\n    def ladderLength(self, beginWord: str, endWord: str, wordList: List[str]) -> int:\n        # TODO: implement\n        return 0",
+    "javascript": "/**\n * @param {string} beginWord\n * @param {string} endWord\n * @param {string[]} wordList\n * @return {number}\n */\nvar ladderLength = function(beginWord, endWord, wordList) {\n    // TODO: implement\n    return 0;\n};"
+  },
+  "functionSignature": {
+    "cpp": "int ladderLength(string beginWord, string endWord, vector<string>& wordList);",
+    "java": "public int ladderLength(String beginWord, String endWord, List<String> wordList);",
+    "python": "def ladderLength(self, beginWord: str, endWord: str, wordList: List[str]) -> int:",
+    "javascript": "var ladderLength = function(beginWord, endWord, wordList);"
+  },
+  "solutions": {
+    "python": "import sys\nfrom collections import deque\nfrom typing import List\n\nclass Solution:\n    def ladderLength(self, beginWord: str, endWord: str, wordList: List[str]) -> int:\n        word_set = set(wordList)\n        if endWord not in word_set:\n            return 0\n        # Ensure beginWord is in the set for neighbor generation\n        word_set.add(beginWord)\n        L = len(beginWord)\n        # Preprocess: generic intermediate states\n        all_combo_dict = {}\n        for word in word_set:\n            for i in range(L):\n                key = word[:i] + '*' + word[i+1:]\n                all_combo_dict.setdefault(key, []).append(word)\n        # BFS\n        queue = deque([(beginWord, 1)])\n        visited = {beginWord}\n        while queue:\n            current_word, level = queue.popleft()\n            for i in range(L):\n                intermediate = current_word[:i] + '*' + current_word[i+1:]\n                for neighbor in all_combo_dict.get(intermediate, []):\n                    if neighbor == endWord:\n                        return level + 1\n                    if neighbor not in visited:\n                        visited.add(neighbor)\n                        queue.append((neighbor, level + 1))\n                # optional clear to save memory\n                # all_combo_dict[intermediate] = []\n        return 0\n\nif __name__ == '__main__':\n    it = iter(sys.stdin.read().split())\n    try:\n        begin = next(it)\n        end = next(it)\n        n = int(next(it))\n        words = [next(it) for _ in range(n)]\n    except StopIteration:\n        sys.exit(0)\n    sol = Solution()\n    ans = sol.ladderLength(begin, end, words)\n    print(ans)",
+    "cpp": "#include <numeric>\n#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    int ladderLength(string beginWord, string endWord, vector<string>& wordList) {\n        unordered_set<string> wordSet(wordList.begin(), wordList.end());\n        if (wordSet.find(endWord) == wordSet.end()) return 0;\n        wordSet.insert(beginWord);\n        int L = beginWord.size();\n        unordered_map<string, vector<string>> comboMap;\n        for (const string& word : wordSet) {\n            for (int i = 0; i < L; ++i) {\n                string key = word;\n                key[i] = '*';\n                comboMap[key].push_back(word);\n            }\n        }\n        queue<pair<string,int>> q;\n        q.push({beginWord,1});\n        unordered_set<string> visited;\n        visited.insert(beginWord);\n        while (!q.empty()) {\n            auto _tmp_binding_0 = q.front(); auto cur = _tmp_binding_0.first; auto level = _tmp_binding_0.second; q.pop();\n            for (int i = 0; i < L; ++i) {\n                string key = cur;\n                key[i] = '*';\n                auto it = comboMap.find(key);\n                if (it == comboMap.end()) continue;\n                for (const string& nxt : it->second) {\n                    if (nxt == endWord) return level + 1;\n                    if (visited.find(nxt) == visited.end()) {\n                        visited.insert(nxt);\n                        q.push({nxt, level + 1});\n                    }\n                }\n                // optional clear to reduce future loops\n                // it->second.clear();\n            }\n        }\n        return 0;\n    }\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    string beginWord, endWord;\n    if (!(cin >> beginWord)) return 0;\n    if (!(cin >> endWord)) return 0;\n    int n; if (!(cin >> n)) return 0;\n    vector<string> wordList(n);\n    for (int i = 0; i < n; ++i) cin >> wordList[i];\n    Solution sol;\n    int ans = sol.ladderLength(beginWord, endWord, wordList);\n    cout << ans << \"\\n\";\n    return 0;\n}\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.5
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "hit\ncog\n6\nhot\ndot\ndog\nlot\nlog\ncog",
+      "output": "5",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "hit\nxyz\n5\nhot\ndot\ndog\nlot\nlog",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "boundary_4",
+      "input": "cat\nbat\n1\ncat",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    },
+    {
+      "id": "random_medium_6",
+      "input": "apple\ntable\n5\napple\ntable\ncarrot\ndoor\nhouse\n",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "random_medium"
+    },
+    {
+      "id": "random_medium_7",
+      "input": "cloud\nstorm\n5\ncloud\nstorm\ngold\nstorm\ncloud\n",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "random_medium"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

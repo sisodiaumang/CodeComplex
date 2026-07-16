@@ -1,0 +1,144 @@
+{
+  "title": "Fixing Node.js Express Middleware Route for Dynamic Route Parameter Validation",
+  "subCategory": "Express Middleware",
+  "statement": {
+    "markdown": "Write a Node.js Express middleware route to validate a dynamic route parameter. The route should accept an HTTP GET request to `/users/:id` and return a JSON response with the user object if the id is valid. If the id is invalid, it should return a 404 status code. However, the existing code does not handle the case where the id is not a positive integer. Fix the code to handle this scenario.",
+    "inputFormat": "The input will be an HTTP GET request to `/users/:id` with the id as a path parameter.",
+    "outputFormat": "The output should be a JSON response with the user object if the id is valid, otherwise a 404 status code.",
+    "notes": "The user object has an id and a name. You can assume that the user object is stored in a database and can be retrieved by the id.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Maximum user id"
+      }
+    ],
+    "examples": [
+      {
+        "input": "/users/1",
+        "output": "{\"id\":1,\"name\":\"John Doe\"}",
+        "explanation": "User with id 1 exists in the database."
+      },
+      {
+        "input": "/users/-1",
+        "output": "{\"error\":\"User not found\"}",
+        "explanation": "User with id -1 does not exist in the database."
+      },
+      {
+        "input": "/users/abc",
+        "output": "{\"error\":\"Invalid user id\"}",
+        "explanation": "User id is not a positive integer."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "NODE_JS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "node_js"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text: Validate the user id as a positive integer before querying the database."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title: Fixing Node.js Express Middleware Route for Dynamic Route Parameter Validation",
+    "intuition": "Explanation of the correct approach: Validate the user id as a positive integer before querying the database.",
+    "bruteForce": "Brute force approach summary: Query the database for every possible user id and return a 404 status code if the id is invalid.",
+    "betterSolution": "Better solution summary: Validate the user id as a positive integer before querying the database.",
+    "optimalSolution": "Optimal solution details: Use a regular expression to validate the user id as a positive integer and query the database if the id is valid.",
+    "proofOfCorrectness": "Correctness proof: The optimal solution returns the correct user object if the id is valid and a 404 status code if the id is invalid.",
+    "dryRun": "Step-by-step example run: Input /users/1, output {\"id\":1,\"name\":\"John Doe\"}.",
+    "commonMistakes": [
+      "Not validating the user id as a positive integer",
+      "Not querying the database for the valid user id"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "app.get('/users/:id', (req, res) => {\n  const id = req.params.id;\n  // TO DO: validate and query the database\n  res.json({ id, name: 'John Doe' });\n})"
+  },
+  "buggyStarterCode": {
+    "javascript": "app.get('/users/:id', (req, res) => {\n  const id = req.params.id;\n  if (id === 1) {\n    res.json({ id: 1, name: 'John Doe' });\n  } else {\n    res.json({ id, name: 'John Doe' });\n  }\n})"
+  },
+  "functionSignature": {
+    "javascript": "app.get('/users/:id', (req, res) => {\n  // TO DO: validate and query the database\n  res.json({ id, name: 'John Doe' });\n})"
+  },
+  "solutions": {
+    "javascript": "// Solution\napp.get('/users/:id', (req, res) => {\n  const id = parseInt(req.params.id);\n  if (isNaN(id) || id <= 0) {\n    res.status(404).json({ error: 'Invalid user id' });\n  } else {\n    // Query the database for the user with the given id\n    const user = { id, name: 'John Doe' };\n    res.json(user);\n  }\n})"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "/users/1",
+      "output": "{\"id\":1,\"name\":\"John Doe\"}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "/users/-1",
+      "output": "{\"error\":\"Invalid user id\"}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    },
+    {
+      "id": "tc_3",
+      "input": "/users/abc",
+      "output": "{\"error\":\"Invalid user id\"}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "cfc8fc0c913d1213b50567c0",
+  "slug": "fixing-nodejs-express-middleware-route-for-dynamic-route-parameter-validation-bugfix-medium-node_js",
+  "mode": "bug_fix",
+  "category": "NODE_JS",
+  "difficulty": "Medium"
+}

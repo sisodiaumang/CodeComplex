@@ -1,0 +1,149 @@
+{
+  "title": "Fix MongoDB Query Projection to Handle Nested Fields with Optional Keys and Null Field Names",
+  "subCategory": "MongoDB Query Projection",
+  "statement": {
+    "markdown": "Given a MongoDB collection with the following document structure: `{name: 'John', address: {street: '123 Main St', city: 'New York', state: 'NY', zip: null}}`. Write a function that takes a field path as input and returns a MongoDB query projection that handles nested fields with optional keys and null field names. The function should also handle cases where the field path is not found in the document.",
+    "inputFormat": "String representing the field path, e.g. 'address.street'",
+    "outputFormat": "MongoDB query projection object",
+    "notes": "The function should return an empty projection object if the field path is not found in the document.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of test cases"
+      }
+    ],
+    "examples": [
+      {
+        "input": "address.street",
+        "output": "{ address: { street: 1 } }",
+        "explanation": "The function should return a query projection that selects the 'street' field from the 'address' document."
+      },
+      {
+        "input": "address.state",
+        "output": "{ address: { state: 1 } }",
+        "explanation": "The function should return a query projection that selects the 'state' field from the 'address' document."
+      },
+      {
+        "input": "non.existent.field",
+        "output": "{}",
+        "explanation": "The function should return an empty query projection if the field path is not found in the document."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "MONGODB"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "mongodb"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the `MongoDB` aggregation framework to handle nested fields."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "function getProjection(fieldPath) {\n  // Your code here\n}",
+    "python": "class Solution:\n  def get_projection(self, field_path: str) -> dict:\n    # Your code here\n"
+  },
+  "buggyStarterCode": {
+    "javascript": "function getProjection(fieldPath) {\n  const fields = fieldPath.split('.');\n  const projection = {};\n  for (let i = 0; i < fields.length; i++) {\n    const field = fields[i];\n    if (i === fields.length - 1) {\n      projection[field] = 1;\n    } else {\n      projection[field] = {}; // Logical bug: should be projection[field] = { [fields[i + 1]]: 1 };\n    }\n  }\n  return projection;\n}",
+    "python": "class Solution:\n  def get_projection(self, field_path: str) -> dict:\n    fields = field_path.split('.')\n    projection = {}\n    for i in range(len(fields)):\n      field = fields[i]\n      if i == len(fields) - 1:\n        projection[field] = 1\n      else:\n        projection[field] = {}  # Logical bug: should be projection[field] = { fields[i + 1]: 1 }\n    return projection;"
+  },
+  "functionSignature": {
+    "javascript": "var getProjection = function(fieldPath) {\n  // Your code here\n}",
+    "python": "def get_projection(self, field_path: str) -> dict:\n  # Your code here\n"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction getProjection(fieldPath) {\n  const fields = fieldPath.split('.');\n  const projection = {};\n  for (let i = 0; i < fields.length; i++) {\n    const field = fields[i];\n    if (i === fields.length - 1) {\n      projection[field] = 1;\n    } else {\n      projection[field] = { [fields[i + 1]]: 1 };\n    }\n  }\n  return projection;\n}",
+    "python": "class Solution:\n  def get_projection(self, field_path: str) -> dict:\n    fields = field_path.split('.')\n    projection = {}\n    for i in range(len(fields)):\n      field = fields[i]\n      if i == len(fields) - 1:\n        projection[field] = 1\n      else:\n        projection[field] = { fields[i + 1]: 1 }\n    return projection;"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "address.street",
+      "output": "{ address: { street: 1 } }",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "address.state",
+      "output": "{ address: { state: 1 } }",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_3",
+      "input": "non.existent.field",
+      "output": "{}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "_id": "0a527cb2219d844f595d53f4",
+  "slug": "fix-mongodb-query-projection-to-handle-nested-fields-with-optional-keys-and-null-field-names-bugfix-hard-mongodb",
+  "mode": "bug_fix",
+  "category": "MONGODB",
+  "difficulty": "Hard"
+}

@@ -27,7 +27,7 @@ const MODES_LIST = [
   { key: "PROMPT_WAR", label: "Prompt War", icon: Sparkles, tagline: "Duel with prompts. The sharper instruction wins the judge." },
   { key: "BACKEND", label: "Backend", icon: Server, tagline: "Design and ship a working API before your opponent does." },
   { key: "FRONTEND", label: "Frontend", icon: Layout, tagline: "Pixel-perfect builds, scored head-to-head." },
-  { key: "FULLSTACK", label: "Fullstack", icon: Cpu, tagline: "End to end. Database to UI. No hiding places." }
+  { key: "PROJECTS", label: "Projects", icon: Cpu, tagline: "End to end. Database to UI. No hiding places." }
 ];
 
 export default function LandingPage() {

@@ -1,0 +1,153 @@
+{
+  "_id": "a31fb5fab004e012d56c784e",
+  "title": "Valid Sudoku Backtracking - Duplicate Row Bug Fix",
+  "slug": "valid-sudoku-backtracking-duplicate-row-bug-fix-bugfix-easy-recursion",
+  "difficulty": "Easy",
+  "category": "DSA",
+  "subCategory": "BACKTRACKING",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "backtracking"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Solve the problem and fix the bugs.",
+    "inputFormat": "Input is a 2D array representing a Sudoku board, where 0 represents an empty cell.",
+    "outputFormat": "Return true if the Sudoku board is valid, false otherwise.",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 9,
+        "description": "Size of the Sudoku board"
+      }
+    ],
+    "examples": [
+      {
+        "input": "[\n               [5,1,7,6,0,0,0,3,4],\n               [2,8,9,0,0,4,0,0,0],\n               [3,4,6,2,0,5,0,9,0],\n               [6,0,2,0,0,0,0,1,0],\n               [0,3,8,0,0,6,0,4,7],\n               [0,0,0,0,0,0,0,0,0],\n               [0,9,0,0,0,0,0,7,8],\n               [7,0,3,4,0,0,5,6,0],\n               [0,0,0,0,0,0,0,0,0]\n            ]",
+        "output": "true",
+        "explanation": ""
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(...) ",
+    "spaceComplexity": "O(...)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\\npublic:\\nbool isValidSudoku(vector<vector<int>>& board);\\n};",
+    "java": "public class Solution {\npublic boolean isValidSudoku(int[][] board);\n}",
+    "python": "class Solution:\\n\\tpass\\n\\ndef is_valid_sudoku(self, board):",
+    "javascript": "var isValidSudoku = function(board) {\n};"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\nbool isValidSudoku(vector<vector<int>>& board) {\nfor (int i = 0; i < n; i++) {\nif (board[i].size() != n) return false;\nfor (int j = 0; j < n; j++) {\nif (board[i][j] <= 0 || board[i][j] > 9) return false;\n}\n}\nreturn board[0].size() == n;\n};\nprivate:\nint n = 0;\n}",
+    "java": "public class Solution {\npublic boolean isValidSudoku(int[][] board) {\nfor (int i = 0; i < n; i++) {\nif (board[i].length != n) return false;\nfor (int j = 0; j < n; j++) {\nif (board[i][j] <= 0 || board[i][j] > 9) return false;\n}\n}\nreturn board[0].length == n;\n};\nprivate int n = 0;\n}",
+    "python": "class Solution:\n\tpass\n\ndef is_valid_sudoku(self, board): \n\tn = len(board)\n\tfor i in range(n):\n\t\tif len(board[i]) != n:\n\t\t\treturn False\n\t\tfor j in range(n):\n\t\t\tif board[i][j] <= 0 or board[i][j] > 9:\n\t\t\t\treturn False\n\t\tif board[0] != board[i]:\n\t\t\treturn False\n\treturn True",
+    "javascript": "var isValidSudoku = function(board) {\n  n = board.length\n  for (let i = 0; i < n; i++) {\n    if (board[i].length != n) return false;\n    for (let j = 0; j < n; j++) {\n      if (board[i][j] <= 0 || board[i][j] > 9) return false;\n    }\n  }\n  return board[0].length == n;\n};"
+  },
+  "functionSignature": {
+    "cpp": "bool solve(vector<vector<int>>& board);",
+    "java": "public boolean isValidSudoku(int[][] board);",
+    "python": "def is_valid_sudoku(self, board: list[list[int]]) -> bool:",
+    "javascript": "var isValidSudoku = function(board);"
+  },
+  "solutions": {
+    "cpp": "class Solution {\npublic:\nbool isValidSudoku(vector<vector<int>>& board) {\nint n = board.size();\nfor (int i = 0; i < n; i++) {\n  if (board[i].size() != n) return false;\n  for (int j = 0; j < n; j++) {\n    if (board[i][j] < 1 || board[i][j] > 9) return false;\n  }\n}\nbool checkRow(int r) {\n  int num[10] = {0};\n  for (int c = 0; c < n; c++) {\n    num[board[r][c]]++;\n    if (num[board[r][c]] > 1) return false;\n  }\n  return true;\n}\nbool checkCol(int c) {\n  int num[10] = {0};\n  for (int r = 0; r < n; r++) {\n    num[board[r][c]]++;\n    if (num[board[r][c]] > 1) return false;\n  }\n  return true;\n}\nbool checkBox(int r, int c) {\n  int num[10] = {0};\n  for (int i = 0; i < 3; i++) {\n    for (int j = 0; j < 3; j++) {\n      num[board[r + i][c + j]]++;\n      if (num[board[r + i][c + j]] > 1) return false;\n    }\n  }\n  return true;\n}\nfor (int i = 0; i < n; i++) {\n  if (!checkRow(i)) return false;\n}\nfor (int j = 0; j < n; j++) {\n  if (!checkCol(j)) return false;\n}\nfor (int i = 0; i < n; i += 3) {\n  for (int j = 0; j < n; j += 3) {\n    if (!checkBox(i, j)) return false;\n  }\n}\nreturn true;\n};\n}",
+    "java": "public class Solution {\npublic boolean isValidSudoku(int[][] board) {\nint n = board.length;\nfor (int i = 0; i < n; i++) {\n  if (board[i].length != n) return false;\n  for (int j = 0; j < n; j++) {\n    if (board[i][j] < 1 || board[i][j] > 9) return false;\n  }\n}\nboolean checkRow(int r) {\n  int[] num = new int[10];\n  for (int c = 0; c < n; c++) {\n    num[board[r][c]]++;\n    if (num[board[r][c]] > 1) return false;\n  }\n  return true;\n}\nboolean checkCol(int c) {\n  int[] num = new int[10];\n  for (int r = 0; r < n; r++) {\n    num[board[r][c]]++;\n    if (num[board[r][c]] > 1) return false;\n  }\n  return true;\n}\nboolean checkBox(int r, int c) {\n  int[] num = new int[10];\n  for (int i = 0; i < 3; i++) {\n    for (int j = 0; j < 3; j++) {\n      num[board[r + i][c + j]]++;\n      if (num[board[r + i][c + j]] > 1) return false;\n    }\n  }\n  return true;\n}\nfor (int i = 0; i < n; i++) {\n  if (!checkRow(i)) return false;\n}\nfor (int j = 0; j < n; j++) {\n  if (!checkCol(j)) return false;\n}\nfor (int i = 0; i < n; i += 3) {\n  for (int j = 0; j < n; j += 3) {\n    if (!checkBox(i, j)) return false;\n  }\n}\nreturn true;\n}",
+    "python": "class Solution:\n\tpass\n\ndef is_valid_sudoku(self, board): \n\tfor i in range(len(board)):\n\t\tif len(board[i]) != len(board):\n\t\t\treturn False\n\t\tfor j in range(len(board[i])):\n\t\t\tif board[i][j] < 1 or board[i][j] > 9:\n\t\t\t\treturn False\n\trow = [board[i][0] for i in range(len(board)) if board[i][0] != 0]\n\tcol = [board[0][j] for j in range(len(board[0])) if board[0][j] != 0]\n\tfor i in range(1, len(board), 3):\n\t\tfor j in range(3):\n\t\t\tbox = [board[i + k][j + l] for k in range(3) for l in range(3) if board[i + k][j + l] != 0]\n\t\t\tif len({board[i + k][j + l] for k in range(3) for l in range(3) if board[i + k][j + l] != 0}) != 9:\n\t\t\t\treturn False\n\tfor i in row:\n\t\tif row.count(i) > 1:\n\t\t\treturn False\n\tfor i in col:\n\t\tif col.count(i) > 1:\n\t\t\treturn False\n\treturn True",
+    "javascript": "var isValidSudoku = function(board) {\n  let n = board.length;\n  for (let i = 0; i < n; i++) {\n    if (board[i].length != n) return false;\n    for (let j = 0; j < n; j++) {\n      if (board[i][j] < 1 || board[i][j] > 9) return false;\n    }\n  }\n  let checkRow = function(r) {\n    let num = new Array(10).fill(0);\n    for (let c = 0; c < n; c++) {\n      num[board[r][c]]++;\n      if (num[board[r][c]] > 1) return false;\n    }\n    return true;\n  }\n  let checkCol = function(c) {\n    let num = new Array(10).fill(0);\n    for (let r = 0; r < n; r++) {\n      num[board[r][c]]++;\n      if (num[board[r][c]] > 1) return false;\n    }\n    return true;\n  }\n  let checkBox = function(r, c) {\n    let num = new Array(10).fill(0);\n    for (let i = 0; i < 3; i++) {\n      for (let j = 0; j < 3; j++) {\n        num[board[r + i][c + j]]++;\n        if (num[board[r + i][c + j]] > 1) return false;\n      }\n    }\n    return true;\n  }\n  for (let i = 0; i < n; i++) {\n    if (!checkRow(i)) return false;\n  }\n  for (let j = 0; j < n; j++) {\n    if (!checkCol(j)) return false;\n  }\n  for (let i = 0; i < n; i += 3) {\n    for (let j = 0; j < n; j += 3) {\n      if (!checkBox(i, j)) return false;\n    }\n  }\n  return true;\n};"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "9\n5 3 0 0 7 0 0 0 0\n6 0 0 1 9 5 0 0 0\n0 9 8 0 0 0 0 6 0\n8 0 0 0 6 0 0 0 3\n4 0 0 8 0 3 0 0 1\n7 0 0 0 2 0 0 0 6\n0 6 0 0 0 0 2 8 0\n0 0 0 4 1 9 0 0 5\n0 0 0 0 8 0 0 7 9\n",
+      "output": "true",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "9\n5 3 0 0 7 0 0 0 0\n6 0 0 1 9 5 0 0 0\n0 9 8 0 0 0 0 6 0\n8 0 0 0 6 0 0 0 3\n4 0 0 8 0 3 0 0 1\n7 0 0 0 2 0 0 0 6\n0 6 0 0 0 0 2 8 0\n0 0 0 4 0 9 0 0 5\n0 0 0 0 8 0 0 7 9\n",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

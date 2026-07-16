@@ -1,0 +1,149 @@
+{
+  "title": "Fixing a Route Parameter Middleware Issue in a Simple Express API",
+  "subCategory": "Route Parameter Middleware",
+  "statement": {
+    "markdown": "In this task, you are required to fix a bug in a simple Express API that handles GET requests to the `/users/:userId` route. The API should validate the `userId` parameter to ensure it's a positive integer. However, the current implementation has a logical bug that causes it to accept negative integers and non-numeric values. Fix the middleware to correctly validate the `userId` parameter.",
+    "inputFormat": "The input will be a URL path matching the `/users/:userId` format, where `userId` is the parameter to be validated.",
+    "outputFormat": "The output should be the validated `userId` parameter if it's a positive integer; otherwise, it should return an error message.",
+    "notes": "You should assume that the `userId` parameter will always be present in the URL.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "userId",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Constraint description"
+      }
+    ],
+    "examples": [
+      {
+        "input": "/users/123",
+        "output": "123",
+        "explanation": "Valid positive integer"
+      },
+      {
+        "input": "/users/-123",
+        "output": "Invalid user ID: -123",
+        "explanation": "Negative integer"
+      },
+      {
+        "input": "/users/abc",
+        "output": "Invalid user ID: abc",
+        "explanation": "Non-numeric value"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 60,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "EXPRESS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "express"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text: Check the validation logic in the middleware."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title: Fixing Route Parameter Middleware Issue in Express API",
+    "intuition": "Explanation of the correct approach: Use a regular expression to validate the `userId` parameter.",
+    "bruteForce": "Brute force approach summary: Try all possible values and check for validity.",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details: Use a regular expression to validate the `userId` parameter and return an error message if it's invalid.",
+    "proofOfCorrectness": "Correctness proof: The solution correctly validates the `userId` parameter and returns an error message if it's invalid.",
+    "dryRun": "Step-by-step example run: Input: /users/123, Output: 123",
+    "commonMistakes": [
+      "Mistake 1: Not using a regular expression to validate the `userId` parameter.",
+      "Mistake 2: Not checking for negative integers and non-numeric values."
+    ],
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "app.get('/users/:userId', (req, res) => {\n  const userId = req.params.userId;\n  // Fix the bug in this line: \n  res.send(userId);\n});",
+    "python": "class Solution:\n    def solve(self, nums: list[int]) -> bool:\n        # TODO: implement\n        pass"
+  },
+  "buggyStarterCode": {
+    "javascript": "const express = require('express');\nconst app = express();\napp.get('/users/:userId', (req, res) => {\n  const userId = req.params.userId;\n  if (userId >= 0) {\n    // This is the bug: it accepts negative integers and non-numeric values\n    res.send(userId);\n  } else {\n    res.send('Invalid user ID: ' + userId);\n  }\n});\napp.listen(3000, () => {\n  console.log('Server started on port 3000');\n});",
+    "python": "from flask import Flask, request\napp = Flask(__name__)\n@app.route('/users/<int:userId>', methods=['GET'])\ndef get_user_id():\n  # This is the bug: it accepts negative integers\n  return str(userId)\nif __name__ == '__main__':\n  app.run(debug=True)"
+  },
+  "functionSignature": {
+    "javascript": "app.get('/users/:userId', (req, res) => { /* fix the bug */ })",
+    "python": "def solve(self, nums: list[int]) -> bool:"
+  },
+  "solutions": {
+    "javascript": "// Solution\nconst express = require('express');\nconst app = express();\napp.get('/users/:userId', (req, res) => {\n  const userId = req.params.userId;\n  if (!isNaN(userId) && parseInt(userId) > 0) {\n    res.send(userId);\n  } else {\n    res.status(400).send('Invalid user ID');\n  }\n});\napp.listen(3000, () => {\n  console.log('Server started on port 3000');\n});",
+    "python": "from flask import Flask, request\napp = Flask(__name__)\n@app.route('/users/<int:userId>', methods=['GET'])\ndef get_user_id():\n  if not userId > 0:\n    return 'Invalid user ID', 400\n  return str(userId)\nif __name__ == '__main__':\n  app.run(debug=True)"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "/users/123",
+      "output": "123",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "/users/-123",
+      "output": "Invalid user ID: -123",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    },
+    {
+      "id": "tc_3",
+      "input": "/users/abc",
+      "output": "Invalid user ID: abc",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "_id": "87c8fbe6f93d0c5deb972879",
+  "slug": "fixing-a-route-parameter-middleware-issue-in-a-simple-express-api-bugfix-medium-express",
+  "mode": "bug_fix",
+  "category": "EXPRESS",
+  "difficulty": "Medium"
+}

@@ -1,0 +1,136 @@
+{
+  "title": "Fixing Route Parameters for a Simple Express API Endpoint",
+  "subCategory": "Routing",
+  "statement": {
+    "markdown": "You are given an Express API endpoint that handles GET requests to retrieve user data. However, the route parameter parsing is incorrect. Fix the bug to ensure the endpoint correctly handles URLs like `/users/123` and returns the corresponding user data.",
+    "inputFormat": "The input will be a URL in the format `/users/<id>`, where `<id>` is a positive integer.",
+    "outputFormat": "The output should be an object containing the user data, or an error message if the user ID is invalid.",
+    "notes": "You should use the `express.Router()` method to define the route.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "id",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "User ID"
+      }
+    ],
+    "examples": [
+      {
+        "input": "/users/123",
+        "output": "{\"name\": \"John Doe\", \"email\": \"johndoe@example.com\"}",
+        "explanation": "User data for ID 123"
+      },
+      {
+        "input": "/users/abc",
+        "output": "{\"error\": \"Invalid user ID\"}",
+        "explanation": "Error message for invalid ID"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "EXPRESS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "express"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the `express.Router()` method to define the route."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial: Fixing Route Parameters",
+    "intuition": "Route parameters should be parsed correctly using the `express.Router()` method.",
+    "bruteForce": "Try using the `req.params` object to access the route parameter.",
+    "betterSolution": "",
+    "optimalSolution": "Use the `express.Router()` method with a callback function to parse the route parameter.",
+    "proofOfCorrectness": "Test the endpoint with valid and invalid user IDs to ensure correct output.",
+    "dryRun": "Step-by-step example run: /users/123 -> { name: 'John Doe', email: 'johndoe@example.com' }",
+    "commonMistakes": [
+      "Incorrectly parsing route parameters",
+      "Not using `express.Router()`"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "const express = require('express');\nconst router = new express.Router();\nrouter.get('/users/:id', (req, res) => {\n  // Fix the bug here\n});",
+    "python": "import express\nfrom flask import Flask\napp = Flask(__name__)\n@app.route('/users/<id>', methods=['GET'])\ndef get_user_data(id):\n  # Fix the bug here\n"
+  },
+  "buggyStarterCode": {
+    "javascript": "const express = require('express');\nconst router = new express.Router();\nrouter.get('/users/:id', (req, res) => {\n  res.send({ name: 'John Doe', email: 'johndoe@example.com' });\n});",
+    "python": "import express\nfrom flask import Flask\napp = Flask(__name__)\n@app.route('/users/<id>', methods=['GET'])\ndef get_user_data(id):\n  return { name: 'John Doe', email: 'johndoe@example.com' }"
+  },
+  "functionSignature": {
+    "javascript": "router.get('/users/:id', (req, res) => {\n  // Fix the bug here\n});",
+    "python": "@app.route('/users/<id>', methods=['GET'])\ndef get_user_data(id):\n  # Fix the bug here\n"
+  },
+  "solutions": {
+    "javascript": "// Solution\nconst express = require('express');\nconst router = new express.Router();\nrouter.get('/users/:id', (req, res) => {\n  const id = parseInt(req.params.id);\n  if (isNaN(id) || id <= 0) {\n    res.send({ error: 'Invalid user ID' });\n  } else {\n    res.send({ name: 'John Doe', email: 'johndoe@example.com' });\n  }\n});",
+    "python": "import express\nfrom flask import Flask\napp = Flask(__name__)\n@app.route('/users/<id>', methods=['GET'])\ndef get_user_data(id):\n  try:\n    id = int(id)\n    if id <= 0:\n      return { error: 'Invalid user ID' }\n    return { name: 'John Doe', email: 'johndoe@example.com' }\n  except ValueError:\n    return { error: 'Invalid user ID' }"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "/users/123",
+      "output": "{\"name\": \"John Doe\", \"email\": \"johndoe@example.com\"}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "/users/abc",
+      "output": "{\"error\": \"Invalid user ID\"}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "06825eb3efbcc0532fcfa473",
+  "slug": "fixing-route-parameters-for-a-simple-express-api-endpoint-bugfix-easy-express",
+  "mode": "bug_fix",
+  "category": "EXPRESS",
+  "difficulty": "Easy"
+}

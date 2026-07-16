@@ -17,7 +17,7 @@ async function run() {
         "ratings.dsa_-1_userId_1",
         "ratings.frontend_-1_userId_1",
         "ratings.backend_-1_userId_1",
-        "ratings.fullstack_-1_userId_1",
+        "ratings.projects_-1_userId_1",
         "ratings.team_-1_userId_1",
         "ratings.promptWar_-1_userId_1",
         "ratings.bugFix_-1_userId_1"

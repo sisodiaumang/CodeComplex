@@ -1,0 +1,52 @@
+{
+  "_id": "691af50bf8483c2404e36454",
+  "title": "Focus-Trapped Sidebar Navigation",
+  "slug": "acc-focus-trap-drawer",
+  "difficulty": "Hard",
+  "topics": [
+    "ACCESSIBILITY"
+  ],
+  "statement": {
+    "markdown": "## Focus-Trapped Sidebar Navigation\n\nCreate a focus-trapped navigation drawer component.\n\n### Requirements:\n1. **Focus loop**: Opening the drawer traps keyboard navigation focus within drawer navigation links.\n2. **Restoring focus**: Closing drawer navigation panel returns keyboard active focus to target trigger toggle button.\n3. **Role Dialog**: Add accessibility role configurations (`role=\"dialog\"`, `aria-hidden`) maintaining structural page integrity."
+  },
+  "constraints": [
+    "Must block keyboard interaction outside the active drawer",
+    "Escape button key events must close the drawer"
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "html": "<div class=\"p-6 bg-slate-900 min-h-[300px] flex flex-col font-sans text-white relative\">\n  <button id=\"open-drawer\" class=\"self-start bg-indigo-600 px-4 py-2 rounded font-bold hover:bg-indigo-500 transition-colors\">Toggle Menu</button>\n  \n  <div id=\"drawer\" role=\"dialog\" aria-modal=\"true\" class=\"fixed right-0 top-0 bottom-0 w-64 bg-slate-800 border-l border-slate-700 p-6 hidden z-50 flex flex-col\">\n    <button id=\"close-drawer\" class=\"self-end text-slate-400 hover:text-white font-bold mb-6\">Close ×</button>\n    <nav class=\"flex-1 flex flex-col gap-4 text-sm font-semibold\">\n      <a href=\"#\" class=\"hover:text-indigo-400\">Profile</a>\n      <a href=\"#\" class=\"hover:text-indigo-400\">Settings</a>\n      <a href=\"#\" class=\"hover:text-indigo-400\">Log out</a>\n    </nav>\n  </div>\n</div>",
+    "css": "",
+    "javascript": "const openBtn = document.getElementById('open-drawer');\nconst closeBtn = document.getElementById('close-drawer');\nconst drawer = document.getElementById('drawer');\n\n// Implement focus trapping, escape key closure, and focus restoration here\n"
+  },
+  "gradingCriteria": [
+    {
+      "id": "focus_containment",
+      "description": "Verify active focus remains trapped inside open drawer links.",
+      "weight": 50
+    },
+    {
+      "id": "trigger_restoring",
+      "description": "Verify trigger button gains focus upon closing navigation drawer panels.",
+      "weight": 50
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "html",
+      "css",
+      "javascript"
+    ],
+    "referenceSolution": "const openBtn = document.getElementById('open-drawer');\nconst closeBtn = document.getElementById('close-drawer');\nconst drawer = document.getElementById('drawer');\n\nlet triggerElement;\n\nfunction toggleDrawer(open) {\n  if (open) {\n    triggerElement = document.activeElement;\n    drawer.classList.remove('hidden');\n    closeBtn.focus();\n    document.addEventListener('keydown', handleKey);\n  } else {\n    drawer.classList.add('hidden');\n    document.remove('keydown', handleKey);\n    if (triggerElement) triggerElement.focus();\n  }\n}\n\nfunction handleKey(e) {\n  if (e.key === 'Escape') {\n    toggleDrawer(false);\n    return;\n  }\n  if (e.key === 'Tab') {\n    const focusable = Array.from(drawer.querySelectorAll('button, [href]'));\n    const first = focusable[0];\n    const last = focusable[focusable.length - 1];\n    \n    if (e.shiftKey) {\n      if (document.activeElement === first) {\n        last.focus();\n        e.preventDefault();\n      }\n    } else {\n      if (document.activeElement === last) {\n        first.focus();\n        e.preventDefault();\n      }\n    }\n  }\n}\n\nopenBtn.addEventListener('click', () => toggleDrawer(true));\ncloseBtn.addEventListener('click', () => toggleDrawer(false));"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

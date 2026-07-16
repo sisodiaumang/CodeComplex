@@ -1,0 +1,163 @@
+{
+  "title": "Fixing a Node.js Express Middleware for Dynamic Route Parameter Validation in Nested Routes",
+  "subCategory": "Node.js Express Routing",
+  "statement": {
+    "markdown": "Implement a Node.js Express middleware to handle dynamic route parameters in nested routes. The middleware should validate the route parameters against a predefined schema and return a 400 error if the parameters are invalid. The schema should be defined as a string representing the JSON schema and the route parameters should be parsed from the request body.",
+    "inputFormat": "The input is a JSON object containing the route parameters and the request body.",
+    "outputFormat": "The output is an HTTP response with the status code and a JSON object containing the error message if the parameters are invalid, otherwise an empty response.",
+    "notes": "The middleware should only validate the route parameters and not the request body. The schema should be a string representing the JSON schema and should be defined in the middleware.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 100
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 1,
+        "max": 100
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"routeParameters\": {\"id\": 1, \"name\": \"John\"}, \"requestBody\": {\"age\": 30, \"city\": \"New York\"}}",
+        "output": "{}",
+        "explanation": "The route parameters are valid, so the middleware returns an empty response."
+      },
+      {
+        "input": "{\"routeParameters\": {\"id\": 1, \"name\": \"John\"}, \"requestBody\": {\"age\": 30, \"city\": \"New York\", \"invalidKey\": \"invalidValue\"}}",
+        "output": "{\"error\": \"Invalid request body\"}",
+        "explanation": "The request body contains an invalid key, so the middleware returns a 400 error."
+      },
+      {
+        "input": "{\"routeParameters\": {\"id\": 1, \"name\": \"John\"}, \"requestBody\": {}}",
+        "output": "{\"error\": \"Invalid request body\"}",
+        "explanation": "The request body is empty, so the middleware returns a 400 error."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 100,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "NODE_JS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "node_js"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use a JSON schema library to validate the route parameters against the predefined schema."
+    },
+    {
+      "order": 2,
+      "text": "Parse the request body from the input JSON object."
+    },
+    {
+      "order": 3,
+      "text": "Use a try-catch block to catch any errors that may occur during validation."
+    }
+  ],
+  "editorial": {
+    "title": "Dynamic Route Parameter Validation in Node.js Express Middleware",
+    "intuition": "The key to this problem is to use a JSON schema library to validate the route parameters against the predefined schema.",
+    "bruteForce": "One possible approach is to manually check each route parameter against the schema, but this is inefficient and prone to errors.",
+    "betterSolution": "Using a JSON schema library provides a more efficient and accurate way to validate the route parameters.",
+    "optimalSolution": "The optimal solution is to use a JSON schema library and parse the request body from the input JSON object.",
+    "proofOfCorrectness": "The correctness of the solution can be verified by testing it with different inputs and checking the output against the expected results.",
+    "dryRun": "Step-by-step example run: 1. Parse the request body from the input JSON object. 2. Validate the route parameters against the predefined schema using a JSON schema library. 3. Return a 400 error if the parameters are invalid, otherwise return an empty response.",
+    "commonMistakes": [
+      "Not using a JSON schema library",
+      "Not parsing the request body correctly",
+      "Not handling errors properly"
+    ],
+    "timeComplexity": "O(n*m)",
+    "spaceComplexity": "O(n*m)"
+  },
+  "starterCode": {
+    "javascript": "var express = require('express');\nvar app = express();\n\napp.use(function(req, res, next) {\n    // Implement the middleware here\n});\n\napp.listen(3000, function() {\n    console.log('Server listening on port 3000');\n});",
+    "python": "class Solution:\n    def __init__(self):\n        pass\n\n    def middleware(self, req, res):\n        # Implement the middleware here\n        pass\n\n    def main(self):\n        app = express()\n        app.use(self.middleware)\n        app.listen(3000, lambda: print('Server listening on port 3000'))\n\nif __name__ == '__main__':\n    solution = Solution()\n    solution.main()"
+  },
+  "buggyStarterCode": {
+    "javascript": "var express = require('express');\nvar app = express();\n\napp.use(function(req, res, next) {\n    var routeParameters = JSON.parse(req.body.routeParameters);\n    var schema = '{\"type\": \"object\", \"properties\": {\"id\": {\"type\": \"integer\"}, \"name\": {\"type\": \"string\"}}';\n    var Joi = require('joi');\n    var validate = Joi.object().keys({\n        id: Joi.number().integer(),\n        name: Joi.string()\n    });\n    var result = validate.validate(routeParameters);\n    if (result.error) {\n        res.status(400).send({ error: 'Invalid request' });\n    } else {\n        next();\n    }\n});\n\napp.listen(3000, function() {\n    console.log('Server listening on port 3000');\n});",
+    "python": "import json\nfrom express import express\n\nclass Solution:\n    def __init__(self):\n        pass\n\n    def middleware(self, req, res):\n        route_parameters = json.loads(req.body['routeParameters'])\n        schema = '{\"type\": \"object\", \"properties\": {\"id\": {\"type\": \"integer\"}, \"name\": {\"type\": \"string\"}}'\n        validate = jsonschema.Draft7Validator(schema)\n        result = validate.validate(route_parameters)\n        if result.errors():\n            res.status(400).send({'error': 'Invalid request'})\n        else:\n            res.send('')\n\n    def main(self):\n        app = express()\n        app.use(self.middleware)\n        app.listen(3000, lambda: print('Server listening on port 3000'))\n\nif __name__ == '__main__':\n    solution = Solution()\n    solution.main()"
+  },
+  "functionSignature": {
+    "javascript": "app.use(function(req, res, next) {\n    // Implement the middleware here\n});",
+    "python": "def middleware(self, req, res):\n    # Implement the middleware here\n"
+  },
+  "solutions": {
+    "javascript": "// Solution\nvar express = require('express');\nvar app = express();\n\napp.use(function(req, res, next) {\n    var routeParameters = JSON.parse(req.body.routeParameters);\n    var schema = '{\"type\": \"object\", \"properties\": {\"id\": {\"type\": \"integer\"}, \"name\": {\"type\": \"string\"}}';\n    var Joi = require('joi');\n    var validate = Joi.object().keys({\n        id: Joi.number().integer(),\n        name: Joi.string()\n    });\n    try {\n        var result = validate.validate(routeParameters);\n        if (result.error) {\n            res.status(400).send({ error: 'Invalid request' });\n        } else {\n            next();\n        }\n    } catch (error) {\n        res.status(400).send({ error: 'Invalid request' });\n    }\n});\n\napp.listen(3000, function() {\n    console.log('Server listening on port 3000');\n});",
+    "python": "import json\nfrom express import express\nfrom jsonschema import Draft7Validator\n\nclass Solution:\n    def __init__(self):\n        pass\n\n    def middleware(self, req, res):\n        try:\n            route_parameters = json.loads(req.body['routeParameters'])\n            schema = '{\"type\": \"object\", \"properties\": {\"id\": {\"type\": \"integer\"}, \"name\": {\"type\": \"string\"}}'\n            validate = Draft7Validator(schema)\n            result = validate.validate(route_parameters)\n            if result.errors():\n                res.status(400).send({'error': 'Invalid request'})\n            else:\n                res.send('')\n        except Exception as e:\n            res.status(400).send({'error': 'Invalid request'})\n\n    def main(self):\n        app = express()\n        app.use(self.middleware)\n        app.listen(3000, lambda: print('Server listening on port 3000'))\n\nif __name__ == '__main__':\n    solution = Solution()\n    solution.main()"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"routeParameters\": {\"id\": 1, \"name\": \"John\"}, \"requestBody\": {\"age\": 30, \"city\": \"New York\"}}",
+      "output": "{}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"routeParameters\": {\"id\": 1, \"name\": \"John\"}, \"requestBody\": {\"age\": 30, \"city\": \"New York\", \"invalidKey\": \"invalidValue\"}}",
+      "output": "{\"error\": \"Invalid request\"}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    },
+    {
+      "id": "tc_3",
+      "input": "{\"routeParameters\": {\"id\": 1, \"name\": \"John\"}, \"requestBody\": {}}",
+      "output": "{\"error\": \"Invalid request\"}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "ac509f86010b4ec4ba15dc2d",
+  "slug": "fixing-a-nodejs-express-middleware-for-dynamic-route-parameter-validation-in-nested-routes-bugfix-hard-node_js",
+  "mode": "bug_fix",
+  "category": "NODE_JS",
+  "difficulty": "Hard"
+}

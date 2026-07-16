@@ -1,0 +1,136 @@
+{
+  "title": "Fixing React Memoized Component Re-renders on State Change",
+  "subCategory": "State Management",
+  "statement": {
+    "markdown": "You are given a React functional component named `Counter` that displays a counter value. The component uses the `useState` hook to manage its state. When the counter value changes, the component should re-render. However, the current implementation causes the component to re-render unnecessarily when the state changes. Your task is to fix the buggy implementation to prevent unnecessary re-renders.",
+    "inputFormat": "The input is an object with a `count` property that represents the counter value.",
+    "outputFormat": "The output is an object with a `count` property that represents the counter value and an `updatedAt` property that represents the timestamp when the counter value was last updated.",
+    "notes": "The `updatedAt` property should be updated whenever the counter value changes.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The counter value"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"count\": 1}",
+        "output": "{\"count\": 1, \"updatedAt\": 1643723400}",
+        "explanation": "The counter value is 1 and the `updatedAt` property is set to the current timestamp."
+      },
+      {
+        "input": "{\"count\": 2}",
+        "output": "{\"count\": 2, \"updatedAt\": 1643723410}",
+        "explanation": "The counter value is 2 and the `updatedAt` property is set to the current timestamp."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 10,
+    "points": 30,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "REACT"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "react"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the `useMemo` hook to memoize the `updatedAt` property."
+    }
+  ],
+  "editorial": {
+    "title": "Optimizing React Memoized Component Re-renders",
+    "intuition": "The `useState` hook updates the state synchronously, causing the component to re-render unnecessarily when the state changes. We can use the `useMemo` hook to memoize the `updatedAt` property and update it only when the counter value changes.",
+    "bruteForce": "The brute force approach is to re-render the component whenever the state changes, which can be inefficient.",
+    "betterSolution": "We can use the `useMemo` hook to memoize the `updatedAt` property and update it only when the counter value changes.",
+    "optimalSolution": "The optimal solution is to use the `useMemo` hook to memoize the `updatedAt` property and update it only when the counter value changes.",
+    "proofOfCorrectness": "The proof of correctness is that the `updatedAt` property is updated only when the counter value changes, preventing unnecessary re-renders.",
+    "dryRun": "Step-by-step example run: The component is re-rendered when the state changes, causing the `updatedAt` property to be updated.",
+    "commonMistakes": [
+      "Not using the `useMemo` hook",
+      "Updating the `updatedAt` property unnecessarily"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "// import React from 'react';\n// import { useState } from 'react';\n\nfunction Counter({ count }) {\n  // const [counter, setCounter] = useState(count);\n  // const updatedAt = new Date().getTime();\n  // return <div>Counter: {counter} ({updatedAt})</div>;\n}\n\n// export default Counter;",
+    "python": "// class Solution:\n//     def __init__(self):\n//         self.count = 0\n//         self.updated_at = 0\n\n//     def solve(self):\n//         print(f'Counter: {self.count} ({self.updated_at})')\n//         self.count += 1\n//         self.updated_at = new Date().getTime() // This line causes the component to re-render unnecessarily\n//         return 0\n// \n// if __name__ == '__main__':\n//     solution = Solution()\n//     solution.solve()"
+  },
+  "buggyStarterCode": {
+    "javascript": "// import React from 'react';\n// import { useState } from 'react';\n\nfunction Counter({ count }) {\n  const [counter, setCounter] = useState(count);\n  const updatedAt = new Date().getTime();\n  // const updatedAt = React.useMemo(() => new Date().getTime(), [counter]);\n  return <div>Counter: {counter} ({updatedAt})</div>;\n}\n\n// export default Counter;",
+    "python": "// class Solution:\n//     def __init__(self):\n//         self.count = 0\n//         self.updated_at = 0\n\n//     def solve(self):\n//         print(f'Counter: {self.count} ({self.updated_at})')\n//         self.count += 1\n//         self.updated_at = new Date().getTime()\n//         return 0\n// \n// if __name__ == '__main__':\n//     solution = Solution()\n//     solution.solve()"
+  },
+  "functionSignature": {
+    "javascript": "function Counter({ count }) {\n}",
+    "python": "class Solution:\n    def __init__(self):\n"
+  },
+  "solutions": {
+    "javascript": "// import React from 'react';\n// import { useState, useMemo } from 'react';\n\nfunction Counter({ count }) {\n  const [counter, setCounter] = useState(count);\n  const updatedAt = useMemo(() => new Date().getTime(), [count]);\n  return <div>Counter: {counter} ({updatedAt})</div>;\n}\n\n// export default Counter;",
+    "python": "// class Solution:\n//     def __init__(self):\n//         self.count = 0\n//         self.updated_at = 0\n\n//     def solve(self):\n//         print(f'Counter: {self.count} ({self.updated_at})')\n//         self.count += 1\n//         self.updated_at = new Date().getTime()\n//         return 0\n// \n// if __name__ == '__main__':\n//     import sys\n//     import json\n//     input = sys.stdin.readline().strip()\n//     data = json.loads(input)\n//     solution = Solution()\n//     solution.count = data['count']\n//     solution.updated_at = new Date().getTime()\n//     while True:\n//         print(f'Counter: {solution.count} ({solution.updated_at})')\n//         solution.count += 1\n//         solution.updated_at = new Date().getTime()\n//         solution.solve()\n//         line = sys.stdin.readline().strip()\n//         if not line:\n//             break"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"count\": 1}",
+      "output": "{\"count\": 1, \"updatedAt\": 1643723400}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"count\": 2}",
+      "output": "{\"count\": 2, \"updatedAt\": 1643723410}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "a050923dc536f707e4db7786",
+  "slug": "fixing-react-memoized-component-re-renders-on-state-change-bugfix-easy-react",
+  "mode": "bug_fix",
+  "category": "REACT",
+  "difficulty": "Easy"
+}

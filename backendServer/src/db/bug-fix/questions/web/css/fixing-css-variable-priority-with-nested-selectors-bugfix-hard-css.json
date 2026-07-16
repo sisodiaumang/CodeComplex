@@ -1,0 +1,136 @@
+{
+  "title": "Fixing CSS Variable Priority with Nested Selectors",
+  "subCategory": "CSS Variable Priority",
+  "statement": {
+    "markdown": "You are given a CSS string that defines some variables and applies styles to elements using these variables. However, due to incorrect priority handling, some styles are being overridden by other selectors. Your task is to fix the priority of the CSS variables so that the styles are applied correctly.\n\nThe input CSS string will contain variable definitions and selector blocks. You need to parse the input string, fix the priority of the variables, and return the corrected CSS string.\n\nExample:\n\nInput: `:root { --primary-color: #333; } .container { background-color: var(--primary-color); } .container .header { background-color: #666; }`\n\nOutput: `:root { --primary-color: #333; } .container { background-color: var(--primary-color); } .container .header { background-color: var(--primary-color); }`\n\nNote that the background-color of `.container .header` should be the same as `.container`.",
+    "inputFormat": "A CSS string that defines variables and applies styles to elements using these variables.",
+    "outputFormat": "A CSS string with the priority of the variables fixed.",
+    "notes": "You should not remove any existing styles. Only fix the priority of the variables.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of variable definitions and selector blocks in the input CSS string."
+      }
+    ],
+    "examples": [
+      {
+        "input": ":root { --primary-color: #333; } .container { background-color: var(--primary-color); } .container .header { background-color: #666; }",
+        "output": ":root { --primary-color: #333; } .container { background-color: var(--primary-color); } .container .header { background-color: var(--primary-color); }",
+        "explanation": "The background-color of `.container .header` should be the same as `.container`."
+      },
+      {
+        "input": ":root { --primary-color: #333; } .container { background-color: var(--primary-color); } .container .header { background-color: #666; } .container .footer { background-color: var(--primary-color); }",
+        "output": ":root { --primary-color: #333; } .container { background-color: var(--primary-color); } .container .header { background-color: var(--primary-color); } .container .footer { background-color: var(--primary-color); }",
+        "explanation": "The background-color of `.container .header` and `.container .footer` should be the same as `.container`."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 75,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "CSS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "css"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text: Focus on the CSS variable priority and how it affects the styles applied to the elements."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach: You need to parse the input CSS string, identify the variable definitions and selector blocks, and then adjust the priority of the variables accordingly.",
+    "bruteForce": "Brute force approach summary: You can use regular expressions to extract the variable definitions and selector blocks from the input CSS string, and then manually adjust the priority of the variables.",
+    "betterSolution": "An alternative solution that is more efficient or elegant.",
+    "optimalSolution": "Optimal solution details: You can use a CSS parser library to parse the input CSS string, identify the variable definitions and selector blocks, and then adjust the priority of the variables accordingly.",
+    "proofOfCorrectness": "Correctness proof: The optimal solution correctly fixes the priority of the CSS variables, ensuring that the styles are applied correctly.",
+    "dryRun": "Step-by-step example run: Input CSS string: `:root { --primary-color: #333; } .container { background-color: var(--primary-color); } .container .header { background-color: #666; }`. Output CSS string: `:root { --primary-color: #333; } .container { background-color: var(--primary-color); } .container .header { background-color: var(--primary-color); }`.",
+    "commonMistakes": [
+      "Mistake 1: Not correctly parsing the input CSS string.",
+      "Mistake 2: Not adjusting the priority of the variables correctly."
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// Define a function to fix the CSS variable priority.\nfunction fixCssPriority(cssString) {\n  // Your implementation here.\n}\n\n// Call the function with the input CSS string.\nconst cssInput = ':root { --primary-color: #333; } .container { background-color: var(--primary-color); } .container .header { background-color: #666; }';\nconst result = fixCssPriority(cssInput);\nconsole.log(result);\n",
+    "python": "class Solution:\n    def fix_css_priority(self, css_string):\n        # Your implementation here.\n        pass\n\nif __name__ == '__main__':\n    css_input = ':root { --primary-color: #333; } .container { background-color: var(--primary-color); } .container .header { background-color: #666; }'\n    solution = Solution()\n    result = solution.fix_css_priority(css_input)\n    print(result)"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Define a function to fix the CSS variable priority.\nfunction fixCssPriority(cssString) {\n  // Split the input CSS string into blocks.\n  const blocks = cssString.split('}');\n  // Initialize an object to store the variable definitions.\n  const variables = {};\n  // Iterate over the blocks.\n  for (let block of blocks) {\n    // Extract the variable definition from the block.\n    const variable = block.split('{')[0].trim();\n    // Add the variable to the object.\n    variables[variable] = block;\n  }\n  // Join the blocks back together.\n  return blocks.join('}');\n}\n\n// Call the function with the input CSS string.\nconst cssInput = ':root { --primary-color: #333; } .container { background-color: var(--primary-color); } .container .header { background-color: #666; }';\nconst result = fixCssPriority(cssInput);\nconsole.log(result);\n",
+    "python": "class Solution:\n    def fix_css_priority(self, css_string):\n        # Split the input CSS string into blocks.\n        blocks = css_string.split('}');\n        # Initialize an object to store the variable definitions.\n        variables = {};\n        # Iterate over the blocks.\n        for block in blocks:\n            # Extract the variable definition from the block.\n            variable = block.split('{')[0].strip();\n            # Add the variable to the object.\n            variables[variable] = block;\n        # Join the blocks back together.\n        return ''.join(blocks);\n\nif __name__ == '__main__':\n    css_input = ':root { --primary-color: #333; } .container { background-color: var(--primary-color); } .container .header { background-color: #666; }'\n    solution = Solution()\n    result = solution.fix_css_priority(css_input)\n    print(result)"
+  },
+  "functionSignature": {
+    "javascript": "function fixCssPriority(cssString) { ... }",
+    "python": "def fix_css_priority(self, css_string: str) -> str: ..."
+  },
+  "solutions": {
+    "javascript": "// Define a function to fix the CSS variable priority.\nfunction fixCssPriority(cssString) {\n  // Split the input CSS string into blocks.\n  const blocks = cssString.split('}');\n  // Initialize an object to store the variable definitions.\n  const variables = {};\n  // Iterate over the blocks.\n  for (let block of blocks) {\n    // Extract the variable definition from the block.\n    const variable = block.split('{')[0].trim();\n    // Add the variable to the object.\n    variables[variable] = block;\n    // Find all occurrences of the variable in the remaining blocks.\n    for (let otherBlock of blocks.slice(blocks.indexOf(block) + 1)) {\n      // Replace the variable with the correct value.\n      otherBlock = otherBlock.replace(variable, block);\n    }\n  }\n  // Join the blocks back together.\n  return blocks.join('}');\n}\n\n// Call the function with the input CSS string.\nconst cssInput = ':root { --primary-color: #333; } .container { background-color: var(--primary-color); } .container .header { background-color: #666; }';\nconst result = fixCssPriority(cssInput);\nconsole.log(result);\n",
+    "python": "class Solution:\n    def fix_css_priority(self, css_string):\n        # Split the input CSS string into blocks.\n        blocks = css_string.split('}');\n        # Initialize an object to store the variable definitions.\n        variables = {};\n        # Iterate over the blocks.\n        for block in blocks:\n            # Extract the variable definition from the block.\n            variable = block.split('{')[0].strip();\n            # Add the variable to the object.\n            variables[variable] = block;\n            # Find all occurrences of the variable in the remaining blocks.\n            for other_block in blocks[blocks.index(block) + 1:]:\n                # Replace the variable with the correct value.\n                other_block = other_block.replace(variable, block);\n        # Join the blocks back together.\n        return ''.join(blocks);\n\nif __name__ == '__main__':\n    css_input = ':root { --primary-color: #333; } .container { background-color: var(--primary-color); } .container .header { background-color: #666; }'\n    solution = Solution()\n    result = solution.fix_css_priority(css_input)\n    print(result)"
+  },
+  "judgeConfig": {
+    "timeLimit": 3,
+    "memoryLimit": 512,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": ":root { --primary-color: #333; } .container { background-color: var(--primary-color); } .container .header { background-color: #666; }",
+      "output": ":root { --primary-color: #333; } .container { background-color: var(--primary-color); } .container .header { background-color: var(--primary-color); }",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": ":root { --primary-color: #333; } .container { background-color: var(--primary-color); } .container .header { background-color: #666; } .container .footer { background-color: var(--primary-color); }",
+      "output": ":root { --primary-color: #333; } .container { background-color: var(--primary-color); } .container .header { background-color: var(--primary-color); } .container .footer { background-color: var(--primary-color); }",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "49a41e5c2f0ae9ad327b1aed",
+  "slug": "fixing-css-variable-priority-with-nested-selectors-bugfix-hard-css",
+  "mode": "bug_fix",
+  "category": "CSS",
+  "difficulty": "Hard"
+}

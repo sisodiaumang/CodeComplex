@@ -1,0 +1,158 @@
+{
+  "_id": "0780f7c0c92143cf80e46135",
+  "title": "Detecting Cycles in an Undirected Graph: Fix the Low Link Values",
+  "slug": "detecting-cycles-in-an-undirected-graph-fix-the-low-link-values-bugfix-medium-graphs-2",
+  "difficulty": "Medium",
+  "category": "DSA",
+  "subCategory": "DFS/BFS",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 100,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "graph"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given an undirected graph represented as an adjacency list, implement a function to detect whether the graph contains a cycle using the Tarjan's algorithm. The graph is represented as an adjacency list where each index represents a node and its value is a list of its neighbors. The function should return True if the graph contains a cycle and False otherwise.",
+    "inputFormat": "The input will be a list of adjacency lists where each inner list represents a node and its neighbors. For example, \n[[1, 2], [0, 2, 3], [0, 3], [1, 2]] represents a graph with 4 nodes and 4 edges (1-2, 1-3, 0-3, 0-2).\n",
+    "outputFormat": "The function should return True if the graph contains a cycle and False otherwise.",
+    "notes": "Note that the graph is undirected and contains at least 1 node. The function should return True if there exists a cycle in the graph.\n",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "[[1, 2], [0, 2, 3], [0, 3], [1, 2]]",
+        "output": "True",
+        "explanation": "The graph contains a cycle (0->1->2->0)"
+      },
+      {
+        "input": "[[1, 3], [0, 2], [0, 3], [1, 2]]",
+        "output": "False",
+        "explanation": "The graph does not contain a cycle"
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Understand the Tarjan's algorithm to detect cycles in an undirected graph."
+    }
+  ],
+  "editorial": {
+    "title": "Detecting Cycles in an Undirected Graph",
+    "intuition": "Tarjan's algorithm works by iteratively selecting a node in the graph and performing a depth-first search (DFS) from that node. If a visited node is revisited during the DFS, it means a cycle exists in the graph.",
+    "bruteForce": "Brute-force approach to detect cycles: Perform DFS from each node and check if there exists a cycle.",
+    "betterSolution": "",
+    "optimalSolution": "Implement Tarjan's algorithm to detect cycles in the graph.",
+    "proofOfCorrectness": "The proof of correctness for Tarjan's algorithm is based on the concept that a graph contains a cycle if and only if there exists a strongly connected component (SCC).",
+    "dryRun": "Perform Tarjan's algorithm on the following graph: \n[[1, 2], [0, 2, 3], [0, 3], [1, 2]]",
+    "commonMistakes": [
+      "Incorrect DFS order",
+      "Incorrect low-link value calculation"
+    ],
+    "timeComplexity": "O(V+E)",
+    "spaceComplexity": "O(V+E)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    bool solve(vector<vector<int>>& graph);\n};\n\nvoid dfs(vector<vector<int>>& graph, int node, int& time, int& low, int& parent, vector<bool>& visited, vector<int>& stack);\n\n",
+    "java": "public class Solution {\n    public boolean solve(int[][] graph);\n}\n\nvoid dfs(int[][] graph, int node, int time, int low, int parent, boolean[] visited, int[] stack);\n\n",
+    "python": "class Solution):\n    def solve(self, graph):\n        # TO DO: implement Tarjan's algorithm\n        ...\n\ndef dfs(graph, node, time, low, parent, visited, stack):\n    ...\n",
+    "javascript": "function solve(graph) {\n    // TO DO: implement Tarjan's algorithm\n    ...\n}\n\nfunction dfs(graph, node, time, low, parent, visited, stack) {\n    ...\n}\n"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    bool solve(vector<vector<int>>& graph) {\n        vector<bool> visited(graph.size(), false);\n        vector<int> stack(graph.size(), -1);\n\n        for (int i = 0; i < graph.size(); i++) {\n            if (!visited[i]) {\n                bool cycle = false;\n                dfs(graph, i, 0, 0, -1, visited, stack);\n                if (cycle) return true;\n            }\n        }\n        return false;\n    }\n\n    void dfs(vector<vector<int>>& graph, int node, int time, int low, int& parent, vector<bool>& visited, vector<int>& stack) {\n        visited[node] = true;\n        low[node] = time++;\n        stack[node] = time;\n\n        for (int neighbor : graph[node]) {\n            if (!visited[neighbor]) {\n                dfs(graph, neighbor, time, low, parent, visited, stack);\n                low[node] = min(low[node], low[neighbor]);\n                if (low[neighbor] >= stack[node]) {\n                    // BUG: Incorrect cycle detection logic\n                    // low[node] >= stack[neighbor] does not check if the neighbor is the parent\n                    // Therefore, it will incorrectly detect cycles\n                    if (low[neighbor] >= stack[node]) {\n                        cycle = true;\n                    }\n                }\n            } else if (neighbor != parent) {\n                // BUG: Incorrect cycle detection logic\n                // This will incorrectly mark the node as visited again\n                visited[neighbor] = true;\n            }\n        }\n    }\n};\n",
+    "java": "public class Solution {\n    public boolean solve(int[][] graph) {\n        boolean[] visited = new boolean[graph.length];\n        int[] stack = new int[graph.length];\n\n        for (int i = 0; i < graph.length; i++) {\n            if (!visited[i]) {\n                boolean cycle = false;\n                dfs(graph, i, 0, 0, null, visited, stack);\n                if (cycle) return true;\n            }\n        }\n        return false;\n    }\n\n    void dfs(int[][] graph, int node, int time, int low, Integer parent, boolean[] visited, int[] stack) {\n        visited[node] = true;\n        low[node] = time++;\n        stack[node] = time;\n\n        for (int neighbor : graph[node]) {\n            if (!visited[neighbor]) {\n                dfs(graph, neighbor, time, low, parent, visited, stack);\n                low[node] = Math.min(low[node], low[neighbor]);\n                if (low[neighbor] >= stack[node]) {\n                    // BUG: Incorrect cycle detection logic\n                    // low[node] >= stack[neighbor] does not check if the neighbor is the parent\n                    // Therefore, it will incorrectly detect cycles\n                    if (low[neighbor] >= stack[node]) {\n                        cycle = true;\n                    }\n                }\n            } else if (neighbor != parent) {\n                // BUG: Incorrect cycle detection logic\n                // This will incorrectly mark the node as visited again\n                visited[neighbor] = true;\n            }\n        }\n    }\n}\n",
+    "python": "class Solution):\n    def solve(self, graph):\n        visited = [False] * len(graph)\n        stack = [-1] * len(graph)\n\n        for i in range(len(graph)):\n            if not visited[i]:\n                cycle = False\n                self.dfs(graph, i, 0, 0, None, visited, stack)\n                if cycle:\n                    return True\n        return False\n\n    def dfs(self, graph, node, time, low, parent, visited, stack):\n        visited[node] = True\n        low[node] = time + 1\n        stack[node] = time + 1\n\n        for neighbor in graph[node]:\n            if not visited[neighbor]:\n                self.dfs(graph, neighbor, time + 1, low, parent, visited, stack)\n                low[node] = min(low[node], low[neighbor])\n                if low[neighbor] >= stack[node]:\n                    # BUG: Incorrect cycle detection logic\n                    # low[node] >= stack[neighbor] does not check if the neighbor is the parent\n                    # Therefore, it will incorrectly detect cycles\n                    if low[neighbor] >= stack[node]:\n                        cycle = True\n            elif neighbor != parent:\n                # BUG: Incorrect cycle detection logic\n                # This will incorrectly mark the node as visited again\n                visited[neighbor] = True\n\n    def dfs(self, graph, node, time, low, parent, visited, stack):\n        # This is an additional dfs function call\n        return\n",
+    "javascript": "function solve(graph) {\n    let visited = new Array(graph.length).fill(false);\n    let stack = new Array(graph.length).fill(-1);\n\n    for (let i = 0; i < graph.length; i++) {\n        if (!visited[i]) {\n            let cycle = false;\n            dfs(graph, i, 0, 0, -1, visited, stack);\n            if (cycle) return true;\n        }\n    }\n    return false;\n}\n\nfunction dfs(graph, node, time, low, parent, visited, stack) {\n    visited[node] = true;\n    low[node] = time++;\n    stack[node] = time;\n\n    for (let neighbor of graph[node]) {\n        if (!visited[neighbor]) {\n            dfs(graph, neighbor, time, low, parent, visited, stack);\n            low[node] = Math.min(low[node], low[neighbor]);\n            if (low[neighbor] >= stack[node]) {\n                // BUG: Incorrect cycle detection logic\n                // low[node] >= stack[neighbor] does not check if the neighbor is the parent\n                // Therefore, it will incorrectly detect cycles\n                if (low[neighbor] >= stack[node]) {\n                    cycle = true;\n                }\n            }\n        } else if (neighbor != parent) {\n            // BUG: Incorrect cycle detection logic\n            // This will incorrectly mark the node as visited again\n            visited[neighbor] = true;\n        }\n    }\n}\n"
+  },
+  "functionSignature": {
+    "cpp": "bool solve(vector<vector<int>>& graph);",
+    "java": "public boolean solve(int[][] graph);",
+    "python": "def solve(self, graph: List[List[int]]) -> bool:",
+    "javascript": "function solve(graph: number[][]): boolean;"
+  },
+  "solutions": {
+    "python": "class Solution:\n    def solve(self, graph: List[List[int]]) -> bool:\n        visited = [False] * len(graph)\n        stack = [0] * len(graph)\n        time = 0\n        low = [0] * len(graph)\n        parent = [-1] * len(graph)\n\n        for i in range(len(graph)):\n            if not visited[i]:\n                if self.dfs(graph, i, 0, 0, -1, visited, stack, time, low, parent):\n                    return True\n        return False\n\n    def dfs(self, graph, node, time, low, parent, visited, stack, time, low, parent):\n        visited[node] = True\n        low[node] = time + 1\n        stack[time] = node\n        time += 1\n        parent[node] = -1\n\n        for neighbor in graph[node]:\n            if not visited[neighbor]:\n                if self.dfs(graph, neighbor, time, low, parent, visited, stack, time, low, parent):\n                    return True\n                low[node] = min(low[node], low[neighbor])\n                if low[neighbor] >= stack[time - 1]:\n                    return True\n            elif neighbor != parent[node]:\n                if low[neighbor] >= stack[time - 1]:\n                    return True\n        stack[time - 1] = -1\n        return False\n\nif __name__ == '__main__':\n    graph = [[1, 2], [0, 2, 3], [0, 3], [1, 2]]\n    solution = Solution()\n    print(solution.solve(graph))\n",
+    "cpp": "#include <iostream>\n#include <vector>\n#include <queue>\n\nclass Solution {\npublic:\n    bool solve(std::vector<std::vector<int>>& graph) {\n        std::vector<bool> visited(graph.size(), false);\n        std::vector<int> stack(graph.size(), -1);\n        int time = 0;\n        int low[graph.size()];\n        int parent[graph.size()];\n\n        for (int i = 0; i < graph.size(); i++) {\n            if (!visited[i]) {\n                if (dfs(graph, i, 0, 0, -1, visited, stack, time, low, parent)) {\n                    return true;\n                }\n            }\n        }\n        return false;\n    }\n\n    bool dfs(std::vector<std::vector<int>>& graph, int node, int time, int low, int parent, std::vector<bool>& visited, std::vector<int>& stack, int& time, int low[], int parent[]) {\n        visited[node] = true;\n        low[node] = time + 1;\n        stack[time] = node;\n        time++;\n        parent[node] = -1;\n\n        for (int neighbor : graph[node]) {\n            if (!visited[neighbor]) {\n                if (dfs(graph, neighbor, time, low, parent, visited, stack, time, low, parent)) {\n                    return true;\n                }\n                low[node] = std::min(low[node], low[neighbor]);\n                if (low[neighbor] >= stack[time - 1]) {\n                    return true;\n                }\n            } else if (neighbor != parent[node]) {\n                if (low[neighbor] >= stack[time - 1]) {\n                    return true;\n                }\n            }\n        }\n        stack[time - 1] = -1;\n        return false;\n    }\n};\n\nint main() {\n    std::vector<std::vector<int>> graph = {{1, 2}, {0, 2, 3}, {0, 3}, {1, 2}};\n    Solution solution;\n    std::cout << std::boolalpha << solution.solve(graph) << std::endl;\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "4\n1 2\n2 3\n0 3\n1 3",
+      "output": "true",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "5\n1 2\n2 3\n0 3\n0 4\n1 4",
+      "output": "true",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

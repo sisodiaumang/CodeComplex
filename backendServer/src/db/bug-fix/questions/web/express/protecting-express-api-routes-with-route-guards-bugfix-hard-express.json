@@ -1,0 +1,149 @@
+{
+  "title": "Protecting Express API Routes with Route Guards",
+  "subCategory": "Route Guards",
+  "statement": {
+    "markdown": "Implement a route guard to ensure that only authenticated users can access a specific API endpoint. The route guard should check for a valid JWT token in the request headers. If the token is invalid or missing, it should return a 401 Unauthorized response. Otherwise, it should pass the request to the route handler. Note that the route handler should be able to process both authenticated and unauthenticated requests.",
+    "inputFormat": "The input will be a JSON object containing a request object with a headers property, and a route handler function.",
+    "outputFormat": "The output should be a response object with a status code and any necessary headers or body.",
+    "notes": "The route guard should be implemented as a middleware function and should be able to handle both GET and POST requests.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of API requests"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{'headers': {'Authorization': 'Bearer invalid-token'}",
+        "output": "{'status': 401, 'headers': {'Content-Type': 'application/json'}",
+        "explanation": "Invalid token, return 401 Unauthorized"
+      },
+      {
+        "input": "{'headers': {'Authorization': 'Bearer valid-token'}",
+        "output": "{'status': 200, 'headers': {'Content-Type': 'application/json'}",
+        "explanation": "Valid token, pass to route handler"
+      },
+      {
+        "input": "{'headers': {}",
+        "output": "{'status': 401, 'headers': {'Content-Type': 'application/json'}",
+        "explanation": "No token, return 401 Unauthorized"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "EXPRESS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "express"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the `jsonwebtoken` library to verify the JWT token"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(...) ",
+    "spaceComplexity": "O(...)"
+  },
+  "starterCode": {
+    "javascript": "const express = require('express'); const jwt = require('jsonwebtoken'); let app = express(); app.use(express.json()); app.get('/api/endpoint', authenticateToken, (req, res) => { // route handler }); function authenticateToken(req, res, next) { // route guard implementation }",
+    "python": "import express from 'express'; import jsonwebtoken from 'jsonwebtoken'; class Solution: def authenticate_token(self, req, res, next): # route guard implementation def route_handler(self, req, res): # route handler implementation app = express(); app.use(express.json()); app.get('/api/endpoint', self.authenticateToken, self.route_handler)"
+  },
+  "buggyStarterCode": {
+    "javascript": "const express = require('express'); const jwt = require('jsonwebtoken'); let app = express(); app.use(express.json()); app.get('/api/endpoint', authenticateToken, (req, res) => { if (req.headers.authorization !== 'Bearer valid-token') { res.status(401).send('Unauthorized'); } else { // route handler }); function authenticateToken(req, res, next) { if (req.headers.authorization === 'Bearer invalid-token') { return next(); } else { return next(); } }",
+    "python": "import express from 'express'; import jsonwebtoken from 'jsonwebtoken'; class Solution: def authenticate_token(self, req, res, next): if req.headers.authorization == 'Bearer invalid-token': return next() else: return next() def route_handler(self, req, res): # route handler implementation app = express(); app.use(express.json()); app.get('/api/endpoint', self.authenticateToken, self.route_handler)"
+  },
+  "functionSignature": {
+    "javascript": "function authenticateToken(req, res, next) { } function route_handler(req, res) { }",
+    "python": "def authenticate_token(self, req, res, next): pass def route_handler(self, req, res): pass"
+  },
+  "solutions": {
+    "javascript": "// Solution\nconst express = require('express'); const jwt = require('jsonwebtoken'); let app = express(); app.use(express.json()); app.get('/api/endpoint', authenticateToken, (req, res) => { try { const token = req.headers.authorization.split(' ')[1]; const decoded = jwt.verify(token, 'secret-key'); next(); } catch (error) { res.status(401).send('Unauthorized'); } });\nfunction authenticateToken(req, res, next) { try { const token = req.headers.authorization.split(' ')[1]; const decoded = jwt.verify(token, 'secret-key'); next(); } catch (error) { res.status(401).send('Unauthorized'); } }",
+    "python": "import express from 'express'; import jsonwebtoken from 'jsonwebtoken'; class Solution:\n    def authenticate_token(self, req, res, next):\n        try:\n            token = req.headers.authorization.split(' ')[1]\n            jsonwebtoken.verify(token, 'secret-key')\n            next()\n        except Exception as e:\n            res.status(401).send('Unauthorized')\n\n    def route_handler(self, req, res):\n        # route handler implementation\n\napp = express()\napp.use(express.json())\napp.get('/api/endpoint', self.authenticateToken, self.route_handler)\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{'headers': {'Authorization': 'Bearer invalid-token'}",
+      "output": "{'status': 401, 'headers': {'Content-Type': 'application/json'}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{'headers': {'Authorization': 'Bearer valid-token'}",
+      "output": "{'status': 200, 'headers': {'Content-Type': 'application/json'}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_3",
+      "input": "{'headers': {}",
+      "output": "{'status': 401, 'headers': {'Content-Type': 'application/json'}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "_id": "bd4d8af530ddef0dbeb3619c",
+  "slug": "protecting-express-api-routes-with-route-guards-bugfix-hard-express",
+  "mode": "bug_fix",
+  "category": "EXPRESS",
+  "difficulty": "Hard"
+}

@@ -1,0 +1,143 @@
+{
+  "title": "Fixing Node.js Express Middleware for Route Parameter Validation in Nested Routes",
+  "subCategory": "Express Middleware and Route Validation",
+  "statement": {
+    "markdown": "You are given a Node.js Express application with a middleware function to validate route parameters in nested routes. However, the current implementation has a logical bug that causes incorrect validation for certain routes. Your task is to fix the bug in the middleware function to ensure that it correctly validates route parameters in nested routes.",
+    "inputFormat": "The input will be a JSON object representing the route parameters.",
+    "outputFormat": "The output will be a boolean indicating whether the route parameters are valid.",
+    "notes": "The middleware function should recursively validate the route parameters in nested routes. You can assume that the route parameters are represented as a nested JSON object.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "maxDepth",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Maximum recursion depth"
+      },
+      {
+        "variable": "maxPathLength",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Maximum path length"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"name\":\"John\",\"address\":{\"street\":\"123 Main St\",\"city\":\"Anytown\",\"state\":\"CA\",\"zip\":\"12345\"}}",
+        "output": "true",
+        "explanation": "The route parameters are valid"
+      },
+      {
+        "input": "{\"name\":\"John\",\"address\":{\"street\":\"123 Main St\",\"city\":\"Anytown\",\"state\":\"CA\"}}",
+        "output": "false",
+        "explanation": "The route parameters are not valid because the zip code is missing"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 75,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "NODE_JS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "node_js"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text: Start by analyzing the current middleware function to understand the logical bug."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(...) ",
+    "spaceComplexity": "O(...)"
+  },
+  "starterCode": {
+    "javascript": "function validateRouteParams(routeParams, maxDepth) {\n\tif (maxDepth === 0) return true;\n\tparams = JSON.parse(JSON.stringify(routeParams));\n\tparams = JSON.stringify(params).replace(/\\s+/g, '');\n\tvar requiredFields = ['name', 'address'];\n\tvar addressFields = ['street', 'city', 'state', 'zip'];\n\tvar requiredFieldsFound = 0;\n\tvar addressFieldsFound = 0;\n\tfor (var i = 0; i < requiredFields.length; i++) {\n\t\tif (params.indexOf(requiredFields[i]) !== -1) requiredFieldsFound++;\n\t}\n\tfor (var i = 0; i < addressFields.length; i++) {\n\t\tif (params.indexOf(addressFields[i]) !== -1) addressFieldsFound++;\n\t}\n\tif (requiredFieldsFound === requiredFields.length && addressFieldsFound === addressFields.length) return true;\n\telse return false;\n}\n",
+    "python": "class Solution:\n\tdef validate_route_params(self, route_params, max_depth):\n\t\tif max_depth == 0:\n\t\t\treturn True\n\t\tparams = route_params.copy()\n\t\tparams = json.dumps(params).replace(' ', '')\n\t\tparams = json.loads(params)\n\t\trequired_fields = ['name', 'address']\n\t\taddress_fields = ['street', 'city', 'state', 'zip']\n\t\trequired_fields_found = 0\n\t\taddress_fields_found = 0\n\t\tfor field in required_fields:\n\t\t\tif field in params:\n\t\t\t\trequired_fields_found += 1\n\t\tfor field in address_fields:\n\t\t\tif field in params:\n\t\t\t\taddress_fields_found += 1\n\t\tif required_fields_found == len(required_fields) and address_fields_found == len(address_fields):\n\t\t\treturn True\n\t\telse:\n\t\t\treturn False\n"
+  },
+  "buggyStarterCode": {
+    "javascript": "function validateRouteParams(routeParams, maxDepth) {\n\tif (maxDepth === 0) return true;\n\tparams = JSON.parse(JSON.stringify(routeParams));\n\tparams = JSON.stringify(params).replace(/\\s+/g, '');\n\tvar requiredFields = ['name', 'address'];\n\tvar addressFields = ['street', 'city', 'state', 'zip'];\n\tvar requiredFieldsFound = 0;\n\tvar addressFieldsFound = 0;\n\tfor (var i = 0; i < requiredFields.length; i++) {\n\t\tif (params.indexOf(requiredFields[i]) !== -1) requiredFieldsFound++;\n\t}\n\tfor (var i = 0; i < addressFields.length; i++) {\n\t\tif (params.indexOf(addressFields[i]) !== -1) addressFieldsFound++;\n\t}\n\tif (requiredFieldsFound === requiredFields.length && addressFieldsFound === addressFields.length) return true;\n\telse if (requiredFieldsFound > 0 || addressFieldsFound > 0) return false;\n\telse return true;\n}\n",
+    "python": "class Solution:\n\tdef validate_route_params(self, route_params, max_depth):\n\t\tif max_depth == 0:\n\t\t\treturn True\n\t\tparams = route_params.copy()\n\t\tparams = json.dumps(params).replace(' ', '')\n\t\tparams = json.loads(params)\n\t\trequired_fields = ['name', 'address']\n\t\taddress_fields = ['street', 'city', 'state', 'zip']\n\t\trequired_fields_found = 0\n\t\taddress_fields_found = 0\n\t\tfor field in required_fields:\n\t\t\tif field in params:\n\t\t\t\trequired_fields_found += 1\n\t\tfor field in address_fields:\n\t\t\tif field in params:\n\t\t\t\taddress_fields_found += 1\n\t\tif required_fields_found == len(required_fields) and address_fields_found == len(address_fields):\n\t\t\treturn True\n\t\telif required_fields_found > 0 or address_fields_found > 0:\n\t\t\treturn False\n\t\telse:\n\t\t\treturn True\n"
+  },
+  "functionSignature": {
+    "javascript": "var validateRouteParams = function(routeParams, maxDepth) { ... };",
+    "python": "class Solution:\n\tpass\n\tdef validate_route_params(self, route_params, max_depth):\n\t\treturn True;"
+  },
+  "solutions": {
+    "javascript": "// Solution\nvar validateRouteParams = function(routeParams, maxDepth) {\n\tif (maxDepth === 0) return true;\n\tparams = JSON.parse(JSON.stringify(routeParams));\n\tparams = JSON.stringify(params).replace(/\\s+/g, '');\n\tvar requiredFields = ['name', 'address'];\n\tvar addressFields = ['street', 'city', 'state', 'zip'];\n\tvar requiredFieldsFound = 0;\n\tvar addressFieldsFound = 0;\n\tvar paramKeys = Object.keys(params);\n\tfor (var i = 0; i < paramKeys.length; i++) {\n\t\tvar key = paramKeys[i];\n\t\tif (requiredFields.includes(key)) requiredFieldsFound++;\n\t\telse if (addressFields.includes(key)) addressFieldsFound++;\n\t}\n\tif (requiredFieldsFound === requiredFields.length && addressFieldsFound === addressFields.length) return true;\n\telse return false;\n};",
+    "python": "import json\n\nclass Solution:\n\tdef validate_route_params(self, route_params, max_depth):\n\t\tif max_depth == 0:\n\t\t\treturn True\n\t\tparams = route_params.copy()\n\t\tparams = json.dumps(params).replace(' ', '')\n\t\tparams = json.loads(params)\n\t\trequired_fields = ['name', 'address']\n\t\taddress_fields = ['street', 'city', 'state', 'zip']\n\t\tparam_keys = list(params.keys())\n\t\trequired_fields_found = 0\n\t\taddress_fields_found = 0\n\t\tfor key in param_keys:\n\t\t\tif key in required_fields:\n\t\t\t\trequired_fields_found += 1\n\t\telif key in address_fields:\n\t\t\t\taddress_fields_found += 1\n\t\tif required_fields_found == len(required_fields) and address_fields_found == len(address_fields):\n\t\t\treturn True\n\t\telse:\n\t\t\treturn False\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"name\":\"John\",\"address\":{\"street\":\"123 Main St\",\"city\":\"Anytown\",\"state\":\"CA\",\"zip\":\"12345\"}}",
+      "output": "true",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"name\":\"John\",\"address\":{\"street\":\"123 Main St\",\"city\":\"Anytown\",\"state\":\"CA\"}}",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "397bbb837a0387e6cd4d2664",
+  "slug": "fixing-nodejs-express-middleware-for-route-parameter-validation-in-nested-routes-bugfix-hard-node_js",
+  "mode": "bug_fix",
+  "category": "NODE_JS",
+  "difficulty": "Hard"
+}

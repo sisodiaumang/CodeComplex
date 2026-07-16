@@ -1,0 +1,147 @@
+{
+  "title": "Fixing Broken HTML Table Structure with Missing Data Cells",
+  "subCategory": "HTML Table Parsing",
+  "statement": {
+    "markdown": "Write a function that takes an HTML table string as input and returns a string with the table structure validated and corrected. The function should ensure that each row has at least one data cell, and add a default cell if necessary. If the input table is empty, return an empty string.",
+    "inputFormat": "A string representing an HTML table, where each row is separated by a newline character.",
+    "outputFormat": "A string representing the validated and corrected HTML table.",
+    "notes": "You can assume that the input table is well-formed and does not contain any invalid HTML tags.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Maximum number of rows in the input table"
+      },
+      {
+        "variable": "max_cols",
+        "type": "integer",
+        "min": 1,
+        "max": 100,
+        "description": "Maximum number of columns in a row"
+      }
+    ],
+    "examples": [
+      {
+        "input": "<table><tr><td>Cell 1</td></tr></table>",
+        "output": "<table><tr><td>Cell 1</td></tr></table>",
+        "explanation": "Input table has one row with one cell, no changes needed."
+      },
+      {
+        "input": "<table><tr><td>Cell 1</td><td>Cell 2</td></tr><tr></tr></table>",
+        "output": "<table><tr><td>Cell 1</td><td>Cell 2</td></tr><tr><td>Default Cell</td></tr></table>",
+        "explanation": "Input table has two rows, the second row is empty, so a default cell is added."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 75,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "HTML"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "html"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use a regex to extract rows and cells from the input table string"
+    },
+    {
+      "order": 2,
+      "text": "Iterate over each row and add a default cell if necessary"
+    }
+  ],
+  "editorial": {
+    "title": "Fixing Broken HTML Table Structure",
+    "intuition": "The key idea is to use a regex to extract rows and cells from the input table string, and then iterate over each row to add a default cell if necessary.",
+    "bruteForce": "One possible approach is to parse the input table string using an HTML parser library, and then use a separate library to generate the corrected table string.",
+    "betterSolution": "",
+    "optimalSolution": "Use a regex to extract rows and cells, and then use a loop to add default cells where necessary.",
+    "proofOfCorrectness": "The optimal solution has a time complexity of O(n), where n is the number of rows in the input table.",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Not handling cases where a row has only one cell",
+      "Not adding a default cell when a row is empty"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// Write a function to fix the broken HTML table structure\nfunction fixTable(tableStr) {\n  // Your code here\n}\nreturn fixTable;",
+    "python": "class Solution:\n  def fix_table(self, table_str):\n    # Your code here\n    pass\n  return self.fix_table"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Write a function to fix the broken HTML table structure\nfunction fixTable(tableStr) {\n  var rows = tableStr.split('<tr>')[1].split('</tr>')[0].split('</td>')[1].split('<td>');\n  for (var i = 0; i < rows.length; i++) {\n    if (rows[i] === '') {\n      rows.splice(i, 0, '<td>Default Cell</td>');\n    }\n  }\n  return '<table>' + rows.join('') + '</table>';\n}\nreturn fixTable;",
+    "python": "class Solution:\n  def fix_table(self, table_str):\n    rows = table_str.split('<tr>')[1].split('</tr>')[0].split('</td>')[1].split('<td>');\n    for i in range(len(rows)):\n      if rows[i] == '' :\n        rows.insert(i, '<td>Default Cell</td>');\n    return '<table>' + ''.join(rows) + '</table>\n  return self.fix_table"
+  },
+  "functionSignature": {
+    "javascript": "var fixTable = function(tableStr);",
+    "python": "def fix_table(self, table_str: str) -> str:"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction fixTable(tableStr) {\n  var rows = tableStr.split('<tr>')[1].split('</tr>')[0].split('</td>')[1].split('<td>');\n  var correctedRows = [];\n  for (var i = 0; i < rows.length; i++) {\n    var cells = rows[i].split('</td>');\n    if (cells.length === 1 && cells[0] === '') {\n      correctedRows.push('<td>Default Cell</td>');\n    } else {\n      correctedRows.push(cells.join(''));\n    }\n  }\n  return '<table>' + correctedRows.join('') + '</table>';\n}\nreturn fixTable;",
+    "python": "class Solution:\n  def fix_table(self, table_str):\n    rows = table_str.split('<tr>')[1].split('</tr>')[0].split('</td>')[1].split('<td>');\n    corrected_rows = [];\n    for i in range(len(rows)):\n      cells = rows[i].split('</td>');\n      if len(cells) == 1 and cells[0] == '' :\n        corrected_rows.append('<td>Default Cell</td>');\n      else:\n        corrected_rows.append(cells[0]);\n    return '<table>' + ''.join(corrected_rows) + '</table>\n  return self.fix_table"
+  },
+  "judgeConfig": {
+    "timeLimit": 3,
+    "memoryLimit": 512,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.5
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "<table><tr><td>Cell 1</td></tr></table>",
+      "output": "<table><tr><td>Cell 1</td></tr></table>",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "<table><tr><td>Cell 1</td><td>Cell 2</td></tr><tr></tr></table>",
+      "output": "<table><tr><td>Cell 1</td><td>Cell 2</td></tr><tr><td>Default Cell</td></tr></table>",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "9de0ae6aa0c52eef5558c642",
+  "slug": "fixing-broken-html-table-structure-with-missing-data-cells-bugfix-hard-html",
+  "mode": "bug_fix",
+  "category": "HTML",
+  "difficulty": "Hard"
+}

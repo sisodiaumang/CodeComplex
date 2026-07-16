@@ -1,0 +1,52 @@
+{
+  "_id": "5913b0c7bb706683595f5fb1",
+  "title": "Interactive Todo List",
+  "slug": "js-todo-list",
+  "difficulty": "Medium",
+  "topics": [
+    "JAVASCRIPT"
+  ],
+  "statement": {
+    "markdown": "## Interactive Todo List\n\nBuild a Todo List application that dynamically updates the list view.\n\n### Requirements:\n1. **Add Items**: Typing in the input field and clicking the `Add` button (or pressing `Enter`) must add a new item to the bottom of the list. Ignore empty inputs.\n2. **Toggle Completion**: Clicking on the task text or a checkmark inside a task element must toggle a visual strike-through effect (e.g., `line-through` and low opacity).\n3. **Delete Items**: Clicking a task's delete button must remove the task item from the DOM completely.\n4. **Input Reset**: Reset the input field text to empty after successfully adding a new todo item."
+  },
+  "constraints": [
+    "Must use vanilla JS to dynamically create elements",
+    "Must style elements with Tailwind CSS"
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "html": "<div class=\"flex flex-col items-center justify-center min-h-[260px] bg-slate-900 font-sans p-4\">\n  <div class=\"w-full max-w-sm p-5 bg-slate-800 rounded-2xl border border-slate-700 shadow-xl\">\n    <h3 class=\"text-lg font-bold text-white mb-4\">My Tasks</h3>\n    <div class=\"flex gap-2 mb-4\">\n      <input type=\"text\" id=\"todo-input\" class=\"flex-1 px-3 py-2 bg-slate-950 text-white border border-slate-700 rounded-lg focus:outline-none focus:border-indigo-500 text-sm\" placeholder=\"New task...\" />\n      <button id=\"add-btn\" class=\"px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg transition-colors text-sm\">Add</button>\n    </div>\n    <ul id=\"todo-list\" class=\"space-y-2 max-h-40 overflow-y-auto pr-1\"></ul>\n  </div>\n</div>",
+    "css": "",
+    "javascript": "const todoInput = document.getElementById('todo-input');\nconst addBtn = document.getElementById('add-btn');\nconst todoList = document.getElementById('todo-list');\n\n// Implement adding, toggling, and deleting tasks here\n"
+  },
+  "gradingCriteria": [
+    {
+      "id": "functional_correctness",
+      "description": "Verify tasks can be added, toggled completed, deleted from the DOM, and input resets cleanly.",
+      "weight": 60
+    },
+    {
+      "id": "code_cleanliness",
+      "description": "Verify correct DOM manipulation (createElement, appendChild, remove), proper event delegation or individual handlers, and clear styling toggle states.",
+      "weight": 40
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "html",
+      "css",
+      "javascript"
+    ],
+    "referenceSolution": "const todoInput = document.getElementById('todo-input');\nconst addBtn = document.getElementById('add-btn');\nconst todoList = document.getElementById('todo-list');\n\nfunction addTodo() {\n  const taskText = todoInput.value.trim();\n  if (!taskText) return;\n\n  const li = document.createElement('li');\n  li.className = 'flex items-center justify-between p-2.5 bg-slate-900 border border-slate-700 rounded-lg group transition-all';\n\n  const textSpan = document.createElement('span');\n  textSpan.className = 'text-slate-200 text-sm cursor-pointer select-none flex-1';\n  textSpan.textContent = taskText;\n  textSpan.addEventListener('click', () => {\n    textSpan.classList.toggle('line-through');\n    textSpan.classList.toggle('opacity-50');\n  });\n\n  const deleteBtn = document.createElement('button');\n  deleteBtn.className = 'text-xs text-rose-500 hover:text-rose-400 font-semibold px-2 py-1 rounded transition-colors';\n  deleteBtn.textContent = 'Delete';\n  deleteBtn.addEventListener('click', () => {\n    li.remove();\n  });\n\n  li.appendChild(textSpan);\n  li.appendChild(deleteBtn);\n  todoList.appendChild(li);\n\n  todoInput.value = '';\n}\n\naddBtn.addEventListener('click', addTodo);\ntodoInput.addEventListener('keydown', (e) => {\n  if (e.key === 'Enter') addTodo();\n});"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

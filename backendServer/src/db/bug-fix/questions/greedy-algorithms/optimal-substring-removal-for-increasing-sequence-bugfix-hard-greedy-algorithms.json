@@ -1,0 +1,153 @@
+{
+  "_id": "6010cfbaf0b946fa4283dd7c",
+  "title": "Optimal Substring Removal for Increasing Sequence",
+  "slug": "optimal-substring-removal-for-increasing-sequence-bugfix-hard-greedy-algorithms",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "GREEDY",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "greedy"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "You are given an array of integers `nums` representing an increasing sequence. The goal is to find the optimal length of a substring to remove from the sequence so that the remaining numbers are all distinct. If there are multiple optimal sub-strings with the same length, find the one with the maximum sum of removed numbers.\n\nGiven an increasing sequence of integers (0-indexed), return the maximum sum of the numbers that can be removed from the sequence.",
+    "inputFormat": "Input will be provided in the format: `nums` (array of integers)",
+    "outputFormat": "Return an integer representing the maximum sum of removed numbers.",
+    "notes": "You can only remove a contiguous sub-string from the sequence, and the remaining numbers should still be in increasing order.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "[1, 2, 3, 5, 7, 8]",
+        "output": "5",
+        "explanation": "To remove numbers to get distinct numbers, you can remove [3, 5, 7], the sum of which is 5."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First, find the last occurrence of each number in the sequence and find the longest increasing subsequence."
+    }
+  ],
+  "editorial": {
+    "title": "Correct Approach",
+    "intuition": "To maximize the sum of removed numbers, it's optimal to remove the numbers that appear the most times and are farthest from each other.",
+    "bruteForce": "Find all possible sub-sequences of the input array, and calculate the sum of each sub-sequence. Return the maximum sum.",
+    "betterSolution": "Use a hashmap to record the last occurrence of each number, and find the longest increasing subsequence using dynamic programming.",
+    "optimalSolution": "Find the optimal sub-string by iterating through the input array from right to left, and maintaining variables for the maximum sum, the longest increasing subsequence, and the last occurrence of each number.",
+    "proofOfCorrectness": "The correctness of the solution comes from the observation that, to maximize the sum of removed numbers, it's optimal to remove the numbers that appear the most times and are farthest from each other.",
+    "dryRun": "Given array `[1, 2, 3, 5, 7, 8]`, the optimal sub-string to remove is `[3, 5, 7]` with the maximum sum of 5.",
+    "commonMistakes": [
+      "Not correctly implementing dynamic programming",
+      "Not correctly calculating the maximum sum of removed numbers"
+    ],
+    "timeComplexity": "O(n log n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    int maximumSum(vector<int>& nums) {\n        // TODO: implement\n    }\n};",
+    "java": "public class Solution {\n    public int maximumSum(int[] nums) {\n        // TODO: implement\n        return 0;\n    }\n}",
+    "python": "class Solution:\n    def maximumSum(self, nums: list[int]) -> int:\n        # TODO: implement\n        pass",
+    "javascript": "function maximumSum(nums) {\n    // TODO: implement\n    return 0;\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    int maximumSum(vector<int>& nums) {\n        if (nums.size() == 0)\n            return 0;\n        vector<int> lastOccurrence = nums;\n        for (int i = 0; i < nums.size(); i++) {\n            for (int j = i + 1; j < nums.size(); j++) {\n                if (nums[i] == nums[j])\n                    lastOccurrence[i] = max(lastOccurrence[i], j);\n            }\n        }\n        int maxLength = 0;\n        for (int i = 0; i < nums.size(); i++) {\n            maxLength = max(maxLength, lastOccurrence[i] - i);\n        }\n        return maxLength;\n    }\n};",
+    "java": "public class Solution {\n    public int maximumSum(int[] nums) {\n        if (nums.length == 0)\n            return 0;\n        int[] lastOccurrence = nums.clone();\n        for (int i = 0; i < nums.length; i++) {\n            for (int j = i + 1; j < nums.length; j++) {\n                if (nums[i] == nums[j])\n                    lastOccurrence[i] = Math.max(lastOccurrence[i], j);\n            }\n        }\n        int maxLength = 0;\n        for (int i = 0; i < nums.length; i++) {\n            maxLength = Math.max(maxLength, lastOccurrence[i] - i);\n        }\n        return maxLength;\n    }\n}",
+    "python": "class Solution:\n    def maximumSum(self, nums: list[int]) -> int:\n        if not nums:\n            return 0\n        last_occurrence = nums\n        for i in range(len(nums)):\n            for j in range(i + 1, len(nums)):\n                if nums[i] == nums[j]:\n                    last_occurrence[i] = max(last_occurrence[i], j)\n        max_length = 0\n        for i in range(len(nums)):\n            max_length = max(max_length, last_occurrence[i] - i)\n        return max_length",
+    "javascript": "function maximumSum(nums) {\n    if (nums.length === 0)\n        return 0;\n    let lastOccurrence = [...nums];\n    for (let i = 0; i < nums.length; i++) {\n        for (let j = i + 1; j < nums.length; j++) {\n            if (nums[i] === nums[j])\n                lastOccurrence[i] = Math.max(lastOccurrence[i], j);\n        }\n    }\n    let maxLength = 0;\n    for (let i = 0; i < nums.length; i++) {\n        maxLength = Math.max(maxLength, lastOccurrence[i] - i);\n    }\n    return maxLength;\n}"
+  },
+  "functionSignature": {
+    "cpp": "int maximumSum(vector<int>& nums);",
+    "java": "int maximumSum(int[] nums);",
+    "python": "int maximumSum(self, nums: list[int]) -> int:",
+    "javascript": "int maximumSum(nums);"
+  },
+  "solutions": {
+    "python": "from typing import List\nfrom sys import stdin, stdout\n\nclass Solution:\n    def maximumSum(self, nums: List[int]) -> int:\n        \\r\n        if not nums:\n            return 0\n\n        last_occurrence = {num: idx for idx, num in enumerate(nums)}\n\n        longest_increasing_subsequence = [1] * len(nums)\n\n        for i in range(1, len(nums)):\n            for j in range(i):\n                if nums[i] > nums[j] and longest_increasing_subsequence[i] < longest_increasing_subsequence[j] + 1:\n                    longest_increasing_subsequence[i] = longest_increasing_subsequence[j] + 1\n\n        max_length = max(longest_increasing_subsequence)\n\n        max_sum = 0\n\n        for i in range(len(nums)):\n            if longest_increasing_subsequence[i] == max_length:\n                max_sum += nums[i]\n\n        return max_sum\\n\nsolution = Solution()\nfor _ in range(int(stdin.readline())):\n    nums = list(map(int, stdin.readline().split()))\n    stdout.write(str(solution.maximumSum(nums)) + '\\n')",
+    "cpp": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int n;\n    cin >> n;\n    vector<int> nums(n);\n    for (int i = 0; i < n; i++)\n        cin >> nums[i];\n    int maxSum = 0;\n    vector<int> lastOccurrence(n);\n    for (int i = 0; i < n; i++)\n        lastOccurrence[i] = i;\n    for (int i = 0; i < n; i++) {\n        for (int j = i + 1; j < n; j++) {\n            if (nums[i] == nums[j])\n                lastOccurrence[i] = max(lastOccurrence[i], j);\n        }\n    }\n    int maxLength = 0;\n    for (int i = 0; i < n; i++) {\n        maxLength = max(maxLength, lastOccurrence[i] - i);\n    }\n    maxSum -= maxLength;\n    cout << maxSum << endl;\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "6\\n1 2 3 5 7 8",
+      "output": "5",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_hidden_generated",
+      "input": "6\\n1 2 3 5 7 8",
+      "output": "5",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

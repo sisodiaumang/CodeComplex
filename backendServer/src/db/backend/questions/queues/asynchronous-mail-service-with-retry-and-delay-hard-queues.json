@@ -1,0 +1,144 @@
+{
+  "_id": "b67191b54177c4ea3c38e75f",
+  "title": "Asynchronous Mail Service with Retry and Delay",
+  "slug": "asynchronous-mail-service-with-retry-and-delay-hard-queues",
+  "difficulty": "Hard",
+  "topics": [
+    "QUEUES"
+  ],
+  "statement": "Design and implement a high-availability asynchronous mail service using a queue. Implement a retry mechanism with exponential backoff for failed mail sends and add a delay feature to allow users to schedule mail sends at a later time. The service should be able to handle multiple concurrent mail sends from various users. The queue should persist data across server restarts, and the mail sends should be thread-safe.",
+  "constraints": [
+    "Must use BullMQ as the queue provider for this task",
+    "Must handle concurrent mail sends from multiple users",
+    "Must persist queue data across server restarts"
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/mail",
+      "description": "Send a mail asynchronously with retry and delay options"
+    },
+    {
+      "method": "GET",
+      "path": "/api/queue/status",
+      "description": "Get the status of the mail queue"
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\n  \"name\": \"async-mail-service\",\n  \"version\": \"1.0.0\",\n  \"main\": \"index.js\",\n  \"scripts\": {\n    \"start\": \"node index.js\"\n  },\n  \"dependencies\": {\n    \"express\": \"^4.18.2\",\n    \"bullmq\": \"^8.0.3\"\n  }\n}",
+    "index.js": "const express = require('express');\nconst bullmq = require('bullmq');\nconst app = express();\nconst queue = bullmq.createQueue('mail');\n\napp.use(express.json());\n\n// TODO: Implement mail send logic and queue management\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "POST",
+      "path": "/api/mail",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "to": "recipient@example.com",
+        "subject": "Test mail",
+        "body": "Hello, this is a test mail"
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "message": "Mail sent successfully"
+      },
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "POST",
+      "path": "/api/mail",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "to": "recipient@example.com",
+        "subject": "Test mail",
+        "body": "Hello, this is a test mail",
+        "retry": 3,
+        "delay": 10000
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "message": "Mail sent successfully"
+      },
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "GET",
+      "path": "/api/queue/status",
+      "expectedStatus": 200,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "POST",
+      "path": "/api/mail",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "to": "invalid-email",
+        "subject": "Test mail",
+        "body": "Hello, this is a test mail"
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "POST",
+      "path": "/api/mail",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "to": "recipient@example.com",
+        "subject": "Test mail",
+        "body": "Hello, this is a test mail"
+      },
+      "expectedStatus": 429,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "bullmq",
+    "rabbitmq",
+    "kafka",
+    "background-jobs",
+    "workers",
+    "retry",
+    "delayed-jobs",
+    "select",
+    "async",
+    "queues",
+    "delay"
+  ]
+}

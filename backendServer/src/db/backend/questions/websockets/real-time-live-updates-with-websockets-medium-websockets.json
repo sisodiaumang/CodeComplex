@@ -1,0 +1,154 @@
+{
+  "_id": "e4c48d3d12bcb41411dd5a23",
+  "title": "Real-time Live Updates with WebSockets",
+  "slug": "real-time-live-updates-with-websockets-medium-websockets",
+  "difficulty": "Medium",
+  "topics": [
+    "WEBSOCKETS"
+  ],
+  "statement": "Implement a WebSocket API using Express that allows clients to receive real-time updates on scores of a fictional sports league. The API should support creating and joining a room (channel) for a specific team, broadcasting updates to all connected clients in that room, and handling disconnections and reconnections.",
+  "constraints": [
+    "Use the in-memory array provided for storing team scores.",
+    "Implement room creation and joining via WebSocket upgrade."
+  ],
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/api/scores",
+      "description": "Returns a list of all available teams and their current scores."
+    },
+    {
+      "method": "POST",
+      "path": "/api/teams",
+      "description": "Creates a new team and assigns it an initial score of 0. The client must send the team name in the request body.",
+      "body": {
+        "key": "value",
+        "properties": [
+          {
+            "name": "teamName",
+            "type": "string",
+            "required": true
+          }
+        ]
+      },
+      "expectedStatus": 201
+    },
+    {
+      "method": "GET",
+      "path": "/api/teams/:teamId",
+      "description": "Returns the score for a specific team.",
+      "query": {
+        "properties": [
+          {
+            "name": "teamId",
+            "type": "integer",
+            "required": true
+          }
+        ]
+      },
+      "expectedStatus": 200
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\"name\":\"websocket-api\",\"version\":\"1.0.0\",\"main\":\"index.js\",\"scripts\":{\"start\":\"node index.js\"},\"dependencies\":{\"express\":\"^4.18.2\",\"ws\":\"^7.4.5\"}}",
+    "index.js": "const express = require('express');\nconst WebSocket = require('ws');\nconst app = express();\napp.use(express.json());\nconst wss = new WebSocket.Server({ path: '/api/websocket' });\n\n// In-memory array for storing team scores\nconst teamScores = [];\n\n// TODO: Implement WebSocket handlers and broadcasting logic\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));\nwss.on('connection', (ws) => {\n\tconsole.log('Client connected');\n\tws.on('message', (message) => {\n\t\tconsole.log(`Received message => ${message}`);\n\t});\n\tws.on('close', () => {\n\t\tconsole.log('Client disconnected');\n\t});\n});"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/api/scores",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "GET",
+      "path": "/api/scores",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "teams": [
+          {
+            "id": 1,
+            "name": "Team A",
+            "score": 10
+          },
+          {
+            "id": 2,
+            "name": "Team B",
+            "score": 5
+          }
+        ]
+      },
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "POST",
+      "path": "/api/teams",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "teamName": "Team C"
+      },
+      "expectedStatus": 201,
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "GET",
+      "path": "/api/teams/1",
+      "expectedStatus": 200,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "POST",
+      "path": "/api/teams",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "teamName": "Invalid input"
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "POST",
+      "path": "/api/websocket",
+      "expectedStatus": 401,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "socket.io",
+    "rooms",
+    "namespaces",
+    "events",
+    "real-time-chat",
+    "broadcasting",
+    "websockets",
+    "real-time",
+    "updates",
+    "sports-league"
+  ]
+}

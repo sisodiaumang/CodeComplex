@@ -1,0 +1,53 @@
+{
+  "_id": "a901d92062e61be683063bff",
+  "title": "React Date Calendar Picker",
+  "slug": "react-date-picker",
+  "difficulty": "Medium",
+  "topics": [
+    "REACT",
+    "REACT_DATE_PICKER"
+  ],
+  "statement": {
+    "markdown": "## React Date Calendar Picker\n\nImplement a custom single-date monthly Calendar Picker component in React.\n\n### Requirements:\n1. **Interactive Monthly Grid**: Generate matching grids representing calendar days of selected months, with responsive header navigation to change months.\n2. **Date Selection**: Clicking on a day highlights it visually as the selected date card.\n3. **Current Day Highlight**: Mark today's calendar cell visually using distinct outlines/background coordinates.\n"
+  },
+  "constraints": [
+    "Must be fully responsive",
+    "Must utilize React state variables",
+    "Must style layers with Tailwind CSS"
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "html": "",
+    "css": "",
+    "react": "import React, { useState } from 'react';\n\nexport default function DatePicker({ onSelect }) {\n  // Implement monthly calendar day picker here\n  return null;\n}"
+  },
+  "gradingCriteria": [
+    {
+      "id": "functional_correctness",
+      "description": "Verify that the interactive props, callbacks, and element structures work cleanly.",
+      "weight": 60
+    },
+    {
+      "id": "code_cleanliness",
+      "description": "Verify state structure designs and clean Tailwind CSS layouts.",
+      "weight": 40
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "react",
+      "tailwind"
+    ],
+    "referenceSolution": "import React, { useState } from 'react';\n\nexport default function DatePicker({ onSelect }) {\n  const [currentDate, setCurrentDate] = useState(new Date());\n  const [selectedDate, setSelectedDate] = useState(null);\n\n  const year = currentDate.getFullYear();\n  const month = currentDate.getMonth();\n\n  const daysInMonth = new Date(year, month + 1, 0).getDate();\n  const firstDay = new Date(year, month, 1).getDay();\n\n  const days = Array.from({ length: daysInMonth }, (_, i) => new Date(year, month, i + 1));\n  const blanks = Array.from({ length: firstDay });\n\n  const prevMonth = () => setCurrentDate(new Date(year, month - 1, 1));\n  const nextMonth = () => setCurrentDate(new Date(year, month + 1, 1));\n\n  const handleSelect = (day) => {\n    setSelectedDate(day);\n    if (onSelect) onSelect(day);\n  };\n\n  const isToday = (day) => {\n    const today = new Date();\n    return day.toDateString() === today.toDateString();\n  };\n\n  const isSelected = (day) => {\n    return selectedDate && day.toDateString() === selectedDate.toDateString();\n  };\n\n  const monthNames = [\"January\", \"February\", \"March\", \"April\", \"May\", \"June\", \"July\", \"August\", \"September\", \"October\", \"November\", \"December\"];\n\n  return (\n    <div className=\"w-80 border border-gray-250 rounded-2xl bg-white shadow-md p-4 select-none font-sans text-sm\">\n      {/* Month Navigation */}\n      <div className=\"flex items-center justify-between mb-4\">\n        <button onClick={prevMonth} className=\"p-1 hover:bg-gray-100 rounded-md\">\n          <svg className=\"w-5 h-5 text-gray-500\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path strokeLinecap=\"round\" strokeLinejoin=\"round\" strokeWidth={2} d=\"M15 19l-7-7 7-7\" /></svg>\n        </button>\n        <span className=\"font-bold text-gray-800\">{monthNames[month]} {year}</span>\n        <button onClick={nextMonth} className=\"p-1 hover:bg-gray-100 rounded-md\">\n          <svg className=\"w-5 h-5 text-gray-500\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path strokeLinecap=\"round\" strokeLinejoin=\"round\" strokeWidth={2} d=\"M9 5l7 7-7 7\" /></svg>\n        </button>\n      </div>\n\n      {/* Weekday headers */}\n      <div className=\"grid grid-cols-7 text-center font-semibold text-gray-400 mb-2\">\n        {[\"Su\", \"Mo\", \"Tu\", \"We\", \"Th\", \"Fr\", \"Sa\"].map(d => <span key={d}>{d}</span>)}\n      </div>\n\n      {/* Days grid */}\n      <div className=\"grid grid-cols-7 text-center gap-y-1\">\n        {blanks.map((_, idx) => <span key={idx} />)}\n        {days.map((day) => (\n          <button\n            key={day.getDate()}\n            onClick={() => handleSelect(day)}\n            className={`w-10 h-10 flex items-center justify-center rounded-lg font-medium transition ${\n              isSelected(day)\n                ? 'bg-purple-600 text-white hover:bg-purple-700'\n                : isToday(day)\n                ? 'border-2 border-purple-500 text-purple-600 bg-purple-50/50'\n                : 'text-gray-700 hover:bg-gray-100'\n            }`}\n          >\n            {day.getDate()}\n          </button>\n        ))}\n      </div>\n    </div>\n  );\n}"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

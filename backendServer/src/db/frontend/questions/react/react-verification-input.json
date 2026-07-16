@@ -1,0 +1,58 @@
+{
+  "_id": "b6f76e6512c5b19ec5fe3e82",
+  "title": "React Verification Code Input",
+  "slug": "react-verification-input",
+  "difficulty": "Medium",
+  "topics": [
+    "REACT",
+    "REACT_VERIFICATION_INPUT"
+  ],
+  "statement": {
+    "markdown": "## React OTP Verification Input Component\n\nCreate a secure 6-digit verification code input component (OTP Input) for user logins and authentications.\n\n### Requirements:\n1. **Multi-Box Structure**: Generate exactly 6 styled digit input boxes.\n2. **Auto-Tab Focus**:\n   - Typing a digit automatically transfers focus to the next input box.\n   - Pressing **Backspace** deletes the current box digit and automatically shifts focus backward.\n3. **Paste Support**: Support pasting a string (e.g. \"123456\") which automatically populates all 6 inputs and triggers verification.\n4. **Number Validation**: Ensure only numerical inputs (0-9) are allowed.\n"
+  },
+  "constraints": [
+    "Must be fully responsive",
+    "Must use React state hooks",
+    "Must style elements with Tailwind CSS"
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "html": "",
+    "css": "",
+    "react": "import React, { useState, useRef } from 'react';\n\nexport default function VerificationInput({ onComplete }) {\n  // Implement 6-digit OTP verification code inputs here\n  return (\n    <div className=\"flex gap-2\">\n      {/* OTP Inputs */}\n    </div>\n  );\n}"
+  },
+  "gradingCriteria": [
+    {
+      "id": "functional_correctness",
+      "description": "Check if the component state is managed properly and fulfills all interaction criteria.",
+      "weight": 50
+    },
+    {
+      "id": "accessibility_focus",
+      "description": "Verify that keyboard focus, event handlers, and ARIA roles match custom specifications.",
+      "weight": 30
+    },
+    {
+      "id": "code_cleanliness",
+      "description": "Verify proper component code design structure and clean state structures.",
+      "weight": 20
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "react",
+      "tailwind"
+    ],
+    "referenceSolution": "import React, { useState, useRef } from 'react';\n\nexport default function VerificationInput({ onComplete }) {\n  const [code, setCode] = useState(Array(6).fill(\"\"));\n  const inputRefs = useRef([]);\n\n  const handleChange = (e, index) => {\n    const value = e.target.value;\n    if (isNaN(value)) return;\n\n    const newCode = [...code];\n    // Take only the last entered char (handles override)\n    newCode[index] = value.substring(value.length - 1);\n    setCode(newCode);\n\n    // Send complete code callback\n    const joined = newCode.join(\"\");\n    if (joined.length === 6 && onComplete) {\n      onComplete(joined);\n    }\n\n    // Auto-focus next box\n    if (value && index < 5) {\n      inputRefs.current[index + 1].focus();\n    }\n  };\n\n  const handleKeyDown = (e, index) => {\n    if (e.key === \"Backspace\") {\n      if (!code[index] && index > 0) {\n        // Shift focus back and clear previous box\n        inputRefs.current[index - 1].focus();\n        const newCode = [...code];\n        newCode[index - 1] = \"\";\n        setCode(newCode);\n      } else {\n        const newCode = [...code];\n        newCode[index] = \"\";\n        setCode(newCode);\n      }\n    }\n  };\n\n  const handlePaste = (e) => {\n    e.preventDefault();\n    const pasteData = e.clipboardData.getData(\"text\").trim();\n    if (pasteData.length !== 6 || isNaN(pasteData)) return;\n\n    const newCode = pasteData.split(\"\");\n    setCode(newCode);\n    inputRefs.current[5].focus();\n\n    if (onComplete) {\n      onComplete(pasteData);\n    }\n  };\n\n  return (\n    <div className=\"flex gap-3 justify-center items-center\">\n      {code.map((digit, idx) => (\n        <input\n          key={idx}\n          type=\"text\"\n          maxLength={1}\n          value={digit}\n          ref={el => (inputRefs.current[idx] = el)}\n          onChange={(e) => handleChange(e, idx)}\n          onKeyDown={(e) => handleKeyDown(e, idx)}\n          onPaste={handlePaste}\n          className=\"w-12 h-14 border-2 border-gray-300 rounded-lg text-center font-bold text-xl text-gray-800 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-200 transition\"\n        />\n      ))}\n    </div>\n  );\n}"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

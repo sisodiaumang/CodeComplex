@@ -1,0 +1,217 @@
+{
+  "_id": "reverse-ll-recursive",
+  "title": "Reverse LL (Recursive)",
+  "slug": "reverse-ll-recursive",
+  "difficulty": "Medium",
+  "category": "TREE",
+  "subCategory": "Medium LL Problems",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 250,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "Linked List",
+      "Recursion"
+    ],
+    "patterns": [
+      "reverse linked list"
+    ],
+    "prerequisites": [
+      "Basic LL Operations"
+    ],
+    "variants": [],
+    "tags": [
+      "medium",
+      "linked list",
+      "recursion"
+    ],
+    "keywords": [
+      "reverse linked list",
+      "recursive function"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "Given the head of a singly linked list, reverse the list using recursion and return the reversed list's head. The singly linked list node is defined as `public class ListNode { int val; ListNode next; ListNode() {}; ListNode(int val) { this.val = val; } ListNode(int val, ListNode next) { this.val = val; this.next = next; } }`. Do not use any extra space that scales with input size, i.e., only constant space is allowed for the recursive call stack. For example, given the linked list `1 -> 2 -> 3 -> 4 -> 5`, the reversed linked list will be `5 -> 4 -> 3 -> 2 -> 1`. The input linked list will have at most 5000 nodes.",
+    "inputFormat": "The first line contains the number of nodes in the linked list. The second line contains the node values separated by space.",
+    "outputFormat": "The output will be the node values of the reversed linked list separated by space.",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 5000,
+        "description": "number of nodes in the linked list"
+      },
+      {
+        "variable": "node values",
+        "type": "integer",
+        "min": -10000,
+        "max": 10000,
+        "description": "value of each node in the linked list"
+      }
+    ],
+    "examples": [
+      {
+        "input": "5\n1 2 3 4 5",
+        "output": "5 4 3 2 1",
+        "explanation": "The input linked list is 1 -> 2 -> 3 -> 4 -> 5. After reversing the linked list, it becomes 5 -> 4 -> 3 -> 2 -> 1."
+      },
+      {
+        "input": "2\n1 2",
+        "output": "2 1",
+        "explanation": "The input linked list is 1 -> 2. After reversing the linked list, it becomes 2 -> 1."
+      },
+      {
+        "input": "1\n1",
+        "output": "1",
+        "explanation": "The input linked list is 1. After reversing the linked list, it remains the same."
+      },
+      {
+        "input": "4\n20 4 15 85",
+        "output": "85 15 4 20",
+        "explanation": "The input linked list is 20 -> 4 -> 15 -> 85. After reversing the linked list, it becomes 85 -> 15 -> 4 -> 20."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "To reverse the linked list recursively, consider the last two nodes first and work your way up to the head."
+    },
+    {
+      "order": 2,
+      "text": "Think about how you can define a recursive function that takes a node as input and returns the new head of the reversed sublist starting from that node."
+    },
+    {
+      "order": 3,
+      "text": "When calling the recursive function, you should pass the next node in the original list, and consider how to handle the base case (i.e., when the next node is null)."
+    },
+    {
+      "order": 4,
+      "text": "In the recursive function, consider how to reverse the sublist starting from the current node's next node, and then connect the current node to the reversed sublist."
+    },
+    {
+      "order": 5,
+      "text": "The key to this problem is to realize that the recursive function should return the new head of the reversed sublist, and that the base case should be when the next node is null, in which case the current node becomes the new head."
+    }
+  ],
+  "editorial": {
+    "title": "Reversing a Linked List Recursively: From Brute‑Force to Optimal",
+    "intuition": "When you think of reversing a list, the most natural idea is to walk through the nodes and rebuild a new list in reverse order. That works, but it requires extra memory for the new nodes and a linear scan to find the tail each time. The recursive strategy, on the other hand, flips the direction of the links as the call stack unwinds, turning a seemingly heavy operation into a clean, linear‑time, constant‑extra‑space solution.",
+    "bruteForce": "A straightforward approach is to create a new linked list and prepend each encountered node’s value. For each node you must traverse the new list to find its end, resulting in an O(n²) time complexity. Even if you maintain a tail pointer, you still allocate new nodes, so the space usage is O(n) in addition to the input list. This method is correct but inefficient for large lists.",
+    "betterSolution": "The key observation is that reversing a list can be done in place by re‑linking the existing nodes. If you reverse the tail first, you can then point the current node’s next to the already reversed part and sever its original link. Recursion naturally provides the reverse order of processing: the deepest call handles the last node, and as the stack unwinds you rewire each link exactly once.",
+    "optimalSolution": "The optimal solution uses a single recursive function that returns the new head of the reversed sublist. It checks for the base case (empty list or single node) and otherwise calls itself on the next node. After the recursive call returns, it sets head.next.next = head and head.next = None, effectively inserting the current node at the front of the reversed list. The function then returns the head of the fully reversed list.",
+    "proofOfCorrectness": "Let H be the head of the original list and R the head of the reversed list. The recursion processes nodes from H to the last node L. By induction, assume that reverseList(H.next) correctly returns the head of the reversed sublist starting at H.next. When the call returns, H.next points to the first node of that sublist. Setting H.next.next = H attaches H after the sublist, and H.next = None detaches the original forward link. Thus the sublist becomes reversed with H at its end. The base case returns the single node unchanged, which is trivially reversed. Therefore each recursive step preserves correctness, and the final returned head is the fully reversed list.",
+    "dryRun": "Consider list 1→2→3. The recursion stack: reverse(1) calls reverse(2), which calls reverse(3). reverse(3) hits base case and returns node 3. unwind: in reverse(2), set 2.next.next (3.next) = 2 and 2.next = None → list 3→2. unwind: in reverse(1), set 1.next.next (2.next) = 1 and 1.next = None → list 3→2→1. The returned head is node 3, the reversed list.",
+    "commonMistakes": [
+      "Assuming recursion uses extra heap memory; it only consumes stack space.",
+      "Forgetting to set the original node’s next to None, which would create a cycle.",
+      "Misunderstanding the base case; both empty list and single node should return the node itself.",
+      "Using an iterative loop but still allocating new nodes instead of rewiring pointers.",
+      "Not handling negative or zero values correctly, though the algorithm is value‑agnostic.",
+      "Failing to update the head pointer after reversal, leading to a dangling reference."
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n) recursion stack (no extra heap allocation beyond input list)"
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nstruct ListNode {\n    int val;\n    ListNode *next;\n    ListNode() : val(0), next(nullptr) {}\n    ListNode(int x) : val(x), next(nullptr) {}\n    ListNode(int x, ListNode *next) : val(x), next(next) {}\n};\n\nclass Solution {\npublic:\n    ListNode* reverseList(ListNode* head) {\n        // TODO: implement\n        return nullptr;\n    }\n};",
+    "java": "import java.util.*;\n\nclass ListNode {\n    int val;\n    ListNode next;\n    ListNode() {}\n    ListNode(int val) { this.val = val; }\n    ListNode(int val, ListNode next) { this.val = val; this.next = next; }\n}\n\nclass Solution {\n    public ListNode reverseList(ListNode head) {\n        // TODO: implement\n        return null;\n    }\n}",
+    "python": "class ListNode:\n    def __init__(self, val=0, next=None):\n        self.val = val\n        self.next = next\n\nclass Solution:\n    def reverseList(self, head: ListNode) -> ListNode:\n        # TODO: implement\n        pass",
+    "javascript": "/**\n * @param {ListNode} head\n * @return {ListNode}\n */\nvar reverseList = function(head) {\n    // TODO: implement\n    return null;\n};"
+  },
+  "functionSignature": {
+    "cpp": "ListNode* reverseList(ListNode* head);",
+    "java": "public ListNode reverseList(ListNode head);",
+    "python": "def reverseList(self, head: ListNode) -> ListNode:",
+    "javascript": "var reverseList = function(head);"
+  },
+  "solutions": {
+    "python": "import sys\n\nclass ListNode:\n    __slots__ = ('val', 'next')\n    def __init__(self, val=0, next=None):\n        self.val = val\n        self.next = next\n\nclass Solution:\n    def reverseList(self, head: ListNode) -> ListNode:\n        # base case: empty or last node\n        if not head or not head.next:\n            return head\n        # reverse rest\n        new_head = self.reverseList(head.next)\n        head.next.next = head\n        head.next = None\n        return new_head\n\nif __name__ == '__main__':\n    data = sys.stdin.read().split()\n    if not data:\n        sys.exit(0)\n    it = iter(data)\n    n = int(next(it))\n    # build linked list\n    dummy = ListNode()\n    cur = dummy\n    for _ in range(n):\n        cur.next = ListNode(int(next(it)))\n        cur = cur.next\n    head = dummy.next\n    sol = Solution()\n    rev = sol.reverseList(head)\n    # collect output\n    out = []\n    while rev:\n        out.append(str(rev.val))\n        rev = rev.next\n    print(' '.join(out))\n",
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nstruct ListNode {\n    int val;\n    ListNode *next;\n    ListNode() : val(0), next(nullptr) {}\n    ListNode(int x) : val(x), next(nullptr) {}\n    ListNode(int x, ListNode *next) : val(x), next(next) {}\n};\n\nclass Solution {\npublic:\n    ListNode* reverseList(ListNode* head) {\n        if (!head || !head->next) return head;\n        ListNode* newHead = reverseList(head->next);\n        head->next->next = head;\n        head->next = nullptr;\n        return newHead;\n    }\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int n;\n    if (!(cin >> n)) return 0;\n    ListNode dummy(0);\n    ListNode* cur = &dummy;\n    for (int i = 0; i < n; ++i) {\n        int v; cin >> v;\n        cur->next = new ListNode(v);\n        cur = cur->next;\n    }\n    ListNode* head = dummy.next;\n    Solution sol;\n    ListNode* rev = sol.reverseList(head);\n    bool first = true;\n    while (rev) {\n        if (!first) cout << ' ';\n        first = false;\n        cout << rev->val;\n        rev = rev->next;\n    }\n    cout << \"\\n\";\n    return 0;\n}\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.2
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5\n1 2 3 4 5",
+      "output": "5 4 3 2 1",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "2\n1 2",
+      "output": "2 1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_3",
+      "input": "1\n1",
+      "output": "1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_4",
+      "input": "4\n20 4 15 85",
+      "output": "85 15 4 20",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint_5",
+      "input": "1\n-10000",
+      "output": "-10000",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

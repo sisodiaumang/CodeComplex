@@ -1,0 +1,52 @@
+{
+  "_id": "5913b0c7bb706683595f5fae",
+  "title": "Interactive Stopwatch",
+  "slug": "js-stopwatch",
+  "difficulty": "Easy",
+  "topics": [
+    "JAVASCRIPT"
+  ],
+  "statement": {
+    "markdown": "## Interactive Stopwatch Component\n\nBuild a fully functional stopwatch with Start, Pause, and Reset controls.\n\n### Requirements:\n1. **Timer Display**: Format the elapsed time as `MM:SS` (two digits for minutes and seconds, e.g., `01:45`).\n2. **Start & Pause Controls**: Clicking `Start` must increment the time every second. Clicking `Pause` must temporarily halt incrementing.\n3. **Reset Control**: Clicking `Reset` must reset the time back to `00:00` and stop active intervals.\n4. **State Management**: Correctly clear intervals to prevent memory leaks and double-firing triggers."
+  },
+  "constraints": [
+    "Must use vanilla JavaScript setInterval/clearInterval",
+    "Must style elements with Tailwind CSS"
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "html": "<div class=\"flex flex-col items-center justify-center min-h-[220px] bg-slate-900 font-sans\">\n  <div class=\"flex flex-col items-center p-6 bg-slate-800 rounded-2xl border border-slate-700 shadow-xl w-64\">\n    <div id=\"timer-display\" class=\"text-4xl font-bold font-mono text-white mb-6 tracking-wider\">00:00</div>\n    <div class=\"flex gap-2 w-full\">\n      <button id=\"start-btn\" class=\"flex-1 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg transition-colors text-sm\">Start</button>\n      <button id=\"pause-btn\" class=\"flex-1 py-2 bg-amber-600 hover:bg-amber-700 text-white font-semibold rounded-lg transition-colors text-sm\">Pause</button>\n      <button id=\"reset-btn\" class=\"flex-1 py-2 bg-rose-600 hover:bg-rose-700 text-white font-semibold rounded-lg transition-colors text-sm\">Reset</button>\n    </div>\n  </div>\n</div>",
+    "css": "",
+    "javascript": "const timerDisplay = document.getElementById('timer-display');\nconst startBtn = document.getElementById('start-btn');\nconst pauseBtn = document.getElementById('pause-btn');\nconst resetBtn = document.getElementById('reset-btn');\n\n// Implement stopwatch logic here\n"
+  },
+  "gradingCriteria": [
+    {
+      "id": "functional_correctness",
+      "description": "Verify timer increments correctly, formats as MM:SS, pauses, and resets back to 00:00.",
+      "weight": 60
+    },
+    {
+      "id": "code_cleanliness",
+      "description": "Verify correct setInterval and clearInterval lifecycle handling to prevent timer overlap.",
+      "weight": 40
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "html",
+      "css",
+      "javascript"
+    ],
+    "referenceSolution": "const timerDisplay = document.getElementById('timer-display');\nconst startBtn = document.getElementById('start-btn');\nconst pauseBtn = document.getElementById('pause-btn');\nconst resetBtn = document.getElementById('reset-btn');\n\nlet seconds = 0;\nlet timerInterval = null;\n\nfunction updateDisplay() {\n  const mins = Math.floor(seconds / 60).toString().padStart(2, '0');\n  const secs = (seconds % 60).toString().padStart(2, '0');\n  timerDisplay.textContent = `${mins}:${secs}`;\n}\n\nstartBtn.addEventListener('click', () => {\n  if (timerInterval) return;\n  timerInterval = setInterval(() => {\n    seconds++;\n    updateDisplay();\n  }, 1000);\n});\n\npauseBtn.addEventListener('click', () => {\n  clearInterval(timerInterval);\n  timerInterval = null;\n});\n\nresetBtn.addEventListener('click', () => {\n  clearInterval(timerInterval);\n  timerInterval = null;\n  seconds = 0;\n  updateDisplay();\n});"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

@@ -32,7 +32,7 @@ type JudgeResult =
 
 const JUDGE0_BACKED_TYPES: BattleType[] = ["DSA", "BUG_FIX"];
 const DOCKER_BACKED_TYPES: BattleType[] = ["BACKEND"];
-const LLM_BACKED_TYPES: BattleType[]    = ["FRONTEND", "FULLSTACK"];
+const LLM_BACKED_TYPES: BattleType[]    = ["FRONTEND", "PROJECTS"];
 
 function isJudge0Backed(battleType: BattleType): boolean {
     return JUDGE0_BACKED_TYPES.includes(battleType);
@@ -127,7 +127,7 @@ export async function createAndJudge(params: {
     questionSlug: string;
     battleType: BattleType;
     battleRoomId: unknown;
-    language: "CPP" | "JAVA" | "PYTHON" | "JAVASCRIPT" | "TYPESCRIPT";
+    language: "CPP" | "JAVA" | "PYTHON" | "JAVASCRIPT" | "TYPESCRIPT" | "HTML" | "CSS" | "REACT";
     sourceCode: string;
 }) {
     const { matchId, userId, team, questionSlug, battleType, battleRoomId, language, sourceCode } = params;
@@ -371,7 +371,7 @@ async function judgeBackendTypeSubmission(
         });
 
         if (status === "ACCEPTED" || status === "PARTIAL") {
-            await applySubmissionScore(submission.matchId.toString(), submission.team as "A" | "B", score);
+            await applySubmissionScore(submission.matchId.toString(), submission.team as "A" | "B", score, status === "ACCEPTED");
         }
     } catch (err) {
         const reason = err instanceof Error ? err.message : String(err);
@@ -511,7 +511,7 @@ async function judgeFrontendTypeSubmission(
     });
 
     if (status === "ACCEPTED" || status === "PARTIAL") {
-        await applySubmissionScore(submission.matchId.toString(), submission.team as "A" | "B", score);
+        await applySubmissionScore(submission.matchId.toString(), submission.team as "A" | "B", score, status === "ACCEPTED");
     }
 }
 
@@ -528,7 +528,7 @@ async function markUnsupportedBattleType(
     const feedback =
         `Judging for ${submission.battleType} submissions is not implemented yet. ` +
         `This match type is supported for play, but automated grading currently ` +
-        `only covers DSA / BUG_FIX / BACKEND / FRONTEND / FULLSTACK. An admin can rejudge once support is added.`;
+        `only covers DSA / BUG_FIX / BACKEND / FRONTEND / PROJECTS. An admin can rejudge once support is added.`;
 
     submission.status = "ERROR";
     submission.feedback = feedback;
@@ -573,7 +573,7 @@ async function markUnsupportedBattleType(
  *
  * Dispatch order:
  *   BACKEND          → backendJudge.service.ts  (Docker + HTTP test runner)
- *   FRONTEND/FULLSTACK → frontendJudge.service.ts (Grok LLM rubric grader)
+ *   FRONTEND/PROJECTS → frontendJudge.service.ts (Grok LLM rubric grader)
  *   DSA/BUG_FIX      → judge.service.ts          (Judge0 stdin/stdout)
  *   anything else    → markUnsupportedBattleType  (PROMPT_WAR, future types)
  */
@@ -601,9 +601,9 @@ export async function judgeSubmission(submissionId: string): Promise<void> {
         return;
     }
 
-    if (submission.battleType === "FULLSTACK") {
-        // FULLSTACK = combine FRONTEND rubric + BACKEND API rubric.
-        // We treat the FULLSTACK submission as:
+    if (submission.battleType === "PROJECTS") {
+        // PROJECTS = combine FRONTEND rubric + BACKEND API rubric.
+        // We treat the PROJECTS submission as:
         //   - submission.sourceCode for frontend judging
         //   - submission.sourceCodeUrl (if present) / submission.sourceCode for backend judging
         // and then average the two rubric scores.
@@ -758,7 +758,8 @@ export async function judgeSubmission(submissionId: string): Promise<void> {
             await applySubmissionScore(
                 submission.matchId.toString(),
                 submission.team as "A" | "B",
-                combinedScore
+                combinedScore,
+                status === "ACCEPTED"
             );
         }
 
@@ -868,7 +869,8 @@ export async function judgeSubmission(submissionId: string): Promise<void> {
             await applySubmissionScore(
                 submission.matchId.toString(),
                 submission.team as "A" | "B",
-                score
+                score,
+                status === "ACCEPTED"
             );
         }
 
@@ -1060,7 +1062,7 @@ export async function judgeSubmission(submissionId: string): Promise<void> {
     });
 
     if (status === "ACCEPTED" || status === "PARTIAL") {
-        await applySubmissionScore(submission.matchId.toString(), submission.team as "A" | "B", finalScore);
+        await applySubmissionScore(submission.matchId.toString(), submission.team as "A" | "B", finalScore, status === "ACCEPTED");
     }
 }
 
@@ -1160,6 +1162,6 @@ async function executeMockFallback(submission: any, match: any, testCasesCount: 
     });
 
     if (status === "ACCEPTED" || status === "PARTIAL") {
-        await applySubmissionScore(submission.matchId.toString(), submission.team as "A" | "B", finalScore);
+        await applySubmissionScore(submission.matchId.toString(), submission.team as "A" | "B", finalScore, status === "ACCEPTED");
     }
 }

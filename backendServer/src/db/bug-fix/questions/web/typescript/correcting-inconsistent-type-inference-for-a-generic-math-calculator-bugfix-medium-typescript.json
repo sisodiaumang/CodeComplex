@@ -1,0 +1,179 @@
+{
+  "title": "Correcting Inconsistent Type Inference for a Generic Math Calculator",
+  "subCategory": "Generic Math Calculator",
+  "statement": {
+    "markdown": "Implement a generic math calculator function that can perform addition, subtraction, multiplication, and division based on the given operator. The function should work with both numbers and strings. However, the current implementation has inconsistent type inference.",
+    "inputFormat": "The function takes three parameters: `num1` and `num2` of type `T` and an operator of type `string`.",
+    "outputFormat": "The function returns the result of the operation as a `number` if the operation is one of the basic math operations, otherwise it returns the concatenated string.",
+    "notes": "The function should handle division by zero correctly and raise an error.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 1000,
+        "description": "Maximum length of the input string"
+      }
+    ],
+    "examples": [
+      {
+        "input": "add, 5, 3",
+        "output": "8",
+        "explanation": "Perform addition of 5 and 3"
+      },
+      {
+        "input": "subtract, 10, 4",
+        "output": "6",
+        "explanation": "Perform subtraction of 10 and 4"
+      },
+      {
+        "input": "multiply, 7, 2",
+        "output": "14",
+        "explanation": "Perform multiplication of 7 and 2"
+      },
+      {
+        "input": "divide, 10, 2",
+        "output": "5",
+        "explanation": "Perform division of 10 and 2"
+      },
+      {
+        "input": "add, 5, a",
+        "output": "5a",
+        "explanation": "Concatenate '5' and 'a'"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 60,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "TYPESCRIPT"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "typescript"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use generics to ensure type safety"
+    },
+    {
+      "order": 2,
+      "text": "Use a type guard to handle division by zero"
+    }
+  ],
+  "editorial": {
+    "title": "Correcting Inconsistent Type Inference for a Generic Math Calculator",
+    "intuition": "The problem requires us to use generics to ensure type safety and use a type guard to handle division by zero.",
+    "bruteForce": "We can use a brute force approach by checking the type of each parameter and performing the operation accordingly.",
+    "betterSolution": "We can use generics to ensure type safety and use a type guard to handle division by zero.",
+    "optimalSolution": "The optimal solution uses generics to ensure type safety and uses a type guard to handle division by zero.",
+    "proofOfCorrectness": "The proof of correctness involves showing that the solution handles all possible inputs and edge cases correctly.",
+    "dryRun": "A dry run would involve testing the solution with various inputs to ensure it works as expected.",
+    "commonMistakes": [
+      "Inconsistent type inference",
+      "Division by zero without handling"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "// GenericMathCalculator.ts\ninterface Calculator<T> {\n  add(num1: T, num2: T): T;\n  subtract(num1: T, num2: T): T;\n  multiply(num1: T, num2: T): T;\n  divide(num1: T, num2: T): T;\n}\nclass CalculatorImpl implements Calculator<number> {\n  add(num1: number, num2: number): number {\n    return num1 + num2;\n  }\n  subtract(num1: number, num2: number): number {\n    return num1 - num2;\n  }\n  multiply(num1: number, num2: number): number {\n    return num1 * num2;\n  }\n  divide(num1: number, num2: number): number {\n    return num1 / num2;\n  }\n}\n",
+    "python": "class Solution:\n    def solve(self, nums: list[int]) -> bool:\n        # TODO: implement\n        pass"
+  },
+  "buggyStarterCode": {
+    "javascript": "// GenericMathCalculator.ts\ninterface Calculator<T> {\n  add(num1: T, num2: T): T;\n  subtract(num1: T, num2: T): T;\n  multiply(num1: T, num2: T): T;\n  divide(num1: T, num2: T): T;\n}\nclass CalculatorImpl implements Calculator<number> {\n  add(num1: number, num2: number): number {\n    return num1 + num2;\n  }\n  subtract(num1: number, num2: number): number {\n    return num1 - num2;\n  }\n  multiply(num1: number, num2: number): number {\n    return num1 * num2;\n  }\n  divide(num1: number, num2: number): number {\n    return num1 / (num2 ? num2 : 1);\n  }\n}\n\nconst calculate = (op: string, num1: any, num2: any) => {\n  const calculator = new CalculatorImpl();\n  switch (op) {\n    case 'add':\n      return calculator.add(num1, num2);\n    case 'subtract':\n      return calculator.subtract(num1, num2);\n    case 'multiply':\n      return calculator.multiply(num1, num2);\n    case 'divide':\n      return calculator.divide(num1, num2);\n    case 'concat':\n      return num1.toString() + num2.toString();\n    default:\n      throw new Error('Invalid operator');\n  }\n};\n",
+    "python": "class Solution:\n    def solve(self, nums: list[int]) -> bool:\n        # Buggy code\n        pass"
+  },
+  "functionSignature": {
+    "javascript": "const calculate = (op: string, num1: any, num2: any) => any",
+    "python": "def solve(self, nums: list[int]) -> bool:"
+  },
+  "solutions": {
+    "javascript": "// GenericMathCalculator.ts\ninterface Calculator<T> {\n  add(num1: T, num2: T): T;\n  subtract(num1: T, num2: T): T;\n  multiply(num1: T, num2: T): T;\n  divide(num1: T, num2: T): T;\n}\n\nclass CalculatorImpl<T> {\n  add(num1: T, num2: T): T {\n    if (typeof num1 === 'string' || typeof num2 === 'string') {\n      return num1.toString() + num2.toString();\n    }\n    return num1 + num2;\n  }\n\n  subtract(num1: T, num2: T): T {\n    if (typeof num1 === 'string' || typeof num2 === 'string') {\n      return num1.toString() + num2.toString();\n    }\n    return num1 - num2;\n  }\n\n  multiply(num1: T, num2: T): T {\n    if (typeof num1 === 'string' || typeof num2 === 'string') {\n      return num1.toString() + num2.toString();\n    }\n    return num1 * num2;\n  }\n\n  divide(num1: T, num2: T): T {\n    if (typeof num1 === 'string' || typeof num2 === 'string') {\n      return num1.toString() + num2.toString();\n    }\n    if (num2 === 0) {\n      throw new Error('Division by zero');\n    }\n    return num1 / num2;\n  }\n}\n\nconst calculate = (op: string, num1: any, num2: any) => {\n  const calculator = new CalculatorImpl<any>();\n  switch (op) {\n    case 'add':\n      return calculator.add(num1, num2);\n    case 'subtract':\n      return calculator.subtract(num1, num2);\n    case 'multiply':\n      return calculator.multiply(num1, num2);\n    case 'divide':\n      return calculator.divide(num1, num2);\n    case 'concat':\n      return num1.toString() + num2.toString();\n    default:\n      throw new Error('Invalid operator');\n  }\n};\n\n// Example usage:\nconsole.log(calculate('add', 5, 3)); // Output: 8\nconsole.log(calculate('subtract', 10, 4)); // Output: 6\nconsole.log(calculate('multiply', 7, 2)); // Output: 14\nconsole.log(calculate('divide', 10, 2)); // Output: 5\nconsole.log(calculate('add', 5, 'a')); // Output: '5a'\n",
+    "python": "# Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "add, 5, 3",
+      "output": "8",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "subtract, 10, 4",
+      "output": "6",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_3",
+      "input": "multiply, 7, 2",
+      "output": "14",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_4",
+      "input": "divide, 10, 2",
+      "output": "5",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_5",
+      "input": "add, 5, 'a'",
+      "output": "'5a'",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "_id": "2c0f8da46973f180644b3238",
+  "slug": "correcting-inconsistent-type-inference-for-a-generic-math-calculator-bugfix-medium-typescript",
+  "mode": "bug_fix",
+  "category": "TYPESCRIPT",
+  "difficulty": "Medium"
+}

@@ -1,0 +1,153 @@
+{
+  "_id": "b54a6b099ea4d0227d2bde69",
+  "title": "Fixing Missing Child Node Handling in a Tree",
+  "slug": "fixing-missing-child-node-handling-in-a-tree-bugfix-easy-binary-trees",
+  "difficulty": "Easy",
+  "category": "DSA",
+  "subCategory": "Tree Traversal",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 10,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "tree"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Solve the problem and fix the bugs.",
+    "inputFormat": "",
+    "outputFormat": "",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "0",
+        "output": "0",
+        "explanation": ""
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Check for missing child nodes in the tree"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial Title",
+    "intuition": "The solution is to handle missing child nodes in the tree",
+    "bruteForce": "Brute Force Approach",
+    "betterSolution": "",
+    "optimalSolution": "Optimal Solution",
+    "proofOfCorrectness": "Proof of Correctness",
+    "dryRun": "Step-by-Step Run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(h)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    bool isCompleteTree(TreeNode* root) {\n        // TODO: implement\n    }\n};\n",
+    "java": "public class Solution {\npublic:\n    boolean isCompleteTree(TreeNode root) {\n        // TODO: implement\n    }\n}\n",
+    "python": "class Solution:\n    def isCompleteTree(self, root: TreeNode) -> bool:\n        # TODO: implement\n        pass\n",
+    "javascript": "function isCompleteTree(root) {\n    // TODO: implement\n}\n"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    bool isCompleteTree(TreeNode* root) {\n        if (!root) return true;\n        return dfs(root.left) && dfs(root.right);\n    }\n    bool dfs(TreeNode* node) {\n        if (!node) return true;\n        if (node.left) return dfs(node.left);\n        if (node.right) return dfs(node.right);\n        return false;\n    }\n};\n",
+    "java": "public class Solution {\npublic:\n    boolean isCompleteTree(TreeNode root) {\n        if (!root) return true;\n        return dfs(root.left) && dfs(root.right);\n    }\n    boolean dfs(TreeNode node) {\n        if (!node) return true;\n        if (node.left) return dfs(node.left);\n        if (node.right) return dfs(node.right);\n        return false;\n    }\n}\n",
+    "python": "class Solution:\n    def isCompleteTree(self, root: TreeNode) -> bool:\n        if not root: return True\n        return self.dfs(root.left) and self.dfs(root.right)\n\n    def dfs(self, node: TreeNode) -> bool:\n        if not node: return True\n        if node.left: return self.dfs(node.left)\n        if node.right: return self.dfs(node.right)\n        return False\n",
+    "javascript": "function isCompleteTree(root) {\n    if (!root) return true;\n    return dfs(root.left) && dfs(root.right);\n}\n\nfunction dfs(node) {\n    if (!node) return true;\n    if (node.left) return dfs(node.left);\n    if (node.right) return dfs(node.right);\n    return false;\n}\n"
+  },
+  "functionSignature": {
+    "cpp": "TreeNode* constructMaximumBinaryTree(vector<int>& nums);",
+    "java": "TreeNode constructMaximumBinaryTree(int[] nums);",
+    "python": "def constructMaximumBinaryTree(self, nums: list[int]) -> TreeNode:",
+    "javascript": "var constructMaximumBinaryTree = function(nums);"
+  },
+  "solutions": {
+    "python": "\nimport sys\nfrom collections import deque\n\nclass Solution:\n    def isCompleteTree(self, root: TreeNode) -> bool:\n        if not root: return True\n\n        queue = deque()\n        queue.append(root)\n\n        while queue:\n            node = queue.popleft()\n            if node:\n                queue.append(node.left)\n                queue.append(node.right)\n            else:\n                return False\n\n        return True\n\n\n# Driver Code: Read from stdin, call Solution().isCompleteTree, print output\nif __name__ == '__main__':\n    input = sys.stdin.readline().strip()\n    n = int(input.split()[0])\n    nums = list(map(int, input.split()[1:]))\n    root = None\n    for num in nums:\n        root = TreeNode(num)\n        if root:\n            if root.left:\n                root.left = TreeNode(0)\n            if root.right:\n                root.right = TreeNode(0)\n    sol = Solution()\n    ans = sol.isCompleteTree(root)\n    print('YES' if ans else 'NO')\n",
+    "cpp": "\n#include <iostream>\n#include <vector>\n#include <utility>\nusing namespace std;\n\n// Definition for a binary tree node.\nstruct TreeNode {\n   int val;\n   TreeNode *left;\n   TreeNode *right;\n   TreeNode(int x) : val(x), left(NULL), right(NULL) {}\n};\n\nclass Solution {\npublic:\n    bool isCompleteTree(TreeNode* root) {\n        if (!root) return true;\n\n        queue<TreeNode*> q;\n        q.push(root);\n\n        bool hasNonLeaf = false;\n        bool hasLeaf = false;\n\n        while (!q.empty()) {\n            TreeNode* node = q.front(); q.pop();\n\n            if (node) {\n                if (node->left) {\n                    q.push(node->left);\n                } else {\n                    hasLeaf = true;\n                }\n\n                if (node->right) {\n                    q.push(node->right);\n                } else {\n                    hasLeaf = true;\n                }\n            } else {\n                hasNonLeaf = true;\n            }\n\n            if (hasNonLeaf && hasLeaf) return false;\n        }\n\n        return true;\n    }\n};\n",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 1,
+    "memoryLimit": 128,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "6\n1 2 3 4 5 6 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0\n",
+      "output": "0",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "10\n1 2 3 4 5 6 7 8 9 0 0\n",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

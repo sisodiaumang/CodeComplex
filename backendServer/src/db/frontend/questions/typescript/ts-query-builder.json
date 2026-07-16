@@ -1,0 +1,48 @@
+{
+  "_id": "08c42f6d88b19e93997e165a",
+  "title": "Generics Query Builder",
+  "slug": "ts-query-builder",
+  "difficulty": "Hard",
+  "topics": [
+    "TYPESCRIPT"
+  ],
+  "statement": {
+    "markdown": "## Generics-Based Query Builder\n\nCreate a generic query builder that type-checks column names, filter clauses, and projections against a row type.\n\n### Requirements:\n1. **Type Constraints**: The query builder should be generic over a row type `T` representing a single record.\n2. **Where Clauses**: `where(column, operator, value)` should only accept a `column` that is a key of `T`, and `value` should match the type of `T[column]`.\n3. **Projections**: `select(...keys)` should restrict `keys` to keys of `T`, and return results as an array of objects containing only the selected keys."
+  },
+  "constraints": [
+    "Select method must narrow down return types",
+    "Filter arguments must reject mismatching data types"
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "typescript": "export class QueryBuilder<T> {\n  private data: T[];\n  \n  constructor(data: T[]) {\n    this.data = data;\n  }\n\n  // Implement typesafe select, where, and execute methods here\n}\n"
+  },
+  "gradingCriteria": [
+    {
+      "id": "query_filtering",
+      "description": "Verify filters execute clean evaluation comparisons against datasets.",
+      "weight": 50
+    },
+    {
+      "id": "typescript_inference",
+      "description": "Verify method outputs accurately narrow down type property keys.",
+      "weight": 50
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "typescript"
+    ],
+    "referenceSolution": "export class QueryBuilder<T> {\n  private data: T[];\n  private filters: Array<(row: T) => boolean> = [];\n  private selectedKeys: Array<keyof T> = [];\n\n  constructor(data: T[]) {\n    this.data = data;\n  }\n\n  where<K extends keyof T>(column: K, operator: '==' | '>', value: T[K]): this {\n    this.filters.push((row: T) => {\n      const cell = row[column];\n      if (operator === '==') return cell === value;\n      if (operator === '>') return cell > value;\n      return false;\n    });\n    return this;\n  }\n\n  select<K extends keyof T>(...keys: K[]): QueryBuilder<Pick<T, K>> {\n    const next = new QueryBuilder<any>(this.data);\n    next.filters = [...this.filters];\n    next.selectedKeys = keys;\n    return next;\n  }\n\n  execute(): T[] {\n    let result = this.data.filter(row => this.filters.every(fn => fn(row)));\n    if (this.selectedKeys.length > 0) {\n      result = result.map(row => {\n        const projection: any = {};\n        this.selectedKeys.forEach(k => {\n          projection[k] = row[k];\n        });\n        return projection;\n      });\n    }\n    return result;\n  }\n}"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

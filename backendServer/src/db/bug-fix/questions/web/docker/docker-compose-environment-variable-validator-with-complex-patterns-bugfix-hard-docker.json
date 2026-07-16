@@ -1,0 +1,143 @@
+{
+  "title": "Docker Compose Environment Variable Validator with Complex Patterns",
+  "subCategory": "Docker Environment Variable Validation",
+  "statement": {
+    "markdown": "Write a function `validateEnvironmentVariables` that takes a Docker Compose file as input and returns an array of environment variables that do not match the specified patterns. The function should be able to handle complex patterns like `^${VARIABLE_NAME}_.*` and `\\d+`. The Docker Compose file is a JSON object with service definitions. Each service definition contains an `environment` property with a list of environment variables, where each variable is a string in the format `VARIABLE_NAME=VALUE`.",
+    "inputFormat": "A JSON object representing a Docker Compose file.",
+    "outputFormat": "An array of strings where each string is an environment variable that does not match the specified patterns.",
+    "notes": "The function should ignore case when matching patterns. The input JSON object may contain duplicate environment variables. The output array should not contain duplicates.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 100,
+        "description": "The number of services in the Docker Compose file"
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 1,
+        "max": 1000,
+        "description": "The number of environment variables in each service"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"services\": {\"service1\": {\"environment\": [\"VARIABLE_NAME=VALUE\", \"VARIABLE_NAME_2\\d+=VALUE_2\"]}}}",
+        "output": "0",
+        "explanation": "The input environment variables match the specified patterns"
+      },
+      {
+        "input": "{\"services\": {\"service1\": {\"environment\": [\"VARIABLE_NAME=VALUE\", \"VARIABLE_NAME\\d+=VALUE\"]}}}",
+        "output": "VARIABLE_NAME\\d+=VALUE",
+        "explanation": "The environment variable `VARIABLE_NAME\\d+=VALUE` does not match the specified pattern"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DOCKER"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "docker"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text: Use a regular expression library to handle complex patterns"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(...) ",
+    "spaceComplexity": "O(...)"
+  },
+  "starterCode": {
+    "javascript": "// This is the start of the solution\nvar validateEnvironmentVariables = function(composeFile) {\n}\n",
+    "python": "class Solution:\n    def validateEnvironmentVariables(self, compose_file) -> list:\n        pass\n"
+  },
+  "buggyStarterCode": {
+    "javascript": "// This is the start of the solution\nvar validateEnvironmentVariables = function(composeFile) {\n  var pattern = new RegExp('^\\${VARIABLE_NAME}_.*');\n  var matches = composeFile.services.service1.environment.map(function(envVar) {\n    return pattern.test(envVar);\n  });\n  return matches.filter(function(match) {\n    return !match;\n  });\n}\n",
+    "python": "class Solution:\n    def validateEnvironmentVariables(self, compose_file) -> list:\n        pattern = re.compile(r'^\\${VARIABLE_NAME}_.*', re.IGNORECASE)\n        matches = [pattern.match(env_var) for env_var in compose_file['services']['service1']['environment']]\n        return [env_var for env_var, match in zip(compose_file['services']['service1']['environment'], matches) if not match]\n"
+  },
+  "functionSignature": {
+    "javascript": "var validateEnvironmentVariables = function(composeFile);",
+    "python": "def validateEnvironmentVariables(self, compose_file: dict) -> list:"
+  },
+  "solutions": {
+    "javascript": "// Solution\nvar validateEnvironmentVariables = function(composeFile) {\n  var pattern = new RegExp('^\\${VARIABLE_NAME}_.*|\\d+$', 'i');\n  var matches = composeFile.services.service1.environment.map(function(envVar) {\n    return pattern.test(envVar);\n  });\n  return matches.filter(function(match) {\n    return !match;\n  });\n}\n",
+    "python": "class Solution:\n    def validateEnvironmentVariables(self, compose_file) -> list:\n        pattern = re.compile(r'^\\${VARIABLE_NAME}_.*|\\d+$', re.IGNORECASE)\n        matches = [pattern.match(env_var) for env_var in compose_file['services']['service1']['environment']]\n        return [env_var for env_var, match in zip(compose_file['services']['service1']['environment'], matches) if not match]\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"services\": {\"service1\": {\"environment\": [\"VARIABLE_NAME=VALUE\", \"VARIABLE_NAME_2\\d+=VALUE_2\"]}}}",
+      "output": "0",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"services\": {\"service1\": {\"environment\": [\"VARIABLE_NAME=VALUE\", \"VARIABLE_NAME\\d+=VALUE\"]}}}",
+      "output": "VARIABLE_NAME\\d+=VALUE",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "20b9c802b7a14d385b5547ae",
+  "slug": "docker-compose-environment-variable-validator-with-complex-patterns-bugfix-hard-docker",
+  "mode": "bug_fix",
+  "category": "DOCKER",
+  "difficulty": "Hard"
+}

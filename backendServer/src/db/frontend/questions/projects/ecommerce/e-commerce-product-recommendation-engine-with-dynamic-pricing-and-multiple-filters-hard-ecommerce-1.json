@@ -1,0 +1,69 @@
+{
+  "_id": "2334633691ce674590c4192b",
+  "title": "E-commerce Product Recommendation Engine with Dynamic Pricing and Multiple Filters",
+  "slug": "e-commerce-product-recommendation-engine-with-dynamic-pricing-and-multiple-filters-hard-ecommerce-1",
+  "difficulty": "Hard",
+  "topics": [
+    "ECOMMERCE"
+  ],
+  "statement": {
+    "markdown": "## Projects Challenge: E-commerce Product Recommendation Engine with Dynamic Pricing and Multiple Filters\n\nYour objective is to build a fully functional, highly interactive React component representing the target design mockup.\n\n### 🎨 Color Palette\n* `#B7D7CD`\n* `#C06C88`\n* `#411C56`\n* `#090a0f`\n\n### 📐 Target Design Mockup\nUse the visual mockup shown in the panel to guide your coordinate alignment, container proportions, and spacing.\n\n### 📌 Target Design SVG Source\nThe target geometry is defined by the following SVG vector graphic (viewable by the LLM judge):\n```xml\n<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300'><rect x='20' y='20' width='360' height='260' rx='20' fill='#090a0f'/><rect x='60' y='40' width='280' height='220' rx='10' fill='#B7D7CD'/><rect x='160' y='60' width='160' height='180' rx='10' fill='#C06C88'/><rect x='120' y='150' width='100' height='40' rx='5' fill='#411C56'/><text x='100' y='220' fill='#FFFFFF' font-size='24'>Search</text><text x='230' y='220' fill='#FFFFFF' font-size='24'>Filters</text><text x='180' y='220' fill='#FFFFFF' font-size='24'>Pricing</text><text x='300' y='220' fill='#FFFFFF' font-size='24'>Recommendations</text></svg>\n```\n\n### ⚙️ Requirements\n1. Match the visual presentation (layout, alignment, borders, colors) of the mockup.\n2. Implement all necessary React state variables, event handlers, and input bindings to make the page interactive.\n3. Make sure all interactive controls (buttons, forms, checkboxes, sliders) update the view correctly.\n"
+  },
+  "constraints": [
+    "Must use only specified colors",
+    "Must be fully interactive with state updates",
+    "Product recommendations should be based on search query and filter preferences",
+    "Pricing table should dynamically update based on user actions"
+  ],
+  "referenceAssets": [
+    {
+      "url": "http://localhost:8000/public/mockups/e-commerce-product-recommendation-engine-with-dynamic-pricing-and-multiple-filters-hard-ecommerce-1.svg",
+      "caption": "Recreate target design: E-commerce Product Recommendation Engine with Dynamic Pricing and Multiple Filters"
+    }
+  ],
+  "starterCode": {
+    "react": "import React, { useState, useEffect } from 'react';\n\nconst App = () => {\n  const [searchQuery, setSearchQuery] = useState('');\n  const [filters, setFilters] = useState({});\n  const [products, setProducts] = useState([]);\n  const [pricing, setPricing] = useState({});\n\n  useEffect(() => {\n    // Fetch products and pricing data\n    fetch('/api/products')\n      .then(response => response.json())\n      .then(data => setProducts(data));\n  }, []);\n\n  const handleSearch = (event) => {\n    setSearchQuery(event.target.value);\n  };\n\n  const handleFilterChange = (event) => {\n    setFilters(event.target.value);\n  };\n\n  const handlePricingChange = (event) => {\n    setPricing(event.target.value);\n  };\n\n  return (\n    <div className=\"min-h-screen bg-[#090a0f] text-white p-4 flex items-center justify-center\">\n      <div className=\"w-full max-w-md mx-auto p-4 bg-white shadow-md rounded-md\">\n        <div className=\"flex items-center justify-between mb-4\">\n          <input\n            type='search'\n            placeholder='Search'\n            value={searchQuery}\n            onChange={handleSearch}\n            className=\"w-full py-2 pl-10 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:border-transparent\"\n          />\n          <button\n            className=\"bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-700 focus:border-transparent\">\n            Search\n          </button>\n        </div>\n        <div className=\"flex flex-wrap -mx-4\">\n          {Object.keys(filters).map((filterKey) => (\n            <div\n              key={filterKey}\n              className=\"w-full md:w-1/2 xl:w-1/3 p-4 mb-4\">\n              <input\n                type='checkbox'\n                id={filterKey}\n                value={filters[filterKey]}\n                onChange={handleFilterChange}\n                className=\"mr-2 text-blue-500\"\n              />\n              <label\n                className=\"text-gray-600 text-sm\"\n                htmlFor={filterKey}\n              >\n                {filterKey.charAt(0).toUpperCase() + filterKey.slice(1)}\n              </label>\n            </div>\n          ))}\n        </div>\n        <div className=\"mt-4 mb-4\">\n          <h2 className=\"text-gray-800 text-lg\">\n            Pricing:\n          </h2>\n          <ul className=\"list-disc ml-4 text-gray-600\">\n            <li>\n              <input\n                type='range'\n                id='price-range'\n                value={pricing['price-range']}\n                onChange={handlePricingChange}\n                className=\"w-full h-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:border-transparent\"\n              />\n              <span className=\"absolute -left-2 text-gray-500\">$</span>\n              <span className=\"absolute -right-2 text-gray-500\">$</span>\n            </li>\n          </ul>\n        </div>\n        <div className=\"flex flex-wrap -mx-4\">\n          {products.map((product) => (\n            <div\n              key={product.id}\n              className=\"w-full md:w-1/2 xl:w-1/3 p-4 mb-4\">\n              <div className=\"bg-white rounded-md shadow-md p-4\">\n                <h3 className=\"text-gray-800 text-lg\">\n                  {product.name}\n                </h3>\n                <p className=\"text-gray-600 text-sm\">\n                  {product.description}\n                </p>\n                <p className=\"text-gray-600 text-sm\">\n                  Price: ${product.price}\n                </p>\n                <button\n                  className=\"bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-700 focus:border-transparent\">\n                  Add to Cart\n                </button>\n              </div>\n            </div>\n          ))}\n        </div>\n      </div>\n    </div>\n  );\n};\n\nexport default App;"
+  },
+  "gradingCriteria": [
+    {
+      "id": "visual_fidelity",
+      "description": "Evaluate how closely the layout, colors, and positioning match the target visual mockup.",
+      "weight": 30
+    },
+    {
+      "id": "interactive_features",
+      "description": "Verify interactive state updates, form logic, active selections, and handlers.",
+      "weight": 40
+    },
+    {
+      "id": "code_quality",
+      "description": "Review code cleanliness, proper semantic elements, and efficient state use.",
+      "weight": 30
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "react"
+    ]
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "tags": [
+    "frontend",
+    "react",
+    "projects",
+    "ecommerce",
+    "color:#B7D7CD",
+    "color:#C06C88",
+    "color:#411C56",
+    "color:#090A0F"
+  ]
+}

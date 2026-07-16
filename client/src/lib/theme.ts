@@ -6,7 +6,7 @@ export type BattleType =
   | "PROMPT_WAR"
   | "BACKEND"
   | "FRONTEND"
-  | "FULLSTACK";
+  | "PROJECTS";
 
 export interface ModeColor {
   accent: string;
@@ -52,11 +52,11 @@ export const MODE_COLORS: Record<BattleType, ModeColor> = {
     label:  "Frontend",
     emoji:  "",
   },
-  FULLSTACK: {
-    accent: "var(--color-mode-fullstack)",
-    subtle: "var(--color-mode-fullstack-subtle)",
+  PROJECTS: {
+    accent: "var(--color-mode-projects)",
+    subtle: "var(--color-mode-projects-subtle)",
     hex:    "#F59E0B",
-    label:  "Fullstack",
+    label:  "Projects",
     emoji:  "",
   },
 } as const;

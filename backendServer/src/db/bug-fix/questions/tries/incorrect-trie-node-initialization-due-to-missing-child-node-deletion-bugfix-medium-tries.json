@@ -1,0 +1,153 @@
+{
+  "_id": "143bdaea54119868d464ed93",
+  "title": "Incorrect Trie Node Initialization Due to Missing Child Node Deletion",
+  "slug": "incorrect-trie-node-initialization-due-to-missing-child-node-deletion-bugfix-medium-tries",
+  "difficulty": "Medium",
+  "category": "DSA",
+  "subCategory": "TRIE",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "trie"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Write a function to insert a word into a trie. Note that the function should handle cases where the word has already been inserted and return True if the word has been successfully inserted, otherwise return False. The trie is a null-terminated binary tree where each node has a character and a boolean value to indicate whether a word ends at this node, and pointers to the child nodes.",
+    "inputFormat": "Input will be a string representing the word to be inserted and a pointer to the root node of the trie.",
+    "outputFormat": "Return a boolean indicating whether the word has been successfully inserted.",
+    "notes": "This is a basic implementation of a trie insertion function.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "example_input",
+        "output": "expected_output",
+        "explanation": "brief explanation"
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(...) ",
+    "spaceComplexity": "O(...)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:    TrieNode* insert(char ch, TrieNode* node)\n    {\n        if (node == nullptr)\n            return new TrieNode(ch);\n        if (ch < node->val)\n            node->left = insert(ch, node->left);\n        else\n            node->right = insert(ch, node->right);\n        return node;\n    }\n};",
+    "java": "public class Solution {\npublic TrieNode insert(char ch, TrieNode node) {\n  if (node == null)\n    return new TrieNode(ch);\n  if (ch < node.val)\n    node.left = insert(ch, node.left);\n  else\n    node.right = insert(ch, node.right);\n  return node;\n}};",
+    "python": "class Solution:\n    def insert(self, node, ch):\n        if node is None:\n            return [TrieNode(ch)]\n        if ch < node.val:\n            node.left = self.insert(node.left, ch)\n        else:\n            node.right = self.insert(node.right, ch)\n        return node",
+    "javascript": "function insert(node, ch) {\n  if (!node)\n    return new TrieNode(ch);\n  if (ch < node.val)\n    node.left = insert(node.left, ch);\n  else\n    node.right = insert(node.right, ch);\n  return node;\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:    TrieNode* insert(char ch, TrieNode* node)\n    {\n        if (node == nullptr)\n            return new TrieNode(ch);\n        if (ch < node->val)\n            // Bug: Node is deleted before its children, causing null pointer exception\n            delete node->left;\n            node->left = insert(ch, node->left);\n        else\n            node->right = insert(ch, node->right);\n        return node;\n    }\n};",
+    "java": "public class Solution {\npublic TrieNode insert(char ch, TrieNode node) {\n  if (node == null)\n    return new TrieNode(ch);\n  if (ch < node.val)\n    // Bug: Node is deleted before its children, causing null pointer exception\n    node.left = insert(ch, node.left);\n    delete node.left;\n  else\n    node.right = insert(ch, node.right);\n  return node;\n}};",
+    "python": "class Solution:\n    def insert(self, node, ch):\n        if node is None:\n            return [TrieNode(ch)]\n        if ch < node.val:\n            # Bug: Node is deleted before its children, causing null pointer exception\n            del node.left\n            node.left = self.insert(node.left, ch)\n        else:\n            node.right = self.insert(node.right, ch)\n        return node",
+    "javascript": "function insert(node, ch) {\n  if (!node)\n    return new TrieNode(ch);\n  if (ch < node.val)\n    // Bug: Node is deleted before its children, causing null pointer exception\n    node.left = insert(node.left, ch);\n    delete node.left;\n  else\n    node.right = insert(node.right, ch);\n  return node;\n}"
+  },
+  "functionSignature": {
+    "cpp": "TrieNode* insert(char ch, TrieNode* node);",
+    "java": "TrieNode insert(char ch, TrieNode node);",
+    "python": "def insert(self, node, ch):",
+    "javascript": "function insert(node, ch);"
+  },
+  "solutions": {
+    "cpp": "class Solution {\npublic:    TrieNode* insert(char ch, TrieNode* node)\n    {\n        if (node == nullptr)\n            return new TrieNode(ch);\n        if (ch < node->val)\n            node->left = insert(ch, node->left);\n        else\n            node->right = insert(ch, node->right);\n        return node;\n    }\n};",
+    "python": "class TrieNode:\n    def __init__(self, char):\n        self.val = char\n        self.left = self.right = None\n\nclass Solution:\n    def insert(self, root, word):\n        node = root\n        for char in word:\n            if not node.left:\n                node.left = TrieNode(char)\n            elif not node.right:\n                node.right = TrieNode(char)\n            if char < node.val:\n                node = node.left\n            else:\n                node = node.right\n        return True\n\nif __name__ == '__main__':\n    solution = Solution()\n    root = None\n    word = input()\n    result = solution.insert(root, word)\n    print(result)\n",
+    "javascript": "// Definition for a Node. \nfunction Node(val, children) {\n    this.val = val;\n    this.children = children;\n}\n\nclass TrieNode {\n    constructor(val) {\n        this.val = val;\n        this.children = {};\n    }\n}\n\nclass Solution {\n    insert(root, ch) {\n        if (!root) return new TrieNode(ch);\n        if (ch < root.val) root.left = this.insert(root.left, ch);\n        else root.right = this.insert(root.right, ch);\n        return root;\n    }\n}\n\nvar solution = new Solution();\nvar root = null;\nvar word = readline();\nvar result = solution.insert(root, word);\nprint(result);",
+    "java": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "First line count, second line elements (stdin match)",
+      "output": "Expected output string",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "Example 2 input",
+      "output": "Example 2 output",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

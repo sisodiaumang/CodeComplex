@@ -2,7 +2,7 @@
 
 import { useRef, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQueryClient, useQuery } from "@tanstack/react-query";
 import {
   Camera,
   KeyRound,
@@ -12,9 +12,10 @@ import {
   User,
   Check,
   Sparkles,
+  Lock,
 } from "lucide-react";
 import { api, errorMessage } from "@/lib/api";
-import { avatarUrl, type Me } from "@/lib/types";
+import { avatarUrl, type Me, type Achievement } from "@/lib/types";
 import { COUNTRIES } from "@/lib/countries";
 import { useAuth } from "@/stores/auth-store";
 import KeyboardMascotAnimation from "@/components/KeyboardMascotAnimation";
@@ -147,6 +148,85 @@ export default function SettingsPage() {
 
 /* ─── Profile Tab ─────────────────────────────────────────────────────── */
 
+const ALL_PETS_LIST = [
+  { id: "cat", label: "Byte Kitten", rarity: "COMMON", source: "First Blood Achievement" },
+  { id: "dog", label: "Debug Puppy", rarity: "COMMON", source: "First Win Achievement" },
+  { id: "hamster", label: "Hamster Thread", rarity: "COMMON", source: "Rising Gladiator Achievement" },
+  { id: "crab", label: "Rusty Crab", rarity: "COMMON", source: "Victorious Achievement" },
+  { id: "panda", label: "Panda Cub", rarity: "COMMON", source: "Battle Hardened Achievement" },
+  { id: "octopus", label: "Octo-Junior", rarity: "COMMON", source: "10 Victories Achievement" },
+  { id: "frog", label: "Ping Frog", rarity: "COMMON", source: "Getting Warm Achievement" },
+  { id: "bunny", label: "Git Bunny", rarity: "COMMON", source: "Hot Streak Achievement" },
+  { id: "turtle", label: "Shell Turtle", rarity: "COMMON", source: "On Fire Achievement" },
+  { id: "koala", label: "Null Koala", rarity: "COMMON", source: "Novice Challenger Achievement" },
+  { id: "fox", label: "Regex Fox", rarity: "RARE", source: "Rising Star Achievement" },
+  { id: "owl", label: "Stack Owl", rarity: "RARE", source: "Elite Competitor Achievement" },
+  { id: "squirrel", label: "Cache Squirrel", rarity: "RARE", source: "Expert Achievement" },
+  { id: "badger", label: "Bit Badger", rarity: "RARE", source: "Master Achievement" },
+  { id: "sloth", label: "Token Sloth", rarity: "RARE", source: "DSA Starter Achievement" },
+  { id: "dino", label: "Dino Compiler", rarity: "RARE", source: "Problem Solver Achievement" },
+  { id: "whale", label: "Docker Whale", rarity: "RARE", source: "Algorithm Ace Achievement" },
+  { id: "otter", label: "Web Otter", rarity: "RARE", source: "Logic Wizard Achievement" },
+  { id: "monkey", label: "Cyber Monkey", rarity: "EPIC", source: "Prompt Novice Achievement" },
+  { id: "quantum_cat", label: "Quantum Cat", rarity: "EPIC", source: "Prompt Warrior Achievement" },
+  { id: "dolphin", label: "API Dolphin", rarity: "EPIC", source: "Prompt Commander Achievement" },
+  { id: "lion", label: "Firewall Lion", rarity: "EPIC", source: "AI Whisperer Achievement" },
+  { id: "raccoon", label: "Kernel Raccoon", rarity: "EPIC", source: "Prompt Master Achievement" },
+  { id: "parrot", label: "Prompt Parrot", rarity: "EPIC", source: "Frontend Learner Achievement" },
+  { id: "snake", label: "Syntax Snake", rarity: "EPIC", source: "Backend Learner Achievement" },
+  { id: "phoenix", label: "Phoenix", rarity: "LEGENDARY", source: "Unstoppable Achievement" },
+  { id: "dragon", label: "Code Dragon", rarity: "LEGENDARY", source: "Legendary Coder Achievement" },
+  { id: "unicorn", label: "Byte Unicorn", rarity: "LEGENDARY", source: "Algorithm Overlord Achievement" },
+  { id: "cyber_fox", label: "AI Cyber-Fox", rarity: "LEGENDARY", source: "Prompt Legend Achievement" },
+  { id: "robo_puppy", label: "Polymer Robo-Puppy", rarity: "LEGENDARY", source: "Projects Titan Achievement" },
+];
+
+const BANNER_CLASSES: Record<string, string> = {
+  apprentice: "bg-slate-950 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:10px_10px] border-slate-800 text-slate-400",
+  novice: "bg-blue-950 bg-[radial-gradient(#1e3a8a_1px,transparent_1px)] bg-[size:8px_8px] border-blue-900 text-blue-400",
+  bug_hunter: "bg-emerald-950 bg-[linear-gradient(45deg,#064e3b_25%,transparent_25%),linear-gradient(-45deg,#064e3b_25%,transparent_25%)] bg-[size:6px_6px] border-emerald-900 text-emerald-400",
+  explorer: "bg-indigo-950 bg-[repeating-linear-gradient(45deg,#312e81,#312e81_4px,transparent_4px,transparent_8px)] border-indigo-900/60 text-indigo-400",
+  architect: "bg-zinc-900 bg-[linear-gradient(to_bottom,transparent_95%,#0891b2_95%)] bg-[size:100%_12px] border-cyan-900/60 text-cyan-400",
+  overlord: "bg-rose-950 bg-[repeating-linear-gradient(-45deg,#991b1b,#991b1b_2px,transparent_2px,transparent_8px)] border-rose-900/60 text-rose-400",
+  slinger: "bg-neutral-950 bg-[radial-gradient(#9d174d_1.2px,transparent_1.2px)] bg-[size:12px_12px] border-pink-900/50 text-pink-400",
+  stack_overlord: "bg-stone-900 bg-[linear-gradient(27deg,#1c1917_25%,transparent_25%),linear-gradient(207deg,#1c1917_25%,transparent_25%)] bg-[size:8px_8px] border-amber-900/60 text-amber-400",
+  cyber_sentient: "bg-stone-950 bg-[linear-gradient(to_right,#5b21b6_0.5px,transparent_0.5px),linear-gradient(to_bottom,#5b21b6_0.5px,transparent_0.5px)] bg-[size:16px_16px] border-violet-900/60 text-violet-400",
+  grandmaster: "bg-black bg-[radial-gradient(#d97706_0.8px,transparent_0.8px)] bg-[size:14px_14px] border-amber-500/30 text-amber-500",
+  void_walker: "bg-violet-950 bg-[radial-gradient(#c084fc_1px,transparent_1px)] bg-[size:20px_20px] border-purple-900/60 text-purple-400",
+  stellar_monarch: "bg-slate-950 bg-[radial-gradient(#fcd34d_0.8px,transparent_0.8px)] bg-[size:16px_16px] border-amber-600/40 text-amber-300",
+  binary_beast: "bg-black bg-[linear-gradient(to_bottom,rgba(16,185,129,0.1)_50%,transparent_50%)] bg-[size:100%_4px] border-emerald-900/50 text-emerald-400",
+  quantum_specter: "bg-cyan-950 bg-[repeating-linear-gradient(135deg,#0e7490,#0e7490_3px,transparent_3px,transparent_12px)] border-cyan-800/50 text-cyan-400",
+  neon_shogun: "bg-neutral-950 bg-[linear-gradient(115deg,#701a75_10%,transparent_10%),linear-gradient(295deg,#701a75_10%,transparent_10%)] bg-[size:12px_12px] border-fuchsia-900/60 text-fuchsia-400",
+  apex_predator: "bg-red-950 bg-[radial-gradient(#dc2626_1.2px,transparent_1.2px)] bg-[size:18px_18px] border-red-800/60 text-red-400",
+  shadow_agent: "bg-zinc-950 bg-[linear-gradient(to_right,#3f3f46_1px,transparent_1px),linear-gradient(to_bottom,#3f3f46_1px,transparent_1px)] bg-[size:14px_14px] border-zinc-800 text-zinc-400",
+  solar_flare: "bg-amber-950 bg-[radial-gradient(#f97316_1px,transparent_1px)] bg-[size:10px_10px] border-orange-950/60 text-orange-400",
+  abyss_watcher: "bg-slate-900 bg-[repeating-linear-gradient(45deg,#1e293b,#1e293b_10px,#0f172a_10px,#0f172a_20px)] border-slate-800/80 text-slate-300",
+  celestial_deity: "bg-slate-950 bg-[radial-gradient(#e2e8f0_1.5px,transparent_1.5px),radial-gradient(#fbbf24_1px,transparent_1px)] bg-[size:24px_24px] border-slate-700/50 text-amber-200",
+};
+
+const ALL_BANNERS_LIST = [
+  { id: "apprentice", name: "Apprentice Coder", reqLevel: 1, class: BANNER_CLASSES.apprentice },
+  { id: "novice", name: "Syntax Novice", reqLevel: 2, class: BANNER_CLASSES.novice },
+  { id: "bug_hunter", name: "Bug Hunter", reqLevel: 3, class: BANNER_CLASSES.bug_hunter },
+  { id: "explorer", name: "Algorithm Explorer", reqLevel: 4, class: BANNER_CLASSES.explorer },
+  { id: "architect", name: "System Architect", reqLevel: 5, class: BANNER_CLASSES.architect },
+  { id: "overlord", name: "API Overlord", reqLevel: 6, class: BANNER_CLASSES.overlord },
+  { id: "slinger", name: "Prompt Slinger", reqLevel: 7, class: BANNER_CLASSES.slinger },
+  { id: "stack_overlord", name: "Stack Overlord", reqLevel: 8, class: BANNER_CLASSES.stack_overlord },
+  { id: "cyber_sentient", name: "Cyber Sentient", reqLevel: 9, class: BANNER_CLASSES.cyber_sentient },
+  { id: "grandmaster", name: "Grandmaster", reqLevel: 10, class: BANNER_CLASSES.grandmaster },
+  { id: "void_walker", name: "Void Walker", reqLevel: 11, class: BANNER_CLASSES.void_walker },
+  { id: "stellar_monarch", name: "Stellar Monarch", reqLevel: 12, class: BANNER_CLASSES.stellar_monarch },
+  { id: "binary_beast", name: "Binary Beast", reqLevel: 13, class: BANNER_CLASSES.binary_beast },
+  { id: "quantum_specter", name: "Quantum Specter", reqLevel: 14, class: BANNER_CLASSES.quantum_specter },
+  { id: "neon_shogun", name: "Neon Shogun", reqLevel: 15, class: BANNER_CLASSES.neon_shogun },
+  { id: "apex_predator", name: "Apex Predator", reqLevel: 16, class: BANNER_CLASSES.apex_predator },
+  { id: "shadow_agent", name: "Shadow Agent", reqLevel: 17, class: BANNER_CLASSES.shadow_agent },
+  { id: "solar_flare", name: "Solar Flare", reqLevel: 18, class: BANNER_CLASSES.solar_flare },
+  { id: "abyss_watcher", name: "Abyss Watcher", reqLevel: 19, class: BANNER_CLASSES.abyss_watcher },
+  { id: "celestial_deity", name: "Celestial Deity", reqLevel: 20, class: BANNER_CLASSES.celestial_deity },
+];
+
 function ProfileTab({
   user,
   patchUser,
@@ -167,9 +247,25 @@ function ProfileTab({
   const [avatarBusy, setAvatarBusy] = useState(false);
   const [saveBusy, setSaveBusy] = useState(false);
 
-  // Mascot customization states
+  // Mascot and banner customization states
   const [myPetType, setMyPetType] = useState("cat");
   const [myPetColor, setMyPetColor] = useState("#FF6B00");
+  const [myBanner, setMyBanner] = useState("apprentice");
+
+  // Fetch achievements to calculate XP and unlocked status
+  const achievementsQuery = useQuery({
+    queryKey: ["achievements"],
+    queryFn: () => api<Achievement[]>("/achievements"),
+  });
+
+  const achievements = achievementsQuery.data ?? [];
+  const totalXp = achievements.filter((a) => a.unlocked).reduce((sum, a) => sum + (a.xpReward ?? 0), 0);
+  const currentLevel = Math.floor(totalXp / 1000) + 1;
+
+  const unlockedPetTypes = new Set([
+    "cat", "dog", "panda", "crab",
+    ...achievements.filter((a) => a.unlocked && a.mascotReward).map((a) => a.mascotReward!.type)
+  ]);
 
   useEffect(() => {
     if (user?.mascot) {
@@ -180,6 +276,12 @@ function ProfileTab({
       setMyPetColor(localStorage.getItem("mascot-color") ?? "#FF6B00");
     }
   }, [user?.mascot]);
+
+  useEffect(() => {
+    if (user?.banner) {
+      setMyBanner(user.banner);
+    }
+  }, [user?.banner]);
 
   const savePetConfig = async (type: string, color: string) => {
     setMyPetType(type);
@@ -197,6 +299,20 @@ function ProfileTab({
       queryClient.invalidateQueries({ queryKey: ["profile"] });
     } catch (err) {
       console.error("Failed to save mascot:", err);
+    }
+  };
+
+  const saveBannerConfig = async (bannerId: string) => {
+    setMyBanner(bannerId);
+    try {
+      await api("/user/banner", {
+        method: "PATCH",
+        body: { banner: bannerId },
+      });
+      patchUser({ banner: bannerId });
+      queryClient.invalidateQueries({ queryKey: ["profile"] });
+    } catch (err) {
+      console.error("Failed to save banner:", err);
     }
   };
 
@@ -272,8 +388,11 @@ function ProfileTab({
       <div className="space-y-3">
         <label className="text-[15px] font-medium text-text-muted">Profile Preview</label>
         <Card className="overflow-hidden border border-border bg-surface shadow-md">
-          {/* Card Header (Gradient background) */}
-          <div className="h-16 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent border-b border-border relative overflow-hidden flex items-center justify-end px-4">
+          {/* Card Header */}
+          <div className={cn(
+            "h-16 border-b relative overflow-hidden flex items-center justify-end px-4",
+            BANNER_CLASSES[myBanner] || "bg-slate-900 border-slate-800 text-slate-400"
+          )}>
             <div className="scale-75 origin-bottom-right translate-y-3 opacity-90">
               <KeyboardMascotAnimation active={true} pet={{ type: myPetType, color: myPetColor }} onlyMascot={true} />
             </div>
@@ -487,43 +606,74 @@ function ProfileTab({
               </p>
             </div>
 
+
             {/* Mascot Settings */}
             <div className="pt-6 border-t border-border/40 space-y-4">
               <div>
                 <h3 className="text-xs font-black text-text uppercase tracking-widest font-mono flex items-center gap-2">
-                  <Sparkles className="size-4 text-primary animate-pulse" />
+                  <Sparkles className="size-4 text-primary" />
                   Mascot Customization
                 </h3>
-                <p className="text-[11px] text-text-faint mt-1">Configure your personal typing mascot that other developers will see in battle rounds.</p>
+                <p className="text-[11px] text-text-faint mt-1">
+                  Configure your typing mascot. Unlock more by completing achievements! (Level {currentLevel} • {totalXp} XP)
+                </p>
               </div>
 
-              <div className="grid gap-6 sm:grid-cols-[1fr_200px]">
+              <div className="grid gap-6 sm:grid-cols-[1fr_180px]">
                 {/* Selectors and picks */}
                 <div className="space-y-4">
                   {/* Select Mascot Type */}
                   <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider font-mono">Select Animal Type</label>
-                    <div className="grid grid-cols-2 gap-2.5">
-                      {[
-                        { id: "cat", label: "Cat 🐱" },
-                        { id: "dog", label: "Dog 🐶" },
-                        { id: "panda", label: "Panda 🐼" },
-                        { id: "crab", label: "Crab 🦀" },
-                      ].map((petOpt) => (
-                        <button
-                          key={petOpt.id}
-                          type="button"
-                          onClick={() => savePetConfig(petOpt.id, myPetColor)}
-                          className={cn(
-                            "flex items-center justify-center py-2.5 px-3 rounded-lg border font-bold text-xs transition-all hover:scale-[1.01] active:scale-95 cursor-pointer",
-                            myPetType === petOpt.id
-                              ? "border-primary bg-primary/5 text-primary shadow-sm"
-                              : "border-border bg-surface-2 text-text-muted hover:border-border-strong hover:text-text"
-                          )}
-                        >
-                          {petOpt.label}
-                        </button>
-                      ))}
+                    <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider font-mono">Select Animal ({ALL_PETS_LIST.filter(p => unlockedPetTypes.has(p.id)).length}/30 Unlocked)</label>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-[220px] overflow-y-auto pr-1.5 border border-border/30 rounded-lg p-2 bg-surface-2/40 scrollbar-thin">
+                      {ALL_PETS_LIST.map((petOpt) => {
+                        const isUnlocked = unlockedPetTypes.has(petOpt.id);
+                        const isSelected = myPetType === petOpt.id;
+
+                        // Rarity styling mapping
+                        let borderClass = "border-border";
+                        let textClass = "text-text-muted";
+                        let rarityLabel = "Common";
+                        
+                        if (petOpt.rarity === "RARE") {
+                          borderClass = "border-blue-500/25";
+                          textClass = "text-blue-400/90";
+                          rarityLabel = "Rare";
+                        } else if (petOpt.rarity === "EPIC") {
+                          borderClass = "border-purple-500/25";
+                          textClass = "text-purple-400/90";
+                          rarityLabel = "Epic";
+                        } else if (petOpt.rarity === "LEGENDARY") {
+                          borderClass = "border-amber-500/30";
+                          textClass = "text-amber-400";
+                          rarityLabel = "Legendary";
+                        }
+
+                        return (
+                          <button
+                            key={petOpt.id}
+                            type="button"
+                            disabled={!isUnlocked}
+                            onClick={() => savePetConfig(petOpt.id, myPetColor)}
+                            className={cn(
+                              "flex flex-col items-start p-2 rounded-lg border text-left transition-all relative overflow-hidden select-none",
+                              isUnlocked ? "hover:scale-[1.01] cursor-pointer" : "opacity-40 cursor-not-allowed bg-surface-3/30",
+                              isSelected
+                                ? "border-primary bg-primary/5 shadow-sm ring-1 ring-primary/30"
+                                : cn("bg-surface", borderClass)
+                            )}
+                            title={isUnlocked ? petOpt.source : `Locked: Requires "${petOpt.source.replace(" Achievement", "")}"`}
+                          >
+                            <span className="text-xs font-bold truncate w-full flex items-center justify-between gap-1">
+                              {petOpt.label}
+                              {!isUnlocked && <Lock className="size-2.5 text-text-faint shrink-0" />}
+                            </span>
+                            <span className={cn("text-[9px] uppercase font-bold font-mono tracking-wider mt-0.5", textClass)}>
+                              {rarityLabel}
+                            </span>
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
 
@@ -538,6 +688,8 @@ function ProfileTab({
                         { hex: "#EF4444", name: "Red" },
                         { hex: "#A855F7", name: "Purple" },
                         { hex: "#06B6D4", name: "Cyan" },
+                        { hex: "#F59E0B", name: "Gold" },
+                        { hex: "#EC4899", name: "Pink" },
                       ].map((colorOpt) => (
                         <button
                           key={colorOpt.hex}
@@ -562,12 +714,58 @@ function ProfileTab({
                 </div>
 
                 {/* Local Preview box */}
-                <div className="flex flex-col items-center justify-center p-4 border border-border bg-surface-2/65 rounded-xl gap-2 select-none">
+                <div className="flex flex-col items-center justify-center p-4 border border-border bg-surface-2/65 rounded-xl gap-2 select-none h-fit self-center">
                   <span className="text-[9px] text-text-faint font-semibold uppercase tracking-wider font-mono">Live Preview</span>
                   <div className="scale-110 origin-center py-1">
                     <KeyboardMascotAnimation active={true} pet={{ type: myPetType, color: myPetColor }} onlyMascot={true} />
                   </div>
                 </div>
+              </div>
+            </div>
+
+            {/* Profile Banner Settings */}
+            <div className="pt-6 border-t border-border/40 space-y-4">
+              <div>
+                <h3 className="text-xs font-black text-text uppercase tracking-widest font-mono flex items-center gap-2">
+                  <User className="size-4 text-primary" />
+                  Profile Banner Customization
+                </h3>
+                <p className="text-[11px] text-text-faint mt-1">
+                  Select a custom background banner for your profile card based on your XP level.
+                </p>
+              </div>
+
+              <div className="grid gap-3 sm:grid-cols-2 max-h-[220px] overflow-y-auto pr-1.5 p-1 scrollbar-thin">
+                {ALL_BANNERS_LIST.map((bannerOpt) => {
+                  const isUnlocked = currentLevel >= bannerOpt.reqLevel;
+                  const isSelected = myBanner === bannerOpt.id;
+
+                  return (
+                    <button
+                      key={bannerOpt.id}
+                      type="button"
+                      disabled={!isUnlocked}
+                      onClick={() => saveBannerConfig(bannerOpt.id)}
+                      className={cn(
+                        "relative flex flex-col items-start p-3.5 rounded-lg border text-left transition-all overflow-hidden select-none bg-gradient-to-r",
+                        bannerOpt.class,
+                        isUnlocked ? "hover:scale-[1.01] cursor-pointer" : "opacity-35 cursor-not-allowed",
+                        isSelected ? "ring-2 ring-primary ring-offset-1 ring-offset-surface scale-[1.01]" : ""
+                      )}
+                    >
+                      <div className="flex w-full items-center justify-between z-10">
+                        <span className="text-xs font-black font-mono tracking-wide uppercase drop-shadow">
+                          {bannerOpt.name}
+                        </span>
+                        {isSelected && <Check className="size-3.5 stroke-[3] drop-shadow" />}
+                        {!isUnlocked && <Lock className="size-3 text-text-faint shrink-0" />}
+                      </div>
+                      <span className="text-[9px] font-semibold font-mono tracking-wider mt-1 opacity-80 z-10 drop-shadow">
+                        {isUnlocked ? "Unlocked" : `Requires Level ${bannerOpt.reqLevel}`}
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
 

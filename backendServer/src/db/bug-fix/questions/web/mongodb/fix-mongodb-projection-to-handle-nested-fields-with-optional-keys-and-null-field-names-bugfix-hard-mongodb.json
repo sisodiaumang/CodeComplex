@@ -1,0 +1,143 @@
+{
+  "title": "Fix MongoDB Projection to Handle Nested Fields with Optional Keys and Null Field Names",
+  "subCategory": "MongoDB Projection",
+  "statement": {
+    "markdown": "You are given a MongoDB collection with a document containing a nested field with an optional key and a null field name. Your task is to write a function that takes the document and the projection as input and returns the projected document. The function should handle the nested field with an optional key and the null field name correctly.",
+    "inputFormat": "The function takes two inputs: `document` (a MongoDB document) and `projection` (a string representing the MongoDB projection)",
+    "outputFormat": "The function returns the projected document",
+    "notes": "The function should handle the case where the nested field with an optional key is missing from the document.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of documents in the collection"
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of fields in the document"
+      }
+    ],
+    "examples": [
+      {
+        "input": "document = {\"name\": \"John\", \"address\": {\"street\": \"123 Main St\", \"city\": \"Anytown\"}}, projection = \"{name, address.city}\"",
+        "output": "{\"name\":\"John\",\"address\":{\"city\":\"Anytown\"}}",
+        "explanation": "The function should return the document with the `name` field and the `address.city` field, excluding the `address.street` field"
+      },
+      {
+        "input": "document = {\"name\": \"Jane\", \"address\": {\"street\": \"456 Elm St\"}}, projection = \"{name, address.city}\"",
+        "output": "{\"name\":\"Jane\",\"address\":{\"city\":null}}",
+        "explanation": "The function should return the document with the `name` field and the `address.city` field, which is null because the `address` field does not contain a `city` key"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 75,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "MONGODB"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "mongodb"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text: Handle the case where the nested field with an optional key is missing from the document."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(n*m)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "function projectDocument(document, projection) {\n  // Your code here\n}\n",
+    "python": "class Solution:\n  def projectDocument(self, document, projection):\n    # Your code here\n"
+  },
+  "buggyStarterCode": {
+    "javascript": "function projectDocument(document, projection) {\n  const fields = projection.split(',');\n  const result = {};\n  for (const field of fields) {\n    const [key, subKey] = field.split('.');\n    result[key] = document[key];\n    if (subKey) {\n      result[key] = result[key][subKey];\n    }\n  }\n  return result;\n}\n",
+    "python": "class Solution:\n  def projectDocument(self, document, projection):\n    fields = projection.split(',');\n    result = {};\n    for field in fields:\n      key, subKey = field.split('.');\n      result[key] = document[key];\n      if subKey:\n        result[key] = result[key][subKey];\n    return result;"
+  },
+  "functionSignature": {
+    "javascript": "function projectDocument(document, projection) {\n}",
+    "python": "def projectDocument(self, document, projection):\n"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction projectDocument(document, projection) {\n  const fields = projection.split(',');\n  const result = {};\n  for (const field of fields) {\n    const [key, subKey] = field.split('.');\n    if (subKey && document[key] && typeof document[key] === 'object') {\n      result[key] = { ...document[key] }; // deep clone the object\n      if (subKey in result[key]) {\n        result[key][subKey] = document[key][subKey];\n      } else {\n        result[key][subKey] = null;\n      }\n    } else {\n      result[key] = document[key];\n    }\n  }\n  return result;\n}\n",
+    "python": "class Solution:\n  def projectDocument(self, document, projection):\n    fields = projection.split(',');\n    result = {};\n    for field in fields:\n      key, subKey = field.split('.');\n      if subKey and document.get(key) and isinstance(document.get(key), dict):\n        result[key] = {**document[key]} # deep copy the object\n        if subKey in result[key]:\n          result[key][subKey] = document[key][subKey]\n        else:\n          result[key][subKey] = None\n      else:\n        result[key] = document[key];\n    return result;"
+  },
+  "judgeConfig": {
+    "timeLimit": 3,
+    "memoryLimit": 512,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"name\":\"John\",\"address\":{\"street\":\"123 Main St\",\"city\":\"Anytown\"}} {name, address.city}",
+      "output": "{\"name\":\"John\",\"address\":{\"city\":\"Anytown\"}}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"name\":\"Jane\",\"address\":{\"street\":\"456 Elm St\"}} {name, address.city}",
+      "output": "{\"name\":\"Jane\",\"address\":{\"city\":null}}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "9cc57b2809ef39951b62a813",
+  "slug": "fix-mongodb-projection-to-handle-nested-fields-with-optional-keys-and-null-field-names-bugfix-hard-mongodb",
+  "mode": "bug_fix",
+  "category": "MONGODB",
+  "difficulty": "Hard"
+}

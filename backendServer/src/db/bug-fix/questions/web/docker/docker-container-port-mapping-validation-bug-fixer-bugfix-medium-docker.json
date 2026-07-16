@@ -1,0 +1,149 @@
+{
+  "title": "Docker Container Port Mapping Validation Bug Fixer",
+  "subCategory": "Container Port Mapping",
+  "statement": {
+    "markdown": "Given a string of Docker container port mappings in the format `containerName:port`, validate if the port number is within the allowed range (1024-65535). Return `true` if the port is valid, `false` otherwise. For example, `web:8080` is valid, but `web:123` is not. If there are multiple mappings, they can be separated by commas, e.g., `web:8080, db:54321`.",
+    "inputFormat": "A string of container port mappings",
+    "outputFormat": "A boolean indicating whether the port is valid",
+    "notes": "Assume the input string is well-formed and does not contain any invalid characters.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Maximum number of port mappings"
+      }
+    ],
+    "examples": [
+      {
+        "input": "web:8080, db:54321",
+        "output": "true",
+        "explanation": "Both ports are within the allowed range"
+      },
+      {
+        "input": "web:123, db:54321",
+        "output": "false",
+        "explanation": "The port 123 is not within the allowed range"
+      },
+      {
+        "input": "web:8080, db:65536",
+        "output": "false",
+        "explanation": "The port 65536 is outside the allowed range"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DOCKER"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "docker"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Split the input string into individual port mappings"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(n) ",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "function validatePortMappings(mappings) {\n  // Your code here\n}\nreturn validatePortMappings;",
+    "python": "class Solution:\n  def validate_port_mappings(self, mappings):\n    # Your code here\n"
+  },
+  "buggyStarterCode": {
+    "javascript": "function validatePortMappings(mappings) {\n  mappings = mappings.split(',');\n  let isValid = true;\n  for (let mapping of mappings) {\n    let [container, port] = mapping.split(':');\n    if (parseInt(port) >= 0 && parseInt(port) <= 1024) {\n      isValid = false;\n      break;\n    }\n  }\n  return isValid;\n}\nreturn validatePortMappings;",
+    "python": "class Solution:\n  def validate_port_mappings(self, mappings):\n    mappings = mappings.split(',');\n    isValid = True;\n    for mapping in mappings:\n      container, port = mapping.split(':');\n      if int(port) >= 0 and int(port) <= 1024:\n        isValid = False;\n        break;\n    return isValid;"
+  },
+  "functionSignature": {
+    "javascript": "function validatePortMappings(mappings);",
+    "python": "def validate_port_mappings(self, mappings: str) -> bool:"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction validatePortMappings(mappings) {\n  mappings = mappings.split(',');\n  let isValid = true;\n  for (let mapping of mappings) {\n    let [container, port] = mapping.split(':');\n    if (parseInt(port) < 1024 || parseInt(port) > 65535) {\n      isValid = false;\n      break;\n    }\n  }\n  return isValid;\n}\nmodule.exports = { validatePortMappings };\n\nconst run = () => {\n  const mappings = 'web:8080, db:54321';\n  console.log(validatePortMappings(mappings));\n};\nuncaughtExceptionHandler = function (error) {\n  console.error(error);\n};\nprocess.on('uncaughtException', uncaughtExceptionHandler);\nprocess.on('unhandledRejection', uncaughtExceptionHandler);\nrun();",
+    "python": "class Solution:\n  def validate_port_mappings(self, mappings: str) -> bool:\n    mappings = mappings.split(',');\n    isValid = True;\n    for mapping in mappings:\n      container, port = mapping.split(':');\n      if int(port) < 1024 or int(port) > 65535:\n        isValid = False;\n        break;\n    return isValid;\n\nif __name__ == '__main__':\n  import sys\n  solution = Solution()\n  mappings = 'web:8080, db:54321'\n  print(solution.validate_port_mappings(mappings))"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "web:8080, db:54321",
+      "output": "true",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "web:123, db:54321",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    },
+    {
+      "id": "tc_3",
+      "input": "web:8080, db:65536",
+      "output": "false",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "_id": "3999bfa41b79eda1a7fc61ba",
+  "slug": "docker-container-port-mapping-validation-bug-fixer-bugfix-medium-docker",
+  "mode": "bug_fix",
+  "category": "DOCKER",
+  "difficulty": "Medium"
+}

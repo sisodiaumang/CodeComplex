@@ -1,0 +1,140 @@
+{
+  "_id": "47444761759c26dd0ad010f1",
+  "title": "Implementing a Payment Refund Endpoint",
+  "slug": "implementing-a-payment-refund-endpoint-medium-payment",
+  "difficulty": "Medium",
+  "topics": [
+    "PAYMENT"
+  ],
+  "statement": "Create a RESTful API that provides a refund endpoint for payments. The endpoint should accept a payment ID, refund amount, and description. If the payment exists, the refund should be processed and the transaction updated. Provide a GET endpoint to retrieve the list of all refunds for a specific payment ID. The API should handle cases where the payment ID is invalid or missing, and return a meaningful error message.",
+  "constraints": [
+    "Must use a mock database to simulate payments and refunds",
+    "Must handle missing or invalid payment IDs",
+    "Must validate and sanitize refund amounts"
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/refund",
+      "description": "Creates a refund for a payment ID\n\nRequest Body:\n- paymentId: The ID of the payment to refund\n- amount: The amount to refund\n- description: Description of the refund\n\nResponse:\n- success: Whether the refund was successful\n- message: Message describing the outcome of the refund"
+    },
+    {
+      "method": "GET",
+      "path": "/api/refund",
+      "description": "Returns a list of refunds for a payment ID\n\nQuery Parameters:\n- paymentId: The ID of the payment to retrieve refunds for\n\nResponse:\n- refunds: List of refunds for the payment ID"
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\"name\": \"refund-api\",\n  \"version\": \"1.0.0\",\n  \"main\": \"index.js\",\n  \"scripts\": {\n    \"start\": \"node index.js\"\n  },\n  \"dependencies\": {\n    \"express\": \"^4.18.2\",\n    \"uuid\": \"^8.3.2\"\n  }\n}",
+    "index.js": "const express = require('express');\nconst app = express();\napp.use(express.json());\n\n// Mock database of payments\nconst payments = [];\n\n// TODO: Implement refund endpoint\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "POST",
+      "path": "/api/refund",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "paymentId": "12345",
+        "amount": 10.99,
+        "description": "Refund for purchase"
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "success": true,
+        "message": "Refund processed successfully"
+      },
+      "expectedBodySchema": null,
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "POST",
+      "path": "/api/refund",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "paymentId": "invalid",
+        "amount": 10.99,
+        "description": "Refund for purchase"
+      },
+      "expectedStatus": 400,
+      "expectedBody": {
+        "success": false,
+        "message": "Invalid payment ID"
+      },
+      "expectedBodySchema": null,
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "GET",
+      "path": "/api/refund",
+      "expectedStatus": 200,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "GET",
+      "path": "/api/refund",
+      "query": {
+        "paymentId": "12345"
+      },
+      "expectedStatus": 200,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "POST",
+      "path": "/api/refund",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "paymentId": "12345",
+        "amount": 0,
+        "description": "Refund for purchase"
+      },
+      "expectedStatus": 400,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "stripe",
+    "razorpay",
+    "webhooks",
+    "checkout",
+    "refunds",
+    "subscriptions",
+    "payment",
+    "refund",
+    "validation",
+    "sanitization"
+  ]
+}

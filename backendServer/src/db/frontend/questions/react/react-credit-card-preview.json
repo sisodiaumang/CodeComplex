@@ -1,0 +1,53 @@
+{
+  "_id": "75d7bbc1f6fd7f94f6e79c4a",
+  "title": "React Credit Card Preview Form",
+  "slug": "react-credit-card-preview",
+  "difficulty": "Medium",
+  "topics": [
+    "REACT",
+    "REACT_CREDIT_CARD_PREVIEW"
+  ],
+  "statement": {
+    "markdown": "## React Credit Card Form and Live Preview\n\nBuild an interactive payment card checkout form with a live visual card layout mockup.\n\n### Requirements:\n1. **Interactive Preview**: Entering input fields (Card Number, Holder Name, Expiry Date, CVC) instantly reflects values onto an overlaying graphical card template design.\n2. **Card Flipping**: Focus on the CVC input field flips the visual card to reveal its backside; focusing off flips it back.\n3. **Number Formatting**: Automatically format the card number input into four-digit blocks (e.g. `xxxx xxxx xxxx xxxx`) on type.\n4. **Input Validation**: Add basic input patterns to validate card lengths, expiration date structures, and numerical inputs.\n"
+  },
+  "constraints": [
+    "Must support mobile responsive layout coordinates",
+    "Must utilize React hooks",
+    "Must use Tailwind CSS"
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "html": "",
+    "css": "",
+    "react": "import React, { useState } from 'react';\n\nexport default function CreditCardForm() {\n  // Implement credit card input form with visual preview flip-card here\n  return null;\n}"
+  },
+  "gradingCriteria": [
+    {
+      "id": "functional_correctness",
+      "description": "Verify that the interactive props, callbacks, and element structures work cleanly.",
+      "weight": 60
+    },
+    {
+      "id": "code_cleanliness",
+      "description": "Verify state structure designs and clean Tailwind CSS layouts.",
+      "weight": 40
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "react",
+      "tailwind"
+    ],
+    "referenceSolution": "import React, { useState } from 'react';\n\nexport default function CreditCardForm() {\n  const [number, setNumber] = useState(\"\");\n  const [name, setName] = useState(\"\");\n  const [expiry, setExpiry] = useState(\"\");\n  const [cvc, setCvc] = useState(\"\");\n  const [isFlipped, setIsFlipped] = useState(false);\n\n  const handleNumberChange = (e) => {\n    const value = e.target.value.replace(/\\D/g, '').substring(0, 16);\n    const formatted = value.match(/.{1,4}/g)?.join(' ') || '';\n    setNumber(formatted);\n  };\n\n  const handleExpiryChange = (e) => {\n    const value = e.target.value.replace(/\\D/g, '').substring(0, 4);\n    const formatted = value.length > 2 ? `${value.substring(0, 2)}/${value.substring(2)}` : value;\n    setExpiry(formatted);\n  };\n\n  const handleCvcChange = (e) => {\n    const value = e.target.value.replace(/\\D/g, '').substring(0, 3);\n    setCvc(value);\n  };\n\n  return (\n    <div className=\"flex flex-col md:flex-row items-center gap-10 max-w-3xl mx-auto py-10 font-sans\">\n      {/* 3D Visual Card Preview */}\n      <div className=\"w-80 h-48 [perspective:1000px] relative select-none\">\n        <div className={`w-full h-full relative transition-transform duration-500 [transform-style:preserve-3d] ${isFlipped ? '[transform:rotateY(180deg)]' : ''}`}>\n          {/* Card Front */}\n          <div className=\"absolute inset-0 w-full h-full rounded-2xl bg-gradient-to-tr from-purple-700 to-indigo-500 p-6 text-white flex flex-col justify-between shadow-xl backface-hidden\">\n            <div className=\"flex justify-between items-center\">\n              <span className=\"text-xs font-bold uppercase tracking-widest\">DevWar Pay</span>\n              <svg className=\"w-8 h-8 opacity-80\" viewBox=\"0 0 24 24\" fill=\"currentColor\"><path d=\"M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z\" /></svg>\n            </div>\n            <div className=\"text-xl font-mono tracking-widest my-4\">\n              {number || \"•••• •••• •••• ••••\"}\n            </div>\n            <div className=\"flex justify-between text-xs font-medium uppercase\">\n              <div>\n                <span className=\"block text-[10px] text-purple-200\">Holder</span>\n                <span>{name || \"UMANG SISODIA\"}</span>\n              </div>\n              <div>\n                <span className=\"block text-[10px] text-purple-200\">Expires</span>\n                <span>{expiry || \"MM/YY\"}</span>\n              </div>\n            </div>\n          </div>\n\n          {/* Card Back */}\n          <div className=\"absolute inset-0 w-full h-full rounded-2xl bg-gradient-to-tr from-purple-800 to-indigo-600 shadow-xl backface-hidden [transform:rotateY(180deg)] py-6\">\n            <div className=\"w-full h-10 bg-black mt-2\" />\n            <div className=\"px-6 mt-4\">\n              <span className=\"block text-[10px] text-purple-200 uppercase\">CVC</span>\n              <div className=\"w-full bg-white text-gray-800 text-right pr-3 font-mono py-1 rounded font-bold\">\n                {cvc || \"•••\"}\n              </div>\n            </div>\n          </div>\n        </div>\n      </div>\n\n      {/* Inputs Form */}\n      <div className=\"w-80 flex flex-col gap-4\">\n        <div>\n          <label className=\"block text-xs font-bold text-gray-500 uppercase mb-1\">Card Number</label>\n          <input type=\"text\" placeholder=\"1234 5678 1234 5678\" value={number} onChange={handleNumberChange} className=\"w-full px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none focus:border-purple-500\" />\n        </div>\n        <div>\n          <label className=\"block text-xs font-bold text-gray-500 uppercase mb-1\">Holder Name</label>\n          <input type=\"text\" placeholder=\"UMANG SISODIA\" value={name} onChange={(e) => setName(e.target.value.substring(0, 20))} className=\"w-full px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none focus:border-purple-500\" />\n        </div>\n        <div className=\"flex gap-4\">\n          <div className=\"w-1/2\">\n            <label className=\"block text-xs font-bold text-gray-500 uppercase mb-1\">Expiry</label>\n            <input type=\"text\" placeholder=\"MM/YY\" value={expiry} onChange={handleExpiryChange} className=\"w-full px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none focus:border-purple-500\" />\n          </div>\n          <div className=\"w-1/2\">\n            <label className=\"block text-xs font-bold text-gray-500 uppercase mb-1\">CVC</label>\n            <input type=\"text\" placeholder=\"123\" value={cvc} onChange={handleCvcChange} onFocus={() => setIsFlipped(true)} onBlur={() => setIsFlipped(false)} className=\"w-full px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none focus:border-purple-500\" />\n          </div>\n        </div>\n      </div>\n      <style>{`\n        .backface-hidden {\n          backface-visibility: hidden;\n          -webkit-backface-visibility: hidden;\n        }\n      `}</style>\n    </div>\n  );\n}"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

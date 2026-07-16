@@ -1,0 +1,136 @@
+{
+  "title": "Fixing Unnecessary Re-renders with React Memo",
+  "subCategory": "State Management",
+  "statement": {
+    "markdown": "A React function component is re-rendering unnecessarily due to incorrect use of the `useMemo` hook. Fix the code to prevent unnecessary re-renders.",
+    "inputFormat": "Input is an object with two properties: `name` and `age`.",
+    "outputFormat": "Output is an array of two strings: `name` and `age`.",
+    "notes": "The component should only re-render when the `age` property changes.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of times the component is rendered"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"name\": 'John', \"age\": 25}",
+        "output": "['John', '25']",
+        "explanation": "The component should only re-render when the age property changes."
+      },
+      {
+        "input": "{\"name\": 'Jane', \"age\": 30}",
+        "output": "['Jane', '30']",
+        "explanation": "The component should only re-render when the age property changes."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 10,
+    "points": 30,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "REACT"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "react"
+    ],
+    "interviewFrequency": 1,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use `useMemo` with a dependency array."
+    }
+  ],
+  "editorial": {
+    "title": "Fixing Unnecessary Re-renders with React Memo",
+    "intuition": "The `useMemo` hook is used to memoize a value, so it's only recalculated when one of its dependencies changes.",
+    "bruteForce": "The brute force approach involves recalculating the value on every render.",
+    "betterSolution": "The better solution involves using `useMemo` with a dependency array to memoize the value.",
+    "optimalSolution": "The optimal solution involves using `useMemo` with a dependency array to memoize the value, and only re-rendering when the dependency changes.",
+    "proofOfCorrectness": "The proof of correctness involves showing that the `useMemo` hook is used correctly to memoize the value.",
+    "dryRun": "A step-by-step example run involves using the `useMemo` hook to memoize the value, and only re-rendering when the dependency changes.",
+    "commonMistakes": [
+      "Not using a dependency array",
+      "Using a dependency array with incorrect dependencies"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "// Import the useState and useMemo hooks\nimport { useState, useMemo } from 'react';\n\n// Define a function component\nfunction MyComponent({ name, age }) {\n  // Use the useState hook to create a state variable\n  const [count, setCount] = useState(0);\n\n  // Use the useMemo hook to memoize a value\n  const memoizedValue = useMemo(() => {\n    // Recalculate the value on every render\n    return `Name: ${name}, Age: ${age}`;\n  }, []);\n\n  // Return a JSX element\n  return (\n    <div>\n      {memoizedValue}\n      <button onClick={() => setCount(count + 1)}>Increment Count</button>\n    </div>\n  );\n}\n\n// Export the function component\nexport default MyComponent;\n",
+    "python": "// Import the useState and useMemo hooks\nimport { useState, useMemo } from 'react';\n\n// Define a function component\nclass MyComponent extends React.Component {\n  constructor(props) {\n    super(props);\n\n    // Use the useState hook to create a state variable\n    this.state = {\n      count: 0\n    };\n  }\n\n  // Use the useMemo hook to memoize a value\n  memoizedValue = useMemo(() => {\n    // Recalculate the value on every render\n    return `Name: ${this.props.name}, Age: ${this.props.age}`;\n  }, []);\n\n  // Render the component\n  render() {\n    return (\n      <div>\n        {this.memoizedValue}\n        <button onClick={() => this.setState({ count: this.state.count + 1 })}>Increment Count</button>\n      </div>\n    );\n  }\n}\n\n// Export the function component\nexport default MyComponent;"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Import the useState and useMemo hooks\nimport { useState, useMemo } from 'react';\n\n// Define a function component\nfunction MyComponent({ name, age }) {\n  // Use the useState hook to create a state variable\n  const [count, setCount] = useState(0);\n\n  // Use the useMemo hook to memoize a value\n  const memoizedValue = useMemo(() => {\n    // Recalculate the value on every render\n    return `Name: ${name}, Age: ${age}`;\n  }, [\n    // Incorrect dependency array\n    name\n  ]);\n\n  // Return a JSX element\n  return (\n    <div>\n      {memoizedValue}\n      <button onClick={() => setCount(count + 1)}>Increment Count</button>\n    </div>\n  );\n}\n\n// Export the function component\nexport default MyComponent;",
+    "python": "// Import the useState and useMemo hooks\nimport { useState, useMemo } from 'react';\n\n// Define a function component\nclass MyComponent extends React.Component {\n  constructor(props) {\n    super(props);\n\n    // Use the useState hook to create a state variable\n    this.state = {\n      count: 0\n    };\n  }\n\n  // Use the useMemo hook to memoize a value\n  memoizedValue = useMemo(() => {\n    // Recalculate the value on every render\n    return `Name: ${this.props.name}, Age: ${this.props.age}`;\n  }, [\n    // Incorrect dependency array\n    this.props.name\n  ]);\n\n  // Render the component\n  render() {\n    return (\n      <div>\n        {this.memoizedValue}\n        <button onClick={() => this.setState({ count: this.state.count + 1 })}>Increment Count</button>\n      </div>\n    );\n  }\n}\n\n// Export the function component\nexport default MyComponent;"
+  },
+  "functionSignature": {
+    "javascript": "function MyComponent({ name, age }) {",
+    "python": "class MyComponent extends React.Component {\n  constructor(props) {\n    super(props);\n  }\n}"
+  },
+  "solutions": {
+    "javascript": "// Import the useState and useMemo hooks\nimport { useState, useMemo } from 'react';\n\n// Define a function component\nfunction MyComponent({ name, age }) {\n  // Use the useState hook to create a state variable\n  const [count, setCount] = useState(0);\n\n  // Use the useMemo hook to memoize a value\n  const memoizedValue = useMemo(() => {\n    // Recalculate the value on every render\n    return `Name: ${name}, Age: ${age}`;\n  }, [\n    // Correct dependency array\n    name,\n    age\n  ]);\n\n  // Return a JSX element\n  return (\n    <div>\n      {memoizedValue}\n      <button onClick={() => setCount(count + 1)}>Increment Count</button>\n    </div>\n  );\n}\n\n// Export the function component\nexport default MyComponent;",
+    "python": "// Import the useState and useMemo hooks\nimport { useState, useMemo } from 'react';\n\n// Define a function component\nclass MyComponent extends React.Component {\n  constructor(props) {\n    super(props);\n\n    // Use the useState hook to create a state variable\n    this.state = {\n      count: 0\n    };\n  }\n\n  // Use the useMemo hook to memoize a value\n  memoizedValue = useMemo(() => {\n    // Recalculate the value on every render\n    return `Name: ${this.props.name}, Age: ${this.props.age}`;\n  }, [\n    // Correct dependency array\n    this.props.name,\n    this.props.age\n  ]);\n\n  // Render the component\n  render() {\n    return (\n      <div>\n        {this.memoizedValue}\n        <button onClick={() => this.setState({ count: this.state.count + 1 })}>Increment Count</button>\n      </div>\n    );\n  }\n}\n\n// Import the React component\nimport React from 'react';\n\n// Define a function to render the component\nfunction render() {\n  ReactDOM.render(\n    <MyComponent name='John' age={25} />\n    ,\n    document.getElementById('root')\n  );\n}\n\n// Call the function to render the component\nrender();\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2000,
+    "memoryLimit": 16777216,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"name\": 'John', \"age\": 25}",
+      "output": "['John', '25']",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"name\": 'Jane', \"age\": 30}",
+      "output": "['Jane', '30']",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "bed4b430da19d1974eb2277b",
+  "slug": "fixing-unnecessary-re-renders-with-react-memo-bugfix-easy-react",
+  "mode": "bug_fix",
+  "category": "REACT",
+  "difficulty": "Easy"
+}

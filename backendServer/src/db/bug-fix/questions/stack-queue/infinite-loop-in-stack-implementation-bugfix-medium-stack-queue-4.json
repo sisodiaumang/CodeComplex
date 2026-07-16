@@ -1,0 +1,156 @@
+{
+  "_id": "3ae3a02c55f137a4fdb18471",
+  "title": "Infinite Loop in Stack Implementation",
+  "slug": "infinite-loop-in-stack-implementation-bugfix-medium-stack-queue-4",
+  "difficulty": "Medium",
+  "category": "DSA",
+  "subCategory": "STACK",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 75,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [
+      "STACK: Pop and Push Operations"
+    ],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "stack",
+      "expression evaluation"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given a string sequence, implement a stack to check if the expression is balanced and evaluate the expression. If the expression is balanced, evaluate it and return the final value. A valid expression consists of integers and the four basic arithmetic operations (+, -, *, /). Each expression starts with an integer followed by zero or more operators and operands. The expression is balanced if every opening parenthesis is closed and every operator is preceded by an operand. Evaluate the expression from left to right.",
+    "inputFormat": "A string sequence representing an expression",
+    "outputFormat": "An integer representing the result of the expression",
+    "notes": "The expression is assumed to be well-formed, i.e., valid arithmetic operations are performed and the operator precedence is applied",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "expr",
+        "type": "string",
+        "min": 1,
+        "max": 10000,
+        "description": "The input expression"
+      }
+    ],
+    "examples": [
+      {
+        "input": "2+3*4",
+        "output": "14",
+        "explanation": "The expression is evaluated from left to right: (2+3)*4 = 20, then 20*4 = 80, but we return the first value of the first eval which is 14."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Handle the case when the operator is not preceded by an operand"
+    }
+  ],
+  "editorial": {
+    "title": "Infinite Loop in Stack Implementation Solution",
+    "intuition": "A stack can be used to keep track of the operands and operators in the expression. The stack should pop operators when an operand is encountered, and the operator should be applied to the current operand and the top operand on the stack.",
+    "bruteForce": "A brute-force approach would involve parsing the expression using a recursive descent parser or a shunting-yard algorithm and then applying the operators to the operands",
+    "betterSolution": "A stack can be used to keep track of the operators and operands in the expression",
+    "optimalSolution": "The stack can be used to keep track of the operators and operands in the expression, and the expression can be evaluated from left to right",
+    "proofOfCorrectness": "The stack-based approach ensures that every opening parenthesis is closed and every operator is preceded by an operand",
+    "dryRun": "The stack-based approach ensures that every opening parenthesis is closed and every operator is preceded by an operand, and the expression can be evaluated from left to right",
+    "commonMistakes": [
+      "Infinite loop in stack implementation",
+      "Incorrect operator precedence"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\nint evaluateExpression(string expr) {\n// TODO: implement expression evaluation using a stack\n}\n};",
+    "java": "public class Solution {\npublic int evaluateExpression(String expr) {\n// TODO: implement expression evaluation using a stack\nreturn 0;\n}\n}",
+    "python": "class Solution:\n\ndef evaluate_expression(self, expr: str) -> int:\n    # TODO: implement expression evaluation using a stack\n    pass\n",
+    "javascript": "function evaluateExpression(expr) {\n    // TODO: implement expression evaluation using a stack\n    return 0;\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\nint evaluateExpression(string expr) {\n    stack<char> s;\n    for (int i = 0; i < expr.length(); i++) {\n        if (isdigit(expr[i]))\n            s.push(expr[i]);\n        else if (s.empty())\n            s.push(expr[i]);\n        else\n            s.pop();\n    }\n    return 0;\n}\n};",
+    "java": "public class Solution {\npublic int evaluateExpression(String expr) {\n    Stack<Character> s = new Stack<>();\n    for (int i = 0; i < expr.length(); i++) {\n        if (Character.isDigit(expr.charAt(i)))\n            s.push(expr.charAt(i));\n        else if (s.isEmpty())\n            s.push(expr.charAt(i));\n        else\n            s.pop();\n    }\n    return 0;\n}",
+    "python": "class Solution:\n\ndef evaluate_expression(self, expr: str) -> int:\n    stack = []\n    for i in range(len(expr)):\n        if expr[i].isdigit():\n            stack.append(expr[i])\n        else: \n            stack.pop()\n    return 0\n",
+    "javascript": "function evaluateExpression(expr) {\n    let s = [];\n    for (let i = 0; i < expr.length; i++) {\n        if (!isNaN(expr[i]))\n            s.push(expr[i]);\n        else\n            s.pop();\n    }\n    return 0;\n}"
+  },
+  "functionSignature": {
+    "cpp": "int evaluateExpression(string expr);",
+    "java": "int evaluateExpression(String expr);",
+    "python": "def evaluate_expression(self, expr: str) -> int;",
+    "javascript": "var evaluateExpression = function(expr) {\n    return 0;\n}"
+  },
+  "solutions": {
+    "python": "class Solution:\n\ndef evaluate_expression(self, expr: str) -> int:\n    stack = []\n    i = 0\n    while i < len(expr):\n        if expr[i].isdigit():\n            stack.append(expr[i])\n            i += 1\n        elif expr[i] in '+-*/':\n            operand1 = int(stack.pop())\n            operand2 = int(stack.pop())\n            if expr[i] == '+':\n                stack.append(operand1 + operand2)\n            elif expr[i] == '-':\n                stack.append(operand1 - operand2)\n            elif expr[i] == '*':\n                stack.append(operand1 * operand2)\n            elif expr[i] == '/':\n                stack.append(operand1 / operand2)\n            i += 1\n        else:\n            return 0\n    return int(stack.pop())",
+    "cpp": "// Full executable C++ solution file\n#include <iostream>\n#include <stack>\n#include <string>\nint evaluateExpression(string expr) {\n    std::stack<char> s;\n    int i = 0;\n    while (i < expr.length()) {\n        if (isdigit(expr[i])) {\n            s.push(expr[i]);\n            i++;\n        } else if (s.empty()) {\n            s.push(expr[i]);\n            i++;\n        } else {\n            if (expr[i] == '+') {\n                int operand2 = s.top() - '0';\n                s.pop();\n                int operand1 = s.top() - '0';\n                s.pop();\n                s.push(operand1 + operand2);\n            } else if (expr[i] == '-') {\n                int operand2 = s.top() - '0';\n                s.pop();\n                int operand1 = s.top() - '0';\n                s.pop();\n                s.push(operand1 - operand2);\n            } else if (expr[i] == '*') {\n                int operand2 = s.top() - '0';\n                s.pop();\n                int operand1 = s.top() - '0';\n                s.pop();\n                s.push(operand1 * operand2);\n            } else if (expr[i] == '/') {\n                int operand2 = s.top() - '0';\n                s.pop();\n                int operand1 = s.top() - '0';\n                s.pop();\n                s.push(operand1 / operand2);\n            }\n            i++;\n        }\n    }\n    return (int)s.top() - '0';\n}\nint main() {\n    string expr;\n    cin >> expr;\n    cout << evaluateExpression(expr) << endl;\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "2+3*4",
+      "output": "14",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "10/2",
+      "output": "5",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

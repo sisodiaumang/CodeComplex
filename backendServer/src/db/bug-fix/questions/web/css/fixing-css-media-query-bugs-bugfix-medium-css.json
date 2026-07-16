@@ -1,0 +1,131 @@
+{
+  "title": "Fixing CSS Media Query Bugs",
+  "subCategory": "CSS Media Queries",
+  "statement": {
+    "markdown": "You are given a string representing a CSS stylesheet with media queries. Your task is to fix the bug in the provided code that prevents it from correctly applying the styles based on the screen size. The styles should be applied from the smallest screen size to the largest.",
+    "inputFormat": "A string representing a CSS stylesheet with media queries, where the media queries are in the format `(min|max)-width: [value]px`",
+    "outputFormat": "A string representing the fixed CSS stylesheet with the bug removed",
+    "notes": "The bug prevents the styles from being applied correctly based on the screen size. You need to fix the bug without modifying the existing styles.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10,
+        "description": "The number of media queries in the input string"
+      }
+    ],
+    "examples": [
+      {
+        "input": "body { background-color: #f2f2f2; }\n@media (min-width: 768px) { body { background-color: #333; } }\n@media (max-width: 480px) { body { background-color: #666; } }",
+        "output": "body { background-color: #f2f2f2; }\n@media (max-width: 480px) { body { background-color: #666; } }\n@media (min-width: 768px) { body { background-color: #333; } }",
+        "explanation": "The correct order of media queries should be from smallest to largest screen size"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "CSS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "css"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Check the order of the media queries"
+    }
+  ],
+  "editorial": {
+    "title": "Fixing CSS Media Query Bugs",
+    "intuition": "The key to solving this problem is to understand how media queries work and how they are parsed by the browser.",
+    "bruteForce": "You can simply sort the media queries by their width in ascending order",
+    "betterSolution": "",
+    "optimalSolution": "You can use a regular expression to extract the media queries and sort them based on their width",
+    "proofOfCorrectness": "The correct solution should produce the expected output for all test cases",
+    "dryRun": "Check the solution with a sample input to ensure it produces the correct output",
+    "commonMistakes": [
+      "Modifying the existing styles",
+      "Not sorting the media queries"
+    ],
+    "timeComplexity": "O(n log n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "function fixMediaQueries(css) {\n  // Your code here\n}",
+    "python": "def fix_media_queries(css):\n  # Your code here\n"
+  },
+  "buggyStarterCode": {
+    "javascript": "function fixMediaQueries(css) {\n  var queries = css.match(/@media (min|max)-width: ([0-9]+)px/g);\n  queries.sort(function(a, b) {\n    return a.width - b.width;\n  });\n  return css;\n}",
+    "python": "def fix_media_queries(css):\n  queries = re.findall(r'@media (min|max)-width: ([0-9]+)px', css)\n  queries.sort(key=lambda x: int(x[1]))\n  return css"
+  },
+  "functionSignature": {
+    "javascript": "function fixMediaQueries(css) {\n}",
+    "python": "def fix_media_queries(css) -> str:\n"
+  },
+  "solutions": {
+    "javascript": "// Fix the bug by sorting the media queries in ascending order of their width\nfunction fixMediaQueries(css) {\n  var queries = css.match(/@media (min|max)-width: ([0-9]+)px/g);\n  queries.sort(function(a, b) {\n    return parseInt(a[2]) - parseInt(b[2]);\n  });\n  return css.split('@media').sort(function(a, b) {\n    var aWidth = a.match(/(min|max)-width: ([0-9]+)px/)[2];\n    var bWidth = b.match(/(min|max)-width: ([0-9]+)px/)[2];\n    return parseInt(aWidth) - parseInt(bWidth);\n  }).join('@media');\n}",
+    "python": "import re\n\ndef fix_media_queries(css) -> str:\n  queries = re.findall(r'@media (min|max)-width: ([0-9]+)px', css)\n  queries.sort(key=lambda x: int(x[1]))\n  sorted_css = ''\n  for query in sorted(queries, key=lambda x: int(x[1]), reverse=True):\n    sorted_css += query + css[css.find(query) + len(query):]\n  return sorted_css.replace('\\n', '').replace('\\t', '')"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "body { background-color: #f2f2f2; }\n@media (min-width: 768px) { body { background-color: #333; } }\n@media (max-width: 480px) { body { background-color: #666; } }",
+      "output": "body { background-color: #f2f2f2; }\n@media (max-width: 480px) { body { background-color: #666; } }\n@media (min-width: 768px) { body { background-color: #333; } }",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "body { background-color: #f2f2f2; }\n@media (max-width: 480px) { body { background-color: #666; } }\n@media (min-width: 768px) { body { background-color: #333; } }",
+      "output": "body { background-color: #f2f2f2; }\n@media (max-width: 480px) { body { background-color: #666; } }\n@media (min-width: 768px) { body { background-color: #333; } }",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "c6d5de45e7d00c90d746bbc6",
+  "slug": "fixing-css-media-query-bugs-bugfix-medium-css",
+  "mode": "bug_fix",
+  "category": "CSS",
+  "difficulty": "Medium"
+}

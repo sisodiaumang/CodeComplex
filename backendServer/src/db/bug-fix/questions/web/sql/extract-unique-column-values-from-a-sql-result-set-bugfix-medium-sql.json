@@ -1,0 +1,131 @@
+{
+  "title": "Extract Unique Column Values from a SQL Result Set",
+  "subCategory": "SQL Query Optimizer",
+  "statement": {
+    "markdown": "Given a SQL result set with multiple columns, write a function that takes the result set and a target column name as input, and returns an object where the keys are unique values from the target column and the values are lists of rows where each unique value occurs.",
+    "inputFormat": "A SQL result set with multiple columns, and a target column name as a string",
+    "outputFormat": "An object where the keys are unique values from the target column and the values are lists of rows where each unique value occurs",
+    "notes": "The function should be able to handle duplicate values in the target column, and the output object should have the same number of keys as the number of unique values in the target column.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of rows in the result set"
+      }
+    ],
+    "examples": [
+      {
+        "input": "SQL result set with 10 rows, and a target column name 'department'\n1 Apple 100\n2 Apple 200\n3 Banana 300\n4 Banana 400\n5 Cherry 500\n6 Cherry 600\n7 Date 700\n8 Date 800\n9 Elderberry 900\n10 Elderberry 1000",
+        "output": "{ 'Apple': [1, 2 ], 'Banana': [3, 4 ], 'Cherry': [5, 6 ], 'Date': [7, 8 ], 'Elderberry': [9, 10 ]}",
+        "explanation": "The function should return an object where the keys are unique values from the 'department' column and the values are lists of rows where each unique value occurs"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "SQL"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "sql"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use a dictionary to store the unique values and their corresponding row numbers"
+    }
+  ],
+  "editorial": {
+    "title": "Extract Unique Column Values from a SQL Result Set",
+    "intuition": "The function should iterate over the result set, and for each row, check if the value in the target column is already a key in the output dictionary. If not, add it as a key with the current row number as the value. If it is already a key, append the current row number to the list of values associated with that key",
+    "bruteForce": "Use a nested loop to iterate over the result set and check for each value in the target column if it is already a key in the output dictionary",
+    "betterSolution": "Use a dictionary to store the unique values and their corresponding row numbers",
+    "optimalSolution": "Use a dictionary to store the unique values and their corresponding row numbers, and iterate over the result set only once",
+    "proofOfCorrectness": "The function should return an object with the same number of keys as the number of unique values in the target column",
+    "dryRun": "Example usage of the function with a sample SQL result set",
+    "commonMistakes": [
+      "Not handling duplicate values in the target column",
+      "Not iterating over the result set only once"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "javascript": "// Define a function that takes a SQL result set and a target column name as input\n// and returns an object where the keys are unique values from the target column and the values are lists of rows where each unique value occurs\nfunction extractUniqueColumnValues(resultSet, targetColumn) {\n  // Initialize an empty object to store the unique values and their corresponding row numbers\n  let uniqueValues = {}\n  // Iterate over the result set\n  for (let i = 0; i < resultSet.length; i++) {\n    // Get the current row\n    let row = resultSet[i]\n    // Get the value in the target column\n    let value = row[targetColumn]\n    // Check if the value is already a key in the uniqueValues object\n    if (value in uniqueValues) {\n      // If it is, append the current row number to the list of values associated with that key\n      uniqueValues[value].push(i)\n    } else {\n      // If not, add it as a key with the current row number as the value\n      uniqueValues[value] = [i]\n    }\n  }\n  // Return the uniqueValues object\n  return uniqueValues\n}",
+    "python": "class Solution:\n  def extractUniqueColumnValues(self, resultSet, targetColumn):\n    # Initialize an empty dictionary to store the unique values and their corresponding row numbers\n    uniqueValues = {}\n    # Iterate over the result set\n    for i, row in enumerate(resultSet):\n      # Get the value in the target column\n      value = row[targetColumn]\n      # Check if the value is already a key in the uniqueValues dictionary\n      if value in uniqueValues:\n        # If it is, append the current row number to the list of values associated with that key\n        uniqueValues[value].append(i)\n      else:\n        # If not, add it as a key with the current row number as the value\n        uniqueValues[value] = [i]\n    # Return the uniqueValues dictionary\n    return uniqueValues\n"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Define a function that takes a SQL result set and a target column name as input\n// and returns an object where the keys are unique values from the target column and the values are lists of rows where each unique value occurs\nfunction extractUniqueColumnValues(resultSet, targetColumn) {\n  // Initialize an empty object to store the unique values and their corresponding row numbers\n  let uniqueValues = {}\n  // Iterate over the result set\n  for (let i = 0; i < resultSet.length; i++) {\n    // Get the current row\n    let row = resultSet[i]\n    // Get the value in the target column\n    let value = row[targetColumn]\n    // Check if the value is already a key in the uniqueValues object\n    if (value in uniqueValues) {\n      // If it is, append the current row number to the list of values associated with that key\n      uniqueValues[value].push(i)\n    } else {\n      // If not, add it as a key with the current row number as the value, but don't append to existing lists\n      uniqueValues[value] = i\n    }\n  }\n  // Return the uniqueValues object\n  return uniqueValues\n}",
+    "python": "class Solution:\n  def extractUniqueColumnValues(self, resultSet, targetColumn):\n    # Initialize an empty dictionary to store the unique values and their corresponding row numbers\n    uniqueValues = {}\n    # Iterate over the result set\n    for i, row in enumerate(resultSet):\n      # Get the value in the target column\n      value = row[targetColumn]\n      # Check if the value is already a key in the uniqueValues dictionary\n      if value in uniqueValues:\n        # If it is, append the current row number to the list of values associated with that key\n        uniqueValues[value].append(i)\n      else:\n        # If not, add it as a key with the current row number as the value, but don't append to existing lists\n        uniqueValues[value] = i\n    # Return the uniqueValues dictionary\n    return uniqueValues\n"
+  },
+  "functionSignature": {
+    "javascript": "function extractUniqueColumnValues(resultSet, targetColumn) {\n}",
+    "python": "def extractUniqueColumnValues(self, resultSet, targetColumn):\n"
+  },
+  "solutions": {
+    "javascript": "// Define a function that takes a SQL result set and a target column name as input\n// and returns an object where the keys are unique values from the target column and the values are lists of rows where each unique value occurs\nfunction extractUniqueColumnValues(resultSet, targetColumn) {\n  // Initialize an empty object to store the unique values and their corresponding row numbers\n  let uniqueValues = {}\n  // Iterate over the result set\n  for (let i = 0; i < resultSet.length; i++) {\n    // Get the current row\n    let row = resultSet[i]\n    // Get the value in the target column\n    let value = row[targetColumn]\n    // Check if the value is already a key in the uniqueValues object\n    if (value in uniqueValues) {\n      // If it is, append the current row number to the list of values associated with that key\n      uniqueValues[value].push(i)\n    } else {\n      // If not, add it as a key with the current row number as the value, and append to existing lists\n      uniqueValues[value] = [i]\n    }\n  }\n  // Return the uniqueValues object\n  return uniqueValues\n}\n\n// Example usage of the function\nlet resultSet = [[1, 'Apple', 100], [2, 'Apple', 200], [3, 'Banana', 300], [4, 'Banana', 400], [5, 'Cherry', 500], [6, 'Cherry', 600], [7, 'Date', 700], [8, 'Date', 800], [9, 'Elderberry', 900], [10, 'Elderberry', 1000]]\nlet targetColumn = 'department'\nconsole.log(extractUniqueColumnValues(resultSet, targetColumn))\n",
+    "python": "class Solution:\n  def extractUniqueColumnValues(self, resultSet, targetColumn):\n    # Initialize an empty dictionary to store the unique values and their corresponding row numbers\n    uniqueValues = {}\n    # Iterate over the result set\n    for i, row in enumerate(resultSet):\n      # Get the value in the target column\n      value = row[targetColumn]\n      # Check if the value is already a key in the uniqueValues dictionary\n      if value in uniqueValues:\n        # If it is, append the current row number to the list of values associated with that key\n        uniqueValues[value].append(i)\n      else:\n        # If not, add it as a key with the current row number as the value, and append to existing lists\n        uniqueValues[value] = [i]\n    # Return the uniqueValues dictionary\n    return uniqueValues\n\n# Example usage of the function\nresultSet = [[1, 'Apple', 100], [2, 'Apple', 200], [3, 'Banana', 300], [4, 'Banana', 400], [5, 'Cherry', 500], [6, 'Cherry', 600], [7, 'Date', 700], [8, 'Date', 800], [9, 'Elderberry', 900], [10, 'Elderberry', 1000]]\ntargetColumn = 'department'\nprint(Solution().extractUniqueColumnValues(resultSet, targetColumn))"
+  },
+  "judgeConfig": {
+    "timeLimit": 5,
+    "memoryLimit": 128,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "SQL result set with 10 rows, and a target column name 'department'\n1 Apple 100\n2 Apple 200\n3 Banana 300\n4 Banana 400\n5 Cherry 500\n6 Cherry 600\n7 Date 700\n8 Date 800\n9 Elderberry 900\n10 Elderberry 1000",
+      "output": "{ 'Apple': [1, 2 ], 'Banana': [3, 4 ], 'Cherry': [5, 6 ], 'Date': [7, 8 ], 'Elderberry': [9, 10 ]}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "SQL result set with 5 rows, and a target column name 'color'\n1 Red 100\n2 Blue 200\n3 Red 300\n4 Green 400\n5 Blue 500",
+      "output": "{ 'Red': [1, 3 ], 'Blue': [2, 5 ], 'Green': [4 ]}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "92b7f12487f28cae1d42469d",
+  "slug": "extract-unique-column-values-from-a-sql-result-set-bugfix-medium-sql",
+  "mode": "bug_fix",
+  "category": "SQL",
+  "difficulty": "Medium"
+}

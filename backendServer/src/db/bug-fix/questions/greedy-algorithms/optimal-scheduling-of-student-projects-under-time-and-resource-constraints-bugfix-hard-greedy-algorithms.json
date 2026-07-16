@@ -1,0 +1,175 @@
+{
+  "_id": "7ace290f1821805e0b2adc9f",
+  "title": "Optimal Scheduling of Student Projects under Time and Resource Constraints",
+  "slug": "optimal-scheduling-of-student-projects-under-time-and-resource-constraints-bugfix-hard-greedy-algorithms",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "Greedy",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "greedy"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "You are given a list of student projects each requiring a certain amount of time and resources. Your task is to schedule the projects in the most optimal way such that the total time and resources used do not exceed the given limits and the number of projects completed is maximized. Each project has a unique ID, time requirement, and resource requirement. You are given the list of projects, time limit, and resource limit. The projects that are scheduled should be those with the highest priority. Your task is to find the maximum number of projects that can be scheduled.",
+    "inputFormat": "The function takes as input a 2D list where each inner list contains the project ID, time requirement, and resource requirement. The last two elements of the input list are the time limit and the resource limit respectively.",
+    "outputFormat": "The function should output the maximum number of projects that can be scheduled.",
+    "notes": "The projects are sorted in descending order of their time requirements and resource requirements.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of projects"
+      },
+      {
+        "variable": "timeLimit",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Time limit"
+      },
+      {
+        "variable": "resourceLimit",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Resource limit"
+      }
+    ],
+    "examples": [
+      {
+        "input": "[[[1, 5, 3], [2, 3, 2], [3, 7, 5], [4, 2, 4], [5, 4, 6], [6, 1, 1], [7, 9, 8], [8, 6, 9], [9, 8, 7], [10, 10, 10]], 50, 30]",
+        "output": "3",
+        "explanation": ""
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Consider using a priority queue to store the projects"
+    },
+    {
+      "order": 2,
+      "text": "Make sure to update the time and resource requirements of the projects in the queue dynamically"
+    },
+    {
+      "order": 3,
+      "text": "Consider using a greedy algorithm to schedule the projects in the queue"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial",
+    "intuition": "The idea is to use a priority queue to store the projects. The priority queue should be ordered based on the time and resource requirements of the projects.",
+    "bruteForce": "A brute force approach would involve trying all possible combinations of projects and checking if they can be scheduled within the given time and resource limits.",
+    "betterSolution": "A better solution would involve using a greedy algorithm to schedule the projects. The greedy algorithm would select the project with the highest priority (i.e., the project with the highest time and resource requirements) and check if it can be scheduled within the given time and resource limits.",
+    "optimalSolution": "The optimal solution would involve using a priority queue to store the projects and a greedy algorithm to schedule them.",
+    "proofOfCorrectness": "The correctness of the greedy algorithm can be proved by induction. The base case is when there is only one project. In this case, the greedy algorithm selects the project with the highest priority and checks if it can be scheduled within the given time and resource limits. If it can be scheduled, then the greedy algorithm returns 1. Otherwise, it returns 0.",
+    "dryRun": "The dry run would involve selecting the project with the highest priority and checking if it can be scheduled within the given time and resource limits. If it can be scheduled, then the dry run would return 1. Otherwise, it would return 0.",
+    "commonMistakes": [
+      "Mistake 1: Not updating the time and resource requirements of the projects in the queue dynamically.",
+      "Mistake 2: Not using a priority queue to store the projects."
+    ],
+    "timeComplexity": "O(n log n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "class Solution\n{\npublic:\n    int maxProjects(vector<vector<int>>& projects, int timeLimit, int resourceLimit)\n    {\n        // TODO: implement\n    }\n};",
+    "java": "public class Solution\n{\n    public int maxProjects(int[][] projects, int timeLimit, int resourceLimit)\n    {\n        // TODO: implement\n        return 0;\n    }\n}",
+    "python": "class Solution:\n    def __init__(self):\n        pass\n    def maxProjects(self, projects, timeLimit, resourceLimit):\n        # TODO: implement\n        return None",
+    "javascript": "function maxProjects(projects, timeLimit, resourceLimit)\n{\n    // TODO: implement\n    return null;\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution\n{\npublic:\n    int maxProjects(vector<vector<int>>& projects, int timeLimit, int resourceLimit)\n    {\n        priority_queue<pair<int,int>, vector<pair<int,int>>, greater<pair<int,int>>> pq;\n        for (int i = 0; i < projects.size(); i++)\n        {\n            pq.push({projects[i][1], projects[i][2]});\n        }\n        int res = 0;\n        while (!pq.empty() && timeLimit > 0 && resourceLimit > 0)\n        {\n            int time = pq.top().first;\n            int resource = pq.top().second;\n            if (time <= timeLimit && resource <= resourceLimit)\n            {\n                res++;\n                timeLimit -= time;\n                resourceLimit -= resource;\n            }\n            else\n            {\n                break;\n            }\n            pq.pop();\n        }\n        return res;\n    }\n};",
+    "java": "public class Solution\n{\n    public int maxProjects(int[][] projects, int timeLimit, int resourceLimit)\n    {\n        PriorityQueue<int[]> pq = new PriorityQueue<int[]>(projects.length, new Comparator<int[]>()\n        {\n            @Override\n            public int compare(int[] a, int[] b)\n            {\n                if (a[1] == b[1])\n                {\n                    return a[2] - b[2];\n                }\n                else\n                {\n                    return b[1] - a[1];\n                }\n            }\n        });\n        for (int[] project : projects)\n        {\n            pq.offer(project);\n        }\n        int res = 0;\n        while (!pq.isEmpty() && timeLimit > 0 && resourceLimit > 0)\n        {\n            int[] project = pq.poll();\n            int time = project[1];\n            int resource = project[2];\n            if (time <= timeLimit && resource <= resourceLimit)\n            {\n                res++;\n                timeLimit -= time;\n                resourceLimit -= resource;\n            }\n        }\n        return res;\n    }\n}",
+    "python": "class Solution:\n    def __init__(self):\n        pass\n    def maxProjects(self, projects, timeLimit, resourceLimit):\n        pq = []\n        for project in projects:\n            pq.append([project[1], project[2]])\n        pq.sort(key = lambda x: (-x[0], -x[1]))\n        res = 0\n        while pq and timeLimit > 0 and resourceLimit > 0:\n            time, resource = pq.pop()[0], pq.pop()[1]\n            if time <= timeLimit and resource <= resourceLimit:\n                res+=\"1\"\n                timeLimit -= time\n                resourceLimit -= resource\n            else:\n                break\n        return int(res)",
+    "javascript": "function maxProjects(projects, timeLimit, resourceLimit)\n{\n    projects.sort((a, b) => b[1] - a[1] || b[2] - a[2]);\n    let res = 0;\n    for (let i = 0; i < projects.length; i++)\n    {\n        if (timeLimit >= projects[i][1] && resourceLimit >= projects[i][2])\n        {\n            res++;\n            timeLimit -= projects[i][1];\n            resourceLimit -= projects[i][2];\n        }\n        else\n        {\n            break;\n        }\n    }\n    return res;\n}"
+  },
+  "functionSignature": {
+    "cpp": "int maxProjects(vector<vector<int>>& projects, int timeLimit, int resourceLimit);",
+    "java": "int maxProjects(int[][] projects, int timeLimit, int resourceLimit);",
+    "python": "def maxProjects(self, projects: list[list[int]], timeLimit: int, resourceLimit: int) -> int:",
+    "javascript": "int maxProjects(int[][] projects, int timeLimit, int resourceLimit)"
+  },
+  "solutions": {
+    "cpp": "class Solution\n{\npublic:\n    int maxProjects(vector<vector<int>>& projects, int timeLimit, int resourceLimit)\n    {\n        priority_queue<pair<int,int>, vector<pair<int,int>>, greater<pair<int,int>>> pq;\n        for (int i = 0; i < projects.size(); i++)\n        {\n            pq.push({projects[i][1], projects[i][2]});\n        }\n        int res = 0;\n        while (!pq.empty() && timeLimit > 0 && resourceLimit > 0)\n        {\n            int time = pq.top().first;\n            int resource = pq.top().second;\n            if (time <= timeLimit && resource <= resourceLimit)\n            {\n                res++;\n                timeLimit -= time;\n                resourceLimit -= resource;\n            }\n            else\n            {\n                break;\n            }\n            pq.pop();\n        }\n        return res;\n    }\n};",
+    "python": "class Solution:\n    def __init__(self):\n        pass\n    def maxProjects(self, projects, timeLimit, resourceLimit):\n        pq = []\n        for project in projects:\n            pq.append([project[1], project[2]])\n        pq.sort(key = lambda x: (-x[0], -x[1]))\n        res = 0\n        while pq and timeLimit > 0 and resourceLimit > 0:\n            time, resource = pq.pop()[0], pq.pop()[1]\n            if time <= timeLimit and resource <= resourceLimit:\n                res+=\"1\"\n                timeLimit -= time\n                resourceLimit -= resource\n            else:\n                break\n        return int(res)",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "[[1, 5, 3], [2, 3, 2], [3, 7, 5], [4, 2, 4], [5, 4, 6], [6, 1, 1], [7, 9, 8], [8, 6, 9], [9, 8, 7], [10, 10, 10]], 50, 30",
+      "output": "3",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_hidden_generated",
+      "input": "[[1, 5, 3], [2, 3, 2], [3, 7, 5], [4, 2, 4], [5, 4, 6], [6, 1, 1], [7, 9, 8], [8, 6, 9], [9, 8, 7], [10, 10, 10]], 50, 30",
+      "output": "3",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

@@ -1,0 +1,157 @@
+{
+  "_id": "78b06f918ea0e6de6b987da4",
+  "title": "Trie Insertion Failure Due to Incorrect Child Node Initialization",
+  "slug": "trie-insertion-failure-due-to-incorrect-child-node-initialization-bugfix-medium-tries",
+  "difficulty": "Medium",
+  "category": "DSA",
+  "subCategory": "TRIE",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 60,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "trie"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Solve the problem and fix the bugs.",
+    "inputFormat": "",
+    "outputFormat": "",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of operations"
+      }
+    ],
+    "examples": [
+      {
+        "input": "5\ninsert hello\ninsert world\ndelete hello\ninsert help\ninsert hell",
+        "output": "1\n0",
+        "explanation": ""
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Verify the logic of child node initialization in the Trie."
+    },
+    {
+      "order": 2,
+      "text": "Double-check that the correct node is being updated during insert operations."
+    }
+  ],
+  "editorial": {
+    "title": "Fixing the Trie Insertion Bug",
+    "intuition": "The problem lies in the way child nodes are initialized. Instead of using a boolean flag to track if a child node exists, we should simply initialize the child nodes as empty lists.",
+    "bruteForce": "The current implementation has a time complexity of O(n^2) due to the recursive function calls and the nested loops. This can be optimized by using a more efficient data structure or algorithm.",
+    "betterSolution": "One possible solution is to use a dictionary to store the child nodes, where each key represents a character and the value is another Trie node. This allows us to look up child nodes in constant time.",
+    "optimalSolution": "The optimal solution is to use a Trie node class with a dictionary attribute to store the child nodes. This allows us to efficiently insert, delete, and search for words in the Trie.",
+    "proofOfCorrectness": "The corrected implementation ensures that child nodes are correctly initialized and updated during insert operations. This prevents the Trie from becoming corrupted.",
+    "dryRun": "Suppose we have the following input: insert hello -> insert world -> delete hello -> insert help -> insert hell. The corrected implementation should output: 1 0 1",
+    "commonMistakes": [
+      "Incorrect child node initialization",
+      "Improper node update during insert operations"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "class TrieNode {\npublic:\nTrieNode* children[26];\n\n// Implement a method to insert a word into the Trie.\nbool insert(string word) {\nreturn true;\n}\n};",
+    "java": "public class TrieNode {\npublic TrieNode[] children = new TrieNode[26];\n\n// Implement a method to insert a word into the Trie.\npublic boolean insert(String word) {\nreturn true;\n}\n}",
+    "python": "class TrieNode:\n    def __init__(self):\n        self.children = [None]*26\n\n    # Implement a method to insert a word into the Trie.\n    def insert(self, word):\n        return True\n",
+    "javascript": "// Implement a TrieNode class.\nclass TrieNode {\npublic:\nTrieNode() {}\nchild[26];\n\n// Implement a method to insert a word into the Trie.\nbool insert(string word) {\nreturn true;\n}\n};"
+  },
+  "buggyStarterCode": {
+    "cpp": "class TrieNode {\npublic:\nTrieNode* children[26];\n\n// Implement a method to insert a word into the Trie.\nbool insert(string word) {\nfor (int i = 0; i < word.length(); i++) {\nif (i < word.length() - 1) {\nchildren[word[i] - 'a'] = new TrieNode;\n}}\nreturn true;\n}\n};",
+    "java": "public class TrieNode {\npublic TrieNode[] children = new TrieNode[26];\n\n// Implement a method to insert a word into the Trie.\npublic boolean insert(String word) {\nfor (int i = 0; i < word.length(); i++) {\nif (i < word.length() - 1) {\nchildren[word.charAt(i) - 'a'] = new TrieNode();\n}}\nreturn true;\n}\n}",
+    "python": "class TrieNode:\n    def __init__(self):\n        self.children = [None]*26\n\n    # Implement a method to insert a word into the Trie.\n    def insert(self, word):\n        for i in range(len(word)):\n            if i < len(word) - 1:\n                self.children[ord(word[i]) - ord('a')] = TrieNode()\n        return True\n",
+    "javascript": "// Implement a TrieNode class.\nclass TrieNode {\npublic:\nTrieNode() {}\nchild[26];\n\n// Implement a method to insert a word into the Trie.\nbool insert(string word) {\nfor (int i = 0; i < word.length(); i++) {\nif (i < word.length() - 1) {\nchildren[word[i] - 'a'] = new TrieNode;\n}}\nreturn true;\n}\n};"
+  },
+  "functionSignature": {
+    "cpp": "bool insert(string word);\n",
+    "java": "public boolean insert(String word);\n",
+    "python": "def insert(self, word: str) -> bool:\n",
+    "javascript": "// bool insert(string word);\n"
+  },
+  "solutions": {
+    "python": "import sys\nfrom collections import defaultdict\n\nclass TrieNode:\n    def __init__(self):\n        self.children = defaultdict(TrieNode)\n\n    def insert(self, word):\n        node = self\n        for char in word:\n            node = node.children[char]\n        return True\n\nclass Trie:\n    def __init__(self):\n        self.root = TrieNode()\n\n    def insert(self, word):\n        self.root.insert(word)\n\n        # Handle the insertion of the word\n        return True\n\ntrie = Trie()\nfor i in range(int(sys.stdin.readline())):\n    op, word = sys.stdin.readline().split()\n    if op == 'insert':\n        trie.insert(word)\n    elif op == 'delete':\n        print(0)\n    else:\n        print(1)\n",
+    "cpp": "#include <iostream>\n#include <vector>\n#include <string>\n\nusing namespace std;\n\nclass TrieNode {\npublic:\nTrieNode() {}\n    TrieNode* children[26];\n\n    bool insert(string word) {\n        TrieNode* node = this;\n        for (char c : word) {\n            node = node->children[c - 'a'];\n            if (!node) node = new TrieNode();\n        }\n        return true;\n    }\n};\n\nint main() {\n    int n;\n    cin >> n;\n\n    for (int i = 0; i < n; i++) {\n        string op, word;\n        cin >> op >> word;\n\n        if (op == 'insert') {\n            TrieNode* root = new TrieNode();\n            root->insert(word);\n            cout << \"1\\n\";\n        }\n        else if (op == 'delete') {\n            cout << \"0\\n\";\n        }\n        else {\n            cout << \"1\\n\";\n        }\n    }\n\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5\ninsert hello\ninsert world\ndelete hello\ninsert help\ninsert hell",
+      "output": "1\n0\n1",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_hidden_generated",
+      "input": "5\ninsert hello\ninsert world\ndelete hello\ninsert help\ninsert hell",
+      "output": "1\n0\n1",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

@@ -1,0 +1,58 @@
+{
+  "_id": "0633145c8dc3c82285a71afd",
+  "title": "Accessible Tree View",
+  "slug": "acce-accessible-tree-view",
+  "difficulty": "Easy",
+  "topics": [
+    "ACCESSIBILITY"
+  ],
+  "statement": {
+    "markdown": "## Accessible Tree View\n\nImplement an accessible tree view that allows users to navigate through a hierarchical structure using keyboard-only. The tree view should have the following features:\n### Requirements\n1. Ability to navigate through the tree using the arrow keys (up, down, left, right)\n2. Indicate the current selection with a high contrast color and font size\n3. Support for keyboard shortcuts (e.g., <kbd>Alt + Arrow</kbd>) to toggle subnodes\n4. Accessibility features such as ARIA attributes for screen readers\n5. Styling using a modern CSS framework (e.g., Tailwind CSS)"
+  },
+  "constraints": [
+    "Use HTML, CSS, and JavaScript only. No third-party libraries or frameworks.",
+    "The tree view should be fully accessible using keyboard-only navigation.",
+    "Test cases will be provided separately."
+  ],
+  "referenceAssets": [],
+  "starterCode": {
+    "html": "<!DOCTYPE html> <html lang=\"en\"> <head> <meta charset=\"UTF-8\"> <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"> <title>Accessible Tree View</title> <link rel=\"stylesheet\" href=\"styles.css\"> </head> <body> <div id=\"tree-view\"></div> <script src=\"script.js\"></script> </body> </html>",
+    "css": "@tailwind base; @tailwind components; @tailwind utilities;",
+    "javascript": "const tree = document.getElementById(\"tree-view\");"
+  },
+  "gradingCriteria": [
+    {
+      "id": "accessibility",
+      "description": "The tree view is fully accessible using keyboard-only navigation.",
+      "weight": 25
+    },
+    {
+      "id": "styling",
+      "description": "The tree view is styled using a modern CSS framework (e.g., Tailwind CSS) and has a high contrast color scheme.",
+      "weight": 25
+    },
+    {
+      "id": "functionality",
+      "description": "The tree view has the following features: navigation using arrow keys, indication of current selection, support for keyboard shortcuts to toggle subnodes.",
+      "weight": 50
+    }
+  ],
+  "judgeConfig": {
+    "judgeModel": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "stack": [
+      "html",
+      "css",
+      "javascript"
+    ],
+    "referenceSolution": "html: <!DOCTYPE html> <html lang=\"en\"> <head> <meta charset=\"UTF-8\"> <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"> <title>Accessible Tree View</title> <link rel=\"stylesheet\" href=\"styles.css\"> </head> <body> <div id=\"tree-view\" role=\"tree\" aria-label=\"Tree View\">   <ul role=\"group\" aria-label=\"Root Node\">     <li role=\"treeitem\" aria-label=\"Node 1\" tabindex=\"0\">       <span role=\"presentation\" class=\"px-2 py-1\">Node 1</span>       <ul role=\"group\" aria-label=\"Subnode 1\">         <li role=\"treeitem\" aria-label=\"Subnode 1.1\" tabindex=\"0\">           <span role=\"presentation\" class=\"px-2 py-1\">Subnode 1.1</span>         </li>         <li role=\"treeitem\" aria-label=\"Subnode 1.2\" tabindex=\"0\">           <span role=\"presentation\" class=\"px-2 py-1\">Subnode 1.2</span>         </li>       </ul>     </li>     <li role=\"treeitem\" aria-label=\"Node 2\" tabindex=\"0\">       <span role=\"presentation\" class=\"px-2 py-1\">Node 2</span>     </li>   </ul> </div> <script src=\"script.js\"></script> </body> </html>\ncss: @tailwind base; @tailwind components; @tailwind utilities; .tree-view {   list-style: none;   padding: 0;   margin: 0; } .tree-view ul {   padding: 0;   list-style: none; } .tree-view li {   padding: 10px;   border-bottom: 1px solid #ccc; } .tree-view li:last-child {   border-bottom: none; } .tree-view .node-selected {   background-color: #ddd;   color: #333; }\njs: const tree = document.getElementById(\"tree-view\"); const nodes = tree.querySelectorAll(\"li[role='treeitem']\"); let currentNodeIndex = 0; nodes.forEach((node, index) => {   node.addEventListener(\"keydown\", (e) => {     if (e.key === \"ArrowRight\") {       toggleNode(node);     } else if (e.key === \"ArrowLeft\") {       if (nodes[currentNodeIndex].querySelector(\"ul\") !== null) {         toggleNode(nodes[currentNodeIndex]);       }     }     if (e.key === \"ArrowDown\") {       if (nodes[currentNodeIndex].querySelector(\"ul\") !== null) {         let nextNodeIndex = currentNodeIndex + 1;         if (nextNodeIndex >= nodes.length) {           nextNodeIndex = 0;         }         selectNode(nodes[nextNodeIndex]);       }     } else if (e.key === \"ArrowUp\") {       if (nodes[currentNodeIndex].querySelector(\"ul\") !== null) {         let nextNodeIndex = currentNodeIndex - 1;         if (nextNodeIndex < 0) {           nextNodeIndex = nodes.length - 1;         }         selectNode(nodes[nextNodeIndex]);       }     }   }); }); function selectNode(node) {   nodes.forEach((n) => n.classList.remove(\"node-selected\"));   node.classList.add(\"node-selected\");   currentNodeIndex = nodes.indexOf(node);} function toggleNode(node) {   let subnode = node.querySelector(\"ul\");   if (subnode !== null) {     if (subnode.style.display === \"none\") {       subnode.style.display = \"block\";     } else {       subnode.style.display = \"none\";     }   }}"
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  }
+}

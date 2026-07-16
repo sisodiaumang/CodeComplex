@@ -52,6 +52,37 @@ export const getMyAchievements = async (req: Request, res: Response, next: NextF
     }
 };
 
+export const getAllAchievements = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const userId = req.user._id;
+
+        // Fetch user profile to check which achievements are unlocked
+        const profile = await UserProfile.findOne({ userId }).select("achievements");
+        const unlockedSet = new Set(
+            (profile?.achievements ?? []).map((id: any) => id.toString())
+        );
+
+        // Fetch all achievements in database
+        const allAchievements = await Achievement.find({}).sort({ name: 1 });
+
+        // Decorate achievements with 'unlocked' boolean and computed progress
+        const decorated = allAchievements.map((ach) => {
+            const achObj = ach.toObject();
+            return {
+                ...achObj,
+                unlocked: unlockedSet.has(achObj._id.toString()),
+            };
+        });
+
+        res.status(200).json({
+            success: true,
+            data: decorated,
+        });
+    } catch (err) {
+        next(err);
+    }
+};
+
 export const getAchievementDetails = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { achievementId } = req.params;

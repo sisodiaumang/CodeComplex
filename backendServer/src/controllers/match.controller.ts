@@ -928,7 +928,7 @@ export const getMatchQuestion = async (
             return;
         }
 
-        const FRONTEND_TYPES = ["FRONTEND", "FULLSTACK"];
+        const FRONTEND_TYPES = ["FRONTEND", "PROJECTS"];
         const BACKEND_TYPES  = ["BACKEND"];
         const PROMPT_TYPES   = ["PROMPT_WAR"];
 

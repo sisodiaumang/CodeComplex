@@ -1,0 +1,153 @@
+{
+  "_id": "93c4b92baaf1ecf1222460d6",
+  "title": "Incorrectly Implemented Trie Insert Operation",
+  "slug": "incorrectly-implemented-trie-insert-operation-bugfix-medium-tries-2",
+  "difficulty": "Medium",
+  "category": "DSA",
+  "subCategory": "TRIE",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "trie"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Solve the problem and fix the bugs.",
+    "inputFormat": "",
+    "outputFormat": "",
+    "notes": "",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of characters array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "Example input string",
+        "output": "Expected output string",
+        "explanation": "Brief explanation of expected input and output"
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Check edge case for empty string"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial Solution for Trie Insert",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "brute Force details.",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details for correct implementation of trie insert",
+    "proofOfCorrectness": "proof Of Correctness details.",
+    "dryRun": "dry Run details.",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(m)",
+    "spaceComplexity": "O(m)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\n public:\n     bool insert(TrieNode* root, char c);\n };",
+    "java": "public class Solution {\n public:\n     boolean insert(TrieNode root, char c);\n }",
+    "python": "class Solution:\n     def insert(self, root: TrieNode, c: str) -> bool:\n         # TODO: implement",
+    "javascript": "function insert(root, c) {\n     // TODO: implement\n }"
+  },
+  "buggyStarterCode": {
+    "cpp": "bool Solution::insert(TrieNode* root, char c) {\n     if (root == NULL) return false;\n\n     if (c == ' ') return false;\n\n     // Create new node without checking if it's already present in the Trie\n     root = new TrieNode();\n\n     // Insert the character in the Trie\n     root->children[c - 'a'].insert(root->children[c - 'a'], c);\n\n     return true;\n }",
+    "java": "boolean Solution.insert(TrieNode root, char c) {\n     if (root == null) return false;\n\n     if (c == ' ') return false;\n\n     // Create new node without checking if it's already present in the Trie\n     root = new TrieNode();\n\n     // Insert the character in the Trie\n     root.children[c - 'a'].insert(root.children[c - 'a'], c);\n\n     return true;\n }",
+    "python": "def Solution.insert(self, root: TrieNode, c: str) -> bool:\n     if root is None:\n         return False\n\n     if c == ' ':\n         return False\n\n     # Create new node without checking if it's already present in the Trie\n     root = TrieNode()\n\n     # Insert the character in the Trie\n     root.children[c - ord('a')].insert(root.children[c - ord('a')], c)\n\n     return True\n",
+    "javascript": "function insert(root, c) {\n     if (root === null) return false;\n\n     if (c === ' ') return false;\n\n     // Create new node without checking if it's already present in the Trie\n     root = new TrieNode();\n\n     // Insert the character in the Trie\n     root.children[c - 'a'].insert(root.children[c - 'a'], c);\n\n     return true;\n }"
+  },
+  "functionSignature": {
+    "cpp": "bool insert(TrieNode* root, char c);",
+    "java": "boolean insert(TrieNode root, char c);",
+    "python": "def insert(self, root: TrieNode, c: str) -> bool:",
+    "javascript": "function insert(root, c);"
+  },
+  "solutions": {
+    "cpp": "/*\n * Solution.cpp\n */\n#include <bits/stdc++.h>\n\nusing namespace std;\n\nclass TrieNode {\n public:\n     char c;\n     unordered_map<char, TrieNode*> children;\n     bool isEndOfWord;\n\n     TrieNode(char c) : c(c), isEndOfWord(false) {}\n\n     bool insert(TrieNode* root, char c) {\n         if (root == NULL) return false;\n\n         if (c == ' ') return false;\n\n         if (children.find(c) != children.end())\n             return false;\n\n         children[c] = new TrieNode(c);\n\n         return true;\n     }\n\n     void preorder() {\n         cout << c << ' '; \n         for (auto it : children)\n             it.second->preorder();\n     }\n }; \n\n bool Solution::insert(TrieNode* root, char c) {\n     return root->insert(root, c);\n }\n\n int main() {\n     ios_base::sync_with_stdio(false);\n     cin.tie(NULL);\n\n     /*\n      * Driver code for testing the Solution\n      */\n     // Create a Trie\n     TrieNode* root = new TrieNode('0');\n\n     // Insert strings into the Trie\n     for (int i = 0; i < 3; i++)\n     {\n         cin >> c;\n         if (Solution::insert(root, c))\n             cout  \"String inserted successfully\"  endl;\n         else\n             cout  \"String not inserted\"  endl;\n     }\n\n     // Preorder traversal of the Trie\n     root->preorder();\n\n     return 0;\n }",
+    "python": "import sys\nfrom collections import defaultdict\nfrom pprint import pprint\n\nclass TrieNode:\n     def __init__(self, c):\n         self.c = c\n         self.isEndOfWord = False\n         self.children = defaultdict(TrieNode)\n\n     def insert(self, c):\n         if self is None:\n             return False\n\n         if c == ' ':\n             return False\n\n         if c in self.children:\n             return False\n\n         self.children[c] = TrieNode(c)\n\n         return True\n\nclass Solution:\n     def insert(self, root, c):\n         if root is None:\n             return False\n\n         if c == ' ':\n             return False\n\n         if c in root.children:\n             return False\n\n         root.children[c] = TrieNode(c)\n\n         return True\n\nif __name__ == '__main__':\n     # Create a Trie\n     root = TrieNode('\\0')\n\n     # Insert strings into the Trie\n     strings = sys.stdin.readline().strip().split()  # Get input strings from standard input\n     for c in strings:\n         if Solution().insert(root, c):\n             print(\"String inserted successfully\")\n         else:\n             print(\"String not inserted\")\n\n     # Preorder traversal of the Trie\n     def preorder(node):\n         if node is not None:\n             print(node.c, end=' ')  # Print character\n             for it in node.children:\n                 preorder(node.children[it])  # Recursively preorder traverse children\n\n     preorder(root)\n",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "5\n apple apple apple banana banana\n",
+      "output": "0",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "10\n hello hello world world world hello\n",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

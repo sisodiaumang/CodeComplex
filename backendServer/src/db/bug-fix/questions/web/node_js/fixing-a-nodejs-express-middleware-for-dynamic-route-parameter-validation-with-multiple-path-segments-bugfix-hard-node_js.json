@@ -1,0 +1,162 @@
+{
+  "title": "Fixing a Node.js Express Middleware for Dynamic Route Parameter Validation with Multiple Path Segments",
+  "subCategory": "Express Middleware",
+  "statement": {
+    "markdown": "Write a Node.js Express middleware function `validateRouteParams` that validates dynamic route parameters in a URL path with multiple path segments. The function should check if the URL path contains valid route parameters in the form of `:paramName`, where `paramName` is a string of alphanumeric characters. The function should ignore any route parameters that are not in the form of `:paramName`. The middleware function should return `true` if the URL path is valid, and `false` otherwise. The middleware function should be used to validate the route parameters in the `GET /users/:username/profile/:profileId` and `GET /users/:username/posts` routes.",
+    "inputFormat": "A URL path string with multiple path segments, e.g., `/users/john/profile/123` or `/users/john/posts`.",
+    "outputFormat": "A boolean value indicating whether the URL path is valid.",
+    "notes": "The middleware function should be case-insensitive when checking the route parameters.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The maximum number of path segments in the URL path."
+      }
+    ],
+    "examples": [
+      {
+        "input": "/users/john/profile/123",
+        "output": "true",
+        "explanation": "The URL path contains a valid route parameter `:username`."
+      },
+      {
+        "input": "/users/john/posts",
+        "output": "true",
+        "explanation": "The URL path contains a valid route parameter `:username`."
+      },
+      {
+        "input": "/users/john/profile/abc",
+        "output": "false",
+        "explanation": "The URL path contains an invalid route parameter `:profileId`."
+      },
+      {
+        "input": "/users/john/profile/:profileId",
+        "output": "false",
+        "explanation": "The URL path contains a route parameter that is not in the form of `:paramName`."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 75,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "NODE_JS"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "node_js"
+    ],
+    "interviewFrequency": 3,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use a regular expression to match the route parameters in the URL path."
+    }
+  ],
+  "editorial": {
+    "title": "Fixing the Node.js Express Middleware for Dynamic Route Parameter Validation",
+    "intuition": "The key to solving this problem is to use a regular expression to match the route parameters in the URL path. The regular expression should match a string that starts with a colon (`:`) and is followed by one or more alphanumeric characters.",
+    "bruteForce": "One approach to solving this problem is to write a function that checks each path segment in the URL path to see if it matches the pattern of a route parameter. If a path segment matches this pattern, then the function should continue to the next path segment. If a path segment does not match this pattern, then the function should immediately return `false`.",
+    "betterSolution": "A better approach to solving this problem is to use a regular expression to match the route parameters in the URL path. This approach is more efficient than the brute force approach because it can match multiple path segments at once.",
+    "optimalSolution": "The optimal solution to this problem is to use a regular expression to match the route parameters in the URL path. The regular expression should match a string that starts with a colon (`:`) and is followed by one or more alphanumeric characters. The function should use the `test` method of the regular expression object to check if the URL path matches the regular expression. If the URL path matches the regular expression, then the function should return `true`. Otherwise, the function should return `false`.",
+    "proofOfCorrectness": "The proof of correctness of the optimal solution is that the regular expression matches the route parameters in the URL path correctly and the function returns `true` if the URL path is valid and `false` otherwise.",
+    "dryRun": "Step-by-step example run: The function is called with the URL path `/users/john/profile/123`. The regular expression is used to match the route parameters in the URL path. The function returns `true` because the URL path is valid.",
+    "commonMistakes": [
+      "Not using a regular expression to match the route parameters",
+      "Not checking if the URL path matches the regular expression"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "// Write a Node.js Express middleware function `validateRouteParams` that validates dynamic route parameters in a URL path with multiple path segments.\nvar validateRouteParams = function(req, res, next) {\n  // Your code here\n};",
+    "python": "class Solution:\n  def __init__(self):\n    pass\n  def validateRouteParams(self, req, res, next):\n    # Your code here"
+  },
+  "buggyStarterCode": {
+    "javascript": "var validateRouteParams = function(req, res, next) {\n  var url = req.url;\n  var pathSegments = url.split('/');\n  for (var i = 1; i < pathSegments.length; i++) {\n    if (pathSegments[i].startsWith(':')) {\n      next();\n      return;\n    }\n  }\n  next();\n};",
+    "python": "class Solution:\n  def __init__(self):\n    pass\n  def validateRouteParams(self, req, res, next):\n    url = req.url;\n    pathSegments = url.split('/');\n    for i in range(1, len(pathSegments)):\n      if pathSegments[i].startswith(':'):\n        next();\n        return;\n    next();"
+  },
+  "functionSignature": {
+    "javascript": "var validateRouteParams = function(req, res, next) {\n  // Your code here\n};",
+    "python": "class Solution:\n  def validateRouteParams(self, req, res, next):\n    # Your code here"
+  },
+  "solutions": {
+    "javascript": "// Solution\nvar validateRouteParams = function(req, res, next) {\n  var url = req.url;\n  var regex = /^/users/[a-zA-Z0-9]+/profile/[a-zA-Z0-9]+$/;\n  if (regex.test(url)) {\n    next();\n  } else {\n    res.status(404).send('Not Found');\n  }\n};",
+    "python": "class Solution:\n  def __init__(self):\n    pass\n  def validateRouteParams(self, req, res, next):\n    url = req.url;\n    regex = r'^/users/[a-zA-Z0-9]+/profile/[a-zA-Z0-9]+$';\n    if re.match(regex, url):\n      next();\n    else:\n      res.status(404).send('Not Found');"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "/users/john/profile/123",
+      "output": "true",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "/users/john/posts",
+      "output": "true",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_3",
+      "input": "/users/john/profile/abc",
+      "output": "false",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_4",
+      "input": "/users/john/profile/:profileId",
+      "output": "false",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    }
+  ],
+  "_id": "03d4f32dcfeda007ca8fa8f4",
+  "slug": "fixing-a-nodejs-express-middleware-for-dynamic-route-parameter-validation-with-multiple-path-segments-bugfix-hard-node_js",
+  "mode": "bug_fix",
+  "category": "NODE_JS",
+  "difficulty": "Hard"
+}

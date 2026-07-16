@@ -1,0 +1,136 @@
+{
+  "title": "Fixing React Component Re-renders Due to Changing Object Reference",
+  "subCategory": "Memoization",
+  "statement": {
+    "markdown": "You are given a React functional component `Person` that displays a person's name and age. The component's state is updated with a new `person` object when the `handleIncrement` function is called. However, the component re-renders unnecessarily even when the `person` object reference remains the same but its properties change. Fix the bug by utilizing React's `useMemo` hook to memoize the `person` object.",
+    "inputFormat": "The input will be an object with a `name` and an `age` property.",
+    "outputFormat": "The output will be a string displaying the person's name and age.",
+    "notes": "The `person` object reference should remain the same when the `handleIncrement` function is called.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 1000,
+        "description": "The number of times the `handleIncrement` function is called."
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"name\":\"John\",\"age\":25}",
+        "output": "John (25)",
+        "explanation": "The component should not re-render when the `person` object reference remains the same."
+      },
+      {
+        "input": "{\"name\":\"Jane\",\"age\":30}",
+        "output": "Jane (30)",
+        "explanation": "The component should re-render when the `person` object changes."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 10,
+    "points": 30,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "REACT"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "react"
+    ],
+    "interviewFrequency": 1,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use the `useMemo` hook to memoize the `person` object."
+    }
+  ],
+  "editorial": {
+    "title": "Editorial Solution",
+    "intuition": "React's `useMemo` hook can be used to memoize the `person` object and prevent unnecessary re-renders.",
+    "bruteForce": "One possible brute force solution is to use the `useState` hook to update the `person` object and then re-render the component.",
+    "betterSolution": "A better solution would be to use the `useCallback` hook to memoize the `handleIncrement` function and then use it to update the `person` object.",
+    "optimalSolution": "The optimal solution is to use the `useMemo` hook to memoize the `person` object and then use it to render the component.",
+    "proofOfCorrectness": "The `useMemo` hook ensures that the `person` object is only updated when it changes, preventing unnecessary re-renders.",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Not using the `useMemo` hook to memoize the `person` object",
+      "Not using the `useCallback` hook to memoize the `handleIncrement` function"
+    ],
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "javascript": "// Define the Person component",
+    "python": "class Person:\n    def __init__(self):\n        self.state = {'name': '', 'age': 0}"
+  },
+  "buggyStarterCode": {
+    "javascript": "// Define the Person component\nconst Person = ({ person, handleIncrement }) => {\n  const { name, age } = person;\n  handleIncrement();\n  return (\n    <div>\n      {name} ({age})\n    </div>\n  );\n};\n\n// Update the person object\nfunction handleIncrement() {\n  setState(prevState => ({ ...prevState, age: prevState.age + 1 }));\n}\n",
+    "python": "class Person:\n    def __init__(self, person):\n        self.state = person\n        self.handleIncrement = self.handleIncrement\n\n    def handleIncrement(self):\n        self.state = {'name': self.state['name'], 'age': self.state['age'] + 1}"
+  },
+  "functionSignature": {
+    "javascript": "function Person({ person, handleIncrement }) {",
+    "python": "class Person:\n    def __init__(self, person):\n        self.state = person\n        self.handleIncrement = self.handleIncrement"
+  },
+  "solutions": {
+    "javascript": "// Solution\nconst Person = ({ person, handleIncrement }) => {\n  const { name, age } = person;\n  const memoizedPerson = useMemo(() => person, [person]);\n  handleIncrement();\n  return (\n    <div>\n      {memoizedPerson.name} ({memoizedPerson.age})\n    </div>\n  );\n};\n",
+    "python": "from functools import cached_property\n\nclass Person:\n    def __init__(self, person):\n        self._person = person\n\n    @cached_property\ndef getPerson(self):\n        return self._person\n\n    def handleIncrement(self):\n        self._person = {'name': self._person['name'], 'age': self._person['age'] + 1}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"name\":\"John\",\"age\":25}",
+      "output": "John (25)",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"name\":\"Jane\",\"age\":30}",
+      "output": "Jane (30)",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "3b28e9a7defadeb2ff843855",
+  "slug": "fixing-react-component-re-renders-due-to-changing-object-reference-bugfix-easy-react",
+  "mode": "bug_fix",
+  "category": "REACT",
+  "difficulty": "Easy"
+}

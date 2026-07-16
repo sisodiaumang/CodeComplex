@@ -1,0 +1,205 @@
+{
+  "_id": "distance-of-nearest-cell-with-1",
+  "title": "Distance of Nearest Cell with 1",
+  "slug": "distance-of-nearest-cell-with-1",
+  "difficulty": "Medium",
+  "category": "GRAPH",
+  "subCategory": "BFS / DFS Problems",
+  "mode": "solve",
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 500,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "Graphs",
+      "BFS",
+      "DFS"
+    ],
+    "patterns": [
+      "nearest cell with 1",
+      "distance to nearest cell with 1"
+    ],
+    "prerequisites": [
+      "BFS",
+      "DFS"
+    ],
+    "variants": [],
+    "tags": [
+      "medium",
+      "graph",
+      "bfs",
+      "dfs"
+    ],
+    "keywords": [
+      "nearest neighbor",
+      "distance to nearest cell"
+    ],
+    "interviewFrequency": 4,
+    "revisionLevel": 0,
+    "contestEligible": true
+  },
+  "statement": {
+    "markdown": "Given an <code>m x n</code> binary grid <code>grid</code> where each cell is either <code>0</code> or <code>1</code>, find and return the distance of the nearest cell with a value of <code>1</code> for each cell in the grid. The distance between two adjacent cells is <code>1</code>.",
+    "inputFormat": "m\ngrid",
+    "outputFormat": "m\nresult",
+    "notes": "The distance is calculated using a breadth-first search (BFS) approach.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 1,
+        "max": 100,
+        "description": "rows in the grid"
+      },
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 100,
+        "description": "columns in the grid"
+      },
+      {
+        "variable": "grid[i][j]",
+        "type": "integer",
+        "min": 0,
+        "max": 1,
+        "description": "value of each cell in the grid"
+      }
+    ],
+    "examples": [
+      {
+        "input": "3\n1 0 1\n0 0 0\n1 0 1",
+        "output": "3\r\n0 1 0\r\n1 2 1\r\n0 1 0",
+        "explanation": "The distance of each cell with a value of 0 to the nearest cell with a value of 1 is calculated."
+      },
+      {
+        "input": "2\n1 1\n1 1",
+        "output": "2\r\n0 0\r\n0 0",
+        "explanation": "All cells have a value of 1, so the distance to the nearest cell with a value of 1 is 0."
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "The problem involves finding the shortest distance to a specific type of cell in a grid, which suggests using a graph traversal algorithm. Consider how cells are connected in the grid."
+    },
+    {
+      "order": 2,
+      "text": "Since the distance between two adjacent cells is 1, and we're dealing with a grid, think about using a breadth-first search (BFS) algorithm. BFS is particularly useful for finding shortest paths in unweighted graphs."
+    },
+    {
+      "order": 3,
+      "text": "The grid is binary, consisting of 0s and 1s. A key insight is to start the BFS traversal from all cells with a value of 1. This is because we want to find the distance from each cell to the nearest cell with a value of 1."
+    }
+  ],
+  "editorial": {
+    "title": "Distance of Nearest Cell with 1 – From Brute Force to Multi‑Source BFS",
+    "intuition": "The task is to replace every 0 in a binary grid with its Manhattan distance to the closest 1. A naïve approach would examine each 0 and search outward until a 1 is found, but this repeats the same work for many cells. The key observation is that all 1s can act as simultaneous sources in a breadth‑first search: distances propagate layer by layer, guaranteeing the first time we reach a cell is its minimal distance.",
+    "bruteForce": "A straightforward solution loops over every cell, and for each 0 performs a flood‑fill or Dijkstra‑like search until a 1 is encountered. This leads to O((mn)^2) time in the worst case, because each of the mn cells may trigger a full scan of the grid. While correct, it quickly becomes infeasible for the maximum 100×100 grid, where up to 10,000 cells would each perform a 10,000‑step search, yielding about 10^8 operations and excessive memory churn.",
+    "betterSolution": "Instead of treating each 0 independently, we enqueue all cells that already contain a 1 and run a single breadth‑first traversal. Each time we pop a cell, we relax its four orthogonal neighbours. If a neighbour has not yet been visited, we set its distance to the current cell’s distance plus one and enqueue it. Because BFS explores in increasing order of distance, the first assignment to a cell is guaranteed to be the shortest possible. This reduces the work to a single pass over the grid, touching each edge once.",
+    "optimalSolution": "The optimal algorithm is a multi‑source BFS that visits every cell exactly once. It runs in O(mn) time and uses O(mn) additional space for the distance matrix and the queue. The queue never contains more than mn elements, and each cell’s neighbours are examined only when the cell is dequeued. Thus the algorithm scales linearly with the input size and meets the problem’s constraints.",
+    "proofOfCorrectness": "Consider any cell v. In the BFS, the first time v is dequeued, it is reached via a path of length d from some source 1. Suppose there existed a shorter path of length d' < d. Then the intermediate cell on that path would have been dequeued earlier, and v would have been enqueued with distance d' before the current enqueue. This contradicts the fact that v was not visited earlier. Therefore the distance assigned to v is minimal. Since all cells are eventually dequeued (the graph is finite and connected via 4‑neighbour edges), every cell receives its correct minimal distance.",
+    "dryRun": "For a 3×3 grid:\n1 0 0\n0 0 0\n0 0 1\n\nInitial queue: (0,0),(2,2). Distances: 0 at those cells.\nDequeue (0,0): enqueue (1,0),(0,1) with dist 1.\nDequeue (2,2): enqueue (1,2),(2,1) with dist 1.\nContinue: (1,0) enqueues (1,1) with dist 2, (0,1) enqueues (1,1) again but it’s already visited.\nFinally, (1,1) is reached with dist 2, and (1,2),(2,1) propagate to (1,1) as well. The resulting matrix is:\n0 1 2\n1 2 1\n2 1 0\nwhich matches the expected output.",
+    "commonMistakes": [
+      "Assuming a single‑source BFS will work when multiple 1s exist; the correct approach must start from all 1s simultaneously.\nUsing DFS or recursion for distance propagation, which can lead to stack overflows and non‑optimal order of visits.\nNot initializing distances to -1 (or another sentinel) and thus misidentifying already visited cells.\nAdding diagonal moves inadvertently, which changes the distance metric.\nForgetting to handle the case where the grid contains no 1s, leading to uninitialized distances.\nUsing a priority queue (Dijkstra) when a simple queue suffices, adding unnecessary overhead."
+    ],
+    "timeComplexity": "O(m*n)",
+    "spaceComplexity": "O(m*n)"
+  },
+  "starterCode": {
+    "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    vector<vector<int>> updateMatrix(vector<vector<int>>& grid) {\n        // TODO: implement\n        return {}; // placeholder return\n    }\n};",
+    "java": "import java.util.*;\n\nclass Solution {\n    public int[][] updateMatrix(int[][] grid) {\n        // TODO: implement\n        return new int[0][]; // placeholder return\n    }\n}",
+    "python": "from typing import List\n\nclass Solution:\n    def updateMatrix(self, grid: List[List[int]]) -> List[List[int]]:\n        # TODO: implement\n        pass",
+    "javascript": "/**\n * @param {number[][]} grid\n * @return {number[][]}\n */\nvar updateMatrix = function(grid) {\n    // TODO: implement\n    return []; // placeholder return\n};"
+  },
+  "functionSignature": {
+    "cpp": "vector<vector<int>> updateMatrix(vector<vector<int>>& grid);",
+    "java": "public int[][] updateMatrix(int[][] grid);",
+    "python": "def updateMatrix(self, grid: List[List[int]]) -> List[List[int]]:",
+    "javascript": "var updateMatrix = function(grid);"
+  },
+  "solutions": {
+    "python": "import sys\nfrom collections import deque\nfrom typing import List\n\nclass Solution:\n    def updateMatrix(self, grid: List[List[int]]) -> List[List[int]]:\n        m, n = len(grid), len(grid[0])\n        res = [[0]*n for _ in range(m)]\n        q = deque()\n        for i in range(m):\n            for j in range(n):\n                if grid[i][j] == 1:\n                    res[i][j] = 0\n                    q.append((i, j))\n                else:\n                    res[i][j] = float('inf')\n        dirs = [(1, 0), (-1, 0), (0, 1), (0, -1)]\n        while q:\n            x, y = q.popleft()\n            for dx, dy in dirs:\n                nx, ny = x + dx, y + dy\n                if 0 <= nx < m and 0 <= ny < n and res[nx][ny] > res[x][y] + 1:\n                    res[nx][ny] = res[x][y] + 1\n                    q.append((nx, ny))\n        return res\n\nif __name__ == '__main__':\n    it = iter(sys.stdin.read().split())\n    try:\n        m = int(next(it))\n        grid = [list(map(int, [next(it) for _ in range(m)])) for _ in range(m)]\n    except StopIteration:\n        sys.exit(0)\n    sol = Solution()\n    ans = sol.updateMatrix(grid)\n    print(m)\n    for row in ans:\n        print(' '.join(map(str, row)))",
+    "cpp": "#include <numeric>\n#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    vector<vector<int>> updateMatrix(vector<vector<int>>& grid) {\n        int m = grid.size(), n = grid[0].size();\n        vector<vector<int>> res(m, vector<int>(n, 0));\n        queue<pair<int, int>> q;\n        for (int i = 0; i < m; i++) {\n            for (int j = 0; j < n; j++) {\n                if (grid[i][j] == 1) {\n                    q.push({i, j});\n                    res[i][j] = 0;\n                } else {\n                    res[i][j] = INT_MAX;\n                }\n            }\n        }\n        vector<pair<int, int>> dirs = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};\n        while (!q.empty()) {\n            int x = q.front().first, y = q.front().second; q.pop();\n            for (auto& dir : dirs) {\n                int nx = x + dir.first, ny = y + dir.second;\n                if (0 <= nx && nx < m && 0 <= ny && ny < n && res[nx][ny] > res[x][y] + 1) {\n                    res[nx][ny] = res[x][y] + 1;\n                    q.push({nx, ny});\n                }\n            }\n        }\n        return res;\n    }\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    int m;\n    cin >> m;\n    vector<vector<int>> grid(m, vector<int>(m));\n    for (int i = 0; i < m; i++) {\n        for (int j = 0; j < m; j++) {\n            cin >> grid[i][j];\n        }\n    }\n    Solution sol;\n    vector<vector<int>> ans = sol.updateMatrix(grid);\n    cout << m << '\\n';\n    for (int i = 0; i < m; i++) {\n        for (int j = 0; j < m; j++) {\n            cout << ans[i][j] << (j == m - 1 ? '\\n' : ' ');\n        }\n    }\n    return 0;\n}"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1.2
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "3\n1 0 1\n0 0 0\n1 0 1",
+      "output": "3\r\n0 1 0\r\n1 2 1\r\n0 1 0",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "sample_2",
+      "input": "2\n1 1\n1 1",
+      "output": "2\r\n0 0\r\n0 0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "min_constraint_3",
+      "input": "2\n0 0\n1 1",
+      "output": "2\r\n1 1\r\n0 0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "min_constraint"
+    },
+    {
+      "id": "boundary_4",
+      "input": "1\n1\n1",
+      "output": "1\r\n0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "boundary"
+    },
+    {
+      "id": "duplicate_5",
+      "input": "2\n0 1\n1 1",
+      "output": "2\r\n1 0\r\n0 0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "duplicate"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

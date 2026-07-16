@@ -1,0 +1,153 @@
+{
+  "_id": "68ddb16cc40f8c611684aa18",
+  "title": "Incorrectly Implemented Coin Change Problem",
+  "slug": "incorrectly-implemented-coin-change-problem-bugfix-easy-greedy-algorithms",
+  "difficulty": "Easy",
+  "category": "DSA",
+  "subCategory": "GREEDY",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 15,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "easy"
+    ],
+    "keywords": [
+      "bug-fix",
+      "greedy"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Given a list of available coins and a target amount, return the minimum number of coins needed to make the target amount using the given coins. Each coin can be used any number of times.\n\n\nNote that the available coins are sorted in increasing order.\n\n\nImplement the CoinChange function to return the minimum number of coins needed to make the target amount.\n\n",
+    "inputFormat": "CoinChange(coins = [1, 2, 5], amount = 11)\n\n",
+    "outputFormat": "3 (11 = 5+5+1)\n\n",
+    "notes": "The input coins array is sorted in non-decreasing order.\n\n",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "Example 1:\n1\n5 10\n\n",
+        "output": "2\n\n",
+        "explanation": "Return 2 as 10 = 9 + 1 = 5 + 5\n\n"
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "1. Iterate through the available coins in order from the smallest to the largest."
+    }
+  ],
+  "editorial": {
+    "title": "Coin Change Problem",
+    "intuition": "The idea is to pick the largest coin for the current amount as many times as possible and move to the next amount.",
+    "bruteForce": "brute Force details.",
+    "betterSolution": "",
+    "optimalSolution": "The optimal solution is to use dynamic programming to solve this problem in O(n) time complexity.\n\n",
+    "proofOfCorrectness": "The correctness of the optimal solution can be proved by showing that it always makes the optimal choice and that the time complexity is O(n).\n\n",
+    "dryRun": "Step 1: Initialize the dp array with all zeros.\n\nStep 2: Iterate through the available coins in order from the smallest to the largest.\n\nFor each coin, iterate through the dp array in reverse order.\n\n",
+    "commonMistakes": [
+      "Picking the smallest coin for the current amount as many times as possible.",
+      "Not iterating through the available coins in order from the smallest to the largest."
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(n)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    int coinChange(vector<int>& coins, int amount) {\n        // TODO: implement\n    }\n};",
+    "java": "public class Solution {\npublic int coinChange(int[] coins, int amount) {\n        // TODO: implement\n    }\n}",
+    "python": "class Solution:\n    def coinChange(self, coins, amount):\n        pass\n    # TODO: implement\n",
+    "javascript": "function coinChange(coins, amount) {\n        // TODO: implement\n        return 1;    }\n}"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    int coinChange(vector<int>& coins, int amount) {\n        if (amount == 0) return 0;\n        int count = 0;\n        for (int i = 0; i < coins.size(); i++) {\n            while (amount >= coins[i]) {\n                amount -= coins[i];\n                count++;\n            }\n        }\n        return count;\n    }\n};",
+    "java": "public class Solution {\npublic int coinChange(int[] coins, int amount) {\n        if (amount == 0) return 0;\n        int count = 0;\n        for (int i = 0; i < coins.length; i++) {\n            while (amount >= coins[i]) {\n                amount -= coins[i];\n                count++;\n            }\n        }\n        return count;\n    }\n}",
+    "python": "class Solution:\n    def coinChange(self, coins, amount):\n        if amount == 0:\n            return 0\n        count = 0\n        for coin in coins:\n            while amount >= coin:\n                amount -= coin\n                count += 1\n        return count\n",
+    "javascript": "function coinChange(coins, amount) {\n        if (amount == 0) return 0;\n        let count = 0;\n        for (let coin of coins) {\n            while (amount >= coin) {\n                amount -= coin;\n                count++;\n            }\n        }\n        return count;\n}"
+  },
+  "functionSignature": {
+    "cpp": "bool solve(vector<int>& nums);",
+    "java": "public boolean solve(int[] nums);",
+    "python": "def solve(self, nums: list[int]) -> bool:",
+    "javascript": "var solve = function(nums);"
+  },
+  "solutions": {
+    "python": "import sys\nfrom collections import defaultdict\n\nclass Solution:\n    def coinChange(self, coins, amount):\n        dp = [float('inf')] * (amount + 1)\n        dp[0] = 0\n        for coin in coins:\n            for x in range(coin, amount + 1):\n                dp[x] = min(dp[x], dp[x - coin] + 1)\n        return dp[amount] if dp[amount] != float('inf') else -1\n\ninput = sys.stdin.readline()\ntests = int(input())\n\nfor test in range(tests):\n    n = int(input())\n    coins = list(map(int, input().split()))\n    amount = int(input())\n    s = Solution()\n    print(s.coinChange(coins, amount))\n\n",
+    "cpp": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nclass Solution {\npublic:\n    int coinChange(vector<int>& coins, int amount) {\n        vector<int> dp(amount + 1, INT_MAX);\n        dp[0] = 0;\n        for (int i = 0; i < coins.size(); i++) {\n            for (int j = coins[i]; j <= amount; j++) {\n                dp[j] = min(dp[j], dp[j - coins[i]] + 1);\n            }\n        }\n        return dp[amount] == INT_MAX ? -1 : dp[amount];\n    }\n};\n\nint main() {\n    int n;\n    cin >> n;\n    for (int i = 0; i < n; i++) {\n        int amount;\n        cin >> amount;\n        vector<int> coins;\n        int count;\n        for (int j = 0; j < amount; j++) {\n            int c;\n            cin >> c;\n            coins.push_back(c);\n        }\n        Solution obj;\n        cout << obj.coinChange(coins, amount) << endl;\n    }\n    return 0;\n}",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "Example 1:\n1\n5 10\n\n",
+      "output": "2\n\n",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_hidden_generated",
+      "input": "Example 1:\n1\n5 10\n\n",
+      "output": "2\n\n",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}

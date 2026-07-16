@@ -1,0 +1,143 @@
+{
+  "title": "Fix MongoDB Query Projection to Handle Optional Fields",
+  "subCategory": "Query Projection",
+  "statement": {
+    "markdown": "Given a MongoDB collection with the following document structure:\n```json\n{ \"name\": \"John\", \"address\": { \"street\": \"123 Main St\", \"city\": \"New York\" } }\n```and a query with optional fields:\n```json\n{ \"name\": \"$name\", \"address.city\": \"$address.city\" }\n```Write a function to project the query result to include only the requested fields.\n**Note:** The `address` field is optional, and the `city` field should only be included if the `address` field exists in the document.\n**Input:**\n- `doc`: the MongoDB document\n- `query`: the query with optional fields\n**Output:**\nThe projected document with the requested fields\n**Constraints:**\n- The input document `doc` is guaranteed to have at most one level of nesting.\n- The input query `query` will always be a valid MongoDB query with optional fields.\n- The `address` field in the input document is optional, and its existence is determined by the presence of the `address` key in the document.\n**Examples:\"\n* Input `doc`:\n```json\n{ \"name\": \"John\", \"address\": { \"street\": \"123 Main St\", \"city\": \"New York\" } }\n``` and input `query`:\n```json\n{ \"name\": \"$name\", \"address.city\": \"$address.city\" }\n``` Output:\n```json\n{ \"name\": \"John\", \"address\": { \"city\": \"New York\" } }\n```",
+    "inputFormat": "JSON document and query",
+    "outputFormat": "Projected JSON document",
+    "notes": "The function should handle nested fields correctly.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of fields in the input document"
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Number of fields in the input query"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{\"name\": \"John\", \"address\": { \"street\": \"123 Main St\", \"city\": \"New York\" }}\n{ \"name\": \"$name\", \"address.city\": \"$address.city\" }",
+        "output": "{\"name\": \"John\", \"address\": { \"city\": \"New York\" }}",
+        "explanation": "The function should project the input document to include only the requested fields."
+      },
+      {
+        "input": "{\"name\": \"Jane\", \"address\": null}\n{ \"name\": \"$name\", \"address.city\": \"$address.city\" }",
+        "output": "{\"name\": \"Jane\"}",
+        "explanation": "The function should not include the `city` field in the output because the `address` field is missing."
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "MONGODB"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "mongodb"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "Optimal solution details",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "Step-by-step example run",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(...) ",
+    "spaceComplexity": "O(...)"
+  },
+  "starterCode": {
+    "javascript": "function queryProjection(doc, query) {\n  // Your code here\n}\n",
+    "python": "class Solution:\n  def queryProjection(self, doc, query):\n    pass\n"
+  },
+  "buggyStarterCode": {
+    "javascript": "function queryProjection(doc, query) {\n  let result = {};\n  for (let key in doc) {\n    if (key === '$name') {\n      result['name'] = doc[key];\n    } else if (key === 'address.city') {\n      result['address'] = { 'city': doc[key] };\n    }\n  }\n  return result;\n}\n",
+    "python": "class Solution:\n  def queryProjection(self, doc, query):\n    result = {}\n    if 'name' in doc:\n      result['name'] = doc['name']\n    if 'address.city' in doc:\n      result['address'] = {'city': doc['address']['city']}\n    return result\n"
+  },
+  "functionSignature": {
+    "javascript": "let queryProjection = function(doc, query) {\n};",
+    "python": "def queryProjection(self, doc, query):\n    pass"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction queryProjection(doc, query) {\n  let result = {};\n  for (let key in doc) {\n    if (query[key] !== undefined) {\n      result[key] = query[key] === '$name' ? doc[key] : { [key.split('.')[0]]: { [key.split('.')[1]]: doc[key] } };\n    }\n  }\n  return result;\n}\n",
+    "python": "class Solution:\n  def queryProjection(self, doc, query):\n    result = {}\n    for key in doc:\n      if key in query:\n        if query[key] == \"$name\":\n          result['name'] = doc[key]\n        elif key.split('.')[1] == 'city':\n          result['address'] = { 'city': doc[key] }\n    return result\n"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{\"name\": \"John\", \"address\": { \"street\": \"123 Main St\", \"city\": \"New York\" }}\n{ \"name\": \"$name\", \"address.city\": \"$address.city\" }",
+      "output": "{\"name\": \"John\", \"address\": { \"city\": \"New York\" }}",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{\"name\": \"Jane\", \"address\": null}\n{ \"name\": \"$name\", \"address.city\": \"$address.city\" }",
+      "output": "{\"name\": \"Jane\"}",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "6ef6c4c0a66d42138a0a0f66",
+  "slug": "fix-mongodb-query-projection-to-handle-optional-fields-bugfix-medium-mongodb",
+  "mode": "bug_fix",
+  "category": "MONGODB",
+  "difficulty": "Medium"
+}

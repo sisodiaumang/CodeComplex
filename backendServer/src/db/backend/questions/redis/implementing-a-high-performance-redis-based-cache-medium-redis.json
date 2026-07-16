@@ -1,0 +1,129 @@
+{
+  "_id": "fa8ddfd8a22510cd6c40d555",
+  "title": "Implementing a High-Performance Redis-Based Cache",
+  "slug": "implementing-a-high-performance-redis-based-cache-medium-redis",
+  "difficulty": "Medium",
+  "topics": [
+    "REDIS"
+  ],
+  "statement": "Your task is to implement a cache system using Redis to store and retrieve data. You will need to create a RESTful API that supports storing, retrieving, and deleting cached items. The cache should have a TTL (time-to-live) of 5 minutes to expire items. When a cached item is requested but not found, the API should return a 404 status code. If an error occurs during cache operations, return a 500 status code with a meaningful error message. Use Redis as the underlying storage, and ensure that your implementation handles concurrent requests correctly.\n\n**Endpoints:\"\n\n* **GET /api/cache/:key**: Retrieve a cached item by its key.\n* **POST /api/cache**: Store a cached item with a given key and TTL.\n* **DELETE /api/cache/:key**: Delete a cached item by its key.\n\n**Requirements:**\n\n* Implement Redis client connection using the `redis` package.\n* Use a cache manager to handle cache operations (store, retrieve, delete).\n* Implement concurrent safety using a lock mechanism or Redis transactions.\n* Validate input data (key, TTL) to prevent errors.\n* Return meaningful error messages for unexpected cases.\n\n**Example Use Cases:\"\n\n* Store a cached item: `POST /api/cache` with JSON body `{'key': 'example_key', 'ttl': 300}`\n* Retrieve a cached item: `GET /api/cache/example_key`\n* Delete a cached item: `DELETE /api/cache/example_key`",
+  "constraints": [
+    "Use Redis as the underlying storage, with a TTL of 5 minutes for cached items.",
+    "Implement concurrent safety using a lock mechanism or Redis transactions."
+  ],
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/api/cache/:key",
+      "description": "Retrieve a cached item by its key."
+    },
+    {
+      "method": "POST",
+      "path": "/api/cache",
+      "description": "Store a cached item with a given key and TTL."
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/cache/:key",
+      "description": "Delete a cached item by its key."
+    }
+  ],
+  "mode": "solve",
+  "starterCode": {
+    "package.json": "{\n  \"name\": \"redis-cache\",\n  \"version\": \"1.0.0\",\n  \"main\": \"index.js\",\n  \"scripts\": {\n    \"start\": \"node index.js\"\n  },\n  \"dependencies\": {\n    \"express\": \"^4.18.2\",\n    \"redis\": \"^3.0.2\"\n  }\n}",
+    "index.js": "const express = require('express');\nconst Redis = require('redis');\nconst app = express();\nconst client = Redis.createClient();\n\napp.use(express.json());\n\n// TODO: Implement cache manager and Redis client connection.\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log('Server running on port ' + PORT));"
+  },
+  "judgeConfig": {
+    "requestTimeoutMs": 2000,
+    "startupTimeoutMs": 4000,
+    "healthCheckPath": "/",
+    "port": 3000,
+    "stack": [
+      "node"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100
+  },
+  "visibleApiTestCases": [
+    {
+      "id": "v_tc1",
+      "method": "POST",
+      "path": "/api/cache",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "key": "example_key",
+        "ttl": 300
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "success": true
+      },
+      "isVisible": true
+    },
+    {
+      "id": "v_tc2",
+      "method": "GET",
+      "path": "/api/cache/example_key",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "key": "example_key",
+        "ttl": 300
+      },
+      "isVisible": true
+    }
+  ],
+  "hiddenApiTestCases": [
+    {
+      "id": "h_tc1",
+      "method": "GET",
+      "path": "/api/cache/invalid_key",
+      "expectedStatus": 404,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc2",
+      "method": "POST",
+      "path": "/api/cache",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "key": "",
+        "ttl": 300
+      },
+      "expectedStatus": 500,
+      "isVisible": false
+    },
+    {
+      "id": "h_tc3",
+      "method": "DELETE",
+      "path": "/api/cache/invalid_key",
+      "expectedStatus": 500,
+      "isVisible": false
+    }
+  ],
+  "tags": [
+    "backend",
+    "pub/sub",
+    "cache",
+    "sessions",
+    "rate-limiting",
+    "leaderboard",
+    "streams",
+    "redis",
+    "concurrency",
+    "ttl",
+    "express",
+    "node"
+  ]
+}

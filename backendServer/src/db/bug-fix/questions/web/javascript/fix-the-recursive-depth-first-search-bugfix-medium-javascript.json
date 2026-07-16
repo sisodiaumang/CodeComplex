@@ -1,0 +1,150 @@
+{
+  "title": "Fix the Recursive Depth First Search",
+  "subCategory": "Graph Theory",
+  "statement": {
+    "markdown": "Write a recursive function to perform a depth-first search (DFS) on a graph. The graph is represented as an adjacency list where each key is a node and its corresponding value is a list of neighboring nodes. The function should return a list of visited nodes in the order they were visited. Note that the graph can be disconnected, meaning some nodes may not be reachable from others. You may assume that the graph is represented as an object where each key is a node and its corresponding value is a list of neighboring nodes. For example, the graph `{ 'A': ['B', 'C'], 'B': ['A', 'D'], 'C': ['A', 'F'], 'D': ['B'], 'E': ['F'], 'F': ['C', 'E'] }` should be traversed in the order `['A', 'B', 'D', 'C', 'F', 'E']`.",
+    "inputFormat": "An object representing the graph where each key is a node and its corresponding value is a list of neighboring nodes.",
+    "outputFormat": "A list of visited nodes in the order they were visited.",
+    "notes": "Your function should use recursion to traverse the graph. If a node is visited before, it should not be visited again. You may assume that the input graph is not empty.",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "The number of nodes in the graph"
+      },
+      {
+        "variable": "m",
+        "type": "integer",
+        "min": 0,
+        "max": 100000,
+        "description": "The number of edges in the graph"
+      },
+      {
+        "variable": "maxDepth",
+        "type": "integer",
+        "min": 0,
+        "max": 1000,
+        "description": "The maximum depth of the recursion"
+      }
+    ],
+    "examples": [
+      {
+        "input": "{ 'A': ['B', 'C'], 'B': ['A', 'D'], 'C': ['A', 'F'], 'D': ['B'], 'E': ['F'], 'F': ['C', 'E'] }",
+        "output": "['A', 'B', 'D', 'C', 'F', 'E']",
+        "explanation": "The graph is traversed in the order ['A', 'B', 'D', 'C', 'F', 'E']"
+      },
+      {
+        "input": "{ 'A': ['B'], 'B': ['A'], 'C': ['D'], 'D': ['C'], 'E': ['F'], 'F': ['E'] }",
+        "output": "['A', 'B', 'A', 'B', 'C', 'D', 'C', 'D', 'E', 'F', 'E', 'F']",
+        "explanation": "The graph is traversed in the order ['A', 'B', 'A', 'B', 'C', 'D', 'C', 'D', 'E', 'F', 'E', 'F']"
+      }
+    ]
+  },
+  "metadata": {
+    "estimatedTime": 20,
+    "points": 50,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "JAVASCRIPT"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "medium"
+    ],
+    "keywords": [
+      "bug-fix",
+      "javascript"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "Use a Set to keep track of visited nodes to avoid infinite loops."
+    }
+  ],
+  "editorial": {
+    "title": "Depth-First Search",
+    "intuition": "The key to this problem is to use a recursive function that calls itself with the neighboring nodes.",
+    "bruteForce": "A brute force approach would be to use a stack to keep track of nodes to visit.",
+    "betterSolution": "Using a recursive function is more efficient because it eliminates the need for a stack.",
+    "optimalSolution": "The optimal solution is to use a recursive function with a Set to keep track of visited nodes.",
+    "proofOfCorrectness": "The proof of correctness is that the function returns a list of visited nodes in the order they were visited.",
+    "dryRun": "Step-by-step example run: Start with node 'A', visit 'B' and 'C', then visit 'D' and 'F', and finally visit 'E'.",
+    "commonMistakes": [
+      "Visiting the same node multiple times",
+      "Not keeping track of visited nodes"
+    ],
+    "timeComplexity": "O(n + m)",
+    "spaceComplexity": "O(maxDepth)"
+  },
+  "starterCode": {
+    "javascript": "function dfs(graph, node, visited) {\n  visited.add(node);\n  // TO DO: visit neighboring nodes\n}\nfunction depthFirstSearch(graph) {\n  // TO DO: implement DFS\n}",
+    "python": "class Solution:\n  def dfs(self, graph, node, visited):\n    visited.add(node)\n    # TO DO: visit neighboring nodes\n  def depthFirstSearch(self, graph):\n    # TO DO: implement DFS"
+  },
+  "buggyStarterCode": {
+    "javascript": "function dfs(graph, node, visited) {\n  visited.add(node);\n  for (let i = 0; i < graph[node].length; i++) {\n    let neighbor = graph[node][i];\n    if (!visited.has(neighbor)) {\n      dfs(graph, neighbor, visited);\n    }\n  }\n}\nfunction depthFirstSearch(graph) {\n  let visited = new Set();\n  dfs(graph, Object.keys(graph)[0], visited);\n  return Array.from(visited);\n}",
+    "python": "class Solution:\n  def dfs(self, graph, node, visited):\n    visited.add(node)\n    for neighbor in graph[node]:\n      if neighbor not in visited:\n        self.dfs(graph, neighbor, visited)\n  def depthFirstSearch(self, graph):\n    visited = set()\n    self.dfs(graph, next(iter(graph)), visited)\n    return list(visited)"
+  },
+  "functionSignature": {
+    "javascript": "function depthFirstSearch(graph) {\n  return [...];\n}",
+    "python": "class Solution:\n  def depthFirstSearch(self, graph) -> list:\n    return [...];"
+  },
+  "solutions": {
+    "javascript": "// Solution\nfunction depthFirstSearch(graph) {\n  let visited = new Set();\n  for (let node in graph) {\n    if (!visited.has(node)) {\n      dfs(graph, node, visited);\n    }\n  }\n  return Array.from(visited);\n}\nfunction dfs(graph, node, visited) {\n  visited.add(node);\n  for (let neighbor of graph[node]) {\n    if (!visited.has(neighbor)) {\n      dfs(graph, neighbor, visited);\n    }\n  }\n}\n",
+    "python": "class Solution:\n  def depthFirstSearch(self, graph) -> list:\n    visited = set()\n    for node in graph:\n      if node not in visited:\n        self.dfs(graph, node, visited)\n    return list(visited)\n  def dfs(self, graph, node, visited):\n    visited.add(node)\n    for neighbor in graph[node]:\n      if neighbor not in visited:\n        self.dfs(graph, neighbor, visited)"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": false
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": false,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 1
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "{ 'A': ['B', 'C'], 'B': ['A', 'D'], 'C': ['A', 'F'], 'D': ['B'], 'E': ['F'], 'F': ['C', 'E'] }",
+      "output": "['A', 'B', 'D', 'C', 'F', 'E']",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "{ 'A': ['B'], 'B': ['A'], 'C': ['D'], 'D': ['C'], 'E': ['F'], 'F': ['E'] }",
+      "output": "['A', 'B', 'A', 'B', 'C', 'D', 'C', 'D', 'E', 'F', 'E', 'F']",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "_id": "160ed5d1305d2bd43ae88d65",
+  "slug": "fix-the-recursive-depth-first-search-bugfix-medium-javascript",
+  "mode": "bug_fix",
+  "category": "JAVASCRIPT",
+  "difficulty": "Medium"
+}

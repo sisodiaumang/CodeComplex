@@ -1,0 +1,153 @@
+{
+  "_id": "8fcaa0329896e0c9743e5d3a",
+  "title": "Restore Missing High-Bits from Binary Array",
+  "slug": "restore-missing-high-bits-from-binary-array-bugfix-hard-bit-manipulation-1",
+  "difficulty": "Hard",
+  "category": "DSA",
+  "subCategory": "BIT_MANIPULATION",
+  "mode": "bug_fix",
+  "metadata": {
+    "estimatedTime": 30,
+    "points": 80,
+    "premium": false,
+    "isPublished": true,
+    "companies": [],
+    "topics": [
+      "DSA"
+    ],
+    "patterns": [],
+    "prerequisites": [],
+    "variants": [],
+    "tags": [
+      "bug-fix",
+      "hard"
+    ],
+    "keywords": [
+      "bug-fix",
+      "bit_manipulation"
+    ],
+    "interviewFrequency": 2,
+    "revisionLevel": 0,
+    "contestEligible": false
+  },
+  "statement": {
+    "markdown": "Your task is to implement a function `solve` that takes an integer array `nums` as input, where each element in the array has a value between 0 and 2^20 - 1, inclusive. The function should find the minimum number of operations to restore all missing high-bits in the array. Note that a high-bit is considered missing if at least one element in the array has the high-bit set, but more than half of elements do not have the high-bit set. You should return the minimum number of operations required to restore all missing high-bits.\n\nHere are some examples: \n\n* `solve([1,2,4])` should return `0` because there are no missing high-bits in this case.\n\n* `solve([2,4,8])` should return `4` because there are two missing high-bits in this case.\n\n* `solve([0,0,0])` should return `1` because the high-bit is missing in this case.\n\nNote that the array can be non-empty and can contain negative numbers.\n\nYou can assume that the input array is not empty and the size of the array will not exceed `10000`.",
+    "inputFormat": "Input contains a single integer array `nums`.",
+    "outputFormat": "Your program should output the minimum number of operations required to restore all missing high-bits.",
+    "notes": "The time complexity of your program should be O(n) and the space complexity should be O(1).",
+    "images": [],
+    "constraints": [
+      {
+        "variable": "n",
+        "type": "integer",
+        "min": 1,
+        "max": 10000,
+        "description": "Size of array"
+      }
+    ],
+    "examples": [
+      {
+        "input": "3\n0 4 8",
+        "output": "2",
+        "explanation": ""
+      }
+    ]
+  },
+  "hints": [
+    {
+      "order": 1,
+      "text": "First hint text"
+    }
+  ],
+  "editorial": {
+    "title": "Editorial title",
+    "intuition": "Explanation of the correct approach",
+    "bruteForce": "Brute force approach summary",
+    "betterSolution": "",
+    "optimalSolution": "optimal Solution details.",
+    "proofOfCorrectness": "Correctness proof",
+    "dryRun": "dry Run details.",
+    "commonMistakes": [
+      "Mistake 1",
+      "Mistake 2"
+    ],
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1)"
+  },
+  "starterCode": {
+    "cpp": "class Solution {\npublic:\n    int solve(vector<int>& nums);\n};\n\n// TODO: implement\n",
+    "java": "public class Solution {\n    public int solve(int[] nums);\n}\n\n// TODO: implement\n",
+    "python": "class Solution:\n    def solve(self, nums: list[int]) -> int:\n        # TODO: implement\n        return 0\n",
+    "javascript": "var solve = function(nums) {\n    // TODO: implement\n    return 0;\n};\n"
+  },
+  "buggyStarterCode": {
+    "cpp": "class Solution {\npublic:\n    int solve(vector<int>& nums) {\n        int result = 0;\n        for (int i = 0; i < n; i++) {\n            result += (nums[i] >> 20) & 1;\n            result -= (nums[i] >> 19) & 1;\n        }\n        return result;\n    }\n};",
+    "java": "public class Solution {\n    public int solve(int[] nums) {\n        int result = 0;\n        for (int i = 0; i < n; i++) {\n            result += (nums[i] >> 20) & 1;\n            result -= (nums[i] >> 19) & 1;\n        }\n        return result;\n    }\n}",
+    "python": "class Solution:\n    def solve(self, nums: list[int]) -> int:\n        n = len(nums)\n        result = 0\n        for i in range(n):\n            result += (nums[i] >> 20) & 1\n            result -= (nums[i] >> 19) & 1\n        return result",
+    "javascript": "var solve = function(nums) {\n    var n = nums.length;\n    var result = 0;\n    for (var i = 0; i < n; i++) {\n        result += (nums[i] >> 20) & 1;\n        result -= (nums[i] >> 19) & 1;\n    }\n    return result;\n}"
+  },
+  "functionSignature": {
+    "cpp": "bool solve(vector<int>& nums);",
+    "java": "public boolean solve(int[] nums);",
+    "python": "def solve(self, nums: list[int]) -> bool:",
+    "javascript": "var solve = function(nums);"
+  },
+  "solutions": {
+    "python": "from typing import List\n\nclass Solution:\n    def solve(self, nums: List[int]) -> int:\n        n = len(nums)\n        result = 1\n        for i in range(20, -1, -1):\n            max_count = 0\n            min_count = float('inf')\n            for j in range(n):\n                if (nums[j] >> i) & 1:\n                    max_count += 1\n                else:\n                    min_count = min(min_count, max_count)\n            result += max(max_count - n // 2, 0)\n        return result",
+    "cpp": "#include <iostream>\n#include <vector>\n\nusing namespace std;\n\nclass Solution {\npublic:\n    int solve(vector<int>& nums) {\n        int n = nums.size();\n        int result = 1;\n        for (int i = 20; i >= 0; i--) {\n            int max_count = 0;\n            int min_count = INT_MAX;\n            for (int j = 0; j < n; j++) {\n                if (nums[j] >> i & 1) {\n                    max_count++;\n                }\n                else {\n                    min_count = min(min_count, max_count);\n                }\n            }\n            result += max(max_count - n / 2, 0);\n        }\n        return result;\n    }\n};",
+    "java": "// Solution",
+    "javascript": "// Solution"
+  },
+  "judgeConfig": {
+    "timeLimit": 2,
+    "memoryLimit": 256,
+    "supportedLanguages": [
+      "cpp",
+      "java",
+      "python",
+      "javascript"
+    ]
+  },
+  "scoring": {
+    "type": "binary",
+    "maxScore": 100,
+    "partialScoring": true
+  },
+  "battleConfig": {
+    "enabled": true,
+    "ratingEnabled": true,
+    "timeBonus": true,
+    "maxBattleScore": 100,
+    "difficultyMultiplier": 2
+  },
+  "testCases": [
+    {
+      "id": "sample_1",
+      "input": "3\n0 4 8",
+      "output": "2",
+      "isVisible": true,
+      "weight": 1,
+      "category": "sample"
+    },
+    {
+      "id": "tc_2",
+      "input": "5\n1 2 4 8 16",
+      "output": "0",
+      "isVisible": false,
+      "weight": 1,
+      "category": "hidden"
+    }
+  ],
+  "analytics": {
+    "likes": 0,
+    "dislikes": 0,
+    "totalSubmissions": 0,
+    "acceptedSubmissions": 0,
+    "averageRuntime": 0,
+    "averageMemory": 0
+  },
+  "similarProblems": [],
+  "followUpQuestions": [],
+  "isDeleted": false,
+  "deletedAt": null
+}
