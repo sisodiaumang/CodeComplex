@@ -1176,7 +1176,7 @@ export const startMatchmaking = async (
             difficulty,
             teamSize: actualTeamSize,
             isRanked: actualIsRanked,
-            topics: { $all: topics, $size: topics.length }
+            topics: { $in: topics }
         }).sort({ createdAt: 1 });
 
         let candidateRooms = rooms;
@@ -1203,6 +1203,7 @@ export const startMatchmaking = async (
 
             if (hasSpaceInA || hasSpaceInB) {
                 let updated = null;
+                const commonTopics = (room.topics ?? []).filter((t: string) => topics.includes(t));
                 if (hasSpaceInA) {
                     updated = await BattleRoom.findOneAndUpdate(
                         {
@@ -1212,7 +1213,10 @@ export const startMatchmaking = async (
                             "teams.teamB": { $ne: userId },
                             $expr: { $lt: [{ $size: "$teams.teamA" }, "$teamSize"] }
                         },
-                        { $push: { "teams.teamA": userId } },
+                        { 
+                            $push: { "teams.teamA": userId },
+                            $set: { topics: commonTopics }
+                        },
                         { new: true }
                     );
                 }
@@ -1225,7 +1229,10 @@ export const startMatchmaking = async (
                             "teams.teamB": { $ne: userId },
                             $expr: { $lt: [{ $size: "$teams.teamB" }, "$teamSize"] }
                         },
-                        { $push: { "teams.teamB": userId } },
+                        { 
+                            $push: { "teams.teamB": userId },
+                            $set: { topics: commonTopics }
+                        },
                         { new: true }
                     );
                 }
