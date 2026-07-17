@@ -118,7 +118,7 @@ function ProfileSkeleton() {
   return (
     <div className="grid gap-6 lg:grid-cols-[280px_1fr]">
       {/* Left Column (Sidebar style details) */}
-      <div className="space-y-6">
+      <div className="space-y-6 w-full max-w-md mx-auto lg:max-w-none lg:mx-0">
         {/* Identity Card Skeleton */}
         <Card className="overflow-hidden border border-border bg-surface shadow-md">
           {/* Card Header Gradient banner */}
@@ -280,7 +280,7 @@ export default function ProfilePage({
   return (
     <div className="grid gap-6 lg:grid-cols-[280px_1fr]">
       {/* Left Column (Sidebar style details) */}
-      <div className="space-y-6">
+      <div className="space-y-6 w-full max-w-md mx-auto lg:max-w-none lg:mx-0">
         {/* Identity Card */}
         <Card className="overflow-hidden border border-border bg-surface shadow-md">
           {/* Card Header (Gradient background with custom mascot!) */}

@@ -2370,11 +2370,11 @@ function CodingWorkspace({ room, matchId, onLeave }: CodingWorkspaceProps) {
       </header>
 
       {/* Main Workspace (IDE splitter layout) */}
-      <main className="flex-1 flex flex-row overflow-hidden min-h-0 relative">
+      <main className="flex-1 flex flex-col md:flex-row overflow-hidden min-h-0 relative">
         {/* Left Side: Question Pane */}
         <div 
-          style={{ width: `${leftWidth}%` }}
-          className="border-r border-border bg-surface/30 flex flex-col overflow-hidden min-h-0 shrink-0 min-w-[280px]"
+          style={{ '--left-width': `${leftWidth}%` } as React.CSSProperties}
+          className="w-full md:w-[var(--left-width)] border-b md:border-b-0 md:border-r border-border bg-surface/30 flex flex-col overflow-hidden min-h-0 shrink-0 md:min-w-[280px] h-[35vh] md:h-auto"
         >
           <div className="flex items-center justify-between border-b border-border bg-surface px-4 h-10 shrink-0">
             <div className="flex gap-2">
@@ -2889,7 +2889,7 @@ function CodingWorkspace({ room, matchId, onLeave }: CodingWorkspaceProps) {
         {/* Vertical Resize Splitter */}
         <div 
           onMouseDown={handleMouseDownLeft}
-          className="w-1.5 hover:w-2 bg-border/20 hover:bg-primary/50 transition-all cursor-col-resize shrink-0 relative z-30 self-stretch flex items-center justify-center group"
+          className="hidden md:flex w-1.5 hover:w-2 bg-border/20 hover:bg-primary/50 transition-all cursor-col-resize shrink-0 relative z-30 self-stretch items-center justify-center group"
         >
           <div className="w-[1px] h-6 bg-border group-hover:bg-primary" />
         </div>
@@ -3278,15 +3278,15 @@ function CodingWorkspace({ room, matchId, onLeave }: CodingWorkspaceProps) {
           {/* Horizontal Resize Splitter */}
           <div 
             onMouseDown={handleMouseDownBottom}
-            className="h-1.5 hover:h-2 bg-border/20 hover:bg-primary/50 transition-all cursor-row-resize shrink-0 relative z-30 w-full flex items-center justify-center group"
+            className="hidden md:flex h-1.5 hover:h-2 bg-border/20 hover:bg-primary/50 transition-all cursor-row-resize shrink-0 relative z-30 w-full items-center justify-center group"
           >
             <div className="h-[1px] w-6 bg-border group-hover:bg-primary" />
           </div>
 
           {/* Bottom Terminal Output Drawer */}
           <div 
-            style={{ height: `${bottomHeight}px` }}
-            className="bg-surface/80 border-t border-border flex flex-col shrink-0 overflow-hidden select-none"
+            style={{ '--bottom-height': `${bottomHeight}px` } as React.CSSProperties}
+            className="w-full h-[180px] md:h-[var(--bottom-height)] bg-surface/80 border-t border-border flex flex-col shrink-0 overflow-hidden select-none"
           >
             <div className="h-9 border-b border-border bg-surface flex items-center justify-between px-4 shrink-0">
               <div className="flex gap-2">

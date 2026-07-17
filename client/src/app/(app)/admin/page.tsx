@@ -457,11 +457,11 @@ export default function AdminPanelPage() {
       {/* Main Dashboard Layout Split Pane */}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
         
-        {/* Left Side: Professional Navigation Column */}
-        <aside className="lg:col-span-1 space-y-4">
-          <div className="sticky top-20">
-            <Card className="p-2 border border-border bg-surface flex flex-col gap-1">
-              <p className="px-4 py-2 text-[11px] font-bold text-text-faint uppercase tracking-wider font-mono">Navigation</p>
+        {/* Left Side: Navigation Column */}
+        <aside className="lg:col-span-1 w-full">
+          <div className="sticky top-18 lg:top-24 space-y-4">
+            <Card className="p-2 border border-border/80 bg-surface/40 backdrop-blur-md flex flex-row lg:flex-col gap-1.5 shadow-sm rounded-2xl overflow-x-auto lg:overflow-x-visible scrollbar-none">
+              <p className="px-4 pt-3 pb-1.5 text-[10px] font-extrabold text-text-faint uppercase tracking-widest font-mono hidden lg:block">Console Navigation</p>
               {NAVIGATION_TABS.map((tab) => {
                 const Icon = tab.icon;
                 const active = activeTab === tab.id;
@@ -470,19 +470,22 @@ export default function AdminPanelPage() {
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
                     className={cn(
-                      "w-full flex items-center gap-3.5 px-4 py-3 rounded-lg text-left transition-all duration-200 group border text-sm cursor-pointer",
+                      "flex items-center gap-2.5 px-4 py-2.5 lg:px-3.5 lg:py-3 rounded-xl text-left transition-all duration-300 group border text-xs sm:text-sm cursor-pointer relative overflow-hidden shrink-0 w-auto lg:w-full",
                       active
-                        ? "bg-primary-subtle border-primary/20 text-primary font-semibold"
-                        : "bg-transparent border-transparent text-text-muted hover:text-text hover:bg-surface-2"
+                        ? "bg-primary/10 border-primary/20 text-primary font-bold shadow-sm"
+                        : "bg-transparent border-transparent text-text-muted hover:text-text hover:bg-surface/50"
                     )}
                   >
+                    {active && (
+                      <div className="absolute left-0 top-3 bottom-3 w-1 bg-primary rounded-full hidden lg:block" />
+                    )}
                     <Icon className={cn(
-                      "size-5 shrink-0 transition-transform group-hover:scale-105",
-                      active ? "text-primary" : "text-text-faint group-hover:text-text"
+                      "size-4 shrink-0 transition-transform duration-300 group-hover:scale-110",
+                      active ? "text-primary" : "text-text-faint group-hover:text-text-muted"
                     )} />
                     <div className="flex-1 min-w-0">
-                      <p className="truncate leading-none">{tab.label}</p>
-                      <p className="text-[11px] text-text-faint mt-1 leading-none font-normal">{tab.desc}</p>
+                      <p className="truncate leading-none text-xs">{tab.label}</p>
+                      <p className="text-[10px] text-text-faint mt-1.5 leading-none font-normal truncate hidden lg:block">{tab.desc}</p>
                     </div>
                     {tab.count !== undefined && tab.count > 0 && (
                       <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-danger text-[10px] font-bold text-white px-1.5">
@@ -494,8 +497,8 @@ export default function AdminPanelPage() {
               })}
             </Card>
             
-            {/* System Quick Diagnostics Card */}
-            <Card className="mt-4 p-4 border border-border bg-surface/50 text-xs text-text-muted space-y-2">
+            {/* System Quick Diagnostics Card - Hidden on Mobile */}
+            <Card className="p-5 border border-border/80 bg-surface/20 backdrop-blur-md text-xs text-text-muted space-y-3 rounded-2xl shadow-sm hidden lg:block">
               <div className="flex items-center justify-between border-b border-border pb-2">
                 <span className="font-semibold text-text flex items-center gap-1.5">
                   <span className="size-2 rounded-full bg-win inline-block animate-pulse" />

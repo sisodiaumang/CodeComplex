@@ -361,13 +361,13 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           {/* Left: brand + nav links (desktop) */}
           <div className="flex items-center gap-6">
             <Brand />
-            <div className="hidden md:block">
+            <div className="hidden lg:block">
               <DesktopNav />
             </div>
           </div>
 
           {/* Right: theme + bell + user (desktop) | hamburger (mobile) */}
-          <div className="hidden items-center gap-1 md:flex">
+          <div className="hidden items-center gap-1 lg:flex">
             <ThemeToggle />
             <NotificationBell />
             <UserMenu />
@@ -377,7 +377,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           <button
             onClick={() => setMobileOpen((o) => !o)}
             aria-label={mobileOpen ? "Close menu" : "Open menu"}
-            className="rounded-md p-1.5 text-sidebar-muted hover:bg-sidebar-hover md:hidden"
+            className="rounded-md p-1.5 text-sidebar-muted hover:bg-sidebar-hover lg:hidden"
           >
             {mobileOpen ? <X className="size-5" /> : <Menu className="size-5" />}
           </button>
@@ -386,7 +386,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
       {/* ── Mobile drawer ── */}
       {mobileOpen && (
-        <div className="fixed inset-0 z-20 md:hidden">
+        <div className="fixed inset-0 z-20 lg:hidden">
           <div
             className="absolute inset-0 bg-black/40"
             onClick={() => setMobileOpen(false)}
