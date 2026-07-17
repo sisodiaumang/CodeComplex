@@ -28,6 +28,9 @@ COPY --from=builder /app/dist ./dist
 # Copy seed json files and db folder (required for DB seed scripts)
 COPY --from=builder /app/src/db ./src/db
 
+# Ensure temporary upload directory exists
+RUN mkdir -p public/temp
+
 EXPOSE 8000
 
 CMD ["npm", "start"]
