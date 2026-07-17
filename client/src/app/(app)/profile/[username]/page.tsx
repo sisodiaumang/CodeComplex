@@ -116,7 +116,7 @@ const RARITY_STYLES: Record<string, string> = {
 
 function ProfileSkeleton() {
   return (
-    <div className="grid gap-6 lg:grid-cols-[280px_1fr]">
+    <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-6">
       {/* Left Column (Sidebar style details) */}
       <div className="space-y-6 w-full max-w-md mx-auto lg:max-w-none lg:mx-0">
         {/* Identity Card Skeleton */}
@@ -278,7 +278,7 @@ export default function ProfilePage({
   const currentLevel = Math.floor(totalXp / 1000) + 1;
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[280px_1fr]">
+    <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-6">
       {/* Left Column (Sidebar style details) */}
       <div className="space-y-6 w-full max-w-md mx-auto lg:max-w-none lg:mx-0">
         {/* Identity Card */}

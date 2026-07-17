@@ -383,7 +383,7 @@ function ProfileTab({
   }
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[280px_1fr]">
+    <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-6">
       {/* Live Preview Card */}
       <div className="space-y-3 w-full max-w-md mx-auto lg:max-w-none lg:mx-0">
         <label className="text-[15px] font-medium text-text-muted">Profile Preview</label>

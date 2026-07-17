@@ -130,7 +130,7 @@ export default function AchievementsPage() {
   }
 
   return (
-    <div className="grid gap-6 md:grid-cols-12 items-start relative min-h-[calc(100vh-8rem)]">
+    <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start relative min-h-[calc(100vh-8rem)]">
       
       {/* ── LEFT SIDEBAR: User Console ── */}
       <div className="md:col-span-4 lg:col-span-3 space-y-6 md:sticky md:top-20">

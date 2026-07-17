@@ -213,7 +213,7 @@ export default function BattlePage() {
     <div className="space-y-8">
       <h1 className="text-2xl font-semibold text-text">Battle</h1>
 
-      <div className="grid gap-6 lg:grid-cols-[1fr_420px]">
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_420px] gap-6">
         {/* Create */}
         <Card>
           <div className="px-6 py-5">

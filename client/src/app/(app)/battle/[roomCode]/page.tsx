@@ -503,7 +503,7 @@ function RoomLobbySkeleton() {
       </div>
 
       {/* Lobby content grid */}
-      <div className="grid gap-6 md:grid-cols-[1fr_280px]">
+      <div className="grid grid-cols-1 md:grid-cols-[1fr_280px] gap-6">
         {/* Teams and code columns */}
         <div className="space-y-6">
           <Card className="p-6">
