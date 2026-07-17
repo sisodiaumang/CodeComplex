@@ -793,7 +793,7 @@ export default function ProfilePage({
                 </div>
 
                 {/* Heatmap Grid Wrapper */}
-                <div className="relative flex-1">
+                <div className="relative flex-1 min-w-0">
                   <div className="overflow-x-auto scrollbar-thin pb-1">
                     <div
                       className="grid"
