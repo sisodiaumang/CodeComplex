@@ -544,12 +544,12 @@ export default function AdminPanelPage() {
               <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
                 
                 {/* Site Performance Metrics */}
-                <Card className="xl:col-span-2">
-                  <div className="p-6 border-b border-border">
-                    <h3 className="text-base font-bold text-text flex items-center gap-2">
+                <Card className="xl:col-span-2 border border-border/80 bg-surface/30 backdrop-blur-md rounded-2xl shadow-sm">
+                  <div className="p-6 border-b border-border/60">
+                    <h3 className="text-base font-bold text-text flex items-center gap-2.5">
                       <BarChart4 className="size-4.5 text-primary" /> System Telemetry Metrics
                     </h3>
-                    <p className="text-xs text-text-faint mt-0.5">Asynchronous API response durations and server workload gauges.</p>
+                    <p className="text-xs text-text-faint mt-1">Asynchronous API response durations and active system process workloads.</p>
                   </div>
                   <div className="p-6 space-y-5">
                     {[
@@ -561,15 +561,15 @@ export default function AdminPanelPage() {
                     ].map((item, idx) => {
                       const percentage = parseMetricPercentage(item.value);
                       return (
-                        <div key={idx} className="space-y-1.5">
+                        <div key={idx} className="space-y-2">
                           <div className="flex items-center justify-between text-xs">
-                            <span className="text-text font-medium flex items-center gap-2">
+                            <span className="text-text-muted font-medium flex items-center gap-2">
                               <item.icon className="size-3.5 text-text-faint" />
                               {item.label}
                             </span>
-                            <span className="font-mono font-bold text-text">{item.value}</span>
+                            <span className="font-mono font-bold text-text bg-surface/50 px-2 py-0.5 rounded border border-border/30">{item.value}</span>
                           </div>
-                          <div className="h-2 w-full bg-surface-3 rounded-full overflow-hidden border border-border">
+                          <div className="h-1.5 w-full bg-surface/60 rounded-full overflow-hidden border border-border/40">
                             <div
                               className={cn("h-full rounded-full transition-all duration-500", getMetricColor(item.value))}
                               style={{ width: `${statsQuery.isLoading ? 0 : percentage}%` }}
@@ -582,88 +582,90 @@ export default function AdminPanelPage() {
                 </Card>
 
                 {/* AI Token Budget & Costs */}
-                <Card className="xl:col-span-1">
-                  <div className="p-6 border-b border-border">
-                    <h3 className="text-base font-bold text-text flex items-center gap-2">
-                      <Coins className="size-4.5 text-warning" /> LLM Token Audit
-                    </h3>
-                    <p className="text-xs text-text-faint mt-0.5">Real-time aggregate consumption of xAI Grok evaluation resources.</p>
-                  </div>
-                  <div className="p-6 flex flex-col justify-between h-[calc(100%-65px)]">
-                    <div className="space-y-5">
-                      <div className="bg-surface-2 border border-border rounded-xl p-4 text-center">
-                        <span className="text-[11px] font-bold uppercase tracking-wider text-text-faint font-mono block">Estimated LLM Cost</span>
-                        <span className="text-3xl font-extrabold text-text tracking-tight font-mono mt-1 block">
+                <Card className="xl:col-span-1 border border-border/80 bg-surface/30 backdrop-blur-md rounded-2xl shadow-sm flex flex-col justify-between">
+                  <div>
+                    <div className="p-6 border-b border-border/60">
+                      <h3 className="text-base font-bold text-text flex items-center gap-2.5">
+                        <Coins className="size-4.5 text-warning" /> LLM Token Audit
+                      </h3>
+                      <p className="text-xs text-text-faint mt-1">Real-time aggregate consumption of xAI Grok evaluation resources.</p>
+                    </div>
+                    <div className="p-6 space-y-6">
+                      <div className="bg-gradient-to-br from-surface-2 to-surface border border-border/80 rounded-2xl p-5 text-center shadow-inner">
+                        <span className="text-[10px] font-extrabold uppercase tracking-widest text-text-faint font-mono block">Estimated LLM Cost</span>
+                        <span className="text-3xl font-black text-text tracking-tight font-mono mt-2 block bg-clip-text bg-gradient-to-r from-text to-text-muted">
                           ${typeof tokens.cost === "number" ? tokens.cost.toFixed(4) : "0.0000"}
                         </span>
                       </div>
 
-                      <div className="space-y-3.5">
-                        <div className="space-y-1">
+                      <div className="space-y-4">
+                        <div className="space-y-1.5">
                           <div className="flex justify-between text-xs text-text-muted">
-                            <span>Prompt (Input)</span>
+                            <span className="flex items-center gap-1.5 font-medium"><span className="size-2 rounded-full bg-primary block" />Prompt</span>
                             <span className="font-mono font-semibold text-text">{tokens.promptTokens.toLocaleString()}</span>
                           </div>
-                          <div className="h-1.5 w-full bg-surface-3 rounded-full overflow-hidden">
-                            <div className="h-full bg-primary" style={{ width: `${(tokens.promptTokens / (tokens.totalTokens || 1)) * 100}%` }} />
+                          <div className="h-1.5 w-full bg-surface/60 rounded-full overflow-hidden border border-border/40">
+                            <div className="h-full bg-primary rounded-full" style={{ width: `${(tokens.promptTokens / (tokens.totalTokens || 1)) * 100}%` }} />
                           </div>
                         </div>
-                        <div className="space-y-1">
+                        <div className="space-y-1.5">
                           <div className="flex justify-between text-xs text-text-muted">
-                            <span>Completion (Output)</span>
+                            <span className="flex items-center gap-1.5 font-medium"><span className="size-2 rounded-full bg-warning block" />Completion</span>
                             <span className="font-mono font-semibold text-text">{tokens.completionTokens.toLocaleString()}</span>
                           </div>
-                          <div className="h-1.5 w-full bg-surface-3 rounded-full overflow-hidden">
-                            <div className="h-full bg-warning" style={{ width: `${(tokens.completionTokens / (tokens.totalTokens || 1)) * 100}%` }} />
+                          <div className="h-1.5 w-full bg-surface/60 rounded-full overflow-hidden border border-border/40">
+                            <div className="h-full bg-warning rounded-full" style={{ width: `${(tokens.completionTokens / (tokens.totalTokens || 1)) * 100}%` }} />
                           </div>
                         </div>
                       </div>
                     </div>
+                  </div>
 
-                    <div className="border-t border-border pt-4 mt-6 flex justify-between text-xs font-mono font-bold">
+                  <div className="p-6 pt-0 mt-auto">
+                    <div className="border-t border-border/60 pt-4 flex justify-between items-center text-xs font-mono font-bold">
                       <span className="text-text-muted">Total Tokens:</span>
-                      <span className="text-primary">{tokens.totalTokens.toLocaleString()}</span>
+                      <span className="text-primary font-mono text-sm">{tokens.totalTokens.toLocaleString()}</span>
                     </div>
                   </div>
                 </Card>
 
                 {/* VM Host Resources */}
-                <Card className="xl:col-span-1">
-                  <div className="p-6 border-b border-border">
-                    <h3 className="text-base font-bold text-text flex items-center gap-2">
+                <Card className="xl:col-span-1 border border-border/80 bg-surface/30 backdrop-blur-md rounded-2xl shadow-sm">
+                  <div className="p-6 border-b border-border/60">
+                    <h3 className="text-base font-bold text-text flex items-center gap-2.5">
                       <Server className="size-4.5 text-primary" /> VM Host Resources
                     </h3>
-                    <p className="text-xs text-text-faint mt-0.5">Real-time load and system memory metrics from the virtual machine host.</p>
+                    <p className="text-xs text-text-faint mt-1">Real-time CPU load and physical system memory utilization metrics.</p>
                   </div>
-                  <div className="p-6 space-y-4">
-                    <div className="space-y-1">
-                      <div className="flex justify-between text-xs">
+                  <div className="p-6 space-y-5">
+                    <div className="space-y-1.5">
+                      <div className="flex justify-between text-xs items-center">
                         <span className="text-text-muted font-medium flex items-center gap-2">
                           <Cpu className="size-3.5 text-text-faint" /> CPU Cores
                         </span>
-                        <span className="font-mono font-bold text-text">{perf.cpuCores || "..."}</span>
-                      </div>
-                    </div>
-
-                    <div className="space-y-1">
-                      <div className="flex justify-between text-xs">
-                        <span className="text-text-muted font-medium flex items-center gap-2">
-                          <Activity className="size-3.5 text-text-faint" /> Load Avg (1m/5m/15m)
-                        </span>
-                        <span className="font-mono font-bold text-text">{perf.systemCpuLoad || "..."}</span>
+                        <span className="font-mono font-bold text-text bg-surface/50 px-2 py-0.5 rounded border border-border/30">{perf.cpuCores || "..."}</span>
                       </div>
                     </div>
 
                     <div className="space-y-1.5">
+                      <div className="flex justify-between text-xs items-center">
+                        <span className="text-text-muted font-medium flex items-center gap-2">
+                          <Activity className="size-3.5 text-text-faint" /> Load Avg (1m/5m/15m)
+                        </span>
+                        <span className="font-mono font-bold text-text bg-surface/50 px-2 py-0.5 rounded border border-border/30">{perf.systemCpuLoad || "..."}</span>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
                       <div className="flex justify-between text-xs">
                         <span className="text-text-muted font-medium flex items-center gap-2">
                           <Shield className="size-3.5 text-text-faint" /> RAM Used / Total
                         </span>
-                        <span className="font-mono font-bold text-text">
+                        <span className="font-mono font-bold text-text bg-surface/50 px-2 py-0.5 rounded border border-border/30">
                           {perf.systemMemUsed || "..."} / {perf.systemTotalMem || "..."}
                         </span>
                       </div>
-                      <div className="h-2 w-full bg-surface-3 rounded-full overflow-hidden border border-border">
+                      <div className="h-1.5 w-full bg-surface/60 rounded-full overflow-hidden border border-border/40">
                         <div
                           className="h-full rounded-full bg-primary transition-all duration-500"
                           style={{
@@ -681,12 +683,12 @@ export default function AdminPanelPage() {
                       </div>
                     </div>
 
-                    <div className="space-y-1 pt-2 border-t border-border">
-                      <div className="flex justify-between text-xs">
+                    <div className="space-y-1.5 pt-4 border-t border-border/60">
+                      <div className="flex justify-between text-xs items-center">
                         <span className="text-text-muted font-medium flex items-center gap-2">
                           <Clock className="size-3.5 text-text-faint" /> Host Uptime
                         </span>
-                        <span className="font-mono font-bold text-text">{perf.systemUptime || "..."}</span>
+                        <span className="font-mono font-bold text-text bg-surface/50 px-2 py-0.5 rounded border border-border/30">{perf.systemUptime || "..."}</span>
                       </div>
                     </div>
                   </div>
@@ -698,12 +700,12 @@ export default function AdminPanelPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 
                 {/* Questions by Category */}
-                <Card>
-                  <div className="p-6 border-b border-border">
-                    <h3 className="text-base font-bold text-text flex items-center gap-2">
+                <Card className="border border-border/80 bg-surface/30 backdrop-blur-md rounded-2xl shadow-sm">
+                  <div className="p-6 border-b border-border/60">
+                    <h3 className="text-base font-bold text-text flex items-center gap-2.5">
                       <Code className="size-4.5 text-info" /> Questions by Mode
                     </h3>
-                    <p className="text-xs text-text-faint mt-0.5">Platform database items broken down by game type.</p>
+                    <p className="text-xs text-text-faint mt-1">Platform database items broken down by game type.</p>
                   </div>
                   <div className="p-6 space-y-4">
                     {[
@@ -722,12 +724,12 @@ export default function AdminPanelPage() {
                       const pct = Math.round((item.count / totalQ) * 100);
 
                       return (
-                        <div key={idx} className="space-y-1">
+                        <div key={idx} className="space-y-1.5">
                           <div className="flex justify-between text-xs">
                             <span className="text-text-muted font-medium">{item.label}</span>
-                            <span className="font-mono font-bold text-text">{item.count} ({pct}%)</span>
+                            <span className="font-mono font-bold text-text bg-surface/50 px-2 py-0.5 rounded border border-border/30">{item.count} ({pct}%)</span>
                           </div>
-                          <div className="h-1.5 w-full bg-surface-3 rounded-full overflow-hidden">
+                          <div className="h-1.5 w-full bg-surface/60 rounded-full overflow-hidden border border-border/40">
                             <div className={cn("h-full rounded-full", item.color)} style={{ width: `${pct}%` }} />
                           </div>
                         </div>
@@ -737,12 +739,12 @@ export default function AdminPanelPage() {
                 </Card>
 
                 {/* Popular Topics scroll panel */}
-                <Card>
-                  <div className="p-6 border-b border-border">
-                    <h3 className="text-base font-bold text-text flex items-center gap-2">
+                <Card className="border border-border/80 bg-surface/30 backdrop-blur-md rounded-2xl shadow-sm">
+                  <div className="p-6 border-b border-border/60">
+                    <h3 className="text-base font-bold text-text flex items-center gap-2.5">
                       <TrendingUp className="size-4.5 text-win" /> Popular Categories
                     </h3>
-                    <p className="text-xs text-text-faint mt-0.5">Top custom labels assigned to programming challenges.</p>
+                    <p className="text-xs text-text-faint mt-1">Top custom labels assigned to programming challenges.</p>
                   </div>
                   <div className="p-6">
                     {statsQuery.isLoading ? (
@@ -754,14 +756,12 @@ export default function AdminPanelPage() {
                         No topic labels mapped.
                       </div>
                     ) : (
-                      <div className="max-h-[195px] overflow-y-auto pr-2 space-y-2 select-text">
+                      <div className="max-h-[220px] overflow-y-auto pr-1 flex flex-wrap gap-2 select-text">
                         {stats.topicStats.map((item: any, idx: number) => (
-                          <div key={idx} className="flex items-center justify-between text-xs py-1.5 border-b border-border last:border-0 font-mono">
-                            <span className="px-2 py-1 rounded bg-surface-2 border border-border text-text-muted">
-                              {item.topic}
-                            </span>
-                            <span className="font-bold text-primary bg-primary-subtle border border-primary/20 px-2.5 py-0.5 rounded-full text-[10px]">
-                              {item.count} {item.count === 1 ? "challenge" : "challenges"}
+                          <div key={idx} className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface/50 border border-border/60 text-xs font-mono transition-all duration-300 hover:border-primary/40 hover:-translate-y-0.5">
+                            <span className="text-text-muted font-mono">{item.topic}</span>
+                            <span className="font-bold text-primary font-mono text-[10px] bg-primary/10 border border-primary/20 px-2 py-0.5 rounded-full">
+                              {item.count}
                             </span>
                           </div>
                         ))}
@@ -805,25 +805,25 @@ export default function AdminPanelPage() {
               </Card>
 
               {/* Reports Table & Controls */}
-              <Card>
-                <div className="p-6 border-b border-border flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <Card className="border border-border/80 bg-surface/30 backdrop-blur-md rounded-2xl shadow-sm overflow-hidden">
+                <div className="p-6 border-b border-border/60 flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <div>
-                    <h3 className="text-base font-bold text-text flex items-center gap-2">
+                    <h3 className="text-base font-bold text-text flex items-center gap-2.5">
                       <AlertCircle className="size-4.5 text-danger" /> Flagged Queue
                     </h3>
-                    <p className="text-xs text-text-faint mt-0.5">Review items flagged by system validations or platform players.</p>
+                    <p className="text-xs text-text-faint mt-1">Review items flagged by system validations or platform players.</p>
                   </div>
 
                   {/* Filter pill row */}
-                  <div className="flex flex-wrap items-center gap-1.5 bg-surface-2 p-1 border border-border rounded-lg text-xs">
+                  <div className="flex flex-wrap items-center gap-1 bg-surface/50 p-1 border border-border/60 rounded-xl text-xs">
                     {(["ALL", "PENDING", "RESOLVED", "DISMISSED"] as const).map((st) => (
                       <button
                         key={st}
                         onClick={() => setReportStatusFilter(st)}
                         className={cn(
-                          "px-3 py-1.5 rounded-md font-semibold transition-all cursor-pointer capitalize",
+                          "px-3 py-1.5 rounded-lg font-semibold transition-all cursor-pointer capitalize text-xs",
                           reportStatusFilter === st
-                            ? "bg-surface border border-border text-primary shadow-sm"
+                            ? "bg-surface border border-border/60 text-primary shadow-sm"
                             : "text-text-muted hover:text-text"
                         )}
                       >
@@ -843,8 +843,8 @@ export default function AdminPanelPage() {
                       No matching moderation flags in this view.
                     </div>
                   ) : (
-                    <table className="min-w-full divide-y divide-border/60">
-                      <thead className="bg-surface-2/30 text-left text-xs font-bold uppercase tracking-wider text-text-muted font-mono">
+                    <table className="min-w-full">
+                      <thead className="bg-surface/50 text-left text-[10px] font-extrabold uppercase tracking-widest text-text-faint font-mono border-b border-border/40">
                         <tr>
                           <th className="px-6 py-4">Reported Item</th>
                           <th className="px-6 py-4">Filer</th>
@@ -864,7 +864,7 @@ export default function AdminPanelPage() {
                           const reportedU = item.reportedUser || { username: "Deleted Player", isBanned: false, role: "USER" };
 
                           return (
-                            <tr key={item._id} className="hover:bg-surface-2/20 transition-colors">
+                            <tr key={item._id} className="hover:bg-surface/40 transition-colors">
                               <td className="px-6 py-4">
                                 {isQuestion ? (
                                   <div className="space-y-1">
@@ -1003,26 +1003,26 @@ export default function AdminPanelPage() {
 
           {/* TAB: USERS LIST */}
           {activeTab === "users" && (
-            <Card>
-              <div className="p-6 border-b border-border flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <Card className="border border-border/80 bg-surface/30 backdrop-blur-md rounded-2xl shadow-sm overflow-hidden">
+              <div className="p-6 border-b border-border/60 flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                  <h3 className="text-base font-bold text-text flex items-center gap-2">
+                  <h3 className="text-base font-bold text-text flex items-center gap-2.5">
                     <Users className="size-4.5 text-primary" /> User Database
                   </h3>
-                  <p className="text-xs text-text-faint mt-0.5">Manage user authorization groups, bans, and access tiers.</p>
+                  <p className="text-xs text-text-faint mt-1">Manage user authorization groups, bans, and access tiers.</p>
                 </div>
 
                 <div className="flex flex-wrap items-center gap-4 flex-1 max-w-xl justify-end">
                   {/* Status Pills */}
-                  <div className="flex bg-surface-2 p-1 border border-border rounded-lg text-xs">
+                  <div className="flex bg-surface/50 p-1 border border-border/60 rounded-xl text-xs">
                     <button
                       onClick={() => {
                         setBannedOnly(false);
                         setUsersPage(1);
                       }}
                       className={cn(
-                        "px-3 py-1.5 rounded-md font-semibold transition-all cursor-pointer",
-                        !bannedOnly ? "bg-surface border border-border text-primary shadow-sm" : "text-text-muted hover:text-text"
+                        "px-3 py-1.5 rounded-lg font-semibold transition-all cursor-pointer text-xs",
+                        !bannedOnly ? "bg-surface border border-border/60 text-primary shadow-sm" : "text-text-muted hover:text-text"
                       )}
                     >
                       All Accounts
@@ -1033,8 +1033,8 @@ export default function AdminPanelPage() {
                         setUsersPage(1);
                       }}
                       className={cn(
-                        "px-3 py-1.5 rounded-md font-semibold transition-all cursor-pointer",
-                        bannedOnly ? "bg-surface border border-border text-primary shadow-sm" : "text-text-muted hover:text-text"
+                        "px-3 py-1.5 rounded-lg font-semibold transition-all cursor-pointer text-xs",
+                        bannedOnly ? "bg-surface border border-border/60 text-primary shadow-sm" : "text-text-muted hover:text-text"
                       )}
                     >
                       Banned Only
@@ -1052,7 +1052,7 @@ export default function AdminPanelPage() {
                         setUsersSearch(e.target.value);
                         setUsersPage(1);
                       }}
-                      className="h-10 pl-9 pr-8 w-full rounded-lg border border-border bg-surface text-xs text-text placeholder:text-text-faint focus:border-primary focus:outline-none transition-colors"
+                      className="h-10 pl-9 pr-8 w-full rounded-xl border border-border/60 bg-surface/60 text-xs text-text placeholder:text-text-faint focus:border-primary focus:outline-none transition-colors"
                     />
                     {usersSearch && (
                       <button
@@ -1080,8 +1080,8 @@ export default function AdminPanelPage() {
                     No matching users found in database.
                   </div>
                 ) : (
-                  <table className="min-w-full divide-y divide-border/60">
-                    <thead className="bg-surface-2/30 text-left text-xs font-bold uppercase tracking-wider text-text-muted font-mono">
+                  <table className="min-w-full">
+                    <thead className="bg-surface/50 text-left text-[10px] font-extrabold uppercase tracking-widest text-text-faint font-mono border-b border-border/40">
                       <tr>
                         <th className="px-6 py-4">User</th>
                         <th className="px-6 py-4">Email</th>
@@ -1096,7 +1096,7 @@ export default function AdminPanelPage() {
                         const isSelf = item._id === user._id;
 
                         return (
-                          <tr key={item._id} className="hover:bg-surface-2/20 transition-colors">
+                          <tr key={item._id} className="hover:bg-surface/40 transition-colors">
                             <td className="px-6 py-4 font-semibold text-text flex items-center gap-3">
                               <Avatar src={item.avatar?.profileImageURL} name={item.username} size={28} />
                               <span className="truncate">{item.username}</span>
@@ -1188,12 +1188,12 @@ export default function AdminPanelPage() {
 
           {/* TAB: BATTLE ROOMS */}
           {activeTab === "rooms" && (
-            <Card>
-              <div className="p-6 border-b border-border">
-                <h3 className="text-base font-bold text-text flex items-center gap-2">
+            <Card className="border border-border/80 bg-surface/30 backdrop-blur-md rounded-2xl shadow-sm overflow-hidden">
+              <div className="p-6 border-b border-border/60">
+                <h3 className="text-base font-bold text-text flex items-center gap-2.5">
                   <Swords className="size-4.5 text-primary" /> Active Battle Rooms
                 </h3>
-                <p className="text-xs text-text-faint mt-0.5">Monitor and terminate active multiplayer or custom lobbies.</p>
+                <p className="text-xs text-text-faint mt-1">Monitor and terminate active multiplayer or custom lobbies.</p>
               </div>
 
               <div className="overflow-x-auto">
@@ -1206,8 +1206,8 @@ export default function AdminPanelPage() {
                     No active battle rooms in database.
                   </div>
                 ) : (
-                  <table className="min-w-full divide-y divide-border/60">
-                    <thead className="bg-surface-2/30 text-left text-xs font-bold uppercase tracking-wider text-text-muted font-mono">
+                  <table className="min-w-full">
+                    <thead className="bg-surface/50 text-left text-[10px] font-extrabold uppercase tracking-widest text-text-faint font-mono border-b border-border/40">
                       <tr>
                         <th className="px-6 py-4">Room Code</th>
                         <th className="px-6 py-4">Host Owner</th>
@@ -1219,7 +1219,7 @@ export default function AdminPanelPage() {
                     </thead>
                     <tbody className="divide-y divide-border/40 text-sm">
                       {roomsData.rooms.map((room: any) => (
-                        <tr key={room._id} className="hover:bg-surface-2/20 transition-colors">
+                        <tr key={room._id} className="hover:bg-surface/40 transition-colors">
                           <td className="px-6 py-4 font-mono font-bold text-primary select-text">{room.roomCode}</td>
                           <td className="px-6 py-4 text-text-muted font-semibold">{room.host?.username || "System Match"}</td>
                           <td className="px-6 py-4">
@@ -1305,13 +1305,13 @@ export default function AdminPanelPage() {
           {activeTab === "llm" && (
             <div className="space-y-6 animate-fadeIn">
               {/* API Keys Card */}
-              <Card>
-                <div className="p-6 border-b border-border flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <Card className="border border-border/80 bg-surface/30 backdrop-blur-md rounded-2xl shadow-sm overflow-hidden">
+                <div className="p-6 border-b border-border/60 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div>
-                    <h3 className="text-base font-bold text-text flex items-center gap-2">
+                    <h3 className="text-base font-bold text-text flex items-center gap-2.5">
                       <Lock className="size-4.5 text-warning" /> Groq Cloud API Keys Pool
                     </h3>
-                    <p className="text-xs text-text-faint mt-0.5">
+                    <p className="text-xs text-text-faint mt-1">
                       Secure pool of API keys. Automatically rotates and switches keys on rate limits or failures.
                     </p>
                   </div>
@@ -1327,7 +1327,7 @@ export default function AdminPanelPage() {
                 </div>
                 
                 {showAddKeyForm && (
-                  <div className="p-6 bg-surface-2/45 border-b border-border space-y-4 animate-fadeIn select-text">
+                  <div className="p-6 bg-surface/50 border-b border-border/60 space-y-4 animate-fadeIn select-text">
                     <h4 className="text-xs font-bold uppercase tracking-wider text-primary font-mono">New Encrypted API Key</h4>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="space-y-1">
@@ -1337,7 +1337,7 @@ export default function AdminPanelPage() {
                           value={newKeyVal}
                           onChange={(e) => setNewKeyVal(e.target.value)}
                           placeholder="Paste your Groq API Key here"
-                          className="w-full h-10 px-3 bg-surface border border-border rounded-lg text-sm text-text focus:outline-none focus:border-primary placeholder:text-text-faint"
+                          className="w-full h-10 px-3 bg-surface/60 border border-border/60 rounded-xl text-sm text-text focus:outline-none focus:border-primary placeholder:text-text-faint transition-colors"
                         />
                       </div>
                       <div className="space-y-1">
@@ -1347,7 +1347,7 @@ export default function AdminPanelPage() {
                           value={newKeyLabel}
                           onChange={(e) => setNewKeyLabel(e.target.value)}
                           placeholder="e.g. Back-up Key 2"
-                          className="w-full h-10 px-3 bg-surface border border-border rounded-lg text-sm text-text focus:outline-none focus:border-primary placeholder:text-text-faint"
+                          className="w-full h-10 px-3 bg-surface/60 border border-border/60 rounded-xl text-sm text-text focus:outline-none focus:border-primary placeholder:text-text-faint transition-colors"
                         />
                       </div>
                     </div>
@@ -1394,7 +1394,7 @@ export default function AdminPanelPage() {
                   ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {apiKeysList.map((key: any) => (
-                        <div key={key._id} className="flex items-center justify-between p-4 bg-surface-2 border border-border rounded-xl">
+                        <div key={key._id} className="flex items-center justify-between p-4 bg-surface/50 border border-border/60 rounded-xl hover:border-primary/45 transition-colors duration-300">
                           <div className="space-y-1 min-w-0 flex-1 pr-4">
                             <div className="flex items-center gap-2">
                               <span className="text-xs font-mono font-bold text-primary truncate">{key.label}</span>
@@ -1464,13 +1464,13 @@ export default function AdminPanelPage() {
               </Card>
 
               {/* Model Fallbacks & Budgets */}
-              <Card>
-                <div className="p-6 border-b border-border flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <Card className="border border-border/80 bg-surface/30 backdrop-blur-md rounded-2xl shadow-sm overflow-hidden mt-6">
+                <div className="p-6 border-b border-border/60 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div>
-                    <h3 className="text-base font-bold text-text flex items-center gap-2">
+                    <h3 className="text-base font-bold text-text flex items-center gap-2.5">
                       <Cpu className="size-4.5 text-primary" /> Groq Model Fallbacks & Limits
                     </h3>
-                    <p className="text-xs text-text-faint mt-0.5">
+                    <p className="text-xs text-text-faint mt-1">
                       Configure budgets, priorities, and fallbacks. Models switch automatically when limits are hit.
                     </p>
                   </div>
@@ -1496,8 +1496,8 @@ export default function AdminPanelPage() {
                       No models configured. Restart the backend to seed the database.
                     </div>
                   ) : (
-                    <table className="min-w-full divide-y divide-border/60">
-                      <thead className="bg-surface-2/30 text-left text-xs font-bold uppercase tracking-wider text-text-muted font-mono">
+                    <table className="min-w-full">
+                      <thead className="bg-surface/50 text-left text-[10px] font-extrabold uppercase tracking-widest text-text-faint font-mono border-b border-border/40">
                         <tr>
                           <th className="px-6 py-4">Model Details</th>
                           <th className="px-6 py-4">Status & Health</th>
@@ -1513,7 +1513,7 @@ export default function AdminPanelPage() {
                           const pct = Math.min(100, Math.round((model.limitSpent / (model.spendLimit || 1)) * 100));
 
                           return (
-                            <tr key={model.modelId} className="hover:bg-surface-2/20 transition-colors">
+                            <tr key={model.modelId} className="hover:bg-surface/40 transition-colors">
                               <td className="px-6 py-4 font-sans">
                                 <span className="font-bold text-text block select-text">{model.displayName}</span>
                                 <span className="text-[11px] font-mono text-text-faint block mt-0.5 select-text">{model.modelId}</span>
