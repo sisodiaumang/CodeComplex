@@ -1,4 +1,4 @@
-# ⚔️ devArena
+# ⚔️ CodeComplex
 
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?style=flat-square&logo=next.js)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19-blue?style=flat-square&logo=react)](https://react.dev/)
@@ -8,7 +8,7 @@
 [![Redis](https://img.shields.io/badge/Redis-7-red?style=flat-square&logo=redis)](https://redis.io/)
 [![Socket.io](https://img.shields.io/badge/Socket.io-4-black?style=flat-square&logo=socket.io)](https://socket.io/)
 
-**devArena** is a premier real-time competitive engineering and coding platform. Developers can face off in live battles across various domains including DSA, bug-fixing, backend engineering, frontend assembly, fullstack tasks, and prompt-engineering wars. 
+**CodeComplex** is a premier real-time competitive engineering and coding platform. Developers can face off in live battles across various domains including DSA, bug-fixing, backend engineering, frontend assembly, fullstack tasks, and prompt-engineering wars. 
 
 The platform supports matchmaking, team configurations, real-time code executions, Elo-based rating tiers, social/friend systems, notifications, and spectator modes.
 
@@ -19,7 +19,7 @@ The platform supports matchmaking, team configurations, real-time code execution
 The project is structured as a monorepo containing a separate TypeScript Express server and a Next.js client, with support for Docker orchestration and production PM2 deployment.
 
 ```
-devArena/
+CodeComplex/
 ├── backendServer/          # Express backend application
 │   ├── src/                # TypeScript source files (controllers, routes, models, sockets, jobs)
 │   ├── openapi.yaml        # API specifications (Swagger/OpenAPI 3.0)
@@ -71,7 +71,7 @@ devArena/
 
 ## ⚙️ Environment Configuration
 
-To run devArena locally or via Docker, configure environment variables for both folders.
+To run CodeComplex locally or via Docker, configure environment variables for both folders.
 
 ### 1. Backend (`backendServer/.env`)
 Create `backendServer/.env` following the structure in `backendServer/.env.example`:
@@ -80,7 +80,7 @@ PORT=8000
 NODE_ENV=development
 CLIENT_URL=http://localhost:3000
 CORS_ORIGIN=http://localhost:3000
-MONGODB_URI=mongodb://127.0.0.1:27017/devarena
+MONGODB_URI=mongodb://127.0.0.1:27017/codecomplex
 REDIS_URL=redis://127.0.0.1:6379
 
 JWT_ACCESS_SECRET=your_jwt_access_secret_key_at_least_32_characters
@@ -91,7 +91,7 @@ REFRESH_TOKEN_EXPIRY=7d
 # Email Transporter (SMTP)
 EMAIL_USER=your_smtp_username
 EMAIL_PASS=your_smtp_password
-EMAIL_FROM_ADDRESS=noreply@devarena.com
+EMAIL_FROM_ADDRESS=noreply@codecomplex.com
 
 # Cloudinary (Avatar uploads)
 CLOUDINARY_CLOUD_NAME=your_cloud_name
