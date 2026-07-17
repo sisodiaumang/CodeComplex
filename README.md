@@ -1,4 +1,4 @@
-# ⚔️ CodeComplex
+# CodeComplex
 
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?style=flat-square&logo=next.js)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19-blue?style=flat-square&logo=react)](https://react.dev/)
@@ -14,7 +14,7 @@ The platform supports matchmaking, team configurations, real-time code execution
 
 ---
 
-## 🏗️ Architecture & Project Structure
+## Architecture and Project Structure
 
 The project is structured as a monorepo containing a separate TypeScript Express server and a Next.js client, with support for Docker orchestration and production PM2 deployment.
 
@@ -35,7 +35,7 @@ CodeComplex/
 
 ---
 
-## 🚀 Key Features
+## Key Features
 
 *   **Real-time Coding Battles:** Multiplayer lobbies with Socket.IO supporting custom lobbies, team configurations (Team A vs. Team B), and real-time game state synchronization.
 *   **Flexible Battle Modes:** Face off in Data Structures & Algorithms, bug patching, API backend creation, frontend component styling, and prompt battles.
@@ -48,7 +48,7 @@ CodeComplex/
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 ### Frontend
 - **Framework:** Next.js 15 (App Router)
@@ -69,7 +69,7 @@ CodeComplex/
 
 ---
 
-## ⚙️ Environment Configuration
+## Environment Configuration
 
 To run CodeComplex locally or via Docker, configure environment variables for both folders.
 
@@ -112,7 +112,7 @@ NEXT_PUBLIC_SOCKET_URL=http://localhost:8000
 
 ---
 
-## 🏃 Quick Start (Local Development)
+## Quick Start (Local Development)
 
 Ensure you have **Node.js 18+**, **MongoDB 5.0+**, and **Redis** running locally.
 
@@ -134,7 +134,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ---
 
-## 🐳 Docker Deployment (Zero Dependency)
+## Docker Deployment (Zero Dependency)
 
 You can spin up the entire ecosystem—including MongoDB, Redis, the Express Backend, and the Next.js Frontend—with a single command:
 
@@ -149,7 +149,7 @@ You can spin up the entire ecosystem—including MongoDB, Redis, the Express Bac
 
 ---
 
-## 🌐 Production Hosting
+## Production Hosting
 
 For production setups on virtual machines (VMs):
 1. **PM2** process configuration handles clustering and auto-restarts (`ecosystem.config.cjs`).
