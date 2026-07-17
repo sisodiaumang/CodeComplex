@@ -621,7 +621,7 @@ export default function AdminPanelPage() {
                     </div>
 
                     <div className="border-t border-border pt-4 mt-6 flex justify-between text-xs font-mono font-bold">
-                      <span className="text-text-muted">Total Evaluated Tokens:</span>
+                      <span className="text-text-muted">Total Tokens:</span>
                       <span className="text-primary">{tokens.totalTokens.toLocaleString()}</span>
                     </div>
                   </div>
