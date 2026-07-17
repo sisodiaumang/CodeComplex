@@ -15,6 +15,7 @@ import ModelConfig from "../models/modelConfig.model.js";
 import ApiKey from "../models/apiKey.model.js";
 import { getEnvApiKeys, decrypt, encrypt } from "../services/aiGateway.service.js";
 import mongoose from "mongoose";
+import os from "os";
 import { getAverageApiLatency } from "../utils/telemetry.js";
 import { env } from "../config/env.js";
 import { sendSiteReportMail } from "../services/emailSend.service.js";
@@ -176,7 +177,13 @@ export const getAdminStats = asyncHandler(
             dbQueryTime,
             judgeQueueLoad,
             cpuLoad: `${cpuLoadPercent}%`,
-            memoryUsage
+            memoryUsage,
+            systemCpuLoad: `${os.loadavg()[0].toFixed(2)} / ${os.loadavg()[1].toFixed(2)} / ${os.loadavg()[2].toFixed(2)}`,
+            systemTotalMem: `${(os.totalmem() / (1024 * 1024 * 1024)).toFixed(1)}GB`,
+            systemFreeMem: `${(os.freemem() / (1024 * 1024 * 1024)).toFixed(1)}GB`,
+            systemMemUsed: `${((os.totalmem() - os.freemem()) / (1024 * 1024 * 1024)).toFixed(1)}GB`,
+            cpuCores: `${os.cpus().length} Cores`,
+            systemUptime: `${(os.uptime() / 3600).toFixed(1)} hours`
         };
 
         // Aggregate token usage per key

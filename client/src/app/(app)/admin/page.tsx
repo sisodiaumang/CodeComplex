@@ -353,7 +353,19 @@ export default function AdminPanelPage() {
 
   const stats = statsQuery.data || {};
   const tokens = stats.tokens || { promptTokens: 0, completionTokens: 0, totalTokens: 0, cost: 0 };
-  const perf = stats.performance || { apiLatency: "...", dbQueryTime: "...", judgeQueueLoad: "...", cpuLoad: "...", memoryUsage: "..." };
+  const perf = stats.performance || {
+    apiLatency: "...",
+    dbQueryTime: "...",
+    judgeQueueLoad: "...",
+    cpuLoad: "...",
+    memoryUsage: "...",
+    systemCpuLoad: "... / ... / ...",
+    systemTotalMem: "...GB",
+    systemFreeMem: "...GB",
+    systemMemUsed: "...GB",
+    cpuCores: "...",
+    systemUptime: "..."
+  };
   const apiKeysList = stats.apiKeys || [];
   const modelConfigsList = stats.modelConfigs || [];
   
@@ -529,7 +541,7 @@ export default function AdminPanelPage() {
               </div>
 
               {/* Advanced Diagnostics (Telemetry Details) */}
-              <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
                 
                 {/* Site Performance Metrics */}
                 <Card className="xl:col-span-2">
@@ -611,6 +623,71 @@ export default function AdminPanelPage() {
                     <div className="border-t border-border pt-4 mt-6 flex justify-between text-xs font-mono font-bold">
                       <span className="text-text-muted">Total Evaluated Tokens:</span>
                       <span className="text-primary">{tokens.totalTokens.toLocaleString()}</span>
+                    </div>
+                  </div>
+                </Card>
+
+                {/* VM Host Resources */}
+                <Card className="xl:col-span-1">
+                  <div className="p-6 border-b border-border">
+                    <h3 className="text-base font-bold text-text flex items-center gap-2">
+                      <Server className="size-4.5 text-primary" /> VM Host Resources
+                    </h3>
+                    <p className="text-xs text-text-faint mt-0.5">Real-time load and system memory metrics from the virtual machine host.</p>
+                  </div>
+                  <div className="p-6 space-y-4">
+                    <div className="space-y-1">
+                      <div className="flex justify-between text-xs">
+                        <span className="text-text-muted font-medium flex items-center gap-2">
+                          <Cpu className="size-3.5 text-text-faint" /> CPU Cores
+                        </span>
+                        <span className="font-mono font-bold text-text">{perf.cpuCores || "..."}</span>
+                      </div>
+                    </div>
+
+                    <div className="space-y-1">
+                      <div className="flex justify-between text-xs">
+                        <span className="text-text-muted font-medium flex items-center gap-2">
+                          <Activity className="size-3.5 text-text-faint" /> Load Avg (1m/5m/15m)
+                        </span>
+                        <span className="font-mono font-bold text-text">{perf.systemCpuLoad || "..."}</span>
+                      </div>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <div className="flex justify-between text-xs">
+                        <span className="text-text-muted font-medium flex items-center gap-2">
+                          <Shield className="size-3.5 text-text-faint" /> RAM Used / Total
+                        </span>
+                        <span className="font-mono font-bold text-text">
+                          {perf.systemMemUsed || "..."} / {perf.systemTotalMem || "..."}
+                        </span>
+                      </div>
+                      <div className="h-2 w-full bg-surface-3 rounded-full overflow-hidden border border-border">
+                        <div
+                          className="h-full rounded-full bg-primary transition-all duration-500"
+                          style={{
+                            width: `${
+                              statsQuery.isLoading
+                                ? 0
+                                : Math.round(
+                                    (parseFloat(perf.systemMemUsed || "0") /
+                                      parseFloat(perf.systemTotalMem || "1")) *
+                                      100
+                                  ) || 0
+                            }%`
+                          }}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-1 pt-2 border-t border-border">
+                      <div className="flex justify-between text-xs">
+                        <span className="text-text-muted font-medium flex items-center gap-2">
+                          <Clock className="size-3.5 text-text-faint" /> Host Uptime
+                        </span>
+                        <span className="font-mono font-bold text-text">{perf.systemUptime || "..."}</span>
+                      </div>
                     </div>
                   </div>
                 </Card>
