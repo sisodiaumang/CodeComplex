@@ -81,14 +81,14 @@ export default function TermsAndConditionsPage() {
               <li>You must provide accurate, current, and complete details during sign-up.</li>
               <li>You are solely responsible for maintaining the confidentiality of your account credentials (passwords, tokens).</li>
               <li>You agree to notify us immediately of any unauthorized access or breach of security.</li>
-              <li>We reserve the right to suspend, restrict, or permanently terminate your account and access to the Platform at any time for cheating, abuse, security threats, or violations of these Terms.</li>
+              <li>We reserve the right to suspend, restrict, or permanently terminate accounts that violate these Terms, compromise platform security, or undermine fair competition. We may terminate or suspend accounts without prior notice if we reasonably believe they threaten the integrity, security, or fairness of the Platform.</li>
             </ul>
           </section>
 
           <section className="space-y-3">
             <h2 className="text-lg font-semibold text-text">3. Intellectual Property</h2>
             <p>
-              The CodeComplex platform, design layout, branding, logos, interface, source code, challenges, test cases, database schemas, and original content are owned by CodeComplex and are protected by copyright, trademark, and other intellectual property laws. They may not be copied, redistributed, reverse-engineered, or reproduced without our explicit prior written permission.
+              The CodeComplex platform, design layout, branding, logos, interface, source code, challenges, test cases, database schemas, and original content are owned by CodeComplex and are protected by copyright, trademark, and other intellectual property laws. They may not be copied, redistributed, reverse-engineered, or reproduced without our explicit prior written permission. You may not attempt to access non-public APIs, administrative interfaces, or other restricted areas of the Platform.
             </p>
           </section>
 
@@ -99,7 +99,7 @@ export default function TermsAndConditionsPage() {
             </p>
             <ul className="list-disc pl-5 space-y-2">
               <li>
-                <strong className="text-text">Anti-Cheating:</strong> You must write and submit your own solutions. Using external help, generative bots, pre-written templates (not provided by the challenge), or scraping solutions from others during live battles is strictly prohibited.
+                <strong className="text-text">Anti-Cheating:</strong> You must write and submit your own solutions. Using external help, AI assistants or large language models (including but not limited to ChatGPT, Claude, Gemini, GitHub Copilot, or similar tools), pre-written templates (not provided by the challenge), or scraping solutions from others during live battles is strictly prohibited.
               </li>
               <li>
                 <strong className="text-text">No Exploits:</strong> Attempting to escape the execution sandbox, crash the runner, write malicious files, execute arbitrary system commands, or execute denial of service (DoS) attacks on the compilation engines will result in an immediate and permanent account ban.
@@ -118,7 +118,7 @@ export default function TermsAndConditionsPage() {
             <ul className="list-disc pl-5 space-y-2">
               <li>Compile, build, execute, run test cases, and analyze the submitted code on our servers.</li>
               <li>Grade, verify correctness, measure execution performance, and display the solution scores on active match cards and leaderboards.</li>
-              <li>Display submission source code to you and your active opponent when debugging or viewing history.</li>
+              <li>Display submission source code to you and your active opponent when debugging or viewing history, and maintain backups necessary for platform operation.</li>
             </ul>
           </section>
 
@@ -140,19 +140,26 @@ export default function TermsAndConditionsPage() {
           <section className="space-y-3">
             <h2 className="text-lg font-semibold text-text">7. Limitation of Liability</h2>
             <p>
-              CodeComplex and its services are provided on an "as-is" and "as-available" basis without warranties of any kind. We do not guarantee that compilation sandboxes, socket connections, or matchmaking queues will be uninterrupted, error-free, or secure from latency spikes. Under no circumstances will we be liable for lost Elo rating points, matching bans, or server downtimes.
+              To the maximum extent permitted by applicable law, CodeComplex and its services are provided on an "as-is" and "as-available" basis without warranties of any kind. We do not guarantee that compilation sandboxes, socket connections, or matchmaking queues will be uninterrupted, error-free, or secure from latency spikes. Under no circumstances will we be liable for lost Elo rating points, matching bans, or server downtimes.
             </p>
           </section>
 
           <section className="space-y-3">
-            <h2 className="text-lg font-semibold text-text">8. Governing Law</h2>
+            <h2 className="text-lg font-semibold text-text">8. Force Majeure</h2>
+            <p>
+              We shall not be liable for delays or failures caused by events beyond our reasonable control, including internet outages, natural disasters, power failures, cyberattacks, or governmental actions.
+            </p>
+          </section>
+
+          <section className="space-y-3">
+            <h2 className="text-lg font-semibold text-text">9. Governing Law</h2>
             <p>
               These Terms & Conditions shall be governed by, and construed in accordance with, the laws of India, without regard to its conflict of law provisions. Any legal disputes or claims arising out of the use of the Platform must be resolved in courts located in India.
             </p>
           </section>
 
           <section className="space-y-3">
-            <h2 className="text-lg font-semibold text-text">9. Inquiries & Contact</h2>
+            <h2 className="text-lg font-semibold text-text">10. Inquiries & Contact</h2>
             <p>
               If you have any questions, disputes, or feedback regarding these Terms & Conditions, please reach out to us at:
               <br />

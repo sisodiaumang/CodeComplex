@@ -90,18 +90,18 @@ export default function PrivacyPolicyPage() {
           <section className="space-y-3">
             <h2 className="text-lg font-semibold text-text">3. Cookies and Authentication Tokens</h2>
             <p>
-              We use cookies, local storage, and JSON Web Tokens (JWT) to secure and run the Platform:
+              We use authentication tokens (including JSON Web Tokens) and cookies where necessary to authenticate users, maintain secure sessions, and prevent unauthorized access:
             </p>
             <ul className="list-disc pl-5 space-y-2">
               <li>
-                <strong className="text-text">Authentication & Session:</strong> JWT access and refresh tokens are stored to keep you authenticated across browser visits.
+                <strong className="text-text">Session Management:</strong> Authentication tokens are stored to keep you logged in across browser sessions.
               </li>
               <li>
-                <strong className="text-text">Preferences:</strong> Local storage is used to remember preferences, such as your light/dark mode configuration.
+                <strong className="text-text">Preferences:</strong> Local browser storage is used to remember preferences, such as your Light/Dark mode configuration.
               </li>
             </ul>
             <p>
-              You can configure your browser to reject cookies, but doing so will prevent you from logging in or using the competitive match features of the Platform.
+              You can configure your browser to reject cookies or clear local storage, but doing so will prevent you from logging in or using the matchmaking features of the Platform.
             </p>
           </section>
 
@@ -132,7 +132,7 @@ export default function PrivacyPolicyPage() {
               We implement reasonable technical and organizational measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction:
             </p>
             <ul className="list-disc pl-5 space-y-2">
-              <li>Passwords are hashed using bcrypt (with adaptive salt rounds) to protect against credential compromises.</li>
+              <li>Passwords are securely hashed using industry-standard cryptographic techniques to protect against credential compromises.</li>
               <li>All client-to-server communications are encrypted using Transport Layer Security (TLS/HTTPS) and secure WebSockets.</li>
               <li>User code execution is isolated within secure Docker container sandboxes to prevent interference with other users or system files.</li>
             </ul>
@@ -158,7 +158,7 @@ export default function PrivacyPolicyPage() {
           <section className="space-y-3">
             <h2 className="text-lg font-semibold text-text">8. International Data Transfers</h2>
             <p>
-              Because our server infrastructure, databases, and third-party API providers are hosted globally, your personal data may be transferred to, and processed in, countries outside your own (including India, the United States, and other global cloud regions). By using the Platform, you consent to these cross-border data transfers.
+              Because our server infrastructure, databases, and third-party API providers are hosted globally, your personal data may be transferred to and processed in countries where our infrastructure or third-party service providers operate. By using the Platform, you consent to these cross-border data transfers.
             </p>
           </section>
 

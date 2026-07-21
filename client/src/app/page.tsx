@@ -291,6 +291,10 @@ export default function LandingPage() {
           <Link href="/privacy" className="hover:text-text hover:underline transition-colors">
             Privacy Policy
           </Link>
+          <span>•</span>
+          <Link href="/guidelines" className="hover:text-text hover:underline transition-colors">
+            Community Guidelines
+          </Link>
         </div>
         <p className="font-mono text-[9px] text-text-faint pt-4">
           CodeComplex — competitive engineering platform

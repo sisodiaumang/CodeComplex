@@ -34,7 +34,7 @@ export default function SignupPage() {
     e.preventDefault();
     setError(null);
     if (!accepted) {
-      setError("You must accept the Terms of Service and Privacy Policy to create an account.");
+      setError("You must accept the Terms of Service, Privacy Policy, and Community Guidelines to create an account.");
       return;
     }
     setLoading(true);
@@ -81,7 +81,7 @@ export default function SignupPage() {
   function handleOAuthClick(e: React.MouseEvent<HTMLAnchorElement>) {
     if (!accepted) {
       e.preventDefault();
-      setError("You must accept the Terms of Service and Privacy Policy to continue.");
+      setError("You must accept the Terms of Service, Privacy Policy, and Community Guidelines to continue.");
     }
   }
 
@@ -190,10 +190,14 @@ export default function SignupPage() {
             I agree to the{" "}
             <Link href="/terms" target="_blank" className="font-semibold text-primary hover:underline">
               Terms of Service
-            </Link>{" "}
-            and{" "}
+            </Link>
+            ,{" "}
             <Link href="/privacy" target="_blank" className="font-semibold text-primary hover:underline">
               Privacy Policy
+            </Link>
+            , and{" "}
+            <Link href="/guidelines" target="_blank" className="font-semibold text-primary hover:underline">
+              Community Guidelines
             </Link>
             .
           </label>
