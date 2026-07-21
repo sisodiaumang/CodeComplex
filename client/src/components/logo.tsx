@@ -7,7 +7,7 @@ export function LogoMark({
 }) {
   return (
     <img
-      src="/logo.png"
+      src="/logo.webp"
       alt="CodeComplex"
       className={className}
       style={{ height: `${size}px`, width: "auto", objectFit: "contain" }}
