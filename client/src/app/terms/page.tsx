@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { LogoMark } from "@/components/logo";
 import { Button } from "@/components/ui";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export default function TermsAndConditionsPage() {
   return (
@@ -13,18 +14,28 @@ export default function TermsAndConditionsPage() {
 
       {/* Header */}
       <header className="border-b border-border/20 backdrop-blur-md sticky top-0 z-50 bg-bg/75">
-        <div className="mx-auto flex max-w-4xl items-center justify-between px-6 py-4">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <Link href="/" className="flex items-center gap-3">
             <LogoMark size={28} />
             <span className="text-lg font-bold tracking-tight text-text">
               Code<span className="text-primary font-medium">Complex</span>
             </span>
           </Link>
-          <Link href="/signup">
-            <Button size="sm" className="h-8 rounded px-4 text-xs font-semibold">
-              Sign up
-            </Button>
-          </Link>
+          <div className="flex items-center gap-4">
+            <div className="border-r border-border/30 pr-1 py-1 text-text">
+              <ThemeToggle />
+            </div>
+            <Link href="/login">
+              <Button variant="ghost" size="sm" className="text-text-muted hover:text-text hover:bg-transparent transition-colors text-xs">
+                Log in
+              </Button>
+            </Link>
+            <Link href="/signup">
+              <Button size="sm" className="h-8 rounded px-4 text-xs font-semibold">
+                Sign up
+              </Button>
+            </Link>
+          </div>
         </div>
       </header>
 
