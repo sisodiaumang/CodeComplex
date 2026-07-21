@@ -25,6 +25,9 @@ export const metadata: Metadata = {
   title: "CodeComplex",
   description:
     "Battle other developers in real-time DSA, bug-fix, backend, frontend and prompt-war challenges.",
+  verification: {
+    google: "lnWwrLDfhvp8UOO3IDtb7ULLq2wVzf8aBtJn4aJAR4A",
+  },
 };
 
 export default function RootLayout({
