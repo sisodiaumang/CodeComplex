@@ -2,13 +2,25 @@ import nodemailer from 'nodemailer';
 import { env } from '../config/env.js';
 import ApiError from '../utils/ApiError.js';
 
-const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: env.EMAIL_USER,
-        pass: env.EMAIL_PASS,
-    },
-});
+const isResend = env.EMAIL_PASS?.startsWith('re_') || env.EMAIL_USER === 'resend';
+
+const transporter = isResend
+    ? nodemailer.createTransport({
+          host: 'smtp.resend.com',
+          port: 465,
+          secure: true,
+          auth: {
+              user: 'resend',
+              pass: env.EMAIL_PASS,
+          },
+      })
+    : nodemailer.createTransport({
+          service: 'gmail',
+          auth: {
+              user: env.EMAIL_USER,
+              pass: env.EMAIL_PASS,
+          },
+      });
 
 if (env.NODE_ENV === "production" && (!env.EMAIL_USER || !env.EMAIL_PASS)) {
     console.warn(
