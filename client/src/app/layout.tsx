@@ -43,7 +43,19 @@ export default function RootLayout({
     >
       <head>
         <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/icon.webp" type="image/webp" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              "name": "CodeComplex",
+              "url": "https://codecomplex.work.gd"
+            })
+          }}
+        />
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(){try{var t=localStorage.getItem("devwar-theme");var d=(t==="dark")||(t!=="light");if(d)document.documentElement.setAttribute("data-theme","dark")}catch(e){}})()`,
