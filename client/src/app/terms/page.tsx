@@ -60,14 +60,20 @@ export default function TermsAndConditionsPage() {
 
         <div className="prose prose-invert max-w-none space-y-8 text-sm text-text-muted leading-relaxed">
           <section className="space-y-3">
-            <h2 className="text-lg font-semibold text-text">1. Agreement to Terms</h2>
+            <h2 className="text-lg font-semibold text-text">1. Agreement to Terms & Eligibility</h2>
             <p>
               By creating an account, registering, or using CodeComplex ("Platform") at codecomplex.work.gd, you agree to be bound by these Terms & Conditions. If you do not agree to all of these terms, you are prohibited from using the Platform and must cease usage immediately.
+            </p>
+            <p>
+              <strong className="text-text">Eligibility:</strong> You must be at least 13 years old (or the minimum age required in your jurisdiction) to use CodeComplex. By using the Platform, you represent and warrant that you meet this requirement.
+            </p>
+            <p>
+              <strong className="text-text">Privacy Policy:</strong> Your use of the Platform is also governed by our <Link href="/privacy" className="text-primary hover:underline font-medium">Privacy Policy</Link>, which details how we collect, use, and safeguard your personal data.
             </p>
           </section>
 
           <section className="space-y-3">
-            <h2 className="text-lg font-semibold text-text">2. Account Responsibility</h2>
+            <h2 className="text-lg font-semibold text-text">2. Account Responsibility & Termination</h2>
             <p>
               To participate in coding battles, matchmaking, and rating changes, you must create a verified account.
             </p>
@@ -75,18 +81,25 @@ export default function TermsAndConditionsPage() {
               <li>You must provide accurate, current, and complete details during sign-up.</li>
               <li>You are solely responsible for maintaining the confidentiality of your account credentials (passwords, tokens).</li>
               <li>You agree to notify us immediately of any unauthorized access or breach of security.</li>
-              <li>We reserve the right to suspend or terminate accounts that provide false details or violate our community guidelines.</li>
+              <li>We reserve the right to suspend, restrict, or permanently terminate your account and access to the Platform at any time for cheating, abuse, security threats, or violations of these Terms.</li>
             </ul>
           </section>
 
           <section className="space-y-3">
-            <h2 className="text-lg font-semibold text-text">3. Code of Conduct and Fair Play</h2>
+            <h2 className="text-lg font-semibold text-text">3. Intellectual Property</h2>
+            <p>
+              The CodeComplex platform, design layout, branding, logos, interface, source code, challenges, test cases, database schemas, and original content are owned by CodeComplex and are protected by copyright, trademark, and other intellectual property laws. They may not be copied, redistributed, reverse-engineered, or reproduced without our explicit prior written permission.
+            </p>
+          </section>
+
+          <section className="space-y-3">
+            <h2 className="text-lg font-semibold text-text">4. Code of Conduct and Fair Play</h2>
             <p>
               CodeComplex is built on healthy, real-time competition. To preserve the integrity of the Platform:
             </p>
             <ul className="list-disc pl-5 space-y-2">
               <li>
-                <strong className="text-text">Anti-Cheating:</strong> You must write and submit your own solutions. Using external help, bots, pre-written templates (not provided by the challenge), or scraping solutions from others during live battles is strictly prohibited.
+                <strong className="text-text">Anti-Cheating:</strong> You must write and submit your own solutions. Using external help, generative bots, pre-written templates (not provided by the challenge), or scraping solutions from others during live battles is strictly prohibited.
               </li>
               <li>
                 <strong className="text-text">No Exploits:</strong> Attempting to escape the execution sandbox, crash the runner, write malicious files, execute arbitrary system commands, or execute denial of service (DoS) attacks on the compilation engines will result in an immediate and permanent account ban.
@@ -98,7 +111,7 @@ export default function TermsAndConditionsPage() {
           </section>
 
           <section className="space-y-3">
-            <h2 className="text-lg font-semibold text-text">4. Code Submissions and Licensing</h2>
+            <h2 className="text-lg font-semibold text-text">5. Code Submissions and Licensing</h2>
             <p>
               You retain ownership of any code you write and submit on the Platform. However, by compiling or submitting code, you grant CodeComplex a worldwide, royalty-free, non-exclusive license to:
             </p>
@@ -110,25 +123,40 @@ export default function TermsAndConditionsPage() {
           </section>
 
           <section className="space-y-3">
-            <h2 className="text-lg font-semibold text-text">5. Limitation of Liability</h2>
+            <h2 className="text-lg font-semibold text-text">6. Service Availability & Disclaimers</h2>
+            <ul className="list-disc pl-5 space-y-2">
+              <li>
+                <strong className="text-text">Rating Disclaimer:</strong> Elo ratings, rankings, and leaderboards are provided for entertainment and educational purposes. We reserve the right to recalculate, reset, or modify ratings at any time to preserve competitive integrity.
+              </li>
+              <li>
+                <strong className="text-text">Service Availability:</strong> We do not guarantee uninterrupted availability of the Platform and may temporarily suspend the services for maintenance, updates, security patches, or server migrations.
+              </li>
+              <li>
+                <strong className="text-text">Third-Party Services:</strong> The Platform relies on third-party integrations (such as MongoDB Atlas, Judge0 sandbox APIs, Cloudinary, and Resend). We are not liable for outages, delays, or failures caused by these third-party providers.
+              </li>
+            </ul>
+          </section>
+
+          <section className="space-y-3">
+            <h2 className="text-lg font-semibold text-text">7. Limitation of Liability</h2>
             <p>
               CodeComplex and its services are provided on an "as-is" and "as-available" basis without warranties of any kind. We do not guarantee that compilation sandboxes, socket connections, or matchmaking queues will be uninterrupted, error-free, or secure from latency spikes. Under no circumstances will we be liable for lost Elo rating points, matching bans, or server downtimes.
             </p>
           </section>
 
           <section className="space-y-3">
-            <h2 className="text-lg font-semibold text-text">6. Term Modifications</h2>
+            <h2 className="text-lg font-semibold text-text">8. Governing Law</h2>
             <p>
-              We reserve the right to revise or update these Terms at any time. When we make updates, we will update the "Last Updated" date at the top of this page. Your continued use of the Platform after changes are published constitutes your acceptance of the revised Terms.
+              These Terms & Conditions shall be governed by, and construed in accordance with, the laws of India, without regard to its conflict of law provisions. Any legal disputes or claims arising out of the use of the Platform must be resolved in courts located in India.
             </p>
           </section>
 
           <section className="space-y-3">
-            <h2 className="text-lg font-semibold text-text">7. Inquiries</h2>
+            <h2 className="text-lg font-semibold text-text">9. Inquiries & Contact</h2>
             <p>
               If you have any questions, disputes, or feedback regarding these Terms & Conditions, please reach out to us at:
               <br />
-              Email: <span className="text-primary hover:underline">support@codecomplex.work.gd</span>
+              Email: <span className="text-primary hover:underline">support@codecomplex.work.gd</span> or <span className="text-primary hover:underline">sisodiaumang6@gmail.com</span>
             </p>
           </section>
         </div>
