@@ -69,81 +69,116 @@ export default function PrivacyPolicyPage() {
           <section className="space-y-3">
             <h2 className="text-lg font-semibold text-text">2. Information We Collect</h2>
             <p>
-              To provide you with a high-quality competitive matchmaking and coding environment, we collect the following types of information:
+              To provide you with a high-quality competitive matchmaking and coding environment, we collect the following categories of information:
             </p>
             <ul className="list-disc pl-5 space-y-2">
               <li>
-                <strong className="text-text">Account Information:</strong> When you register, we collect your full name, email address, username, and secure password hashes.
+                <strong className="text-text">Information You Provide:</strong> When you register or update your account, we collect your full name, email address, username, profile description, and secure password hashes.
               </li>
               <li>
-                <strong className="text-text">Third-Party OAuth Profiles:</strong> If you sign up using Google or GitHub, we receive basic profile information (such as your public profile picture, name, username, and email) to link and authenticate your account.
+                <strong className="text-text">Third-Party OAuth Profiles:</strong> If you register or authenticate using Google or GitHub, we receive basic profile information (such as your public profile picture, name, username, and email) to link and authenticate your account.
               </li>
               <li>
                 <strong className="text-text">Code Submissions:</strong> We collect and run code submissions you compile or submit during battles to grade your solution, calculate pass rates, and award ratings/points.
               </li>
               <li>
-                <strong className="text-text">Match Statistics:</strong> We track your history, rankings, ratings, and performance in matches to maintain the global leaderboard.
+                <strong className="text-text">Automatically Collected Information:</strong> When you interact with the Platform, our servers automatically log standard network details. This includes your IP address, browser type, operating system, device information, access timestamps, and telemetry regarding socket connections and page views.
               </li>
             </ul>
           </section>
 
           <section className="space-y-3">
-            <h2 className="text-lg font-semibold text-text">3. How We Use Your Information</h2>
+            <h2 className="text-lg font-semibold text-text">3. Cookies and Authentication Tokens</h2>
             <p>
-              We process your data for the following purposes:
-            </p>
-            <ul className="list-disc pl-5 space-y-2">
-              <li>To manage your account and authenticate your logins.</li>
-              <li>To facilitate matchmaking, execute real-time coding challenges, and update active battles.</li>
-              <li>To run sandbox test cases on your code submissions using Docker and local runtime compilation.</li>
-              <li>To calculate and render your Elo rankings, trophies, and leaderboard standings.</li>
-              <li>To send you important system notifications, updates, or account recovery tools.</li>
-            </ul>
-          </section>
-
-          <section className="space-y-3">
-            <h2 className="text-lg font-semibold text-text">4. Security and Data Protection</h2>
-            <p>
-              Your security is our absolute priority. We implement robust technical measures to safeguard your personal data:
-            </p>
-            <ul className="list-disc pl-5 space-y-2">
-              <li>We hash passwords using bcrypt (with adaptive salt rounds) to prevent credentials leakage.</li>
-              <li>All client-to-server communications are encrypted using Transport Layer Security (TLS/HTTPS).</li>
-              <li>Compiling and executing code is done within isolated sandbox directories or secure execution environments.</li>
-            </ul>
-          </section>
-
-          <section className="space-y-3">
-            <h2 className="text-lg font-semibold text-text">5. Third-Party Services</h2>
-            <p>
-              We integrate with specific third-party APIs to manage assets and execute code:
+              We use cookies, local storage, and JSON Web Tokens (JWT) to secure and run the Platform:
             </p>
             <ul className="list-disc pl-5 space-y-2">
               <li>
-                <strong className="text-text">OAuth Providers:</strong> Google and GitHub are used solely for fast, passwordless authentication.
+                <strong className="text-text">Authentication & Session:</strong> JWT access and refresh tokens are stored to keep you authenticated across browser visits.
               </li>
               <li>
-                <strong className="text-text">Cloudinary:</strong> We use Cloudinary to store and serve your public avatar images securely.
+                <strong className="text-text">Preferences:</strong> Local storage is used to remember preferences, such as your light/dark mode configuration.
               </li>
+            </ul>
+            <p>
+              You can configure your browser to reject cookies, but doing so will prevent you from logging in or using the competitive match features of the Platform.
+            </p>
+          </section>
+
+          <section className="space-y-3">
+            <h2 className="text-lg font-semibold text-text">4. How We Use and Share Your Information</h2>
+            <p>
+              We process your personal information to run the matchmaking, compiling, and leaderboard systems. We share data only with trusted service providers necessary for operating our platform:
+            </p>
+            <ul className="list-disc pl-5 space-y-2">
+              <li>
+                <strong className="text-text">OAuth Providers:</strong> Google and GitHub are used to verify identity and enable passwordless login.
+              </li>
+              <li>
+                <strong className="text-text">Asset Hosting:</strong> We use Cloudinary to store and serve your public avatar images securely.
+              </li>
+              <li>
+                <strong className="text-text">Infrastructure:</strong> We utilize cloud database services (such as MongoDB Atlas) and cloud hosting platforms to host and process data.
+              </li>
+              <li>
+                <strong className="text-text">Communication:</strong> We use email delivery services (such as Resend) to send account verification codes, system updates, and user communications.
+              </li>
+            </ul>
+          </section>
+
+          <section className="space-y-3">
+            <h2 className="text-lg font-semibold text-text">5. Security and Data Protection</h2>
+            <p>
+              We implement reasonable technical and organizational measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction:
+            </p>
+            <ul className="list-disc pl-5 space-y-2">
+              <li>Passwords are hashed using bcrypt (with adaptive salt rounds) to protect against credential compromises.</li>
+              <li>All client-to-server communications are encrypted using Transport Layer Security (TLS/HTTPS) and secure WebSockets.</li>
+              <li>User code execution is isolated within secure Docker container sandboxes to prevent interference with other users or system files.</li>
             </ul>
           </section>
 
           <section className="space-y-3">
             <h2 className="text-lg font-semibold text-text">6. Data Retention and Deletion</h2>
             <p>
-              We retain account data for as long as your account remains active. You can delete your profile, including all battle history and avatars, at any time directly through your account settings panel. Deletion is immediate and irreversible.
+              We retain account and submission data for as long as your account remains active.
+            </p>
+            <p>
+              <strong className="text-text">Account Deletion:</strong> You can delete your profile, including all battle history and avatars, at any time directly through your account settings panel. Upon account deletion, we remove your personal data from active systems. Some information, such as system event logs or code execution records, may remain in encrypted backups for a limited period before being automatically and permanently deleted.
             </p>
           </section>
 
           <section className="space-y-3">
-            <h2 className="text-lg font-semibold text-text">7. Contact Us</h2>
+            <h2 className="text-lg font-semibold text-text">7. User Rights</h2>
             <p>
-              If you have any questions, concerns, or feedback regarding this Privacy Policy or your data, please contact us at:
+              Depending on your jurisdiction, you may have the right to access, correct, export, or request the erasure of your personal data. You can exercise these rights or request deletion directly through your settings page or by contacting us using the email addresses listed below.
+            </p>
+          </section>
+
+          <section className="space-y-3">
+            <h2 className="text-lg font-semibold text-text">8. International Data Transfers</h2>
+            <p>
+              Because our server infrastructure, databases, and third-party API providers are hosted globally, your personal data may be transferred to, and processed in, countries outside your own (including India, the United States, and other global cloud regions). By using the Platform, you consent to these cross-border data transfers.
+            </p>
+          </section>
+
+          <section className="space-y-3">
+            <h2 className="text-lg font-semibold text-text">9. Policy Modifications</h2>
+            <p>
+              We reserve the right to revise or update this Privacy Policy at any time. When updates are published, we will modify the "Last Updated" date at the top of this page. For significant changes, we will notify you through in-app alerts, email, or prominent notices on the Platform.
+            </p>
+          </section>
+
+          <section className="space-y-3">
+            <h2 className="text-lg font-semibold text-text">10. Contact Us</h2>
+            <p>
+              If you have any questions, concerns, or feedback regarding this Privacy Policy or your data, please contact the platform owner:
               <br />
-              Email: <span className="text-primary hover:underline">support@codecomplex.work.gd</span>
+              Email: <span className="text-primary hover:underline">support@codecomplex.work.gd</span> or <span className="text-primary hover:underline">sisodiaumang6@gmail.com</span>
             </p>
           </section>
         </div>
+
       </main>
 
       {/* Footer */}
