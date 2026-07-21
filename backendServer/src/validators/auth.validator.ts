@@ -7,6 +7,9 @@ export const signupSchema = z.object({
         password: z.string().min(8).max(128),
         fullName: z.string().min(3).max(50),
         country: z.string().length(2).toUpperCase().optional().default("IN"),
+        acceptTerms: z.literal(true, {
+            message: "You must accept the Terms of Service and Privacy Policy to create an account."
+        }),
     }).strict(),
 });
 

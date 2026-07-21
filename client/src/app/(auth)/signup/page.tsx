@@ -23,6 +23,7 @@ export default function SignupPage() {
     password: "",
   });
   const [otp, setOtp] = useState("");
+  const [accepted, setAccepted] = useState(false);
 
   function set<K extends keyof typeof form>(key: K, value: string) {
     setForm((f) => ({ ...f, [key]: value }));
@@ -31,9 +32,13 @@ export default function SignupPage() {
   async function onSignup(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    if (!accepted) {
+      setError("You must accept the Terms of Service and Privacy Policy to create an account.");
+      return;
+    }
     setLoading(true);
     try {
-      await api("/user/signup", { method: "POST", body: form });
+      await api("/user/signup", { method: "POST", body: { ...form, acceptTerms: accepted } });
       setNotice(`We sent a 6-digit code to ${form.email}.`);
       setStep("verify");
     } catch (err) {
@@ -162,7 +167,31 @@ export default function SignupPage() {
           onChange={(e) => set("password", e.target.value)}
           placeholder="At least 8 characters"
         />
-        <Button type="submit" loading={loading}>
+        
+        <div className="flex items-start gap-2 py-1 select-none">
+          <input
+            id="acceptTerms"
+            name="acceptTerms"
+            type="checkbox"
+            required
+            checked={accepted}
+            onChange={(e) => setAccepted(e.target.checked)}
+            className="mt-1 size-4 rounded border-border bg-surface text-primary focus:ring-primary/20 cursor-pointer"
+          />
+          <label htmlFor="acceptTerms" className="text-xs text-text-muted leading-relaxed cursor-pointer">
+            I agree to the{" "}
+            <Link href="/terms" target="_blank" className="font-semibold text-primary hover:underline">
+              Terms of Service
+            </Link>{" "}
+            and{" "}
+            <Link href="/privacy" target="_blank" className="font-semibold text-primary hover:underline">
+              Privacy Policy
+            </Link>
+            .
+          </label>
+        </div>
+
+        <Button type="submit" loading={loading} disabled={!accepted}>
           Create account
         </Button>
       </form>

@@ -283,7 +283,16 @@ export default function LandingPage() {
             </Button>
           </Link>
         </div>
-        <p className="font-mono text-[9px] text-text-faint pt-8">
+        <div className="flex items-center justify-center gap-4 text-[10px] text-text-faint pt-4">
+          <Link href="/terms" className="hover:text-text hover:underline transition-colors">
+            Terms of Service
+          </Link>
+          <span>•</span>
+          <Link href="/privacy" className="hover:text-text hover:underline transition-colors">
+            Privacy Policy
+          </Link>
+        </div>
+        <p className="font-mono text-[9px] text-text-faint pt-4">
           CodeComplex — competitive engineering platform
         </p>
       </footer>
