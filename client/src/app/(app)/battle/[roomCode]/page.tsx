@@ -1602,8 +1602,11 @@ function CodingWorkspace({ room, matchId, onLeave }: CodingWorkspaceProps) {
   const liveMatchQuery = useQuery({
     queryKey: ["match", matchId, "live"],
     queryFn: () => api<any>(`/match/${matchId}/live`),
-    enabled: Boolean(matchId) && room?.status !== "FINISHED",
-    refetchInterval: room?.status === "FINISHED" ? false : 3000,
+    enabled: Boolean(matchId),
+    refetchInterval: (query) => {
+      const matchStatus = query.state.data?.status;
+      return (matchStatus === "COMPLETED" || matchStatus === "ABANDONED" || room?.status === "FINISHED") ? false : 3000;
+    },
   });
 
   const submissionsQuery = useQuery({
@@ -1629,6 +1632,34 @@ function CodingWorkspace({ room, matchId, onLeave }: CodingWorkspaceProps) {
     retry: 5,
     retryDelay: 1000,
   });
+
+  // Socket listeners for real-time score updates and match end events
+  useEffect(() => {
+    if (!matchId) return;
+
+    const rCode = room?.roomCode;
+
+    const handleScoreUpdate = () => {
+      queryClient.invalidateQueries({ queryKey: ["match", matchId, "live"] });
+      if (rCode) queryClient.invalidateQueries({ queryKey: ["battle", rCode] });
+    };
+
+    const handleMatchEnded = () => {
+      queryClient.invalidateQueries({ queryKey: ["match", matchId, "live"] });
+      if (rCode) queryClient.invalidateQueries({ queryKey: ["battle", rCode] });
+      queryClient.invalidateQueries({ queryKey: ["match", matchId, "rating-changes"] });
+    };
+
+    socket.on("score:update", handleScoreUpdate);
+    socket.on("match:ended", handleMatchEnded);
+    socket.on("match:winner", handleMatchEnded);
+
+    return () => {
+      socket.off("score:update", handleScoreUpdate);
+      socket.off("match:ended", handleMatchEnded);
+      socket.off("match:winner", handleMatchEnded);
+    };
+  }, [matchId, room?.roomCode, queryClient]);
 
   useEffect(() => {
     const liveMatchStatus = liveMatchQuery.data?.status;
