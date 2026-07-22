@@ -13,6 +13,9 @@ export default function KeyboardMascotAnimation({ active, pet, onlyMascot = fals
   const type = pet?.type ?? "cat";
   const color = pet?.color ?? "#FF6B00";
 
+  const isBot = Boolean(opponentName && (opponentName.toLowerCase().includes("bot") || opponentName.toLowerCase().includes("ghost")));
+  const activeState = active || isBot;
+
   const svgContent = (
     <svg width="80" height="60" viewBox="0 0 80 60" fill="none" className="shrink-0 overflow-visible drop-shadow-[0_6px_16px_rgba(0,0,0,0.18)]">
       <defs>
@@ -46,7 +49,7 @@ export default function KeyboardMascotAnimation({ active, pet, onlyMascot = fals
       <use href="#baseShadow" />
 
       {/* ── MASCOT BODY & HEAD ── */}
-      <g className={cn(!active ? "animate-mascot-thinking" : "")} style={{ transformOrigin: "40px 40px" }}>
+      <g className={cn(!activeState ? "animate-mascot-thinking" : "")} style={{ transformOrigin: "40px 40px" }}>
 
         {/* 1. Cat */}
         {type === "cat" && (
@@ -1032,7 +1035,7 @@ export default function KeyboardMascotAnimation({ active, pet, onlyMascot = fals
       </g>
 
       {/* ─── THINKING QUESTION MARK ─── */}
-      {!active && (
+      {!activeState && (
         <g className="animate-question-float">
           <circle cx="16" cy="12" r="5" fill="#FFB703" filter="url(#neonGlowMascot)" />
           <text x="16" y="15.5" fill="#FFF" fontSize="10" fontWeight="bold" fontFamily="system-ui" textAnchor="middle">?</text>
@@ -1044,7 +1047,7 @@ export default function KeyboardMascotAnimation({ active, pet, onlyMascot = fals
         <polygon points="12,49 68,49 76,58 4,58" fill="url(#deskGrad)" opacity="0.9" />
         <polygon points="26,34 54,34 56,45 24,45" fill="#12131C" stroke="#222533" strokeWidth="1" />
         <polygon points="28,36 52,36 54,43 26,43" fill="url(#screenGlow)" />
-        <g className={cn(active ? "animate-code-pulse" : "opacity-40")} filter="url(#screenContentGlow)">
+        <g className={cn(activeState ? "animate-code-pulse" : "opacity-40")} filter="url(#screenContentGlow)">
           <line x1="31" y1="38" x2="40" y2="38" stroke="#00F5D4" strokeWidth="1.2" strokeLinecap="round" />
           <line x1="31" y1="40" x2="46" y2="40" stroke="#FF007F" strokeWidth="1.2" strokeLinecap="round" />
           <line x1="31" y1="42" x2="36" y2="42" stroke="#7000FF" strokeWidth="1.2" strokeLinecap="round" />
@@ -1057,14 +1060,14 @@ export default function KeyboardMascotAnimation({ active, pet, onlyMascot = fals
 
       {/* ─── PAWS ─── */}
       <g>
-        <g className={cn(active ? "animate-paw-type-left" : "animate-paw-think-scratch")} style={{ transformOrigin: "26px 47px" }}>
+        <g className={cn(activeState ? "animate-paw-type-left" : "animate-paw-think-scratch")} style={{ transformOrigin: "26px 47px" }}>
           {type === "crab" ? (
             <path d="M 22 45 Q 19 39 24 40 Q 27 41 24 46 Z" fill={color} stroke="#111" strokeWidth="0.8" />
           ) : (
             <circle cx="26" cy="47" r="4.5" fill={["panda","octopus","koala","badger","raccoon","robo_puppy"].includes(type) ? "#888" : color} stroke="rgba(0,0,0,0.15)" strokeWidth="0.75" />
           )}
         </g>
-        <g className={cn(active ? "animate-paw-type-right" : "animate-paw-think-tap")} style={{ transformOrigin: "54px 47px" }}>
+        <g className={cn(activeState ? "animate-paw-type-right" : "animate-paw-think-tap")} style={{ transformOrigin: "54px 47px" }}>
           {type === "crab" ? (
             <path d="M 58 45 Q 61 39 56 40 Q 53 41 56 46 Z" fill={color} stroke="#111" strokeWidth="0.8" />
           ) : (
@@ -1262,7 +1265,7 @@ export default function KeyboardMascotAnimation({ active, pet, onlyMascot = fals
             <span className="text-primary font-black truncate max-w-[100px]">{opponentName}</span>
           ) : "Opponent"}
           <span className="text-text-faint font-normal">
-            {active ? "is coding" : "is thinking"}
+            {activeState ? "is coding" : "is thinking"}
           </span>
           <span className="flex gap-0.5 items-center">
             <span className="size-1 bg-text rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
@@ -1271,7 +1274,7 @@ export default function KeyboardMascotAnimation({ active, pet, onlyMascot = fals
           </span>
         </span>
         <span className="text-[10px] text-text-faint block">
-          {active ? "Synthesizing solution..." : "Pondering algorithms..."}
+          {activeState ? "Synthesizing solution..." : "Pondering algorithms..."}
         </span>
       </div>
     </div>
