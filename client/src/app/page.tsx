@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
+import { api } from "@/lib/api";
 import { 
   ArrowRight, 
   Code, 
@@ -33,9 +34,23 @@ const MODES_LIST = [
 export default function LandingPage() {
   const { status } = useAuth();
   const router = useRouter();
+  const [stats, setStats] = useState<{ users: number; battles: number; challenges: number } | null>(null);
 
   useEffect(() => {
-    if (status === "authed") router.replace("/battle");
+    if (status === "authed") {
+      router.replace("/battle");
+      return;
+    }
+
+    api("/user/public/stats")
+      .then((res: any) => {
+        if (res && typeof res === "object") {
+          setStats(res);
+        }
+      })
+      .catch(() => {
+        // Fallback silently
+      });
   }, [status, router]);
 
   return (
@@ -74,7 +89,7 @@ export default function LandingPage() {
       </header>
 
       {/* Hero section */}
-      <section className="mx-auto max-w-3xl px-6 pt-32 pb-20 text-center space-y-6">
+      <section className="mx-auto max-w-3xl px-6 pt-32 pb-16 text-center space-y-6">
         {/* Subtle status tag */}
         <div className="inline-flex items-center gap-1.5 rounded-full border border-border bg-surface/50 px-3 py-1 text-[10px] font-medium text-text-muted tracking-wide uppercase">
           <span className="size-1.5 rounded-full bg-primary" />
@@ -83,17 +98,17 @@ export default function LandingPage() {
 
         {/* Title */}
         <h1 className="text-4xl font-semibold tracking-tight sm:text-6xl max-w-2xl mx-auto leading-[1.1] text-text">
-          Competitive coding,<br />
-          <span className="text-primary">simplified.</span>
+          Master coding battles,<br />
+          <span className="text-primary font-medium">simplified.</span>
         </h1>
 
         {/* Description */}
-        <p className="max-w-lg mx-auto text-sm text-text-muted leading-relaxed">
-          Duel other engineers in real-time programming matches. Solve algorithms, build APIs, debug code, and climb the competitive ladder.
+        <p className="max-w-xl mx-auto text-sm text-text-muted leading-relaxed">
+          Duel other developers in real-time programming matches. Solve algorithmic challenges, build sandbox APIs, assemble frontend layouts, and climb the competitive Elo ladder.
         </p>
 
         {/* Buttons */}
-        <div className="flex items-center justify-center gap-4 pt-4">
+        <div className="flex items-center justify-center gap-4 pt-2">
           <Link href="/signup">
             <Button className="h-9 px-5 text-xs font-medium gap-1.5 rounded">
               Start building <ArrowRight className="size-3.5" />
@@ -104,6 +119,28 @@ export default function LandingPage() {
               Leaderboard
             </Button>
           </Link>
+        </div>
+      </section>
+
+      {/* Real-time platform stats (dynamic & real, no fake data) */}
+      <section className="mx-auto max-w-3xl px-6 pb-20 grid grid-cols-3 gap-4 text-center border-b border-border/10">
+        <div className="space-y-1">
+          <div className="text-2xl font-extrabold tracking-tight text-primary font-mono sm:text-3xl">
+            {stats?.users !== undefined ? stats.users.toLocaleString() : "—"}
+          </div>
+          <p className="text-[10px] uppercase tracking-wider font-bold text-text-faint">Developers Joined</p>
+        </div>
+        <div className="space-y-1">
+          <div className="text-2xl font-extrabold tracking-tight text-primary font-mono sm:text-3xl">
+            {stats?.battles !== undefined ? stats.battles.toLocaleString() : "—"}
+          </div>
+          <p className="text-[10px] uppercase tracking-wider font-bold text-text-faint">Duels Completed</p>
+        </div>
+        <div className="space-y-1">
+          <div className="text-2xl font-extrabold tracking-tight text-primary font-mono sm:text-3xl">
+            {stats?.challenges !== undefined ? stats.challenges.toLocaleString() : "—"}
+          </div>
+          <p className="text-[10px] uppercase tracking-wider font-bold text-text-faint">Coding Challenges</p>
         </div>
       </section>
 
@@ -366,6 +403,14 @@ export default function LandingPage() {
           <Link href="/guidelines" className="hover:text-text hover:underline transition-colors">
             Community Guidelines
           </Link>
+          <span>•</span>
+          <a href="https://github.com/sisodiaumang/CodeComplex" target="_blank" rel="noopener noreferrer" className="hover:text-text hover:underline transition-colors">
+            GitHub
+          </a>
+          <span>•</span>
+          <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="hover:text-text hover:underline transition-colors">
+            LinkedIn
+          </a>
         </div>
         <p className="font-mono text-[9px] text-text-faint pt-4">
           CodeComplex — competitive engineering platform

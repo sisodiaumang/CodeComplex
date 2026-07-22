@@ -21,7 +21,8 @@ import {
     updateFullName,
     updateSocials,
     updateMascot,
-    updateBanner
+    updateBanner,
+    getPublicStats
 } from "../controllers/user.controllers.js";
 import { createReport } from "../controllers/admin.controller.js";
 
@@ -79,6 +80,8 @@ userRouter.route("/socials").patch(verifyJWT, validateRequest(updateSocialsSchem
 userRouter.route("/mascot").patch(verifyJWT, validateRequest(updateMascotSchema), updateMascot);
 userRouter.route("/banner").patch(verifyJWT, validateRequest(updateBannerSchema), updateBanner);
 userRouter.route("/report").post(verifyJWT, createReport);
+
+userRouter.route("/public/stats").get(getPublicStats);
 
 // ─── Public profile lookup — keep LAST among GET routes ───────────────
 // A param route like "/:username" matches any path segment, so if it were

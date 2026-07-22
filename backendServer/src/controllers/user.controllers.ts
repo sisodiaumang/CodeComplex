@@ -3,6 +3,11 @@ import asyncHandler from "../utils/asyncHandler.js";
 import User from "../models/user.model.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import RefreshToken from "../models/refreshToken.model.js";
+import Match from "../models/match.model.js";
+import Question from "../models/question.model.js";
+import FrontendQuestion from "../models/frontendQuestion.model.js";
+import BackendQuestion from "../models/backendQuestion.model.js";
+import PromptWarScenario from "../models/promptWarScenerio.model.js";
 import { JwtPayload } from "jsonwebtoken";
 import jwt from "jsonwebtoken";
 import ms, { StringValue } from "ms";
@@ -1151,6 +1156,41 @@ const updateSocials = asyncHandler(async (req, res) => {
     );
 });
 
+// ─── getPublicStats ─────────────────────────────────────────────────────────────
+const getPublicStats = asyncHandler(async (req, res) => {
+    const [
+        usersCount,
+        matchesCount,
+        solveCount,
+        bugFixCount,
+        frontendCount,
+        backendCount,
+        promptCount
+    ] = await Promise.all([
+        User.countDocuments({ isBanned: { $ne: true } }),
+        Match.countDocuments({ status: "COMPLETED" }),
+        Question.countDocuments({ mode: "solve" }),
+        Question.countDocuments({ mode: "bug_fix" }),
+        FrontendQuestion.countDocuments(),
+        BackendQuestion.countDocuments(),
+        PromptWarScenario.countDocuments()
+    ]);
+
+    const totalChallenges = solveCount + bugFixCount + frontendCount + backendCount + promptCount;
+
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            {
+                users: usersCount,
+                battles: matchesCount,
+                challenges: totalChallenges
+            },
+            "Public statistics fetched successfully"
+        )
+    );
+});
+
 // ─── Exports ───────────────────────────────────────────────────────────────────
 
 export {
@@ -1174,5 +1214,6 @@ export {
     updateFullName,
     updateSocials,
     updateMascot,
-    updateBanner
+    updateBanner,
+    getPublicStats
 };
