@@ -126,18 +126,12 @@ export default function LandingPage() {
       </section>
 
       {/* Real-time platform stats (dynamic & real, no fake data) */}
-      <section className="mx-auto max-w-3xl px-6 pb-20 grid grid-cols-3 gap-4 text-center border-b border-border/10">
+      <section className="mx-auto max-w-2xl px-6 pb-20 grid grid-cols-2 gap-4 text-center border-b border-border/10">
         <div className="space-y-1">
           <div className="text-2xl font-extrabold tracking-tight text-primary font-mono sm:text-3xl">
             {stats?.users !== undefined ? stats.users.toLocaleString() : "—"}
           </div>
           <p className="text-[10px] uppercase tracking-wider font-bold text-text-faint">Developers Joined</p>
-        </div>
-        <div className="space-y-1">
-          <div className="text-2xl font-extrabold tracking-tight text-primary font-mono sm:text-3xl">
-            {stats?.battles !== undefined ? stats.battles.toLocaleString() : "—"}
-          </div>
-          <p className="text-[10px] uppercase tracking-wider font-bold text-text-faint">Duels Completed</p>
         </div>
         <div className="space-y-1">
           <div className="text-2xl font-extrabold tracking-tight text-primary font-mono sm:text-3xl">
