@@ -28,6 +28,7 @@ import {
   AlertCircle,
   ArrowRight,
   Maximize2,
+  Bot,
   Minimize2,
   GripHorizontal,
   ChevronDown,
@@ -564,6 +565,8 @@ export default function BattleLobbyPage() {
   const [actionError, setActionError] = useState<string | null>(null);
   const [showInvite, setShowInvite] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
+  const [isTriggeringBot, setIsTriggeringBot] = useState(false);
+  const [dismissedBotPrompt, setDismissedBotPrompt] = useState(false);
 
   const roomQuery = useQuery({
     queryKey: ["battle", roomCode],
@@ -880,6 +883,57 @@ export default function BattleLobbyPage() {
           </Button>
         )}
       </div>
+
+      {/* ── Bot Matchmaker Option Banner ── */}
+      {isHost && !started && room.teamSize === 1 && room.teams.teamB.length === 0 && !dismissedBotPrompt && (
+        <div className="rounded-2xl border border-primary/30 bg-surface-2/95 p-5 shadow-xl backdrop-blur-md space-y-3 animate-in fade-in slide-in-from-bottom-2 duration-300">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2.5 text-primary font-bold text-sm">
+              <Bot className="size-5 text-primary animate-pulse shrink-0" />
+              <span>No real player currently coding in this topic</span>
+            </div>
+            <button
+              onClick={() => setDismissedBotPrompt(true)}
+              className="text-text-faint hover:text-text p-1 transition-colors"
+              title="Dismiss"
+            >
+              <X className="size-4" />
+            </button>
+          </div>
+          <p className="text-xs text-text-faint leading-relaxed">
+            There are currently no active human competitors in the queue for <strong className="text-text font-semibold">{room.battleType}</strong> ({room.topics?.join(", ") || "General"}). Would you like to match with <strong className="text-primary font-bold">DevBot V1 (AI Rival)</strong> or keep searching?
+          </p>
+          <div className="flex flex-wrap gap-2.5 pt-1">
+            <Button
+              size="sm"
+              loading={isTriggeringBot}
+              onClick={async () => {
+                setIsTriggeringBot(true);
+                try {
+                  await api("/battle/matchmaking/fallback", {
+                    method: "POST",
+                    body: { roomCode: room.roomCode }
+                  });
+                  await queryClient.invalidateQueries({ queryKey: ["battle", room.roomCode] });
+                } catch (e) {
+                  console.error("Bot trigger error:", e);
+                } finally {
+                  setIsTriggeringBot(false);
+                }
+              }}
+            >
+              <Bot className="size-4 mr-1.5" /> Match with DevBot V1
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setDismissedBotPrompt(true)}
+            >
+              Keep Searching for Human
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* ── Waiting indicator ── */}
       {!isHost && !started && (
