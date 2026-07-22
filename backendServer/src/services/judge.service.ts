@@ -248,6 +248,17 @@ export async function getTestCases(questionSlug: string): Promise<TestCase[]> {
  *  - `firstFailure` = first non-accepted result by original case order
  *  - `lastResult`   = last result by original case order
  */
+export function normalizeOutput(str: string): string {
+    if (!str) return "";
+    return str
+        .replace(/\r\n/g, "\n")
+        .replace(/\r/g, "\n")
+        .split("\n")
+        .map(line => line.trimEnd())
+        .join("\n")
+        .trim();
+}
+
 export async function judgeAgainstTestCases(
     language: SubmissionLanguage,
     sourceCode: string,
@@ -282,8 +293,8 @@ export async function judgeAgainstTestCases(
 
     for (let i = 0; i < results.length; i++) {
         const result = results[i];
-        const actualOutput = (result.stdout ?? "").trim();
-        const expectedOutput = testCases[i].expectedOutput.trim();
+        const actualOutput = normalizeOutput(result.stdout ?? "");
+        const expectedOutput = normalizeOutput(testCases[i].expectedOutput);
         const isAccepted =
             result.status.description === "Accepted" &&
             actualOutput === expectedOutput;

@@ -5,6 +5,17 @@ import { promisify } from "util";
 
 const execPromise = promisify(exec);
 
+export function normalizeOutput(str: string): string {
+    if (!str) return "";
+    return str
+        .replace(/\r\n/g, "\n")
+        .replace(/\r/g, "\n")
+        .split("\n")
+        .map(line => line.trimEnd())
+        .join("\n")
+        .trim();
+}
+
 interface TestCase {
     input: string;
     expectedOutput: string;
@@ -113,8 +124,8 @@ export async function runLocally(
             const result = await executeTestCase(runCmd, runArgs, tempDir, tc.input);
             lastResult = result;
 
-            const actualTrimmed = (result.stdout ?? "").trim();
-            const expectedTrimmed = tc.expectedOutput.trim();
+            const actualTrimmed = normalizeOutput(result.stdout ?? "");
+            const expectedTrimmed = normalizeOutput(tc.expectedOutput);
             
             const isAccepted = result.status.id === 3 && actualTrimmed === expectedTrimmed;
 
