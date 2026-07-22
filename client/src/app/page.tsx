@@ -271,6 +271,65 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Detailed SEO Overview & FAQ */}
+      <section className="border-t border-border/20 py-20 bg-bg">
+        <div className="mx-auto max-w-5xl px-6 grid gap-12 md:grid-cols-[1fr_1.25fr]">
+          {/* SEO Copywriting Text */}
+          <div className="space-y-6">
+            <div className="space-y-2">
+              <h2 className="text-xl font-bold tracking-tight">Competitive Coding Simplified</h2>
+              <p className="text-xs text-text-muted leading-relaxed">
+                CodeComplex is the ultimate real-time peer-to-peer arena designed for competitive developers and software engineers. Practice data structures, solve algorithms, compile backend APIs, or build custom layout structures in live 1v1 duels.
+              </p>
+            </div>
+            
+            <div className="space-y-4 text-xs text-text-muted">
+              <div>
+                <strong className="text-text block mb-1">Who is CodeComplex for?</strong>
+                <p className="leading-relaxed">
+                  Engineers preparing for top tech interviews, students mastering computer science concepts, and algorithmic competitive programmers who want to sharpen their problem-solving speed under pressure.
+                </p>
+              </div>
+
+              <div>
+                <strong className="text-text block mb-1">Why use CodeComplex?</strong>
+                <p className="leading-relaxed">
+                  Unlike traditional static coding platforms, CodeComplex brings the thrill of head-to-head gamified matching. Socket-driven synchronized timers and live compiler checks simulate the high-intensity environments of technical screens.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Mini FAQ Accordion */}
+          <div className="space-y-4">
+            <h2 className="text-xl font-bold tracking-tight mb-2">FAQ</h2>
+            {[
+              {
+                q: "How does 1v1 matchmaking work?",
+                a: "When you join the queue, our matchmaking engine pairs you with a competitor of similar rating points. Once matched, you enter the lobby where the room code is initialized."
+              },
+              {
+                q: "What coding challenges are supported?",
+                a: "We support multiple categories: Algorithmic puzzles (DSA), Frontend layout assembly (CSS/HTML), Backend API integrations (Node.js), and Prompt Engineering (Prompt War)."
+              },
+              {
+                q: "Are the compilation runners safe?",
+                a: "Yes. Every solution compiled runs inside isolated sandboxed runtimes (powered by Docker), preventing sandbox escapes and keeping execution resources safe."
+              },
+              {
+                q: "Can I invite a friend to a duel?",
+                a: "Yes! You can create a custom room, select the mode, and share the lobby code directly with any other user to duel in private matches."
+              }
+            ].map((faq, index) => (
+              <div key={index} className="rounded border border-border/20 bg-surface/10 p-4 space-y-2">
+                <h3 className="text-xs font-bold text-text">{faq.q}</h3>
+                <p className="text-[11px] leading-relaxed text-text-muted">{faq.a}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Footer CTA */}
       <footer className="border-t border-border/20 bg-bg py-20 text-center space-y-4">
         <h2 className="text-xl font-semibold tracking-tight">
@@ -283,7 +342,19 @@ export default function LandingPage() {
             </Button>
           </Link>
         </div>
-        <div className="flex items-center justify-center gap-4 text-[10px] text-text-faint pt-4">
+        <div className="flex items-center justify-center flex-wrap gap-4 text-[10px] text-text-faint pt-4">
+          <Link href="/about" className="hover:text-text hover:underline transition-colors">
+            About
+          </Link>
+          <span>•</span>
+          <Link href="/contact" className="hover:text-text hover:underline transition-colors">
+            Contact
+          </Link>
+          <span>•</span>
+          <Link href="/faq" className="hover:text-text hover:underline transition-colors">
+            FAQ
+          </Link>
+          <span>•</span>
           <Link href="/terms" className="hover:text-text hover:underline transition-colors">
             Terms of Service
           </Link>
