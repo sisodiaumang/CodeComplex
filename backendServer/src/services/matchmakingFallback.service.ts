@@ -6,6 +6,7 @@ import Match from "../models/match.model.js";
 import { createMatchForRoom } from "./match.service.js";
 import { io } from "../index.js";
 import { BattleType } from "../interfaces/battleRoom.interface.js";
+import { startBotSimulation } from "./botSimulator.service.js";
 
 /**
  * Ensures a system AI Bot user exists in the database for single-player fallback.
@@ -172,6 +173,9 @@ export async function trigger1v1Fallback(roomCode: string, pickQuestionFn?: (roo
         questionSlug,
         durationInMinutes: 30
       });
+
+      // Launch automated Bot simulation loop for typing and submissions
+      startBotSimulation(roomCode, (match._id as any).toString(), botUser.username);
 
       const populated = await BattleRoom.findById(updatedWithBot._id)
         .populate("host", "username fullName avatar mascot")
