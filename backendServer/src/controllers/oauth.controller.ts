@@ -56,9 +56,18 @@ async function findOrCreateOAuthUser(
     // 1. Already linked OAuth user
     let user = await User.findOne({ oauthProvider: provider, oauthId });
     if (user) {
-        // Update avatar from provider on every login
-        if (avatarUrl) {
+        // Only update avatar from OAuth provider if user hasn't set a custom profile image
+        const hasCustomAvatar = Boolean(
+            user.avatar?.profileImagePublicId ||
+            (user.avatar?.profileImageURL &&
+             user.avatar.profileImageURL !== env.DEFAULT_AVATAR_URL &&
+             !user.avatar.profileImageURL.includes("googleusercontent.com") &&
+             !user.avatar.profileImageURL.includes("githubusercontent.com"))
+        );
+
+        if (!hasCustomAvatar && avatarUrl && user.avatar.profileImageURL !== avatarUrl) {
             user.avatar.profileImageURL = avatarUrl;
+            await user.save({ validateBeforeSave: false });
         }
         return { user, isNew: false };
     }
@@ -70,8 +79,16 @@ async function findOrCreateOAuthUser(
             user.oauthProvider = provider;
             user.oauthId = oauthId;
         }
-        // Update avatar from provider if they still have default
-        if (avatarUrl) {
+        // Only update avatar from OAuth provider if user hasn't set a custom profile image
+        const hasCustomAvatar = Boolean(
+            user.avatar?.profileImagePublicId ||
+            (user.avatar?.profileImageURL &&
+             user.avatar.profileImageURL !== env.DEFAULT_AVATAR_URL &&
+             !user.avatar.profileImageURL.includes("googleusercontent.com") &&
+             !user.avatar.profileImageURL.includes("githubusercontent.com"))
+        );
+
+        if (!hasCustomAvatar && avatarUrl) {
             user.avatar.profileImageURL = avatarUrl;
             user.avatar.profileImagePublicId = "";
         }
