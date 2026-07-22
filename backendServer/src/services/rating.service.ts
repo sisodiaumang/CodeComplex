@@ -184,33 +184,25 @@ export async function updateRatings(
     const loserNewRating  = Math.max(MIN_RATING, loserOldRating  + loserDelta);
 
     if (match.matchType === "RANKED") {
-        // ── Update winner profile ──────────────────────────────────────────────────
+        // ── Update winner profile with Elo rating & stats ─────────────────────────
         await UserProfile.findOneAndUpdate(
             { userId: new mongoose.Types.ObjectId(winnerId) },
             {
                 $set:  { [`ratings.${category}`]: winnerNewRating },
-                // peakRatings must only ever ratchet upward — $max never lowers it
-                // and needs no fetch-then-compare round trip.
                 $max:  { [`peakRatings.${category}`]: winnerNewRating },
                 $inc:  {
                     "stats.wins":         1,
                     "stats.totalMatches": 1,
-                    streak:               1,   // increment win streak
+                    streak:               1,
                 }
             }
         );
 
-        // ── Update loser profile ───────────────────────────────────────────────────
-        // FIX (W6): $set and $inc CAN target different paths in the same update
-        // document — the earlier split into two findOneAndUpdate calls (with a
-        // misleading no-op $max: {} placeholder) was unnecessary. One round-trip
-        // now handles the rating set, stats increment, and streak reset together.
+        // ── Update loser profile with Elo rating & stats ──────────────────────────
         await UserProfile.findOneAndUpdate(
             { userId: new mongoose.Types.ObjectId(loserId) },
             {
                 $set:  { [`ratings.${category}`]: loserNewRating, streak: 0 },
-                // A loss can't raise peak, but keep the write symmetric so a
-                // brand-new profile's peak is initialised alongside its rating.
                 $max:  { [`peakRatings.${category}`]: loserNewRating },
                 $inc:  {
                     "stats.losses":       1,
@@ -218,74 +210,103 @@ export async function updateRatings(
                 }
             }
         );
-    }
 
-    // ── Write RatingHistory for winner ────────────────────────────────────────
-    await RatingHistory.create({
-        userId:       new mongoose.Types.ObjectId(winnerId),
-        matchId:      match._id,
-        category:     historyCategory,
-        oldRating:    winnerOldRating,
-        newRating:    winnerNewRating,
-        ratingChange: winnerDelta,
-        reason:       isAbandon ? "WIN_BY_ABANDON" : "WIN",
-        matchType:    match.matchType,
-    });
+        // ── Write RatingHistory for Ranked match ──────────────────────────────────
+        await RatingHistory.create({
+            userId:       new mongoose.Types.ObjectId(winnerId),
+            matchId:      match._id,
+            category:     historyCategory,
+            oldRating:    winnerOldRating,
+            newRating:    winnerNewRating,
+            ratingChange: winnerDelta,
+            reason:       isAbandon ? "WIN_BY_ABANDON" : "WIN",
+            matchType:    match.matchType,
+        });
 
-    // ── Write RatingHistory for loser ─────────────────────────────────────────
-    await RatingHistory.create({
-        userId:       new mongoose.Types.ObjectId(loserId),
-        matchId:      match._id,
-        category:     historyCategory,
-        oldRating:    loserOldRating,
-        newRating:    loserNewRating,
-        ratingChange: loserDelta,
-        reason:       isAbandon ? "LOSS_BY_ABANDON" : "LOSS",
-        matchType:    match.matchType,
-    });
+        await RatingHistory.create({
+            userId:       new mongoose.Types.ObjectId(loserId),
+            matchId:      match._id,
+            category:     historyCategory,
+            oldRating:    loserOldRating,
+            newRating:    loserNewRating,
+            ratingChange: loserDelta,
+            reason:       isAbandon ? "LOSS_BY_ABANDON" : "LOSS",
+            matchType:    match.matchType,
+        });
 
-    // FIX (D3): ratingProcessed is now set by the caller (applyRankedRatings)
-    // after ALL pairings complete, not here. Writing it per-pair meant a
-    // multi-player match would mark itself processed after the first pair
-    // and block the remaining pairs via the guard in applyRankedRatings.
-    // applyAbandonRating still sets it directly (it has no loop), so that
-    // path is unaffected.
+        // ── Ranked Match Notifications ───────────────────────────────────────────
+        const winnerChange = winnerDelta >= 0 ? `+${winnerDelta}` : `${winnerDelta}`;
+        const loserChange  = loserDelta  >= 0 ? `+${loserDelta}`  : `${loserDelta}`;
 
-    // ── Send notifications to both players ────────────────────────────────────
-    const winnerChange = winnerDelta >= 0 ? `+${winnerDelta}` : `${winnerDelta}`;
-    const loserChange  = loserDelta  >= 0 ? `+${loserDelta}`  : `${loserDelta}`;
+        const notifications = await Notification.insertMany([
+            {
+                recipient:       new mongoose.Types.ObjectId(winnerId),
+                type:            "MATCH_RESULT",
+                title:           "Match Result — Victory",
+                message:         `You won! Rating: ${winnerOldRating} → ${winnerNewRating} (${winnerChange})`,
+                relatedEntityId: match._id,
+            },
+            {
+                recipient:       new mongoose.Types.ObjectId(loserId),
+                type:            "MATCH_RESULT",
+                title:           isAbandon ? "Match Abandoned" : "Match Result — Defeat",
+                message:         `You ${isAbandon ? "abandoned" : "lost"}. Rating: ${loserOldRating} → ${loserNewRating} (${loserChange})`,
+                relatedEntityId: match._id,
+            },
+        ]);
 
-    const notifications = await Notification.insertMany([
-        {
-            recipient:       new mongoose.Types.ObjectId(winnerId),
-            type:            "MATCH_RESULT",
-            title:           "Match Result — Victory",
-            message:         `You won! Rating: ${winnerOldRating} → ${winnerNewRating} (${winnerChange})`,
-            relatedEntityId: match._id,
-        },
-        {
-            recipient:       new mongoose.Types.ObjectId(loserId),
-            type:            "MATCH_RESULT",
-            title:           isAbandon ? "Match Abandoned" : "Match Result — Defeat",
-            message:         `You ${isAbandon ? "abandoned" : "lost"}. Rating: ${loserOldRating} → ${loserNewRating} (${loserChange})`,
-            relatedEntityId: match._id,
-        },
-    ]);
-
-    try {
-        const { io } = await import("../index.js");
-        if (io) {
-            io.to(`user:${winnerId}`).emit("notification:new", notifications[0]);
-            io.to(`user:${loserId}`).emit("notification:new", notifications[1]);
+        try {
+            const { io } = await import("../index.js");
+            if (io) {
+                io.to(`user:${winnerId}`).emit("notification:new", notifications[0]);
+                io.to(`user:${loserId}`).emit("notification:new", notifications[1]);
+            }
+        } catch (e) {
+            console.error("[RatingService] Failed to emit victory/defeat notifications via socket:", e);
         }
-    } catch (e) {
-        console.error("[RatingService] Failed to emit victory/defeat notifications via socket:", e);
+    } else {
+        // ── Casual Match Handling (Stats update only, no rating changes) ──────────
+        await UserProfile.findOneAndUpdate(
+            { userId: new mongoose.Types.ObjectId(winnerId) },
+            { $inc: { "stats.wins": 1, "stats.totalMatches": 1, streak: 1 } }
+        );
+
+        await UserProfile.findOneAndUpdate(
+            { userId: new mongoose.Types.ObjectId(loserId) },
+            { $set: { streak: 0 }, $inc: { "stats.losses": 1, "stats.totalMatches": 1 } }
+        );
+
+        const notifications = await Notification.insertMany([
+            {
+                recipient:       new mongoose.Types.ObjectId(winnerId),
+                type:            "MATCH_RESULT",
+                title:           "Match Result — Victory 🏆",
+                message:         "You won the casual match!",
+                relatedEntityId: match._id,
+            },
+            {
+                recipient:       new mongoose.Types.ObjectId(loserId),
+                type:            "MATCH_RESULT",
+                title:           isAbandon ? "Match Abandoned" : "Match Result — Defeat ⚔️",
+                message:         `You ${isAbandon ? "abandoned" : "lost"} the casual match.`,
+                relatedEntityId: match._id,
+            },
+        ]);
+
+        try {
+            const { io } = await import("../index.js");
+            if (io) {
+                io.to(`user:${winnerId}`).emit("notification:new", notifications[0]);
+                io.to(`user:${loserId}`).emit("notification:new", notifications[1]);
+            }
+        } catch (e) {
+            console.error("[RatingService] Failed to emit casual notifications via socket:", e);
+        }
     }
 
     console.log(
-        `[RatingService] Match ${matchId} processed. ` +
-        `Winner ${winnerId}: ${winnerOldRating} → ${winnerNewRating} (${winnerChange}). ` +
-        `Loser ${loserId}: ${loserOldRating} → ${loserNewRating} (${loserChange}).`
+        `[RatingService] Match ${matchId} (${match.matchType}) processed. ` +
+        `Winner: ${winnerId}, Loser: ${loserId}.`
     );
 }
 
@@ -363,59 +384,97 @@ export async function updateRatingsForDraw(
                 }
             ),
         ]);
-    }
 
-    await RatingHistory.insertMany([
-        {
-            userId:       new mongoose.Types.ObjectId(playerAId),
-            matchId:      match._id,
-            category:     historyCategory,
-            oldRating:    ratingA,
-            newRating:    newRatingA,
-            ratingChange: deltaA,
-            reason:       "DRAW",
-            matchType:    match.matchType,
-        },
-        {
-            userId:       new mongoose.Types.ObjectId(playerBId),
-            matchId:      match._id,
-            category:     historyCategory,
-            oldRating:    ratingB,
-            newRating:    newRatingB,
-            ratingChange: deltaB,
-            reason:       "DRAW",
-            matchType:    match.matchType,
-        },
-    ]);
+        await RatingHistory.insertMany([
+            {
+                userId:       new mongoose.Types.ObjectId(playerAId),
+                matchId:      match._id,
+                category:     historyCategory,
+                oldRating:    ratingA,
+                newRating:    newRatingA,
+                ratingChange: deltaA,
+                reason:       "DRAW",
+                matchType:    match.matchType,
+            },
+            {
+                userId:       new mongoose.Types.ObjectId(playerBId),
+                matchId:      match._id,
+                category:     historyCategory,
+                oldRating:    ratingB,
+                newRating:    newRatingB,
+                ratingChange: deltaB,
+                reason:       "DRAW",
+                matchType:    match.matchType,
+            },
+        ]);
 
-    const changeA = deltaA >= 0 ? `+${deltaA}` : `${deltaA}`;
-    const changeB = deltaB >= 0 ? `+${deltaB}` : `${deltaB}`;
+        const changeA = deltaA >= 0 ? `+${deltaA}` : `${deltaA}`;
+        const changeB = deltaB >= 0 ? `+${deltaB}` : `${deltaB}`;
 
-    const notifications = await Notification.insertMany([
-        {
-            recipient:       new mongoose.Types.ObjectId(playerAId),
-            type:            "MATCH_RESULT",
-            title:           "Match Result — Draw 🤝",
-            message:         `It's a draw! Rating: ${ratingA} → ${newRatingA} (${changeA})`,
-            relatedEntityId: match._id,
-        },
-        {
-            recipient:       new mongoose.Types.ObjectId(playerBId),
-            type:            "MATCH_RESULT",
-            title:           "Match Result — Draw 🤝",
-            message:         `It's a draw! Rating: ${ratingB} → ${newRatingB} (${changeB})`,
-            relatedEntityId: match._id,
-        },
-    ]);
+        const notifications = await Notification.insertMany([
+            {
+                recipient:       new mongoose.Types.ObjectId(playerAId),
+                type:            "MATCH_RESULT",
+                title:           "Match Result — Draw 🤝",
+                message:         `It's a draw! Rating: ${ratingA} → ${newRatingA} (${changeA})`,
+                relatedEntityId: match._id,
+            },
+            {
+                recipient:       new mongoose.Types.ObjectId(playerBId),
+                type:            "MATCH_RESULT",
+                title:           "Match Result — Draw 🤝",
+                message:         `It's a draw! Rating: ${ratingB} → ${newRatingB} (${changeB})`,
+                relatedEntityId: match._id,
+            },
+        ]);
 
-    try {
-        const { io } = await import("../index.js");
-        if (io) {
-            io.to(`user:${playerAId}`).emit("notification:new", notifications[0]);
-            io.to(`user:${playerBId}`).emit("notification:new", notifications[1]);
+        try {
+            const { io } = await import("../index.js");
+            if (io) {
+                io.to(`user:${playerAId}`).emit("notification:new", notifications[0]);
+                io.to(`user:${playerBId}`).emit("notification:new", notifications[1]);
+            }
+        } catch (e) {
+            console.error("[RatingService] Failed to emit draw notifications via socket:", e);
         }
-    } catch (e) {
-        console.error("[RatingService] Failed to emit draw notifications via socket:", e);
+    } else {
+        await Promise.all([
+            UserProfile.findOneAndUpdate(
+                { userId: new mongoose.Types.ObjectId(playerAId) },
+                { $set: { streak: 0 }, $inc: { "stats.draws": 1, "stats.totalMatches": 1 } }
+            ),
+            UserProfile.findOneAndUpdate(
+                { userId: new mongoose.Types.ObjectId(playerBId) },
+                { $set: { streak: 0 }, $inc: { "stats.draws": 1, "stats.totalMatches": 1 } }
+            ),
+        ]);
+
+        const notifications = await Notification.insertMany([
+            {
+                recipient:       new mongoose.Types.ObjectId(playerAId),
+                type:            "MATCH_RESULT",
+                title:           "Match Result — Draw 🤝",
+                message:         "It's a draw in the casual match!",
+                relatedEntityId: match._id,
+            },
+            {
+                recipient:       new mongoose.Types.ObjectId(playerBId),
+                type:            "MATCH_RESULT",
+                title:           "Match Result — Draw 🤝",
+                message:         "It's a draw in the casual match!",
+                relatedEntityId: match._id,
+            },
+        ]);
+
+        try {
+            const { io } = await import("../index.js");
+            if (io) {
+                io.to(`user:${playerAId}`).emit("notification:new", notifications[0]);
+                io.to(`user:${playerBId}`).emit("notification:new", notifications[1]);
+            }
+        } catch (e) {
+            console.error("[RatingService] Failed to emit casual draw notifications via socket:", e);
+        }
     }
 
     // FIX (D3): ratingProcessed removed here — owned by applyRankedRatings caller.
