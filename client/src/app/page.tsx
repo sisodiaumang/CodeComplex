@@ -4,18 +4,23 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { api } from "@/lib/api";
-import {
-  ArrowRight,
-  Code,
-  Cpu,
-  Layout,
-  Server,
-  ShieldAlert,
-  Sparkles,
+import { 
+  ArrowRight, 
+  Code, 
+  Cpu, 
+  Layout, 
+  Server, 
+  ShieldAlert, 
+  Sparkles, 
   CheckCircle2,
   Zap,
   ShieldCheck,
   Trophy,
+  Flame,
+  Terminal,
+  Activity,
+  Layers,
+  ChevronRight
 } from "lucide-react";
 import { LogoMark } from "@/components/logo";
 import { ELO_TIERS } from "@/lib/theme";
@@ -24,69 +29,14 @@ import { Button, Card } from "@/components/ui";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { cn } from "@/lib/utils";
 
-// Each battle mode carries its own accent color pulled from the design system's
-// battle-category palette, so the grid reads as six distinct arenas rather than
-// six repeats of the same icon-in-a-box template.
 const MODES_LIST = [
-  {
-    key: "DSA",
-    label: "DSA & Algorithms",
-    command: "run dsa_algorithms",
-    color: "#3B82F6",
-    icon: Code,
-    tagline: "High-speed algorithmic duels. First to pass every testcase takes the Elo.",
-  },
-  {
-    key: "BUG_FIX",
-    label: "Bug Fix Arena",
-    command: "run bug_fix",
-    color: "#EF4444",
-    icon: ShieldAlert,
-    tagline: "A broken codebase with hidden edge cases. Spot the flaw, repair it, win.",
-  },
-  {
-    key: "PROMPT_WAR",
-    label: "Prompt War",
-    command: "run prompt_war",
-    color: "#A855F7",
-    icon: Sparkles,
-    tagline: "Craft precision prompts under pressure. The sharper instruction wins the judge.",
-  },
-  {
-    key: "BACKEND",
-    label: "Backend API",
-    command: "run backend_api",
-    color: "#2DB55D",
-    icon: Server,
-    tagline: "Design and ship a working REST endpoint before your opponent does.",
-  },
-  {
-    key: "FRONTEND",
-    label: "Pixel Perfect",
-    command: "run frontend_ui",
-    color: "#06B6D4",
-    icon: Layout,
-    tagline: "Recreate a UI mockup head-to-head, scored by automated layout diffing.",
-  },
-  {
-    key: "PROJECTS",
-    label: "Full-Stack",
-    command: "run full_stack",
-    color: "#F59E0B",
-    icon: Cpu,
-    tagline: "Database schema to frontend component. Full builds, evaluated live.",
-  },
+  { key: "DSA", label: "DSA & Algorithms", badge: "Algorithms", icon: Code, tagline: "High-speed algorithmic duels. First to pass all testcases claims the Elo victory." },
+  { key: "BUG_FIX", label: "Bug Fix Arena", badge: "Debugging", icon: ShieldAlert, tagline: "Broken codebases with hidden edge-case bugs. Spot the flaw, repair it, win." },
+  { key: "PROMPT_WAR", label: "Prompt War", badge: "AI / LLM", icon: Sparkles, tagline: "Craft precision prompts under pressure. The sharper instruction wins the judge." },
+  { key: "BACKEND", label: "Backend API", badge: "Architecture", icon: Server, tagline: "Design and deploy functioning REST endpoints against live validation runners." },
+  { key: "FRONTEND", label: "Pixel Perfect", badge: "UI / CSS", icon: Layout, tagline: "Recreate complex UI mockups head-to-head with automated layout scoring." },
+  { key: "PROJECTS", label: "Full-Stack", badge: "End-to-End", icon: Cpu, tagline: "Database schemas to frontend components. Full project builds evaluated live." }
 ];
-
-// Converts a design-token hex value into a translucent rgba() for tinted
-// backgrounds, so mode colors stay theme-accurate in both light and dark mode.
-function tint(hex: string, alpha: number) {
-  const clean = hex.replace("#", "");
-  const r = parseInt(clean.substring(0, 2), 16);
-  const g = parseInt(clean.substring(2, 4), 16);
-  const b = parseInt(clean.substring(4, 6), 16);
-  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-}
 
 export default function LandingPage() {
   const { status } = useAuth();
@@ -111,36 +61,33 @@ export default function LandingPage() {
   }, [status, router]);
 
   return (
-    <div className="relative min-h-screen bg-bg text-text antialiased">
-      {/* Faint code-grid backdrop, consistent with the terminal motif rather than a generic radial glow */}
-      <div
-        className="pointer-events-none absolute inset-0 -z-10 opacity-[0.04]"
-        style={{
-          backgroundImage:
-            "linear-gradient(to right, currentColor 1px, transparent 1px), linear-gradient(to bottom, currentColor 1px, transparent 1px)",
-          backgroundSize: "40px 40px",
-        }}
-      />
+    <div className="relative min-h-screen bg-bg text-text overflow-hidden antialiased">
+      {/* Quiet Developer Grid Background */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808003_1px,transparent_1px),gradient(to_bottom,#80808003_1px,transparent_1px)] bg-[size:32px_32px] pointer-events-none -z-10" />
+      
+      {/* Ultra-subtle background radial glow */}
+      <div className="absolute left-1/2 top-1/4 -z-10 size-[600px] -translate-x-1/2 rounded-full bg-primary/10 opacity-40 blur-3xl pointer-events-none" />
 
-      {/* Header */}
-      <header className="sticky top-0 z-50 border-b border-border/40 bg-bg/80 backdrop-blur-md">
+      {/* Header bar */}
+      <header className="border-b border-border/20 backdrop-blur-md sticky top-0 z-50 bg-bg/75">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-          <div className="flex items-center gap-2.5">
-            <LogoMark size={26} />
-            <span className="font-mono text-base font-bold tracking-tight text-text">
-              code<span className="text-primary">complex</span>
+          <div className="flex items-center gap-3">
+            <LogoMark size={28} />
+            <span className="text-lg font-bold tracking-tight text-text">
+              Code<span className="text-primary font-medium">Complex</span>
             </span>
           </div>
-          <div className="flex items-center gap-3">
-            <ThemeToggle />
-            <div className="mx-1 h-5 w-px bg-border/50" />
+          <div className="flex items-center gap-4">
+            <div className="border-r border-border/30 pr-1 py-1 text-text">
+              <ThemeToggle />
+            </div>
             <Link href="/login">
-              <Button variant="ghost" size="sm" className="text-text-muted hover:text-text hover:bg-transparent">
+              <Button variant="ghost" size="sm" className="text-text-muted hover:text-text hover:bg-transparent transition-colors text-xs">
                 Log in
               </Button>
             </Link>
             <Link href="/signup">
-              <Button size="sm" className="rounded-md px-4 font-semibold">
+              <Button size="sm" className="h-8 rounded px-4 text-xs font-semibold">
                 Sign up
               </Button>
             </Link>
@@ -148,208 +95,191 @@ export default function LandingPage() {
         </div>
       </header>
 
-      {/* Hero — framed as a single terminal window; the whole page speaks this language */}
-      <section className="mx-auto max-w-4xl px-6 pt-14 sm:pt-20">
-        <div className="overflow-hidden rounded-xl border border-border/60 bg-surface/50 shadow-2xl">
-          <div className="flex items-center gap-2 border-b border-border/50 bg-surface-2/60 px-4 py-2.5">
-            <div className="flex gap-1.5">
-              <span className="size-2.5 rounded-full bg-red-500/60" />
-              <span className="size-2.5 rounded-full bg-amber-500/60" />
-              <span className="size-2.5 rounded-full bg-emerald-500/60" />
-            </div>
-            <span className="ml-2 font-mono text-[11px] text-text-faint">arena@codecomplex — matchmaking</span>
-          </div>
-
-          <div className="space-y-7 px-6 py-14 text-center sm:px-10 sm:py-20">
-            <div className="inline-flex items-center gap-2 font-mono text-xs text-text-muted">
-              <span className="size-1.5 rounded-full bg-emerald-500 motion-safe:animate-pulse" />
-              <span>$ matchmaking --status=live</span>
-            </div>
-
-            <h1 className="mx-auto max-w-2xl font-mono text-4xl font-bold uppercase leading-[1.15] tracking-tight sm:text-5xl">
-              Real-time code duels.
-              <br />
-              <span className="text-primary">Ranked. Sandboxed. Live.</span>
-            </h1>
-
-            <p className="mx-auto max-w-lg text-sm leading-relaxed text-text-muted sm:text-base">
-              Duel other developers head-to-head. Solve algorithms, patch broken
-              builds, ship APIs, and climb an Elo ladder that remembers every win.
-            </p>
-
-            <div className="flex flex-wrap items-center justify-center gap-3 pt-1">
-              <Link href="/signup">
-                <Button className="h-10 gap-2 rounded-md px-6 text-sm font-semibold shadow-lg shadow-primary/20">
-                  Start building <ArrowRight className="size-4" />
-                </Button>
-              </Link>
-              <Link href="/leaderboard">
-                <Button variant="outline" className="h-10 rounded-md border-border/60 bg-surface/40 px-6 text-sm font-medium">
-                  View leaderboard
-                </Button>
-              </Link>
-            </div>
-
-            <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 pt-3 font-mono text-xs text-text-muted">
-              <span>
-                <strong className="text-text">{stats?.users ?? 9}</strong> devs_joined
-              </span>
-              <span className="text-border">│</span>
-              <span>
-                <strong className="text-primary">
-                  {stats?.challenges !== undefined ? stats.challenges.toLocaleString() : "4,027"}
-                </strong>{" "}
-                challenges_ready
-              </span>
-              <span className="text-border">│</span>
-              <span>free_&amp;_open_source</span>
-            </div>
-          </div>
+      {/* Hero section */}
+      <section className="mx-auto max-w-4xl px-6 pt-24 pb-12 text-center space-y-6">
+        {/* Real-time status tag */}
+        <div className="inline-flex items-center gap-2 rounded-full border border-border/50 bg-surface/60 px-3.5 py-1 text-[11px] font-medium text-text-muted tracking-wide">
+          <span className="size-2 rounded-full bg-emerald-500 animate-pulse" />
+          <span>Real-Time Code Matchmaking</span>
         </div>
-      </section>
 
-      {/* Live battle HUD — the signature element: a true head-to-head split with a glowing VS core */}
-      <section className="mx-auto max-w-5xl px-6 py-16 sm:py-20">
-        <div className="overflow-hidden rounded-xl border border-border/50 bg-surface/40 shadow-xl">
-          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/40 bg-surface-2/40 px-5 py-3 font-mono text-xs">
-            <div className="flex items-center gap-3">
-              <span className="flex items-center gap-2 font-bold text-text">
-                <span className="size-2 rounded-full bg-emerald-500 motion-safe:animate-ping" />
-                LIVE BATTLE #8492
-              </span>
-              <span className="text-text-faint">·</span>
-              <span className="text-text-muted">
-                mode: <strong style={{ color: "#3B82F6" }}>dsa_speedrun</strong>
-              </span>
-            </div>
-            <div className="flex items-center gap-2 text-[11px]">
-              <span className="rounded border border-border/50 bg-surface px-2 py-0.5 font-bold text-text-muted">
-                08:42 remaining
-              </span>
-              <span className="rounded border border-primary/25 bg-primary/10 px-2 py-0.5 font-bold text-primary">
-                ± 32 elo
-              </span>
-            </div>
-          </div>
+        {/* Title */}
+        <h1 className="text-4xl font-extrabold tracking-tight sm:text-6xl max-w-3xl mx-auto leading-[1.1] text-text">
+          Real-Time Code Duels.<br />
+          <span className="bg-gradient-to-r from-primary via-cyan-400 to-indigo-400 bg-clip-text text-transparent">
+            Built for Competitive Engineers.
+          </span>
+        </h1>
 
-          <div className="border-b border-border/30 bg-bg/40 px-5 py-4">
-            <div className="flex items-center gap-2">
-              <span className="rounded border border-amber-500/25 bg-amber-500/10 px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wide text-amber-500">
-                Medium
-              </span>
-              <h3 className="text-sm font-bold text-text">Subarray Sum Equals K</h3>
-            </div>
-            <p className="mt-1.5 text-xs leading-relaxed text-text-muted">
-              Given an array <code className="font-mono text-[11px] text-primary">nums</code> and integer{" "}
-              <code className="font-mono text-[11px] text-primary">k</code>, return how many subarrays sum to{" "}
-              <code className="font-mono text-[11px] text-primary">k</code>.
-            </p>
-          </div>
+        {/* Description */}
+        <p className="max-w-xl mx-auto text-sm text-text-muted leading-relaxed">
+          Duel other developers in head-to-head programming matches. Solve algorithmic challenges, build sandbox APIs, assemble frontend layouts, and climb the competitive Elo ladder.
+        </p>
 
-          <div className="relative grid divide-y divide-border/20 bg-bg/30 md:grid-cols-[1fr_auto_1fr] md:divide-y-0">
-            {/* YOU */}
-            <div className="space-y-3 p-5">
-              <div className="flex items-center justify-between">
-                <span className="flex items-center gap-2 text-xs font-bold text-text">
-                  <span className="size-2 rounded-full bg-emerald-500" />
-                  You
-                </span>
-                <span className="font-mono text-[11px] font-bold text-emerald-400">4 / 4 passed</span>
-              </div>
-              <pre className="overflow-x-auto rounded-lg border border-border/30 bg-surface/40 p-3 font-mono text-[11px] leading-relaxed text-text-muted">
-                <span className="text-purple-400">int</span> subarraySum(vector&lt;int&gt;&amp; nums, int k) {"{"}
-                {"\n"}  unordered_map&lt;int,int&gt; mp = {"{"}{"{"}0,1{"}"}{"}"};{"\n"}  int sum=0, count=0;
-                {"\n"}  for (int n : nums) {"{"} sum += n;
-                {"\n"}    if (mp.count(sum-k)) count += mp[sum-k];
-                {"\n"}    mp[sum]++; {"}"}
-                {"\n"}  return count;
-                {"\n"}
-                {"}"}
-              </pre>
-              <div className="h-1.5 w-full overflow-hidden rounded-full bg-surface-2">
-                <div className="h-full w-full rounded-full bg-emerald-500" />
-              </div>
-            </div>
+        {/* Action Buttons */}
+        <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
+          <Link href="/signup">
+            <Button className="h-10 px-6 text-xs font-semibold gap-2 rounded-lg bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20">
+              Start building <ArrowRight className="size-3.5" />
+            </Button>
+          </Link>
+          <Link href="/leaderboard">
+            <Button variant="outline" className="h-10 px-6 text-xs font-medium bg-surface/30 border-border/60 hover:bg-surface/60 rounded-lg">
+              View Leaderboard
+            </Button>
+          </Link>
+        </div>
 
-            {/* VS core */}
-            <div className="flex items-center justify-center py-2 md:py-0 md:px-6">
-              <span
-                className="flex size-11 shrink-0 items-center justify-center rounded-full border-2 border-primary bg-bg font-mono text-xs font-bold text-primary"
-                style={{ boxShadow: "0 0 26px -4px currentColor" }}
-              >
-                VS
-              </span>
-            </div>
-
-            {/* RIVAL */}
-            <div className="space-y-3 p-5 opacity-90">
-              <div className="flex items-center justify-between">
-                <span className="flex items-center gap-2 text-xs font-bold text-text-muted">
-                  <span className="size-2 rounded-full bg-amber-500" />
-                  Rival_Dev99
-                </span>
-                <span className="font-mono text-[11px] font-bold text-text-faint">2 / 4 passed</span>
-              </div>
-              <pre className="overflow-x-auto rounded-lg border border-border/30 bg-surface/30 p-3 font-mono text-[11px] leading-relaxed text-text-faint">
-                <span className="text-purple-400/70">int</span> subarraySum(vector&lt;int&gt;&amp; nums, int k) {"{"}
-                {"\n"}  int sum=0, count=0;
-                {"\n"}  for (int i=0;i&lt;nums.size();i++) {"{"}
-                {"\n"}    for (int j=i;j&lt;nums.size();j++) {"{"} ...
-                {"\n"}    {"}"}
-                {"\n"}  {"}"}
-                {"\n"}  // still brute-forcing…
-                {"\n"}
-                {"}"}
-              </pre>
-              <div className="h-1.5 w-full overflow-hidden rounded-full bg-surface-2">
-                <div className="h-full w-1/2 rounded-full bg-amber-500" />
-              </div>
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between border-t border-border/30 bg-emerald-500/5 px-5 py-3">
-            <div className="flex items-center gap-2 font-mono text-xs font-bold text-emerald-400">
-              <CheckCircle2 className="size-4" />
-              your_submission: all testcases passed
-            </div>
-            <span className="font-mono text-[10px] text-text-muted">
-              runtime <strong className="text-text">14ms</strong> · memory <strong className="text-text">16.2mb</strong>
+        {/* Single Stat Highlight - Coding Challenges Only */}
+        <div className="pt-4 flex items-center justify-center">
+          <div className="inline-flex items-center gap-2.5 rounded-full border border-border/40 bg-surface-2/40 px-4 py-1.5 text-xs backdrop-blur-md">
+            <Flame className="size-4 text-amber-500 shrink-0" />
+            <span className="text-text-muted">
+              <strong className="text-text font-bold font-mono">
+                {stats?.challenges !== undefined ? stats.challenges.toLocaleString() : "4,027"}
+              </strong>{" "}
+              Coding Challenges Ready to Battle
             </span>
           </div>
         </div>
+
+        <p className="text-[10px] text-text-faint font-mono pt-1">
+          100% Free & Open Source • Secure Sandboxed Run
+        </p>
       </section>
 
-      {/* Battle modes — "select your class"; each card is tinted by its own category color */}
-      <section className="border-y border-border/30 bg-surface-2/20 py-20">
-        <div className="mx-auto max-w-5xl px-6">
-          <div className="mb-10">
-            <p className="font-mono text-xs text-primary">// battle_modes</p>
-            <h2 className="mt-1 text-2xl font-bold tracking-tight">Select your class</h2>
-            <p className="mt-1.5 text-sm text-text-muted">
-              Six arenas, six independent Elo ratings. Pick where you fight.
-            </p>
+      {/* Live Battle Arena HUD Showcase */}
+      <section className="mx-auto max-w-5xl px-6 pb-24">
+        <div className="rounded-xl border border-border/50 bg-surface/40 p-2 shadow-2xl backdrop-blur-md">
+          {/* Top Bar HUD */}
+          <div className="flex flex-wrap items-center justify-between border-b border-border/30 bg-surface-2/40 px-4 py-3 rounded-t-lg gap-2 text-xs font-mono">
+            <div className="flex items-center gap-3">
+              <span className="flex items-center gap-2 font-bold text-text">
+                <span className="size-2 rounded-full bg-emerald-500 animate-ping" />
+                LIVE BATTLE #8492
+              </span>
+              <span className="text-text-faint">•</span>
+              <span className="text-text-muted">Mode: <strong className="text-primary">DSA Speedrun</strong></span>
+            </div>
+            <div className="flex items-center gap-3 text-[11px]">
+              <span className="px-2 py-0.5 rounded bg-surface border border-border/40 text-text-muted font-bold">
+                ⏱ 08:42 REMAINING
+              </span>
+              <span className="px-2 py-0.5 rounded bg-primary/10 border border-primary/20 text-primary font-bold">
+                ELO ± 32 Pts
+              </span>
+            </div>
           </div>
 
+          {/* Match Split Screen */}
+          <div className="grid md:grid-cols-12 divide-y md:divide-y-0 md:divide-x divide-border/20 bg-bg/40">
+            {/* Left: Problem & Matchup */}
+            <div className="md:col-span-5 p-5 space-y-4">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/10 text-amber-500 border border-amber-500/20 uppercase tracking-wider">
+                    Medium
+                  </span>
+                  <span className="text-xs text-text-faint font-mono">ID: #4092</span>
+                </div>
+                <h3 className="text-sm font-bold text-text">Subarray Sum Equals K</h3>
+              </div>
+              <p className="text-xs text-text-muted leading-relaxed">
+                Given an array of integers <code className="text-primary font-mono text-[11px]">nums</code> and an integer <code className="text-primary font-mono text-[11px]">k</code>, return the total number of subarrays whose sum equals to <code className="text-primary font-mono text-[11px]">k</code>.
+              </p>
+
+              <div className="pt-2 border-t border-border/20 space-y-2">
+                <span className="text-[10px] uppercase font-bold text-text-faint tracking-wider block">Live Competitors</span>
+                <div className="space-y-2 text-xs">
+                  <div className="flex items-center justify-between p-2 rounded border border-border/30 bg-surface/30">
+                    <div className="flex items-center gap-2">
+                      <span className="size-2 rounded-full bg-emerald-500" />
+                      <span className="font-bold text-text">You (Team A)</span>
+                    </div>
+                    <span className="font-mono text-primary font-bold">4/4 Passed</span>
+                  </div>
+                  <div className="flex items-center justify-between p-2 rounded border border-border/30 bg-surface/20 opacity-80">
+                    <div className="flex items-center gap-2">
+                      <span className="size-2 rounded-full bg-amber-500" />
+                      <span className="text-text-muted">Rival_Dev99 (Team B)</span>
+                    </div>
+                    <span className="font-mono text-text-faint">2/4 Passed</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right: Code & Exec Engine */}
+            <div className="md:col-span-7 p-5 space-y-4 flex flex-col justify-between">
+              <div className="space-y-2 font-mono text-xs leading-relaxed text-text-muted">
+                <div className="flex items-center justify-between text-[10px] text-text-faint pb-1 border-b border-border/10">
+                  <span>solution.cpp</span>
+                  <span className="text-emerald-400 font-bold">Docker Sandbox ACTIVE</span>
+                </div>
+                <pre className="overflow-x-auto text-[11px]">
+                  <div><span className="text-purple-400">#include</span> <span className="text-emerald-300">&lt;unordered_map&gt;</span></div>
+                  <div><span className="text-purple-400">using namespace</span> std;</div>
+                  <br />
+                  <div><span className="text-blue-400">int</span> <span className="text-amber-300">subarraySum</span>(vector&lt;<span className="text-blue-400">int</span>&gt;&amp; nums, <span className="text-blue-400">int</span> k) &#123;</div>
+                  <div>    unordered_map&lt;<span className="text-blue-400">int</span>, <span className="text-blue-400">int</span>&gt; mp = &#123;&#123;<span className="text-orange-400">0</span>, <span className="text-orange-400">1</span>&#125;&#125;;</div>
+                  <div>    <span className="text-blue-400">int</span> sum = <span className="text-orange-400">0</span>, count = <span className="text-orange-400">0</span>;</div>
+                  <div>    <span className="text-purple-400">for</span> (<span className="text-blue-400">int</span> n : nums) &#123;</div>
+                  <div>        sum += n;</div>
+                  <div>        <span className="text-purple-400">if</span> (mp.count(sum - k)) count += mp[sum - k];</div>
+                  <div>        mp[sum]++;</div>
+                  <div>    &#125;</div>
+                  <div>    <span className="text-purple-400">return</span> count;</div>
+                  <div>&#125;</div>
+                </pre>
+              </div>
+
+              {/* Engine Result Bar */}
+              <div className="p-3 rounded-lg border border-emerald-500/30 bg-emerald-500/5 flex items-center justify-between">
+                <div className="flex items-center gap-2 text-xs font-bold text-emerald-400">
+                  <CheckCircle2 className="size-4" />
+                  <span>ALL TESTCASES PASSED (4/4)</span>
+                </div>
+                <span className="font-mono text-[10px] text-text-muted">
+                  Runtime: <strong className="text-text">14ms</strong> | Memory: <strong className="text-text">16.2MB</strong>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Battle Modes Overview */}
+      <section className="border-y border-border/20 bg-surface-2/10 py-20">
+        <div className="mx-auto max-w-5xl px-6">
+          <div className="space-y-1 mb-12">
+            <h2 className="text-xl font-bold tracking-tight">Diverse Battle Categories</h2>
+            <p className="text-xs text-text-muted">
+              Choose your competitive domain. Each mode tracks an independent Elo rating tier.
+            </p>
+          </div>
+          
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {MODES_LIST.map((mode) => {
               const IconComp = mode.icon;
               return (
                 <div
                   key={mode.key}
-                  className="group rounded-xl border border-border/40 bg-surface/40 p-5 transition-colors"
-                  style={{ borderLeftColor: mode.color, borderLeftWidth: 3 }}
+                  className="rounded-xl border border-border/30 bg-surface/30 p-5 transition-all duration-300 hover:border-primary/50 hover:bg-surface/50 group"
                 >
-                  <div className="mb-3 flex items-center justify-between">
-                    <div
-                      className="flex size-9 items-center justify-center rounded-lg"
-                      style={{ backgroundColor: tint(mode.color, 0.12), color: mode.color }}
-                    >
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="size-9 rounded-lg bg-surface-2 flex items-center justify-center border border-border/40 text-primary group-hover:bg-primary group-hover:text-white transition-colors">
                       <IconComp className="size-4" />
                     </div>
-                    <span className="font-mono text-[10px] text-text-faint">{mode.command}</span>
+                    <span className="text-[10px] font-bold font-mono px-2 py-0.5 rounded bg-surface border border-border/30 text-text-faint">
+                      {mode.badge}
+                    </span>
                   </div>
-                  <h3 className="text-sm font-bold text-text">{mode.label}</h3>
-                  <p className="mt-1.5 text-xs leading-relaxed text-text-muted">{mode.tagline}</p>
+                  <h3 className="text-xs font-bold text-text group-hover:text-primary transition-colors">
+                    {mode.label}
+                  </h3>
+                  <p className="mt-2 text-[11px] leading-relaxed text-text-muted">
+                    {mode.tagline}
+                  </p>
                 </div>
               );
             })}
@@ -357,146 +287,155 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Feature highlights */}
+      {/* Dynamic Bento Feature Highlights */}
       <section className="mx-auto max-w-5xl px-6 py-20">
-        <div className="mb-10">
-          <p className="font-mono text-xs text-primary">// engine</p>
-          <h2 className="mt-1 text-2xl font-bold tracking-tight">Built for a fair fight</h2>
+        <div className="text-center space-y-2 mb-12">
+          <h2 className="text-2xl font-bold tracking-tight text-text sm:text-3xl">
+            Engineered for Competitive Edge
+          </h2>
+          <p className="text-xs text-text-muted max-w-md mx-auto">
+            Everything you need for zero-latency duels, secure executions, and fair Elo progression.
+          </p>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-3">
+          <Card className="p-6 space-y-3 bg-surface/20 border-border/30 rounded-xl relative overflow-hidden group hover:border-primary/50 transition-all">
+            <div className="size-10 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
+              <Zap className="size-5" />
+            </div>
+            <h3 className="text-sm font-bold text-text">WebSocket Matchmaking</h3>
+            <p className="text-xs leading-relaxed text-text-muted">
+              Zero-polling event synchronization keeps timers, opponent progress, and live code executions locked in real time.
+            </p>
+          </Card>
+
+          <Card className="p-6 space-y-3 bg-surface/20 border-border/30 rounded-xl relative overflow-hidden group hover:border-primary/50 transition-all">
+            <div className="size-10 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
+              <ShieldCheck className="size-5" />
+            </div>
+            <h3 className="text-sm font-bold text-text">Docker Runtime Sandboxes</h3>
+            <p className="text-xs leading-relaxed text-text-muted">
+              Every submission compiles inside isolated containers with strict CPU/memory limits, ensuring 100% execution safety.
+            </p>
+          </Card>
+
+          <Card className="p-6 space-y-3 bg-surface/20 border-border/30 rounded-xl relative overflow-hidden group hover:border-primary/50 transition-all">
+            <div className="size-10 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
+              <Trophy className="size-5" />
+            </div>
+            <h3 className="text-sm font-bold text-text">Fair Elo Tier Progression</h3>
+            <p className="text-xs leading-relaxed text-text-muted">
+              Custom mathematical rating adjustments award points based on opponent rank and solve time, scaling from Bronze to Legend.
+            </p>
+          </Card>
+        </div>
+      </section>
+
+      {/* How it works */}
+      <section className="mx-auto max-w-5xl px-6 py-16 border-t border-border/20">
+        <div className="space-y-1 mb-12">
+          <h2 className="text-xl font-bold tracking-tight">How it works</h2>
+          <p className="text-xs text-text-muted">
+            Go from lobby to duel in under a minute.
+          </p>
         </div>
 
         <div className="grid gap-4 md:grid-cols-3">
           {[
-            {
-              icon: Zap,
-              title: "WebSocket matchmaking",
-              text: "Zero-polling sync keeps timers, opponent progress, and live runs locked together in real time.",
-            },
-            {
-              icon: ShieldCheck,
-              title: "Docker sandboxes",
-              text: "Every submission compiles inside an isolated container with strict CPU and memory limits.",
-            },
-            {
-              icon: Trophy,
-              title: "Fair Elo progression",
-              text: "Rating adjustments weigh opponent rank and solve time, scaling from Bronze to Grandmaster.",
-            },
-          ].map(({ icon: Icon, title, text }) => (
-            <Card key={title} className="space-y-3 rounded-xl border-border/40 bg-surface/30 p-6">
-              <div className="flex size-9 items-center justify-center rounded-lg border border-primary/25 bg-primary/10 text-primary">
-                <Icon className="size-4" />
-              </div>
-              <h3 className="text-sm font-bold text-text">{title}</h3>
-              <p className="text-xs leading-relaxed text-text-muted">{text}</p>
+            { num: "01", title: "Open a Room", text: "Create a match room, select the mode, and share the lobby code." },
+            { num: "02", title: "Rally Rivals", text: "Invite friends or queue against active online competitors of similar ranks." },
+            { num: "03", title: "Duel & Climb", text: "Write code, run automatic testcases, and climb the leaderboards." },
+          ].map(({ num, title, text }) => (
+            <Card key={num} className="p-5 space-y-2 bg-surface/20 border-border/20 rounded-xl">
+              <span className="font-mono text-xs text-primary font-bold">{num}</span>
+              <h3 className="text-xs font-bold text-text">{title}</h3>
+              <p className="text-[11px] leading-relaxed text-text-muted">{text}</p>
             </Card>
           ))}
         </div>
       </section>
 
-      {/* How it works — a real sequence, so numbering earns its place */}
-      <section className="mx-auto max-w-5xl border-t border-border/30 px-6 py-20">
-        <div className="mb-10">
-          <p className="font-mono text-xs text-primary">// how_it_works</p>
-          <h2 className="mt-1 text-2xl font-bold tracking-tight">Lobby to duel in under a minute</h2>
-        </div>
-
-        <div className="grid gap-4 md:grid-cols-3">
-          {[
-            { step: "step_01", title: "Open a room", text: "Create a match room, pick the mode, share the lobby code." },
-            { step: "step_02", title: "Rally rivals", text: "Invite friends, or queue against online competitors near your rank." },
-            { step: "step_03", title: "Duel & climb", text: "Write code, run testcases live, and move up the leaderboard." },
-          ].map(({ step, title, text }) => (
-            <Card key={step} className="space-y-2 rounded-xl border-border/30 bg-surface/20 p-5">
-              <span className="font-mono text-xs font-bold text-primary">{step}</span>
-              <h3 className="text-sm font-bold text-text">{title}</h3>
-              <p className="text-xs leading-relaxed text-text-muted">{text}</p>
-            </Card>
-          ))}
-        </div>
-      </section>
-
-      {/* Ranked ladder — a real leaderboard list rather than floating pills */}
-      <section className="border-t border-border/30 bg-surface-2/20 py-20">
-        <div className="mx-auto max-w-2xl px-6">
-          <div className="mb-8 text-center">
-            <p className="font-mono text-xs text-primary">// ranked_ladder</p>
-            <h2 className="mt-1 text-2xl font-bold tracking-tight">Climb the tiers</h2>
+      {/* Tier ladder */}
+      <section className="border-t border-border/20 bg-surface-2/10 py-20">
+        <div className="mx-auto max-w-5xl px-6">
+          <div className="space-y-1 mb-12 text-center">
+            <h2 className="text-xl font-bold tracking-tight">The Competitive Ladder</h2>
+            <p className="text-xs text-text-muted">
+              Climb the Elo rating ladder to unlock prestigious ranking tiers.
+            </p>
           </div>
 
-          <div className="overflow-hidden rounded-xl border border-border/40 bg-surface/40">
-            {ELO_TIERS.map((tier, i) => (
+          <div className="flex flex-wrap gap-3 justify-center max-w-2xl mx-auto">
+            {ELO_TIERS.map((tier) => (
               <div
                 key={tier.label}
-                className={cn(
-                  "flex items-center justify-between px-5 py-3",
-                  i !== ELO_TIERS.length - 1 && "border-b border-border/25"
-                )}
-                style={{ borderLeft: `3px solid ${tier.color}` }}
+                className="flex items-center gap-2.5 rounded-lg border border-border/40 bg-surface/40 px-3.5 py-2 shadow-sm"
               >
-                <span className="text-sm font-bold" style={{ color: tier.color }}>
+                <span className="text-xs font-bold" style={{ color: tier.color }}>
                   {tier.label}
                 </span>
-                <span className="font-mono text-xs text-text-faint">{tier.minRating}+ rating</span>
+                <span className="font-mono text-[10px] text-text-faint">
+                  {tier.minRating}+ Rating
+                </span>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* SEO copy + FAQ */}
-      <section className="border-t border-border/30 bg-bg py-20">
-        <div className="mx-auto grid max-w-5xl gap-12 px-6 md:grid-cols-[1fr_1.25fr]">
+      {/* Detailed SEO Overview & FAQ */}
+      <section className="border-t border-border/20 py-20 bg-bg">
+        <div className="mx-auto max-w-5xl px-6 grid gap-12 md:grid-cols-[1fr_1.25fr]">
+          {/* SEO Copywriting Text */}
           <div className="space-y-6">
-            <div>
-              <p className="font-mono text-xs text-primary">// about</p>
-              <h2 className="mt-1 text-xl font-bold tracking-tight">Competitive coding, simplified</h2>
-              <p className="mt-2 text-sm leading-relaxed text-text-muted">
-                CodeComplex is a real-time, peer-to-peer arena for competitive developers.
-                Practice data structures, ship backend APIs, or build full layouts in live 1v1 duels.
+            <div className="space-y-2">
+              <h2 className="text-xl font-bold tracking-tight">Competitive Coding Simplified</h2>
+              <p className="text-xs text-text-muted leading-relaxed">
+                CodeComplex is the ultimate real-time peer-to-peer arena designed for competitive developers and software engineers. Practice data structures, solve algorithms, compile backend APIs, or build custom layout structures in live 1v1 duels.
               </p>
             </div>
-
-            <div className="space-y-4 text-sm text-text-muted">
+            
+            <div className="space-y-4 text-xs text-text-muted">
               <div>
-                <strong className="mb-1 block text-text">Who is it for?</strong>
+                <strong className="text-text block mb-1">Who is CodeComplex for?</strong>
                 <p className="leading-relaxed">
-                  Engineers prepping for technical interviews, students learning CS fundamentals, and
-                  competitive programmers sharpening their speed under pressure.
+                  Engineers preparing for top tech interviews, students mastering computer science concepts, and algorithmic competitive programmers who want to sharpen their problem-solving speed under pressure.
                 </p>
               </div>
+
               <div>
-                <strong className="mb-1 block text-text">Why not just LeetCode?</strong>
+                <strong className="text-text block mb-1">Why use CodeComplex?</strong>
                 <p className="leading-relaxed">
-                  Static platforms don't have a clock or an opponent. Synchronized timers and live
-                  sandboxed runs recreate the pressure of an actual technical screen.
+                  Unlike traditional static coding platforms, CodeComplex brings the thrill of head-to-head gamified matching. Socket-driven synchronized timers and live compiler checks simulate the high-intensity environments of technical screens.
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="space-y-3">
-            <p className="font-mono text-xs text-primary">// faq</p>
+          {/* Mini FAQ Accordion */}
+          <div className="space-y-4">
+            <h2 className="text-xl font-bold tracking-tight mb-2">Frequently Asked Questions</h2>
             {[
               {
                 q: "How does 1v1 matchmaking work?",
-                a: "Join the queue and the matchmaking engine pairs you with a competitor near your rating. Once matched, a lobby opens with a shared room code.",
+                a: "When you join the queue, our matchmaking engine pairs you with a competitor of similar rating points. Once matched, you enter the lobby where the room code is initialized."
               },
               {
-                q: "What challenge types are supported?",
-                a: "DSA algorithm puzzles, frontend layout builds, backend API integrations, and prompt-engineering duels.",
+                q: "What coding challenges are supported?",
+                a: "We support multiple categories: Algorithmic puzzles (DSA), Frontend layout assembly (CSS/HTML), Backend API integrations (Node.js), and Prompt Engineering (Prompt War)."
               },
               {
-                q: "Are the compile runners safe?",
-                a: "Every submission runs inside an isolated Docker sandbox with strict resource limits — no host access.",
+                q: "Are the compilation runners safe?",
+                a: "Yes. Every solution compiled runs inside isolated sandboxed runtimes (powered by Docker), preventing sandbox escapes and keeping execution resources safe."
               },
               {
-                q: "Can I duel a friend directly?",
-                a: "Yes — create a private room, pick the mode, and share the lobby code with anyone.",
-              },
-            ].map((faq) => (
-              <div key={faq.q} className="rounded-lg border border-border/30 bg-surface/20 p-4">
-                <h3 className="text-sm font-bold text-text">{faq.q}</h3>
-                <p className="mt-1.5 text-xs leading-relaxed text-text-muted">{faq.a}</p>
+                q: "Can I invite a friend to a duel?",
+                a: "Yes! You can create a custom room, select the mode, and share the lobby code directly with any other user to duel in private matches."
+              }
+            ].map((faq, index) => (
+              <div key={index} className="rounded-lg border border-border/20 bg-surface/10 p-4 space-y-2">
+                <h3 className="text-xs font-bold text-text">{faq.q}</h3>
+                <p className="text-[11px] leading-relaxed text-text-muted">{faq.a}</p>
               </div>
             ))}
           </div>
@@ -504,44 +443,53 @@ export default function LandingPage() {
       </section>
 
       {/* Footer CTA */}
-      <footer className="border-t border-border/30 bg-bg py-20 text-center">
-        <h2 className="text-xl font-semibold tracking-tight">Ready to enter the arena?</h2>
-        <div className="pt-5">
+      <footer className="border-t border-border/20 bg-bg py-20 text-center space-y-4">
+        <h2 className="text-xl font-semibold tracking-tight">
+          Ready to enter the arena?
+        </h2>
+        <div className="pt-2">
           <Link href="/signup">
-            <Button className="h-10 rounded-md px-6 text-sm font-semibold">Create account</Button>
+            <Button className="h-9 px-6 text-xs font-medium rounded">
+              Create account
+            </Button>
           </Link>
         </div>
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-text-faint">
-          {[
-            { href: "/about", label: "About" },
-            { href: "/contact", label: "Contact" },
-            { href: "/faq", label: "FAQ" },
-            { href: "/terms", label: "Terms of Service" },
-            { href: "/privacy", label: "Privacy Policy" },
-            { href: "/guidelines", label: "Community Guidelines" },
-          ].map((link) => (
-            <Link key={link.href} href={link.href} className="transition-colors hover:text-text hover:underline">
-              {link.label}
-            </Link>
-          ))}
-          <a
-            href="https://github.com/sisodiaumang/CodeComplex"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="transition-colors hover:text-text hover:underline"
-          >
+        <div className="flex items-center justify-center flex-wrap gap-4 text-[10px] text-text-faint pt-4">
+          <Link href="/about" className="hover:text-text hover:underline transition-colors">
+            About
+          </Link>
+          <span>•</span>
+          <Link href="/contact" className="hover:text-text hover:underline transition-colors">
+            Contact
+          </Link>
+          <span>•</span>
+          <Link href="/faq" className="hover:text-text hover:underline transition-colors">
+            FAQ
+          </Link>
+          <span>•</span>
+          <Link href="/terms" className="hover:text-text hover:underline transition-colors">
+            Terms of Service
+          </Link>
+          <span>•</span>
+          <Link href="/privacy" className="hover:text-text hover:underline transition-colors">
+            Privacy Policy
+          </Link>
+          <span>•</span>
+          <Link href="/guidelines" className="hover:text-text hover:underline transition-colors">
+            Community Guidelines
+          </Link>
+          <span>•</span>
+          <a href="https://github.com/sisodiaumang/CodeComplex" target="_blank" rel="noopener noreferrer" className="hover:text-text hover:underline transition-colors">
             GitHub
           </a>
-          <a
-            href="https://linkedin.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="transition-colors hover:text-text hover:underline"
-          >
+          <span>•</span>
+          <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="hover:text-text hover:underline transition-colors">
             LinkedIn
           </a>
         </div>
-        <p className="mt-6 font-mono text-[10px] text-text-faint">// codecomplex — competitive engineering platform</p>
+        <p className="font-mono text-[9px] text-text-faint pt-4">
+          CodeComplex — competitive engineering platform
+        </p>
       </footer>
     </div>
   );
