@@ -67,18 +67,20 @@ async function fetchLeaderboardPage(params: {
 }): Promise<{ players: any[]; page: number; totalPages: number; total: number }> {
     const { category, page, limit, country, college } = params;
 
-    const query: any = {};
+    // Get system bot user IDs to exclude from public leaderboards
+    const botUsers = await User.find({ username: "devbot_v1" }).select("_id");
+    const botUserIds = botUsers.map(b => b._id);
+
+    const query: any = { userId: { $nin: botUserIds } };
     if (country) query.country = country;
     if (college) query.college = college;
 
-    // total = number of users who have corresponding rating document
-    // For MVP stage, we count from UserProfile only when filtering is applied.
-    const total = await UserProfile.countDocuments();
+    const total = await UserProfile.countDocuments(query);
     const totalPages = Math.ceil(total / limit);
     const skip = (page - 1) * limit;
 
     // Get top profiles, sorted by current rating.
-    const top = await UserProfile.find({ ...query })
+    const top = await UserProfile.find(query)
         .sort({ [`ratings.${category}`]: -1 } as any)
         .skip(skip)
         .limit(limit)
@@ -160,7 +162,7 @@ export const getCountryLeaderboard = async (req: Request, res: Response, next: N
         // (global page, then in-memory filter, with global totals) returned
         // near-empty pages and meaningless pagination. Resolve the country's
         // users first, then rank *their* profiles with a real DB query.
-        const countryUsers = await User.find({ country }).select("_id username avatar country");
+        const countryUsers = await User.find({ country, username: { $ne: "devbot_v1" } }).select("_id username avatar country");
         const userIds = countryUsers.map((u: any) => u._id);
         const userById = new Map(countryUsers.map((u: any) => [u._id.toString(), u]));
 
@@ -287,18 +289,21 @@ export const getMeLeaderboardPosition = async (req: Request, res: Response, next
         const category = getCategory(battleType);
         const userId = req.user._id.toString();
 
-        // rank = 1 + count of users with rating strictly greater
+        const botUsers = await User.find({ username: "devbot_v1" }).select("_id");
+        const botUserIds = botUsers.map(b => b._id);
+
+        // rank = 1 + count of real users with rating strictly greater
         const myProfile = await UserProfile.findOne({ userId }).select(`ratings.${category}`);
         const myRating = (myProfile?.ratings as any)?.[category] ?? 1200;
 
-        const higherCount = await UserProfile.countDocuments({ [`ratings.${category}`]: { $gt: myRating } } as any);
+        const higherCount = await UserProfile.countDocuments({ userId: { $nin: botUserIds }, [`ratings.${category}`]: { $gt: myRating } } as any);
         const myRank = higherCount + 1;
 
         // show window around user (MVP): grab top 100 and slice by rank
         const windowStart = Math.max(1, myRank - 3);
         const windowEnd = myRank + 3;
 
-        const top = await UserProfile.find({})
+        const top = await UserProfile.find({ userId: { $nin: botUserIds } })
             .sort({ [`ratings.${category}`]: -1 } as any)
             .select("userId ratings")
             .limit(windowEnd);
