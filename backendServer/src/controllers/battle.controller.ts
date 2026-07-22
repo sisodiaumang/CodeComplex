@@ -11,6 +11,7 @@ import UserProfile from "../models/userProfile.model.js";
 import { io } from "../index.js";
 import { createMatchForRoom, MatchServiceError } from "../services/match.service.js";
 import { IBattleRoom } from "../interfaces/battleRoom.interface.js";
+import { trigger1v1Fallback } from "../services/matchmakingFallback.service.js";
 
 // ─────────────────────────────────────────────
 // Helpers
@@ -1342,10 +1343,41 @@ export const startMatchmaking = async (
             .populate("teams.teamA", "username fullName avatar mascot")
             .populate("teams.teamB", "username fullName avatar mascot");
 
+        // 3-Tier Matchmaking Fallback: If 1v1 room, trigger Ghost/Bot fallback after 15s if no human joins
+        if (actualTeamSize === 1) {
+            setTimeout(() => {
+                trigger1v1Fallback(roomCode, pickRandomQuestion)
+                    .catch(err => console.error("[Matchmaking] Automated 15s fallback error:", err));
+            }, 15000);
+        }
+
         res.status(201).json({
             success: true,
             message: "Matchmaking room created",
             data: populatedNewRoom
+        });
+    } catch (err) {
+        next(err);
+    }
+};
+
+// 12. POST /battle/matchmaking/fallback — Explicit Trigger for 1v1 Fallback
+export const check1v1MatchmakingFallback = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+): Promise<void> => {
+    try {
+        const { roomCode } = req.body;
+        if (!roomCode) {
+            res.status(400).json({ success: false, message: "roomCode is required" });
+            return;
+        }
+
+        const result = await trigger1v1Fallback(roomCode, pickRandomQuestion);
+        res.status(200).json({
+            success: result.success,
+            data: result
         });
     } catch (err) {
         next(err);
