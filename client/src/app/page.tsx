@@ -120,6 +120,9 @@ export default function LandingPage() {
             </Button>
           </Link>
         </div>
+        <p className="text-[10px] text-text-faint font-mono pt-1">
+          100% Free & Open Source • Secure Sandboxed Run
+        </p>
       </section>
 
       {/* Real-time platform stats (dynamic & real, no fake data) */}
@@ -190,7 +193,7 @@ export default function LandingPage() {
                     { test: "Testcase 1", status: "Passed", time: "12ms" },
                     { test: "Testcase 2", status: "Passed", time: "8ms" },
                     { test: "Testcase 3", status: "Passed", time: "15ms" },
-                    { test: "Testcase 4", status: "Failed", time: "—" },
+                    { test: "Testcase 4", status: "Passed", time: "10ms" },
                   ].map((tc, idx) => (
                     <div key={idx} className="flex items-center justify-between text-[11px] px-2 py-1.5 rounded border border-border/20 bg-surface/20">
                       <div className="flex items-center gap-2">
@@ -268,7 +271,7 @@ export default function LandingPage() {
         <div className="grid gap-4 md:grid-cols-3">
           {[
             { num: "01", title: "Open a Room", text: "Create a match room, select the mode, and share the lobby code." },
-            { num: "02", title: "Rally Rivals", text: "Invite friends or queue against matching ranks (Team A vs Team B)." },
+            { num: "02", title: "Rally Rivals", text: "Invite friends or queue against active online competitors of similar ranks." },
             { num: "03", title: "Duel & Climb", text: "Write code, run automatic testcases, and climb the leaderboards." },
           ].map(({ num, title, text }) => (
             <Card key={num} className="p-5 space-y-2 bg-surface/20 border-border/20 rounded-md">
