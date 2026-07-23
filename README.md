@@ -21,29 +21,29 @@ CodeComplex is structured as a monorepo containing a TypeScript Express API & We
 
 ```
 CodeComplex/
-├── [backendServer/](file:///d:/PROGRAMMING/projects/New%20folder%20-%20Copy/devArena/backendServer)           # TypeScript Express 5 API & WebSocket Server
-│   ├── [src/](file:///d:/PROGRAMMING/projects/New%20folder%20-%20Copy/devArena/backendServer/src)                 # Application logic & services
-│   │   ├── [config/](file:///d:/PROGRAMMING/projects/New%20folder%20-%20Copy/devArena/backendServer/src/config)          # Environment variables & schema validation
-│   │   ├── [controllers/](file:///d:/PROGRAMMING/projects/New%20folder%20-%20Copy/devArena/backendServer/src/controllers)     # REST request handlers (Auth, Battle, Admin, Rating, etc.)
-│   │   ├── [db/](file:///d:/PROGRAMMING/projects/New%20folder%20-%20Copy/devArena/backendServer/src/db)              # Database connections & category seeding scripts
-│   │   ├── [jobs/](file:///d:/PROGRAMMING/projects/New%20folder%20-%20Copy/devArena/backendServer/src/jobs)            # Background cron jobs (stale rooms, token cleanup, reminders)
-│   │   ├── [middlewares/](file:///d:/PROGRAMMING/projects/New%20folder%20-%20Copy/devArena/backendServer/src/middlewares)     # Auth, error handling, rate limiting, and socket auth
-│   │   ├── [models/](file:///d:/PROGRAMMING/projects/New%20folder%20-%20Copy/devArena/backendServer/src/models)           # Mongoose schemas (Users, Battles, Submissions, AI Keys)
-│   │   ├── [routes/](file:///d:/PROGRAMMING/projects/New%20folder%20-%20Copy/devArena/backendServer/src/routes)           # Express API endpoints
-│   │   ├── [services/](file:///d:/PROGRAMMING/projects/New%20folder%20-%20Copy/devArena/backendServer/src/services)         # Judging engines, AI Gateway, local runners, match logic
-│   │   └── [sockets/](file:///d:/PROGRAMMING/projects/New%20folder%20-%20Copy/devArena/backendServer/src/sockets)          # Real-time Socket.IO chat and WebRTC voice handlers
-│   ├── [openapi.yaml](file:///d:/PROGRAMMING/projects/New%20folder%20-%20Copy/devArena/backendServer/openapi.yaml)        # OpenAPI 3.0 API Specification
-│   └── [Dockerfile](file:///d:/PROGRAMMING/projects/New%20folder%20-%20Copy/devArena/backendServer/Dockerfile)          # Backend production container specification
-├── [client/](file:///d:/PROGRAMMING/projects/New%20folder%20-%20Copy/devArena/client)                  # Next.js 16 (App Router) Frontend
-│   ├── [src/](file:///d:/PROGRAMMING/projects/New%20folder%20-%20Copy/devArena/client/src)                 # React 19 source code
-│   │   ├── [app/](file:///d:/PROGRAMMING/projects/New%20folder%20-%20Copy/devArena/client/src/app)             # App router pages ((auth), (app), battle, admin, profile, etc.)
-│   │   ├── [components/](file:///d:/PROGRAMMING/projects/New%20folder%20-%20Copy/devArena/client/src/components)      # UI components, Monaco code editor, theme toggles, toast system
-│   │   ├── [lib/](file:///d:/PROGRAMMING/projects/New%20folder%20-%20Copy/devArena/client/src/lib)             # Custom Axios client with auto-refresh interceptors & themes
-│   │   └── [stores/](file:///d:/PROGRAMMING/projects/New%20folder%20-%20Copy/devArena/client/src/stores)          # Zustand global state stores (Auth, Socket, Toast, Theme)
-│   └── [Dockerfile](file:///d:/PROGRAMMING/projects/New%20folder%20-%20Copy/devArena/client/Dockerfile)          # Client production container configuration
-├── [docker-compose.yml](file:///d:/PROGRAMMING/projects/New%20folder%20-%20Copy/devArena/docker-compose.yml)      # Production container orchestration for Client, Backend, MongoDB 6 & Redis 7
-├── [nginx.conf](file:///d:/PROGRAMMING/projects/New%20folder%20-%20Copy/devArena/nginx.conf)              # Host Nginx reverse-proxy template with WebSocket & rate-limiting
-└── [PRODUCTION.md](file:///d:/PROGRAMMING/projects/New%20folder%20-%20Copy/devArena/PRODUCTION.md)           # Production Docker & Docker Compose deployment guide
+├── backendServer/           # TypeScript Express 5 API & WebSocket Server
+│   ├── src/                 # Application logic & services
+│   │   ├── config/          # Environment variables & schema validation
+│   │   ├── controllers/     # REST request handlers (Auth, Battle, Admin, Rating, etc.)
+│   │   ├── db/              # Database connections & category seeding scripts
+│   │   ├── jobs/            # Background cron jobs (stale rooms, token cleanup, reminders)
+│   │   ├── middlewares/     # Auth, error handling, rate limiting, and socket auth
+│   │   ├── models/          # Mongoose schemas (Users, Battles, Submissions, AI Keys)
+│   │   ├── routes/          # Express API endpoints
+│   │   ├── services/        # Judging engines, AI Gateway, local runners, match logic
+│   │   └── sockets/         # Real-time Socket.IO chat and WebRTC voice handlers
+│   ├── openapi.yaml        # OpenAPI 3.0 API Specification
+│   └── Dockerfile          # Backend production container specification
+├── client/                  # Next.js 16 (App Router) Frontend
+│   ├── src/                 # React 19 source code
+│   │   ├── app/             # App router pages ((auth), (app), battle, admin, profile, etc.)
+│   │   ├── components/      # UI components, Monaco code editor, theme toggles, toast system
+│   │   ├── lib/             # Custom Axios client with auto-refresh interceptors & themes
+│   │   └── stores/          # Zustand global state stores (Auth, Socket, Toast, Theme)
+│   └── Dockerfile          # Client production container configuration
+├── docker-compose.yml      # Production container orchestration for Client, Backend, MongoDB 6 & Redis 7
+├── nginx.conf              # Host Nginx reverse-proxy template with WebSocket & rate-limiting
+└── PRODUCTION.md           # Production Docker & Docker Compose deployment guide
 ```
 
 ---
@@ -60,19 +60,19 @@ CodeComplex/
 
 ### 2. Multi-Engine Code Judging System
 *   **Judge0 Remote API:** External compiler sandbox for remote execution across multiple languages (C++, Java, Python, JavaScript, TypeScript).
-*   **Local Subprocess Runner:** High-speed fallback execution engine ([localRunner.service.ts](file:///d:/PROGRAMMING/projects/New%20folder%20-%20Copy/devArena/backendServer/src/services/localRunner.service.ts)) using native compilers/runtimes (`g++`, `node`, `python`, `javac`).
-*   **Docker Container Sandbox:** Isolated backend API runner ([backendJudge.service.ts](file:///d:/PROGRAMMING/projects/New%20folder%20-%20Copy/devArena/backendServer/src/services/backendJudge.service.ts)) providing zero-trust execution with CPU, memory, and process limits.
-*   **AI Vision & Rubric Engine:** Intelligent evaluation powered by Grok / Llama Scout ([frontendJudge.service.ts](file:///d:/PROGRAMMING/projects/New%20folder%20-%20Copy/devArena/backendServer/src/services/frontendJudge.service.ts), [promptJudge.service.ts](file:///d:/PROGRAMMING/projects/New%20folder%20-%20Copy/devArena/backendServer/src/services/promptJudge.service.ts)).
+*   **Local Subprocess Runner:** High-speed fallback execution engine ([localRunner.service.ts](./backendServer/src/services/localRunner.service.ts)) using native compilers/runtimes (`g++`, `node`, `python`, `javac`).
+*   **Docker Container Sandbox:** Isolated backend API runner ([backendJudge.service.ts](./backendServer/src/services/backendJudge.service.ts)) providing zero-trust execution with CPU, memory, and process limits.
+*   **AI Vision & Rubric Engine:** Intelligent evaluation powered by Grok / Llama Scout ([frontendJudge.service.ts](./backendServer/src/services/frontendJudge.service.ts), [promptJudge.service.ts](./backendServer/src/services/promptJudge.service.ts)).
 
 ### 3. AI Gateway & Multi-Model Orchestration
-*   **Model Rotation & Fallbacks:** Dynamic model routing ([aiGateway.service.ts](file:///d:/PROGRAMMING/projects/New%20folder%20-%20Copy/devArena/backendServer/src/services/aiGateway.service.ts)) across Llama 3.3 70B, GPT OSS 120B, Llama 4 Scout 17B, Qwen 3 32B, and Llama 3.1 8B.
+*   **Model Rotation & Fallbacks:** Dynamic model routing ([aiGateway.service.ts](./backendServer/src/services/aiGateway.service.ts)) across Llama 3.3 70B, GPT OSS 120B, Llama 4 Scout 17B, Qwen 3 32B, and Llama 3.1 8B.
 *   **Budgeting & Limits:** Tracks spend limits per model, automatically falling back to lower-cost models if budget limits are reached.
-*   **Security & Telemetry:** AES-256-CBC encrypted storage for custom database API keys ([ApiKey.model.ts](file:///d:/PROGRAMMING/projects/New%20folder%20-%20Copy/devArena/backendServer/src/models/apiKey.model.ts)) and token usage tracking ([TokenUsage.model.ts](file:///d:/PROGRAMMING/projects/New%20folder%20-%20Copy/devArena/backendServer/src/models/tokenUsage.model.ts)).
+*   **Security & Telemetry:** AES-256-CBC encrypted storage for custom database API keys ([ApiKey.model.ts](./backendServer/src/models/apiKey.model.ts)) and token usage tracking ([TokenUsage.model.ts](./backendServer/src/models/tokenUsage.model.ts)).
 
 ### 4. 3-Tier Matchmaking Engine (Ghost Opponents & Adaptive AI Bots)
 *   **Tier 1 (Live Human Matchmaking):** Searches for active online human opponents matching the player's Elo rating bracket.
-*   **Tier 2 (Ghost Opponent Replay):** If no active human opponent joins within 15 seconds, the matchmaking engine ([matchmakingFallback.service.ts](file:///d:/PROGRAMMING/projects/New%20folder%20-%20Copy/devArena/backendServer/src/services/matchmakingFallback.service.ts)) searches past completed matches in MongoDB to stream a recorded historical submission attempt by a real player as a "Ghost Opponent".
-*   **Tier 3 (Adaptive AI Bot Simulator):** If no ghost recording exists, the engine pairs the player with `devbot_v1` ([botSimulator.service.ts](file:///d:/PROGRAMMING/projects/New%20folder%20-%20Copy/devArena/backendServer/src/services/botSimulator.service.ts)):
+*   **Tier 2 (Ghost Opponent Replay):** If no active human opponent joins within 15 seconds, the matchmaking engine ([matchmakingFallback.service.ts](./backendServer/src/services/matchmakingFallback.service.ts)) searches past completed matches in MongoDB to stream a recorded historical submission attempt by a real player as a "Ghost Opponent".
+*   **Tier 3 (Adaptive AI Bot Simulator):** If no ghost recording exists, the engine pairs the player with `devbot_v1` ([botSimulator.service.ts](./backendServer/src/services/botSimulator.service.ts)):
     *   **Rating-Calibrated Skill:** Dynamically adjusts bot typing speed, solve duration, and failure probability based on the host's Elo rating (Bronze / Silver / Gold / Master).
     *   **Difficulty Scaling:** Calculates target solve windows based on question difficulty (EASY: 1.5–3 mins, MEDIUM: 3.5–6 mins, HARD: 6–10 mins).
     *   **Realistic Jitter & Multi-Stage Submissions:** Simulates human typing indicators with random intervals and emits multi-stage partial submissions (Stage 1 at ~30%, Stage 2 at ~70%, and Stage 3 final submission).
@@ -80,8 +80,8 @@ CodeComplex/
 
 ### 5. Real-Time Communication & WebRTC Voice
 *   **Match Lobbies & State:** Socket.IO synchronization for countdowns, team allocation (Team A vs. Team B), code submissions, and round outcomes.
-*   **Integrated Live Chat:** Real-time text channels for battle lobbies and global communication ([battleChat.socket.ts](file:///d:/PROGRAMMING/projects/New%20folder%20-%20Copy/devArena/backendServer/src/sockets/battleChat.socket.ts)).
-*   **WebRTC Voice Stream:** In-battle peer-to-peer voice channels with signal routing ([battleVoice.socket.ts](file:///d:/PROGRAMMING/projects/New%20folder%20-%20Copy/devArena/backendServer/src/sockets/battleVoice.socket.ts)).
+*   **Integrated Live Chat:** Real-time text channels for battle lobbies and global communication ([battleChat.socket.ts](./backendServer/src/sockets/battleChat.socket.ts)).
+*   **WebRTC Voice Stream:** In-battle peer-to-peer voice channels with signal routing ([battleVoice.socket.ts](./backendServer/src/sockets/battleVoice.socket.ts)).
 *   **Live Spectating:** Real-time observation mode for spectators to watch active matches and code progress live.
 
 ### 6. Competitive Elo Rating & Social Network
@@ -231,14 +231,14 @@ Spin up the entire ecosystem—MongoDB, Redis, Express Backend, and Next.js Fron
 For production environments using **Docker & Docker Compose**:
 1. **Container Orchestration:** Spin up all containers (Frontend, Backend, MongoDB, Redis) in detached mode using `docker-compose up --build -d`.
 2. **Reverse Proxy & SSL:** Configure host Nginx to proxy `https://yourdomain.com` traffic to `127.0.0.1:3000` (frontend) and `127.0.0.1:8000` (backend & websockets), securing the domain with Let's Encrypt SSL via Certbot.
-3. Follow the complete step-by-step guide in [PRODUCTION.md](file:///d:/PROGRAMMING/projects/New%20folder%20-%20Copy/devArena/PRODUCTION.md) for environment configuration, container logs management, seeding, and Nginx SSL setup.
+3. Follow the complete step-by-step guide in [PRODUCTION.md](./PRODUCTION.md) for environment configuration, container logs management, seeding, and Nginx SSL setup.
 
 ---
 
 ## 📖 API Documentation
 
 The complete REST API specification is documented using OpenAPI 3.0:
-- **Spec File:** [backendServer/openapi.yaml](file:///d:/PROGRAMMING/projects/New%20folder%20-%20Copy/devArena/backendServer/openapi.yaml)
+- **Spec File:** [backendServer/openapi.yaml](./backendServer/openapi.yaml)
 - **Health Check Endpoint:** `GET /health`
 - **Root Status:** `GET /`
 
