@@ -2430,28 +2430,38 @@ function CodingWorkspace({ room, matchId, onLeave }: CodingWorkspaceProps) {
         </div>
 
         {/* Score Board */}
-        <div className="flex items-center gap-5">
-          {room.isSolo ? (
-            <div className="text-right">
-              <span className="text-[10px] text-text-faint font-semibold uppercase block">Score</span>
-              <span className="font-mono text-sm font-bold text-primary">
-                {(userTeam === "B" ? liveMatch?.score?.teamB : liveMatch?.score?.teamA) ?? 0} pts
-              </span>
+        {(() => {
+          const subsList = Array.isArray(submissionsQuery.data) ? submissionsQuery.data : [];
+          const bestSubScore = subsList.length > 0 ? Math.max(...subsList.map((s: any) => s.score ?? 0)) : 0;
+          const scoreA = liveMatch?.score?.teamA ?? liveMatch?.teamAScore ?? (userTeam === "A" ? bestSubScore : 0);
+          const scoreB = liveMatch?.score?.teamB ?? liveMatch?.teamBScore ?? (userTeam === "B" ? bestSubScore : 0);
+          const displayScore = userTeam === "B" ? scoreB : scoreA;
+
+          return (
+            <div className="flex items-center gap-5">
+              {room.isSolo ? (
+                <div className="text-right">
+                  <span className="text-[10px] text-text-faint font-semibold uppercase block">Score</span>
+                  <span className="font-mono text-sm font-bold text-primary">
+                    {displayScore} pts
+                  </span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2.5">
+                  <div className="text-right">
+                    <span className="text-[10px] text-text-faint font-semibold uppercase block">Team A</span>
+                    <span className="font-mono text-sm font-bold text-blue-400">{scoreA} pts</span>
+                  </div>
+                  <div className="text-center font-mono text-xs font-bold text-text-faint px-1.5 py-0.5 bg-surface-2 rounded border border-border/50">VS</div>
+                  <div className="text-left">
+                    <span className="text-[10px] text-text-faint font-semibold uppercase block">Team B</span>
+                    <span className="font-mono text-sm font-bold text-red-400">{scoreB} pts</span>
+                  </div>
+                </div>
+              )}
             </div>
-          ) : (
-            <div className="flex items-center gap-2.5">
-              <div className="text-right">
-                <span className="text-[10px] text-text-faint font-semibold uppercase block">Team A</span>
-                <span className="font-mono text-sm font-bold text-blue-400">{liveMatch?.score?.teamA ?? 0} pts</span>
-              </div>
-              <div className="text-center font-mono text-xs font-bold text-text-faint px-1.5 py-0.5 bg-surface-2 rounded border border-border/50">VS</div>
-              <div className="text-left">
-                <span className="text-[10px] text-text-faint font-semibold uppercase block">Team B</span>
-                <span className="font-mono text-sm font-bold text-red-400">{liveMatch?.score?.teamB ?? 0} pts</span>
-              </div>
-            </div>
-          )}
-        </div>
+          );
+        })()}
       </header>
 
       {/* Main Workspace (IDE splitter layout) */}

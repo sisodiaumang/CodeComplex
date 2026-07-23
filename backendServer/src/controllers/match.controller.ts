@@ -839,14 +839,6 @@ export const getLiveMatch = async (
             return;
         }
 
-        if (match.status !== "ONGOING") {
-            res.status(400).json({
-                success: false,
-                message: "Match is not live"
-            });
-            return;
-        }
-
         const userId = req.user._id.toString();
         const players = allPlayerIds(match);
 
