@@ -885,7 +885,7 @@ export default function BattleLobbyPage() {
       </div>
 
       {/* ── Bot Matchmaker Option Banner ── */}
-      {isHost && !started && room.teamSize === 1 && room.teams.teamB.length === 0 && !dismissedBotPrompt && (
+      {isHost && !started && !room.isSolo && room.teamSize === 1 && room.teams.teamB.length === 0 && !dismissedBotPrompt && (
         <div className="rounded-2xl border border-primary/30 bg-surface-2/95 p-5 shadow-xl backdrop-blur-md space-y-3 animate-in fade-in slide-in-from-bottom-2 duration-300">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5 text-primary font-bold text-sm">
