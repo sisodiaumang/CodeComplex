@@ -1,106 +1,109 @@
-# Production Deployment Guide (VM Hosting)
+# Production Deployment Guide (Docker & Docker Compose)
 
-This guide walks you through deploying the DevWar application on a Virtual Machine (VM) using **PM2** for process management and **Nginx** as a high-performance reverse proxy.
+This guide walks you through deploying the **CodeComplex** application in production using **Docker & Docker Compose** for container orchestration, and **Nginx** as a high-performance reverse proxy with **Let's Encrypt SSL**.
 
 ---
 
 ## Prerequisites
 
-Ensure your VM (Ubuntu/Debian, CentOS, RedHat, or Windows Server) has the following installed:
-1. **Node.js** (v18 or higher recommended)
-2. **NPM**
-3. **MongoDB** (Local instance or an Atlas connection URI)
-4. **Redis** (Required for background jobs and rate limiting)
-5. **PM2** (`npm install -g pm2`)
-6. **Nginx**
+Ensure your production server or VM (Ubuntu/Debian, CentOS, RedHat, or AWS EC2 / DigitalOcean Droplet) has the following installed:
+
+1. **Docker Engine** (v20.10+ recommended)
+2. **Docker Compose** (v2.0+ recommended plugin)
+3. **Nginx** (Installed on host for SSL termination & domain routing)
+4. **Certbot** (`sudo apt install certbot python3-certbot-nginx`)
 
 ---
 
-## Step 1: Environment Variables
+## Step 1: Production Environment Setup
 
-Prepare your production environment variables.
+Create a root-level `.env` file in the project root directory (`CodeComplex/.env`):
 
-### Backend (`backendServer/.env`)
-Create or edit `backendServer/.env` with production configurations:
 ```ini
-PORT=8000
 NODE_ENV=production
-CORS_ORIGIN=https://yourdomain.com
+PORT=8000
 CLIENT_URL=https://yourdomain.com
-MONGODB_URI=mongodb://your_prod_user:your_prod_password@127.0.0.1:27017/devwar?authSource=admin
+CORS_ORIGIN=https://yourdomain.com
+
+# Database & Cache URIs
+MONGODB_URI=mongodb://devarena-mongodb:27017/codecomplex
+REDIS_URL=redis://devarena-redis:6379
+
+# Security Tokens (Generate strong 32+ character secrets)
 JWT_ACCESS_SECRET=your-super-long-secure-access-secret-at-least-32-chars
 JWT_REFRESH_SECRET=your-super-long-secure-refresh-secret-at-least-32-chars
 ACCESS_TOKEN_EXPIRY=15m
 REFRESH_TOKEN_EXPIRY=7d
-REDIS_URL=redis://127.0.0.1:6379
 
-# Add other keys (XAI, Groq, Cloudinary, etc.) as needed
-```
+# Email Transporter (SMTP)
+EMAIL_USER=your_smtp_username
+EMAIL_PASS=your_smtp_password
+EMAIL_FROM_ADDRESS=support@yourdomain.com
+OWNER_EMAIL=admin@yourdomain.com
 
-### Client (`client/.env.local`)
-Create or edit `client/.env.local` to point to your Nginx proxy domain:
-```ini
-# Since Nginx acts as a reverse proxy, we can route all api/socket traffic to the same host
+# Cloudinary (Avatar uploads)
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+
+# OAuth (Google & GitHub)
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+GITHUB_CLIENT_ID=your_github_client_id
+GITHUB_CLIENT_SECRET=your_github_client_secret
+OAUTH_CALLBACK_URL=https://yourdomain.com/api/v1/auth/callback
+
+# Code Execution & AI Judges
+JUDGE_MODE=local
+JUDGE0_API_URL=http://localhost:2358
+JUDGE0_API_KEY=your_judge0_key
+GROQ_API_KEY=your_groq_api_key
+XAI_API_KEY=your_xai_api_key
+
+# Frontend Client Public Variables (Passed during build)
 NEXT_PUBLIC_API_URL=https://yourdomain.com/api/v1
 NEXT_PUBLIC_SOCKET_URL=https://yourdomain.com
 ```
 
 ---
 
-## Step 2: Build the Application
+## Step 2: Build and Launch Containers
 
-Build both the backend and client apps on the VM to generate production bundles.
+Run Docker Compose to build images for the frontend client and Express backend, and spin up isolated containers alongside MongoDB 6 and Redis 7:
 
 ```bash
-# Build Backend
-cd backendServer
-npm install --omit=dev  # Install production dependencies only
-npm run build           # Compiles typescript into dist/
+# Build and start all services in detached mode
+docker-compose up --build -d
 
-# Build Client
-cd ../client
-npm install
-npm run build           # Compiles Next.js app to .next/
+# Check running containers
+docker-compose ps
 ```
+
+### Essential Container Commands:
+- **View Container Logs:** `docker-compose logs -f --tail=100`
+- **View Specific Service Logs:** `docker-compose logs -f backend`
+- **Restart Services:** `docker-compose restart`
+- **Stop Containers:** `docker-compose down`
+- **Rebuild Single Service:** `docker-compose up --build -d backend`
 
 ---
 
-## Step 3: Run with PM2
+## Step 3: Configure Host Nginx Reverse Proxy
 
-Run both services simultaneously using the provided PM2 config file (`ecosystem.config.cjs`). PM2 cluster mode enables multiple instances to run concurrently matching available CPU cores, providing load balancing, error recovery, and zero-downtime updates.
+Nginx acts as the host entry point, managing TLS (SSL) termination, forwarding WebSocket streams for Socket.IO/WebRTC, and routing API traffic to Docker containers.
 
-From the root project directory:
-```bash
-# Start all services
-pm2 start ecosystem.config.cjs
-
-# Make PM2 restart automatically on VM reboot
-pm2 startup
-pm2 save
-```
-
-### Monitoring commands:
-- Check application status: `pm2 status`
-- Monitor resource usage: `pm2 monit`
-- View combined logs: `pm2 logs`
-- Restart applications: `pm2 restart all`
-
----
-
-## Step 4: Configure Nginx
-
-Nginx acts as the entry point for the VM, managing TLS (SSL) termination, routing web socket requests, and caching static assets.
-
-1. Copy the provided `nginx.conf` template contents to your active Nginx site configurations:
-   - On Linux systems, this is typically `/etc/nginx/sites-available/devarena` (or directly inside `nginx.conf`).
-2. Create a symlink to enable it:
+1. Copy the provided [`nginx.conf`](file:///d:/PROGRAMMING/projects/New%20folder%20-%20Copy/devArena/nginx.conf) to your Nginx sites configuration:
    ```bash
-   sudo ln -s /etc/nginx/sites-available/devarena /etc/nginx/sites-enabled/
+   sudo cp nginx.conf /etc/nginx/sites-available/codecomplex
+   sudo ln -s /etc/nginx/sites-available/codecomplex /etc/nginx/sites-enabled/
    ```
-3. Update the configuration to match your details:
-   - Replace `devarena.example.com` with your actual domain.
-   - Update static folder path aliases `/var/www/devArena/client/...` to match the exact absolute directory path of your project on the VM.
-4. Test and reload Nginx:
+
+2. Update domain and proxy targets inside `/etc/nginx/sites-available/codecomplex`:
+   - Replace `devarena.example.com` with your actual domain (`yourdomain.com`).
+   - Frontend container maps to `127.0.0.1:3000`.
+   - Express backend container maps to `127.0.0.1:8000`.
+
+3. Test and reload Nginx:
    ```bash
    sudo nginx -t
    sudo systemctl reload nginx
@@ -108,25 +111,52 @@ Nginx acts as the entry point for the VM, managing TLS (SSL) termination, routin
 
 ---
 
-## Step 5: Secure with SSL (Let's Encrypt)
+## Step 4: Secure Domain with SSL (Let's Encrypt Certbot)
 
-Secure your deployment using free HTTPS certificates from Let's Encrypt.
+Enable HTTPS for your domain using Certbot:
 
-1. Install Certbot:
-   ```bash
-   sudo apt install certbot python3-certbot-nginx
-   ```
-2. Request and install certificates automatically:
-   ```bash
-   sudo certbot --nginx -d yourdomain.com
-   ```
-3. Certbot will prompt you to configure redirection. Select `Redirect` to force all HTTP requests to go through HTTPS.
-4. Once completed, uncomment the redirect code inside your Nginx server block to finalize:
-   ```nginx
-   # Redirect all HTTP requests to HTTPS
-   return 301 https://$host$request_uri;
-   ```
-5. Reload Nginx:
-   ```bash
-   sudo systemctl reload nginx
-   ```
+```bash
+# Request and install SSL certificate automatically
+sudo certbot --nginx -d yourdomain.com -d www.yourdomain.com
+
+# Auto-renewal verification
+sudo certbot renew --dry-run
+```
+
+Certbot automatically configures SSL directives and HTTP-to-HTTPS redirects inside your Nginx configuration.
+
+---
+
+## Step 5: Database Seeding & Maintenance
+
+Populate the database with default challenges directly through the running backend container:
+
+```bash
+# Run all seeding scripts inside the backend container
+docker-compose exec backend npm run seed
+docker-compose exec backend npm run seed:prompt-war
+docker-compose exec backend npm run seed:frontend
+docker-compose exec backend npm run seed:backend
+docker-compose exec backend npm run seed:bug-fix
+```
+
+---
+
+## Summary Architecture
+
+```
+[ Client Browser ]
+        │
+        ▼ (HTTPS / WSS)
+   [ Host Nginx ]
+   ├── Port 443 -> Forward to 127.0.0.1:3000 (Frontend Container)
+   ├── /api/    -> Forward to 127.0.0.1:8000 (Backend Container)
+   └── /socket.io/ -> Forward to 127.0.0.1:8000 (Backend Container)
+        │
+        ▼
+   [ Docker Compose Network ]
+   ├── Frontend Container (Next.js 16)
+   ├── Backend Container  (Express 5 API & Socket.IO)
+   ├── MongoDB Container  (Port 27017)
+   └── Redis Container    (Port 6379)
+```
