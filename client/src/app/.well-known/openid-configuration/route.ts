@@ -11,8 +11,11 @@ export async function GET() {
       token_endpoint_auth_methods_supported: ["client_secret_post", "bearer"],
       agent_auth: {
         register_uri: "https://codecomplex.site/auth.md",
+        registration_endpoint: "https://codecomplex.site/auth.md",
         supported_identity_types: ["user", "agent"],
         credential_types: ["bearer_token", "oauth2"],
+        revocation_uri: "https://codecomplex.site/api/v1/user/logout",
+        claims_supported: ["sub", "email", "name", "role", "agent_id"],
       },
     }),
     {
