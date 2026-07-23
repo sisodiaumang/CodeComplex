@@ -74,28 +74,67 @@ async function pickRandomQuestion(
     }
 
     for (const topic of shuffled) {
-        const query: any = {
-            difficulty: difficulty as any,
+        const normalizedTopic = topic.replace(/[-_]/g, "[_\\- ]");
+        const topicRegex = new RegExp("^" + normalizedTopic + "$", "i");
+
+        const baseQuery: any = {
             "battleConfig.enabled": true,
         };
-        query[queryField] = topic;
+
         if (isQuestionModel) {
-            query.isDeleted = { $ne: true };
+            baseQuery.isDeleted = { $ne: true };
+            if (queryField === "category") {
+                baseQuery.$or = [
+                    { category: topic },
+                    { category: topicRegex },
+                    { topics: topic },
+                    { topics: topicRegex }
+                ];
+            } else {
+                baseQuery[queryField] = { $in: [topic, topicRegex] };
+            }
+        } else {
+            baseQuery[queryField] = { $in: [topic, topicRegex] };
+        }
+
+        // Attempt 1: Exact difficulty + mode
+        let query: any = { ...baseQuery, difficulty: difficulty as any };
+        if (isQuestionModel) {
             if (room.battleType === "DSA") {
-                query.mode = "solve";
+                query.mode = { $in: ["solve", null, undefined] };
             } else if (room.battleType === "BUG_FIX") {
                 query.mode = "bug_fix";
             }
         }
 
-        const questions = await Model.find(query)
-            .select("slug")
-            .lean();
+        let questions = await Model.find(query).select("slug").lean();
+
+        // Attempt 2: Relax mode filter
+        if (questions.length === 0 && isQuestionModel) {
+            delete query.mode;
+            questions = await Model.find(query).select("slug").lean();
+        }
+
+        // Attempt 3: Relax difficulty filter
+        if (questions.length === 0) {
+            delete query.difficulty;
+            questions = await Model.find(query).select("slug").lean();
+        }
 
         if (questions.length > 0) {
             const pick = questions[Math.floor(Math.random() * questions.length)];
             return pick.slug ?? null;
         }
+    }
+
+    // Global Fallback: any battle-enabled question for this model
+    const fallbackQuery: any = { "battleConfig.enabled": true };
+    if (isQuestionModel) fallbackQuery.isDeleted = { $ne: true };
+
+    const fallbackQuestions = await Model.find(fallbackQuery).select("slug").lean();
+    if (fallbackQuestions.length > 0) {
+        const pick = fallbackQuestions[Math.floor(Math.random() * fallbackQuestions.length)];
+        return pick.slug ?? null;
     }
 
     return null;
