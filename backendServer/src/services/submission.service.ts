@@ -1004,8 +1004,12 @@ export async function judgeSubmission(submissionId: string): Promise<void> {
             const aiReview = await runAiReview(userCode, submission.language || "CPP");
             aiScore = aiReview.score;
             aiReviewFeedback = aiReview.feedback;
-            const correctnessPortion = Math.round((passed / total) * 90);
-            finalScore = correctnessPortion + aiScore;
+            if (passed === total) {
+                finalScore = 100;
+            } else {
+                const correctnessPortion = Math.round((passed / total) * 90);
+                finalScore = Math.min(99, correctnessPortion + aiScore);
+            }
         } catch (e) {
             console.error("[SubmissionService] AI Code Review failed:", e);
         }

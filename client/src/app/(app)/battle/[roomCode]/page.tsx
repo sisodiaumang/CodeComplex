@@ -2117,7 +2117,12 @@ function CodingWorkspace({ room, matchId, onLeave }: CodingWorkspaceProps) {
   // Timer countdown
   const [timeLeft, setTimeLeft] = useState(0);
   useEffect(() => {
-    if (!liveMatch?.timer?.endsAt) return;
+    if (!liveMatch?.timer?.endsAt || room?.status === "FINISHED" || liveMatch?.status === "COMPLETED" || liveMatch?.status === "ABANDONED") {
+      if (room?.status === "FINISHED" || liveMatch?.status === "COMPLETED" || liveMatch?.status === "ABANDONED") {
+        setTimeLeft(0);
+      }
+      return;
+    }
     const endsAtTime = new Date(liveMatch.timer.endsAt).getTime();
     
     const tick = () => {
@@ -2131,7 +2136,7 @@ function CodingWorkspace({ room, matchId, onLeave }: CodingWorkspaceProps) {
     tick();
     const interval = setInterval(tick, 1000);
     return () => clearInterval(interval);
-  }, [liveMatch?.timer?.endsAt]);
+  }, [liveMatch?.timer?.endsAt, room?.status, liveMatch?.status]);
 
   const formatTime = (secs: number) => {
     const m = Math.floor(secs / 60);
