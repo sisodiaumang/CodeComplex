@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     template: "%s | CodeComplex",
   },
   description:
-    "CodeComplex is the ultimate real-time competitive programming platform for software engineers. Battle in 1v1 duels, 4v4 team matches, DSA, Frontend, Backend, and AI Prompt Wars with live sandboxed evaluation.",
+    "Real-time competitive coding arena for developers. Battle in 1v1 & 4v4 duels across DSA, Frontend, Backend, and AI Prompt Wars. Rank up on global Elo leaderboards.",
   keywords: [
     "competitive programming",
     "coding battles",
@@ -50,7 +50,7 @@ export const metadata: Metadata = {
     url: "https://codecomplex.site",
     title: "CodeComplex — Real-time Competitive Engineering Arena",
     description:
-      "Compete in live 1v1 and 4v4 coding battles across DSA, Frontend, Backend, and Prompt Wars. Compete, rank up, and master real-world engineering.",
+      "Real-time competitive coding arena for developers. Battle in 1v1 & 4v4 duels across DSA, Frontend, Backend, and AI Prompt Wars. Rank up on global Elo leaderboards.",
     siteName: "CodeComplex",
     images: [
       {
