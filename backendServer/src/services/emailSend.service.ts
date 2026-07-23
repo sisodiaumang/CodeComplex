@@ -29,7 +29,7 @@ if (env.NODE_ENV === "production" && (!env.EMAIL_USER || !env.EMAIL_PASS)) {
     );
 }
 
-const FROM_ADDRESS = env.EMAIL_FROM_ADDRESS ?? env.EMAIL_USER ?? "noreply@codecomplex.dev";
+const FROM_ADDRESS = env.EMAIL_FROM_ADDRESS ?? env.EMAIL_USER ?? "support@codecomplex.site";
 const APP_NAME = 'CodeComplex';
 
 function buildVerificationHtml(otp: string): string {

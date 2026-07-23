@@ -91,7 +91,7 @@ REFRESH_TOKEN_EXPIRY=7d
 # Email Transporter (SMTP)
 EMAIL_USER=your_smtp_username
 EMAIL_PASS=your_smtp_password
-EMAIL_FROM_ADDRESS=noreply@codecomplex.com
+EMAIL_FROM_ADDRESS=support@codecomplex.site
 
 # Cloudinary (Avatar uploads)
 CLOUDINARY_CLOUD_NAME=your_cloud_name

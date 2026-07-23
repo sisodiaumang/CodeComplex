@@ -163,7 +163,7 @@ export default function TermsAndConditionsPage() {
             <p>
               If you have any questions, disputes, or feedback regarding these Terms & Conditions, please reach out to us at:
               <br />
-              Email: <span className="text-primary hover:underline">support@codecomplex.site</span> or <span className="text-primary hover:underline">sisodiaumang6@gmail.com</span>
+              Email: <span className="text-primary hover:underline">support@codecomplex.site</span>
             </p>
           </section>
         </div>

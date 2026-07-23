@@ -174,7 +174,7 @@ export default function PrivacyPolicyPage() {
             <p>
               If you have any questions, concerns, or feedback regarding this Privacy Policy or your data, please contact the platform owner:
               <br />
-              Email: <span className="text-primary hover:underline">support@codecomplex.site</span> or <span className="text-primary hover:underline">sisodiaumang6@gmail.com</span>
+              Email: <span className="text-primary hover:underline">support@codecomplex.site</span>
             </p>
           </section>
         </div>

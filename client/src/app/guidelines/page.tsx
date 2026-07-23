@@ -175,7 +175,7 @@ export default function CommunityGuidelinesPage() {
               If you have questions about these Community Guidelines or wish to appeal an enforcement decision:
             </p>
             <div className="text-xs font-mono space-y-1 text-text-faint">
-              Email: <span className="text-primary hover:underline">support@codecomplex.site</span> or <span className="text-primary hover:underline">sisodiaumang6@gmail.com</span>
+              Email: <span className="text-primary hover:underline">support@codecomplex.site</span>
             </div>
           </section>
         </div>

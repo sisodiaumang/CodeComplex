@@ -160,9 +160,6 @@ export default function ContactPage() {
                 <a href="mailto:support@codecomplex.site" className="block text-primary hover:underline">
                   support@codecomplex.site
                 </a>
-                <a href="mailto:sisodiaumang6@gmail.com" className="block text-primary hover:underline">
-                  sisodiaumang6@gmail.com
-                </a>
               </div>
             </Card>
 
