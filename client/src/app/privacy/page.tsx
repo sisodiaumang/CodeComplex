@@ -62,7 +62,7 @@ export default function PrivacyPolicyPage() {
           <section className="space-y-3">
             <h2 className="text-lg font-semibold text-text">1. Introduction</h2>
             <p>
-              Welcome to CodeComplex ("we", "our", or "us"). We are committed to protecting your privacy and security. This Privacy Policy explains how we collect, use, disclose, and safeguard your personal information when you use our competitive engineering platform, hosted at codecomplex.work.gd.
+              Welcome to CodeComplex ("we", "our", or "us"). We are committed to protecting your privacy and security. This Privacy Policy explains how we collect, use, disclose, and safeguard your personal information when you use our competitive engineering platform, hosted at codecomplex.site.
             </p>
           </section>
 
@@ -174,7 +174,7 @@ export default function PrivacyPolicyPage() {
             <p>
               If you have any questions, concerns, or feedback regarding this Privacy Policy or your data, please contact the platform owner:
               <br />
-              Email: <span className="text-primary hover:underline">support@codecomplex.work.gd</span> or <span className="text-primary hover:underline">sisodiaumang6@gmail.com</span>
+              Email: <span className="text-primary hover:underline">support@codecomplex.site</span> or <span className="text-primary hover:underline">sisodiaumang6@gmail.com</span>
             </p>
           </section>
         </div>

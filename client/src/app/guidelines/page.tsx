@@ -140,7 +140,7 @@ export default function CommunityGuidelinesPage() {
             </p>
             <ul className="list-disc pl-5 space-y-2">
               <li>
-                <strong className="text-text">Responsible Disclosure:</strong> Do not exploit the flaw or share it with others. Report it immediately to the administration at <span className="text-primary hover:underline">support@codecomplex.work.gd</span>.
+                <strong className="text-text">Responsible Disclosure:</strong> Do not exploit the flaw or share it with others. Report it immediately to the administration at <span className="text-primary hover:underline">support@codecomplex.site</span>.
               </li>
               <li>
                 <strong className="text-text">No Sandbox Escapes:</strong> Any attempt to attack the host systems, read restricted files, execute raw shell commands, or crash compilers is an immediate ground for permanent account termination.
@@ -148,36 +148,35 @@ export default function CommunityGuidelinesPage() {
             </ul>
           </section>
 
-          {/* Section 5 */}
           <section className="space-y-4">
-            <h2 className="text-lg font-semibold text-text">5. Enforcement and Penalties</h2>
-            <p>
-              We monitor match submissions and chat telemetry. Violations of these guidelines will result in progressive enforcement actions, determined by the severity of the infraction:
+            <h2 className="text-lg font-semibold text-text">7. Enforcement & Penalties</h2>
+            <p className="text-xs text-text-faint leading-relaxed">
+              Violating the Community Guidelines may result in progressive enforcement actions depending on the severity and frequency of the violation:
             </p>
-            <ul className="list-disc pl-5 space-y-2">
-              <li>
-                <strong className="text-text">First Warning:</strong> Minor chat infractions will receive a warning or temporary chat suspension.
+            <ul className="space-y-2 text-xs text-text-faint">
+              <li className="flex items-start gap-2">
+                <span className="text-primary font-bold">•</span>
+                <strong className="text-text">Warning:</strong> First-time minor infractions (e.g. mild chat toxicity).
               </li>
-              <li>
+              <li className="flex items-start gap-2">
+                <span className="text-primary font-bold">•</span>
                 <strong className="text-text">Matchmaking Bans:</strong> Cheating or exploiting will result in temporary or permanent bans from active matchmaking queues.
               </li>
-              <li>
-                <strong className="text-text">Rating Reset:</strong> Smurfing or cheating will lead to a complete reset of Elo rating, titles, and match history.
-              </li>
-              <li>
-                <strong className="text-text">Permanent Ban:</strong> Malicious platform security breaches, severe toxicity, or repeated fair play violations will result in permanent account deletion and IP-level blocks.
+              <li className="flex items-start gap-2">
+                <span className="text-primary font-bold">•</span>
+                <strong className="text-text">Elo Reset & Account Termination:</strong> Sandbagging or rating manipulation leads to Elo reset. Severe/repeat offenses lead to permanent account suspension.
               </li>
             </ul>
           </section>
 
-          {/* Contact */}
-          <section className="space-y-3 pt-6 border-t border-border/20">
-            <h2 className="text-lg font-semibold text-text">Reporting Violations</h2>
-            <p>
-              If you suspect an opponent is cheating, using AI tools, or violating our communication policy, please report them to:
-              <br />
-              Email: <span className="text-primary hover:underline">support@codecomplex.work.gd</span> or <span className="text-primary hover:underline">sisodiaumang6@gmail.com</span>
+          <section className="space-y-4">
+            <h2 className="text-lg font-semibold text-text">8. Contact Us</h2>
+            <p className="text-xs text-text-faint leading-relaxed">
+              If you have questions about these Community Guidelines or wish to appeal an enforcement decision:
             </p>
+            <div className="text-xs font-mono space-y-1 text-text-faint">
+              Email: <span className="text-primary hover:underline">support@codecomplex.site</span> or <span className="text-primary hover:underline">sisodiaumang6@gmail.com</span>
+            </div>
           </section>
         </div>
       </main>

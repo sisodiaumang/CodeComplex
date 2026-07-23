@@ -22,41 +22,55 @@ const code = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://codecomplex.site"),
   title: {
-    default: "CodeComplex — Competitive Coding Platform",
+    default: "CodeComplex — Real-time Competitive Engineering Arena",
     template: "%s | CodeComplex",
   },
   description:
-    "Battle other developers in real-time DSA, bug-fix, backend, frontend, and prompt-war challenges. Climb the Elo tiers and secure your rank.",
-  keywords: ["competitive coding", "DSA", "coding challenges", "programming battle", "interview prep", "algorithms"],
-  metadataBase: new URL("https://codecomplex.work.gd"),
-  alternates: {
-    canonical: "/",
-  },
-  verification: {
-    google: "lnWwrLDfhvp8UOO3IDtb7ULLq2wVzf8aBtJn4aJAR4A",
-  },
+    "CodeComplex is the ultimate real-time competitive programming platform for software engineers. Battle in 1v1 duels, 4v4 team matches, DSA, Frontend, Backend, and AI Prompt Wars with live sandboxed evaluation.",
+  keywords: [
+    "competitive programming",
+    "coding battles",
+    "1v1 coding",
+    "DSA practice",
+    "frontend battle",
+    "backend arena",
+    "prompt war",
+    "developer arena",
+    "live code editor",
+    "CodeComplex",
+  ],
+  authors: [{ name: "Umang Sisodia", url: "https://codecomplex.site" }],
+  creator: "CodeComplex",
+  publisher: "CodeComplex",
   openGraph: {
-    title: "CodeComplex — Competitive Coding Platform",
-    description: "Battle other developers in real-time DSA, bug-fix, backend, frontend, and prompt-war challenges.",
-    url: "https://codecomplex.work.gd",
+    type: "website",
+    locale: "en_US",
+    url: "https://codecomplex.site",
+    title: "CodeComplex — Real-time Competitive Engineering Arena",
+    description:
+      "Compete in live 1v1 and 4v4 coding battles across DSA, Frontend, Backend, and Prompt Wars. Compete, rank up, and master real-world engineering.",
     siteName: "CodeComplex",
     images: [
       {
-        url: "/logo.png",
-        width: 512,
-        height: 512,
-        alt: "CodeComplex Logo",
+        url: "/logo.webp",
+        width: 1200,
+        height: 630,
+        alt: "CodeComplex Competitive Arena",
       },
     ],
-    locale: "en_US",
-    type: "website",
   },
   twitter: {
-    card: "summary",
-    title: "CodeComplex — Competitive Coding Platform",
-    description: "Real-time, head-to-head programming battles.",
-    images: ["/logo.png"],
+    card: "summary_large_image",
+    title: "CodeComplex — Real-time Competitive Engineering Arena",
+    description:
+      "Compete in live 1v1 and 4v4 coding battles across DSA, Frontend, Backend, and Prompt Wars.",
+    images: ["/logo.webp"],
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
 };
 
@@ -78,38 +92,26 @@ export default function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify([
-              {
-                "@context": "https://schema.org",
-                "@type": "WebSite",
-                "name": "CodeComplex",
-                "url": "https://codecomplex.work.gd"
-              },
-              {
-                "@context": "https://schema.org",
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebApplication",
+              "name": "CodeComplex",
+              "url": "https://codecomplex.site",
+              "applicationCategory": "EducationalApplication",
+              "operatingSystem": "All",
+              "description": "Real-time competitive engineering arena for developers to compete in 1v1 & team duels.",
+              "publisher": {
                 "@type": "Organization",
                 "name": "CodeComplex",
-                "url": "https://codecomplex.work.gd",
-                "logo": "https://codecomplex.work.gd/logo.webp",
-                "sameAs": [
-                  "https://github.com/sisodiaumang/CodeComplex"
-                ]
+                "url": "https://codecomplex.site",
+                "logo": "https://codecomplex.site/logo.webp"
               },
-              {
-                "@context": "https://schema.org",
-                "@type": "WebApplication",
-                "name": "CodeComplex",
-                "url": "https://codecomplex.work.gd",
-                "applicationCategory": "EducationalApplication, GameApplication",
-                "operatingSystem": "All",
-                "browserRequirements": "Requires HTML5 compatible browser",
-                "offers": {
-                  "@type": "Offer",
-                  "price": "0.00",
-                  "priceCurrency": "USD"
-                }
+              "offers": {
+                "@type": "Offer",
+                "price": "0",
+                "priceCurrency": "USD"
               }
-            ])
+            })
           }}
         />
         <script

@@ -60,7 +60,7 @@ const FAQ_LIST = [
       },
       {
         q: "How do I report a player for toxicity or cheating?",
-        a: "You can submit reports directly to support@codecomplex.work.gd with match codes, screenshots, and logs. We review reports manually and take progressive enforcement steps."
+        a: "You can submit reports directly to support@codecomplex.site with match codes, screenshots, and logs. We review reports manually and take progressive enforcement steps."
       }
     ]
   }

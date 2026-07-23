@@ -17,7 +17,7 @@ export async function getOrCreateBotUser() {
     bot = await User.create({
       username: "devbot_v1",
       fullName: "DevBot V1",
-      email: "bot@codecomplex.work.gd",
+      email: "bot@codecomplex.site",
       oauthProvider: "google",
       oauthId: "system-bot-devbot-v1",
       country: "US",

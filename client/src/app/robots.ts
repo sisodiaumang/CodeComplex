@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
       disallow: ["/admin/", "/settings/", "/notifications/", "/battle/"],
     },
-    sitemap: "https://codecomplex.work.gd/sitemap.xml",
+    sitemap: "https://codecomplex.site/sitemap.xml",
   };
 }

@@ -157,8 +157,8 @@ export default function ContactPage() {
                 For account recovery, billing questions, or business inquiries, email us directly:
               </p>
               <div className="text-xs font-mono space-y-1">
-                <a href="mailto:support@codecomplex.work.gd" className="block text-primary hover:underline">
-                  support@codecomplex.work.gd
+                <a href="mailto:support@codecomplex.site" className="block text-primary hover:underline">
+                  support@codecomplex.site
                 </a>
                 <a href="mailto:sisodiaumang6@gmail.com" className="block text-primary hover:underline">
                   sisodiaumang6@gmail.com

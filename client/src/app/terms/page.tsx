@@ -62,7 +62,7 @@ export default function TermsAndConditionsPage() {
           <section className="space-y-3">
             <h2 className="text-lg font-semibold text-text">1. Agreement to Terms & Eligibility</h2>
             <p>
-              By creating an account, registering, or using CodeComplex ("Platform") at codecomplex.work.gd, you agree to be bound by these Terms & Conditions. If you do not agree to all of these terms, you are prohibited from using the Platform and must cease usage immediately.
+              By creating an account, registering, or using CodeComplex ("Platform") at codecomplex.site, you agree to be bound by these Terms & Conditions. If you do not agree to all of these terms, you are prohibited from using the Platform and must cease usage immediately.
             </p>
             <p>
               <strong className="text-text">Eligibility:</strong> You must be at least 13 years old (or the minimum age required in your jurisdiction) to use CodeComplex. By using the Platform, you represent and warrant that you meet this requirement.
@@ -163,7 +163,7 @@ export default function TermsAndConditionsPage() {
             <p>
               If you have any questions, disputes, or feedback regarding these Terms & Conditions, please reach out to us at:
               <br />
-              Email: <span className="text-primary hover:underline">support@codecomplex.work.gd</span> or <span className="text-primary hover:underline">sisodiaumang6@gmail.com</span>
+              Email: <span className="text-primary hover:underline">support@codecomplex.site</span> or <span className="text-primary hover:underline">sisodiaumang6@gmail.com</span>
             </p>
           </section>
         </div>
