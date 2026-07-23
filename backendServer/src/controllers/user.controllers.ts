@@ -241,9 +241,10 @@ const signupUser = asyncHandler(async (req, res) => {
 
     try {
         await sendVerificationMail(userData.email, otp);
-    } catch {
+    } catch (err: any) {
         await OTP.deleteOne({ email: userData.email, purpose: "EMAIL_VERIFICATION" });
-        throw new ApiError(500, "Failed to send verification email");
+        const errorMsg = err?.message || "Failed to send verification email";
+        throw new ApiError(500, errorMsg);
     }
 
     // Attach signup payload to OTP doc — User is created only after OTP passes

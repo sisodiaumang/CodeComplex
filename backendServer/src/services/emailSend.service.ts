@@ -134,11 +134,11 @@ async function sendVerificationMail(email: string, otp: string): Promise<void> {
             html: buildVerificationHtml(otp),
         });
     } catch (err) {
+        console.error("[EmailService] Verification email send error:", err);
         const reason = err instanceof Error ? err.message : String(err);
         throw new ApiError(
             500,
-            "Failed to send verification email",
-            [reason]
+            `Failed to send verification email: ${reason}`
         );
     }
 }
