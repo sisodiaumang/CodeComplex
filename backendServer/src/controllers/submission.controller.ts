@@ -77,8 +77,14 @@ async function ensureDriverCode(language: string, code: string, questionSlug: st
                 }
 
                 if (hiddenCode && splitType === "after") {
-                    const delimiter = (lang === "python" || lang === "python3") ? "# @driver-code-start" : "// @driver-code-start";
-                    return code.trim() + "\n\n" + delimiter + "\n" + hiddenCode;
+                    if (lang === "python" || lang === "python3") {
+                        let finalCode = code.trim();
+                        if (hiddenCode.includes("sys.") && !finalCode.includes("import sys")) {
+                            finalCode = "import sys\n" + finalCode;
+                        }
+                        return finalCode + "\n\n# @driver-code-start\n" + hiddenCode;
+                    }
+                    return code.trim() + "\n\n// @driver-code-start\n" + hiddenCode;
                 }
             }
         }
