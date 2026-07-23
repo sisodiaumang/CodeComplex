@@ -43,11 +43,6 @@ async function pickRandomQuestion(
     const topics = room.topics ?? [];
     const difficulty = DIFFICULTY_MAP[room.difficulty ?? ""] ?? room.difficulty;
 
-    if (topics.length === 0) return null;
-
-    // Shuffle topics so we try in random order
-    const shuffled = [...topics].sort(() => Math.random() - 0.5);
-
     const FRONTEND_TYPES = ["FRONTEND", "PROJECTS"];
     const BACKEND_TYPES  = ["BACKEND"];
     const PROMPT_TYPES   = ["PROMPT_WAR"];
@@ -73,33 +68,23 @@ async function pickRandomQuestion(
         isQuestionModel = false;
     }
 
-    for (const topic of shuffled) {
+    const shuffledTopics = [...topics].sort(() => Math.random() - 0.5);
+
+    // 1. Try selected topics at EXACT difficulty with preferred mode
+    for (const topic of shuffledTopics) {
         const normalizedTopic = topic.replace(/[-_]/g, "[_\\- ]");
         const topicRegex = new RegExp("^" + normalizedTopic + "$", "i");
+        const topicFilter = queryField === "category" 
+            ? { $or: [{ category: topic }, { category: topicRegex }, { topics: topic }, { topics: topicRegex }] }
+            : { [queryField]: { $in: [topic, topicRegex] } };
 
-        const baseQuery: any = {
+        const query: any = {
+            ...topicFilter,
+            difficulty: difficulty as any,
             "battleConfig.enabled": true,
         };
-
         if (isQuestionModel) {
-            baseQuery.isDeleted = { $ne: true };
-            if (queryField === "category") {
-                baseQuery.$or = [
-                    { category: topic },
-                    { category: topicRegex },
-                    { topics: topic },
-                    { topics: topicRegex }
-                ];
-            } else {
-                baseQuery[queryField] = { $in: [topic, topicRegex] };
-            }
-        } else {
-            baseQuery[queryField] = { $in: [topic, topicRegex] };
-        }
-
-        // Attempt 1: Exact difficulty + mode
-        let query: any = { ...baseQuery, difficulty: difficulty as any };
-        if (isQuestionModel) {
+            query.isDeleted = { $ne: true };
             if (room.battleType === "DSA") {
                 query.mode = { $in: ["solve", null, undefined] };
             } else if (room.battleType === "BUG_FIX") {
@@ -107,27 +92,56 @@ async function pickRandomQuestion(
             }
         }
 
-        let questions = await Model.find(query).select("slug").lean();
-
-        // Attempt 2: Relax mode filter
-        if (questions.length === 0 && isQuestionModel) {
-            delete query.mode;
-            questions = await Model.find(query).select("slug").lean();
-        }
-
-        // Attempt 3: Relax difficulty filter
-        if (questions.length === 0) {
-            delete query.difficulty;
-            questions = await Model.find(query).select("slug").lean();
-        }
-
+        const questions = await Model.find(query).select("slug").lean();
         if (questions.length > 0) {
             const pick = questions[Math.floor(Math.random() * questions.length)];
             return pick.slug ?? null;
         }
     }
 
-    // Global Fallback: any battle-enabled question for this model
+    // 2. Try selected topics at EXACT difficulty without mode restriction
+    for (const topic of shuffledTopics) {
+        const normalizedTopic = topic.replace(/[-_]/g, "[_\\- ]");
+        const topicRegex = new RegExp("^" + normalizedTopic + "$", "i");
+        const topicFilter = queryField === "category" 
+            ? { $or: [{ category: topic }, { category: topicRegex }, { topics: topic }, { topics: topicRegex }] }
+            : { [queryField]: { $in: [topic, topicRegex] } };
+
+        const query: any = {
+            ...topicFilter,
+            difficulty: difficulty as any,
+            "battleConfig.enabled": true,
+        };
+        if (isQuestionModel) query.isDeleted = { $ne: true };
+
+        const questions = await Model.find(query).select("slug").lean();
+        if (questions.length > 0) {
+            const pick = questions[Math.floor(Math.random() * questions.length)];
+            return pick.slug ?? null;
+        }
+    }
+
+    // 3. Try ANY question in the system matching the EXACT difficulty
+    const sameDiffQuery: any = {
+        difficulty: difficulty as any,
+        "battleConfig.enabled": true,
+    };
+    if (isQuestionModel) {
+        sameDiffQuery.isDeleted = { $ne: true };
+        if (room.battleType === "DSA") {
+            sameDiffQuery.mode = { $in: ["solve", null, undefined] };
+        } else if (room.battleType === "BUG_FIX") {
+            sameDiffQuery.mode = "bug_fix";
+        }
+    }
+
+    const sameDiffQuestions = await Model.find(sameDiffQuery).select("slug").lean();
+    if (sameDiffQuestions.length > 0) {
+        const pick = sameDiffQuestions[Math.floor(Math.random() * sameDiffQuestions.length)];
+        return pick.slug ?? null;
+    }
+
+    // 4. Last resort fallback: any battle-enabled question for this model
     const fallbackQuery: any = { "battleConfig.enabled": true };
     if (isQuestionModel) fallbackQuery.isDeleted = { $ne: true };
 
