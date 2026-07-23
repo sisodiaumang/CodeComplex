@@ -41,31 +41,37 @@ async function ensureDriverCode(language: string, code: string, questionSlug: st
 
     try {
         const question = await Question.findOne({ slug: questionSlug });
-        if (question && question.solutions) {
-            const solutionCode = (question.solutions as any)[lang === "c++" ? "cpp" : lang === "python3" ? "python" : lang === "js" ? "javascript" : lang];
-            if (solutionCode) {
+        if (question) {
+            const key = lang === "c++" ? "cpp" : lang === "python3" ? "python" : lang === "js" ? "javascript" : lang;
+            const candidates = [
+                (question.solutions as any)?.[key],
+                (question.buggyStarterCode as any)?.[key],
+                (question.starterCode as any)?.[key]
+            ].filter(c => typeof c === "string" && c.length > 20);
+
+            for (const sampleCode of candidates) {
                 let hiddenCode = "";
                 let splitType: "before" | "after" | "none" = "none";
                 
                 if (lang === "cpp" || lang === "c++") {
-                    const mainIndex = solutionCode.indexOf("int main(");
+                    const mainIndex = sampleCode.indexOf("int main(");
                     if (mainIndex !== -1) {
-                        hiddenCode = solutionCode.substring(mainIndex);
+                        hiddenCode = sampleCode.substring(mainIndex);
                         splitType = "after";
                     }
                 } else if (lang === "java") {
-                    const mainIndex = solutionCode.indexOf("public static void main(");
+                    const mainIndex = sampleCode.indexOf("public static void main(");
                     if (mainIndex !== -1) {
-                        hiddenCode = solutionCode.substring(mainIndex);
+                        hiddenCode = sampleCode.substring(mainIndex);
                         splitType = "after";
                     }
                 } else if (lang === "python" || lang === "python3") {
-                    let mainIndex = solutionCode.indexOf("def main():");
+                    let mainIndex = sampleCode.indexOf("def main():");
                     if (mainIndex === -1) {
-                        mainIndex = solutionCode.indexOf("if __name__ ==");
+                        mainIndex = sampleCode.indexOf("if __name__ ==");
                     }
                     if (mainIndex !== -1) {
-                        hiddenCode = solutionCode.substring(mainIndex);
+                        hiddenCode = sampleCode.substring(mainIndex);
                         splitType = "after";
                     }
                 }
