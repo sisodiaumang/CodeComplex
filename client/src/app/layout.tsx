@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Space_Grotesk, Inter, JetBrains_Mono } from "next/font/google";
 import Providers from "@/components/providers";
+import WebMCPProvider from "@/components/WebMCPProvider";
 import "./globals.css";
 
 const heading = Space_Grotesk({
@@ -125,6 +126,7 @@ export default function RootLayout({
       </head>
       <body className="antialiased">
         <Providers>
+          <WebMCPProvider />
           {children}
         </Providers>
       </body>
