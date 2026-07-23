@@ -74,8 +74,24 @@ async function pickRandomQuestion(
     for (const topic of shuffledTopics) {
         const normalizedTopic = topic.replace(/[-_]/g, "[_\\- ]");
         const topicRegex = new RegExp("^" + normalizedTopic + "$", "i");
+        const containsRegex = new RegExp(topic.replace(/[-_]/g, "[-_ ]"), "i");
+
         const topicFilter = queryField === "category" 
-            ? { $or: [{ category: topic }, { category: topicRegex }, { topics: topic }, { topics: topicRegex }] }
+            ? { 
+                $or: [
+                    { category: topic }, 
+                    { category: topicRegex }, 
+                    { subCategory: topic }, 
+                    { subCategory: topicRegex }, 
+                    { topics: topic }, 
+                    { topics: topicRegex }, 
+                    { "metadata.keywords": topic }, 
+                    { "metadata.keywords": topicRegex }, 
+                    { "metadata.tags": topic }, 
+                    { "metadata.tags": topicRegex }, 
+                    { slug: containsRegex }
+                ] 
+              }
             : { [queryField]: { $in: [topic, topicRegex] } };
 
         const query: any = {
@@ -103,13 +119,66 @@ async function pickRandomQuestion(
     for (const topic of shuffledTopics) {
         const normalizedTopic = topic.replace(/[-_]/g, "[_\\- ]");
         const topicRegex = new RegExp("^" + normalizedTopic + "$", "i");
+        const containsRegex = new RegExp(topic.replace(/[-_]/g, "[-_ ]"), "i");
+
         const topicFilter = queryField === "category" 
-            ? { $or: [{ category: topic }, { category: topicRegex }, { topics: topic }, { topics: topicRegex }] }
+            ? { 
+                $or: [
+                    { category: topic }, 
+                    { category: topicRegex }, 
+                    { subCategory: topic }, 
+                    { subCategory: topicRegex }, 
+                    { topics: topic }, 
+                    { topics: topicRegex }, 
+                    { "metadata.keywords": topic }, 
+                    { "metadata.keywords": topicRegex }, 
+                    { "metadata.tags": topic }, 
+                    { "metadata.tags": topicRegex }, 
+                    { slug: containsRegex }
+                ] 
+              }
             : { [queryField]: { $in: [topic, topicRegex] } };
 
         const query: any = {
             ...topicFilter,
             difficulty: difficulty as any,
+            "battleConfig.enabled": true,
+        };
+        if (isQuestionModel) query.isDeleted = { $ne: true };
+
+        const questions = await Model.find(query).select("slug").lean();
+        if (questions.length > 0) {
+            const pick = questions[Math.floor(Math.random() * questions.length)];
+            return pick.slug ?? null;
+        }
+    }
+
+    // 3. Try selected topics at ANY difficulty (topic preservation over difficulty)
+    for (const topic of shuffledTopics) {
+        const normalizedTopic = topic.replace(/[-_]/g, "[_\\- ]");
+        const topicRegex = new RegExp("^" + normalizedTopic + "$", "i");
+        const containsRegex = new RegExp(topic.replace(/[-_]/g, "[-_ ]"), "i");
+
+        const topicFilter = queryField === "category" 
+            ? { 
+                $or: [
+                    { category: topic }, 
+                    { category: topicRegex }, 
+                    { subCategory: topic }, 
+                    { subCategory: topicRegex }, 
+                    { topics: topic }, 
+                    { topics: topicRegex }, 
+                    { "metadata.keywords": topic }, 
+                    { "metadata.keywords": topicRegex }, 
+                    { "metadata.tags": topic }, 
+                    { "metadata.tags": topicRegex }, 
+                    { slug: containsRegex }
+                ] 
+              }
+            : { [queryField]: { $in: [topic, topicRegex] } };
+
+        const query: any = {
+            ...topicFilter,
             "battleConfig.enabled": true,
         };
         if (isQuestionModel) query.isDeleted = { $ne: true };
