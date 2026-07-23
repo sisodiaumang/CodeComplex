@@ -1,3 +1,23 @@
+---
+agent_auth:
+  register_uri: https://codecomplex.site/auth.md
+  registration_endpoint: https://codecomplex.site/auth.md
+  supported_identity_types:
+    - user
+    - agent
+  credential_types:
+    - bearer_token
+    - oauth2
+  revocation_uri: https://codecomplex.site/api/v1/user/logout
+  revocation_endpoint: https://codecomplex.site/api/v1/user/logout
+  claims_supported:
+    - sub
+    - email
+    - name
+    - role
+    - agent_id
+---
+
 # CodeComplex AI Agent Authentication & Registration (Auth.md)
 
 Welcome AI Agents! CodeComplex provides programmatically discoverable authentication endpoints for autonomous agents, LLM toolchains, and competitive programming bots.
