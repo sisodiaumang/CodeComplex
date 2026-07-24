@@ -88,7 +88,6 @@ const RATING_KEYS: Array<{ key: keyof RatingsMap; mode: BattleType }> = [
   { key: "dsa", mode: "DSA" },
   { key: "frontend", mode: "FRONTEND" },
   { key: "backend", mode: "BACKEND" },
-  { key: "projects", mode: "PROJECTS" },
   { key: "promptWar", mode: "PROMPT_WAR" },
 ];
 
@@ -588,7 +587,6 @@ export default function ProfilePage({
                 { label: "DSA Problems Solved", value: dsaSolved, color: "bg-mode-dsa" },
                 { label: "Frontend Challenges", value: frontendCompleted, color: "bg-mode-frontend" },
                 { label: "Backend Challenges", value: backendCompleted, color: "bg-mode-backend" },
-                { label: "Project Challenges", value: projectsCompleted, color: "bg-mode-projects" },
               ].map((item) => (
                 <div key={item.label} className="space-y-1">
                   <div className="flex items-center justify-between text-xs">
@@ -656,7 +654,6 @@ export default function ProfilePage({
             { label: "Prompt War", value: "PROMPT_WAR", unit: "war", plural: "wars" },
             { label: "Backend", value: "BACKEND", unit: "battle", plural: "battles" },
             { label: "Frontend", value: "FRONTEND", unit: "battle", plural: "battles" },
-            { label: "Projects", value: "PROJECTS", unit: "battle", plural: "battles" },
           ];
 
           const currentModeConfig = MODES.find((m) => m.value === selectedMode) || MODES[0];

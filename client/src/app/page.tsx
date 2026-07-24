@@ -27,8 +27,7 @@ const MODES_LIST = [
   { key: "BUG_FIX", label: "Bug Fix", icon: ShieldAlert, tagline: "A broken codebase, a ticking timer. Find it, fix it, win." },
   { key: "PROMPT_WAR", label: "Prompt War", icon: Sparkles, tagline: "Duel with prompts. The sharper instruction wins the judge." },
   { key: "BACKEND", label: "Backend", icon: Server, tagline: "Design and ship a working API before your opponent does." },
-  { key: "FRONTEND", label: "Frontend", icon: Layout, tagline: "Pixel-perfect builds, scored head-to-head." },
-  { key: "PROJECTS", label: "Projects", icon: Cpu, tagline: "End to end. Database to UI. No hiding places." }
+  { key: "FRONTEND", label: "Frontend", icon: Layout, tagline: "Pixel-perfect builds, scored head-to-head." }
 ];
 
 export default function LandingPage() {

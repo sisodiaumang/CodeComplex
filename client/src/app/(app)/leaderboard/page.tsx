@@ -16,7 +16,6 @@ const MODES: BattleType[] = [
   "BUG_FIX",
   "FRONTEND",
   "BACKEND",
-  "PROJECTS",
   "PROMPT_WAR",
 ];
 

@@ -11,7 +11,7 @@ Welcome to CodeComplex! CodeComplex is the ultimate real-time competitive progra
 
 ## Key Features
 - **1v1 & 4v4 Team Duels:** Squad up or battle head-to-head in real-time coding matches.
-- **6 Battle Arenas:** DSA & Algorithms, Frontend (React/HTML), Backend (Node/Express), Bug Fix, Full-Stack Projects, and AI Prompt Wars.
+- **5 Battle Arenas:** DSA & Algorithms, Frontend (React/HTML), Backend (Node/Express), Bug Fix, and AI Prompt Wars.
 - **Adaptive AI Bot Rivals (DevBot V1):** Dynamic AI opponents that calibrate solve speed and testcase pass rates to your Elo rank.
 - **Competitive Elo System:** Climb divisions from Bronze to Master with global & regional leaderboards.
 
