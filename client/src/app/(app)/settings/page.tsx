@@ -609,6 +609,33 @@ function ProfileTab({
 
             {/* Mascot Settings */}
             <div className="pt-6 border-t border-border/40 space-y-4">
+              <style>{`
+                @keyframes petShimmer {
+                  0% { background-position: 200% center; }
+                  100% { background-position: -200% center; }
+                }
+                .border-shimmer-epic { border-color: transparent !important; }
+                .border-shimmer-epic::before {
+                  content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px;
+                  background: linear-gradient(90deg, rgba(168,85,247,0.1), rgba(168,85,247,0.8), rgba(168,85,247,0.1));
+                  background-size: 200% auto; animation: petShimmer 3s linear infinite;
+                  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+                  -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
+                }
+                .border-shimmer-legendary { border-color: transparent !important; }
+                .border-shimmer-legendary::before {
+                  content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px;
+                  background: linear-gradient(90deg, rgba(251,191,36,0.2), rgba(251,191,36,1), rgba(251,191,36,0.2));
+                  background-size: 200% auto; animation: petShimmer 3s linear infinite;
+                  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+                  -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
+                }
+                .bg-dots-pattern {
+                  background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.15) 1px, transparent 0);
+                  background-size: 16px 16px;
+                }
+              `}</style>
+
               <div>
                 <h3 className="text-xs font-black text-text uppercase tracking-widest font-mono flex items-center gap-2">
                   <Sparkles className="size-4 text-primary" />
@@ -619,59 +646,106 @@ function ProfileTab({
                 </p>
               </div>
 
-              <div className="grid gap-6 sm:grid-cols-[1fr_180px]">
+              <div className="grid gap-6 sm:grid-cols-[1fr_220px]">
                 {/* Selectors and picks */}
-                <div className="space-y-4">
+                <div className="space-y-6">
                   {/* Select Mascot Type */}
                   <div className="space-y-2">
                     <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider font-mono">Select Animal ({ALL_PETS_LIST.filter(p => unlockedPetTypes.has(p.id)).length}/30 Unlocked)</label>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-[220px] overflow-y-auto pr-1.5 border border-border/30 rounded-lg p-2 bg-surface-2/40 scrollbar-thin">
-                      {ALL_PETS_LIST.map((petOpt) => {
-                        const isUnlocked = unlockedPetTypes.has(petOpt.id);
-                        const isSelected = myPetType === petOpt.id;
-
-                        // Rarity styling mapping
-                        let borderClass = "border-border";
-                        let textClass = "text-text-muted";
-                        let rarityLabel = "Common";
+                    <div className="space-y-4">
+                      {[
+                        { id: "COMMON", label: "Common", headerClass: "text-text bg-surface-2/50 border border-border/30", wrapperClass: "" },
+                        { id: "RARE", label: "Rare", headerClass: "text-blue-400 bg-blue-500/10 border border-blue-500/20", wrapperClass: "" },
+                        { id: "EPIC", label: "Epic", headerClass: "text-purple-400 bg-purple-500/10 border border-purple-500/20", wrapperClass: "" },
+                        { id: "LEGENDARY", label: "Legendary", headerClass: "text-amber-400 bg-amber-500/10 border border-amber-500/30 shadow-[0_0_10px_rgba(245,158,11,0.2)]", wrapperClass: "" },
+                      ].map(group => {
+                        const groupPets = ALL_PETS_LIST.filter(p => p.rarity === group.id);
+                        if (groupPets.length === 0) return null;
                         
-                        if (petOpt.rarity === "RARE") {
-                          borderClass = "border-blue-500/25";
-                          textClass = "text-blue-400/90";
-                          rarityLabel = "Rare";
-                        } else if (petOpt.rarity === "EPIC") {
-                          borderClass = "border-purple-500/25";
-                          textClass = "text-purple-400/90";
-                          rarityLabel = "Epic";
-                        } else if (petOpt.rarity === "LEGENDARY") {
-                          borderClass = "border-amber-500/30";
-                          textClass = "text-amber-400";
-                          rarityLabel = "Legendary";
-                        }
-
                         return (
-                          <button
-                            key={petOpt.id}
-                            type="button"
-                            disabled={!isUnlocked}
-                            onClick={() => savePetConfig(petOpt.id, myPetColor)}
-                            className={cn(
-                              "flex flex-col items-start p-2 rounded-lg border text-left transition-all relative overflow-hidden select-none",
-                              isUnlocked ? "hover:scale-[1.01] cursor-pointer" : "opacity-40 cursor-not-allowed bg-surface-3/30",
-                              isSelected
-                                ? "border-primary bg-primary/5 shadow-sm ring-1 ring-primary/30"
-                                : cn("bg-surface", borderClass)
-                            )}
-                            title={isUnlocked ? petOpt.source : `Locked: Requires "${petOpt.source.replace(" Achievement", "")}"`}
-                          >
-                            <span className="text-xs font-bold truncate w-full flex items-center justify-between gap-1">
-                              {petOpt.label}
-                              {!isUnlocked && <Lock className="size-2.5 text-text-faint shrink-0" />}
-                            </span>
-                            <span className={cn("text-[9px] uppercase font-bold font-mono tracking-wider mt-0.5", textClass)}>
-                              {rarityLabel}
-                            </span>
-                          </button>
+                          <div key={group.id} className="space-y-2">
+                            <div className={cn("px-3 py-1.5 rounded-md text-xs font-bold uppercase tracking-wider font-mono flex items-center justify-between", group.headerClass)}>
+                              <span>{group.label}</span>
+                              <span className="opacity-70 text-[10px]">{groupPets.filter(p => unlockedPetTypes.has(p.id)).length}/{groupPets.length}</span>
+                            </div>
+                            <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                              {groupPets.map((petOpt) => {
+                                const isUnlocked = unlockedPetTypes.has(petOpt.id);
+                                const isSelected = myPetType === petOpt.id;
+
+                                // Rarity styling mapping
+                                let borderClass = "border-border/50";
+                                let textClass = "text-text-muted";
+                                let bgClass = "bg-surface-2/40";
+                                let rarityLabel = "Common";
+                                
+                                if (petOpt.rarity === "RARE") {
+                                  borderClass = "border-blue-500/25";
+                                  bgClass = "bg-blue-500/5";
+                                  textClass = "text-blue-400/90";
+                                  rarityLabel = "Rare";
+                                } else if (petOpt.rarity === "EPIC") {
+                                  borderClass = "border-shimmer-epic";
+                                  bgClass = "bg-surface-2/40";
+                                  textClass = "text-purple-400/90";
+                                  rarityLabel = "Epic";
+                                } else if (petOpt.rarity === "LEGENDARY") {
+                                  borderClass = "border-shimmer-legendary shadow-[0_0_12px_rgba(251,191,36,0.1)]";
+                                  bgClass = "bg-surface-2/40";
+                                  textClass = "text-amber-400";
+                                  rarityLabel = "Legendary";
+                                }
+
+                                return (
+                                  <button
+                                    key={petOpt.id}
+                                    type="button"
+                                    disabled={!isUnlocked}
+                                    onClick={() => savePetConfig(petOpt.id, myPetColor)}
+                                    className={cn(
+                                      "flex flex-col items-start p-2 rounded-lg border text-left transition-all relative overflow-hidden select-none",
+                                      isUnlocked ? "hover:scale-[1.03] cursor-pointer" : "opacity-60 cursor-not-allowed bg-surface-3/30",
+                                      isSelected
+                                        ? "border-primary bg-primary/10 shadow-sm ring-1 ring-primary/30 z-10"
+                                        : cn(bgClass, borderClass)
+                                    )}
+                                    title={isUnlocked ? petOpt.source : `Locked: Requires "${petOpt.source.replace(" Achievement", "")}"`}
+                                  >
+                                    {isSelected && (
+                                      <div className="absolute top-0 right-0 bg-green-500 text-white text-[7px] font-bold px-1 py-0.5 rounded-bl-lg flex items-center gap-0.5 z-20">
+                                        <Check className="size-2" /> EQUIPPED
+                                      </div>
+                                    )}
+
+                                    <div className="flex flex-col items-center justify-center w-full mb-1">
+                                      <div className="relative h-[36px] w-[46px] shrink-0 bg-black/20 rounded-md border border-border/30 overflow-hidden flex items-center justify-center">
+                                        <div className="scale-[0.55] origin-center flex items-center justify-center pointer-events-none translate-y-1.5 translate-x-0.5" style={!isUnlocked ? { filter: 'grayscale(1) brightness(0.3)' } : {}}>
+                                          <KeyboardMascotAnimation active={false} pet={{ type: petOpt.id, color: myPetColor }} onlyMascot={true} />
+                                        </div>
+                                        {!isUnlocked && (
+                                          <div className="absolute inset-0 flex items-center justify-center bg-black/10">
+                                            <Lock className="size-4 text-white drop-shadow-md opacity-90" />
+                                          </div>
+                                        )}
+                                      </div>
+                                    </div>
+                                    
+                                    <div className="flex flex-col min-w-0 w-full items-center text-center">
+                                      <span className="text-[10px] font-bold truncate w-full">
+                                        {petOpt.label}
+                                      </span>
+                                    </div>
+
+                                    {!isUnlocked && (
+                                      <div className="mt-1.5 text-[8px] text-text-faint/80 w-full bg-black/20 p-1 rounded border border-border/20 truncate text-center" title={petOpt.source}>
+                                        {petOpt.source.replace(" Achievement", "")}
+                                      </div>
+                                    )}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
                         );
                       })}
                     </div>
@@ -690,6 +764,10 @@ function ProfileTab({
                         { hex: "#06B6D4", name: "Cyan" },
                         { hex: "#F59E0B", name: "Gold" },
                         { hex: "#EC4899", name: "Pink" },
+                        { hex: "#14B8A6", name: "Teal" },
+                        { hex: "#6366F1", name: "Indigo" },
+                        { hex: "#F43F5E", name: "Rose" },
+                        { hex: "#84CC16", name: "Lime" },
                       ].map((colorOpt) => (
                         <button
                           key={colorOpt.hex}
@@ -710,14 +788,48 @@ function ProfileTab({
                         </button>
                       ))}
                     </div>
+                    
+                    <div className="mt-3 flex items-center gap-3">
+                      <label className="text-[10px] font-bold text-text-faint uppercase font-mono">Custom Hex</label>
+                      <input 
+                        type="text" 
+                        placeholder="#FFFFFF"
+                        key={myPetColor} // force update when color changes from swatches
+                        defaultValue={myPetColor}
+                        onChange={(e) => {
+                          if (/^#[0-9a-fA-F]{6}$/i.test(e.target.value)) {
+                            savePetConfig(myPetType, e.target.value);
+                          }
+                        }}
+                        maxLength={7}
+                        className="bg-surface-2 border border-border rounded-md px-2 py-1 text-xs uppercase font-mono w-[85px] outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all text-text"
+                      />
+                    </div>
                   </div>
                 </div>
 
                 {/* Local Preview box */}
-                <div className="flex flex-col items-center justify-center p-4 border border-border bg-surface-2/65 rounded-xl gap-2 select-none h-fit self-center">
-                  <span className="text-[9px] text-text-faint font-semibold uppercase tracking-wider font-mono">Live Preview</span>
-                  <div className="scale-110 origin-center py-1">
+                <div className="flex flex-col items-center justify-center p-6 border border-border/50 bg-gradient-to-b from-surface-2/80 to-surface-3/90 rounded-xl gap-4 select-none relative overflow-hidden h-fit self-start shadow-sm sticky top-6">
+                  {/* Subtle animated background pattern */}
+                  <div className="absolute inset-0 bg-dots-pattern opacity-30 animate-[petShimmer_20s_linear_infinite]"></div>
+                  
+                  <span className="text-[10px] text-text-faint font-semibold uppercase tracking-widest font-mono z-10">Live Preview</span>
+                  
+                  <div className="scale-[1.4] origin-center py-6 z-10 drop-shadow-lg">
                     <KeyboardMascotAnimation active={true} pet={{ type: myPetType, color: myPetColor }} onlyMascot={true} />
+                  </div>
+
+                  <div className="flex flex-col items-center z-10 mt-2">
+                    <span className="text-base font-bold text-text text-center">
+                      {ALL_PETS_LIST.find(p => p.id === myPetType)?.label || "Mascot"}
+                    </span>
+                    <span className={cn("text-[10px] uppercase font-bold font-mono tracking-wider mt-1", 
+                      ALL_PETS_LIST.find(p => p.id === myPetType)?.rarity === "LEGENDARY" ? "text-amber-400" :
+                      ALL_PETS_LIST.find(p => p.id === myPetType)?.rarity === "EPIC" ? "text-purple-400" :
+                      ALL_PETS_LIST.find(p => p.id === myPetType)?.rarity === "RARE" ? "text-blue-400" : "text-text-muted"
+                    )}>
+                      {ALL_PETS_LIST.find(p => p.id === myPetType)?.rarity || "COMMON"}
+                    </span>
                   </div>
                 </div>
               </div>

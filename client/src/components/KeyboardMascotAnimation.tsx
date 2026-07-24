@@ -1,20 +1,24 @@
 "use client";
 
 import { cn } from "@/lib/utils";
+import { useMemo } from "react";
 
 interface KeyboardMascotAnimationProps {
   active: boolean;
   pet?: { type: string; color: string } | null;
   onlyMascot?: boolean;
   opponentName?: string;
+  rarity?: string;
 }
 
-export default function KeyboardMascotAnimation({ active, pet, onlyMascot = false, opponentName }: KeyboardMascotAnimationProps) {
+export default function KeyboardMascotAnimation({ active, pet, onlyMascot = false, opponentName, rarity }: KeyboardMascotAnimationProps) {
   const type = pet?.type ?? "cat";
   const color = pet?.color ?? "#FF6B00";
 
   const isBot = Boolean(opponentName && (opponentName.toLowerCase().includes("bot") || opponentName.toLowerCase().includes("ghost")));
   const activeState = active || isBot;
+
+  const screenPattern = useMemo(() => Math.floor(Math.random() * 3) + 1, []);
 
   const svgContent = (
     <svg width="80" height="60" viewBox="0 0 80 60" fill="none" className="shrink-0 overflow-visible drop-shadow-[0_6px_16px_rgba(0,0,0,0.18)]">
@@ -44,16 +48,58 @@ export default function KeyboardMascotAnimation({ active, pet, onlyMascot = fals
           <feGaussianBlur stdDeviation="2.5" result="blur" />
           <feComposite in="SourceGraphic" in2="blur" operator="over" />
         </filter>
+        <filter id="epicGlow" x="-30%" y="-30%" width="160%" height="160%">
+          <feGaussianBlur stdDeviation="2" result="blur" />
+          <feFlood floodColor="#A855F7" floodOpacity="0.5" result="color" />
+          <feComposite in="color" in2="blur" operator="in" result="glow" />
+          <feComposite in="SourceGraphic" in2="glow" operator="over" />
+        </filter>
+        <filter id="legendaryWarmGlow" x="-30%" y="-30%" width="160%" height="160%">
+          <feGaussianBlur stdDeviation="3" result="blur" />
+          <feFlood floodColor="#FFD700" floodOpacity="0.6" result="color" />
+          <feComposite in="color" in2="blur" operator="in" result="glow" />
+          <feComposite in="SourceGraphic" in2="glow" operator="over" />
+        </filter>
+        <radialGradient id="legendaryHaloGrad" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#FFF7D6" stopOpacity="0.8" />
+          <stop offset="50%" stopColor="#FFD700" stopOpacity="0.5" />
+          <stop offset="100%" stopColor="#FF8C00" stopOpacity="0" />
+        </radialGradient>
       </defs>
 
       <use href="#baseShadow" />
 
       {/* ── MASCOT BODY & HEAD ── */}
-      <g className={cn(!activeState ? "animate-mascot-thinking" : "")} style={{ transformOrigin: "40px 40px" }}>
+      <g 
+        className={cn(!activeState ? "animate-mascot-thinking" : "")} 
+        style={{ 
+          transformOrigin: "40px 40px",
+          transition: "all 0.3s ease",
+          filter: rarity === "LEGENDARY" ? "url(#legendaryWarmGlow)" : rarity === "EPIC" ? "url(#epicGlow)" : "none"
+        }}
+      >
+        {rarity === "LEGENDARY" && (
+          <g className="animate-legendary-pulse">
+            <ellipse cx="40" cy="22" rx="20" ry="20" fill="url(#legendaryHaloGrad)" />
+            <text x="20" y="15" fontSize="6" fill="#FFD700" className="animate-sparkle-float" style={{ animationDelay: "0s" }}>✦</text>
+            <text x="55" y="10" fontSize="5" fill="#FFF7D6" className="animate-sparkle-float" style={{ animationDelay: "0.5s" }}>✦</text>
+            <text x="50" y="30" fontSize="4" fill="#FF8C00" className="animate-sparkle-float" style={{ animationDelay: "1s" }}>✦</text>
+          </g>
+        )}
+        {rarity === "EPIC" && (
+          <g className="animate-epic-orbit" style={{ transformOrigin: "40px 25px" }}>
+            <circle cx="20" cy="25" r="2" fill="#A855F7" opacity="0.8" />
+            <circle cx="60" cy="20" r="1.5" fill="#C084FC" opacity="0.8" />
+            <circle cx="45" cy="5" r="2.5" fill="#A855F7" opacity="0.6" />
+            <circle cx="25" cy="40" r="1.5" fill="#C084FC" opacity="0.9" />
+          </g>
+        )}
 
         {/* 1. Cat */}
         {type === "cat" && (
           <g>
+            {/* Tail */}
+            <path d="M55 42 C65 42 70 30 65 25" stroke={color} strokeWidth="4" strokeLinecap="round" fill="none" className={!activeState ? "animate-cat-tail" : ""} style={{ transformOrigin: "55px 42px" }} />
             {/* Body */}
             <path d="M27 36 C22 36 20 42 20 46 L60 46 C60 42 58 36 53 36 C50 33 30 33 27 36Z" fill={color} />
             <path d="M27 36 C22 36 20 42 20 46 L60 46 C60 42 58 36 53 36 C50 33 30 33 27 36Z" fill="#000" opacity="0.08" />
@@ -116,8 +162,10 @@ export default function KeyboardMascotAnimation({ active, pet, onlyMascot = fals
             <ellipse cx="39" cy="24.8" rx="1" ry="0.6" fill="#fff" opacity="0.5" />
             {/* Mouth & tongue */}
             <path d="M37 27.5 Q40 29.5 43 27.5" stroke="#222" strokeWidth="0.8" fill="none" />
-            <ellipse cx="40" cy="30" rx="2.5" ry="2" fill="#FF5E6C" />
-            <path d="M38 30 L42 30" stroke="#FF3D50" strokeWidth="0.5" />
+            <g className={!activeState ? "animate-dog-pant" : ""} style={{ transformOrigin: "40px 29px" }}>
+              <ellipse cx="40" cy="30" rx="2.5" ry="2" fill="#FF5E6C" />
+              <path d="M38 30 L42 30" stroke="#FF3D50" strokeWidth="0.5" />
+            </g>
             {/* Cheeks */}
             <ellipse cx="30" cy="26" rx="4" ry="2.5" fill="#FF9EBE" opacity="0.3" />
             <ellipse cx="50" cy="26" rx="4" ry="2.5" fill="#FF9EBE" opacity="0.3" />
@@ -235,6 +283,8 @@ export default function KeyboardMascotAnimation({ active, pet, onlyMascot = fals
             <circle cx="50" cy="16.5" r="4.5" fill="#fff" />
             <circle cx="50" cy="17" r="2.8" fill="#111" />
             <circle cx="49" cy="15.8" r="1.1" fill="#fff" />
+            <rect x="25" y="11" width="10" height="11" fill={color} className={!activeState ? "animate-frog-blink" : ""} style={{ transformOrigin: "30px 11px", transform: "scaleY(0)" }} />
+            <rect x="45" y="11" width="10" height="11" fill={color} className={!activeState ? "animate-frog-blink" : ""} style={{ transformOrigin: "50px 11px", transform: "scaleY(0)" }} />
             {/* Nostrils */}
             <ellipse cx="37.5" cy="24.5" rx="1.2" ry="0.8" fill="#000" opacity="0.3" />
             <ellipse cx="42.5" cy="24.5" rx="1.2" ry="0.8" fill="#000" opacity="0.3" />
@@ -287,10 +337,10 @@ export default function KeyboardMascotAnimation({ active, pet, onlyMascot = fals
             <ellipse cx="40" cy="39" rx="14" ry="9" fill={color} />
             <ellipse cx="40" cy="39" rx="8" ry="5" fill="#fff" opacity="0.2" />
             {/* Long ears */}
-            <path d="M31 15 C28 2 24 -4 26 -8 C28 -4 30 4 32 12Z" fill={color} className="animate-ear-wiggle" style={{ transformOrigin: "31px 15px" }} />
-            <ellipse cx="29" cy="3" rx="2.5" ry="6" fill="#FFB5C8" opacity="0.8" className="animate-ear-wiggle" style={{ transformOrigin: "31px 15px" }} />
-            <path d="M49 15 C52 2 56 -4 54 -8 C52 -4 50 4 48 12Z" fill={color} className="animate-ear-wiggle-alt" style={{ transformOrigin: "49px 15px" }} />
-            <ellipse cx="51" cy="3" rx="2.5" ry="6" fill="#FFB5C8" opacity="0.8" className="animate-ear-wiggle-alt" style={{ transformOrigin: "49px 15px" }} />
+            <path d="M31 15 C28 2 24 -4 26 -8 C28 -4 30 4 32 12Z" fill={color} className={!activeState ? "animate-ear-wiggle-idle" : "animate-ear-wiggle"} style={{ transformOrigin: "31px 15px" }} />
+            <ellipse cx="29" cy="3" rx="2.5" ry="6" fill="#FFB5C8" opacity="0.8" className={!activeState ? "animate-ear-wiggle-idle" : "animate-ear-wiggle"} style={{ transformOrigin: "31px 15px" }} />
+            <path d="M49 15 C52 2 56 -4 54 -8 C52 -4 50 4 48 12Z" fill={color} className={!activeState ? "animate-ear-wiggle-idle" : "animate-ear-wiggle-alt"} style={{ transformOrigin: "49px 15px" }} />
+            <ellipse cx="51" cy="3" rx="2.5" ry="6" fill="#FFB5C8" opacity="0.8" className={!activeState ? "animate-ear-wiggle-idle" : "animate-ear-wiggle-alt"} style={{ transformOrigin: "49px 15px" }} />
             {/* Head */}
             <ellipse cx="40" cy="23" rx="12" ry="11" fill={color} />
             {/* Eyes */}
@@ -411,12 +461,14 @@ export default function KeyboardMascotAnimation({ active, pet, onlyMascot = fals
             {/* Wing hints */}
             <path d="M26 36 C20 34 18 40 22 44" stroke={color} strokeWidth="4" fill="none" strokeLinecap="round" />
             <path d="M54 36 C60 34 62 40 58 44" stroke={color} strokeWidth="4" fill="none" strokeLinecap="round" />
-            {/* Ear tufts */}
-            <polygon points="30,12 26,4 34,8" fill={color} />
-            <polygon points="50,12 54,4 46,8" fill={color} />
-            {/* Head */}
-            <ellipse cx="40" cy="22" rx="13" ry="12" fill={color} />
-            {/* Facial disc */}
+            {/* Head Group */}
+            <g className={!activeState ? "animate-owl-tilt" : ""} style={{ transformOrigin: "40px 22px" }}>
+              {/* Ear tufts */}
+              <polygon points="30,12 26,4 34,8" fill={color} />
+              <polygon points="50,12 54,4 46,8" fill={color} />
+              {/* Head */}
+              <ellipse cx="40" cy="22" rx="13" ry="12" fill={color} />
+              {/* Facial disc */}
             <ellipse cx="40" cy="23" rx="11" ry="10" fill="#C8AD7F" opacity="0.4" />
             {/* Large eyes with rings */}
             <circle cx="33" cy="20" r="5.5" fill="#fff" stroke="#6F4E37" strokeWidth="1.5" />
@@ -431,6 +483,7 @@ export default function KeyboardMascotAnimation({ active, pet, onlyMascot = fals
             <line x1="38.5" y1="20" x2="41.5" y2="20" stroke="#6F4E37" strokeWidth="0.5" />
             {/* Hooked beak */}
             <path d="M37 24 L40 28 L43 24 Q40 22 37 24Z" fill="#E8A020" />
+            </g>
           </g>
         )}
 
@@ -1048,10 +1101,34 @@ export default function KeyboardMascotAnimation({ active, pet, onlyMascot = fals
         <polygon points="26,34 54,34 56,45 24,45" fill="#12131C" stroke="#222533" strokeWidth="1" />
         <polygon points="28,36 52,36 54,43 26,43" fill="url(#screenGlow)" />
         <g className={cn(activeState ? "animate-code-pulse" : "opacity-40")} filter="url(#screenContentGlow)">
-          <line x1="31" y1="38" x2="40" y2="38" stroke="#00F5D4" strokeWidth="1.2" strokeLinecap="round" />
-          <line x1="31" y1="40" x2="46" y2="40" stroke="#FF007F" strokeWidth="1.2" strokeLinecap="round" />
-          <line x1="31" y1="42" x2="36" y2="42" stroke="#7000FF" strokeWidth="1.2" strokeLinecap="round" />
-          <line x1="39" y1="42" x2="47" y2="42" stroke="#FFBE0B" strokeWidth="1.2" strokeLinecap="round" />
+          {screenPattern === 1 && (
+            <>
+              <line x1="31" y1="38" x2="40" y2="38" stroke="#00F5D4" strokeWidth="1.2" strokeLinecap="round" />
+              <line x1="31" y1="40" x2="46" y2="40" stroke="#FF007F" strokeWidth="1.2" strokeLinecap="round" />
+              <line x1="31" y1="42" x2="36" y2="42" stroke="#7000FF" strokeWidth="1.2" strokeLinecap="round" />
+              <line x1="39" y1="42" x2="47" y2="42" stroke="#FFBE0B" strokeWidth="1.2" strokeLinecap="round" />
+            </>
+          )}
+          {screenPattern === 2 && (
+            <>
+              <rect x="31" y="37" width="16" height="2" rx="1" fill="#222533" />
+              <rect x="31" y="37" width="10" height="2" rx="1" fill="#00F5D4" />
+              <path d="M31 42 L33 44 L37 39" stroke="#00F5D4" strokeWidth="1" fill="none" />
+              <path d="M40 42 L42 44 L46 39" stroke="#FFBE0B" strokeWidth="1" fill="none" />
+            </>
+          )}
+          {screenPattern === 3 && (
+            <>
+              <circle cx="33" cy="38" r="0.8" fill="#FF007F" />
+              <circle cx="37" cy="38" r="0.8" fill="#FF007F" />
+              <circle cx="41" cy="38" r="0.8" fill="#FF007F" />
+              <circle cx="45" cy="38" r="0.8" fill="#FF007F" />
+              <circle cx="33" cy="42" r="0.8" fill="#00F5D4" />
+              <circle cx="37" cy="42" r="0.8" fill="#00F5D4" />
+              <circle cx="41" cy="42" r="0.8" fill="#00F5D4" />
+              <circle cx="45" cy="42" r="0.8" fill="#00F5D4" />
+            </>
+          )}
         </g>
         <polygon points="24,45 56,45 60,51 20,51" fill="url(#laptopBody)" stroke="#161822" strokeWidth="0.8" />
         <polygon points="25,45.5 55,45.5 57,48 23,48" fill="#11121A" opacity="0.8" />
@@ -1060,14 +1137,14 @@ export default function KeyboardMascotAnimation({ active, pet, onlyMascot = fals
 
       {/* ─── PAWS ─── */}
       <g>
-        <g className={cn(activeState ? "animate-paw-type-left" : "animate-paw-think-scratch")} style={{ transformOrigin: "26px 47px" }}>
+        <g className={cn(activeState ? "animate-paw-type-left" : "animate-paw-think-scratch")} style={{ transformOrigin: "26px 47px", transition: "all 0.3s ease" }}>
           {type === "crab" ? (
             <path d="M 22 45 Q 19 39 24 40 Q 27 41 24 46 Z" fill={color} stroke="#111" strokeWidth="0.8" />
           ) : (
             <circle cx="26" cy="47" r="4.5" fill={["panda","octopus","koala","badger","raccoon","robo_puppy"].includes(type) ? "#888" : color} stroke="rgba(0,0,0,0.15)" strokeWidth="0.75" />
           )}
         </g>
-        <g className={cn(activeState ? "animate-paw-type-right" : "animate-paw-think-tap")} style={{ transformOrigin: "54px 47px" }}>
+        <g className={cn(activeState ? "animate-paw-type-right" : "animate-paw-think-tap")} style={{ transformOrigin: "54px 47px", transition: "all 0.3s ease" }}>
           {type === "crab" ? (
             <path d="M 58 45 Q 61 39 56 40 Q 53 41 56 46 Z" fill={color} stroke="#111" strokeWidth="0.8" />
           ) : (
@@ -1187,6 +1264,56 @@ export default function KeyboardMascotAnimation({ active, pet, onlyMascot = fals
           50% { opacity: 1; }
         }
         .animate-led-blink { animation: ledBlink 0.5s infinite ease-in-out alternate; }
+
+        @keyframes legendPulse {
+          0%, 100% { transform: scale(1); opacity: 0.8; }
+          50% { transform: scale(1.1); opacity: 1; }
+        }
+        .animate-legendary-pulse { animation: legendPulse 3s infinite ease-in-out; }
+
+        @keyframes sparkleFloat {
+          0%, 100% { transform: translateY(0) scale(1); opacity: 0.5; }
+          50% { transform: translateY(-5px) scale(1.2); opacity: 1; }
+        }
+        .animate-sparkle-float { animation: sparkleFloat 2s infinite ease-in-out; }
+
+        @keyframes epicOrbit {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+        .animate-epic-orbit { animation: epicOrbit 8s infinite linear; }
+
+        @keyframes catTail {
+          0%, 100% { transform: rotate(0deg); }
+          50% { transform: rotate(15deg); }
+        }
+        .animate-cat-tail { animation: catTail 2s infinite ease-in-out; }
+
+        @keyframes dogPant {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(1px); }
+        }
+        .animate-dog-pant { animation: dogPant 0.3s infinite ease-in-out; }
+
+        @keyframes bunnyEarIdle {
+          0%, 100% { transform: rotate(0deg); }
+          25% { transform: rotate(-15deg); }
+          75% { transform: rotate(5deg); }
+        }
+        .animate-ear-wiggle-idle { animation: bunnyEarIdle 3s infinite ease-in-out; }
+
+        @keyframes owlTilt {
+          0%, 100% { transform: rotate(0deg); }
+          20% { transform: rotate(5deg); }
+          80% { transform: rotate(-5deg); }
+        }
+        .animate-owl-tilt { animation: owlTilt 4s infinite ease-in-out; }
+
+        @keyframes frogBlink {
+          0%, 96%, 100% { transform: scaleY(0); }
+          98% { transform: scaleY(1); }
+        }
+        .animate-frog-blink { animation: frogBlink 4s infinite; }
 
         /* ══ LEGENDARY UNIQUE ANIMATIONS ══ */
 
