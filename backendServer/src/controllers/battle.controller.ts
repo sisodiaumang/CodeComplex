@@ -37,6 +37,48 @@ const DIFFICULTY_MAP: Record<string, string> = {
  * question of that category + difficulty, and returns the slug.
  * Falls back: if the first topic has no questions, tries others.
  */
+function buildTopicFilter(topic: string, queryField: string) {
+    const raw = topic.trim();
+    const cleaned = raw.toLowerCase().replace(/[-_ ]/g, "");
+    
+    let regexStr: string;
+    if (cleaned === "linkedlist" || cleaned === "linked") {
+        regexStr = "(linked[-_\\s]?list|linked)";
+    } else if (cleaned === "binarytree" || cleaned === "binarytrees") {
+        regexStr = "binary[-_\\s]?tree(s)?";
+    } else if (cleaned === "binarysearch" || cleaned === "bst") {
+        regexStr = "(binary[-_\\s]?search|bst)";
+    } else if (cleaned === "dynamicprogramming" || cleaned === "dp") {
+        regexStr = "(dynamic[-_\\s]?programming|dp)";
+    } else {
+        const parts = raw.split(/[-_ ]+/).filter(Boolean);
+        regexStr = parts.map(p => p.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join("[-_\\s]?");
+    }
+
+    const topicRegex = new RegExp("^" + regexStr + "$", "i");
+    const containsRegex = new RegExp(regexStr, "i");
+
+    if (queryField === "category") {
+        return {
+            $or: [
+                { category: raw },
+                { category: topicRegex },
+                { subCategory: raw },
+                { subCategory: topicRegex },
+                { topics: raw },
+                { topics: topicRegex },
+                { "metadata.keywords": raw },
+                { "metadata.keywords": topicRegex },
+                { "metadata.tags": raw },
+                { "metadata.tags": topicRegex },
+                { slug: containsRegex }
+            ]
+        };
+    } else {
+        return { [queryField]: { $in: [raw, topicRegex] } };
+    }
+}
+
 async function pickRandomQuestion(
     room: InstanceType<typeof BattleRoom>
 ): Promise<string | null> {
@@ -72,27 +114,7 @@ async function pickRandomQuestion(
 
     // 1. Try selected topics at EXACT difficulty with preferred mode
     for (const topic of shuffledTopics) {
-        const normalizedTopic = topic.replace(/[-_]/g, "[_\\- ]");
-        const topicRegex = new RegExp("^" + normalizedTopic + "$", "i");
-        const containsRegex = new RegExp(topic.replace(/[-_]/g, "[-_ ]"), "i");
-
-        const topicFilter = queryField === "category" 
-            ? { 
-                $or: [
-                    { category: topic }, 
-                    { category: topicRegex }, 
-                    { subCategory: topic }, 
-                    { subCategory: topicRegex }, 
-                    { topics: topic }, 
-                    { topics: topicRegex }, 
-                    { "metadata.keywords": topic }, 
-                    { "metadata.keywords": topicRegex }, 
-                    { "metadata.tags": topic }, 
-                    { "metadata.tags": topicRegex }, 
-                    { slug: containsRegex }
-                ] 
-              }
-            : { [queryField]: { $in: [topic, topicRegex] } };
+        const topicFilter = buildTopicFilter(topic, queryField);
 
         const query: any = {
             ...topicFilter,
@@ -117,27 +139,7 @@ async function pickRandomQuestion(
 
     // 2. Try selected topics at EXACT difficulty without mode restriction
     for (const topic of shuffledTopics) {
-        const normalizedTopic = topic.replace(/[-_]/g, "[_\\- ]");
-        const topicRegex = new RegExp("^" + normalizedTopic + "$", "i");
-        const containsRegex = new RegExp(topic.replace(/[-_]/g, "[-_ ]"), "i");
-
-        const topicFilter = queryField === "category" 
-            ? { 
-                $or: [
-                    { category: topic }, 
-                    { category: topicRegex }, 
-                    { subCategory: topic }, 
-                    { subCategory: topicRegex }, 
-                    { topics: topic }, 
-                    { topics: topicRegex }, 
-                    { "metadata.keywords": topic }, 
-                    { "metadata.keywords": topicRegex }, 
-                    { "metadata.tags": topic }, 
-                    { "metadata.tags": topicRegex }, 
-                    { slug: containsRegex }
-                ] 
-              }
-            : { [queryField]: { $in: [topic, topicRegex] } };
+        const topicFilter = buildTopicFilter(topic, queryField);
 
         const query: any = {
             ...topicFilter,
@@ -153,29 +155,9 @@ async function pickRandomQuestion(
         }
     }
 
-    // 3. Try selected topics at ANY difficulty (topic preservation over difficulty)
+    // 3. Try selected topics at ANY difficulty (topic boundary enforcement)
     for (const topic of shuffledTopics) {
-        const normalizedTopic = topic.replace(/[-_]/g, "[_\\- ]");
-        const topicRegex = new RegExp("^" + normalizedTopic + "$", "i");
-        const containsRegex = new RegExp(topic.replace(/[-_]/g, "[-_ ]"), "i");
-
-        const topicFilter = queryField === "category" 
-            ? { 
-                $or: [
-                    { category: topic }, 
-                    { category: topicRegex }, 
-                    { subCategory: topic }, 
-                    { subCategory: topicRegex }, 
-                    { topics: topic }, 
-                    { topics: topicRegex }, 
-                    { "metadata.keywords": topic }, 
-                    { "metadata.keywords": topicRegex }, 
-                    { "metadata.tags": topic }, 
-                    { "metadata.tags": topicRegex }, 
-                    { slug: containsRegex }
-                ] 
-              }
-            : { [queryField]: { $in: [topic, topicRegex] } };
+        const topicFilter = buildTopicFilter(topic, queryField);
 
         const query: any = {
             ...topicFilter,
@@ -190,7 +172,7 @@ async function pickRandomQuestion(
         }
     }
 
-    // 3. Try ANY question in the system matching the EXACT difficulty
+    // 4. Try ANY question in the system matching the EXACT difficulty
     const sameDiffQuery: any = {
         difficulty: difficulty as any,
         "battleConfig.enabled": true,
@@ -210,7 +192,7 @@ async function pickRandomQuestion(
         return pick.slug ?? null;
     }
 
-    // 4. Last resort fallback: any battle-enabled question for this model
+    // 5. Last resort fallback: any battle-enabled question for this model
     const fallbackQuery: any = { "battleConfig.enabled": true };
     if (isQuestionModel) fallbackQuery.isDeleted = { $ne: true };
 
