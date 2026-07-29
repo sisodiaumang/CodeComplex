@@ -50,6 +50,10 @@ function buildTopicFilter(topic: string, queryField: string) {
         regexStr = "(binary[-_\\s]?search|bst)";
     } else if (cleaned === "dynamicprogramming" || cleaned === "dp") {
         regexStr = "(dynamic[-_\\s]?programming|dp)";
+    } else if (cleaned === "array" || cleaned === "arrays") {
+        regexStr = "array(s)?";
+    } else if (cleaned === "string" || cleaned === "strings") {
+        regexStr = "string(s)?";
     } else {
         const parts = raw.split(/[-_ ]+/).filter(Boolean);
         regexStr = parts.map(p => p.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join("[-_\\s]?");
@@ -65,8 +69,11 @@ function buildTopicFilter(topic: string, queryField: string) {
                 { category: topicRegex },
                 { subCategory: raw },
                 { subCategory: topicRegex },
+                { subCategory: containsRegex },
                 { topics: raw },
                 { topics: topicRegex },
+                { "metadata.topics": raw },
+                { "metadata.topics": topicRegex },
                 { "metadata.keywords": raw },
                 { "metadata.keywords": topicRegex },
                 { "metadata.tags": raw },
@@ -75,7 +82,15 @@ function buildTopicFilter(topic: string, queryField: string) {
             ]
         };
     } else {
-        return { [queryField]: { $in: [raw, topicRegex] } };
+        return {
+            $or: [
+                { [queryField]: { $in: [raw, topicRegex] } },
+                { "metadata.topics": { $in: [raw, topicRegex] } },
+                { "metadata.tags": { $in: [raw, topicRegex] } },
+                { subCategory: containsRegex },
+                { slug: containsRegex }
+            ]
+        };
     }
 }
 
@@ -155,7 +170,7 @@ async function pickRandomQuestion(
         }
     }
 
-    // 3. Try selected topics at ANY difficulty (topic boundary enforcement)
+    // 3. Try selected topics at ANY difficulty (strict topic preservation)
     for (const topic of shuffledTopics) {
         const topicFilter = buildTopicFilter(topic, queryField);
 
@@ -172,7 +187,26 @@ async function pickRandomQuestion(
         }
     }
 
-    // 4. Try ANY question in the system matching the EXACT difficulty
+    // If user explicitly selected topics, DO NOT jump to completely different topics (e.g. String vs LinkedList)
+    if (shuffledTopics.length > 0) {
+        // Broad topic slug search fallback for selected topics
+        for (const topic of shuffledTopics) {
+            const clean = topic.toLowerCase().replace(/[-_ ]/g, "");
+            const broadRegex = new RegExp(clean.slice(0, 4), "i"); // e.g. "link"
+            const query: any = {
+                slug: broadRegex,
+                "battleConfig.enabled": true,
+            };
+            if (isQuestionModel) query.isDeleted = { $ne: true };
+            const questions = await Model.find(query).select("slug").lean();
+            if (questions.length > 0) {
+                const pick = questions[Math.floor(Math.random() * questions.length)];
+                return pick.slug ?? null;
+            }
+        }
+    }
+
+    // 4. Try ANY question in the system matching the EXACT difficulty (only if no topics selected)
     const sameDiffQuery: any = {
         difficulty: difficulty as any,
         "battleConfig.enabled": true,
