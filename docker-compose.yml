@@ -77,6 +77,31 @@ services:
     networks:
       - devarena-network
 
+  # Standalone Email Queue Worker
+  email-worker:
+    build:
+      context: ./backendServer
+      dockerfile: Dockerfile.worker
+    container_name: devarena-email-worker
+    restart: always
+    depends_on:
+      - mongodb
+      - redis
+    environment:
+      - NODE_ENV=production
+      - MONGODB_URI=${MONGODB_URI}
+      - REDIS_URL=${REDIS_URL}
+      - CLIENT_URL=${CLIENT_URL}
+      - JWT_ACCESS_SECRET=${JWT_ACCESS_SECRET}
+      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET}
+      - EMAIL_USER=${EMAIL_USER}
+      - EMAIL_PASS=${EMAIL_PASS}
+      - EMAIL_FROM_ADDRESS=${EMAIL_FROM_ADDRESS}
+      - OWNER_EMAIL=${OWNER_EMAIL}
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+    networks:
+      - devarena-network
+
   # Next.js Client
   frontend:
     build:

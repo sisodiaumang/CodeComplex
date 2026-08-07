@@ -15,7 +15,7 @@ import { env } from "../config/env.js";
 import bcrypt from "bcrypt";
 import OTP, { MAX_OTP_ATTEMPTS } from "../models/otp.model.js";
 import { generateOTP } from "../services/otp.service.js";
-import { sendVerificationMail, sendWelcomeMail, sendEmailChangeMail } from "../services/emailSend.service.js";
+import { enqueueVerificationEmail, enqueueWelcomeEmail, enqueueEmailChangeEmail } from "../queues/emailQueue.js";
 import UserProfile from "../models/userProfile.model.js";
 import Friendship from "../models/friendship.model.js";
 import { OtpPurpose } from "../interfaces/otp.interface.js";
@@ -240,7 +240,7 @@ const signupUser = asyncHandler(async (req, res) => {
     const otp = await sendOtp(userData.email, "EMAIL_VERIFICATION");
 
     try {
-        await sendVerificationMail(userData.email, otp);
+        await enqueueVerificationEmail(userData.email, otp);
     } catch (err: any) {
         await OTP.deleteOne({ email: userData.email, purpose: "EMAIL_VERIFICATION" });
         const errorMsg = err?.message || "Failed to send verification email";
@@ -329,7 +329,7 @@ const verifyUser = asyncHandler(async (req, res) => {
     await UserProfile.create({ userId: user._id });
 
     // Send Welcome Email
-    sendWelcomeMail(user.email, user.username).catch((err) => {
+    enqueueWelcomeEmail(user.email, user.username).catch((err) => {
         console.error("[EmailService] Failed to send welcome mail:", err);
     });
 
@@ -395,7 +395,7 @@ const resendOtp = asyncHandler(async (req, res) => {
     const otp = await sendOtp(email, purpose as OtpPurpose);
 
     try {
-        await sendVerificationMail(email, otp);
+        await enqueueVerificationEmail(email, otp);
     } catch {
         throw new ApiError(500, "Failed to send OTP email");
     }
@@ -546,7 +546,7 @@ const forgotPassword = asyncHandler(async (req, res) => {
     const otp = await sendOtp(email, "PASSWORD_RESET");
 
     try {
-        await sendVerificationMail(email, otp);
+        await enqueueVerificationEmail(email, otp);
     } catch {
         await OTP.deleteOne({ email, purpose: "PASSWORD_RESET" });
         throw new ApiError(500, "Failed to send password reset email");
@@ -699,7 +699,7 @@ const requestEmailChange = asyncHandler(async (req, res) => {
     const otp = await sendOtp(newEmail, "EMAIL_CHANGE");
 
     try {
-        await sendEmailChangeMail(newEmail, otp);
+        await enqueueEmailChangeEmail(newEmail, otp);
     } catch {
         await OTP.deleteOne({ email: newEmail, purpose: "EMAIL_CHANGE" });
         throw new ApiError(500, "Failed to send verification email to new address");

@@ -9,6 +9,9 @@ const transporter = isResend
           host: 'smtp.resend.com',
           port: 465,
           secure: true,
+          connectionTimeout: 5000,
+          greetingTimeout: 5000,
+          socketTimeout: 10000,
           auth: {
               user: 'resend',
               pass: env.EMAIL_PASS,
@@ -16,6 +19,9 @@ const transporter = isResend
       })
     : nodemailer.createTransport({
           service: 'gmail',
+          connectionTimeout: 5000,
+          greetingTimeout: 5000,
+          socketTimeout: 10000,
           auth: {
               user: env.EMAIL_USER,
               pass: env.EMAIL_PASS,

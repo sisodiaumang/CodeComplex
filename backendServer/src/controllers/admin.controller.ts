@@ -18,7 +18,7 @@ import mongoose from "mongoose";
 import os from "os";
 import { getAverageApiLatency } from "../utils/telemetry.js";
 import { env } from "../config/env.js";
-import { sendSiteReportMail } from "../services/emailSend.service.js";
+import { enqueueSiteReportEmail } from "../queues/emailQueue.js";
 
 // Global variables for CPU usage tracking
 let lastCpuUsage = process.cpuUsage();
@@ -581,7 +581,7 @@ export const createReport = asyncHandler(
 
         if (targetType === "SITE") {
             // Trigger report email to the owner of the platform
-            await sendSiteReportMail(req.user.username, req.user.email, reason, details);
+            await enqueueSiteReportEmail(req.user.username, req.user.email, reason, details);
         }
 
         res.status(201).json({

@@ -1,10 +1,10 @@
 import cron from "node-cron";
 import User from "../models/user.model.js";
-import { sendGrindReminderMail } from "../services/emailSend.service.js";
+import { enqueueGrindReminderEmail } from "../queues/emailQueue.js";
 
 /**
  * Triggers the grind reminder email task immediately for all inactive users.
- * Returns the number of reminder emails successfully sent.
+ * Returns the number of reminder emails successfully enqueued.
  */
 export const triggerGrindReminders = async (): Promise<number> => {
     const sevenDaysAgo = new Date();
@@ -19,18 +19,16 @@ export const triggerGrindReminders = async (): Promise<number> => {
 
     console.log(`[Job] Found ${inactiveUsers.length} inactive users.`);
 
-    let sentCount = 0;
+    let enqueuedCount = 0;
     for (const user of inactiveUsers) {
         try {
-            await sendGrindReminderMail(user.email, user.username);
-            sentCount++;
-            // Basic rate throttling to avoid hitting SMTP sending limits
-            await new Promise((r) => setTimeout(r, 1000));
+            await enqueueGrindReminderEmail(user.email, user.username);
+            enqueuedCount++;
         } catch (sendErr: any) {
-            console.error(`[Job] Failed to send reminder email to ${user.email}:`, sendErr.message);
+            console.error(`[Job] Failed to enqueue reminder email to ${user.email}:`, sendErr.message);
         }
     }
-    return sentCount;
+    return enqueuedCount;
 };
 
 /**

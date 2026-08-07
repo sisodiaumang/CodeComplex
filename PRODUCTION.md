@@ -155,8 +155,9 @@ docker-compose exec backend npm run seed:bug-fix
         │
         ▼
    [ Docker Compose Network ]
-   ├── Frontend Container (Next.js 16)
-   ├── Backend Container  (Express 5 API & Socket.IO)
-   ├── MongoDB Container  (Port 27017)
-   └── Redis Container    (Port 6379)
+   ├── Frontend Container     (Next.js 16)
+   ├── Backend Container      (Express 5 API & Socket.IO)
+   ├── Email Worker Container (BullMQ Async Queue Processor)
+   ├── MongoDB Container      (Port 27017)
+   └── Redis Container        (Port 6379)
 ```
