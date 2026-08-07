@@ -13,11 +13,13 @@ export const SOCKET_URL =
 
 export class ApiError extends Error {
   status: number;
+  data?: any;
 
-  constructor(status: number, message: string) {
+  constructor(status: number, message: string, data?: any) {
     super(message);
     this.name = "ApiError";
     this.status = status;
+    this.data = data;
   }
 }
 
@@ -92,7 +94,8 @@ export async function api<T = unknown>(
   if (!res.ok) {
     throw new ApiError(
       res.status,
-      json?.message ?? `Request failed with status ${res.status}`
+      json?.message ?? `Request failed with status ${res.status}`,
+      json?.data
     );
   }
 

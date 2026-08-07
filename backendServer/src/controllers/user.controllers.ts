@@ -205,6 +205,45 @@ function getCookieOptions() {
 
 // ─── signupUser ────────────────────────────────────────────────────────────────
 
+export async function generateUsernameSuggestions(baseUsername: string): Promise<string[]> {
+    const cleanBase = baseUsername.toLowerCase().trim().replace(/[^a-z0-9_]/g, "");
+    if (!cleanBase) return ["dev_1", "dev_2", "coder_99"];
+
+    const candidatesSet = new Set<string>();
+    
+    // Variational patterns matching the base username
+    candidatesSet.add(`${cleanBase}_dev`);
+    candidatesSet.add(`${cleanBase}_code`);
+    candidatesSet.add(`${cleanBase}_x`);
+    candidatesSet.add(`${cleanBase}_arena`);
+    candidatesSet.add(`real_${cleanBase}`);
+    candidatesSet.add(`${cleanBase}_official`);
+    
+    // Append random digits
+    for (let i = 0; i < 6; i++) {
+        const randNum = Math.floor(10 + Math.random() * 900);
+        candidatesSet.add(`${cleanBase}${randNum}`);
+        candidatesSet.add(`${cleanBase}_${randNum}`);
+    }
+
+    const candidateList = Array.from(candidatesSet);
+
+    // Check which candidates already exist in MongoDB
+    const existingUsers = await User.find({ username: { $in: candidateList } }).select("username");
+    const takenUsernames = new Set(existingUsers.map((u) => u.username.toLowerCase()));
+
+    // Filter candidates to those available
+    const availableSuggestions: string[] = [];
+    for (const cand of candidateList) {
+        if (cand.length >= 3 && cand.length <= 30 && !takenUsernames.has(cand) && !isReservedUsername(cand)) {
+            availableSuggestions.push(cand);
+            if (availableSuggestions.length >= 4) break;
+        }
+    }
+
+    return availableSuggestions;
+}
+
 const signupUser = asyncHandler(async (req, res) => {
 
     type userSignup = {
@@ -224,15 +263,19 @@ const signupUser = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Account Creation Failed", ["Email not found"]);
     if (!userData.password)
         throw new ApiError(400, "Account Creation Failed", ["Password not found"]);
-    if (isReservedUsername(userData.username))
-        throw new ApiError(409, "Account Creation Failed", ["This username is reserved and cannot be used"]);
+    if (isReservedUsername(userData.username)) {
+        const suggestions = await generateUsernameSuggestions(userData.username);
+        throw new ApiError(409, "Account Creation Failed", ["This username is reserved and cannot be used"], { suggestions });
+    }
     const eUser = await User.findOne({ email: userData.email });
     if (eUser)
         throw new ApiError(409, "Account Creation Failed", ["Email already in use"]);
 
     const uUser = await User.findOne({ username: userData.username });
-    if (uUser)
-        throw new ApiError(409, "Account Creation Failed", ["Username already in use"]);
+    if (uUser) {
+        const suggestions = await generateUsernameSuggestions(userData.username);
+        throw new ApiError(409, "Account Creation Failed", ["Username already in use"], { suggestions });
+    }
 
     // Hash password before storing — never store plain-text even temporarily
     const passwordHash = await bcrypt.hash(userData.password, 12);

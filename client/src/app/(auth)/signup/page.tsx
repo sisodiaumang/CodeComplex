@@ -15,6 +15,7 @@ export default function SignupPage() {
   const [step, setStep] = useState<Step>("form");
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
+  const [suggestions, setSuggestions] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
   const [form, setForm] = useState({
@@ -33,6 +34,7 @@ export default function SignupPage() {
   async function onSignup(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    setSuggestions([]);
     if (!accepted) {
       setError("You must accept the Terms of Service, Privacy Policy, and Community Guidelines to create an account.");
       return;
@@ -42,8 +44,11 @@ export default function SignupPage() {
       await api("/user/signup", { method: "POST", body: { ...form, acceptTerms: accepted } });
       setNotice(`We sent a 6-digit code to ${form.email}.`);
       setStep("verify");
-    } catch (err) {
+    } catch (err: any) {
       setError(errorMessage(err));
+      if (err?.data?.suggestions && Array.isArray(err.data.suggestions)) {
+        setSuggestions(err.data.suggestions);
+      }
     } finally {
       setLoading(false);
     }
@@ -142,17 +147,45 @@ export default function SignupPage() {
           onChange={(e) => set("fullName", e.target.value)}
           placeholder="Ada Lovelace"
         />
-        <Input
-          label="Username"
-          name="username"
-          required
-          minLength={3}
-          maxLength={30}
-          value={form.username}
-          onChange={(e) => set("username", e.target.value.toLowerCase())}
-          placeholder="ada_lovelace"
-          hint="Lowercase, 3–30 characters. This is your arena tag."
-        />
+        <div>
+          <Input
+            label="Username"
+            name="username"
+            required
+            minLength={3}
+            maxLength={30}
+            value={form.username}
+            onChange={(e) => {
+              set("username", e.target.value.toLowerCase());
+              if (suggestions.length > 0) setSuggestions([]);
+            }}
+            placeholder="ada_lovelace"
+            hint="Lowercase, 3–30 characters. This is your arena tag."
+          />
+          {suggestions.length > 0 && (
+            <div className="mt-2 rounded-lg border border-primary/25 bg-primary/5 p-3 text-xs">
+              <p className="font-medium text-text mb-2">
+                Available matching tags you can use:
+              </p>
+              <div className="flex flex-wrap gap-1.5">
+                {suggestions.map((sug) => (
+                  <button
+                    key={sug}
+                    type="button"
+                    onClick={() => {
+                      set("username", sug);
+                      setSuggestions([]);
+                      setError(null);
+                    }}
+                    className="rounded-md border border-primary/30 bg-surface px-2.5 py-1 text-xs font-mono font-semibold text-primary hover:bg-primary hover:text-white transition-colors cursor-pointer"
+                  >
+                    @{sug}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
         <Input
           label="Email"
           name="email"
