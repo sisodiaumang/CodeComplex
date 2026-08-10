@@ -3008,6 +3008,21 @@ function CodingWorkspace({ room, matchId, onLeave }: CodingWorkspaceProps) {
                                     <Terminal className="size-3" />
                                     <span>Apply to Editor</span>
                                   </button>
+
+                                  <button
+                                    onClick={() => {
+                                      const targetCode = cleanSolution.trim() || codeSolution;
+                                      setCodeByLang(prev => ({ ...prev, [selectedLang]: targetCode }));
+                                      setTimeout(() => {
+                                        handleSubmit();
+                                      }, 150);
+                                    }}
+                                    disabled={submitting || compiling || hasPerfectScore || matchEnded}
+                                    className="flex items-center gap-1 text-[11px] font-mono text-emerald-400 hover:text-emerald-300 transition-colors cursor-pointer px-2.5 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/25 font-bold disabled:opacity-50"
+                                  >
+                                    <Send className="size-3" />
+                                    <span>Submit Solution</span>
+                                  </button>
                                 </div>
                               </div>
                               <pre className="p-4 text-xs font-mono text-text leading-relaxed overflow-x-auto max-h-[380px] scrollbar-thin whitespace-pre select-text">
