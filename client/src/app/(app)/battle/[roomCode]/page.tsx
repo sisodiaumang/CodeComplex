@@ -43,6 +43,8 @@ import {
   Eye,
   EyeOff,
   User,
+  BookOpen,
+  Lock,
 } from "lucide-react";
 import Editor from "@monaco-editor/react";
 import { api, errorMessage } from "@/lib/api";
@@ -1305,7 +1307,9 @@ function CodingWorkspace({ room, matchId, onLeave }: CodingWorkspaceProps) {
   }, [workspaceLangs, selectedLang]);
 
   const [consoleTab, setConsoleTab] = useState<"result" | "submissions">("result");
-  const [activeTab, setActiveTab] = useState<"description" | "submissions" | "opponent">("description");
+  const [activeTab, setActiveTab] = useState<"description" | "submissions" | "opponent" | "solution">("description");
+  const [solutionLang, setSolutionLang] = useState<string>("javascript");
+  const [copiedSolution, setCopiedSolution] = useState(false);
   const [selectedOpponentName, setSelectedOpponentName] = useState<string>("");
   const { resolved: resolvedTheme } = useTheme();
   
@@ -2508,6 +2512,34 @@ function CodingWorkspace({ room, matchId, onLeave }: CodingWorkspaceProps) {
                   <User className="size-3.5 inline mr-1" /> Opponent
                 </button>
               )}
+              {room.isSolo && (
+                <button
+                  onClick={() => {
+                    if (hasSubmitted) {
+                      setActiveTab("solution");
+                    } else {
+                      alert("Please submit your code at least once to unlock the reference solution!");
+                    }
+                  }}
+                  className={cn(
+                    "h-10 px-3 text-xs font-semibold border-b-2 transition-all cursor-pointer flex items-center gap-1.5",
+                    activeTab === "solution"
+                      ? "border-emerald-500 text-emerald-400 font-bold"
+                      : hasSubmitted
+                      ? "border-transparent text-emerald-400/90 hover:text-emerald-300 font-medium"
+                      : "border-transparent text-text-faint hover:text-text-muted opacity-75"
+                  )}
+                  title={hasSubmitted ? "View official solution" : "Submit at least 1 attempt to unlock solution"}
+                >
+                  {hasSubmitted ? <BookOpen className="size-3.5 inline" /> : <Lock className="size-3.5 inline text-amber-400" />}
+                  <span>Solution</span>
+                  {!hasSubmitted && (
+                    <span className="text-[9px] font-mono font-bold bg-amber-500/10 text-amber-400 px-1.5 py-0.5 rounded border border-amber-500/20 uppercase tracking-wider">
+                      Locked
+                    </span>
+                  )}
+                </button>
+              )}
             </div>
           </div>
 
@@ -2839,6 +2871,173 @@ function CodingWorkspace({ room, matchId, onLeave }: CodingWorkspaceProps) {
                       </div>
                     );
                   })
+                )}
+              </div>
+            ) : activeTab === "solution" ? (
+              <div className="p-5 space-y-6 select-text font-sans">
+                {!hasSubmitted ? (
+                  <div className="p-8 text-center bg-surface-2/40 border border-border/60 rounded-2xl space-y-3">
+                    <div className="size-12 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center mx-auto">
+                      <Lock className="size-6" />
+                    </div>
+                    <h3 className="text-base font-extrabold text-text">Solution Locked</h3>
+                    <p className="text-xs text-text-muted max-w-sm mx-auto leading-relaxed">
+                      In Solo Practice Mode, official reference solutions are unlocked automatically after you make your first submission attempt.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-6">
+                    <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center justify-between">
+                      <div className="flex items-center gap-2.5">
+                        <div className="p-2 rounded-lg bg-emerald-500/20 text-emerald-400">
+                          <BookOpen className="size-5" />
+                        </div>
+                        <div>
+                          <h3 className="text-sm font-bold text-text">Official Reference Solution</h3>
+                          <p className="text-[11px] text-text-faint">Available in Solo Practice Mode</p>
+                        </div>
+                      </div>
+                      <Badge className="bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-[10px] font-mono uppercase font-bold">
+                        UNLOCKED
+                      </Badge>
+                    </div>
+
+                    {/* 1. Code Solution Box */}
+                    {(() => {
+                      const availSolutions = question?.solutions || {};
+                      const referenceSol = question?.judgeConfig?.referenceSolution || question?.referenceSolution;
+                      const solLangs = Object.keys(availSolutions);
+                      const currentSolLang = solLangs.includes(solutionLang) ? solutionLang : (solLangs[0] || selectedLang || "javascript");
+                      const codeSolution = availSolutions[currentSolLang] || (typeof referenceSol === "string" ? referenceSol : null);
+
+                      return (
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between flex-wrap gap-2">
+                            <h4 className="text-xs font-bold text-text uppercase tracking-wider font-mono flex items-center gap-2">
+                              <Code2 className="size-4 text-primary" /> Reference Code Solution
+                            </h4>
+                            
+                            {solLangs.length > 0 && (
+                              <div className="flex items-center gap-1.5 bg-surface-2 p-1 rounded-lg border border-border/60">
+                                {solLangs.map((lang) => (
+                                  <button
+                                    key={lang}
+                                    onClick={() => setSolutionLang(lang)}
+                                    className={cn(
+                                      "px-2.5 py-1 text-[10px] font-bold rounded-md font-mono transition-colors uppercase cursor-pointer",
+                                      currentSolLang === lang
+                                        ? "bg-primary text-white shadow-sm"
+                                        : "text-text-muted hover:text-text hover:bg-surface-3"
+                                    )}
+                                  >
+                                    {lang === "cpp" ? "C++" : lang}
+                                  </button>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+
+                          {codeSolution ? (
+                            <div className="relative rounded-xl border border-border/80 bg-surface-2 overflow-hidden shadow-inner">
+                              <div className="flex items-center justify-between px-4 py-2 bg-surface-3/80 border-b border-border/60 text-xs font-mono">
+                                <span className="text-text-muted font-bold text-[11px] uppercase">{currentSolLang} Solution</span>
+                                <div className="flex items-center gap-2">
+                                  <button
+                                    onClick={() => {
+                                      navigator.clipboard.writeText(codeSolution);
+                                      setCopiedSolution(true);
+                                      setTimeout(() => setCopiedSolution(false), 2000);
+                                    }}
+                                    className="flex items-center gap-1 text-[11px] font-mono text-text-muted hover:text-primary transition-colors cursor-pointer px-2 py-0.5 rounded bg-surface border border-border/50"
+                                  >
+                                    {copiedSolution ? <Check className="size-3 text-emerald-400" /> : <Copy className="size-3" />}
+                                    <span>{copiedSolution ? "Copied!" : "Copy"}</span>
+                                  </button>
+
+                                  <button
+                                    onClick={() => {
+                                      setCodeByLang(prev => ({ ...prev, [selectedLang]: codeSolution }));
+                                      alert("Solution copied into your editor workspace!");
+                                    }}
+                                    className="flex items-center gap-1 text-[11px] font-mono text-primary hover:text-primary-hover transition-colors cursor-pointer px-2 py-0.5 rounded bg-primary/10 border border-primary/20 font-bold"
+                                  >
+                                    <Terminal className="size-3" />
+                                    <span>Apply to Editor</span>
+                                  </button>
+                                </div>
+                              </div>
+                              <pre className="p-4 text-xs font-mono text-text leading-relaxed overflow-x-auto max-h-[380px] scrollbar-thin whitespace-pre">
+                                {codeSolution}
+                              </pre>
+                            </div>
+                          ) : (
+                            <div className="p-4 bg-surface-2 border border-border/60 rounded-xl text-xs text-text-muted italic">
+                              No code solution provided for this challenge. Review the editorial breakdown below.
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })()}
+
+                    {/* 2. Editorial & Approach Explanation */}
+                    {question?.editorial && (
+                      <div className="space-y-4 border-t border-border/60 pt-5">
+                        <h4 className="text-xs font-bold text-text uppercase tracking-wider font-mono flex items-center gap-2">
+                          <Sparkles className="size-4 text-amber-400" /> Editorial & Algorithm Breakdown
+                        </h4>
+
+                        {question.editorial.title && (
+                          <h3 className="text-sm font-extrabold text-text">{question.editorial.title}</h3>
+                        )}
+
+                        {/* Complexities */}
+                        {(question.editorial.timeComplexity || question.editorial.spaceComplexity) && (
+                          <div className="grid grid-cols-2 gap-3">
+                            {question.editorial.timeComplexity && (
+                              <div className="p-3 bg-surface-2 border border-border/60 rounded-xl space-y-1">
+                                <span className="text-[10px] font-mono uppercase font-bold text-text-faint">Time Complexity</span>
+                                <p className="text-xs font-mono font-bold text-primary">{question.editorial.timeComplexity}</p>
+                              </div>
+                            )}
+                            {question.editorial.spaceComplexity && (
+                              <div className="p-3 bg-surface-2 border border-border/60 rounded-xl space-y-1">
+                                <span className="text-[10px] font-mono uppercase font-bold text-text-faint">Space Complexity</span>
+                                <p className="text-xs font-mono font-bold text-amber-400">{question.editorial.spaceComplexity}</p>
+                              </div>
+                            )}
+                          </div>
+                        )}
+
+                        {/* Intuition & Optimal Solution Markdown */}
+                        {question.editorial.intuition && (
+                          <div className="space-y-1.5">
+                            <h5 className="text-xs font-bold text-text font-mono uppercase tracking-wider">Intuition</h5>
+                            <div className="p-3.5 bg-surface-2/60 border border-border/50 rounded-xl text-xs text-text-muted leading-relaxed whitespace-pre-wrap">
+                              {question.editorial.intuition}
+                            </div>
+                          </div>
+                        )}
+
+                        {question.editorial.optimalSolution && (
+                          <div className="space-y-1.5">
+                            <h5 className="text-xs font-bold text-text font-mono uppercase tracking-wider">Optimal Approach</h5>
+                            <div className="p-3.5 bg-surface-2/60 border border-border/50 rounded-xl text-xs text-text-muted leading-relaxed whitespace-pre-wrap">
+                              {question.editorial.optimalSolution}
+                            </div>
+                          </div>
+                        )}
+
+                        {question.editorial.dryRun && (
+                          <div className="space-y-1.5">
+                            <h5 className="text-xs font-bold text-text font-mono uppercase tracking-wider">Dry Run</h5>
+                            <div className="p-3.5 bg-surface-2/60 border border-border/50 rounded-xl text-xs text-text-muted leading-relaxed font-mono whitespace-pre-wrap">
+                              {question.editorial.dryRun}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 )}
               </div>
             ) : (
