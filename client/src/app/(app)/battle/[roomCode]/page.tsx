@@ -195,18 +195,19 @@ function combineCode(language: string, visibleCode: string, hiddenCode: string, 
   }
 }
 
-function buildPreviewHtml(html: string, css: string, js: string): string {
+function buildPreviewHtml(html: string, css: string, js: string, isCSSBattle: boolean = false): string {
+  const tailwindScript = isCSSBattle ? "" : '<script src="https://cdn.tailwindcss.com"></script>';
   return `
     <!DOCTYPE html>
     <html lang="en">
     <head>
       <meta charset="UTF-8">
-      <script src="https://cdn.tailwindcss.com"></script>
+      ${tailwindScript}
       <style>
         ${css}
       </style>
     </head>
-    <body style="margin: 0; padding: 0;">
+    <body style="${isCSSBattle ? "margin: 0; padding: 0; width: 400px; height: 300px; overflow: hidden;" : "margin: 0; padding: 0;"}">
       ${html}
       <script>
         try {
@@ -1229,7 +1230,9 @@ function CodingWorkspace({ room, matchId, onLeave }: CodingWorkspaceProps) {
   const isCSSBattle = useMemo(() => {
     const hasAssets = question?.referenceAssets && question.referenceAssets.length > 0;
     const isAccessibility = question?.topics?.some((t: string) => t.toUpperCase() === "ACCESSIBILITY");
-    return Boolean(hasAssets && !isAccessibility);
+    const isHtmlCssTopic = question?.topics?.some((t: string) => t.toUpperCase() === "HTML_CSS");
+    const isCSSBattleConstraints = question?.constraints?.some((c: string) => c.includes("400px") || c.toLowerCase().includes("cssbattle"));
+    return Boolean((hasAssets && !isAccessibility) || isHtmlCssTopic || isCSSBattleConstraints);
   }, [question]);
 
   const workspaceLangs = useMemo(() => {
@@ -1398,7 +1401,8 @@ function CodingWorkspace({ room, matchId, onLeave }: CodingWorkspaceProps) {
         : buildPreviewHtml(
             codeByLang.html || "",
             codeByLang.css || "",
-            codeByLang.javascript || ""
+            codeByLang.javascript || "",
+            isCSSBattle
           );
 
       const resolvedUrl = resolveMockupUrl(targetImgUrl);
@@ -3455,7 +3459,8 @@ function CodingWorkspace({ room, matchId, onLeave }: CodingWorkspaceProps) {
                                 : buildPreviewHtml(
                                     codeByLang.html || "",
                                     codeByLang.css || "",
-                                    codeByLang.javascript || ""
+                                    codeByLang.javascript || "",
+                                    isCSSBattle
                                   )}
                               title="Live Output Preview"
                               sandbox="allow-scripts allow-same-origin"
@@ -3494,7 +3499,8 @@ function CodingWorkspace({ room, matchId, onLeave }: CodingWorkspaceProps) {
                                     : buildPreviewHtml(
                                         codeByLang.html || "",
                                         codeByLang.css || "",
-                                        codeByLang.javascript || ""
+                                        codeByLang.javascript || "",
+                                        isCSSBattle
                                       )}
                                   title="Live Output Preview"
                                   sandbox="allow-scripts allow-same-origin"
@@ -3579,7 +3585,8 @@ function CodingWorkspace({ room, matchId, onLeave }: CodingWorkspaceProps) {
                               : buildPreviewHtml(
                                   codeByLang.html || "",
                                   codeByLang.css || "",
-                                  codeByLang.javascript || ""
+                                  codeByLang.javascript || "",
+                                  isCSSBattle
                                 )}
                             title="Live Output Preview"
                             sandbox="allow-scripts allow-same-origin"
@@ -4375,7 +4382,8 @@ function CodingWorkspace({ room, matchId, onLeave }: CodingWorkspaceProps) {
                   : buildPreviewHtml(
                       codeByLang.html || "",
                       codeByLang.css || "",
-                      codeByLang.javascript || ""
+                      codeByLang.javascript || "",
+                      isCSSBattle
                     )}
                 title="Expanded Live Preview"
                 sandbox="allow-scripts allow-same-origin"
