@@ -250,6 +250,23 @@ export async function callLLM(
         throw new Error("[AIGateway] No API keys available in environment or database");
     }
 
+    // Sanitize messages so content is always a valid string for Groq text models
+    const sanitizedMessages = (requestBody.messages || []).map((m: any) => {
+        if (typeof m.content === "string") return m;
+        if (Array.isArray(m.content)) {
+            const textParts: string[] = [];
+            for (const block of m.content) {
+                if (block.type === "text" && block.text) {
+                    textParts.push(block.text);
+                } else if (block.type === "image_url" && block.image_url?.url) {
+                    textParts.push(`\n[Reference Mockup Image: ${block.image_url.url}]`);
+                }
+            }
+            return { ...m, content: textParts.join("\n") };
+        }
+        return { ...m, content: String(m.content || "") };
+    });
+
     let lastError: Error | null = null;
     let apiResponseData: any = null;
     let successfulKeyId = "";
@@ -268,6 +285,7 @@ export async function callLLM(
                 },
                 body: JSON.stringify({
                     ...requestBody,
+                    messages: sanitizedMessages,
                     model: modelIdToUse
                 }),
             });
@@ -287,6 +305,7 @@ export async function callLLM(
                         },
                         body: JSON.stringify({
                             ...requestBody,
+                            messages: sanitizedMessages,
                             model: modelIdToUse
                         }),
                     });

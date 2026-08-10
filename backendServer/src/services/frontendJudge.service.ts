@@ -414,13 +414,12 @@ export async function judgeFrontendSubmission(
         userPromptText += `\n\n## Reference Correct Solution\nUse the following correct solution code to guide your architectural and visual layout evaluation of the player's submission:\n\`\`\`html\n${question.judgeConfig.referenceSolution}\n\`\`\`\n\n## Comparison Instructions\nYou MUST compare the player's submission code directly against the Reference Correct Solution code. Check if the layout, sizes, positions, alignments, spacing, translation/transform values, clip-paths, borders, and margins match. If there is any misalignment or difference in dimension/position values that would result in a visual discrepancy (e.g. alignment mismatch, different sizing, shifted elements), you must penalize the "layout_correctness" (or layout-related) criterion and explain the misalignment/mismatch in the feedback. Do not give full points for layout correctness if there are positioning or dimensional differences.`;
     }
 
-    // Interleave reference images after the text prompt so the model can
-    // visually compare the submission against the design mockups while
-    // evaluating the code.
-    const userContent: ContentBlock[] = [
-        { type: "text", text: userPromptText },
-        ...imageBlocks,
-    ];
+    if (imageBlocks.length > 0) {
+        const imageUrlsText = imageBlocks.map((b) => b.image_url.url).join("\n- ");
+        userPromptText += `\n\n### Reference Mockup Image URLs:\n- ${imageUrlsText}`;
+    }
+
+    const userContent = userPromptText;
 
     // ── 4. Call Grok ──────────────────────────────────────────────────────
     let rawText: string;

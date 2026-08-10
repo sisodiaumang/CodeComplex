@@ -271,7 +271,7 @@ export async function judgePromptWarSubmission(
             temperature: 0,
             messages: [
                 { role: "system", content: systemPrompt },
-                { role: "user", content: [{ type: "text", text: userPrompt }] },
+                { role: "user", content: userPrompt },
             ],
         });
 
