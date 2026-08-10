@@ -140,21 +140,32 @@ function splitCode(language: string, fullCode: string): { visibleCode: string; h
       };
     }
   } else if (lang === "java") {
-    const mainIndex = fullCode.indexOf("public static void main(");
+    let mainIndex = fullCode.indexOf("public class Main");
+    if (mainIndex === -1) {
+      mainIndex = fullCode.indexOf("public static void main(");
+    }
     if (mainIndex !== -1) {
       let visible = fullCode.substring(0, mainIndex).trim() + "\n";
-      if (visible.includes("public class Main") && !visible.endsWith("}")) {
-        visible += "\n}\n";
-      }
       return {
         visibleCode: visible,
         hiddenCode: fullCode.substring(mainIndex),
         splitType: "after"
       };
     }
-  } else if (lang === "javascript" || lang === "js") {
+  } else if (lang === "javascript" || lang === "js" || lang === "typescript" || lang === "ts") {
+    let driverIndex = fullCode.indexOf("const sol");
+    if (driverIndex === -1) driverIndex = fullCode.indexOf("let sol");
+    if (driverIndex === -1) driverIndex = fullCode.indexOf("var sol");
+    if (driverIndex === -1) driverIndex = fullCode.indexOf("new Solution");
+    if (driverIndex !== -1) {
+      return {
+        visibleCode: fullCode.substring(0, driverIndex).trim() + "\n",
+        hiddenCode: fullCode.substring(driverIndex),
+        splitType: "after"
+      };
+    }
     const solutionIndex = fullCode.indexOf("class Solution");
-    if (solutionIndex !== -1) {
+    if (solutionIndex > 0) {
       return {
         visibleCode: fullCode.substring(solutionIndex),
         hiddenCode: fullCode.substring(0, solutionIndex),
@@ -1310,6 +1321,7 @@ function CodingWorkspace({ room, matchId, onLeave }: CodingWorkspaceProps) {
   const [activeTab, setActiveTab] = useState<"description" | "submissions" | "opponent" | "solution">("description");
   const [solutionLang, setSolutionLang] = useState<string>("javascript");
   const [copiedSolution, setCopiedSolution] = useState(false);
+  const [showFullDriverCode, setShowFullDriverCode] = useState(false);
   const [selectedOpponentName, setSelectedOpponentName] = useState<string>("");
   const { resolved: resolvedTheme } = useTheme();
   
@@ -2908,7 +2920,17 @@ function CodingWorkspace({ room, matchId, onLeave }: CodingWorkspaceProps) {
                       const referenceSol = question?.judgeConfig?.referenceSolution || question?.referenceSolution;
                       const solLangs = Object.keys(availSolutions);
                       const currentSolLang = solLangs.includes(solutionLang) ? solutionLang : (solLangs[0] || selectedLang || "javascript");
-                      const codeSolution = availSolutions[currentSolLang] || (typeof referenceSol === "string" ? referenceSol : null);
+                      const rawCodeSolution = availSolutions[currentSolLang] || (typeof referenceSol === "string" ? referenceSol : null);
+
+                      const { visibleCode: cleanSolution, hiddenCode: driverCode } = rawCodeSolution
+                        ? splitCode(currentSolLang, rawCodeSolution)
+                        : { visibleCode: "", hiddenCode: "" };
+
+                      const codeSolution = showFullDriverCode
+                        ? rawCodeSolution
+                        : (cleanSolution.trim() || rawCodeSolution);
+
+                      const hasDriver = Boolean(driverCode && driverCode.trim().length > 0);
 
                       return (
                         <div className="space-y-3">
@@ -2917,34 +2939,55 @@ function CodingWorkspace({ room, matchId, onLeave }: CodingWorkspaceProps) {
                               <Code2 className="size-4 text-primary" /> Reference Code Solution
                             </h4>
                             
-                            {solLangs.length > 0 && (
-                              <div className="flex items-center gap-1.5 bg-surface-2 p-1 rounded-lg border border-border/60">
-                                {solLangs.map((lang) => (
-                                  <button
-                                    key={lang}
-                                    onClick={() => setSolutionLang(lang)}
-                                    className={cn(
-                                      "px-2.5 py-1 text-[10px] font-bold rounded-md font-mono transition-colors uppercase cursor-pointer",
-                                      currentSolLang === lang
-                                        ? "bg-primary text-white shadow-sm"
-                                        : "text-text-muted hover:text-text hover:bg-surface-3"
-                                    )}
-                                  >
-                                    {lang === "cpp" ? "C++" : lang}
-                                  </button>
-                                ))}
-                              </div>
-                            )}
+                            <div className="flex items-center gap-2 flex-wrap">
+                              {hasDriver && (
+                                <button
+                                  onClick={() => setShowFullDriverCode(!showFullDriverCode)}
+                                  className={cn(
+                                    "px-2.5 py-1 text-[10px] font-mono font-bold rounded-lg border transition-colors cursor-pointer flex items-center gap-1",
+                                    showFullDriverCode
+                                      ? "bg-amber-500/10 border-amber-500/30 text-amber-400"
+                                      : "bg-surface-2 border-border/60 text-text-muted hover:text-text"
+                                  )}
+                                >
+                                  <span>{showFullDriverCode ? "Hide Main ()" : "Show Main ()"}</span>
+                                </button>
+                              )}
+
+                              {solLangs.length > 0 && (
+                                <div className="flex items-center gap-1 bg-surface-2 p-1 rounded-lg border border-border/60">
+                                  {solLangs.map((lang) => (
+                                    <button
+                                      key={lang}
+                                      onClick={() => setSolutionLang(lang)}
+                                      className={cn(
+                                        "px-2.5 py-1 text-[10px] font-bold rounded-md font-mono transition-colors uppercase cursor-pointer",
+                                        currentSolLang === lang
+                                          ? "bg-primary text-white shadow-sm"
+                                          : "text-text-muted hover:text-text hover:bg-surface-3"
+                                      )}
+                                    >
+                                      {lang === "cpp" ? "C++" : lang}
+                                    </button>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
                           </div>
 
                           {codeSolution ? (
                             <div className="relative rounded-xl border border-border/80 bg-surface-2 overflow-hidden shadow-inner">
                               <div className="flex items-center justify-between px-4 py-2 bg-surface-3/80 border-b border-border/60 text-xs font-mono">
-                                <span className="text-text-muted font-bold text-[11px] uppercase">{currentSolLang} Solution</span>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-text-muted font-bold text-[11px] uppercase">{currentSolLang} Solution</span>
+                                  <Badge className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[9px] font-mono uppercase font-bold py-0">
+                                    LeetCode Style
+                                  </Badge>
+                                </div>
                                 <div className="flex items-center gap-2">
                                   <button
                                     onClick={() => {
-                                      navigator.clipboard.writeText(codeSolution);
+                                      navigator.clipboard.writeText(cleanSolution.trim() || codeSolution);
                                       setCopiedSolution(true);
                                       setTimeout(() => setCopiedSolution(false), 2000);
                                     }}
@@ -2956,8 +2999,9 @@ function CodingWorkspace({ room, matchId, onLeave }: CodingWorkspaceProps) {
 
                                   <button
                                     onClick={() => {
-                                      setCodeByLang(prev => ({ ...prev, [selectedLang]: codeSolution }));
-                                      alert("Solution copied into your editor workspace!");
+                                      const targetCode = cleanSolution.trim() || codeSolution;
+                                      setCodeByLang(prev => ({ ...prev, [selectedLang]: targetCode }));
+                                      alert("Solution code applied to your editor!");
                                     }}
                                     className="flex items-center gap-1 text-[11px] font-mono text-primary hover:text-primary-hover transition-colors cursor-pointer px-2 py-0.5 rounded bg-primary/10 border border-primary/20 font-bold"
                                   >
@@ -2966,7 +3010,7 @@ function CodingWorkspace({ room, matchId, onLeave }: CodingWorkspaceProps) {
                                   </button>
                                 </div>
                               </div>
-                              <pre className="p-4 text-xs font-mono text-text leading-relaxed overflow-x-auto max-h-[380px] scrollbar-thin whitespace-pre">
+                              <pre className="p-4 text-xs font-mono text-text leading-relaxed overflow-x-auto max-h-[380px] scrollbar-thin whitespace-pre select-text">
                                 {codeSolution}
                               </pre>
                             </div>
