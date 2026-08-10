@@ -3052,8 +3052,41 @@ function CodingWorkspace({ room, matchId, onLeave }: CodingWorkspaceProps) {
                               </pre>
                             </div>
                           ) : (
-                            <div className="p-4 bg-surface-2 border border-border/60 rounded-xl text-xs text-text-muted italic">
-                              No code solution provided for this challenge. Review the editorial breakdown below.
+                            <div className="p-6 bg-surface-2 border border-border/60 rounded-xl space-y-3 text-center">
+                              <p className="text-xs text-text-muted">
+                                No reference solution posted for this challenge yet. Be the first to post your solution to the server!
+                              </p>
+                              <button
+                                onClick={async () => {
+                                  try {
+                                    const currentCode = (codeByLang[selectedLang] || "").trim();
+                                    if (!currentCode) {
+                                      alert("Your editor is empty! Please write your solution in the workspace editor first.");
+                                      return;
+                                    }
+                                    const isConfirmed = confirm(`Do you want to post your current ${selectedLang.toUpperCase()} code to the server so other users can see it as the reference solution?`);
+                                    if (!isConfirmed) return;
+
+                                    await api(`/match/${matchId}/solution`, {
+                                      method: "POST",
+                                      body: {
+                                        language: selectedLang,
+                                        solutionCode: currentCode
+                                      }
+                                    });
+
+                                    alert("🎉 Your solution has been posted to the server and is now visible to all users!");
+                                    questionQuery.refetch();
+                                  } catch (err: any) {
+                                    console.error(err);
+                                    alert(errorMessage(err) || "Failed to post solution to server.");
+                                  }
+                                }}
+                                className="inline-flex items-center gap-1.5 text-xs font-mono text-white hover:bg-primary-hover transition-colors cursor-pointer px-4 py-2 rounded-lg bg-primary border border-primary-hover font-bold shadow-md"
+                              >
+                                <Upload className="size-4" />
+                                <span>Post Solution to Server</span>
+                              </button>
                             </div>
                           )}
                         </div>

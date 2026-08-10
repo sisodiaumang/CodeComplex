@@ -362,13 +362,14 @@ export async function judgeFrontendSubmission(
 
     // ── 1. Fetch question ────────────────────────────────────────────────
     const question = await FrontendQuestion.findOne({ slug: questionSlug })
-        .select("statement gradingCriteria referenceAssets judgeConfig scoring")
+        .select("statement gradingCriteria referenceAssets judgeConfig scoring topics")
         .lean<{
             statement: { markdown: string };
             gradingCriteria: IFrontendGradingCriterion[];
             referenceAssets: { url: string; caption?: string }[];
             judgeConfig: { judgeModel?: string; referenceSolution?: string };
             scoring: { maxScore: number; passingScore: number };
+            topics?: string[];
         }>();
 
     if (!question) {
@@ -410,7 +411,8 @@ export async function judgeFrontendSubmission(
         criteria: gradingCriteria,
     });
 
-    if (question.judgeConfig?.referenceSolution) {
+    const isHtmlCssTopic = question.topics?.some((t: string) => t.toUpperCase() === "HTML_CSS");
+    if (question.judgeConfig?.referenceSolution && !isHtmlCssTopic) {
         userPromptText += `\n\n## Reference Correct Solution\nUse the following correct solution code to guide your architectural and visual layout evaluation of the player's submission:\n\`\`\`html\n${question.judgeConfig.referenceSolution}\n\`\`\`\n\n## Comparison Instructions\nYou MUST compare the player's submission code directly against the Reference Correct Solution code. Check if the layout, sizes, positions, alignments, spacing, translation/transform values, clip-paths, borders, and margins match. If there is any misalignment or difference in dimension/position values that would result in a visual discrepancy (e.g. alignment mismatch, different sizing, shifted elements), you must penalize the "layout_correctness" (or layout-related) criterion and explain the misalignment/mismatch in the feedback. Do not give full points for layout correctness if there are positioning or dimensional differences.`;
     }
 
