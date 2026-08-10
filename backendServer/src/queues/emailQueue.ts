@@ -52,12 +52,17 @@ export interface SiteReportEmailPayload {
   details: string;
 }
 
+export interface TestEmailPayload {
+  targetEmail?: string;
+}
+
 export enum EmailJobType {
   VERIFICATION = "VERIFICATION",
   WELCOME = "WELCOME",
   EMAIL_CHANGE = "EMAIL_CHANGE",
   GRIND_REMINDER = "GRIND_REMINDER",
   SITE_REPORT = "SITE_REPORT",
+  TEST_EMAIL = "TEST_EMAIL",
 }
 
 export const emailQueue = new Queue(EMAIL_QUEUE_NAME, {
@@ -101,4 +106,8 @@ export async function enqueueSiteReportEmail(
     reason,
     details,
   });
+}
+
+export async function enqueueTestEmail(targetEmail?: string): Promise<void> {
+  await emailQueue.add(EmailJobType.TEST_EMAIL, { targetEmail });
 }

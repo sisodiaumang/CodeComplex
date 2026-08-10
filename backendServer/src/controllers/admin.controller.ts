@@ -18,7 +18,7 @@ import mongoose from "mongoose";
 import os from "os";
 import { getAverageApiLatency } from "../utils/telemetry.js";
 import { env } from "../config/env.js";
-import { enqueueSiteReportEmail } from "../queues/emailQueue.js";
+import { enqueueSiteReportEmail, enqueueTestEmail } from "../queues/emailQueue.js";
 
 // Global variables for CPU usage tracking
 let lastCpuUsage = process.cpuUsage();
@@ -817,6 +817,28 @@ export const getAdminReportDetails = asyncHandler(
             success: true,
             message: "Report details fetched successfully",
             data: report
+        });
+    }
+);
+
+/**
+ * POST /api/v1/admin/test-email
+ * Enqueues a system test email to the owner email or custom target address.
+ */
+export const sendTestEmailAdmin = asyncHandler(
+    async (req: Request, res: Response) => {
+        const { targetEmail } = req.body || {};
+        const recipient = targetEmail || env.OWNER_EMAIL || env.EMAIL_USER;
+        if (!recipient) {
+            throw new ApiError(400, "No OWNER_EMAIL or EMAIL_USER configured in environment variables");
+        }
+
+        await enqueueTestEmail(recipient);
+
+        res.status(200).json({
+            success: true,
+            message: `Test email job successfully enqueued to ${recipient}`,
+            data: { recipient }
         });
     }
 );
