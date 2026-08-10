@@ -162,6 +162,8 @@ async function sendWelcomeMail(email: string, username: string): Promise<void> {
         });
     } catch (err) {
         console.error(`[EmailService] Welcome email failed to send to ${email}:`, err);
+        const reason = err instanceof Error ? err.message : String(err);
+        throw new ApiError(500, `Failed to send welcome email: ${reason}`);
     }
 }
 

@@ -7,6 +7,7 @@ import UserProfile from "../models/userProfile.model.js";
 import RefreshToken from "../models/refreshToken.model.js";
 import ApiError from "../utils/ApiError.js";
 import asyncHandler from "../utils/asyncHandler.js";
+import { enqueueWelcomeEmail } from "../queues/emailQueue.js";
 
 /* ─── helpers ─────────────────────────────────────────────────────────── */
 
@@ -117,6 +118,11 @@ async function findOrCreateOAuthUser(
     });
 
     await UserProfile.create({ userId: user._id });
+
+    // Send Welcome Email for new OAuth signups
+    enqueueWelcomeEmail(user.email, user.username).catch((err) => {
+        console.error("[EmailService] Failed to send OAuth welcome mail:", err);
+    });
 
     return { user, isNew: true };
 }
