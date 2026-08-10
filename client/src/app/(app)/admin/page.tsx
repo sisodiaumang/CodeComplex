@@ -519,9 +519,10 @@ export default function AdminPanelPage() {
             <div className="space-y-6">
               
               {/* Telemetry Grid */}
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
                 {[
                   { label: "Total Users", value: stats.totalUsers, icon: Users, color: "text-primary bg-primary/10 border-primary/20", desc: "Registered accounts" },
+                  { label: "Online Users", value: stats.onlineUsersCount ?? 0, icon: UserCheck, color: "text-win bg-win-subtle border-win/25", desc: "Connected right now", animate: true },
                   { label: "Active Rooms", value: stats.activeRooms, icon: Activity, color: "text-win bg-win-subtle border-win/25", desc: "Lobbies live now", animate: true },
                   { label: "Total Matches", value: stats.totalMatches, icon: Swords, color: "text-info bg-mode-dsa-subtle border-info/20", desc: "Battles completed" },
                   { label: "Banned Users", value: stats.bannedUsers, icon: Ban, color: "text-danger bg-loss-subtle border-danger/20", desc: "Restricted accounts" }
@@ -542,6 +543,47 @@ export default function AdminPanelPage() {
                   </Card>
                 ))}
               </div>
+
+              {/* Currently Online Users Live Widget */}
+              <Card className="border border-border/80 bg-surface/30 backdrop-blur-md rounded-2xl shadow-sm overflow-hidden">
+                <div className="p-5 border-b border-border/60 flex items-center justify-between">
+                  <div>
+                    <h3 className="text-base font-bold text-text flex items-center gap-2.5">
+                      <UserCheck className="size-4.5 text-win" /> Live Online Sessions ({stats.onlineUsersCount || 0})
+                    </h3>
+                    <p className="text-xs text-text-faint mt-1">Real-time connected users authenticated via Socket.IO gateway.</p>
+                  </div>
+                  <Badge className="bg-win-subtle border border-win/20 text-win font-mono text-xs px-2.5 py-1 flex items-center gap-1.5">
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-win opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-win"></span>
+                    </span>
+                    LIVE GATEWAY
+                  </Badge>
+                </div>
+                <div className="p-5">
+                  {(!stats.onlineUsers || stats.onlineUsers.length === 0) ? (
+                    <div className="text-center py-6 text-xs text-text-muted font-medium">
+                      No active online socket connections detected right now.
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3">
+                      {stats.onlineUsers.map((u: any) => (
+                        <div key={u.userId} className="flex items-center gap-3 p-3 bg-surface/60 border border-border/60 rounded-xl hover:border-win/40 transition-colors">
+                          <Avatar src={u.avatar} name={u.username} size={32} />
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-xs font-bold text-text truncate">@{u.username}</span>
+                              <span className="size-1.5 rounded-full bg-win shrink-0 animate-pulse" />
+                            </div>
+                            <p className="text-[10px] text-text-faint font-mono truncate">{u.fullName || u.email}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </Card>
 
               {/* Advanced Diagnostics (Telemetry Details) */}
               <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
@@ -1127,15 +1169,22 @@ export default function AdminPanelPage() {
                               </div>
                             </td>
                             <td className="px-6 py-4">
-                              {item.isBanned ? (
-                                <Badge className="bg-danger/10 border border-danger/25 text-danger text-[10px] font-semibold gap-1 py-0.5 font-mono uppercase">
-                                  <Lock className="size-3" /> Banned
-                                </Badge>
-                              ) : (
-                                <Badge className="bg-win-subtle border border-win/20 text-win text-[10px] font-semibold gap-1 py-0.5 font-mono uppercase">
-                                  <Unlock className="size-3" /> Active
-                                </Badge>
-                              )}
+                              <div className="flex items-center gap-1.5 flex-wrap">
+                                {item.isOnline ? (
+                                  <Badge className="bg-win-subtle border border-win/20 text-win text-[10px] font-semibold gap-1 py-0.5 font-mono uppercase">
+                                    <span className="size-1.5 rounded-full bg-win animate-pulse" /> Online
+                                  </Badge>
+                                ) : (
+                                  <Badge className="bg-surface-2 border border-border text-text-muted text-[10px] font-semibold gap-1 py-0.5 font-mono uppercase">
+                                    <span className="size-1.5 rounded-full bg-border" /> Offline
+                                  </Badge>
+                                )}
+                                {item.isBanned && (
+                                  <Badge className="bg-danger/10 border border-danger/25 text-danger text-[10px] font-semibold gap-1 py-0.5 font-mono uppercase">
+                                    <Lock className="size-3" /> Banned
+                                  </Badge>
+                                )}
+                              </div>
                             </td>
                             <td className="px-6 py-4 text-xs text-text-faint font-mono">
                               {new Date(item.createdAt).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" })}

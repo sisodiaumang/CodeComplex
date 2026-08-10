@@ -212,6 +212,42 @@ export const io = new Server(server, {
 
 io.use(socketAuthMiddleware);
 
+export function getOnlineUsersInfo(): {
+    count: number;
+    userIds: string[];
+    users: Array<{ userId: string; username: string; email: string; fullName: string; role: string; avatar?: string }>;
+} {
+    if (!io || !io.sockets || !io.sockets.sockets) {
+        return { count: 0, userIds: [], users: [] };
+    }
+
+    const onlineMap = new Map<string, { userId: string; username: string; email: string; fullName: string; role: string; avatar?: string }>();
+
+    for (const [_, socket] of io.sockets.sockets) {
+        const user = socket.data?.user;
+        if (user && user._id) {
+            const userIdStr = user._id.toString();
+            if (!onlineMap.has(userIdStr)) {
+                onlineMap.set(userIdStr, {
+                    userId: userIdStr,
+                    username: user.username,
+                    email: user.email,
+                    fullName: user.fullName || user.username,
+                    role: user.role || "USER",
+                    avatar: user.avatar?.profileImageURL || ""
+                });
+            }
+        }
+    }
+
+    const users = Array.from(onlineMap.values());
+    return {
+        count: users.length,
+        userIds: users.map((u) => u.userId),
+        users,
+    };
+}
+
 io.on("connection", (socket) => {
     console.log(` User Connected : ${socket.id}`);
 

@@ -19,6 +19,7 @@ import os from "os";
 import { getAverageApiLatency } from "../utils/telemetry.js";
 import { env } from "../config/env.js";
 import { enqueueSiteReportEmail } from "../queues/emailQueue.js";
+import { getOnlineUsersInfo } from "../index.js";
 
 // Global variables for CPU usage tracking
 let lastCpuUsage = process.cpuUsage();
@@ -252,6 +253,8 @@ export const getAdminStats = asyncHandler(
             message: "Admin telemetry statistics fetched successfully",
             data: {
                 totalUsers,
+                onlineUsersCount: getOnlineUsersInfo().count,
+                onlineUsers: getOnlineUsersInfo().users,
                 totalMatches,
                 activeRooms,
                 totalRooms,
@@ -311,11 +314,17 @@ export const getAdminUsers = asyncHandler(
             User.countDocuments(query)
         ]);
 
+        const onlineSet = new Set(getOnlineUsersInfo().userIds);
+        const usersWithOnlineStatus = users.map((u) => ({
+            ...u.toObject(),
+            isOnline: onlineSet.has(u._id.toString())
+        }));
+
         res.status(200).json({
             success: true,
             message: "Users list fetched",
             data: {
-                users,
+                users: usersWithOnlineStatus,
                 pagination: {
                     page,
                     limit,
