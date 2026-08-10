@@ -952,3 +952,106 @@ export const getMatchQuestion = async (
         next(err);
     }
 };
+
+// ─────────────────────────────────────────────
+// 11. POST /match/:matchId/solution — Submit/Update Question Solution on Server
+// ─────────────────────────────────────────────
+export const submitMatchQuestionSolution = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+): Promise<void> => {
+    try {
+        const { matchId } = req.params;
+        const { language, solutionCode } = req.body;
+
+        if (!mongoose.isValidObjectId(matchId)) {
+            res.status(400).json({ success: false, message: "Invalid matchId" });
+            return;
+        }
+
+        if (!solutionCode || typeof solutionCode !== "string" || solutionCode.trim().length === 0) {
+            res.status(400).json({ success: false, message: "solutionCode is required" });
+            return;
+        }
+
+        const match = await Match.findById(matchId);
+        if (!match) {
+            res.status(404).json({ success: false, message: "Match not found" });
+            return;
+        }
+
+        const userId = req.user._id.toString();
+        const players = allPlayerIds(match);
+
+        if (!players.includes(userId) && req.user.role !== "ADMIN") {
+            res.status(403).json({
+                success: false,
+                message: "Not authorised to post solution for this match"
+            });
+            return;
+        }
+
+        const FRONTEND_TYPES = ["FRONTEND", "PROJECTS"];
+        const BACKEND_TYPES  = ["BACKEND"];
+        const PROMPT_TYPES   = ["PROMPT_WAR"];
+
+        let question: any;
+        const langKey = (language || "javascript").toLowerCase();
+
+        if (FRONTEND_TYPES.includes(match.battleType)) {
+            const { default: FrontendQuestion } = await import("../models/frontendQuestion.model.js");
+            question = await FrontendQuestion.findOne({ slug: match.questionSlug });
+            if (question) {
+                if (!question.judgeConfig) question.judgeConfig = {} as any;
+                question.judgeConfig.referenceSolution = solutionCode;
+                question.markModified("judgeConfig");
+                await question.save();
+            }
+        } else if (BACKEND_TYPES.includes(match.battleType)) {
+            const { default: BackendQuestion } = await import("../models/backendQuestion.model.js");
+            question = await BackendQuestion.findOne({ slug: match.questionSlug });
+            if (question) {
+                if (!question.judgeConfig) question.judgeConfig = {} as any;
+                question.judgeConfig.referenceSolution = solutionCode;
+                question.markModified("judgeConfig");
+                await question.save();
+            }
+        } else if (PROMPT_TYPES.includes(match.battleType)) {
+            const { default: PromptWarScenario } = await import("../models/promptWarScenerio.model.js");
+            question = await PromptWarScenario.findOne({ slug: match.questionSlug });
+            if (question) {
+                if (!question.judgeConfig) question.judgeConfig = {} as any;
+                question.judgeConfig.referenceSolution = solutionCode;
+                question.markModified("judgeConfig");
+                await question.save();
+            }
+        } else {
+            const { default: Question } = await import("../models/question.model.js");
+            question = await Question.findOne({ slug: match.questionSlug });
+            if (question) {
+                if (!question.solutions) question.solutions = {} as any;
+                if (question.solutions instanceof Map) {
+                    question.solutions.set(langKey, solutionCode);
+                } else {
+                    question.solutions[langKey] = solutionCode;
+                }
+                question.markModified("solutions");
+                await question.save();
+            }
+        }
+
+        if (!question) {
+            res.status(404).json({ success: false, message: "Question not found" });
+            return;
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "Solution submitted to server successfully!",
+            data: { question }
+        });
+    } catch (err) {
+        next(err);
+    }
+};

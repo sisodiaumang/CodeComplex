@@ -45,6 +45,7 @@ import {
   User,
   BookOpen,
   Lock,
+  Upload,
 } from "lucide-react";
 import Editor from "@monaco-editor/react";
 import { api, errorMessage } from "@/lib/api";
@@ -3013,20 +3014,37 @@ function CodingWorkspace({ room, matchId, onLeave }: CodingWorkspaceProps) {
                                     <span>Apply to Editor</span>
                                   </button>
 
-                                  <button
-                                    onClick={() => {
-                                      const targetCode = cleanSolution.trim() || codeSolution;
-                                      setCodeByLang(prev => ({ ...prev, [selectedLang]: targetCode }));
-                                      setTimeout(() => {
-                                        handleSubmit();
-                                      }, 150);
-                                    }}
-                                    disabled={submitting || compiling || hasPerfectScore || matchEnded}
-                                    className="flex items-center gap-1 text-[11px] font-mono text-emerald-400 hover:text-emerald-300 transition-colors cursor-pointer px-2.5 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/25 font-bold disabled:opacity-50"
-                                  >
-                                    <Send className="size-3" />
-                                    <span>Submit Solution</span>
-                                  </button>
+                                   <button
+                                     onClick={async () => {
+                                       try {
+                                         const currentCode = (codeByLang[selectedLang] || "").trim();
+                                         if (!currentCode) {
+                                           alert("Your editor is empty! Please write your solution in the workspace editor first.");
+                                           return;
+                                         }
+                                         const isConfirmed = confirm(`Do you want to post your current ${selectedLang.toUpperCase()} code to the server so other users can see it as the reference solution?`);
+                                         if (!isConfirmed) return;
+
+                                         await api(`/match/${matchId}/solution`, {
+                                           method: "POST",
+                                           body: {
+                                             language: selectedLang,
+                                             solutionCode: currentCode
+                                           }
+                                         });
+
+                                         alert("🎉 Your solution has been posted to the server and is now visible to all users!");
+                                         questionQuery.refetch();
+                                       } catch (err: any) {
+                                         console.error(err);
+                                         alert(errorMessage(err) || "Failed to post solution to server.");
+                                       }
+                                     }}
+                                     className="flex items-center gap-1 text-[11px] font-mono text-white hover:bg-primary-hover transition-colors cursor-pointer px-2.5 py-0.5 rounded bg-primary border border-primary-hover font-bold shadow-sm"
+                                   >
+                                     <Upload className="size-3" />
+                                     <span>Post Solution to Server</span>
+                                   </button>
                                 </div>
                               </div>
                               <pre className="p-4 text-xs font-mono text-text leading-relaxed overflow-x-auto max-h-[380px] scrollbar-thin whitespace-pre select-text">

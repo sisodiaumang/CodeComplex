@@ -10,7 +10,8 @@ import {
     getMatchHistory,
     getMatchDetails,
     getLiveMatch,
-    getMatchQuestion
+    getMatchQuestion,
+    submitMatchQuestionSolution
 } from "../controllers/match.controller.js";
 
 // ASSUMPTION: I don't have your HTTP auth middleware file (only
@@ -44,6 +45,7 @@ router.get("/:matchId/details", getMatchDetails);
 router.get("/:matchId/result", getMatchResult);
 router.get("/:matchId/live", getLiveMatch);
 router.get("/:matchId/question", getMatchQuestion);
+router.post("/:matchId/solution", submitMatchQuestionSolution);
 router.post("/:matchId/end", endMatch);
 router.post("/:matchId/abandon", abandonMatch);
 
