@@ -13,6 +13,15 @@ const ENCRYPTION_KEY = crypto
     .update(env.JWT_ACCESS_SECRET || "fallback_encryption_key_32_bytes_long!")
     .digest();
 
+const GROQ_MODEL_ALIAS_MAP: Record<string, string> = {
+    "meta-llama/llama-4-scout-17b-16e-instruct": "llama-3.3-70b-versatile",
+    "openai/gpt-oss-120b": "llama-3.3-70b-versatile",
+    "openai/gpt-oss-20b": "llama-3.1-8b-instant",
+    "qwen/qwen3-32b": "llama-3.3-70b-versatile",
+    "qwen/qwen3.6-27b": "llama-3.3-70b-versatile",
+    "grok-2-vision-1212": "llama-3.3-70b-versatile"
+};
+
 const DEFAULT_MODELS = [
     {
         modelId: "llama-3.3-70b-versatile",
@@ -25,63 +34,33 @@ const DEFAULT_MODELS = [
         isActive: true,
     },
     {
-        modelId: "openai/gpt-oss-120b",
-        displayName: "GPT OSS 120B",
-        inputPricePer1M: 0.15,
-        outputPricePer1M: 0.60,
-        spendLimit: 5.00,
-        limitSpent: 0,
-        priority: 2,
-        isActive: true,
-    },
-    {
-        modelId: "meta-llama/llama-4-scout-17b-16e-instruct",
-        displayName: "Llama 4 Scout 17B",
-        inputPricePer1M: 0.11,
-        outputPricePer1M: 0.34,
-        spendLimit: 5.00,
-        limitSpent: 0,
-        priority: 3,
-        isActive: true,
-    },
-    {
-        modelId: "openai/gpt-oss-20b",
-        displayName: "GPT OSS 20B",
-        inputPricePer1M: 0.075,
-        outputPricePer1M: 0.30,
-        spendLimit: 5.00,
-        limitSpent: 0,
-        priority: 4,
-        isActive: true,
-    },
-    {
         modelId: "llama-3.1-8b-instant",
         displayName: "Llama 3.1 8B",
         inputPricePer1M: 0.05,
         outputPricePer1M: 0.08,
         spendLimit: 5.00,
         limitSpent: 0,
-        priority: 5,
+        priority: 2,
         isActive: true,
     },
     {
-        modelId: "qwen/qwen3-32b",
-        displayName: "Qwen 3 32B",
-        inputPricePer1M: 0.29,
-        outputPricePer1M: 0.59,
+        modelId: "mixtral-8x7b-32768",
+        displayName: "Mixtral 8x7B",
+        inputPricePer1M: 0.24,
+        outputPricePer1M: 0.24,
         spendLimit: 5.00,
         limitSpent: 0,
-        priority: 6,
+        priority: 3,
         isActive: true,
     },
     {
-        modelId: "qwen/qwen3.6-27b",
-        displayName: "Qwen 3.6 27B",
-        inputPricePer1M: 0.60,
-        outputPricePer1M: 3.00,
+        modelId: "gemma2-9b-it",
+        displayName: "Gemma 2 9B",
+        inputPricePer1M: 0.20,
+        outputPricePer1M: 0.20,
         spendLimit: 5.00,
         limitSpent: 0,
-        priority: 7,
+        priority: 4,
         isActive: true,
     }
 ];
@@ -226,17 +205,20 @@ export async function callLLM(
     requestBody: Omit<GrokRequest, "model">,
     feature: "FRONTEND" | "PROMPT_WAR" | "PROJECTS"
 ): Promise<{ text: string; modelUsed: string }> {
-    // 1. Reset limits if reset interval passed
+    // 1. Sanitize model ID using alias map
+    const targetModel = GROQ_MODEL_ALIAS_MAP[requestedModel] || requestedModel;
+
+    // 1b. Reset limits if reset interval passed
     await resetExpiredModelLimits();
 
     // 2. Fetch config for requested model
-    let modelConfig = await ModelConfig.findOne({ modelId: requestedModel });
-    let modelIdToUse = requestedModel;
+    let modelConfig = await ModelConfig.findOne({ modelId: targetModel });
+    let modelIdToUse = targetModel;
 
     // Fallback logic if limits exceeded
     if (!modelConfig || !modelConfig.isActive || modelConfig.limitSpent >= modelConfig.spendLimit) {
         console.warn(
-            `[AIGateway] Requested model ${requestedModel} is inactive or budget exceeded (${modelConfig?.limitSpent?.toFixed(4)} / ${modelConfig?.spendLimit?.toFixed(4)}). Finding fallback model...`
+            `[AIGateway] Requested model ${targetModel} is inactive or budget exceeded (${modelConfig?.limitSpent?.toFixed(4)} / ${modelConfig?.spendLimit?.toFixed(4)}). Finding fallback model...`
         );
 
         // Find best active model that has not exceeded its limit, sorted by priority (lowest rank first)
@@ -251,11 +233,11 @@ export async function callLLM(
             console.log(`[AIGateway] Switching to fallback model: ${modelIdToUse}`);
         } else {
             console.warn("[AIGateway] All models have exceeded their spend limit! Falling back to original requested model.");
-            modelConfig = await ModelConfig.findOne({ modelId: requestedModel });
+            modelConfig = await ModelConfig.findOne({ modelId: targetModel });
             if (!modelConfig) {
                 modelConfig = new ModelConfig({
-                    modelId: requestedModel,
-                    displayName: requestedModel,
+                    modelId: targetModel,
+                    displayName: targetModel,
                     inputPricePer1M: 0.1,
                     outputPricePer1M: 0.2
                 });
@@ -292,6 +274,31 @@ export async function callLLM(
 
             if (!res.ok) {
                 const body = await res.text().catch(() => "");
+                
+                // If the model returned 404 / model_not_found, try automatic fallback to llama-3.3-70b-versatile
+                if ((res.status === 404 || body.includes("model_not_found") || body.includes("does not exist")) && modelIdToUse !== "llama-3.3-70b-versatile") {
+                    console.warn(`[AIGateway] Model '${modelIdToUse}' returned 404. Automatically falling back to 'llama-3.3-70b-versatile'...`);
+                    modelIdToUse = "llama-3.3-70b-versatile";
+                    const retryRes = await fetch(GROQ_API_URL, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization: `Bearer ${keyInfo.key}`,
+                        },
+                        body: JSON.stringify({
+                            ...requestBody,
+                            model: modelIdToUse
+                        }),
+                    });
+
+                    if (retryRes.ok) {
+                        const retryData = await retryRes.json() as any;
+                        apiResponseData = retryData;
+                        successfulKeyId = keyInfo._id;
+                        break;
+                    }
+                }
+
                 throw new Error(
                     `[AIGateway] API request failed with status ${res.status}: ${body.slice(0, 300)}`
                 );

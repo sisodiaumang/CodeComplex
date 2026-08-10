@@ -70,7 +70,7 @@ import type { IFrontendGradingCriterion } from "../interfaces/frontendQuestion.i
 
 // ── Constants ─────────────────────────────────────────────────────────────
 
-const JUDGE_MODEL = "meta-llama/llama-4-scout-17b-16e-instruct";
+const JUDGE_MODEL = "llama-3.3-70b-versatile";
 
 // Source code truncated at this limit before sending to the LLM.
 // ~40k chars ≈ ~10k tokens — leaves headroom for prompt + image blocks.
