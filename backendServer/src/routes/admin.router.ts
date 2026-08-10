@@ -16,8 +16,7 @@ import {
     toggleApiKey,
     deleteApiKey,
     getAdminQuestionDetails,
-    getAdminReportDetails,
-    sendTestEmailAdmin
+    getAdminReportDetails
 } from "../controllers/admin.controller.js";
 import { verifyJWT, verifyAdminOrModerator } from "../middlewares/auth.middleware.js";
 
@@ -39,7 +38,6 @@ router.get("/questions/:questionId", getAdminQuestionDetails);
 router.patch("/reports/:reportId/status", updateReportStatus);
 router.post("/moderator/run", runModeratorAgent);
 router.post("/trigger-reminders", triggerGrindRemindersAdmin);
-router.post("/test-email", sendTestEmailAdmin);
 
 // LLM Model Config Routing
 router.patch("/llm-models/:modelId", updateModelConfig);

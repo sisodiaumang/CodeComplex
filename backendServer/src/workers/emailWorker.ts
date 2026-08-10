@@ -8,7 +8,6 @@ import {
   EmailChangeEmailPayload,
   GrindReminderEmailPayload,
   SiteReportEmailPayload,
-  TestEmailPayload,
 } from "../queues/emailQueue.js";
 import {
   sendVerificationMail,
@@ -16,7 +15,6 @@ import {
   sendEmailChangeMail,
   sendGrindReminderMail,
   sendSiteReportMail,
-  sendTestMailToOwner,
 } from "../services/emailSend.service.js";
 import { logger } from "../utils/logger.js";
 import connectDB from "../db/connectDB.js";
@@ -65,11 +63,6 @@ const worker = new Worker(
           data.reason,
           data.details
         );
-        break;
-      }
-      case EmailJobType.TEST_EMAIL: {
-        const data = job.data as TestEmailPayload;
-        await sendTestMailToOwner(data.targetEmail);
         break;
       }
       default:

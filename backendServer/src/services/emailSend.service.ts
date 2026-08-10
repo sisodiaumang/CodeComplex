@@ -254,55 +254,10 @@ async function sendSiteReportMail(
     }
 }
 
-/**
- * Sends a comprehensive test email to the system owner or custom target address.
- */
-async function sendTestMailToOwner(targetEmail?: string): Promise<{ success: boolean; recipient: string }> {
-    const ownerEmail = targetEmail || env.OWNER_EMAIL || env.EMAIL_USER;
-    if (!ownerEmail) {
-        throw new ApiError(400, "No OWNER_EMAIL or EMAIL_USER configured in environment variables");
-    }
-
-    try {
-        await transporter.sendMail({
-            from: `"${APP_NAME} Test" <${FROM_ADDRESS}>`,
-            to: ownerEmail,
-            subject: `[${APP_NAME}] System Test Email ✅`,
-            html: `
-                <div style="background-color: #0d1117; color: #c9d1d9; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; padding: 40px 20px; border-radius: 8px; max-width: 600px; margin: 0 auto; border: 1px solid #30363d;">
-                    <div style="text-align: center; margin-bottom: 24px;">
-                        <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 800; letter-spacing: -0.5px;">Code<span style="color: #FF6B00;">Complex</span></h1>
-                    </div>
-                    <div style="background-color: #161b22; padding: 28px; border-radius: 8px; border: 1px solid #30363d;">
-                        <h2 style="color: #2ea043; margin-top: 0; font-size: 20px; font-weight: 600; text-align: center;">Email Service Online & Healthy ✅</h2>
-                        <p style="font-size: 15px; line-height: 1.6; color: #8b949e; margin-top: 8px; text-align: center;">This test email confirms that Nodemailer SMTP transport and BullMQ worker queue pipelines are working properly.</p>
-                        
-                        <div style="margin: 20px 0; border-top: 1px solid #30363d; padding-top: 15px;">
-                            <p style="font-size: 14px; margin: 4px 0;"><strong>Recipient:</strong> ${ownerEmail}</p>
-                            <p style="font-size: 14px; margin: 4px 0;"><strong>Timestamp:</strong> ${new Date().toISOString()}</p>
-                            <p style="font-size: 14px; margin: 4px 0;"><strong>Environment:</strong> ${env.NODE_ENV}</p>
-                            <p style="font-size: 14px; margin: 4px 0;"><strong>SMTP Provider:</strong> ${isResend ? 'Resend (smtp.resend.com)' : 'Gmail SMTP'}</p>
-                        </div>
-                    </div>
-                    <div style="text-align: center; margin-top: 24px; font-size: 12px; color: #484f58;">
-                        &copy; ${new Date().getFullYear()} CodeComplex. All rights reserved.
-                    </div>
-                </div>
-            `,
-        });
-        return { success: true, recipient: ownerEmail };
-    } catch (err) {
-        console.error("[EmailService] Failed to send test email to owner:", err);
-        const reason = err instanceof Error ? err.message : String(err);
-        throw new ApiError(500, `Failed to send test email: ${reason}`);
-    }
-}
-
 export {
     sendVerificationMail,
     sendWelcomeMail,
     sendEmailChangeMail,
     sendGrindReminderMail,
-    sendSiteReportMail,
-    sendTestMailToOwner
+    sendSiteReportMail
 };
