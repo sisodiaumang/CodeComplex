@@ -112,43 +112,9 @@ export async function trigger1v1Fallback(roomCode: string, pickQuestionFn?: (roo
 
     const hostIdStr = room.host.toString();
 
-    // ─────────────────────────────────────────────
-    // Tier 2: Search for Ghost Player Replay
-    // ─────────────────────────────────────────────
-    const ghostMatchData = await getGhostOpponent(room.battleType, hostIdStr);
-
-    if (ghostMatchData && ghostMatchData.ghostUser) {
-      const updated = await BattleRoom.findOneAndUpdate(
-        { _id: room._id, status: "WAITING", "teams.teamB": { $size: 0 } },
-        { $push: { "teams.teamB": ghostMatchData.ghostUser._id } },
-        { new: true }
-      );
-
-      if (updated) {
-        const match = await createMatchForRoom(updated, {
-          questionSlug: ghostMatchData.questionSlug,
-          durationInMinutes: 30
-        });
-
-        const populated = await BattleRoom.findById(updated._id)
-          .populate("host", "username fullName avatar mascot")
-          .populate("teams.teamA", "username fullName avatar mascot")
-          .populate("teams.teamB", "username fullName avatar mascot");
-
-        io.to(roomCode).emit("battle:match-created", {
-          room: populated,
-          match,
-          isGhost: true,
-          opponentType: "GHOST"
-        });
-
-        return { success: true, opponentType: "GHOST", data: populated, match };
-      }
-    }
-
-    // ─────────────────────────────────────────────
-    // Tier 3: Fallback to Simulated AI Bot Rival
-    // ─────────────────────────────────────────────
+    // Always use system AI Bot Rival (devbot_v1) for automated matchmaking fallback.
+    // This ensures no real user's Mongo ID is placed in teams.teamB, preventing
+    // active room hijacking (spurious "Rejoin Room" buttons) and rating deductions for offline users.
     const botUser = await getOrCreateBotUser();
     if ((botUser._id as any).toString() === hostIdStr) {
       return { success: false, reason: "Host is bot" };
