@@ -29,6 +29,7 @@ import { createReport } from "../controllers/admin.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 import { uploadAvatar } from "../middlewares/uploadSingleImage.middleware.js";
 import { validateRequest } from "../middlewares/validate.middleware.js";
+import { authLimiter } from "../middlewares/rateLimit.middleware.js";
 import {
     signupSchema,
     verifyUserSchema,
@@ -51,17 +52,17 @@ const userRouter = Router();
 
 
 // ─── Auth / Signup flow ───────────────────────────────────────────────
-userRouter.route("/signup").post(validateRequest(signupSchema), signupUser);
-userRouter.route("/signup/verify").post(validateRequest(verifyUserSchema), verifyUser);
-userRouter.route("/otp/resend").post(validateRequest(resendOtpSchema), resendOtp);
+userRouter.route("/signup").post(authLimiter, validateRequest(signupSchema), signupUser);
+userRouter.route("/signup/verify").post(authLimiter, validateRequest(verifyUserSchema), verifyUser);
+userRouter.route("/otp/resend").post(authLimiter, validateRequest(resendOtpSchema), resendOtp);
 
-userRouter.route("/login").post(validateRequest(loginSchema), loginUser);
+userRouter.route("/login").post(authLimiter, validateRequest(loginSchema), loginUser);
 userRouter.route("/logout").post(verifyJWT, logoutUser);
 userRouter.route("/refresh-token").post(refreshAccessToken);
 
 // ─── Password management ───────────────────────────────────────────────
-userRouter.route("/password/forgot").post(validateRequest(forgotPasswordSchema), forgotPassword);
-userRouter.route("/password/reset").post(validateRequest(resetPasswordSchema), resetPassword);
+userRouter.route("/password/forgot").post(authLimiter, validateRequest(forgotPasswordSchema), forgotPassword);
+userRouter.route("/password/reset").post(authLimiter, validateRequest(resetPasswordSchema), resetPassword);
 userRouter.route("/password/change").patch(verifyJWT, validateRequest(changePasswordSchema), changePassword);
 
 // ─── Email change flow ─────────────────────────────────────────────────

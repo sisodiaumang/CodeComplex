@@ -1,8 +1,8 @@
 openapi: 3.0.0
 info:
-  title: DevArena Backend API
+  title: CodeComplex Backend API
   description: |
-    DevArena - Competitive Coding Battle Platform
+    CodeComplex - Competitive Coding Battle Platform
     
     All authenticated endpoints require a JWT access token in the Authorization header:
     `Authorization: Bearer <token>`
@@ -10,12 +10,12 @@ info:
     Socket.IO events run on the same server (default port 8000) with separate authentication.
   version: 1.0.0
   contact:
-    name: DevArena Team
+    name: CodeComplex Team
 
 servers:
   - url: http://localhost:8000
     description: Development server
-  - url: https://api.devarena.com
+  - url: https://api.codecomplex.site
     description: Production server
 
 paths:
@@ -734,7 +734,8 @@ paths:
           description: Submission details returned
     delete:
       tags: [Submission]
-      summary: Delete submission
+      summary: Delete submission (Requires ADMIN role)
+      description: Permanently deletes a submission. Restricted to users with the ADMIN role.
       security:
         - BearerAuth: []
       parameters:
@@ -746,11 +747,14 @@ paths:
       responses:
         200:
           description: Submission deleted
+        403:
+          description: Access denied - Admin role required
 
   /api/v1/submission/{submissionId}/rejudge:
     post:
       tags: [Submission]
-      summary: Rejudge a submission
+      summary: Rejudge a submission (Requires ADMIN role)
+      description: Re-runs judging pipeline on a submission. Restricted to users with the ADMIN role.
       security:
         - BearerAuth: []
       parameters:

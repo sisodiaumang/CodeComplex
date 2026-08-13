@@ -10,10 +10,6 @@ import {
     deleteSubmission
 } from "../controllers/submission.controller.js";
 
-// Same ASSUMPTION as match.router.ts: I don't have your HTTP auth
-// middleware file, so this assumes `verifyJWT` in
-// middlewares/auth.middleware.js. Update this one import if the real name
-// differs.
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 import { validateRequest } from "../middlewares/validate.middleware.js";
 import {

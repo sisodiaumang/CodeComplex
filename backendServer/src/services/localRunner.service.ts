@@ -45,6 +45,17 @@ export async function runLocally(
     }) | null;
     lastResult: LocalRunResult;
 }> {
+    // Security check: Unsandboxed host execution protection
+    if (process.env.NODE_ENV === "production" && process.env.ALLOW_UNSANDBOXED_LOCAL_RUNNER !== "true") {
+        throw new Error(
+            "[Security Error] Unsandboxed local code execution is disabled in production. Ensure Judge0 is online or set ALLOW_UNSANDBOXED_LOCAL_RUNNER=true for explicit local dev override."
+        );
+    }
+
+    console.warn(
+        "⚠️ [SECURITY WARN] Local runner host fallback triggered. Sandboxed execution (Judge0 / Docker) is recommended."
+    );
+
     const uniqueId = Math.random().toString(36).substring(2, 15);
     const tempDir = path.join(process.cwd(), "temp_runner_" + uniqueId);
     

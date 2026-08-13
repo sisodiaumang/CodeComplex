@@ -26,8 +26,8 @@ CLIENT_URL=https://yourdomain.com
 CORS_ORIGIN=https://yourdomain.com
 
 # Database & Cache URIs
-MONGODB_URI=mongodb://devarena-mongodb:27017/codecomplex
-REDIS_URL=redis://devarena-redis:6379
+MONGODB_URI=mongodb://codecomplex-mongodb:27017/codecomplex
+REDIS_URL=redis://codecomplex-redis:6379
 
 # Security Tokens (Generate strong 32+ character secrets)
 JWT_ACCESS_SECRET=your-super-long-secure-access-secret-at-least-32-chars

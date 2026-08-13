@@ -76,8 +76,20 @@ app.use((req, res, next) => {
 app.use(
     helmet({
         crossOriginResourcePolicy: { policy: "cross-origin" },
-        frameguard: false,
-        contentSecurityPolicy: false
+        frameguard: { action: "sameorigin" },
+        contentSecurityPolicy: {
+            directives: {
+                defaultSrc: ["'self'"],
+                scriptSrc: ["'self'"],
+                styleSrc: ["'self'", "'unsafe-inline'"],
+                imgSrc: ["'self'", "data:", "https:"],
+                connectSrc: ["'self'", "http:", "https:", "ws:", "wss:"],
+                fontSrc: ["'self'", "https:", "data:"],
+                objectSrc: ["'none'"],
+                mediaSrc: ["'self'"],
+                frameAncestors: ["'self'"],
+            },
+        },
     })
 );
 
@@ -119,12 +131,12 @@ app.use(
 // Cookie parser
 app.use(cookieParser());
 
-// JSON and URL-encoded body parsing (with size limits)
-app.use(express.json({ limit: "50mb" }));
+// JSON and URL-encoded body parsing (with strict 2MB size limits)
+app.use(express.json({ limit: "2mb" }));
 app.use(
     express.urlencoded({
         extended: true,
-        limit: "50mb"
+        limit: "2mb"
     })
 );
 

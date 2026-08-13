@@ -4,31 +4,31 @@ services:
   # MongoDB database
   mongodb:
     image: mongo:6.0
-    container_name: devarena-mongodb
+    container_name: codecomplex-mongodb
     restart: always
     ports:
-      - "27017:27017"
+      - "127.0.0.1:27017:27017"
     volumes:
       - mongodb_data:/data/db
     networks:
-      - devarena-network
+      - codecomplex-network
 
   # Redis service
   redis:
     image: redis:7.0-alpine
-    container_name: devarena-redis
+    container_name: codecomplex-redis
     restart: always
     ports:
-      - "6379:6379"
+      - "127.0.0.1:6379:6379"
     networks:
-      - devarena-network
+      - codecomplex-network
 
   # Express Backend
   backend:
     build:
       context: ./backendServer
       dockerfile: Dockerfile
-    container_name: devarena-backend
+    container_name: codecomplex-backend
     restart: always
     ports:
       - "8000:8000"
@@ -75,14 +75,14 @@ services:
       - GROQ_API_KEY=${GROQ_API_KEY}
       - GROQ_API_KEYS=${GROQ_API_KEYS}
     networks:
-      - devarena-network
+      - codecomplex-network
 
   # Standalone Email Queue Worker
   email-worker:
     build:
       context: ./backendServer
       dockerfile: Dockerfile.worker
-    container_name: devarena-email-worker
+    container_name: codecomplex-email-worker
     restart: always
     depends_on:
       - mongodb
@@ -100,7 +100,7 @@ services:
       - OWNER_EMAIL=${OWNER_EMAIL}
       - LOG_LEVEL=${LOG_LEVEL:-info}
     networks:
-      - devarena-network
+      - codecomplex-network
 
   # Next.js Client
   frontend:
@@ -110,18 +110,18 @@ services:
       args:
         - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
         - NEXT_PUBLIC_SOCKET_URL=${NEXT_PUBLIC_SOCKET_URL}
-    container_name: devarena-frontend
+    container_name: codecomplex-frontend
     restart: always
     ports:
       - "3000:3000"
     depends_on:
       - backend
     networks:
-      - devarena-network
+      - codecomplex-network
 
 volumes:
   mongodb_data:
 
 networks:
-  devarena-network:
+  codecomplex-network:
     driver: bridge

@@ -14,12 +14,6 @@ import {
     submitMatchQuestionSolution
 } from "../controllers/match.controller.js";
 
-// ASSUMPTION: I don't have your HTTP auth middleware file (only
-// socketAuth.middleware.js was visible, which is socket-only). Going by the
-// generateAccessToken/generateRefreshToken naming in user.model.ts, this
-// assumes an HTTP equivalent named `verifyJWT` in
-// middlewares/auth.middleware.js. If your actual middleware has a different
-// name/path, update just this import line.
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 
 const router = Router();

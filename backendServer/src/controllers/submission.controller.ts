@@ -223,6 +223,7 @@ export const submitCode = async (req: Request, res: Response, next: NextFunction
 // ─────────────────────────────────────────────
 export const compileCode = async (req: Request, res: Response, next: NextFunction) => {
     try {
+        const userIdStr = req.user._id.toString();
         const { matchId, language, code } = req.body;
 
         if (!matchId || !language || typeof code !== "string") {
@@ -233,12 +234,32 @@ export const compileCode = async (req: Request, res: Response, next: NextFunctio
             return;
         }
 
+        if (req.user.isBanned) {
+            res.status(403).json({
+                success: false,
+                message: "Banned accounts cannot compile code"
+            });
+            return;
+        }
+
         const normalizedLanguage = normalizeLanguage(language);
 
         // Fetch match to determine battle type
         const match = await Match.findById(matchId);
         if (!match) {
             res.status(404).json({ success: false, message: "Match not found" });
+            return;
+        }
+
+        // Verify caller is actually a participant in this match
+        const inTeamA = match.teamA.map((id) => id.toString()).includes(userIdStr);
+        const inTeamB = match.teamB.map((id) => id.toString()).includes(userIdStr);
+
+        if (!inTeamA && !inTeamB) {
+            res.status(403).json({
+                success: false,
+                message: "You are not a player in this match"
+            });
             return;
         }
 
