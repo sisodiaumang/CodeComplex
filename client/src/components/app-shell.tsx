@@ -23,7 +23,7 @@ import {
   AlertTriangle,
   AlertCircle,
   CheckCircle2,
-  BrainCircuit,
+  RotateCcw,
 } from "lucide-react";
 import { api } from "@/lib/api";
 import { unwrapList, type AppNotification } from "@/lib/types";
@@ -38,7 +38,7 @@ import { AchievementToastsContainer } from "@/components/AchievementToast";
 
 const NAV = [
   { href: "/battle", label: "Battle", icon: Swords },
-  { href: "/revision", label: "Revision", icon: BrainCircuit },
+  { href: "/revision", label: "Revision", icon: RotateCcw },
   { href: "/leaderboard", label: "Leaderboard", icon: Trophy },
   { href: "/achievements", label: "Achievements", icon: Award },
   { href: "/matches", label: "Matches", icon: History },
