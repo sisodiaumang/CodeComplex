@@ -115,10 +115,7 @@ async function fetchLeaderboardPage(params: {
 
 export const getGlobalLeaderboard = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const battleType = normalizeBattleType(req.query.battleType);
-        if (!battleType) {
-            return res.status(400).json({ success: false, message: "battleType is required" });
-        }
+        const battleType = normalizeBattleType(req.query.battleType) || "DSA";
 
         const category = getCategory(battleType);
 
