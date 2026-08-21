@@ -77,14 +77,14 @@ const userProfileSchema =
     );
 
 
-// Per-category leaderboard indexes.
-userProfileSchema.index({ "ratings.dsa": -1 });
-userProfileSchema.index({ "ratings.frontend": -1 });
-userProfileSchema.index({ "ratings.backend": -1 });
-userProfileSchema.index({ "ratings.projects": -1 });
-userProfileSchema.index({ "ratings.team": -1 });
-userProfileSchema.index({ "ratings.promptWar": -1 });
-userProfileSchema.index({ "ratings.bugFix": -1 });
+// Per-category leaderboard compound indexes for fast MongoDB index-only scans.
+userProfileSchema.index({ "ratings.dsa": -1, userId: 1 });
+userProfileSchema.index({ "ratings.frontend": -1, userId: 1 });
+userProfileSchema.index({ "ratings.backend": -1, userId: 1 });
+userProfileSchema.index({ "ratings.projects": -1, userId: 1 });
+userProfileSchema.index({ "ratings.team": -1, userId: 1 });
+userProfileSchema.index({ "ratings.promptWar": -1, userId: 1 });
+userProfileSchema.index({ "ratings.bugFix": -1, userId: 1 });
 
 
 const UserProfile: mongoose.Model<IUserProfile> =

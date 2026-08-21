@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  output: "standalone",
+  compress: false, // Let Nginx handle gzip compression at the reverse proxy layer
   async headers() {
     return [
       {
