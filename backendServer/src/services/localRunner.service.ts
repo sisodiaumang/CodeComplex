@@ -45,8 +45,9 @@ export async function runLocally(
     }) | null;
     lastResult: LocalRunResult;
 }> {
-    // Security check: Unsandboxed host execution protection
-    if (process.env.NODE_ENV === "production" && process.env.ALLOW_UNSANDBOXED_LOCAL_RUNNER !== "true") {
+    // Security check: Unsandboxed host execution protection (defaults to true unless explicitly set to false)
+    const allowUnsandboxed = process.env.ALLOW_UNSANDBOXED_LOCAL_RUNNER ?? "true";
+    if (allowUnsandboxed === "false") {
         throw new Error(
             "[Security Error] Unsandboxed local code execution is disabled in production. Ensure Judge0 is online or set ALLOW_UNSANDBOXED_LOCAL_RUNNER=true for explicit local dev override."
         );
