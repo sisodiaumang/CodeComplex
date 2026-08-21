@@ -301,6 +301,9 @@ connectDB()
         startGrindReminderJob();
         startRevisionReminderJob();
 
+        server.keepAliveTimeout = 65000;
+        server.headersTimeout = 66000;
+
         server.listen(PORT, () => {
 
             console.log(
