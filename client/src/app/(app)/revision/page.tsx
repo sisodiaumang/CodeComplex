@@ -70,6 +70,34 @@ export default function RevisionDashboardPage() {
   const [activeTab, setActiveTab] = useState<"DUE" | "SOON" | "MASTERED" | "ALL">("DUE");
   const [selectedCategory, setSelectedCategory] = useState<string>("ALL");
   const [search, setSearch] = useState("");
+  const [launchingSlug, setLaunchingSlug] = useState<string | null>(null);
+
+  async function startSoloPracticeForQuestion(item: RevisionItem) {
+    setLaunchingSlug(item.questionSlug);
+    try {
+      const room = await api<any>("/battle", {
+        method: "POST",
+        body: {
+          battleType: item.battleType || "DSA",
+          difficulty: item.difficulty || "MEDIUM",
+          topics: item.topics && item.topics.length > 0 ? item.topics : ["ARRAY"],
+          maxTeamSize: 1,
+          isRanked: false,
+          isSolo: true,
+          isPrivate: true,
+          questionSlug: item.questionSlug,
+        },
+      });
+
+      const dataObj = (room as any).data ?? room;
+      const code = dataObj.roomCode;
+      if (!code) throw new Error("Room created but no room code returned.");
+      router.push(`/battle/${code}`);
+    } catch (err) {
+      console.error("Failed to start solo practice for question:", err);
+      setLaunchingSlug(null);
+    }
+  }
 
   const dashboardQuery = useQuery({
     queryKey: ["revision", "dashboard"],
@@ -144,13 +172,15 @@ export default function RevisionDashboardPage() {
           </Button>
 
           {dueList.length > 0 && (
-            <Link
-              href="/battle"
-              className="inline-flex items-center gap-2 rounded-lg bg-primary px-3.5 py-1.5 text-xs font-bold text-white shadow-xs hover:bg-primary/90 transition-all"
+            <button
+              type="button"
+              disabled={!!launchingSlug}
+              onClick={() => startSoloPracticeForQuestion(dueList[0])}
+              className="inline-flex items-center gap-2 rounded-lg bg-primary px-3.5 py-1.5 text-xs font-bold text-white shadow-xs hover:bg-primary/90 transition-all disabled:opacity-50"
             >
-              <Play className="size-3.5 fill-current" />
-              Revise Top Problem
-            </Link>
+              <Play className={cn("size-3.5 fill-current", launchingSlug === dueList[0].questionSlug && "animate-spin")} />
+              {launchingSlug === dueList[0].questionSlug ? "Starting..." : "Revise Top Problem"}
+            </button>
           )}
         </div>
       </div>
@@ -164,9 +194,14 @@ export default function RevisionDashboardPage() {
               <strong>{dueCount} question{dueCount > 1 ? "s" : ""} due today</strong> for spaced repetition. Practicing today maintains algorithm retention.
             </span>
           </div>
-          <Link href="/battle" className="text-xs font-bold text-primary hover:underline shrink-0">
+          <button
+            type="button"
+            disabled={!!launchingSlug}
+            onClick={() => startSoloPracticeForQuestion(dueList[0])}
+            className="text-xs font-bold text-primary hover:underline shrink-0"
+          >
             Start Practice &rarr;
-          </Link>
+          </button>
         </div>
       )}
 
@@ -373,13 +408,15 @@ export default function RevisionDashboardPage() {
                     </div>
 
                     <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
-                      <Link
-                        href={`/battle`}
-                        className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3.5 py-1.5 text-xs font-bold text-white shadow-xs hover:bg-primary/90 transition-all"
+                      <button
+                        type="button"
+                        disabled={launchingSlug === item.questionSlug}
+                        onClick={() => startSoloPracticeForQuestion(item)}
+                        className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3.5 py-1.5 text-xs font-bold text-white shadow-xs hover:bg-primary/90 transition-all disabled:opacity-50 cursor-pointer"
                       >
-                        <Play className="size-3.5 fill-current" />
-                        Revise Now
-                      </Link>
+                        <Play className={cn("size-3.5 fill-current", launchingSlug === item.questionSlug && "animate-spin")} />
+                        {launchingSlug === item.questionSlug ? "Launching..." : "Revise Now"}
+                      </button>
                     </div>
                   </div>
                 </Card>
