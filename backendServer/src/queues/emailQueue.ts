@@ -52,12 +52,21 @@ export interface SiteReportEmailPayload {
   details: string;
 }
 
+export interface RevisionReminderPayload {
+  email: string;
+  username: string;
+  questionTitle: string;
+  daysAgo: number;
+  questionSlug: string;
+}
+
 export enum EmailJobType {
   VERIFICATION = "VERIFICATION",
   WELCOME = "WELCOME",
   EMAIL_CHANGE = "EMAIL_CHANGE",
   GRIND_REMINDER = "GRIND_REMINDER",
   SITE_REPORT = "SITE_REPORT",
+  REVISION_REMINDER = "REVISION_REMINDER",
 }
 
 export const emailQueue = new Queue(EMAIL_QUEUE_NAME, {
@@ -100,5 +109,21 @@ export async function enqueueSiteReportEmail(
     reporterEmail,
     reason,
     details,
+  });
+}
+
+export async function enqueueRevisionReminderEmail(
+  email: string,
+  username: string,
+  questionTitle: string,
+  daysAgo: number,
+  questionSlug: string
+): Promise<void> {
+  await emailQueue.add(EmailJobType.REVISION_REMINDER, {
+    email,
+    username,
+    questionTitle,
+    daysAgo,
+    questionSlug,
   });
 }

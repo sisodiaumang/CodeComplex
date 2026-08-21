@@ -254,6 +254,57 @@ async function sendSiteReportMail(
     }
 }
 
+export async function sendRevisionReminderMail(
+    toEmail: string,
+    username: string,
+    questionTitle: string,
+    daysAgo: number,
+    questionSlug: string
+): Promise<void> {
+    if (!env.EMAIL_USER || !env.EMAIL_PASS) {
+        console.log(`[EmailService DEV] Would send Revision Reminder Email to ${toEmail} for question "${questionTitle}" solved ${daysAgo} days ago.`);
+        return;
+    }
+
+    try {
+        const targetUrl = `${env.CORS_ORIGIN || "https://codecomplex.site"}/revision`;
+        await transporter.sendMail({
+            from: `"${APP_NAME} Memory Trainer" <${FROM_ADDRESS}>`,
+            to: toEmail,
+            subject: `⚡ Time to Revise: You solved "${questionTitle}" ${daysAgo} days ago!`,
+            html: `
+                <div style="background-color: #0d1117; color: #c9d1d9; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; padding: 40px 20px; border-radius: 8px; max-width: 550px; margin: 0 auto; border: 1px solid #30363d;">
+                    <div style="text-align: center; margin-bottom: 24px;">
+                        <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 800; letter-spacing: -0.5px;">Code<span style="color: #FF6B00;">Complex</span></h1>
+                    </div>
+                    <div style="background-color: #161b22; padding: 28px; border-radius: 8px; border: 1px solid #30363d;">
+                        <h2 style="color: #FF6B00; margin-top: 0; font-size: 20px; font-weight: 600; text-align: center;">Memory Retention Reminder 🧠</h2>
+                        <p style="font-size: 15px; line-height: 1.6; color: #c9d1d9; margin-top: 12px;">Hi <strong>@${username}</strong>,</p>
+                        <p style="font-size: 14px; line-height: 1.6; color: #8b949e; margin-top: 8px;">
+                            You solved <strong style="color: #ffffff;">"${questionTitle}"</strong> <strong>${daysAgo} day${daysAgo === 1 ? "" : "s"} ago</strong>.
+                            According to your adaptive memory interval, today is the ideal day to revise it so you don't forget the underlying pattern!
+                        </p>
+                        
+                        <div style="text-align: center; margin: 28px 0;">
+                            <a href="${targetUrl}" style="background-color: #FF6B00; color: #ffffff; text-decoration: none; font-weight: 700; font-size: 15px; padding: 12px 28px; border-radius: 6px; display: inline-block;">
+                                Revise Problem Now &rarr;
+                            </a>
+                        </div>
+                        <p style="font-size: 12px; color: #6e7681; text-align: center; margin-top: 16px;">
+                            Practicing spaced repetition strengthens algorithm retention by over 300%.
+                        </p>
+                    </div>
+                    <div style="text-align: center; margin-top: 24px; font-size: 12px; color: #484f58;">
+                        &copy; ${new Date().getFullYear()} CodeComplex. All rights reserved.
+                    </div>
+                </div>
+            `,
+        });
+    } catch (err) {
+        console.error(`[EmailService] Failed to send revision reminder email to ${toEmail}:`, err);
+    }
+}
+
 export {
     sendVerificationMail,
     sendWelcomeMail,

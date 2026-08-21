@@ -20,6 +20,7 @@ import startOtpCleanupJob from "./jobs/otpCleanup.js";
 import startNotificationCleanupJob from "./jobs/notificationCleanup.js";
 import startStaleBattleRoomCleanupJob from "./jobs/staleBattleRoomCleanup.js";
 import { startGrindReminderJob } from "./jobs/grindReminder.js";
+import { startRevisionReminderJob } from "./jobs/revisionReminder.job.js";
 import { seedModels } from "./services/aiGateway.service.js";
 import { seedAchievements } from "./services/achievement.service.js";
 
@@ -40,6 +41,7 @@ import leaderboardRouter from "./routes/leaderboard.router.js";
 import spectateRouter from "./routes/spectate.router.js";
 import oauthRouter from "./routes/oauth.router.js";
 import adminRouter from "./routes/admin.router.js";
+import revisionRouter from "./routes/revision.router.js";
 
 
 
@@ -185,6 +187,7 @@ app.use("/api/v1/leaderboard", leaderboardRouter);
 app.use("/api/v1/spectate", spectateRouter);
 app.use("/api/v1/auth", oauthRouter);
 app.use("/api/v1/admin", adminRouter);
+app.use("/api/v1/revision", revisionRouter);
 
 
 
@@ -296,6 +299,7 @@ connectDB()
         startNotificationCleanupJob();
         startStaleBattleRoomCleanupJob();
         startGrindReminderJob();
+        startRevisionReminderJob();
 
         server.listen(PORT, () => {
 

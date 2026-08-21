@@ -8,6 +8,7 @@ import {
   EmailChangeEmailPayload,
   GrindReminderEmailPayload,
   SiteReportEmailPayload,
+  RevisionReminderPayload,
 } from "../queues/emailQueue.js";
 import {
   sendVerificationMail,
@@ -15,6 +16,7 @@ import {
   sendEmailChangeMail,
   sendGrindReminderMail,
   sendSiteReportMail,
+  sendRevisionReminderMail,
 } from "../services/emailSend.service.js";
 import { logger } from "../utils/logger.js";
 import connectDB from "../db/connectDB.js";
@@ -62,6 +64,17 @@ const worker = new Worker(
           data.reporterEmail,
           data.reason,
           data.details
+        );
+        break;
+      }
+      case EmailJobType.REVISION_REMINDER: {
+        const data = job.data as RevisionReminderPayload;
+        await sendRevisionReminderMail(
+          data.email,
+          data.username,
+          data.questionTitle,
+          data.daysAgo,
+          data.questionSlug
         );
         break;
       }
