@@ -342,7 +342,7 @@ export const getBattleQuestions = async (
         } = req.query;
 
         const bType = String(battleType).toUpperCase();
-        const limitNum = Math.min(Math.max(parseInt(String(limit), 10) || 500, 1), 1000);
+        const limitNum = Math.min(Math.max(parseInt(String(limit), 10) || 5000, 1), 10000);
 
         const FRONTEND_TYPES = ["FRONTEND", "PROJECTS"];
         const BACKEND_TYPES  = ["BACKEND"];
@@ -372,10 +372,8 @@ export const getBattleQuestions = async (
         const query: any = {};
 
         if (isQuestionModel) {
-            query.isDeleted = { $ne: true };
-            query["battleConfig.enabled"] = { $ne: false };
             if (bType === "DSA") {
-                query.mode = { $in: ["solve", null, undefined] };
+                query.mode = { $ne: "bug_fix" };
             } else if (bType === "BUG_FIX") {
                 query.mode = "bug_fix";
             }

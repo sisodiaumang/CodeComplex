@@ -141,6 +141,7 @@ export default function BattlePage() {
     queryFn: async () => {
       const params = new URLSearchParams();
       params.set("battleType", battleType);
+      params.set("limit", "5000");
       if (questionFilterDiff !== "ALL") params.set("difficulty", questionFilterDiff);
       if (questionSearch.trim()) params.set("search", questionSearch.trim());
 
