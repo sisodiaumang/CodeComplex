@@ -8,6 +8,7 @@ import Friendship from "../models/friendship.model.js";
 import User from "../models/user.model.js";
 import Notification from "../models/notification.model.js";
 import UserProfile from "../models/userProfile.model.js";
+import Submission from "../models/submission.model.js";
 import { io } from "../index.js";
 import { createMatchForRoom, MatchServiceError } from "../services/match.service.js";
 import { IBattleRoom } from "../interfaces/battleRoom.interface.js";
@@ -322,13 +323,136 @@ export const getActiveRoom = async (
 };
 
 // ─────────────────────────────────────────────
+// 0.5 GET /battle/questions — Get & Search Battle Questions
+// ─────────────────────────────────────────────
+
+export const getBattleQuestions = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+): Promise<void> => {
+    try {
+        const userId = req.user._id;
+        const {
+            battleType = "DSA",
+            difficulty,
+            topic,
+            search,
+            limit = "50"
+        } = req.query;
+
+        const bType = String(battleType).toUpperCase();
+        const limitNum = Math.min(Math.max(parseInt(String(limit), 10) || 50, 1), 100);
+
+        const FRONTEND_TYPES = ["FRONTEND", "PROJECTS"];
+        const BACKEND_TYPES  = ["BACKEND"];
+        const PROMPT_TYPES   = ["PROMPT_WAR"];
+
+        let Model: any = Question;
+        let queryField = "category";
+        let isQuestionModel = true;
+
+        if (FRONTEND_TYPES.includes(bType)) {
+            const { default: FrontendQuestion } = await import("../models/frontendQuestion.model.js");
+            Model = FrontendQuestion;
+            queryField = "topics";
+            isQuestionModel = false;
+        } else if (BACKEND_TYPES.includes(bType)) {
+            const { default: BackendQuestion } = await import("../models/backendQuestion.model.js");
+            Model = BackendQuestion;
+            queryField = "topics";
+            isQuestionModel = false;
+        } else if (PROMPT_TYPES.includes(bType)) {
+            const { default: PromptWarScenario } = await import("../models/promptWarScenerio.model.js");
+            Model = PromptWarScenario;
+            queryField = "topics";
+            isQuestionModel = false;
+        }
+
+        const query: any = {};
+
+        if (isQuestionModel) {
+            query.isDeleted = { $ne: true };
+            query["battleConfig.enabled"] = true;
+            if (bType === "DSA") {
+                query.mode = { $in: ["solve", null, undefined] };
+            } else if (bType === "BUG_FIX") {
+                query.mode = "bug_fix";
+            }
+        }
+
+        if (difficulty && difficulty !== "all") {
+            const mappedDiff = DIFFICULTY_MAP[String(difficulty).toUpperCase()] ?? String(difficulty);
+            query.difficulty = { $regex: new RegExp("^" + mappedDiff + "$", "i") };
+        }
+
+        if (topic) {
+            const topicFilter = buildTopicFilter(String(topic), queryField);
+            Object.assign(query, topicFilter);
+        }
+
+        if (search) {
+            const searchStr = String(search).trim();
+            const searchRegex = new RegExp(searchStr.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), "i");
+            const searchConditions = [
+                { title: searchRegex },
+                { slug: searchRegex },
+                { category: searchRegex },
+                { subCategory: searchRegex },
+                { topics: searchRegex }
+            ];
+            if (query.$or) {
+                query.$and = [{ $or: query.$or }, { $or: searchConditions }];
+                delete query.$or;
+            } else {
+                query.$or = searchConditions;
+            }
+        }
+
+        const questions = await Model.find(query)
+            .select("title slug difficulty category subCategory topics")
+            .limit(limitNum)
+            .lean();
+
+        // Get user's accepted submissions to mark solved status
+        const acceptedSubmissions = await Submission.find({
+            userId,
+            $or: [{ status: "ACCEPTED" }, { judgeResult: "ACCEPTED" }]
+        }).select("questionSlug").lean();
+
+        const solvedSlugs = new Set(acceptedSubmissions.map((s: any) => s.questionSlug));
+
+        const result = questions.map((q: any) => {
+            const rawDiff = String(q.difficulty || "MEDIUM").toUpperCase();
+            const normDiff = rawDiff.includes("EASY") ? "EASY" : rawDiff.includes("HARD") ? "HARD" : "MEDIUM";
+            return {
+                _id: q._id,
+                title: q.title,
+                slug: q.slug,
+                difficulty: normDiff,
+                category: q.category || q.subCategory || (q.topics && q.topics[0]) || "General",
+                topics: q.topics || (q.category ? [q.category] : []),
+                isSolved: solvedSlugs.has(q.slug)
+            };
+        });
+
+        res.status(200).json({
+            success: true,
+            data: result
+        });
+    } catch (err) {
+        next(err);
+    }
+};
+
+// ─────────────────────────────────────────────
 // 1. POST /battle  — Create Room
 // ─────────────────────────────────────────────
 
 /**
  * Creates a new battle room and places the host in Team A.
  *
- * Body: { battleType, teamSize, difficulty, isRanked, topic? }
+ * Body: { battleType, teamSize, difficulty, isRanked, topic?, questionSlug? }
  */
 export const createRoom = async (
     req: Request,
@@ -345,7 +469,8 @@ export const createRoom = async (
             isRanked = true,
             isSolo = false,
             isPrivate = true,
-            topics
+            topics,
+            questionSlug
         } = req.body;
 
         // Validate required fields
@@ -419,6 +544,7 @@ export const createRoom = async (
             isSolo,
             isPrivate: actualIsPrivate,
             topics: topics ?? [],
+            questionSlug: questionSlug || undefined,
             status: "WAITING",
             teams: {
                 teamA: [hostId],
@@ -870,8 +996,12 @@ export const startBattle = async (
             return;
         }
 
-        // Randomly pick a question from the room's selected topics + difficulty
-        const questionSlug = await pickRandomQuestion(room);
+        // Use pre-selected question or randomly pick one from room settings
+        let questionSlug: string | undefined = room.questionSlug ?? undefined;
+        if (!questionSlug) {
+            const picked = await pickRandomQuestion(room);
+            if (picked) questionSlug = picked;
+        }
 
         if (!questionSlug) {
             res.status(404).json({

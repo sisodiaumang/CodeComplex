@@ -13,6 +13,7 @@ import {
     getRoomInvitableFriends,
     startMatchmaking,
     check1v1MatchmakingFallback,
+    getBattleQuestions,
 } from "../controllers/battle.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 import { validateRequest } from "../middlewares/validate.middleware.js";
@@ -31,7 +32,8 @@ const battleRouter = Router();
 // All battle routes require authentication
 battleRouter.use(verifyJWT);
 
-// ── Room ──────────────────────────────────────
+// ── Room & Question Lookups ────────────────────
+battleRouter.get("/questions", getBattleQuestions);
 battleRouter.post("/", validateRequest(createRoomSchema), createRoom);
 battleRouter.post("/matchmaking", validateRequest(createRoomSchema), startMatchmaking);
 battleRouter.post("/matchmaking/fallback", check1v1MatchmakingFallback);

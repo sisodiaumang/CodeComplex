@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Swords, KeyRound, DoorOpen, ArrowRight, Users, Play, Info } from "lucide-react";
+import { Swords, KeyRound, DoorOpen, ArrowRight, Users, Play, Info, Shuffle, Target, Search, CheckCircle2 } from "lucide-react";
 import { api, errorMessage } from "@/lib/api";
 import type { BattleRoom } from "@/lib/types";
 import { MODE_COLORS, type BattleType } from "@/lib/theme";
@@ -130,6 +130,26 @@ export default function BattlePage() {
   const [joinError, setJoinError] = useState<string | null>(null);
   const [joining, setJoining] = useState(false);
 
+  // Solo mode question selection states
+  const [questionSelectMode, setQuestionSelectMode] = useState<"RANDOM" | "SPECIFIC">("RANDOM");
+  const [selectedQuestion, setSelectedQuestion] = useState<{ slug: string; title: string; difficulty: Difficulty } | null>(null);
+  const [questionSearch, setQuestionSearch] = useState("");
+  const [questionFilterDiff, setQuestionFilterDiff] = useState<"ALL" | Difficulty>("ALL");
+
+  const questionsQuery = useQuery({
+    queryKey: ["battle", "questions", battleType, questionFilterDiff, questionSearch],
+    queryFn: async () => {
+      const params = new URLSearchParams();
+      params.set("battleType", battleType);
+      if (questionFilterDiff !== "ALL") params.set("difficulty", questionFilterDiff);
+      if (questionSearch.trim()) params.set("search", questionSearch.trim());
+
+      const res = await api<{ success: boolean; data: any[] }>(`/battle/questions?${params.toString()}`);
+      return (res as any).data ?? res;
+    },
+    enabled: lobbyMode === "SOLO" && questionSelectMode === "SPECIFIC",
+  });
+
   const activeRoomQuery = useQuery({
     queryKey: ["battle", "me", "active"],
     queryFn: () => api<{ room: BattleRoom | null }>("/battle/me/active"),
@@ -161,26 +181,40 @@ export default function BattlePage() {
   async function onCreate(e: React.FormEvent) {
     e.preventDefault();
     setCreateError(null);
-    const minTopics = lobbyMode === "RANKED" ? 3 : 1;
-    if (selectedTopics.length < minTopics) {
-      setCreateError(`Select at least ${minTopics} topic${minTopics > 1 ? "s" : ""}`);
+
+    if (lobbyMode !== "SOLO" || questionSelectMode === "RANDOM") {
+      const minTopics = lobbyMode === "RANKED" ? 3 : 1;
+      if (selectedTopics.length < minTopics) {
+        setCreateError(`Select at least ${minTopics} topic${minTopics > 1 ? "s" : ""}`);
+        return;
+      }
+    }
+
+    if (lobbyMode === "SOLO" && questionSelectMode === "SPECIFIC" && !selectedQuestion) {
+      setCreateError("Please search and select a specific question");
       return;
     }
+
     setCreating(true);
     const isPublicMatch = !isPrivate && lobbyMode !== "SOLO";
     const endpoint = isPublicMatch ? "/battle/matchmaking" : "/battle";
     try {
+      const body: any = {
+        battleType,
+        difficulty: selectedQuestion ? selectedQuestion.difficulty : difficulty,
+        topics: selectedTopics.length > 0 ? selectedTopics : ["ARRAY"],
+        maxTeamSize: lobbyMode === "SOLO" ? 1 : teamSize,
+        isRanked: lobbyMode === "RANKED",
+        isSolo: lobbyMode === "SOLO",
+        isPrivate: lobbyMode === "SOLO" ? true : isPrivate,
+      };
+      if (lobbyMode === "SOLO" && questionSelectMode === "SPECIFIC" && selectedQuestion) {
+        body.questionSlug = selectedQuestion.slug;
+      }
+
       const room = await api<BattleRoom | { room: BattleRoom }>(endpoint, {
         method: "POST",
-        body: {
-          battleType,
-          difficulty,
-          topics: selectedTopics,
-          maxTeamSize: lobbyMode === "SOLO" ? 1 : teamSize,
-          isRanked: lobbyMode === "RANKED",
-          isSolo: lobbyMode === "SOLO",
-          isPrivate: lobbyMode === "SOLO" ? true : isPrivate,
-        },
+        body,
       });
       const dataObj = (room as any).data ?? room;
       const code = dataObj.roomCode;
@@ -318,6 +352,165 @@ export default function BattlePage() {
                 })}
               </div>
             </div>
+
+            {/* Solo Question Selection Mode */}
+            {lobbyMode === "SOLO" && (
+              <div className="space-y-4 rounded-xl border border-primary/20 bg-primary/5 p-4">
+                <label className="block text-xs font-semibold text-text uppercase tracking-wider font-mono">
+                  Question Selection
+                </label>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setQuestionSelectMode("RANDOM");
+                      setSelectedQuestion(null);
+                    }}
+                    className={cn(
+                      "flex items-center justify-center gap-2 rounded-lg border p-3 text-xs font-bold transition-all",
+                      questionSelectMode === "RANDOM"
+                        ? "border-primary bg-primary text-white shadow-sm"
+                        : "border-border/60 bg-surface/50 text-text-muted hover:border-border hover:text-text"
+                    )}
+                  >
+                    <Shuffle className="size-4" />
+                    Random Question
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setQuestionSelectMode("SPECIFIC")}
+                    className={cn(
+                      "flex items-center justify-center gap-2 rounded-lg border p-3 text-xs font-bold transition-all",
+                      questionSelectMode === "SPECIFIC"
+                        ? "border-primary bg-primary text-white shadow-sm"
+                        : "border-border/60 bg-surface/50 text-text-muted hover:border-border hover:text-text"
+                    )}
+                  >
+                    <Target className="size-4" />
+                    Select Question
+                  </button>
+                </div>
+
+                {questionSelectMode === "SPECIFIC" && (
+                  <div className="space-y-3 pt-2">
+                    {/* Search input & Difficulty filter */}
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      <div className="relative flex-1">
+                        <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-text-faint" />
+                        <input
+                          type="text"
+                          placeholder="Search by title, topic or keyword..."
+                          value={questionSearch}
+                          onChange={(e) => setQuestionSearch(e.target.value)}
+                          className="w-full rounded-lg border border-border bg-surface py-2 pl-9 pr-3 text-xs text-text placeholder:text-text-faint focus:border-primary focus:outline-none"
+                        />
+                      </div>
+                      <div className="flex gap-1">
+                        {(["ALL", "EASY", "MEDIUM", "HARD"] as const).map((d) => (
+                          <button
+                            key={d}
+                            type="button"
+                            onClick={() => setQuestionFilterDiff(d)}
+                            className={cn(
+                              "rounded-md border px-2.5 py-1 text-[11px] font-semibold capitalize transition-colors",
+                              questionFilterDiff === d
+                                ? "border-primary bg-primary-subtle text-primary"
+                                : "border-border bg-surface text-text-muted hover:text-text"
+                            )}
+                          >
+                            {d.toLowerCase()}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Selected question pill banner if selected */}
+                    {selectedQuestion && (
+                      <div className="flex items-center justify-between rounded-lg border border-primary/40 bg-surface p-2.5 text-xs">
+                        <div className="flex items-center gap-2 truncate">
+                          <CheckCircle2 className="size-4 shrink-0 text-primary" />
+                          <span className="font-semibold text-text truncate">{selectedQuestion.title}</span>
+                          <span className={cn(
+                            "rounded px-1.5 py-0.5 text-[10px] font-bold border",
+                            DIFF_COLORS[selectedQuestion.difficulty as Difficulty]
+                          )}>
+                            {selectedQuestion.difficulty}
+                          </span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setSelectedQuestion(null)}
+                          className="text-[11px] font-medium text-text-faint hover:text-danger ml-2"
+                        >
+                          Clear
+                        </button>
+                      </div>
+                    )}
+
+                    {/* Question List Box */}
+                    <div className="max-h-64 overflow-y-auto space-y-1.5 rounded-lg border border-border bg-surface p-2 scrollbar-thin">
+                      {questionsQuery.isLoading ? (
+                        <p className="py-6 text-center text-xs text-text-faint">Loading questions...</p>
+                      ) : Array.isArray(questionsQuery.data) && questionsQuery.data.length > 0 ? (
+                        questionsQuery.data.map((q: any) => {
+                          const isSelected = selectedQuestion?.slug === q.slug;
+                          return (
+                            <button
+                              key={q._id || q.slug}
+                              type="button"
+                              onClick={() => {
+                                setSelectedQuestion({ slug: q.slug, title: q.title, difficulty: q.difficulty });
+                                setDifficulty(q.difficulty);
+                              }}
+                              className={cn(
+                                "flex w-full items-center justify-between gap-3 rounded-lg border p-2.5 text-left transition-all hover:border-primary/50",
+                                isSelected
+                                  ? "border-primary bg-primary/10 shadow-sm"
+                                  : "border-border/50 bg-surface/40 hover:bg-surface"
+                              )}
+                            >
+                              <div className="flex flex-col min-w-0 gap-1">
+                                <div className="flex items-center gap-2">
+                                  <span className="font-semibold text-xs text-text truncate">{q.title}</span>
+                                  <span className={cn(
+                                    "rounded px-1.5 py-0.5 text-[9px] font-bold border shrink-0",
+                                    DIFF_COLORS[q.difficulty as Difficulty] || "border-border text-text-faint"
+                                  )}>
+                                    {q.difficulty}
+                                  </span>
+                                </div>
+                                <div className="flex items-center gap-2 text-[10px] text-text-faint">
+                                  <span>{q.category}</span>
+                                  {q.topics && q.topics.length > 0 && (
+                                    <span>• {q.topics.slice(0, 2).join(", ")}</span>
+                                  )}
+                                </div>
+                              </div>
+
+                              <div className="flex items-center gap-2 shrink-0">
+                                {/* Solved Status Badge */}
+                                {q.isSolved ? (
+                                  <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
+                                    <CheckCircle2 className="size-3" />
+                                    Solved
+                                  </span>
+                                ) : (
+                                  <span className="inline-flex items-center gap-1 rounded-full border border-border bg-surface-2 px-2 py-0.5 text-[10px] font-medium text-text-faint">
+                                    Unsolved
+                                  </span>
+                                )}
+                              </div>
+                            </button>
+                          );
+                        })
+                      ) : (
+                        <p className="py-6 text-center text-xs text-text-faint">No questions found matching your search.</p>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Room Visibility */}
             {lobbyMode !== "SOLO" && (

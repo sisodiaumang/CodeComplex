@@ -10,6 +10,7 @@ export const createRoomSchema = z.object({
         isRanked: z.boolean().optional(),
         isSolo: z.boolean().optional(),
         isPrivate: z.boolean().optional(),
+        questionSlug: z.string().optional(),
     }).strict()
     .refine(
         (data) => {
