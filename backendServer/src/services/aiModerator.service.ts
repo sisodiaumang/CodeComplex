@@ -9,7 +9,7 @@ import { callLLM } from "./aiGateway.service.js";
 
 async function callGrokJson(prompt: string, systemInstruction: string): Promise<any> {
     const result = await callLLM(
-        "llama-3.3-70b-versatile",
+        "llama-3.1-8b-instant",
         {
             messages: [
                 { role: "system", content: systemInstruction },
