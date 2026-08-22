@@ -14,12 +14,13 @@ const ENCRYPTION_KEY = crypto
     .digest();
 
 const GROQ_MODEL_ALIAS_MAP: Record<string, string> = {
-    "meta-llama/llama-4-scout-17b-16e-instruct": "llama-3.3-70b-versatile",
-    "openai/gpt-oss-120b": "llama-3.3-70b-versatile",
+    "llama-3.3-70b-versatile": "llama-3.1-8b-instant",
+    "meta-llama/llama-4-scout-17b-16e-instruct": "llama-3.1-8b-instant",
+    "openai/gpt-oss-120b": "openai/gpt-oss-120b",
     "openai/gpt-oss-20b": "llama-3.1-8b-instant",
-    "qwen/qwen3-32b": "llama-3.3-70b-versatile",
-    "qwen/qwen3.6-27b": "llama-3.3-70b-versatile",
-    "grok-2-vision-1212": "llama-3.3-70b-versatile"
+    "qwen/qwen3-32b": "qwen/qwen3.6-27b",
+    "qwen/qwen3.6-27b": "qwen/qwen3.6-27b",
+    "grok-2-vision-1212": "llama-3.1-8b-instant"
 };
 
 const DEFAULT_MODELS = [
@@ -34,13 +35,23 @@ const DEFAULT_MODELS = [
         isActive: true,
     },
     {
-        modelId: "llama-3.3-70b-versatile",
-        displayName: "Llama 3.3 70B",
-        inputPricePer1M: 0.59,
-        outputPricePer1M: 0.79,
+        modelId: "openai/gpt-oss-120b",
+        displayName: "GPT OSS 120B",
+        inputPricePer1M: 0.50,
+        outputPricePer1M: 0.70,
         spendLimit: 10.00,
         limitSpent: 0,
         priority: 2,
+        isActive: true,
+    },
+    {
+        modelId: "qwen/qwen3.6-27b",
+        displayName: "Qwen 3.6 27B",
+        inputPricePer1M: 0.30,
+        outputPricePer1M: 0.40,
+        spendLimit: 10.00,
+        limitSpent: 0,
+        priority: 3,
         isActive: true,
     },
     {
@@ -50,7 +61,7 @@ const DEFAULT_MODELS = [
         outputPricePer1M: 0.79,
         spendLimit: 10.00,
         limitSpent: 0,
-        priority: 3,
+        priority: 4,
         isActive: true,
     },
     {
@@ -58,16 +69,6 @@ const DEFAULT_MODELS = [
         displayName: "Mixtral 8x7B",
         inputPricePer1M: 0.24,
         outputPricePer1M: 0.24,
-        spendLimit: 10.00,
-        limitSpent: 0,
-        priority: 4,
-        isActive: true,
-    },
-    {
-        modelId: "gemma2-9b-it",
-        displayName: "Gemma 2 9B",
-        inputPricePer1M: 0.20,
-        outputPricePer1M: 0.20,
         spendLimit: 10.00,
         limitSpent: 0,
         priority: 5,
@@ -410,8 +411,9 @@ export async function callLLM(
                 // If the model returned 404 / model_not_found, try automatic multi-model fallback chain
                 if (res.status === 404 || body.includes("model_not_found") || body.includes("does not exist")) {
                     const FALLBACK_MODELS = [
-                        "llama-3.3-70b-versatile",
                         "llama-3.1-8b-instant",
+                        "openai/gpt-oss-120b",
+                        "qwen/qwen3.6-27b",
                         "llama3-70b-8192",
                         "llama3-8b-8192",
                         "gemma2-9b-it",
