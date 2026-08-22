@@ -293,6 +293,14 @@ export async function callLLM(
             if (!res.ok) {
                 const body = await res.text().catch(() => "");
                 
+                // If key is 401 (expired/invalid), mark DB key inactive if applicable
+                if (res.status === 401 || body.includes("expired_api_key") || body.includes("Invalid API Key")) {
+                    console.warn(`[AIGateway WARN] API Key ${keyInfo._id} is expired or invalid (401). Skipping and rotating...`);
+                    if (!keyInfo._id.startsWith("env-")) {
+                        await ApiKey.updateOne({ _id: keyInfo._id }, { isActive: false }).catch(() => {});
+                    }
+                }
+                
                 // If the model returned 404 / model_not_found, try automatic fallback to llama-3.3-70b-versatile
                 if ((res.status === 404 || body.includes("model_not_found") || body.includes("does not exist")) && modelIdToUse !== "llama-3.3-70b-versatile") {
                     console.warn(`[AIGateway] Model '${modelIdToUse}' returned 404. Automatically falling back to 'llama-3.3-70b-versatile'...`);
@@ -339,6 +347,12 @@ export async function callLLM(
     }
 
     if (!apiResponseData) {
+        const is401Error = lastError?.message?.includes("401") || lastError?.message?.includes("expired_api_key") || lastError?.message?.includes("Invalid API Key");
+        if (is401Error) {
+            throw new Error(
+                "[AIGateway Error] All configured Groq API keys are expired or invalid (401). Please update GROQ_API_KEY in your VM .env file or add a valid key in the Admin Panel."
+            );
+        }
         throw lastError || new Error("[AIGateway] All API keys in pool failed");
     }
 
