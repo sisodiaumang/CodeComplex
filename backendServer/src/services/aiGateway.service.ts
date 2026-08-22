@@ -397,28 +397,49 @@ export async function callLLM(
                     }
                 }
                 
-                // If the model returned 404 / model_not_found, try automatic fallback to llama-3.3-70b-versatile
-                if ((res.status === 404 || body.includes("model_not_found") || body.includes("does not exist")) && modelIdToUse !== "llama-3.3-70b-versatile") {
-                    console.warn(`[AIGateway] Model '${modelIdToUse}' returned 404. Automatically falling back to 'llama-3.3-70b-versatile'...`);
-                    modelIdToUse = "llama-3.3-70b-versatile";
-                    const retryRes = await fetch(GROQ_API_URL, {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                            Authorization: `Bearer ${keyInfo.key}`,
-                        },
-                        body: JSON.stringify({
-                            ...requestBody,
-                            messages: sanitizedMessages,
-                            model: modelIdToUse
-                        }),
-                    });
+                // If the model returned 404 / model_not_found, try automatic multi-model fallback chain
+                if (res.status === 404 || body.includes("model_not_found") || body.includes("does not exist")) {
+                    const FALLBACK_MODELS = [
+                        "llama-3.3-70b-versatile",
+                        "llama-3.1-8b-instant",
+                        "llama3-70b-8192",
+                        "llama3-8b-8192",
+                        "gemma2-9b-it",
+                        "mixtral-8x7b-32768"
+                    ];
+                    console.warn(`[AIGateway] Model '${modelIdToUse}' returned 404. Attempting automatic multi-model fallback chain...`);
 
-                    if (retryRes.ok) {
-                        const retryData = await retryRes.json() as any;
-                        apiResponseData = retryData;
-                        successfulKeyId = keyInfo._id;
-                        break;
+                    for (const altModel of FALLBACK_MODELS) {
+                        if (altModel === modelIdToUse) continue;
+                        try {
+                            const retryRes = await fetch(GROQ_API_URL, {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                    Authorization: `Bearer ${keyInfo.key}`,
+                                },
+                                body: JSON.stringify({
+                                    ...requestBody,
+                                    messages: sanitizedMessages,
+                                    model: altModel
+                                }),
+                            });
+
+                            if (retryRes.ok) {
+                                const retryData = await retryRes.json() as any;
+                                apiResponseData = retryData;
+                                successfulKeyId = keyInfo._id;
+                                modelIdToUse = altModel;
+                                console.log(`[AIGateway] ✅ Multi-model fallback succeeded with '${altModel}'!`);
+                                break;
+                            }
+                        } catch {
+                            // continue fallback loop
+                        }
+                    }
+
+                    if (apiResponseData) {
+                        break; // Success! Exit key loop
                     }
                 }
 
