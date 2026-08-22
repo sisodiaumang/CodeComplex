@@ -2136,25 +2136,37 @@ function CodingWorkspace({ room, matchId, onLeave }: CodingWorkspaceProps) {
   }, [room.battleType]);
 
   // Timer countdown
-  const [timeLeft, setTimeLeft] = useState(0);
+  const [timeLeft, setTimeLeft] = useState<number>(0);
   useEffect(() => {
     if (!liveMatch?.timer?.endsAt) return;
     const endsAtTime = new Date(liveMatch.timer.endsAt).getTime();
     
+    // Check if match is configured with unlimited duration (e.g. >= 9999 minutes or 0)
+    const isUnlimited = liveMatch.durationInMinutes && liveMatch.durationInMinutes >= 9999;
+    if (isUnlimited) {
+      setTimeLeft(Infinity);
+      return;
+    }
+
+    let timerId: NodeJS.Timeout | null = null;
+    
     const tick = () => {
       const diff = Math.max(0, Math.floor((endsAtTime - Date.now()) / 1000));
       setTimeLeft(diff);
-      if (diff === 0) {
-        clearInterval(interval);
+      if (diff <= 0) {
+        if (timerId) clearInterval(timerId);
       }
     };
     
     tick();
-    const interval = setInterval(tick, 1000);
-    return () => clearInterval(interval);
-  }, [liveMatch?.timer?.endsAt]);
+    timerId = setInterval(tick, 1000);
+    return () => {
+      if (timerId) clearInterval(timerId);
+    };
+  }, [liveMatch?.timer?.endsAt, liveMatch?.durationInMinutes]);
 
   const formatTime = (secs: number) => {
+    if (secs === Infinity || isNaN(secs) || secs < 0) return "∞ Unlimited";
     const m = Math.floor(secs / 60);
     const s = secs % 60;
     return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
