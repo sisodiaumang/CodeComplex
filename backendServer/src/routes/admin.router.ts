@@ -15,6 +15,7 @@ import {
     createApiKey,
     toggleApiKey,
     deleteApiKey,
+    pruneApiKeys,
     getAdminQuestionDetails,
     getAdminReportDetails
 } from "../controllers/admin.controller.js";
@@ -45,6 +46,7 @@ router.post("/llm-models/reset", resetAllModelsSpent);
 
 // API Keys Routing
 router.post("/api-keys", createApiKey);
+router.post("/api-keys/prune", pruneApiKeys);
 router.patch("/api-keys/:keyId", toggleApiKey);
 router.delete("/api-keys/:keyId", deleteApiKey);
 

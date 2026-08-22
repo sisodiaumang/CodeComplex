@@ -13,7 +13,7 @@ import asyncHandler from "../utils/asyncHandler.js";
 import { runAIModeratorAgent } from "../services/aiModerator.service.js";
 import ModelConfig from "../models/modelConfig.model.js";
 import ApiKey from "../models/apiKey.model.js";
-import { getEnvApiKeys, decrypt, encrypt } from "../services/aiGateway.service.js";
+import { getEnvApiKeys, decrypt, encrypt, pruneAndValidateApiKeys } from "../services/aiGateway.service.js";
 import mongoose from "mongoose";
 import os from "os";
 import { getAverageApiLatency } from "../utils/telemetry.js";
@@ -767,6 +767,21 @@ export const deleteApiKey = asyncHandler(
         res.status(200).json({
             success: true,
             message: "API key deleted successfully from the pool"
+        });
+    }
+);
+
+/**
+ * POST /api/v1/admin/api-keys/prune
+ * Scans all environment & database API keys, tests validity with Groq API, and prunes/deactivates expired ones.
+ */
+export const pruneApiKeys = asyncHandler(
+    async (req: Request, res: Response, next: NextFunction) => {
+        const result = await pruneAndValidateApiKeys();
+        res.status(200).json({
+            success: true,
+            message: `API Key scan complete. ${result.validCount} working key(s), ${result.invalidCount} expired key(s) pruned.`,
+            data: result
         });
     }
 );

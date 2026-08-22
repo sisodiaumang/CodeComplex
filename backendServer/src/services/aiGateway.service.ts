@@ -75,6 +75,7 @@ export async function seedModels() {
             );
         }
         console.log("[AIGateway] Models seeded successfully");
+        await pruneAndValidateApiKeys().catch((err) => console.error("[AIGateway] Startup key validation error:", err));
     } catch (error) {
         console.error("[AIGateway] Failed to seed models:", error);
     }
@@ -136,14 +137,107 @@ export function getEnvApiKeys(): string[] {
     return keys;
 }
 
+const invalidEnvKeys = new Set<string>();
+
+/**
+ * Pings Groq API to verify whether an API key is valid and working.
+ */
+export async function verifyGroqKey(apiKey: string): Promise<boolean> {
+    if (!apiKey || typeof apiKey !== "string") return false;
+    try {
+        const res = await fetch("https://api.groq.com/openai/v1/models", {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${apiKey}`
+            }
+        });
+        return res.ok;
+    } catch {
+        return false;
+    }
+}
+
+/**
+ * Validates all API keys (env & DB), deactivates expired ones in DB, and prunes invalid env keys.
+ */
+export async function pruneAndValidateApiKeys(): Promise<{
+    totalChecked: number;
+    validCount: number;
+    invalidCount: number;
+    validKeys: string[];
+    prunedKeys: string[];
+}> {
+    console.log("[AIGateway] Starting API Key verification and pruning scan...");
+    const envKeys = getEnvApiKeys();
+    const validKeys: string[] = [];
+    const prunedKeys: string[] = [];
+
+    // 1. Check environment keys
+    for (const key of envKeys) {
+        const masked = key.substring(0, 7) + "..." + key.slice(-4);
+        const isValid = await verifyGroqKey(key);
+        if (isValid) {
+            invalidEnvKeys.delete(key);
+            validKeys.push(`env:${masked}`);
+            console.log(`[AIGateway] ✅ Env Key ${masked} is VALID.`);
+        } else {
+            invalidEnvKeys.add(key);
+            prunedKeys.push(`env:${masked}`);
+            console.warn(`[AIGateway] ❌ Env Key ${masked} is EXPIRED/INVALID - pruned from pool.`);
+        }
+    }
+
+    // 2. Check database keys
+    try {
+        const dbKeys = await ApiKey.find();
+        for (const dbKey of dbKeys) {
+            try {
+                const decrypted = decrypt(dbKey.keyHash, dbKey.iv);
+                const masked = decrypted ? decrypted.substring(0, 7) + "..." + decrypted.slice(-4) : dbKey.label;
+                const isValid = decrypted ? await verifyGroqKey(decrypted) : false;
+
+                if (isValid) {
+                    if (!dbKey.isActive) {
+                        dbKey.isActive = true;
+                        await dbKey.save();
+                    }
+                    validKeys.push(`db:${dbKey.label} (${masked})`);
+                    console.log(`[AIGateway] ✅ DB Key '${dbKey.label}' is VALID.`);
+                } else {
+                    if (dbKey.isActive) {
+                        dbKey.isActive = false;
+                        await dbKey.save();
+                    }
+                    prunedKeys.push(`db:${dbKey.label} (${masked})`);
+                    console.warn(`[AIGateway] ❌ DB Key '${dbKey.label}' is EXPIRED/INVALID - deactivated in DB.`);
+                }
+            } catch (err) {
+                console.error(`[AIGateway] Failed to test DB key ${dbKey.label}:`, err);
+            }
+        }
+    } catch (error) {
+        console.error("[AIGateway] Error scanning database API keys:", error);
+    }
+
+    console.log(`[AIGateway] Verification complete: ${validKeys.length} working, ${prunedKeys.length} expired/pruned.`);
+
+    return {
+        totalChecked: envKeys.length + (validKeys.length + prunedKeys.length - envKeys.length),
+        validCount: validKeys.length,
+        invalidCount: prunedKeys.length,
+        validKeys,
+        prunedKeys
+    };
+}
+
 /**
  * Get all API keys (environment keys + active decrypted database keys) mapped with unique IDs.
  */
 export async function getDecryptedApiKeys(): Promise<DecryptedKeyInfo[]> {
     const keys: DecryptedKeyInfo[] = [];
 
-    // 1. Get from env
-    const envKeys = getEnvApiKeys();
+    // 1. Get from env (excluding invalid/expired ones)
+    const envKeys = getEnvApiKeys().filter((k) => !invalidEnvKeys.has(k));
     envKeys.forEach((key, idx) => {
         keys.push({ _id: `env-${idx}`, key });
     });
@@ -293,10 +387,12 @@ export async function callLLM(
             if (!res.ok) {
                 const body = await res.text().catch(() => "");
                 
-                // If key is 401 (expired/invalid), mark DB key inactive if applicable
+                // If key is 401 (expired/invalid), mark DB key inactive or add env key to invalid set
                 if (res.status === 401 || body.includes("expired_api_key") || body.includes("Invalid API Key")) {
                     console.warn(`[AIGateway WARN] API Key ${keyInfo._id} is expired or invalid (401). Skipping and rotating...`);
-                    if (!keyInfo._id.startsWith("env-")) {
+                    if (keyInfo._id.startsWith("env-")) {
+                        invalidEnvKeys.add(keyInfo.key);
+                    } else {
                         await ApiKey.updateOne({ _id: keyInfo._id }, { isActive: false }).catch(() => {});
                     }
                 }
