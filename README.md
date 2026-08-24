@@ -16,7 +16,7 @@ The platform combines Socket.IO real-time state synchronization, WebRTC live voi
 
 ---
 
-## 🏗️ Architecture & Project Structure
+##  Architecture & Project Structure
 
 CodeComplex is structured as a monorepo containing a TypeScript Express API & WebSocket server alongside a Next.js 16 App Router web client, backed by Docker Compose container orchestration.
 
