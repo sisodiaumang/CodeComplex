@@ -1,6 +1,7 @@
 "use client";
 
 import { Sun, Moon, Monitor } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { useTheme } from "@/stores/theme-store";
 
 const THEME_META = {
@@ -9,7 +10,11 @@ const THEME_META = {
   system: { icon: Monitor, label: "System", next: "Switch to light mode" },
 } as const;
 
-export function ThemeToggle() {
+/**
+ * `className` overrides the colour treatment only. Omitting it keeps the
+ * original sidebar palette, so existing call sites are unchanged.
+ */
+export function ThemeToggle({ className }: { className?: string }) {
   const { theme, cycle } = useTheme();
   const meta = THEME_META[theme];
   const Icon = meta.icon;
@@ -17,7 +22,12 @@ export function ThemeToggle() {
   return (
     <button
       onClick={cycle}
-      className="flex items-center gap-1.5 rounded-md px-2 py-1.5 text-sidebar-muted transition-colors hover:bg-sidebar-hover hover:text-sidebar-text"
+      className={cn(
+        "flex items-center gap-1.5 rounded-md px-2 py-1.5 transition-colors",
+        "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
+        className ??
+          "text-sidebar-muted hover:bg-sidebar-hover hover:text-sidebar-text"
+      )}
       title={meta.next}
       aria-label={meta.next}
     >
