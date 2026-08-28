@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useEffect, type ReactNode } from "react";
+import { Menu, X } from "lucide-react";
 import { api } from "@/lib/api";
 import { LogoMark } from "@/components/logo";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -122,7 +123,7 @@ const FOOTER_COLS = [
   { head: "Start", links: [{ label: "Sign up", href: "/signup" }, { label: "Log in", href: "/login" }] },
   { head: "Learn", links: [{ label: "About", href: "/about" }, { label: "FAQ", href: "/faq" }, { label: "Guidelines", href: "/guidelines" }] },
   { head: "Legal", links: [{ label: "Privacy", href: "/privacy" }, { label: "Terms", href: "/terms" }] },
-  { head: "Talk", links: [{ label: "Contact", href: "/contact" }, { label: "support@codecomplex.site", href: "mailto:support@codecomplex.site" }] },
+  { head: "Talk", links: [{ label: "Contact", href: "/contact" }, { label: "Email support", href: "mailto:support@codecomplex.site" }] },
 ];
 
 const CSS = `
@@ -184,20 +185,55 @@ html[data-theme="light"] { background: #FAF8F4; }
 .cc-btn { display: inline-flex; align-items: center; gap: 9px; height: 48px; padding: 0 24px; border: 0; border-radius: 999px; background: var(--orange-fill); color: #0B0B0C; font-weight: 700; font-size: 15.5px; cursor: pointer; transition: background .18s ease; }
 .cc-btn:hover { background: var(--orange-hi); }
 
-.cc-pill { display: inline-flex; align-items: center; gap: 7px; height: 33px; padding: 0 15px; border-radius: 999px; border: 1px solid var(--rule); font-family: ui-monospace, monospace; font-size: 10.5px; font-weight: 500; letter-spacing: 0.11em; text-transform: uppercase; color: var(--fg-muted); }
+/* white-space + flex-shrink together: as a flex child inside .cc-navend the pill
+   would otherwise be squeezed under its own text width and wrap "SIGN UP" onto
+   two lines on a phone. */
+.cc-pill { display: inline-flex; align-items: center; gap: 7px; height: 33px; padding: 0 15px; border-radius: 999px; border: 1px solid var(--rule); font-family: ui-monospace, monospace; font-size: 10.5px; font-weight: 500; letter-spacing: 0.11em; text-transform: uppercase; color: var(--fg-muted); white-space: nowrap; }
 .cc-pill:hover { color: var(--fg); border-color: var(--rule-strong); }
 
-.cc-quiet { color: var(--fg-muted); }
+.cc-quiet { color: var(--fg-muted); white-space: nowrap; }
 .cc-quiet:hover { color: var(--fg); }
 
 .cc-nav { position: sticky; top: 0; z-index: 50; background: var(--ink-blur); backdrop-filter: blur(14px); border-bottom: 1px solid var(--rule-soft); }
 .cc-nav-in { display: flex; align-items: center; justify-content: space-between; gap: 22px; height: 66px; }
-.cc-brand { display: flex; align-items: center; gap: 10px; color: var(--fg); font-weight: 700; font-size: 17px; }
+.cc-brand { display: flex; align-items: center; gap: 10px; color: var(--fg); font-weight: 700; font-size: 17px; flex-shrink: 0; white-space: nowrap; }
 .cc-navlinks { display: flex; gap: 28px; font-size: 13.5px; }
-.cc-navend { display: flex; align-items: center; gap: 18px; font-size: 13.5px; }
+.cc-navend { display: flex; align-items: center; gap: 18px; font-size: 13.5px; flex-shrink: 0; }
+.cc-navend > * { flex: 0 0 auto; }
 .cc-tt { color: var(--fg-muted); }
 .cc-tt:hover { color: var(--fg); background: var(--rule-soft); }
-@media (max-width: 900px) { .cc-navlinks { display: none; } }
+
+/* ── mobile menu ──────────────────────────────────────────────────
+   #modes / #ladder / #agents have no other entry point, so hiding
+   .cc-navlinks under 900px without a replacement stranded every phone
+   visitor at the top of the page with no way to reach the sections. The
+   burger opens a right-hand sheet that carries those four links plus the
+   two auth actions the bar itself drops on the narrowest screens. */
+.cc-burger { display: none; align-items: center; justify-content: center; width: 38px; height: 38px; margin-right: -7px; background: none; border: 0; border-radius: 8px; color: var(--fg-muted); cursor: pointer; }
+.cc-burger:hover { color: var(--fg); background: var(--rule-soft); }
+
+/* Above .cc-nav's z-index 50 so the sheet covers the sticky bar rather than
+   sliding under it. */
+.cc-scrim { position: fixed; inset: 0; z-index: 60; background: rgba(0, 0, 0, 0.55); }
+.cc-sheet { position: fixed; top: 0; right: 0; bottom: 0; z-index: 61; width: min(310px, 84vw); display: flex; flex-direction: column; padding: 18px 22px 26px; background: var(--band); border-left: 1px solid var(--rule); overflow-y: auto; overscroll-behavior: contain; }
+.cc-sheet-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; height: 42px; margin-bottom: 12px; }
+.cc-sheet-lbl { font-family: ui-monospace, monospace; font-size: 10.5px; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: var(--fg-faint); }
+.cc-sheet-x { display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px; margin-right: -9px; background: none; border: 0; border-radius: 8px; color: var(--fg-muted); cursor: pointer; }
+.cc-sheet-x:hover { color: var(--fg); background: var(--rule-soft); }
+.cc-sheet-a { display: block; padding: 13px 0; border-top: 1px solid var(--rule-soft); font-size: 17px; font-weight: 600; color: var(--fg); }
+.cc-sheet-a:first-of-type { border-top: 0; }
+.cc-sheet-foot { margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--rule); display: flex; flex-direction: column; align-items: flex-start; gap: 14px; }
+.cc-sheet-foot .cc-btn { width: 100%; justify-content: center; }
+
+@media (max-width: 900px) {
+  .cc-navlinks { display: none; }
+  .cc-burger { display: inline-flex; }
+}
+/* Safety net for a rotate-to-landscape that crosses the breakpoint before the
+   resize listener unmounts the sheet. */
+@media (min-width: 901px) {
+  .cc-scrim, .cc-sheet { display: none; }
+}
 
 .cc-hero { padding: clamp(48px, 8vw, 104px) 0 clamp(52px, 7vw, 96px); }
 .cc-spectrum { display: flex; height: 5px; margin: clamp(30px, 4vw, 46px) 0 0; max-width: 780px; gap: 1px; }
@@ -214,23 +250,23 @@ html[data-theme="light"] { background: #FAF8F4; }
 .cc-ladder { display: flex; align-items: stretch; gap: clamp(5px, 1.3vw, 15px); height: clamp(190px, 27vw, 300px); margin: clamp(34px, 5vw, 60px) 0 0; }
 .cc-rung { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 11px; color: var(--tone-d); }
 [data-theme="light"] .cc-rung { color: var(--tone-l); }
-.cc-rung[data-tier="Bronze"] { --tone-d: #C1743C; --tone-l: #8A4A17; }
-.cc-rung[data-tier="Bronze"] .cc-rung-bar { height: 26%; }
-.cc-rung[data-tier="Silver"] { --tone-d: #A8B2BD; --tone-l: #55606B; }
-.cc-rung[data-tier="Silver"] .cc-rung-bar { height: 38%; }
-.cc-rung[data-tier="Gold"] { --tone-d: #E3A81B; --tone-l: #7A5A05; }
-.cc-rung[data-tier="Gold"] .cc-rung-bar { height: 50%; }
-.cc-rung[data-tier="Platinum"] { --tone-d: #2BB8C4; --tone-l: #0F6E78; }
-.cc-rung[data-tier="Platinum"] .cc-rung-bar { height: 62%; }
-.cc-rung[data-tier="Diamond"] { --tone-d: #5B85F5; --tone-l: #2A4FB8; }
-.cc-rung[data-tier="Diamond"] .cc-rung-bar { height: 74%; }
-.cc-rung[data-tier="Master"] { --tone-d: #B06BF5; --tone-l: #6B32A8; }
-.cc-rung[data-tier="Master"] .cc-rung-bar { height: 86%; }
-.cc-rung[data-tier="Grandmaster"] { --tone-d: #FF3E6C; --tone-l: #B3123F; }
-.cc-rung[data-tier="Grandmaster"] .cc-rung-bar { height: 100%; }
+/* --fill is the rating floor as a proportion of the tallest rung. It drives the
+   bar's height on desktop and its width in the stacked mobile layout, so both
+   orientations read one number instead of two sets of per-tier rules. */
+.cc-rung[data-tier="Bronze"]      { --tone-d: #C1743C; --tone-l: #8A4A17; --fill: 26%; }
+.cc-rung[data-tier="Silver"]      { --tone-d: #A8B2BD; --tone-l: #55606B; --fill: 38%; }
+.cc-rung[data-tier="Gold"]        { --tone-d: #E3A81B; --tone-l: #7A5A05; --fill: 50%; }
+.cc-rung[data-tier="Platinum"]    { --tone-d: #2BB8C4; --tone-l: #0F6E78; --fill: 62%; }
+.cc-rung[data-tier="Diamond"]     { --tone-d: #5B85F5; --tone-l: #2A4FB8; --fill: 74%; }
+.cc-rung[data-tier="Master"]      { --tone-d: #B06BF5; --tone-l: #6B32A8; --fill: 86%; }
+.cc-rung[data-tier="Grandmaster"] { --tone-d: #FF3E6C; --tone-l: #B3123F; --fill: 100%; }
 .cc-rung-top { font-family: ui-monospace, monospace; font-size: 11px; color: var(--fg-faint); }
+/* Orange rating floor marks the tier every new account opens in. Colour instead
+   of the old "You start here" label: that label wrapped to two lines inside a
+   ~55px phone column and pushed its rung's bar off the shared baseline. */
+.cc-rung[data-start] .cc-rung-top { color: var(--orange-ink); font-weight: 700; }
 .cc-rung-track { position: relative; flex: 1; min-height: 0; }
-.cc-rung-bar { position: absolute; left: 0; right: 0; bottom: 0; background: currentColor; }
+.cc-rung-bar { position: absolute; left: 0; right: 0; bottom: 0; height: var(--fill); background: currentColor; }
 .cc-rung-name { font-weight: 700; font-size: clamp(9.5px, 1.05vw, 12px); text-transform: uppercase; letter-spacing: 0.06em; overflow: hidden; text-overflow: ellipsis; }
 
 .cc-rows { margin: clamp(28px, 4vw, 46px) 0 0; }
@@ -270,6 +306,65 @@ html[data-theme="light"] { background: #FAF8F4; }
 .cc-fbrand { font-weight: 700; font-size: 19px; }
 .cc-fnote { font-size: 13.5px; color: var(--fg-muted); margin-top: 8px; max-width: 26ch; }
 .cc-fbase { margin-top: clamp(38px, 5vw, 62px); padding-top: 20px; border-top: 1px solid var(--rule-soft); font-size: 12.5px; color: var(--fg-faint); display: flex; flex-wrap: wrap; gap: 14px; justify-content: space-between; }
+
+/* ── narrow widths ────────────────────────────────────────────────
+   Last in the sheet on purpose: these are single-class selectors, so they
+   only beat the rules above them on source order. */
+
+/* Seven rungs across stops working under ~90px per column — GRANDMASTER
+   ellipsises and the rating axis crowds its neighbour. Below this the ladder
+   becomes one row per tier with the bars running left to right, reading the
+   same --fill. */
+@media (max-width: 720px) {
+  .cc-ladder { display: block; height: auto; }
+  .cc-rung { display: grid; grid-template-columns: 100px minmax(0, 1fr) 44px; align-items: center; gap: 12px; padding: 10px 0; border-top: 1px solid var(--rule-soft); }
+  .cc-rung:first-child { border-top: 0; }
+  .cc-rung-name { order: 1; font-size: 11px; }
+  .cc-rung-track { order: 2; height: 14px; }
+  .cc-rung-bar { top: 0; bottom: 0; right: auto; width: var(--fill); height: auto; }
+  .cc-rung-top { order: 3; text-align: right; }
+}
+
+/* Glyph / copy / CTA in three columns leaves the copy about 220px wide on a
+   phone and floats the pill against the middle of a four-line paragraph. */
+@media (max-width: 640px) {
+  .cc-mode { grid-template-columns: 46px minmax(0, 1fr); align-items: start; column-gap: 15px; row-gap: 15px; }
+  .cc-mode-g { width: 46px; height: 46px; margin-top: 3px; }
+  .cc-mode-cta { grid-column: 2; justify-self: start; }
+}
+
+@media (max-width: 560px) {
+  .cc-wrap { padding: 0 18px; }
+  .cc-nav-in { gap: 12px; height: 60px; }
+  .cc-navend { gap: 11px; }
+  .cc-brand { font-size: 15.5px; gap: 8px; }
+  .cc-pill { height: 30px; padding: 0 12px; font-size: 10px; letter-spacing: 0.08em; }
+  .cc-eyebrow { font-size: 10px; letter-spacing: 0.12em; }
+  .cc-btn { height: 46px; font-size: 15px; }
+  .cc-join input { width: 116px; }
+  /* Both move into the sheet. Dropping them is what buys the Sign up pill
+     enough room to stay in the bar at 320px. */
+  .cc-navtt, .cc-navlogin { display: none; }
+  /* 21px tall was under the 44px minimum for a thumb. */
+  .cc-flink { padding: 9px 0; }
+}
+
+/* At this width the pill already sits alone on its line, so a centred
+   full-width target is free to give. */
+@media (max-width: 480px) {
+  .cc-hero .cc-btn, .cc-close .cc-btn { width: 100%; justify-content: center; }
+}
+
+/* 320px is the floor. .cc-brand and .cc-navend are both flex-shrink: 0, so
+   anything that does not fit overflows the document and gives the whole page a
+   horizontal scrollbar instead of compressing. Measured at 320px: brand 115 +
+   gap 10 + pill 72 + gap 9 + burger 31 = 237 inside 284 of content box. */
+@media (max-width: 400px) {
+  .cc-nav-in { gap: 10px; }
+  .cc-navend { gap: 9px; }
+  .cc-brand { font-size: 14.5px; gap: 7px; }
+  .cc-h1 { font-size: 2.15rem; }
+}
 `;
 
 export default function LandingPage() {
@@ -277,6 +372,33 @@ export default function LandingPage() {
   const { status } = useAuth();
   const [stats, setStats] = useState<{ challenges: number; battles: number } | null>(null);
   const [roomCode, setRoomCode] = useState("");
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  /* Escape closes; the page behind is locked so a swipe can't scroll two
+     layers at once; and crossing back over 900px unmounts the sheet, which
+     otherwise stays open — and now unreachable — after a rotate to landscape. */
+  useEffect(() => {
+    if (!menuOpen) return;
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMenuOpen(false);
+    };
+    const wide = window.matchMedia("(min-width: 901px)");
+    const onWide = () => {
+      if (wide.matches) setMenuOpen(false);
+    };
+
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", onKey);
+    wide.addEventListener("change", onWide);
+
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener("keydown", onKey);
+      wide.removeEventListener("change", onWide);
+    };
+  }, [menuOpen]);
 
   useEffect(() => {
     if (status === "loading") return;
@@ -305,12 +427,54 @@ export default function LandingPage() {
             <Link href="/faq" className="cc-quiet">FAQ</Link>
           </nav>
           <div className="cc-navend">
-            <ThemeToggle className="cc-tt" />
-            <Link href="/login" className="cc-quiet">Log in</Link>
+            <ThemeToggle className="cc-tt cc-navtt" />
+            <Link href="/login" className="cc-quiet cc-navlogin">Log in</Link>
             <Link href="/signup" className="cc-pill">Sign up</Link>
+            <button
+              type="button"
+              className="cc-burger"
+              aria-label="Open menu"
+              aria-expanded={menuOpen}
+              aria-controls="cc-menu"
+              onClick={() => setMenuOpen(true)}
+            >
+              <Menu size={20} aria-hidden />
+            </button>
           </div>
         </div>
       </header>
+
+      {menuOpen && (
+        <>
+          <div className="cc-scrim" onClick={() => setMenuOpen(false)} aria-hidden />
+          <div className="cc-sheet" id="cc-menu" role="dialog" aria-modal="true" aria-label="Menu">
+            <div className="cc-sheet-top">
+              <span className="cc-sheet-lbl">Menu</span>
+              <button
+                type="button"
+                className="cc-sheet-x"
+                aria-label="Close menu"
+                onClick={() => setMenuOpen(false)}
+              >
+                <X size={20} aria-hidden />
+              </button>
+            </div>
+
+            {/* In-page anchors have to close the sheet, or the scroll they
+                trigger happens behind a locked, opaque overlay. */}
+            <a href="#modes" className="cc-sheet-a" onClick={() => setMenuOpen(false)}>Modes</a>
+            <a href="#ladder" className="cc-sheet-a" onClick={() => setMenuOpen(false)}>Ladder</a>
+            <a href="#agents" className="cc-sheet-a" onClick={() => setMenuOpen(false)}>For agents</a>
+            <Link href="/faq" className="cc-sheet-a" onClick={() => setMenuOpen(false)}>FAQ</Link>
+
+            <div className="cc-sheet-foot">
+              <ThemeToggle className="cc-tt" />
+              <Link href="/login" className="cc-quiet" onClick={() => setMenuOpen(false)}>Log in</Link>
+              <Link href="/signup" className="cc-btn" onClick={() => setMenuOpen(false)}>Start a duel</Link>
+            </div>
+          </div>
+        </>
+      )}
       <main>
         <section className="cc-wrap cc-hero">
           <p className="cc-eyebrow">Real-time competitive coding</p>
@@ -329,14 +493,19 @@ export default function LandingPage() {
           <h2 className="cc-h2">Seven tiers. Everyone opens at 1200.</h2>
           <div className="cc-ladder">
             {LADDER.map((rung) => (
-              <div key={rung.label} className="cc-rung" data-tier={rung.label}>
+              <div
+                key={rung.label}
+                className="cc-rung"
+                data-tier={rung.label}
+                data-start={rung.isStart ? "1" : undefined}
+              >
                 <span className="cc-rung-top">{rung.band}</span>
                 <span className="cc-rung-track" aria-hidden><span className="cc-rung-bar" /></span>
                 <span className="cc-rung-name">{rung.label}</span>
-                {rung.isStart && <span className="cc-rung-start" style={{ color: "var(--orange-ink)", fontSize: "9.5px" }}>You start here</span>}
               </div>
             ))}
           </div>
+          <p className="cc-note" style={{ marginTop: 22 }}>1200, in orange, is where every new account opens.</p>
         </section>
         <section id="modes" className="cc-wrap cc-sec cc-sec-rule">
           <p className="cc-eyebrow">Five modes</p>
