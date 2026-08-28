@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Space_Grotesk, Inter, JetBrains_Mono } from "next/font/google";
+import Script from "next/script";
 import Providers from "@/components/providers";
 import WebMCPProvider from "@/components/WebMCPProvider";
 import "./globals.css";
@@ -93,8 +94,10 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.ico" />
         <link rel="icon" href="/icon.webp" type="image/webp" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-        <script
+        <Script
+          id="schema-org-ldjson"
           type="application/ld+json"
+          strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               "@context": "https://schema.org",
@@ -118,7 +121,9 @@ export default function RootLayout({
             })
           }}
         />
-        <script
+        <Script
+          id="theme-preload"
+          strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
             __html: `(function(){try{var t=localStorage.getItem("devwar-theme");var d=(t==="dark")||(t!=="light");if(d)document.documentElement.setAttribute("data-theme","dark")}catch(e){}})()`,
           }}
