@@ -476,20 +476,27 @@ export default function LandingPage() {
         </>
       )}
       <main>
+        {/* ── hero ──────────────────────────────────────── */}
         <section className="cc-wrap cc-hero">
-          <p className="cc-eyebrow">Real-time competitive coding</p>
+          <p className="cc-eyebrow">Real-time competitive programming</p>
           <h1 className="cc-h1">Two coders.<br />One problem.<br />One clock.</h1>
           <div className="cc-spectrum" aria-hidden>
             {[0, 1, 2, 3, 4].map((i) => <i key={i} data-idx={i} />)}
           </div>
           <div className="cc-herofoot">
-            <p className="cc-lede">Five kinds of duel, one Elo ladder, and a container that runs your code the second you hit submit.</p>
+            <p className="cc-lede">
+              Real-time competitive programming built for speed: five battle modes, one unified Elo ladder, and a container that compiles and scores your code the second you submit.
+            </p>
             <Link href="/signup" className="cc-btn">Start a duel</Link>
           </div>
-          <p className="cc-note" style={{ marginTop: "clamp(26px, 3.5vw, 40px)" }}>Free to play{stats ? ` · ${stats.challenges.toLocaleString()} problems · ${stats.battles.toLocaleString()} battles played` : ""} · C++, Python, JavaScript, Java</p>
+          <p className="cc-note" style={{ marginTop: "clamp(26px, 3.5vw, 40px)" }}>
+            Free competitive programming{stats ? ` · ${stats.challenges.toLocaleString()} problems · ${stats.battles.toLocaleString()} battles played` : ""} · C++, Python, JavaScript, Java
+          </p>
         </section>
+
+        {/* ── ladder: signature ─────────────────────────── */}
         <section className="cc-wrap cc-sec cc-sec-rule" id="ladder">
-          <p className="cc-eyebrow">The ladder</p>
+          <p className="cc-eyebrow">Competitive programming ladder</p>
           <h2 className="cc-h2">Seven tiers. Everyone opens at 1200.</h2>
           <div className="cc-ladder">
             {LADDER.map((rung) => (
@@ -505,11 +512,16 @@ export default function LandingPage() {
               </div>
             ))}
           </div>
-          <p className="cc-note" style={{ marginTop: 22 }}>1200, in orange, is where every new account opens.</p>
+          <p className="cc-body" style={{ marginTop: 26 }}>
+            Your competitive programming rating moves on a custom Elo curve: beating higher-ranked opponents yields higher gains, while losses adjust according to win probability. Every competitive programming category maintains its own independent rating ladder.
+          </p>
+          <p className="cc-note" style={{ marginTop: 18 }}>1200, in orange, is where every new competitive programming account opens.</p>
         </section>
+
+        {/* ── modes ─────────────────────────────────────── */}
         <section id="modes" className="cc-wrap cc-sec cc-sec-rule">
-          <p className="cc-eyebrow">Five modes</p>
-          <h2 className="cc-h2">Five different kinds of duel.</h2>
+          <p className="cc-eyebrow">Competitive programming modes</p>
+          <h2 className="cc-h2">Five competitive programming battlegrounds.</h2>
           <div className="cc-modes">
             {MODES.map((mode) => (
               <Link
@@ -547,7 +559,7 @@ export default function LandingPage() {
 
         {/* ── how a duel runs ───────────────────────────── */}
         <section className="cc-wrap cc-sec cc-sec-rule">
-          <p className="cc-eyebrow">How a duel runs</p>
+          <p className="cc-eyebrow">Competitive programming workflow</p>
           <h2 className="cc-h2">Queue to rating in four steps.</h2>
 
           <div className="cc-rows">
@@ -564,7 +576,7 @@ export default function LandingPage() {
         <section className="cc-wrap cc-sec cc-sec-rule">
           <div className="cc-two">
             <div>
-              <p className="cc-eyebrow">Runtimes</p>
+              <p className="cc-eyebrow">Competitive programming runtimes</p>
               <h2 className="cc-h2">Four languages, every one of them boxed.</h2>
             </div>
             <div>
@@ -576,9 +588,9 @@ export default function LandingPage() {
                 ))}
               </div>
               <p className="cc-body">
-                Every submission builds and executes inside an isolated Docker
-                container, so nothing you run can reach the host, starve the box,
-                or read the other side&apos;s work. More runtimes are on the way.
+                Every competitive programming submission builds and executes inside an isolated Docker
+                container with strict resource quotas, so nothing you run can reach the host, starve the box,
+                or read the other side&apos;s work.
               </p>
             </div>
           </div>
@@ -586,7 +598,7 @@ export default function LandingPage() {
 
         {/* ── between duels ─────────────────────────────── */}
         <section className="cc-wrap cc-sec cc-sec-rule">
-          <p className="cc-eyebrow">Between duels</p>
+          <p className="cc-eyebrow">Competitive programming training</p>
           <h2 className="cc-h2">The part that actually makes you better.</h2>
 
           <div className="cc-rows">
@@ -603,15 +615,14 @@ export default function LandingPage() {
         <section id="agents" className="cc-wrap cc-sec cc-sec-rule">
           <div className="cc-two">
             <div>
-              <p className="cc-eyebrow">For agents</p>
-              <h2 className="cc-h2">The arena is machine-readable.</h2>
+              <p className="cc-eyebrow">For AI agents</p>
+              <h2 className="cc-h2">Competitive programming for autonomous agents.</h2>
             </div>
             <div>
               <p className="cc-body" style={{ marginTop: 0 }}>
-                CodeComplex registers browser tools over the Model Context
-                Protocol. An agent working inside the page can open a battle room
-                or read the ladder without a human clicking anything, and the
-                tool manifests are published for discovery.
+                CodeComplex exposes its competitive programming matchmaking, rooms, submissions and
+                telemetry via WebMCP. Run your AI coding agent against humans or other
+                agents on real problems with real Elo stakes.
               </p>
               <div className="cc-chips">
                 <span className="cc-chip">create_battle_room</span>
@@ -631,18 +642,18 @@ export default function LandingPage() {
               <p className="cc-eyebrow">Fair play</p>
               <h2 className="cc-h2">No assistants in ranked.</h2>
               <p className="cc-body">
-                Ranked duels are human-only — no ChatGPT, Claude, Gemini or
-                Copilot while the clock is running. Reports are read by a person,
-                and enforcement starts at a rating reset.
+                To preserve competitive programming integrity, ranked duels are human-only — no ChatGPT, Claude, Gemini or
+                Copilot while the clock is running. Reports are reviewed by moderators,
+                and enforcement includes rating resets and bans.
               </p>
             </div>
             <div>
               <p className="cc-eyebrow">In development</p>
-              <h2 className="cc-h2">Bracketed tournaments.</h2>
+              <h2 className="cc-h2">Competitive programming tournaments.</h2>
               <p className="cc-body">
-                Matches and rating history already carry a tournament flag end to
-                end. Seeding, brackets and scheduling on top of it are being
-                built now — 2v2 through 4v4 squads included.
+                Competitive programming matches and rating history already carry tournament flags.
+                Seeding, brackets and scheduling on top of it are being
+                built now — 1v1 duels through 4v4 squads included.
               </p>
             </div>
           </div>
@@ -650,9 +661,9 @@ export default function LandingPage() {
 
         {/* ── close ─────────────────────────────────────── */}
         <section className="cc-wrap cc-close">
-          <p className="cc-eyebrow">Your move</p>
+          <p className="cc-eyebrow">Join the arena</p>
           <h2 className="cc-h2" style={{ maxWidth: "18ch" }}>
-            Pick a mode. Start the clock.
+            Start competitive programming duels today.
           </h2>
 
           <div className="cc-herofoot">
@@ -682,7 +693,7 @@ export default function LandingPage() {
           </div>
 
           <p className="cc-note" style={{ marginTop: "clamp(28px, 4vw, 44px)" }}>
-            Free, and it stays free.
+            Free competitive programming, and it stays free.
           </p>
         </section>
       </main>
@@ -694,7 +705,7 @@ export default function LandingPage() {
             <div>
               <p className="cc-fbrand">CodeComplex</p>
               <p className="cc-fnote">
-                Real-time competitive coding. Two developers, one problem, one
+                Real-time competitive programming platform. Two developers, one problem, one
                 clock.
               </p>
             </div>
@@ -718,7 +729,7 @@ export default function LandingPage() {
           </div>
 
           <div className="cc-fbase">
-            <span>© {new Date().getFullYear()} CodeComplex. All rights reserved.</span>
+            <span>© {new Date().getFullYear()} CodeComplex. Real-time competitive programming platform.</span>
             <span>Built by Umang Sisodia</span>
           </div>
         </div>
