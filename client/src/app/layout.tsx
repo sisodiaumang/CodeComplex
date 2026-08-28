@@ -25,21 +25,27 @@ const code = JetBrains_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL("https://codecomplex.site"),
   title: {
-    default: "CodeComplex — Real-time Competitive Engineering Arena",
-    template: "%s | CodeComplex",
+    default: "CodeComplex — Real-Time Competitive Programming & 1v1 Coding Arena",
+    template: "%s | CodeComplex — Competitive Programming",
   },
   description:
-    "Real-time competitive coding arena for developers. Battle in 1v1 & 4v4 duels across DSA, Frontend, Backend, and AI Prompt Wars. Rank up on global Elo leaderboards.",
+    "CodeComplex is the real-time competitive programming platform for developers. Duel 1v1 and in squads across DSA algorithms, live debugging, backend APIs, frontend layouts, and AI prompt engineering with instant Docker sandbox execution and Elo rating ladders.",
   keywords: [
     "competitive programming",
-    "coding battles",
-    "1v1 coding",
+    "competitive programming platform",
+    "real-time competitive programming",
+    "1v1 coding battles",
+    "multiplayer coding",
     "DSA practice",
-    "frontend battle",
-    "backend arena",
-    "prompt war",
-    "developer arena",
+    "data structures and algorithms",
+    "algorithmic speed duels",
+    "coding contests",
     "live code editor",
+    "bug fixing challenge",
+    "backend arena",
+    "frontend pixel duel",
+    "prompt engineering war",
+    "Elo rating system",
     "CodeComplex",
   ],
   authors: [{ name: "Umang Sisodia", url: "https://codecomplex.site" }],
@@ -49,24 +55,24 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: "https://codecomplex.site",
-    title: "CodeComplex — Real-time Competitive Engineering Arena",
+    title: "CodeComplex — Real-Time Competitive Programming & 1v1 Coding Arena",
     description:
-      "Real-time competitive coding arena for developers. Battle in 1v1 & 4v4 duels across DSA, Frontend, Backend, and AI Prompt Wars. Rank up on global Elo leaderboards.",
-    siteName: "CodeComplex",
+      "Master competitive programming in live 1v1 and team duels. Solve DSA algorithms, debug real-world bugs, build backend APIs, and climb global Elo leaderboards.",
+    siteName: "CodeComplex Competitive Programming",
     images: [
       {
         url: "/logo.webp",
         width: 1200,
         height: 630,
-        alt: "CodeComplex Competitive Arena",
+        alt: "CodeComplex — Competitive Programming Arena",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "CodeComplex — Real-time Competitive Engineering Arena",
+    title: "CodeComplex — Real-Time Competitive Programming & 1v1 Coding Arena",
     description:
-      "Compete in live 1v1 and 4v4 coding battles across DSA, Frontend, Backend, and Prompt Wars.",
+      "The premier real-time competitive programming arena. Duel developers in timed 1v1 matches across DSA, debugging, APIs, and prompt wars.",
     images: ["/logo.webp"],
   },
   icons: {
@@ -101,7 +107,7 @@ const jsonLd = {
         "caption": "CodeComplex Logo"
       },
       "image": "https://codecomplex.site/logo.webp",
-      "description": "Real-time competitive engineering arena for developers to compete in 1v1 and squad coding battles across DSA, Bug Fix, Frontend, Backend, and Prompt Engineering.",
+      "description": "CodeComplex is a real-time competitive programming platform where developers duel in 1v1 and squad coding battles across DSA, Bug Fix, Frontend, Backend, and AI Prompt Wars.",
       "founder": {
         "@type": "Person",
         "name": "Umang Sisodia",
@@ -120,8 +126,8 @@ const jsonLd = {
       "@type": "WebSite",
       "@id": "https://codecomplex.site/#website",
       "url": "https://codecomplex.site",
-      "name": "CodeComplex",
-      "description": "Real-time competitive engineering arena for developers. Battle in 1v1 & team duels across DSA, Frontend, Backend, and AI Prompt Wars.",
+      "name": "CodeComplex — Competitive Programming",
+      "description": "Real-time competitive programming arena for developers. Battle in 1v1 & team duels across DSA algorithms, debugging, full-stack APIs, and AI Prompt Wars.",
       "publisher": {
         "@id": "https://codecomplex.site/#organization"
       },
@@ -140,14 +146,14 @@ const jsonLd = {
     {
       "@type": "WebApplication",
       "@id": "https://codecomplex.site/#webapp",
-      "name": "CodeComplex Arena",
+      "name": "CodeComplex — Competitive Programming Arena",
       "url": "https://codecomplex.site",
-      "applicationCategory": "DeveloperApplication",
-      "applicationSubCategory": "Competitive Programming & Engineering Arena",
+      "applicationCategory": "DeveloperApplication, EducationalApplication",
+      "applicationSubCategory": "Competitive Programming Platform",
       "operatingSystem": "All (Web Browser)",
       "browserRequirements": "Requires JavaScript. Requires HTML5.",
       "softwareVersion": "2.4.0",
-      "description": "Multiplayer real-time competitive coding platform. Match against other engineers in timed 1v1 and team battles across algorithms, debugging, full-stack APIs, frontend layouts, and prompt engineering.",
+      "description": "Multiplayer real-time competitive programming platform. Match against other engineers in timed 1v1 and squad battles across data structures and algorithms (DSA), live bug debugging, backend APIs, frontend layouts, and prompt engineering.",
       "offers": {
         "@type": "Offer",
         "price": "0",
@@ -155,7 +161,7 @@ const jsonLd = {
         "availability": "https://schema.org/InStock"
       },
       "featureList": [
-        "Real-time 1v1 and 4v4 multiplayer coding duels",
+        "Real-time competitive programming in 1v1 and 4v4 duels",
         "DSA algorithmic problem solving in C++, Python, Java, JavaScript, and Go",
         "Bug Fix Hunter mode with live codebase debugging",
         "Backend API and microservice endpoint engineering challenges",
