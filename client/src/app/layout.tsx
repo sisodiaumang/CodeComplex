@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Space_Grotesk, Inter, JetBrains_Mono } from "next/font/google";
-import Script from "next/script";
 import Providers from "@/components/providers";
 import WebMCPProvider from "@/components/WebMCPProvider";
 import "./globals.css";
@@ -86,6 +85,27 @@ export const metadata: Metadata = {
   },
 };
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  name: "CodeComplex",
+  url: "https://codecomplex.site",
+  applicationCategory: "EducationalApplication",
+  operatingSystem: "All",
+  description: "Real-time competitive engineering arena for developers to compete in 1v1 & team duels.",
+  publisher: {
+    "@type": "Organization",
+    name: "CodeComplex",
+    url: "https://codecomplex.site",
+    logo: "https://codecomplex.site/logo.webp"
+  },
+  offers: {
+    "@type": "Offer",
+    price: "0",
+    priceCurrency: "USD"
+  }
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -98,39 +118,9 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="antialiased">
-        <Script
-          id="schema-org-ldjson"
+        <script
           type="application/ld+json"
-          strategy="beforeInteractive"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "WebApplication",
-              "name": "CodeComplex",
-              "url": "https://codecomplex.site",
-              "applicationCategory": "EducationalApplication",
-              "operatingSystem": "All",
-              "description": "Real-time competitive engineering arena for developers to compete in 1v1 & team duels.",
-              "publisher": {
-                "@type": "Organization",
-                "name": "CodeComplex",
-                "url": "https://codecomplex.site",
-                "logo": "https://codecomplex.site/logo.webp"
-              },
-              "offers": {
-                "@type": "Offer",
-                "price": "0",
-                "priceCurrency": "USD"
-              }
-            })
-          }}
-        />
-        <Script
-          id="theme-preload"
-          strategy="beforeInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem("devwar-theme");var d=(t==="dark")||(t!=="light");if(d)document.documentElement.setAttribute("data-theme","dark")}catch(e){}})()`,
-          }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
         <Providers>
           <WebMCPProvider />
