@@ -2,9 +2,8 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { ArrowLeft, ChevronDown, ChevronUp } from "lucide-react";
+import { ArrowLeft, ChevronDown, ChevronUp, HelpCircle } from "lucide-react";
 import { LogoMark } from "@/components/logo";
-import { Button } from "@/components/ui";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 const FAQ_LIST = [
@@ -13,57 +12,57 @@ const FAQ_LIST = [
     questions: [
       {
         q: "What is CodeComplex?",
-        a: "CodeComplex is a real-time, head-to-head competitive coding platform where developers compete in duels to solve algorithms, compile backend APIs, or layout frontend pages under time constraints. Winning duels helps you climb rankings on our global Elo leaderboard."
+        a: "CodeComplex is a real-time, head-to-head competitive programming platform where developers duel in timed matches to solve algorithms, debug codebases, build APIs, and construct frontend layouts. Winning duels increases your Elo rating across 7 competitive tiers.",
       },
       {
-        q: "Is the platform free to use?",
-        a: "Yes! CodeComplex is 100% free for educational and competitive usage. You can practice in various sandbox arenas, run test cases, and join active rooms without any subscription."
-      }
-    ]
+        q: "Is CodeComplex completely free?",
+        a: "Yes! CodeComplex is 100% free for educational and competitive usage. You can practice in all sandbox arenas, execute test suites, and join public or private multiplayer battle rooms without any subscription.",
+      },
+    ],
   },
   {
-    category: "Matchmaking & Ratings",
+    category: "Matchmaking & Elo Ratings",
     questions: [
       {
-        q: "How does matchmaking work?",
-        a: "When you join a matchmaking queue, our backend matches you against active players with similar rating points. If no matching rating is found quickly, the queue scope expands to pair you with available competitors."
+        q: "How does live matchmaking work?",
+        a: "When you join a matchmaking queue, our backend pairs you with an opponent near your Elo tier. If no immediate match is available, the queue window smoothly widens. Both players receive the exact same problem statement and test cases at the same millisecond.",
       },
       {
-        q: "How are rating changes calculated?",
-        a: "CodeComplex uses a custom Elo rating system. The amount of points won or lost depends on the rating difference between you and your opponent. Winning against a higher-ranked player awards more points, while losing to a lower-ranked player deducts more."
+        q: "How are Elo rating changes calculated?",
+        a: "Ratings follow a custom Elo distribution curve scaled from 1200 (starting floor) up to 2800+ (Grandmaster). Beating higher-rated opponents awards larger point swings, while losses adjust proportionally based on match expectations.",
       },
       {
-        q: "Can I play against my friends?",
-        a: "Absolutely! You can open a custom lobby room, select your preferred battle mode, and share the lobby join code directly with your friends."
-      }
-    ]
+        q: "Can I duel my friends in private rooms?",
+        a: "Yes. You can open a custom lobby, pick any mode and topic, and share the short join code with your friends or teammates.",
+      },
+    ],
   },
   {
-    category: "Security & Compilation Sandbox",
+    category: "Sandboxing & Runtimes",
     questions: [
       {
-        q: "What runtime sandboxes do you use?",
-        a: "To ensure safety and execution parity, all submitted solutions are built and executed inside isolated Docker container sandboxes. This prevents malicious scripts, limits resource utilization, and prevents sandbox escapes."
+        q: "How does the execution sandbox work?",
+        a: "All code submissions compile and run in isolated Docker Linux containers with strict CPU/memory quotas, network isolation, and microsecond execution limits to guarantee security and deterministic benchmarking.",
       },
       {
-        q: "What languages are currently supported?",
-        a: "We currently support C++, Python, JavaScript (Node.js), and Java. Additional language runtimes are scheduled to be added over time."
-      }
-    ]
+        q: "What programming languages are supported?",
+        a: "We currently support C++20 (GCC), Python 3.12, JavaScript (Node.js 20), and Java (OpenJDK 21). Go and Rust are in active development.",
+      },
+    ],
   },
   {
-    category: "Rules & Fair Play",
+    category: "Fair Play & AI Agents",
     questions: [
       {
-        q: "Is it allowed to use AI assistants during ranked matches?",
-        a: "No. In accordance with our Community Guidelines, the usage of AI coding models (ChatGPT, Claude, Gemini, GitHub Copilot, etc.) during active matchmaking duels is strictly prohibited. Violating this will lead to a rating reset or account ban."
+        q: "Are AI assistants allowed during ranked matches?",
+        a: "No. Ranked duels are strictly human-only. External generative AI assistants (ChatGPT, Claude, Gemini, Copilot) are forbidden while the clock is running. Violations result in rating resets and account penalties.",
       },
       {
-        q: "How do I report a player for toxicity or cheating?",
-        a: "You can submit reports directly to support@codecomplex.site with match codes, screenshots, and logs. We review reports manually and take progressive enforcement steps."
-      }
-    ]
-  }
+        q: "Can autonomous AI agents compete?",
+        a: "Yes, in designated agent queues! CodeComplex publishes native Model Context Protocol (WebMCP) tool manifests allowing autonomous AI coding agents to discover, queue, submit, and duel programmatically.",
+      },
+    ],
+  },
 ];
 
 export default function FAQPage() {
@@ -74,60 +73,63 @@ export default function FAQPage() {
   };
 
   return (
-    <div className="relative min-h-screen bg-bg text-text antialiased">
-      {/* Developer Grid Background */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808003_1px,transparent_1px),linear-gradient(to_bottom,#80808003_1px,transparent_1px)] bg-[size:32px_32px] pointer-events-none -z-10" />
-
+    <div className="min-h-screen bg-[#0B0B0C] text-[#EFEDE8] selection:bg-[#FF7A1A] selection:text-[#0B0B0C] font-sans antialiased">
       {/* Header */}
-      <header className="border-b border-border/20 backdrop-blur-md sticky top-0 z-50 bg-bg/75">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-          <Link href="/" className="flex items-center gap-3">
-            <LogoMark size={28} />
-            <span className="text-lg font-bold tracking-tight text-text">
-              Code<span className="text-primary font-medium">Complex</span>
-            </span>
+      <header className="sticky top-0 z-50 border-b border-white/[0.08] bg-[#0B0B0C]/85 backdrop-blur-md">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 h-16">
+          <Link href="/" className="flex items-center gap-2.5 font-bold text-base tracking-tight text-white hover:opacity-90 transition-opacity">
+            <LogoMark size={24} />
+            <span>Code<span className="text-[#FF7A1A]">Complex</span></span>
           </Link>
           <div className="flex items-center gap-4">
-            <div className="border-r border-border/30 pr-1 py-1 text-text">
-              <ThemeToggle />
-            </div>
-            <Link href="/login">
-              <Button variant="ghost" size="sm" className="text-text-muted hover:text-text hover:bg-transparent transition-colors text-xs">
-                Log in
-              </Button>
+            <ThemeToggle className="text-white/70 hover:text-white" />
+            <Link
+              href="/login"
+              className="text-xs font-medium text-white/70 hover:text-white transition-colors hidden sm:inline-block"
+            >
+              Log in
             </Link>
-            <Link href="/signup">
-              <Button size="sm" className="h-8 rounded px-4 text-xs font-semibold">
-                Sign up
-              </Button>
+            <Link
+              href="/signup"
+              className="inline-flex items-center justify-center h-8 px-3.5 rounded-full border border-white/20 text-xs font-mono tracking-wider uppercase text-white/80 hover:text-white hover:border-white/40 transition-colors"
+            >
+              Sign up
             </Link>
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="mx-auto max-w-3xl px-6 py-16 space-y-12">
+      <main className="mx-auto max-w-3xl px-6 py-14 space-y-12">
         <div className="space-y-4">
           <Link
             href="/"
-            className="inline-flex items-center gap-2 text-xs font-semibold text-text-muted hover:text-text transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs font-mono tracking-wider uppercase text-white/50 hover:text-white transition-colors"
           >
-            <ArrowLeft className="size-3.5" /> Back to home
+            <ArrowLeft className="size-3.5" /> Back to arena
           </Link>
-          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl text-text">
-            Frequently Asked Questions
-          </h1>
-          <p className="text-xs text-text-muted">
-            Find quick answers to common questions about CodeComplex.
+          <div className="space-y-2">
+            <span className="text-[11px] font-mono tracking-widest uppercase text-[#FF7A1A]">
+              &#123; Frequently Asked Questions &#125;
+            </span>
+            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-white flex items-center gap-3">
+              <HelpCircle className="size-8 text-[#FF7A1A]" />
+              FAQ & Platform Guide
+            </h1>
+          </div>
+          <p className="text-sm text-white/60">
+            Everything you need to know about matchmaking, sandboxing, Elo ratings, and fair play.
           </p>
         </div>
 
-        <hr className="border-border/20" />
+        <hr className="border-white/[0.08]" />
 
-        <div className="space-y-8">
+        <div className="space-y-10">
           {FAQ_LIST.map((group, groupIdx) => (
-            <div key={groupIdx} className="space-y-3">
-              <h2 className="text-xs font-bold uppercase tracking-wider text-primary border-b border-border/10 pb-1.5">{group.category}</h2>
+            <div key={groupIdx} className="space-y-3.5">
+              <h2 className="text-[11px] font-mono tracking-wider uppercase text-[#FF7A1A] border-b border-white/[0.08] pb-2">
+                {group.category}
+              </h2>
               <div className="space-y-2.5">
                 {group.questions.map((faq, faqIdx) => {
                   const itemKey = `${group.category}-${faqIdx}`;
@@ -135,21 +137,21 @@ export default function FAQPage() {
                   return (
                     <div
                       key={faqIdx}
-                      className="rounded border border-border/20 bg-surface/10 overflow-hidden"
+                      className="rounded-xl border border-white/[0.08] bg-white/[0.02] overflow-hidden transition-colors hover:border-white/[0.16]"
                     >
                       <button
                         onClick={() => toggle(itemKey)}
-                        className="w-full flex items-center justify-between p-4 text-left select-none focus:outline-none hover:bg-surface/30 transition-colors"
+                        className="w-full flex items-center justify-between p-4 text-left select-none focus:outline-none cursor-pointer"
                       >
-                        <span className="text-xs font-bold text-text">{faq.q}</span>
+                        <span className="text-sm font-medium text-white">{faq.q}</span>
                         {isOpen ? (
-                          <ChevronUp className="size-3.5 text-text-muted" />
+                          <ChevronUp className="size-4 text-[#FF7A1A] shrink-0 ml-3" />
                         ) : (
-                          <ChevronDown className="size-3.5 text-text-muted" />
+                          <ChevronDown className="size-4 text-white/40 shrink-0 ml-3" />
                         )}
                       </button>
                       {isOpen && (
-                        <div className="px-4 pb-4 text-xs leading-relaxed text-text-muted border-t border-border/10 pt-3 bg-surface/5">
+                        <div className="px-4 pb-4 text-xs leading-relaxed text-white/70 border-t border-white/[0.06] pt-3 bg-white/[0.01]">
                           {faq.a}
                         </div>
                       )}
@@ -163,9 +165,13 @@ export default function FAQPage() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-border/20 bg-bg py-12 text-center text-[11px] text-text-faint">
-        <p>© 2026 CodeComplex. All rights reserved.</p>
+      <footer className="border-t border-white/[0.08] bg-[#0B0B0C] py-8 text-center text-xs text-white/40">
+        <div className="mx-auto max-w-6xl px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <span>© {new Date().getFullYear()} CodeComplex. Real-time competitive programming.</span>
+          <span>Built by Umang Sisodia</span>
+        </div>
       </footer>
     </div>
   );
 }
+

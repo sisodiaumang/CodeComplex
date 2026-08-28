@@ -15,6 +15,13 @@ const immutable = [
   { key: "Access-Control-Allow-Origin", value: "*" },
 ];
 
+const staticPageHeader = [
+  {
+    key: "Cache-Control",
+    value: "public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800",
+  },
+];
+
 const nextConfig: NextConfig = {
   output: "standalone",
   compress: false, // Let Nginx handle gzip compression at the reverse proxy layer
@@ -34,6 +41,13 @@ const nextConfig: NextConfig = {
         ? [
             { source: "/_next/static/:path*", headers: immutable },
             { source: "/logo.webp", headers: immutable },
+            { source: "/", headers: staticPageHeader },
+            { source: "/about", headers: staticPageHeader },
+            { source: "/faq", headers: staticPageHeader },
+            { source: "/guidelines", headers: staticPageHeader },
+            { source: "/privacy", headers: staticPageHeader },
+            { source: "/terms", headers: staticPageHeader },
+            { source: "/contact", headers: staticPageHeader },
           ]
         : []),
     ];
