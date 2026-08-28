@@ -730,7 +730,25 @@ export default function LandingPage() {
 
           <div className="cc-fbase">
             <span>© {new Date().getFullYear()} CodeComplex. Real-time competitive programming platform.</span>
-            <span>Built by Umang Sisodia</span>
+            <div style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
+              <a
+                href="//www.dmca.com/Protection/Status.aspx?ID=476614e6-e66c-4cac-8c7c-362aeffef81a"
+                title="DMCA.com Protection Status"
+                className="dmca-badge"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="https://images.dmca.com/Badges/dmca-badge-w100-5x1-02.png?ID=476614e6-e66c-4cac-8c7c-362aeffef81a"
+                  alt="DMCA.com Protection Status"
+                  width={100}
+                  height={20}
+                  style={{ display: "block" }}
+                />
+              </a>
+              <span>Built by Umang Sisodia</span>
+            </div>
           </div>
         </div>
       </footer>

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Space_Grotesk, Inter, JetBrains_Mono } from "next/font/google";
+import Script from "next/script";
 import Providers from "@/components/providers";
 import WebMCPProvider from "@/components/WebMCPProvider";
 import "./globals.css";
@@ -202,6 +203,10 @@ export default function RootLayout({
           <WebMCPProvider />
           {children}
         </Providers>
+        <Script
+          src="https://images.dmca.com/Badges/DMCABadgeHelper.min.js"
+          strategy="lazyOnload"
+        />
       </body>
     </html>
   );
