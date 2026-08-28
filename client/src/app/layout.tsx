@@ -70,6 +70,13 @@ export const metadata: Metadata = {
       "Compete in live 1v1 and 4v4 coding battles across DSA, Frontend, Backend, and Prompt Wars.",
     images: ["/logo.webp"],
   },
+  icons: {
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/icon.webp", type: "image/webp" },
+    ],
+    apple: "/apple-touch-icon.png",
+  },
   robots: {
     index: true,
     follow: true,
@@ -90,10 +97,7 @@ export default function RootLayout({
       className={`${heading.variable} ${body.variable} ${code.variable}`}
       suppressHydrationWarning
     >
-      <head>
-        <link rel="icon" href="/favicon.ico" />
-        <link rel="icon" href="/icon.webp" type="image/webp" />
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+      <body className="antialiased">
         <Script
           id="schema-org-ldjson"
           type="application/ld+json"
@@ -128,8 +132,6 @@ export default function RootLayout({
             __html: `(function(){try{var t=localStorage.getItem("devwar-theme");var d=(t==="dark")||(t!=="light");if(d)document.documentElement.setAttribute("data-theme","dark")}catch(e){}})()`,
           }}
         />
-      </head>
-      <body className="antialiased">
         <Providers>
           <WebMCPProvider />
           {children}
