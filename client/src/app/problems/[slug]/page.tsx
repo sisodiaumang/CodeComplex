@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import Editor from "@monaco-editor/react";
@@ -25,6 +25,7 @@ import {
   Layout,
   Server,
   Sparkles,
+  RotateCcw,
 } from "lucide-react";
 import { LogoMark } from "@/components/logo";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -114,6 +115,105 @@ export default function ProblemDetailPage() {
   const [selectedLang, setSelectedLang] = useState<SupportedLang>("python");
   const [code, setCode] = useState<string>("");
 
+  // Resizable layout states (LeetCode-style splitters)
+  const [leftWidth, setLeftWidth] = useState<number>(48); // width in %
+  const [bottomHeight, setBottomHeight] = useState<number>(230); // height in px
+  const [isDragging, setIsDragging] = useState<boolean>(false);
+
+  const containerRef = useRef<HTMLDivElement>(null);
+  const rightWorkspaceRef = useRef<HTMLDivElement>(null);
+  const isDraggingLeftRef = useRef(false);
+  const isDraggingBottomRef = useRef(false);
+
+  // Restore saved layout preferences
+  useEffect(() => {
+    try {
+      const savedWidth = localStorage.getItem("cc_problem_left_width");
+      if (savedWidth) {
+        const val = parseFloat(savedWidth);
+        if (!isNaN(val) && val >= 20 && val <= 80) setLeftWidth(val);
+      }
+      const savedHeight = localStorage.getItem("cc_problem_bottom_height");
+      if (savedHeight) {
+        const val = parseFloat(savedHeight);
+        if (!isNaN(val) && val >= 90 && val <= 600) setBottomHeight(val);
+      }
+    } catch {}
+  }, []);
+
+  // Left-right horizontal dragging handler
+  const handleMouseMoveLeft = useCallback((e: MouseEvent) => {
+    if (!isDraggingLeftRef.current || !containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const newWidth = ((e.clientX - rect.left) / rect.width) * 100;
+    const clamped = Math.max(20, Math.min(80, newWidth));
+    setLeftWidth(clamped);
+  }, []);
+
+  const handleMouseUpLeft = useCallback(() => {
+    if (!isDraggingLeftRef.current) return;
+    isDraggingLeftRef.current = false;
+    setIsDragging(false);
+    document.body.style.cursor = "";
+    document.body.style.userSelect = "";
+    document.removeEventListener("mousemove", handleMouseMoveLeft);
+    document.removeEventListener("mouseup", handleMouseUpLeft);
+    try {
+      localStorage.setItem("cc_problem_left_width", String(leftWidth));
+    } catch {}
+  }, [handleMouseMoveLeft, leftWidth]);
+
+  const handleMouseDownLeft = (e: React.MouseEvent) => {
+    e.preventDefault();
+    isDraggingLeftRef.current = true;
+    setIsDragging(true);
+    document.body.style.cursor = "col-resize";
+    document.body.style.userSelect = "none";
+    document.addEventListener("mousemove", handleMouseMoveLeft);
+    document.addEventListener("mouseup", handleMouseUpLeft);
+  };
+
+  // Top-bottom vertical dragging handler
+  const handleMouseMoveBottom = useCallback((e: MouseEvent) => {
+    if (!isDraggingBottomRef.current || !rightWorkspaceRef.current) return;
+    const rect = rightWorkspaceRef.current.getBoundingClientRect();
+    const newHeight = rect.bottom - e.clientY;
+    const clamped = Math.max(90, Math.min(rect.height - 100, newHeight));
+    setBottomHeight(clamped);
+  }, []);
+
+  const handleMouseUpBottom = useCallback(() => {
+    if (!isDraggingBottomRef.current) return;
+    isDraggingBottomRef.current = false;
+    setIsDragging(false);
+    document.body.style.cursor = "";
+    document.body.style.userSelect = "";
+    document.removeEventListener("mousemove", handleMouseMoveBottom);
+    document.removeEventListener("mouseup", handleMouseUpBottom);
+    try {
+      localStorage.setItem("cc_problem_bottom_height", String(bottomHeight));
+    } catch {}
+  }, [handleMouseMoveBottom, bottomHeight]);
+
+  const handleMouseDownBottom = (e: React.MouseEvent) => {
+    e.preventDefault();
+    isDraggingBottomRef.current = true;
+    setIsDragging(true);
+    document.body.style.cursor = "row-resize";
+    document.body.style.userSelect = "none";
+    document.addEventListener("mousemove", handleMouseMoveBottom);
+    document.addEventListener("mouseup", handleMouseUpBottom);
+  };
+
+  const handleResetLayout = () => {
+    setLeftWidth(48);
+    setBottomHeight(230);
+    try {
+      localStorage.removeItem("cc_problem_left_width");
+      localStorage.removeItem("cc_problem_bottom_height");
+    } catch {}
+  };
+
   // Test run states
   const [activeTab, setActiveTab] = useState<"examples" | "testcases" | "console">("examples");
   const [isRunning, setIsRunning] = useState(false);
@@ -147,7 +247,6 @@ export default function ProblemDetailPage() {
             setSelectedLang("prompt");
             setCode(q.starterCode?.prompt || "# Enter your system instruction and prompt template here:\n");
           } else if (qMode === "BUG_FIX") {
-            // Preload buggy starter code for debugging
             const buggy = q.buggyStarterCode || q.starterCode;
             if (buggy?.python) {
               setSelectedLang("python");
@@ -163,7 +262,6 @@ export default function ProblemDetailPage() {
               setCode(buggy.java);
             }
           } else {
-            // DSA / Frontend / Backend
             const starter = q.starterCode;
             if (starter?.python) {
               setSelectedLang("python");
@@ -249,7 +347,6 @@ export default function ProblemDetailPage() {
       return;
     }
 
-    // If logged in: create a Solo battle room with this specific question and enter it!
     setIsSubmitting(true);
     try {
       const bType =
@@ -359,13 +456,23 @@ export default function ProblemDetailPage() {
             <span className={`text-[10px] font-mono font-semibold px-2 py-0.5 rounded border uppercase ${difficultyColors}`}>
               {question.difficulty}
             </span>
-            <span className="text-xs font-semibold text-white truncate max-w-[200px] sm:max-w-xs md:max-w-md">
+            <span className="text-xs font-semibold text-white truncate max-w-[160px] sm:max-w-xs md:max-w-md">
               {question.title}
             </span>
           </div>
         </div>
 
         <div className="flex items-center gap-2.5">
+          <button
+            type="button"
+            onClick={handleResetLayout}
+            title="Reset Splitter Sizes (50/50)"
+            className="hidden md:flex items-center gap-1 text-[11px] font-mono text-white/40 hover:text-white px-2 py-1 rounded hover:bg-white/5 transition-colors cursor-pointer"
+          >
+            <RotateCcw className="size-3" />
+            <span className="hidden lg:inline">Reset Layout</span>
+          </button>
+
           <ThemeToggle className="text-white/60 hover:text-white hidden sm:flex" />
 
           {status === "authed" ? (
@@ -394,10 +501,16 @@ export default function ProblemDetailPage() {
         </div>
       </header>
 
-      {/* ── Main Split View ──────────────────────────────── */}
-      <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
+      {/* ── Main Resizable Split View (LeetCode Style) ────── */}
+      <div
+        ref={containerRef}
+        className="flex-1 flex flex-col lg:flex-row overflow-hidden relative"
+      >
         {/* Left Column: Problem Statement & Details */}
-        <div className="w-full lg:w-1/2 flex flex-col border-b lg:border-b-0 lg:border-r border-white/[0.08] bg-[#0B0B0C] overflow-y-auto">
+        <div
+          style={{ width: `${leftWidth}%` }}
+          className="w-full lg:w-[var(--left-w)] flex flex-col border-b lg:border-b-0 border-white/[0.08] bg-[#0B0B0C] overflow-y-auto shrink-0"
+        >
           <div className="p-6 space-y-6 max-w-2xl">
             {/* Meta tags */}
             <div className="space-y-3">
@@ -603,10 +716,23 @@ export default function ProblemDetailPage() {
           </div>
         </div>
 
-        {/* Right Column: Code Editor + Runner & Submission */}
-        <div className="w-full lg:w-1/2 flex flex-col bg-[#08090D] min-h-[500px]">
+        {/* ── Vertical Resizer (Left-Right Splitter) ─────── */}
+        <div
+          onMouseDown={handleMouseDownLeft}
+          className="hidden lg:flex w-2 hover:w-2.5 bg-transparent hover:bg-[#FF7A1A]/40 transition-all cursor-col-resize shrink-0 relative z-30 self-stretch items-center justify-center group select-none"
+          title="Drag to resize problem / editor split"
+        >
+          <div className="w-[2px] h-8 bg-white/20 group-hover:bg-[#FF7A1A] rounded-full transition-colors" />
+        </div>
+
+        {/* Right Column: Code Editor Workspace */}
+        <div
+          ref={rightWorkspaceRef}
+          style={{ width: `calc(${100 - leftWidth}% - 8px)` }}
+          className="w-full flex-1 flex flex-col bg-[#08090D] overflow-hidden min-w-[300px]"
+        >
           {/* Editor Header */}
-          <div className="h-10 border-b border-white/[0.08] bg-[#0E0E12] px-4 flex items-center justify-between shrink-0">
+          <div className="h-10 border-b border-white/[0.08] bg-[#0E0E12] px-4 flex items-center justify-between shrink-0 select-none">
             <div className="flex items-center gap-2">
               <Code2 className="size-3.5 text-white/40" />
               {question.mode === "PROMPT_WAR" ? (
@@ -625,15 +751,15 @@ export default function ProblemDetailPage() {
               )}
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               <span className="text-[10px] font-mono text-white/30 hidden sm:inline">
-                Docker Execution Kernel
+                Docker Linux Sandbox
               </span>
             </div>
           </div>
 
           {/* Monaco Editor Container */}
-          <div className="flex-1 relative w-full overflow-hidden min-h-[300px]">
+          <div className={`flex-1 relative w-full overflow-hidden min-h-[140px] ${isDragging ? "pointer-events-none select-none" : ""}`}>
             <Editor
               height="100%"
               language={selectedLang === "cpp" ? "cpp" : selectedLang === "python" ? "python" : selectedLang === "java" ? "java" : selectedLang === "prompt" ? "markdown" : "javascript"}
@@ -652,8 +778,20 @@ export default function ProblemDetailPage() {
             />
           </div>
 
+          {/* ── Horizontal Resizer (Editor-Console Splitter) ── */}
+          <div
+            onMouseDown={handleMouseDownBottom}
+            className="hidden md:flex h-2 hover:h-2.5 bg-transparent hover:bg-[#FF7A1A]/40 transition-all cursor-row-resize shrink-0 relative z-30 w-full items-center justify-center group select-none"
+            title="Drag to resize console drawer"
+          >
+            <div className="h-[2px] w-8 bg-white/20 group-hover:bg-[#FF7A1A] rounded-full transition-colors" />
+          </div>
+
           {/* Bottom Execution & Console Panel */}
-          <div className="h-56 border-t border-white/[0.08] bg-[#0B0B0E] flex flex-col shrink-0">
+          <div
+            style={{ height: `${bottomHeight}px` }}
+            className="border-t border-white/[0.08] bg-[#0B0B0E] flex flex-col shrink-0 overflow-hidden select-none"
+          >
             {/* Panel Tabs */}
             <div className="h-9 px-4 border-b border-white/[0.08] bg-[#0E0E12] flex items-center justify-between shrink-0">
               <div className="flex items-center gap-3">
@@ -689,7 +827,7 @@ export default function ProblemDetailPage() {
             </div>
 
             {/* Panel Content */}
-            <div className="flex-1 overflow-y-auto p-3 font-mono text-xs">
+            <div className="flex-1 overflow-y-auto p-3 font-mono text-xs select-text">
               {activeTab === "examples" && (
                 <div className="space-y-2">
                   {examples.length > 0 ? (
