@@ -44,6 +44,7 @@ import oauthRouter from "./routes/oauth.router.js";
 import adminRouter from "./routes/admin.router.js";
 import revisionRouter from "./routes/revision.router.js";
 import certificateRouter from "./routes/certificate.router.js";
+import questionRouter from "./routes/question.router.js";
 
 
 
@@ -191,6 +192,7 @@ app.use("/api/v1/auth", oauthRouter);
 app.use("/api/v1/admin", adminRouter);
 app.use("/api/v1/revision", revisionRouter);
 app.use("/api/v1/certificates", certificateRouter);
+app.use("/api/v1/questions", questionRouter);
 
 
 

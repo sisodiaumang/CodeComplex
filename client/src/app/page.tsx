@@ -143,7 +143,7 @@ const WHY_CODECOMPLEX = [
 ];
 
 const FOOTER_COLS = [
-  { head: "Start", links: [{ label: "Sign up", href: "/signup" }, { label: "Log in", href: "/login" }] },
+  { head: "Start", links: [{ label: "Sign up", href: "/signup" }, { label: "Log in", href: "/login" }, { label: "400+ Problems", href: "/problems" }] },
   { head: "Learn", links: [{ label: "About", href: "/about" }, { label: "Verify Certificate", href: "/verify-certificate" }, { label: "FAQ", href: "/faq" }, { label: "Guidelines", href: "/guidelines" }] },
   { head: "Legal", links: [{ label: "Privacy", href: "/privacy" }, { label: "Terms", href: "/terms" }] },
   { head: "Talk", links: [{ label: "Contact", href: "/contact" }, { label: "Email support", href: "mailto:support@codecomplex.site" }] },
@@ -444,6 +444,7 @@ export default function LandingPage() {
             <span>Code<span style={{ color: "var(--orange-ink)" }}>Complex</span></span>
           </Link>
           <nav className="cc-navlinks">
+            <Link href="/problems" className="cc-quiet">Problems</Link>
             <a href="#modes" className="cc-quiet">Modes</a>
             <a href="#ladder" className="cc-quiet">Ladder</a>
             <a href="#agents" className="cc-quiet">For agents</a>
@@ -485,6 +486,7 @@ export default function LandingPage() {
 
             {/* In-page anchors have to close the sheet, or the scroll they
                 trigger happens behind a locked, opaque overlay. */}
+            <Link href="/problems" className="cc-sheet-a" onClick={() => setMenuOpen(false)}>Problems</Link>
             <a href="#modes" className="cc-sheet-a" onClick={() => setMenuOpen(false)}>Modes</a>
             <a href="#ladder" className="cc-sheet-a" onClick={() => setMenuOpen(false)}>Ladder</a>
             <a href="#agents" className="cc-sheet-a" onClick={() => setMenuOpen(false)}>For agents</a>

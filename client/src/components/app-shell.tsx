@@ -25,6 +25,7 @@ import {
   AlertCircle,
   CheckCircle2,
   RotateCcw,
+  Code2,
 } from "lucide-react";
 import { api } from "@/lib/api";
 import { unwrapList, type AppNotification } from "@/lib/types";
@@ -39,6 +40,7 @@ import { AchievementToastsContainer } from "@/components/AchievementToast";
 
 const NAV = [
   { href: "/battle", label: "Battle", icon: Swords },
+  { href: "/problems", label: "Problems", icon: Code2 },
   { href: "/revision", label: "Revision", icon: RotateCcw },
   { href: "/leaderboard", label: "Leaderboard", icon: Trophy },
   { href: "/achievements", label: "Achievements", icon: Award },

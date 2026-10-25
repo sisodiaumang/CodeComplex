@@ -20,7 +20,7 @@ function normalizeLanguage(language: string): string {
     return language.trim().toUpperCase();
 }
 
-async function ensureDriverCode(language: string, code: string, questionSlug: string): Promise<string> {
+export async function ensureDriverCode(language: string, code: string, questionSlug: string): Promise<string> {
     const lang = language.toLowerCase();
     
     // Check if code already contains the main entry point
