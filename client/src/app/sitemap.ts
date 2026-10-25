@@ -3,7 +3,7 @@ import { MetadataRoute } from "next";
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = "https://codecomplex.site";
   const now = new Date();
-  
+
   return [
     {
       url: baseUrl,
@@ -15,6 +15,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: `${baseUrl}/battle`,
       lastModified: now,
       changeFrequency: "daily",
+      priority: 0.95,
+    },
+    {
+      url: `${baseUrl}/about`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/faq`,
+      lastModified: now,
+      changeFrequency: "weekly",
       priority: 0.9,
     },
     {
@@ -24,15 +36,33 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.9,
     },
     {
+      url: `${baseUrl}/verify-certificate`,
+      lastModified: now,
+      changeFrequency: "daily",
+      priority: 0.85,
+    },
+    {
+      url: `${baseUrl}/revision`,
+      lastModified: now,
+      changeFrequency: "daily",
+      priority: 0.85,
+    },
+    {
       url: `${baseUrl}/achievements`,
       lastModified: now,
       changeFrequency: "weekly",
-      priority: 0.7,
+      priority: 0.75,
     },
     {
       url: `${baseUrl}/matches`,
       lastModified: now,
       changeFrequency: "daily",
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/guidelines`,
+      lastModified: now,
+      changeFrequency: "monthly",
       priority: 0.7,
     },
     {
@@ -54,22 +84,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.6,
     },
     {
-      url: `${baseUrl}/guidelines`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.6,
-    },
-    {
       url: `${baseUrl}/privacy`,
       lastModified: now,
       changeFrequency: "monthly",
       priority: 0.5,
-    },
-    {
-      url: `${baseUrl}/verify-certificate`,
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 0.8,
     },
     {
       url: `${baseUrl}/terms`,

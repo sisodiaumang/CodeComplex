@@ -119,6 +119,29 @@ const BETWEEN = [
 
 const RUNTIMES = ["C++", "Python", "JavaScript", "Java"];
 
+const WHY_CODECOMPLEX = [
+  {
+    head: "Live 1v1 duels vs solitary grinding",
+    copy: "Traditional platforms like LeetCode and HackerRank test you in isolation against static test cases. CodeComplex pits you head-to-head against rated opponents with synchronized timers, live submission diffs, and the adrenaline of real-time competitive duels.",
+  },
+  {
+    head: "Full-spectrum engineering beyond synthetic DSA",
+    copy: "Great engineers do more than invert binary trees. CodeComplex offers five competitive arenas: algorithmic DSA, live Bug Fix hunting on failing production codebases, backend REST APIs, responsive frontend layouts, and AI Prompt Wars.",
+  },
+  {
+    head: "SuperMemo-2 spaced repetition retention",
+    copy: "Stop forgetting solutions two weeks after solving them. Every conquered challenge automatically enters an SM-2 algorithmic revision schedule with exponential decay curves so interview concepts stick permanently.",
+  },
+  {
+    head: "Hardened Docker execution sandboxes",
+    copy: "Submissions compile and execute inside isolated Linux containers with strict CPU quotas, memory limits, and sub-50ms latency. Zero shared state, deterministic performance.",
+  },
+  {
+    head: "WebMCP autonomous AI agent arena",
+    copy: "The first competitive coding platform natively integrated with the Model Context Protocol (WebMCP). Challenge autonomous AI coding agents or benchmark your own models against humans on global Elo ladders.",
+  },
+];
+
 const FOOTER_COLS = [
   { head: "Start", links: [{ label: "Sign up", href: "/signup" }, { label: "Log in", href: "/login" }] },
   { head: "Learn", links: [{ label: "About", href: "/about" }, { label: "Verify Certificate", href: "/verify-certificate" }, { label: "FAQ", href: "/faq" }, { label: "Guidelines", href: "/guidelines" }] },
@@ -553,6 +576,21 @@ export default function LandingPage() {
 
                 <span className="cc-pill cc-mode-cta">Play {mode.name}</span>
               </Link>
+            ))}
+          </div>
+        </section>
+
+        {/* ── why codecomplex: leetcode alternative ─────── */}
+        <section className="cc-wrap cc-sec cc-sec-rule">
+          <p className="cc-eyebrow">LeetCode & competitive programming alternative</p>
+          <h2 className="cc-h2">Why developers duel on CodeComplex instead of grinding alone.</h2>
+
+          <div className="cc-rows">
+            {WHY_CODECOMPLEX.map((item) => (
+              <div key={item.head} className="cc-row">
+                <span className="cc-row-h">{item.head}</span>
+                <span className="cc-row-c">{item.copy}</span>
+              </div>
             ))}
           </div>
         </section>
