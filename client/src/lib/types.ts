@@ -236,3 +236,39 @@ export function avatarUrl(avatar?: Avatar | string): string | undefined {
   if (typeof avatar === "string") return avatar;
   return avatar.profileImageURL || undefined;
 }
+
+
+// ─── Internship Certificate Types ──────────────────────────────────────────
+
+export type CertificateStatus = "VALID" | "REVOKED" | "EXPIRED";
+
+export interface InternshipCertificate {
+  _id?: string;
+  certificateId: string;
+  recipientName: string;
+  recipientEmail?: string;
+  role: string;
+  domain: string;
+  duration: string;
+  startDate: string;
+  endDate: string;
+  issueDate: string;
+  grade?: string;
+  skills: string[];
+  description: string;
+  status: CertificateStatus;
+  revocationReason?: string;
+  issuer: string;
+  signatoryName: string;
+  signatoryTitle: string;
+  verificationCount: number;
+  lastVerifiedAt?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface CertificateVerifyResponse {
+  certificate: InternshipCertificate;
+  isAuthentic: boolean;
+  verifiedAt: string;
+}

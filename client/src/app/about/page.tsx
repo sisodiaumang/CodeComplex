@@ -79,6 +79,12 @@ export default function AboutPage() {
           <div className="flex items-center gap-4">
             <ThemeToggle className="text-white/70 hover:text-white" />
             <Link
+              href="/verify-certificate"
+              className="text-xs font-medium text-white/70 hover:text-white transition-colors hidden sm:inline-block"
+            >
+              Verify Certificate
+            </Link>
+            <Link
               href="/login"
               className="text-xs font-medium text-white/70 hover:text-white transition-colors hidden sm:inline-block"
             >
@@ -204,7 +210,19 @@ export default function AboutPage() {
           </p>
         </section>
 
-        {/* Section 5: Creator & Mission */}
+        
+        {/* Section 5: Internship & Credential Verification */}
+        <section className="p-6 rounded-2xl border border-white/[0.08] bg-white/[0.02] space-y-3">
+          <div className="flex items-center gap-2 text-[#FF7A1A]">
+            <Award className="size-5" />
+            <h3 className="text-base font-bold text-white">Internship & Credential Verification</h3>
+          </div>
+          <p className="text-xs text-white/70 leading-relaxed">
+            CodeComplex offers competitive software engineering internships spanning full-stack development, distributed backend systems, and containerized sandbox infrastructure. Anyone—including hiring managers and background investigators—can publicly verify internship credentials in real-time without signing up via our <Link href="/verify-certificate" className="text-[#FF7A1A] underline font-medium hover:text-[#FF9040]">Certificate Verification Registry</Link>.
+          </p>
+        </section>
+
+        {/* Section 6: Creator & Mission */}
         <section className="space-y-4 border-t border-white/[0.08] pt-10 text-xs text-white/60 leading-relaxed">
           <p>
             <strong className="text-white font-medium">CodeComplex</strong> is designed and maintained by <a href="https://github.com/sisodiaumang" target="_blank" rel="noopener noreferrer" className="text-[#FF7A1A] hover:underline font-semibold">Umang Sisodia</a> as an open-ecosystem platform for developers, competitive programmers, and autonomous agents worldwide.
@@ -219,6 +237,7 @@ export default function AboutPage() {
       <footer className="border-t border-white/[0.08] bg-[#0B0B0C] py-8 text-center text-xs text-white/40">
         <div className="mx-auto max-w-6xl px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <span>© {new Date().getFullYear()} CodeComplex. Real-time competitive programming.</span>
+          <Link href="/verify-certificate" className="hover:text-white transition-colors">Verify Certificate</Link>
           <span>Built by Umang Sisodia</span>
         </div>
       </footer>

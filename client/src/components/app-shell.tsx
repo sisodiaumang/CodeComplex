@@ -20,6 +20,7 @@ import {
   Moon,
   Monitor,
   Shield,
+  ShieldCheck,
   AlertTriangle,
   AlertCircle,
   CheckCircle2,
@@ -215,6 +216,14 @@ function UserMenu() {
             <AlertTriangle className="size-4 text-text-muted" />
             Report Issue
           </button>
+          <Link
+            href="/verify-certificate"
+            onClick={() => setOpen(false)}
+            className="flex items-center gap-2.5 px-3 py-2 text-sm text-text hover:bg-surface-2"
+          >
+            <ShieldCheck className="size-4 text-text-muted" />
+            Verify Certificate
+          </Link>
           <div className="my-1 border-t border-border" />
           <button
             onClick={() => {

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Shield,
@@ -34,14 +35,21 @@ import {
   TrendingUp,
   Database,
   BarChart4,
-  ChevronDown
+  ChevronDown,
+  Award,
+  ShieldCheck,
+  FileText,
+  Plus,
+  ExternalLink,
+  Copy,
+  Check
 } from "lucide-react";
 import { api } from "@/lib/api";
 import { useAuth } from "@/stores/auth-store";
 import { cn } from "@/lib/utils";
 import { Card, CardHeader, Button, Badge, Spinner, Avatar } from "@/components/ui";
 
-type AdminTab = "dashboard" | "reports" | "users" | "rooms" | "llm";
+type AdminTab = "dashboard" | "reports" | "users" | "rooms" | "llm" | "certificates";
 
 interface NavTab {
   id: AdminTab;
@@ -92,6 +100,26 @@ export default function AdminPanelPage() {
 
   // Rooms pagination state
   const [roomsPage, setRoomsPage] = useState(1);
+  // Certificate management state
+  const [certSearch, setCertSearch] = useState("");
+  const [certStatusFilter, setCertStatusFilter] = useState("ALL");
+  const [certPage, setCertPage] = useState(1);
+  const [showAddCertModal, setShowAddCertModal] = useState(false);
+  const [certCopiedId, setCertCopiedId] = useState<string | null>(null);
+
+  // Form state for creating certificate
+  const [newCertId, setNewCertId] = useState("");
+  const [newRecipientName, setNewRecipientName] = useState("");
+  const [newRecipientEmail, setNewRecipientEmail] = useState("");
+  const [newDomain, setNewDomain] = useState("Full Stack Web & Real-Time Systems");
+  const [newRole, setNewRole] = useState("Software Engineering Intern");
+  const [newDuration, setNewDuration] = useState("12 Weeks");
+  const [newStartDate, setNewStartDate] = useState("2026-06-01");
+  const [newEndDate, setNewEndDate] = useState("2026-08-24");
+  const [newGrade, setNewGrade] = useState("Outstanding Distinction (Top 5%)");
+  const [newSkills, setNewSkills] = useState("Next.js, React, Node.js, Express, Docker, Redis, TypeScript");
+  const [newDescription, setNewDescription] = useState("");
+
 
   // Authenticate user's role on mount
   useEffect(() => {
@@ -125,6 +153,68 @@ export default function AdminPanelPage() {
     queryKey: ["admin", "reports", reportsPage],
     queryFn: () => api<any>(`/admin/reports?page=${reportsPage}&limit=10`),
     enabled: !!user && ["ADMIN", "MODERATOR", "OWNER"].includes(user.role || ""),
+  });
+
+
+  // Certificates list query
+  const certificatesQuery = useQuery({
+    queryKey: ["admin", "certificates", certSearch, certStatusFilter, certPage],
+    queryFn: () =>
+      api<{
+        certificates: any[];
+        total: number;
+        page: number;
+        totalPages: number;
+      }>(
+        `/certificates/admin?search=${encodeURIComponent(certSearch)}&status=${certStatusFilter}&page=${certPage}&limit=10`
+      ),
+    enabled: !!user && ["ADMIN", "MODERATOR", "OWNER"].includes(user.role || ""),
+  });
+
+  const createCertMutation = useMutation({
+    mutationFn: (data: any) =>
+      api("/certificates/admin", {
+        method: "POST",
+        body: data,
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "certificates"] });
+      setShowAddCertModal(false);
+      setNewCertId("");
+      setNewRecipientName("");
+      setNewRecipientEmail("");
+      setNewDescription("");
+    },
+    onError: (err: any) => {
+      alert("Failed to create certificate: " + (err.message || "Unknown error"));
+    },
+  });
+
+  const toggleCertStatusMutation = useMutation({
+    mutationFn: ({ id, status, revocationReason }: { id: string; status: string; revocationReason?: string }) =>
+      api(`/certificates/admin/${id}`, {
+        method: "PATCH",
+        body: { status, revocationReason },
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "certificates"] });
+    },
+    onError: (err: any) => {
+      alert("Failed to update certificate: " + (err.message || "Unknown error"));
+    },
+  });
+
+  const deleteCertMutation = useMutation({
+    mutationFn: (id: string) =>
+      api(`/certificates/admin/${id}`, {
+        method: "DELETE",
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "certificates"] });
+    },
+    onError: (err: any) => {
+      alert("Failed to delete certificate: " + (err.message || "Unknown error"));
+    },
   });
 
   // Rooms list query
@@ -414,6 +504,7 @@ export default function AdminPanelPage() {
     { id: "dashboard", label: "Dashboard", desc: "Overview & metrics", icon: Activity },
     { id: "reports", label: "Moderation", desc: "Flagged content", icon: AlertCircle, count: stats.openReports },
     { id: "llm", label: "LLM Manager", desc: "API Keys & Fallbacks", icon: Cpu },
+    { id: "certificates", label: "Certificates", desc: "Internship verification registry", icon: Award },
     { id: "users", label: "User Database", desc: "Access & permissions", icon: Users },
     { id: "rooms", label: "Battle Rooms", desc: "Active matchmaking", icon: Swords },
   ];
@@ -1353,6 +1444,264 @@ export default function AdminPanelPage() {
             </Card>
           )}
 
+
+          {/* TAB: INTERNSHIP CERTIFICATES REGISTRY */}
+          {activeTab === "certificates" && (
+            <div className="space-y-6 animate-fadeIn">
+              <Card className="border border-border/80 bg-surface/30 backdrop-blur-md rounded-2xl shadow-sm overflow-hidden">
+                <div className="p-6 border-b border-border/60 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div>
+                    <h3 className="text-base font-bold text-text flex items-center gap-2.5">
+                      <Award className="size-5 text-primary" /> CodeComplex Internship Certificates Registry
+                    </h3>
+                    <p className="text-xs text-text-faint mt-1">
+                      Issue, audit, revoke, and verify official CodeComplex internship credentials. Anyone can verify these at <Link href="/verify-certificate" target="_blank" className="text-primary hover:underline font-mono">/verify-certificate</Link> without signup.
+                    </p>
+                  </div>
+                  <Button
+                    onClick={() => setShowAddCertModal(true)}
+                    variant="primary"
+                    size="sm"
+                    className="h-9 px-4 font-bold text-xs gap-1.5 shadow-md bg-primary hover:bg-primary-hover cursor-pointer shrink-0"
+                  >
+                    <Plus className="size-4" /> Issue Certificate
+                  </Button>
+                </div>
+
+                {/* Filter and Search Bar */}
+                <div className="p-4 bg-surface/20 border-b border-border/40 flex flex-col sm:flex-row gap-3 items-center justify-between">
+                  <div className="relative w-full sm:w-80">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-text-faint" />
+                    <input
+                      type="text"
+                      placeholder="Search ID, recipient, domain..."
+                      value={certSearch}
+                      onChange={(e) => {
+                        setCertSearch(e.target.value);
+                        setCertPage(1);
+                      }}
+                      className="w-full h-9 pl-9 pr-3 rounded-lg border border-border bg-surface text-xs text-text placeholder:text-text-faint focus:outline-none focus:border-primary"
+                    />
+                  </div>
+
+                  <div className="flex items-center gap-2 w-full sm:w-auto">
+                    <span className="text-xs text-text-faint font-mono hidden sm:inline">Status:</span>
+                    <select
+                      value={certStatusFilter}
+                      onChange={(e) => {
+                        setCertStatusFilter(e.target.value);
+                        setCertPage(1);
+                      }}
+                      className="h-9 px-3 rounded-lg border border-border bg-surface text-xs text-text focus:outline-none focus:border-primary"
+                    >
+                      <option value="ALL">All Statuses</option>
+                      <option value="VALID">Valid (Active)</option>
+                      <option value="REVOKED">Revoked</option>
+                      <option value="EXPIRED">Expired</option>
+                    </select>
+
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => certificatesQuery.refetch()}
+                      className="h-9 px-3 text-xs"
+                    >
+                      Refresh
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Certificates Table */}
+                <div className="overflow-x-auto">
+                  {certificatesQuery.isLoading ? (
+                    <div className="p-12 text-center flex flex-col items-center justify-center gap-2">
+                      <Spinner />
+                      <span className="text-xs text-text-faint font-mono">Loading certificate registry...</span>
+                    </div>
+                  ) : !certificatesQuery.data?.certificates || certificatesQuery.data.certificates.length === 0 ? (
+                    <div className="p-12 text-center space-y-2">
+                      <Award className="size-10 text-text-faint mx-auto opacity-30" />
+                      <p className="text-sm font-semibold text-text">No Certificates Found</p>
+                      <p className="text-xs text-text-faint">
+                        {certSearch ? "Try adjusting your search criteria" : "Issue the first certificate using the button above"}
+                      </p>
+                    </div>
+                  ) : (
+                    <table className="min-w-full text-left">
+                      <thead className="bg-surface/50 text-[10px] font-extrabold uppercase tracking-widest text-text-faint font-mono border-b border-border/40">
+                        <tr>
+                          <th className="px-6 py-3.5">Credential ID</th>
+                          <th className="px-6 py-3.5">Recipient</th>
+                          <th className="px-6 py-3.5">Domain & Track</th>
+                          <th className="px-6 py-3.5">Duration</th>
+                          <th className="px-6 py-3.5">Status</th>
+                          <th className="px-6 py-3.5">Lookups</th>
+                          <th className="px-6 py-3.5 text-right">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-border/40 text-xs">
+                        {certificatesQuery.data.certificates.map((cert: any) => {
+                          const isCopied = certCopiedId === cert.certificateId;
+                          return (
+                            <tr key={cert._id || cert.certificateId} className="hover:bg-surface/40 transition-colors">
+                              <td className="px-6 py-4 font-mono">
+                                <div className="flex items-center gap-1.5">
+                                  <span className="font-bold text-primary select-text">{cert.certificateId}</span>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      navigator.clipboard.writeText(cert.certificateId);
+                                      setCertCopiedId(cert.certificateId);
+                                      setTimeout(() => setCertCopiedId(null), 2000);
+                                    }}
+                                    className="p-1 text-text-faint hover:text-text rounded cursor-pointer"
+                                    title="Copy Certificate ID"
+                                  >
+                                    {isCopied ? <Check className="size-3 text-emerald-400" /> : <Copy className="size-3" />}
+                                  </button>
+                                </div>
+                              </td>
+
+                              <td className="px-6 py-4">
+                                <span className="font-bold text-text block select-text">{cert.recipientName}</span>
+                                {cert.recipientEmail && (
+                                  <span className="text-[11px] text-text-faint font-mono block select-text">{cert.recipientEmail}</span>
+                                )}
+                              </td>
+
+                              <td className="px-6 py-4">
+                                <span className="font-medium text-text block">{cert.domain}</span>
+                                <span className="text-[11px] text-text-faint block">{cert.role}</span>
+                                {cert.grade && (
+                                  <span className="text-[10px] text-primary font-mono block mt-0.5">{cert.grade}</span>
+                                )}
+                              </td>
+
+                              <td className="px-6 py-4">
+                                <span className="font-medium text-text block">{cert.duration}</span>
+                                <span className="text-[11px] text-text-faint font-mono block">
+                                  {cert.startDate} - {cert.endDate}
+                                </span>
+                              </td>
+
+                              <td className="px-6 py-4">
+                                <span
+                                  className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase ${
+                                    cert.status === "VALID"
+                                      ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30"
+                                      : cert.status === "REVOKED"
+                                      ? "bg-red-500/10 text-red-400 border border-red-500/30"
+                                      : "bg-amber-500/10 text-amber-400 border border-amber-500/30"
+                                  }`}
+                                >
+                                  {cert.status}
+                                </span>
+                              </td>
+
+                              <td className="px-6 py-4 font-mono text-text-faint">
+                                {cert.verificationCount || 0}
+                              </td>
+
+                              <td className="px-6 py-4 text-right">
+                                <div className="flex items-center justify-end gap-2">
+                                  <Link
+                                    href={`/verify-certificate?id=${encodeURIComponent(cert.certificateId)}`}
+                                    target="_blank"
+                                    className="p-1.5 rounded-lg border border-border bg-surface hover:bg-surface-2 text-text-muted hover:text-text transition-colors inline-flex items-center gap-1 text-[11px]"
+                                    title="View public verification"
+                                  >
+                                    <ExternalLink className="size-3.5" />
+                                    <span>Verify</span>
+                                  </Link>
+
+                                  {cert.status === "VALID" ? (
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        const reason = prompt("Enter revocation reason (optional):") ?? undefined;
+                                        if (confirm(`Revoke certificate ${cert.certificateId} for ${cert.recipientName}?`)) {
+                                          toggleCertStatusMutation.mutate({
+                                            id: cert._id || cert.certificateId,
+                                            status: "REVOKED",
+                                            revocationReason: reason
+                                          });
+                                        }
+                                      }}
+                                      className="p-1.5 rounded-lg border border-red-500/30 bg-red-500/10 hover:bg-red-500/20 text-red-400 transition-colors text-[11px] font-medium cursor-pointer"
+                                    >
+                                      Revoke
+                                    </button>
+                                  ) : (
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        if (confirm(`Restore and re-activate certificate ${cert.certificateId}?`)) {
+                                          toggleCertStatusMutation.mutate({
+                                            id: cert._id || cert.certificateId,
+                                            status: "VALID"
+                                          });
+                                        }
+                                      }}
+                                      className="p-1.5 rounded-lg border border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 transition-colors text-[11px] font-medium cursor-pointer"
+                                    >
+                                      Restore
+                                    </button>
+                                  )}
+
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      if (confirm(`Permanently delete certificate ${cert.certificateId}?`)) {
+                                        deleteCertMutation.mutate(cert._id || cert.certificateId);
+                                      }
+                                    }}
+                                    className="p-1.5 rounded-lg text-text-faint hover:text-red-400 hover:bg-red-500/10 transition-colors cursor-pointer"
+                                    title="Delete certificate"
+                                  >
+                                    <Trash2 className="size-3.5" />
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  )}
+                </div>
+
+                {/* Pagination */}
+                {certificatesQuery.data && certificatesQuery.data.totalPages > 1 && (
+                  <div className="p-4 border-t border-border/40 flex items-center justify-between text-xs text-text-faint">
+                    <span>
+                      Showing Page {certificatesQuery.data.page} of {certificatesQuery.data.totalPages} ({certificatesQuery.data.total} total)
+                    </span>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        disabled={certPage <= 1}
+                        onClick={() => setCertPage((p) => Math.max(1, p - 1))}
+                        className="h-8 px-3 text-xs"
+                      >
+                        Previous
+                      </Button>
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        disabled={certPage >= certificatesQuery.data.totalPages}
+                        onClick={() => setCertPage((p) => p + 1)}
+                        className="h-8 px-3 text-xs"
+                      >
+                        Next
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </Card>
+            </div>
+          )}
+
           {/* TAB: LLM MANAGER */}
           {activeTab === "llm" && (
             <div className="space-y-6 animate-fadeIn">
@@ -1719,6 +2068,203 @@ export default function AdminPanelPage() {
         </div>
 
       </div>
+
+
+      {/* Issue Internship Certificate Modal */}
+      {showAddCertModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 overflow-y-auto">
+          <div className="bg-surface border border-border shadow-2xl rounded-2xl max-w-xl w-full p-6 space-y-5 my-8">
+            <div className="flex items-center justify-between border-b border-border/60 pb-3">
+              <div className="flex items-center gap-2 text-primary font-bold">
+                <Award className="size-5" />
+                <h3 className="text-base text-text">Issue Internship Certificate</h3>
+              </div>
+              <button
+                onClick={() => setShowAddCertModal(false)}
+                className="text-text-faint hover:text-text cursor-pointer"
+              >
+                <X className="size-5" />
+              </button>
+            </div>
+
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                createCertMutation.mutate({
+                  certificateId: newCertId.trim() || undefined,
+                  recipientName: newRecipientName.trim(),
+                  recipientEmail: newRecipientEmail.trim() || undefined,
+                  domain: newDomain.trim(),
+                  role: newRole.trim(),
+                  duration: newDuration.trim(),
+                  startDate: newStartDate.trim(),
+                  endDate: newEndDate.trim(),
+                  grade: newGrade.trim() || undefined,
+                  skills: newSkills.split(',').map((s) => s.trim()).filter(Boolean),
+                  description: newDescription.trim() || undefined,
+                });
+              }}
+              className="space-y-4 text-xs"
+            >
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <label className="block text-text-faint font-mono">Recipient Full Name *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Maya Lin"
+                    value={newRecipientName}
+                    onChange={(e) => setNewRecipientName(e.target.value)}
+                    className="w-full h-9 px-3 rounded-lg border border-border bg-surface text-text focus:outline-none focus:border-primary text-xs"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="block text-text-faint font-mono">Recipient Email</label>
+                  <input
+                    type="email"
+                    placeholder="e.g. maya@example.com"
+                    value={newRecipientEmail}
+                    onChange={(e) => setNewRecipientEmail(e.target.value)}
+                    className="w-full h-9 px-3 rounded-lg border border-border bg-surface text-text focus:outline-none focus:border-primary text-xs"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <label className="block text-text-faint font-mono">Specialization Domain *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Full Stack Web & Real-Time Systems"
+                    value={newDomain}
+                    onChange={(e) => setNewDomain(e.target.value)}
+                    className="w-full h-9 px-3 rounded-lg border border-border bg-surface text-text focus:outline-none focus:border-primary text-xs"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="block text-text-faint font-mono">Role Title *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Software Engineering Intern"
+                    value={newRole}
+                    onChange={(e) => setNewRole(e.target.value)}
+                    className="w-full h-9 px-3 rounded-lg border border-border bg-surface text-text focus:outline-none focus:border-primary text-xs"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="space-y-1">
+                  <label className="block text-text-faint font-mono">Duration *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. 12 Weeks"
+                    value={newDuration}
+                    onChange={(e) => setNewDuration(e.target.value)}
+                    className="w-full h-9 px-3 rounded-lg border border-border bg-surface text-text focus:outline-none focus:border-primary text-xs"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="block text-text-faint font-mono">Start Date *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. 2026-06-01"
+                    value={newStartDate}
+                    onChange={(e) => setNewStartDate(e.target.value)}
+                    className="w-full h-9 px-3 rounded-lg border border-border bg-surface text-text focus:outline-none focus:border-primary text-xs"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="block text-text-faint font-mono">End Date *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. 2026-08-24"
+                    value={newEndDate}
+                    onChange={(e) => setNewEndDate(e.target.value)}
+                    className="w-full h-9 px-3 rounded-lg border border-border bg-surface text-text focus:outline-none focus:border-primary text-xs"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <label className="block text-text-faint font-mono">Custom Certificate ID (Optional)</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. CC-INT-2026-042 (leave blank to auto-generate)"
+                    value={newCertId}
+                    onChange={(e) => setNewCertId(e.target.value.toUpperCase())}
+                    className="w-full h-9 px-3 rounded-lg border border-border bg-surface text-text focus:outline-none focus:border-primary text-xs font-mono"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="block text-text-faint font-mono">Performance Grade / Honors</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Outstanding Distinction (Top 5%)"
+                    value={newGrade}
+                    onChange={(e) => setNewGrade(e.target.value)}
+                    className="w-full h-9 px-3 rounded-lg border border-border bg-surface text-text focus:outline-none focus:border-primary text-xs"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="block text-text-faint font-mono">Skills & Technologies (Comma-separated)</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Next.js, React, Node.js, Express, Docker, Redis, TypeScript"
+                  value={newSkills}
+                  onChange={(e) => setNewSkills(e.target.value)}
+                  className="w-full h-9 px-3 rounded-lg border border-border bg-surface text-text focus:outline-none focus:border-primary text-xs font-mono"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="block text-text-faint font-mono">Scope & Deliverables Description (Optional)</label>
+                <textarea
+                  rows={3}
+                  placeholder="Leave blank for standard completion description or write custom highlights..."
+                  value={newDescription}
+                  onChange={(e) => setNewDescription(e.target.value)}
+                  className="w-full p-3 rounded-lg border border-border bg-surface text-text focus:outline-none focus:border-primary text-xs resize-none"
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-border/40">
+                <Button
+                  type="button"
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => setShowAddCertModal(false)}
+                  className="h-9 px-4 text-xs"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  variant="primary"
+                  size="sm"
+                  loading={createCertMutation.isPending}
+                  className="h-9 px-5 text-xs font-bold"
+                >
+                  Issue & Register Certificate
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* AI Moderator Audit Log Stream Modal Drawer */}
       {showLogsModal && moderatorLogs && (

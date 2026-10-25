@@ -23,6 +23,7 @@ import { startGrindReminderJob } from "./jobs/grindReminder.js";
 import { startRevisionReminderJob } from "./jobs/revisionReminder.job.js";
 import { seedModels } from "./services/aiGateway.service.js";
 import { seedAchievements } from "./services/achievement.service.js";
+import { seedCertificates } from "./services/certificate.service.js";
 
 //sockets
 import { registerBattleChatHandlers } from "./sockets/battleChat.socket.js";
@@ -42,6 +43,7 @@ import spectateRouter from "./routes/spectate.router.js";
 import oauthRouter from "./routes/oauth.router.js";
 import adminRouter from "./routes/admin.router.js";
 import revisionRouter from "./routes/revision.router.js";
+import certificateRouter from "./routes/certificate.router.js";
 
 
 
@@ -188,6 +190,7 @@ app.use("/api/v1/spectate", spectateRouter);
 app.use("/api/v1/auth", oauthRouter);
 app.use("/api/v1/admin", adminRouter);
 app.use("/api/v1/revision", revisionRouter);
+app.use("/api/v1/certificates", certificateRouter);
 
 
 
@@ -290,6 +293,7 @@ connectDB()
         console.log(" MongoDB Connected");
         seedModels();
         seedAchievements();
+        seedCertificates();
 
         // Start background cron jobs
         startCleanupJob();

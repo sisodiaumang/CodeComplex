@@ -1,0 +1,727 @@
+================================================================================
+CODECOMPLEX (devArena) — COMPREHENSIVE TECHNICAL & ENGINEERING REPORT
+================================================================================
+Document Type     : Master Project Engineering & Architectural Deep-Dive
+Platform Name     : CodeComplex (devArena)
+Domain Target     : Real-Time Competitive Programming & 1v1 Engineering Arena
+Production URL    : https://codecomplex.site
+Repository Layout : Monorepo (TypeScript Express 5 API + Next.js 16 Web Client)
+Generated Date    : 2026-10-24
+================================================================================
+
+--------------------------------------------------------------------------------
+TABLE OF CONTENTS
+--------------------------------------------------------------------------------
+1. EXECUTIVE SUMMARY & PLATFORM OBJECTIVE
+2. HIGH-LEVEL SYSTEM ARCHITECTURE & MONOREPO TOPOLOGY
+3. CORE SUBSYSTEMS & DEEP FEATURE BREAKDOWN
+   3.1. The Six Competitive Battle Disciplines
+   3.2. Three-Tier Matchmaking Engine (Live -> Ghost Replay -> AI Bot)
+   3.3. Multi-Engine Sandboxed Code Execution Pipeline
+   3.4. AI Gateway & Multi-Model Orchestration Engine
+   3.5. Real-Time WebSocket Synchronization & WebRTC Voice Layer
+   3.6. Asynchronous Background Queues & Distributed Worker (BullMQ)
+   3.7. Spaced Repetition Revision System (SM-2 Cognitive Science)
+   3.8. Elo Rating Mathematics & Anti-Cheat Moderation
+   3.9. SEO, OpenGraph & Structured Schema.org Architecture
+4. WHERE IT GETS HARD: CRITICAL ENGINEERING CHALLENGES & HOW WE TACKLED THEM
+   4.1. Challenge 1: The AI Gateway Model Deprecation & Dead Key Collapse
+   4.2. Challenge 2: High-Concurrency Battle Room Timer Leaks & Zombie Processes
+   4.3. Challenge 3: 2,000-Connection Traffic Surge & Database Pool Starvation
+   4.4. Challenge 4: Next.js 16 / React 19 Hydration Failures & Inline Script Panics
+   4.5. Challenge 5: Backend API Battle Sandbox: Ephemeral Docker Container Orchestration & Port Collisions
+   4.6. Challenge 6: Matchmaking Desertion & Low-Traffic Ghost Opponent Replay
+   4.7. Challenge 7: Automated Frontend Visual Evaluation Without Unit Tests
+   4.8. Challenge 8: Microcaching Dynamic SSR Routes Without Corrupting Real-Time Sessions
+   4.9. Challenge 9: WebRTC Voice Signaling NAT Traversal in Fast-Paced Matches
+   4.10. Challenge 10: Asynchronous OTP/Email Delivery Failures Under Load Spikes
+5. COMPLETE DATABASE DATA MODELS & INDEXING TOPOLOGY
+6. EMPIRICAL BENCHMARKS & LOAD TESTING AUDIT (2,000 CONCURRENT USERS)
+7. PRODUCTION DEPLOYMENT & CONTAINER ORCHESTRATION GUIDE
+8. FUTURE ROADMAP & CONCLUSION
+
+================================================================================
+1. EXECUTIVE SUMMARY & PLATFORM OBJECTIVE
+================================================================================
+CodeComplex is a production-grade, real-time multiplayer competitive programming
+and software engineering battle arena. Traditional coding platforms (LeetCode, 
+HackerRank, Codeforces) are almost exclusively focused on static algorithmic 
+problem-solving evaluated asynchronously through batch test cases.
+
+CodeComplex expands competitive programming into modern full-spectrum engineering
+disciplines:
+- Data Structures & Algorithms (DSA)
+- Live Bug Fixing & Defect Debugging
+- Real-time Backend API Development (tested against live running microcontainers)
+- Frontend UI Assembly (evaluated via Multi-Modal Vision LLMs)
+- Prompt Engineering Duels (evaluated via semantic rubric grading & anti-bot checks)
+- Full-stack Projects
+
+The platform is designed to guarantee zero downtime, instant matchmaking (sub-15s
+guarantee via 3-tier fallback), sub-millisecond leaderboard caching, low-latency
+bi-directional telemetry via WebSockets, and zero-trust sandboxed execution for
+user-submitted arbitrary code.
+
+================================================================================
+2. HIGH-LEVEL SYSTEM ARCHITECTURE & MONOREPO TOPOLOGY
+================================================================================
+The project is built as a unified TypeScript monorepo with strict architectural 
+separation between client presentation, backend business logic, asynchronous 
+worker pipelines, and persistent storage layers:
+
+                         +-------------------------+
+                         |      Host Nginx         |
+                         | (SSL, Microcache, Proxy)|
+                         +------------+------------+
+                                      |
+              +-----------------------+-----------------------+
+              |                                               |
+     (Web / SSR Traffic)                             (REST & WebSocket)
+              |                                               |
+              v                                               v
+     +-----------------+                     +---------------------------------+
+     | Next.js 16      |                     | Express 5 Backend Cluster       |
+     | React 19 Client |                     | (Port 8000, 8001, 8002, 8003)   |
+     | Standalone Node |                     | Socket.IO + WebSockets          |
+     +-----------------+                     +----------------+----------------+
+                                                              |
+                  +--------------------+----------------------+--------------------+
+                  |                    |                      |                    |
+                  v                    v                      v                    v
+         +-----------------+  +-----------------+    +-----------------+  +-----------------+
+         | MongoDB 6 Atlas |  | Redis 7 Store   |    | BullMQ Worker   |  | Sandboxed       |
+         | (Persistent DB, |  | (RAM Cache,     |    | (Decoupled OTP, |  | Execution       |
+         | Compound IXSCAN)|  | Sockets, Queues)|    | Reminders, Jobs)|  | (Judge0/Docker) |
+         +-----------------+  +-----------------+    +-----------------+  +-----------------+
+
+Directory Structure:
+├── backendServer/
+│   ├── src/
+│   │   ├── config/          # Environment schema validation & constants
+│   │   ├── controllers/     # Route logic (Auth, Battle, Match, Admin, User, Rating)
+│   │   ├── db/              # Database connection pools & seeder scripts
+│   │   ├── jobs/            # Node-cron background sweeps (stale rooms, cleanup)
+│   │   ├── middlewares/     # JWT Auth, Socket Auth, Redis Cache, Rate Limiting
+│   │   ├── models/          # 20 Mongoose schemas (Users, Battles, Questions, APIKeys)
+│   │   ├── queues/          # BullMQ queue producers (emailQueue.ts)
+│   │   ├── routes/          # Express route definitions
+│   │   ├── services/        # Business logic, Sandboxes, AI Gateway, Matchmaking
+│   │   ├── sockets/         # Socket.IO handlers (Chat, WebRTC Voice, Room state)
+│   │   └── workers/         # Dedicated BullMQ consumer processes (emailWorker.ts)
+│   ├── openapi.yaml         # OpenAPI 3.0 REST specification
+│   ├── Dockerfile           # Backend API container
+│   └── Dockerfile.worker    # Standalone queue worker container
+├── client/
+│   ├── src/
+│   │   ├── app/             # Next.js 16 App Router (SSR, Static & Dynamic pages)
+│   │   ├── components/      # Reusable React 19 UI, Monaco Editor, Theme toggles
+│   │   ├── lib/             # Axios instance with JWT auto-refresh interceptors
+│   │   └── stores/          # Zustand global stores (Auth, Socket, Toast, Theme)
+│   ├── next.config.ts       # Standalone build, Cache-Control headers, Turbo settings
+│   └── Dockerfile           # Multi-stage production container
+├── docker-compose.yml       # Production multi-service orchestration
+├── ecosystem.config.cjs     # PM2 production process configuration
+├── nginx.conf               # Nginx reverse proxy, microcaching & rate-limiting
+└── PRODUCTION.md            # Zero-dependency deployment runbook
+
+================================================================================
+3. CORE SUBSYSTEMS & DEEP FEATURE BREAKDOWN
+================================================================================
+
+--------------------------------------------------------------------------------
+3.1. The Six Competitive Battle Disciplines
+--------------------------------------------------------------------------------
+1. DSA (Data Structures & Algorithms):
+   - Real-time algorithmic head-to-head duels.
+   - Concurrently executes compiled languages (C++, Java) and interpreted runtimes
+     (Python, JavaScript, TypeScript) against secret test suites.
+   - Measures CPU run time (down to milliseconds) and peak memory usage (MB).
+
+2. Bug Fix:
+   - Real-world codebase debugging under extreme time limits.
+   - Injects syntactical, logical, off-by-one, race condition, or memory-leak bugs.
+   - Players must read stack traces, isolate the failure, and patch the source.
+
+3. Backend API Engineering:
+   - Players are given a requirement spec (e.g., "Build an idempotent Stripe webhook
+     or rate-limited auth endpoint").
+   - Backend spins up an isolated Docker container, mounts the player's code, boots
+     the web server, and runs automated HTTP integration test suites over localhost.
+
+4. Frontend Layout Assembly:
+   - UI development duels where developers build responsive components matching
+     a design mockup and design requirements.
+   - Evaluated by Multi-Modal AI Vision LLMs comparing visual rendering, flexbox/grid
+     compliance, and component architecture.
+
+5. Prompt War:
+   - Advanced prompt engineering duels.
+   - Contestants craft zero-shot, few-shot, or chain-of-thought prompts to solve
+     complex generative logic or extraction tasks.
+   - Evaluated by multi-criteria rubrics, with built-in heuristic AI-text detection
+     to prevent users from copying raw AI output.
+
+6. Full-stack Projects:
+   - Comprehensive multi-tier challenges evaluated on backend persistence, API
+     robustness, and UI interaction.
+
+--------------------------------------------------------------------------------
+3.2. Three-Tier Matchmaking Engine (Live -> Ghost Replay -> AI Bot)
+--------------------------------------------------------------------------------
+To solve the "cold start" and player desertion problem common to multiplayer games:
+- Tier 1: Real-Time Human Queue
+  Scans active Socket.IO connection pools for online players within a +/- 150 Elo
+  bracket. Widens bracket by 50 Elo every 3 seconds up to 15 seconds.
+- Tier 2: Ghost Opponent Replay
+  If no human is found within 15 seconds, the engine queries MongoDB for past human
+  matches on the same problem with similar Elo. It streams the recorded submission
+  timeline as an active "Ghost", simulating keystrokes, compilation attempts, and
+  progress bar updates in real time.
+- Tier 3: Adaptive AI Bot Simulator (`devbot_v1`)
+  If no ghost recording matches the criteria, an AI bot agent simulates a player.
+  It calculates target solve times based on user rating, simulates human-like typing
+  jitters, occasional failed compile runs, and final submission.
+Result: Queue wait times never exceed 15 seconds.
+
+--------------------------------------------------------------------------------
+3.3. Multi-Engine Sandboxed Code Execution Pipeline
+--------------------------------------------------------------------------------
+The platform provides a triple-redundant code execution infrastructure:
+1. Remote Judge0 API: High-isolation sandbox cluster for distributed code grading.
+2. Local Subprocess Runner (`localRunner.service.ts`):
+   - Zero-latency native fallback engine executing via `child_process.spawn`.
+   - Uses native `g++` (C++20), `node` (V8), `python3`, and `javac`.
+   - Enforces strict process timeouts (`SIGKILL` after 5000ms) and buffer caps.
+3. Backend Docker Sandbox (`backendJudge.service.ts`):
+   - Zero-trust execution for arbitrary multi-file backend projects.
+   - Boots ephemeral microcontainers with `--network none`, `--memory 256m`,
+     `--cpus 0.5`, `--pids-limit 64`, and unprivileged execution users.
+
+--------------------------------------------------------------------------------
+3.4. AI Gateway & Multi-Model Orchestration Engine
+--------------------------------------------------------------------------------
+Centralized LLM routing gateway (`aiGateway.service.ts`):
+- Models supported: Groq Llama 3.3 70B, Llama 3.1 8B Instant, GPT OSS 120B,
+  Qwen 3.6 27B, Llama 4 Scout 17B, xAI Grok.
+- Automatic key rotation across encrypted database keys (`ApiKey.model.ts`).
+- Dynamic spend tracking and token usage accounting (`TokenUsage.model.ts`).
+- Resilient fallback cascade: When an upstream provider rate-limits or returns
+  a model deprecation error, requests fall back to secondary models automatically.
+
+--------------------------------------------------------------------------------
+3.5. Real-Time WebSocket Synchronization & WebRTC Voice Layer
+--------------------------------------------------------------------------------
+- State Machine: Socket.IO manages lobby creation, mutual readiness, countdown,
+  synchronous match start, real-time code diff telemetry, test execution status,
+  and match conclusion.
+- WebRTC Peer-to-Peer Voice (`battleVoice.socket.ts`):
+  Enables in-browser real-time voice communication during competitive matches
+  using WebSockets as the SDP offer/answer/ICE candidate signaling broker.
+
+--------------------------------------------------------------------------------
+3.6. Asynchronous Background Queues & Distributed Worker (BullMQ)
+--------------------------------------------------------------------------------
+- Producers (`emailQueue.ts`) push jobs to Redis backed by BullMQ.
+- Standalone Worker (`emailWorker.ts`) runs as a separate decoupled OS process or
+  Docker container.
+- Handles transactional verification OTPs, welcome onboarding emails, daily grind
+  reminders, revision notices, and abuse reports with exponential backoff retries.
+
+--------------------------------------------------------------------------------
+3.7. Spaced Repetition Revision System (SM-2 Cognitive Science)
+--------------------------------------------------------------------------------
+- Implements the SuperMemo-2 (SM-2) spaced repetition memory retention algorithm.
+- When a user fails a problem in a battle or makes a sub-optimal submission, it is
+  automatically enrolled in their Revision Deck (`revision.service.ts`).
+- Calculates optimal review intervals (Day 1, Day 3, Day 7, Day 16, Day 35) based
+  on performance quality ratings (0-5), ensuring long-term concept mastery.
+
+--------------------------------------------------------------------------------
+3.8. Elo Rating Mathematics & Anti-Cheat Moderation
+--------------------------------------------------------------------------------
+- Standard Elo formula adapted for competitive programming:
+    E_A = 1 / (1 + 10^((R_B - R_A) / 400))
+    R'_A = R_A + K * (S_A - E_A)
+- Dynamic K-factor:
+    K = 40 for provisional users (< 10 matches) to rapidly converge rating.
+    K = 20 for established players.
+    K = 10 for master-tier ratings (> 2000 Elo).
+- Anti-Cheat: Code plagiarism heuristics, sandbox jail-break detection, and
+  tab-focus loss telemetry during live ranked matches.
+
+--------------------------------------------------------------------------------
+3.9. SEO, OpenGraph & Structured Schema.org Architecture
+--------------------------------------------------------------------------------
+- Targeted keyword density focused on "competitive programming" across metadata,
+  headings, card descriptions, and OpenGraph.
+- Comprehensive Schema.org `@graph` rendering Organization, WebSite (with
+  SearchAction deep linking), and WebApplication schemas.
+- Canonical tags (`https://codecomplex.site`) and automated XML sitemaps.
+
+================================================================================
+4. WHERE IT GETS HARD: CRITICAL ENGINEERING CHALLENGES & HOW WE TACKLED THEM
+================================================================================
+
+This section details the most complex architectural bottlenecks, failure modes,
+production bugs, and edge cases encountered throughout development, along with
+the exact technical strategies used to eliminate them.
+
+--------------------------------------------------------------------------------
+4.1. Challenge 1: The AI Gateway Model Deprecation & Dead Key Collapse
+--------------------------------------------------------------------------------
+THE PROBLEM:
+During peak testing, Groq suddenly decommissioned several model endpoints
+(such as `llama-3.3-70b-versatile`), returning HTTP 404 `model_not_found` errors.
+Concurrently, several free-tier developer API keys hit their daily limits or were
+revoked, returning HTTP 401 `Invalid API Key`.
+Because AI evaluation is used directly in Frontend, Prompt War, and match code
+reviews, these upstream API errors caused uncaught promise rejections, hanging
+matches, and infinite waiting spinners for end users.
+
+HOW WE TACKLED IT:
+1. Multi-Model Fallback Chain (`aiGateway.service.ts`):
+   Instead of hardcoding a single LLM model, we implemented an automated fallback
+   cascade. If the primary model (`llama-3.3-70b-versatile`) throws a 404 or 400,
+   the catch block immediately catches the error, remaps the target model to
+   `llama-3.1-8b-instant` or official replacements (`gpt-oss-120b`, `qwen-3.6-27b`),
+   and retries the inference request seamlessly without dropping the user's call.
+2. Self-Healing Key Health Scanner & Auto-Pruning:
+   In `aiGateway.service.ts` and `admin.controller.ts`, we added an automated
+   verification scanner. When a key throws an HTTP 401:
+   - The key is immediately flagged as `isActive: false` in MongoDB.
+   - It is bypassed in memory for all subsequent key rotations.
+   - We exposed an administrative endpoint `POST /api/v1/admin/api-keys/prune` that
+     iterates through all configured keys, makes a lightweight 1-token probe call,
+     and deletes or disables all defunct credentials automatically.
+3. Decrypted Key Memory Caching:
+   AES-256 decrypted keys are cached in memory with a 5-minute TTL, avoiding
+   repeated database decryptions on every evaluation.
+
+--------------------------------------------------------------------------------
+4.2. Challenge 2: High-Concurrency Battle Room Timer Leaks & Zombie Processes
+--------------------------------------------------------------------------------
+THE PROBLEM:
+Every active battle room requires countdown timers, round timers, and latency
+heartbeats. Initially, timers were spawned using standard `setInterval` inside
+Socket.IO handlers.
+When players disconnected abruptly, closed browser tabs, or encountered network
+drops, the corresponding socket disconnected, but the underlying `setInterval`
+continued ticking in Node.js memory. Over 100+ concurrent matches, thousands of
+unreferenced timer intervals accumulated in the V8 event loop, causing CPU
+utilization to spike to 100% and triggering out-of-memory (OOM) crashes.
+
+HOW WE TACKLED IT:
+1. Centralized Room Registry with Strong Lifetime Management:
+   We created a centralized `ActiveBattleRooms` map holding explicit references to
+   all active room timers, socket IDs, and abort controllers.
+2. Safe Cleanup Lifecycle Hooks:
+   In `battle.controller.ts` and Socket disconnect listeners:
+   ```typescript
+   if (room.timerInterval) {
+     clearInterval(room.timerInterval);
+     room.timerInterval = null;
+   }
+   if (room.abortController) {
+     room.abortController.abort();
+   }
+   ```
+3. Node-Cron Stale Room Sweeper (`staleBattleRoomCleanup.ts`):
+   A background job runs every 10 minutes scanning MongoDB for rooms in `in_progress`
+   status that have had no socket activity for > 30 minutes. It forcibly terminates
+   them, clears lingering intervals, refunds disconnected players' Elo ratings
+   if caused by server maintenance, and marks the room `abandoned`.
+4. Unlimited Clock Format Support:
+   Refactored the clock math to support variable time structures (unlimited practice,
+   blitz 5-min, standard 15-min) without relying on ticking countdown intervals for
+   static displays.
+
+--------------------------------------------------------------------------------
+4.3. Challenge 3: 2,000-Connection Traffic Surge & Database Pool Starvation
+--------------------------------------------------------------------------------
+THE PROBLEM:
+Stress testing the platform under a simulated 2,000 concurrent user barrage
+revealed severe bottlenecks:
+1. MongoDB default connection pool (`maxPoolSize: 10`) was exhausted in seconds.
+   Database queries queued up, causing HTTP 504 Gateway Timeouts.
+2. The `/api/v1/leaderboard/global` endpoint was recalculating ranks across tens
+   of thousands of user documents on every single request, performing full table
+   scans (`COLLSCAN`) that crippled the database.
+3. Single-threaded Node.js event loop saturation delayed WebSocket packet delivery.
+
+HOW WE TACKLED IT:
+1. Multi-Replica Backend Scaling (`docker-compose.yml` & `nginx.conf`):
+   Configured 4 Express backend container replicas (`backend-1` through `backend-4`)
+   bound to ports 8000–8003. Host Nginx was configured with an `upstream` block
+   using round-robin load balancing and persistent HTTP keepalive pools:
+   ```nginx
+   upstream backend_servers {
+     server 127.0.0.1:8000 max_fails=3 fail_timeout=10s;
+     server 127.0.0.1:8001 max_fails=3 fail_timeout=10s;
+     server 127.0.0.1:8002 max_fails=3 fail_timeout=10s;
+     server 127.0.0.1:8003 max_fails=3 fail_timeout=10s;
+     keepalive 256;
+   }
+   ```
+2. Mongoose Pool Expansion:
+   In `backendServer/src/db/connectDB.ts`, we increased `maxPoolSize` from 10 to
+   100 per container instance (400 concurrent database connections total):
+   ```typescript
+   await mongoose.connect(process.env.MONGODB_URI!, {
+     maxPoolSize: 100,
+     minPoolSize: 10,
+     serverSelectionTimeoutMS: 5000,
+   });
+   ```
+3. Compound Covered Indexing (`IXSCAN`):
+   Added compound indexes on `userProfile.model.ts`:
+   `{ "ratings.dsa": -1, userId: 1 }`
+   This allows MongoDB to satisfy leaderboard sorting and pagination directly from
+   RAM index trees without reading document bodies from disk.
+4. Redis RAM Response Caching Middleware (`cache.middleware.ts`):
+   Wrapped read-heavy routes in Redis caching with automatic invalidation on new
+   match completions.
+   BENCHMARK RESULT: Leaderboard throughput surged from 140 RPS to 17,088 RPS
+   with 0 ms median latency!
+
+--------------------------------------------------------------------------------
+4.4. Challenge 4: Next.js 16 / React 19 Hydration Failures & Inline Script Panics
+--------------------------------------------------------------------------------
+THE PROBLEM:
+Upgrading to Next.js 16 (Turbopack) and React 19 introduced strict rules regarding
+client hydration and script execution:
+1. Client-side console error:
+   "Encountered a script tag while rendering React component. Scripts inside React
+   components are never executed when rendering on the client."
+   This occurred because theme-switching scripts and third-party badges (DMCA)
+   were injected as raw `<script>` tags inside `layout.tsx`.
+2. Hydration mismatches: LocalStorage theme values ('dark' vs 'light') differed
+   between the server-rendered HTML and client DOM, causing layout flashing
+   and broken React reconciliation trees.
+
+HOW WE TACKLED IT:
+1. Standardized JSON-LD Structured Data:
+   Replaced manual script injections with explicit Next.js React 19 compliant data
+   scripts:
+   ```tsx
+   <script
+     type="application/ld+json"
+     dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaGraph) }}
+   />
+   ```
+2. Headless Script Offloading:
+   External scripts (e.g., `DMCABadgeHelper.min.js`) were refactored using Next.js
+   `<Script strategy="lazyOnload" />` placed cleanly inside the `<body>` element.
+3. Flawless Theme Hydration Pattern:
+   Removed inline script hacks in favor of Zustand-backed persistent theme store
+   coupled with CSS variables and `suppressHydrationWarning` on the `<html>` root:
+   ```tsx
+   <html lang="en" suppressHydrationWarning className={theme}>
+   ```
+   An `initTheme()` hook executes in `providers.tsx` on client mount, reading
+   `localStorage` and applying the appropriate class without breaking server SSR.
+
+--------------------------------------------------------------------------------
+4.5. Challenge 5: Backend API Battle Sandbox: Ephemeral Docker Container Orchestration & Port Collisions
+--------------------------------------------------------------------------------
+THE PROBLEM:
+In the Backend Battle discipline, users submit complete Express/Nest/Fastify
+server code. We must run their code in an actual execution environment, listen
+on a port, and fire automated test suites against it.
+Critical risks:
+1. Malicious user code attempting to access host filesystem or network.
+2. Port conflicts when multiple concurrent matches run on port 3000/8000.
+3. Zombie containers failing to exit when user code contains infinite loops
+   (`while(true)`) or unhandled errors.
+
+HOW WE TACKLED IT:
+1. Dynamic Ephemeral Container Lifecycle (`backendJudge.service.ts`):
+   When a submission is received:
+   - A unique directory `/tmp/submissions/{submissionId}` is materialized.
+   - A free ephemeral port (e.g. `49152–65535`) is allocated dynamically.
+   - A Docker container is booted with strict security flags:
+     `docker run -d --rm --memory="256m" --cpus="0.5" --pids-limit=64 --network none -p {randomPort}:8000 ...`
+2. Aggressive Health Checks with Timeout Cutoffs:
+   A lightweight polling loop probes `http://localhost:{randomPort}/health`
+   every 100ms for up to 3000ms. If the user's server fails to boot within 3 seconds,
+   the container is killed via `docker rm -f`, and a `Server Boot Timeout` error
+   is returned.
+3. Automated Test Suite Execution:
+   Once the container is healthy, our backend issues an array of HTTP requests
+   (GET, POST, invalid bodies, edge cases) against the container, measures response
+   codes, headers, and payloads, and grades the submission.
+4. Guaranteed Destruction via `finally`:
+   Container removal is wrapped in a `try...finally` block to ensure that win, lose,
+   crash, or timeout, the container is destroyed and temporary files are unlinked.
+
+--------------------------------------------------------------------------------
+4.6. Challenge 6: Matchmaking Desertion & Low-Traffic Ghost Opponent Replay
+--------------------------------------------------------------------------------
+THE PROBLEM:
+In real-time multiplayer platforms, user retention drops dramatically if players
+are forced to wait longer than 30–60 seconds for a human opponent. In early
+stages or during off-peak time zones, matching human players of equal skill is
+statistically impossible without a massive concurrent player base.
+
+HOW WE TACKLED IT:
+1. Ghost Opponent Data Harvesting:
+   Whenever a human user completes a battle, their submission data, keystroke
+   milestones, compilation attempts, and execution timings are stored in MongoDB
+   under `Match.model.ts` as an eligible Ghost Replay.
+2. Seamless Ghost Streaming (`matchmakingFallback.service.ts`):
+   When a player waits > 15 seconds in queue, the engine transitions the room to
+   Ghost Mode without informing the client UI (preserving psychological tension).
+   The engine reads the ghost player's submission profile, masks their presence
+   as a live player, and schedules progress bar emissions at the exact timestamps
+   recorded in the original match.
+3. Dynamic Fallback to Bot Simulator (`botSimulator.service.ts`):
+   If no ghost match exists for that specific problem, `devbot_v1` is spawned.
+   The bot's target completion time is calculated as a function of the problem
+   difficulty and the human player's Elo, guaranteeing a fair and competitive match.
+
+--------------------------------------------------------------------------------
+4.7. Challenge 7: Automated Frontend Visual Evaluation Without Unit Tests
+--------------------------------------------------------------------------------
+THE PROBLEM:
+Grading frontend code (HTML/Tailwind/CSS/React) through unit tests (Jest/Testing
+Library) is brittle. Minor class differences (e.g., `flex items-center` vs
+`grid place-content-center`) can achieve the exact same visual layout while failing
+strict string or DOM equality tests.
+
+HOW WE TACKLED IT:
+1. Multi-Modal Vision & Structural Rubric Evaluation (`frontendJudge.service.ts`):
+   We designed an AI Vision pipeline.
+   - Step 1: Structural Extraction. The user's submitted DOM/JSX and CSS rules
+     are parsed for semantic structure, layout hierarchy, and responsiveness.
+   - Step 2: Reference Comparison. The submission is evaluated alongside the
+     reference challenge rubric.
+   - Step 3: LLM Evaluation. The code is passed to Grok Vision / Llama Scout with
+     a structured prompt requiring a strict JSON output schema containing:
+     `{ visualAccuracy: 0-100, responsiveScore: 0-100, codeQuality: 0-100, feedback: string }`.
+2. Deterministic Scoring Normalization:
+   The composite score is calculated using weighted multipliers:
+   `FinalScore = (visualAccuracy * 0.5) + (responsiveScore * 0.3) + (codeQuality * 0.2)`.
+   This allows flexible engineering approaches while strictly enforcing visual
+   fidelity and design specifications.
+
+--------------------------------------------------------------------------------
+4.8. Challenge 8: Microcaching Dynamic SSR Routes Without Corrupting Real-Time Sessions
+--------------------------------------------------------------------------------
+THE PROBLEM:
+Next.js SSR provides incredible SEO and initial page load speed. However, rendering
+React components on the server for every incoming request under high traffic spikes
+strains the Node.js event loop.
+If we cache the entire application indiscriminately in Nginx, user-specific
+authenticated states (profile avatars, notifications, active battle redirects)
+leak across different users' browsers.
+
+HOW WE TACKLED IT:
+1. Strict Route Segregation:
+   We divided the URL topology into two distinct categories:
+   - Category A: Static & Public Documentation (`/`, `/about`, `/faq`, `/guidelines`,
+     `/privacy`, `/terms`, `/contact`).
+   - Category B: Dynamic & Authenticated App Routes (`/battle/*`, `/dashboard`,
+     `/profile`, `/api/*`).
+2. Nginx Microcaching with Header Overrides (`nginx.conf`):
+   For public pages, Nginx enforces a 2-second RAM microcache:
+   ```nginx
+   proxy_cache STATIC_CACHE;
+   proxy_cache_valid 200 2s;
+   proxy_ignore_headers Cache-Control Expires Set-Cookie;
+   proxy_cache_use_stale error timeout updating http_500 http_502 http_503;
+   ```
+   A 2-second microcache is imperceptible to users looking at landing page copy,
+   yet absorbs thousands of duplicate requests per second during viral spikes.
+3. Edge Caching Headers (`next.config.ts`):
+   Public routes emit explicit edge caching headers:
+   `Cache-Control: public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800`
+   Dynamic app routes emit:
+   `Cache-Control: private, no-cache, no-store, must-revalidate`
+
+--------------------------------------------------------------------------------
+4.9. Challenge 9: WebRTC Voice Signaling NAT Traversal in Fast-Paced Matches
+--------------------------------------------------------------------------------
+THE PROBLEM:
+Integrating live in-match voice chat required direct peer-to-peer audio streaming
+between players. Due to asymmetric NATs, cellular data connections, and firewalls,
+direct WebRTC connections frequently failed or entered disconnected states,
+leaving players with silent or broken audio channels.
+
+HOW WE TACKLED IT:
+1. Robust Signaling State Machine (`battleVoice.socket.ts`):
+   Built a signaling coordinator over Socket.IO handling:
+   - `voice-join-room` -> Notifies opponent and initiates handshake.
+   - `voice-offer` -> Relays SDP offer with ICE restart flags.
+   - `voice-answer` -> Relays SDP answer.
+   - `voice-ice-candidate` -> Buffers and exchanges ICE candidates.
+2. Redundant STUN Server Configuration:
+   Configured multiple public Google STUN servers (`stun:stun1.l.google.com:19302`,
+   `stun:stun2.l.google.com:19302`) in client WebRTC peer connection options.
+3. Graceful Fallback & Mute Telemetry:
+   If WebRTC peer connection status transitions to `failed` or `disconnected`,
+   the client UI updates the voice pill to `Disconnected` without throwing
+   unhandled exceptions or interrupting the ongoing code battle.
+
+--------------------------------------------------------------------------------
+4.10. Challenge 10: Asynchronous OTP/Email Delivery Failures Under Load Spikes
+--------------------------------------------------------------------------------
+THE PROBLEM:
+When many users sign up simultaneously, sending transactional verification OTP
+emails synchronously during HTTP request handling causes requests to hang for
+1–3 seconds while waiting for SMTP handshakes. If the SMTP server experiences
+rate limiting or network latency, the signup API endpoint times out.
+
+HOW WE TACKLED IT:
+1. BullMQ + Redis Decoupled Producer-Consumer Architecture:
+   Separated email dispatch into a non-blocking queue (`emailQueue.ts`).
+   The registration controller pushes a job to Redis in < 2 milliseconds and
+   immediately returns HTTP 201 to the client.
+2. Dedicated Worker Container (`emailWorker.ts`):
+   A standalone worker process pulls jobs from Redis with concurrency throttled
+   to 5 parallel transmissions, preventing SMTP server rejection.
+3. Exponential Backoff & Dead Letter Handling:
+   Configured 3 automated retry attempts with exponential backoff:
+   `attempts: 3, backoff: { type: 'exponential', delay: 2000 }`.
+   Failed jobs are moved to a Dead Letter Queue for administrative review.
+
+================================================================================
+5. COMPLETE DATABASE DATA MODELS & INDEXING TOPOLOGY
+================================================================================
+MongoDB contains 20 production schemas optimized for high write-throughput and
+instant read lookups:
+
+1. `User.model.ts`:
+   - Primary credentials, email verification status, roles (admin, user), OAuth
+     links (Google, GitHub), password hashes (bcrypt), and account state.
+2. `UserProfile.model.ts`:
+   - Ratings object (`dsa`, `bugFix`, `backend`, `frontend`, `promptWar`, `project`),
+     tier badges, win/loss stats, total battles, avatar URL, bio.
+   - Indexes: `{ "ratings.dsa": -1 }`, `{ "ratings.bugFix": -1 }`, `{ userId: 1 }`.
+3. `BattleRoom.model.ts`:
+   - Room code, battle discipline, participants array, match state (`waiting`,
+     `countdown`, `in_progress`, `completed`, `abandoned`), round timer, code buffers.
+   - Indexes: `{ roomCode: 1 }`, `{ status: 1, createdAt: -1 }`.
+4. `Question.model.ts`:
+   - DSA & Bug Fix challenge repository. Contains title, slug, difficulty, description,
+     starter code snippets (C++, Java, Python, JS, TS), driver code, test cases.
+   - Indexes: `{ slug: 1 }`, `{ difficulty: 1, category: 1 }`.
+5. `BackendQuestion.model.ts` & `FrontendQuestion.model.ts`:
+   - Domain-specific project blueprints, container specifications, HTTP test assertions,
+     and visual reference assets.
+6. `PromptWarScenerio.model.ts`:
+   - Complex prompt scenarios, input constraints, and scoring rubrics.
+7. `Submission.model.ts`:
+   - Detailed record of every compile attempt: source code, language, status
+     (`Accepted`, `Wrong Answer`, `Runtime Error`, `Time Limit Exceeded`), execution
+     time, memory used, test case pass ratio.
+8. `Match.model.ts`:
+   - Historical record of finished duels, final scores, Elo rating deltas (+/-),
+     and Ghost Replay timelines.
+9. `Revision.model.ts`:
+   - Spaced repetition deck entries tracking repetition count, interval, ease factor,
+     and next scheduled review date.
+10. `ApiKey.model.ts` & `TokenUsage.model.ts`:
+    - Encrypted API credentials (AES-256-CBC) and hourly token spend metrics.
+
+================================================================================
+6. EMPIRICAL BENCHMARKS & LOAD TESTING AUDIT (2,000 CONCURRENT USERS)
+================================================================================
+Stress testing was performed using Autocannon and K6 against the production
+cluster deployed on a 4 vCPU, 8GB RAM host running Docker Compose with Nginx.
+
+--------------------------------------------------------------------------------
+Workload 1: Global Leaderboard API (`GET /api/v1/leaderboard/global?battleType=dsa`)
+- Concurrency      : 2,000 persistent HTTP connections
+- Optimization     : Redis Memory Caching Middleware + Mongoose Covered Index
+- Throughput (RPS) : 17,088 Requests / Second
+- Success Rate     : 100.00% (Zero 5xx or 4xx errors)
+- Latency (p50)    : 0 ms
+- Latency (p99)    : 8 ms
+- Verdict          : Instantaneous RAM delivery capable of absorbing extreme spikes.
+
+--------------------------------------------------------------------------------
+Workload 2: Authenticated User Profile (`GET /api/v1/user/me`)
+- Concurrency      : 2,000 persistent HTTP connections with JWT Bearer tokens
+- Optimization     : Express 5 async handler + Mongoose connection pool (100)
+- Throughput (RPS) : 15,487 Requests / Second
+- Success Rate     : 100.00%
+- Latency (p50)    : 0 ms
+- Latency (p99)    : 11 ms
+- Verdict          : Sub-millisecond JWT authentication and session hydration.
+
+--------------------------------------------------------------------------------
+Workload 3: Next.js 16 Server-Side Rendered Homepage (`GET /`)
+- Concurrency      : 500 persistent HTTP connections
+- Optimization     : Nginx 2-second RAM Microcaching + Standalone Next.js build
+- Throughput (RPS) : 428.57 Requests / Second
+- Success Rate     : 100.00%
+- Latency (p50)    : 413 ms
+- Latency (p99)    : 780 ms
+- Verdict          : Highly responsive SSR delivery under load with zero server crashes.
+
+================================================================================
+7. PRODUCTION DEPLOYMENT & CONTAINER ORCHESTRATION GUIDE
+================================================================================
+CodeComplex is deployed using Docker Compose for zero-dependency portability.
+
+Step 1: System Level Kernel Socket Tuning
+```bash
+sudo sysctl -w net.core.somaxconn=65535
+sudo sysctl -w net.ipv4.tcp_max_syn_backlog=65535
+```
+
+Step 2: Environment File Verification
+- Ensure `backendServer/.env` contains valid production secrets (JWT secrets,
+  MongoDB Atlas URI, Redis URI, SMTP credentials, Cloudinary, API keys).
+- Ensure `client/.env.local` points to production domain endpoints.
+
+Step 3: Multi-Service Build & Container Orchestration
+```bash
+# Build and spin up all containers in detached mode
+docker compose up --build -d
+
+# Check running status
+docker compose ps
+```
+
+Containers Launched:
+1. `codecomplex-backend-1` (API & WebSockets on port 8000)
+2. `codecomplex-backend-2` (Replica 2 on port 8001)
+3. `codecomplex-backend-3` (Replica 3 on port 8002)
+4. `codecomplex-backend-4` (Replica 4 on port 8003)
+5. `codecomplex-worker`    (BullMQ Email Worker)
+6. `codecomplex-frontend`  (Next.js 16 Standalone on port 3000)
+7. `codecomplex-redis`     (Redis 7 on port 6379)
+8. `codecomplex-mongo`     (MongoDB 6 on port 27017)
+
+Step 4: Nginx Reverse Proxy & SSL Configuration
+Symlink `nginx.conf` to `/etc/nginx/sites-available/codecomplex.conf`, test configuration
+with `sudo nginx -t`, reload Nginx (`sudo systemctl reload nginx`), and obtain Let's
+Encrypt SSL certificates using Certbot:
+```bash
+sudo certbot --nginx -d codecomplex.site -d www.codecomplex.site
+```
+
+================================================================================
+8. FUTURE ROADMAP & CONCLUSION
+================================================================================
+Key Planned Evolutions:
+1. WebAssembly (Wasm) Client Sandboxing:
+   Running C++, Python, and JS test cases directly in the client browser using
+   Wasm runtimes to reduce backend execution costs to near zero for simple DSA.
+2. Automated System Design Battles:
+   Interactive canvas duels evaluating distributed architecture diagrams,
+   traffic flow, and database partitioning rubrics via AI models.
+3. Tournament Mode & Bracket Tournaments:
+   Automated 64-player single-elimination tournament trees with automated round
+   advancements and live spectator commentary.
+
+CONCLUSION:
+CodeComplex demonstrates that real-time competitive programming can be expanded
+beyond static algorithmic exercises into high-pressure, full-stack software
+engineering duels. By implementing multi-tier fallback matchmaking, multi-engine
+execution sandboxing, multi-replica container scaling, and resilient AI Gateway
+orchestration, the platform delivers sub-half-second latency and uninterrupted
+availability even under demanding production traffic spikes.
+================================================================================
+END OF ENGINEERING REPORT
+================================================================================

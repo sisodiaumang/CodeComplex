@@ -121,7 +121,7 @@ const RUNTIMES = ["C++", "Python", "JavaScript", "Java"];
 
 const FOOTER_COLS = [
   { head: "Start", links: [{ label: "Sign up", href: "/signup" }, { label: "Log in", href: "/login" }] },
-  { head: "Learn", links: [{ label: "About", href: "/about" }, { label: "FAQ", href: "/faq" }, { label: "Guidelines", href: "/guidelines" }] },
+  { head: "Learn", links: [{ label: "About", href: "/about" }, { label: "Verify Certificate", href: "/verify-certificate" }, { label: "FAQ", href: "/faq" }, { label: "Guidelines", href: "/guidelines" }] },
   { head: "Legal", links: [{ label: "Privacy", href: "/privacy" }, { label: "Terms", href: "/terms" }] },
   { head: "Talk", links: [{ label: "Contact", href: "/contact" }, { label: "Email support", href: "mailto:support@codecomplex.site" }] },
 ];
