@@ -105,7 +105,7 @@ export const metadata: Metadata = {
     apple: "/apple-touch-icon.png",
   },
   alternates: {
-    canonical: "https://codecomplex.site",
+    canonical: "./",
   },
   robots: {
     index: true,
