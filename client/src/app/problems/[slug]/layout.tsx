@@ -11,8 +11,8 @@ export async function generateMetadata({
 
   if (!question) {
     return {
-      title: "Coding Problem Not Found — CodeComplex",
-      description: "Explore 400+ algorithmic coding problems and real-time 1v1 duels on CodeComplex.",
+      title: "Challenge Not Found — CodeComplex",
+      description: "Explore 4,000+ coding challenges across algorithms, debugging, frontend, backend, and prompt engineering on CodeComplex.",
     };
   }
 
@@ -22,39 +22,45 @@ export async function generateMetadata({
     .trim()
     .slice(0, 160);
 
+  const modeLabels: Record<string, string> = {
+    DSA: "DSA Algorithm",
+    BUG_FIX: "Bug Fix & Debugging",
+    FRONTEND: "Frontend UI",
+    BACKEND: "Backend API",
+    PROMPT_WAR: "AI Prompt War",
+  };
+  const modeLabel = modeLabels[question.mode?.toUpperCase() || "DSA"] || "Coding";
+
   const metaDesc = cleanDescription
-    ? `${cleanDescription}... Practice ${question.title} in C++, Python, JavaScript, and Java with instant sandbox execution.`
-    : `Solve ${question.title} (${question.difficulty} · ${question.category}) on CodeComplex. Test your solution in live Docker containers.`;
+    ? `${cleanDescription}... Practice this ${question.difficulty} ${modeLabel} challenge in CodeComplex's real-time Docker sandbox.`
+    : `Solve ${question.title} (${question.difficulty} · ${modeLabel}) on CodeComplex. Test your code in live sandboxes with instant execution.`;
 
   return {
-    title: `${question.title} — Practice ${question.difficulty} DSA Challenge`,
+    title: `${question.title} — ${modeLabel} (${question.difficulty})`,
     description: metaDesc,
     keywords: [
       question.title,
-      `${question.title} problem`,
+      `${question.title} challenge`,
       `${question.title} solution`,
-      `${question.title} leetcode`,
-      `${question.title} codecomplex`,
-      `practice ${question.title}`,
-      `${question.title} python`,
-      `${question.title} cpp`,
-      `${question.title} javascript`,
-      `${question.category.toLowerCase()} dsa problems`,
-      `${question.difficulty.toLowerCase()} algorithm challenge`,
+      `${question.title} practice`,
+      `${modeLabel.toLowerCase()} challenge`,
+      `${question.difficulty.toLowerCase()} coding question`,
+      question.category.toLowerCase(),
       ...(question.tags || []),
+      ...(question.topics || []),
     ],
     alternates: {
       canonical: `https://codecomplex.site/problems/${question.slug || slug}`,
     },
     openGraph: {
-      title: `${question.title} — ${question.difficulty} Coding Challenge | CodeComplex`,
+      title: `${question.title} — ${modeLabel} (${question.difficulty}) | CodeComplex`,
       description: metaDesc,
       url: `https://codecomplex.site/problems/${question.slug || slug}`,
       type: "article",
     },
     twitter: {
       card: "summary_large_image",
-      title: `${question.title} — ${question.difficulty} Coding Challenge`,
+      title: `${question.title} — ${modeLabel} (${question.difficulty})`,
       description: metaDesc,
     },
   };
@@ -78,11 +84,12 @@ export default async function ProblemDetailLayout({
         "text": question.statement?.markdown || question.title,
         "educationalLevel": question.difficulty,
         "about": [
+          question.mode,
           question.category,
           ...(question.topics || []),
           ...(question.tags || []),
         ],
-        "learningResourceType": "Practice Problem",
+        "learningResourceType": "Interactive Challenge",
         "potentialAction": {
           "@type": "SolveAction",
           "target": `https://codecomplex.site/problems/${question.slug || slug}`,

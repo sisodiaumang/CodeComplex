@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import Editor from "@monaco-editor/react";
@@ -17,21 +17,22 @@ import {
   Lock,
   ChevronDown,
   ChevronUp,
-  Sparkles,
   Zap,
   Clock,
-  Layers,
   LogIn,
   UserPlus,
-  RefreshCw,
+  Bug,
+  Layout,
+  Server,
+  Sparkles,
 } from "lucide-react";
 import { LogoMark } from "@/components/logo";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { Button, Badge, Spinner } from "@/components/ui";
+import { Button, Spinner } from "@/components/ui";
 import { useAuth } from "@/stores/auth-store";
 import { API_URL, api } from "@/lib/api";
 
-type SupportedLang = "python" | "cpp" | "javascript" | "java";
+type SupportedLang = "python" | "cpp" | "javascript" | "java" | "prompt";
 
 interface QuestionData {
   _id: string;
@@ -40,7 +41,7 @@ interface QuestionData {
   difficulty: "Easy" | "Medium" | "Hard";
   category: string;
   subCategory?: string;
-  mode?: string;
+  mode?: "DSA" | "BUG_FIX" | "FRONTEND" | "BACKEND" | "PROMPT_WAR" | string;
   metadata?: {
     estimatedTime?: number;
     points?: number;
@@ -52,9 +53,9 @@ interface QuestionData {
     inputFormat?: string;
     outputFormat?: string;
     notes?: string;
-    constraints?: Array<{
-      variable: string;
-      type: string;
+    constraints?: Array<string | {
+      variable?: string;
+      type?: string;
       min?: number;
       max?: number;
       description?: string;
@@ -70,10 +71,21 @@ interface QuestionData {
     text: string;
   }>;
   starterCode?: Record<string, string>;
+  buggyStarterCode?: Record<string, string>;
   testCases?: Array<{
     input: string;
     expectedOutput: string;
     explanation?: string;
+  }>;
+  endpoints?: Array<{
+    method: string;
+    path: string;
+    description?: string;
+  }>;
+  evaluationCriteria?: Array<{
+    id?: string;
+    name?: string;
+    description: string;
   }>;
 }
 
@@ -126,27 +138,56 @@ export default function ProblemDetailPage() {
       })
       .then((data) => {
         if (data?.data) {
-          setQuestion(data.data);
-          const starter = data.data.starterCode;
-          if (starter?.python) {
-            setSelectedLang("python");
-            setCode(starter.python);
-          } else if (starter?.cpp) {
-            setSelectedLang("cpp");
-            setCode(starter.cpp);
-          } else if (starter?.javascript) {
-            setSelectedLang("javascript");
-            setCode(starter.javascript);
-          } else if (starter?.java) {
-            setSelectedLang("java");
-            setCode(starter.java);
+          const q: QuestionData = data.data;
+          setQuestion(q);
+
+          const qMode = q.mode?.toUpperCase();
+
+          if (qMode === "PROMPT_WAR") {
+            setSelectedLang("prompt");
+            setCode(q.starterCode?.prompt || "# Enter your system instruction and prompt template here:\n");
+          } else if (qMode === "BUG_FIX") {
+            // Preload buggy starter code for debugging
+            const buggy = q.buggyStarterCode || q.starterCode;
+            if (buggy?.python) {
+              setSelectedLang("python");
+              setCode(buggy.python);
+            } else if (buggy?.cpp) {
+              setSelectedLang("cpp");
+              setCode(buggy.cpp);
+            } else if (buggy?.javascript) {
+              setSelectedLang("javascript");
+              setCode(buggy.javascript);
+            } else if (buggy?.java) {
+              setSelectedLang("java");
+              setCode(buggy.java);
+            }
           } else {
-            setCode("// Write your solution here");
+            // DSA / Frontend / Backend
+            const starter = q.starterCode;
+            if (starter?.python) {
+              setSelectedLang("python");
+              setCode(starter.python);
+            } else if (starter?.cpp) {
+              setSelectedLang("cpp");
+              setCode(starter.cpp);
+            } else if (starter?.javascript) {
+              setSelectedLang("javascript");
+              setCode(starter.javascript);
+            } else if (starter?.java) {
+              setSelectedLang("java");
+              setCode(starter.java);
+            } else if (typeof starter === "object" && starter !== null) {
+              const firstKey = Object.keys(starter)[0];
+              if (firstKey) {
+                setCode(starter[firstKey]);
+              }
+            }
           }
         }
       })
       .catch((err) => {
-        setError(err.message || "Failed to load problem");
+        setError(err.message || "Failed to load challenge");
       })
       .finally(() => setLoading(false));
   }, [slug]);
@@ -154,14 +195,16 @@ export default function ProblemDetailPage() {
   // Update starter code on language switch
   const handleLangChange = (newLang: SupportedLang) => {
     setSelectedLang(newLang);
-    if (question?.starterCode?.[newLang]) {
-      setCode(question.starterCode[newLang]);
+    const pool = (question?.mode === "BUG_FIX" ? question.buggyStarterCode : question?.starterCode) || question?.starterCode;
+    if (pool?.[newLang]) {
+      setCode(pool[newLang]);
     } else {
       const defaultSnippet: Record<SupportedLang, string> = {
         python: "# Write your solution here\nclass Solution:\n    pass\n",
         cpp: "// Write your solution here\n#include <iostream>\nusing namespace std;\n\nclass Solution {\npublic:\n};\n",
         javascript: "// Write your solution here\nfunction solution() {\n}\n",
         java: "// Write your solution here\nclass Solution {\n}\n",
+        prompt: "# Enter your prompt instructions here:\n",
       };
       setCode(defaultSnippet[newLang]);
     }
@@ -209,10 +252,21 @@ export default function ProblemDetailPage() {
     // If logged in: create a Solo battle room with this specific question and enter it!
     setIsSubmitting(true);
     try {
+      const bType =
+        question?.mode === "FRONTEND"
+          ? "FRONTEND"
+          : question?.mode === "BACKEND"
+          ? "BACKEND"
+          : question?.mode === "PROMPT_WAR"
+          ? "PROMPT_WAR"
+          : question?.mode === "BUG_FIX"
+          ? "BUG_FIX"
+          : "DSA";
+
       const room = await api<any>("/battle", {
         method: "POST",
         body: {
-          battleType: "DSA",
+          battleType: bType,
           isPrivate: true,
           isSolo: true,
           maxTeamSize: 1,
@@ -253,9 +307,9 @@ export default function ProblemDetailPage() {
         </p>
         <Link
           href="/problems"
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-sm font-medium transition-colors"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-sm font-medium transition-colors cursor-pointer"
         >
-          <ArrowLeft className="size-4" /> Browse All Challenges
+          <ArrowLeft className="size-4" /> Browse Challenge Library
         </Link>
       </div>
     );
@@ -267,16 +321,29 @@ export default function ProblemDetailPage() {
     Hard: "text-rose-400 bg-rose-500/10 border-rose-500/20",
   }[question.difficulty];
 
+  const modeBadgeStyles: Record<string, { label: string; cls: string; icon: any }> = {
+    DSA: { label: "DSA Algorithm", cls: "text-[#4D8DFF] bg-[#4D8DFF]/10 border-[#4D8DFF]/20", icon: Code2 },
+    BUG_FIX: { label: "Bug Fix Hunter", cls: "text-[#FF5A52] bg-[#FF5A52]/10 border-[#FF5A52]/20", icon: Bug },
+    FRONTEND: { label: "Frontend UI", cls: "text-[#2FCBDB] bg-[#2FCBDB]/10 border-[#2FCBDB]/20", icon: Layout },
+    BACKEND: { label: "Backend API", cls: "text-[#35C46A] bg-[#35C46A]/10 border-[#35C46A]/20", icon: Server },
+    PROMPT_WAR: { label: "AI Prompt War", cls: "text-[#B57BF5] bg-[#B57BF5]/10 border-[#B57BF5]/20", icon: Sparkles },
+  };
+
+  const currentModeInfo = modeBadgeStyles[question.mode?.toUpperCase() || "DSA"] || modeBadgeStyles.DSA;
+  const ModeIcon = currentModeInfo.icon;
+
   const examples = question.statement?.examples || [];
   const constraints = question.statement?.constraints || [];
   const hints = question.hints || [];
+  const endpoints = question.endpoints || [];
+  const criteria = question.evaluationCriteria || [];
 
   return (
     <div className="min-h-screen bg-[#0B0B0C] text-[#EFEDE8] flex flex-col font-sans selection:bg-[#FF7A1A] selection:text-[#0B0B0C]">
       {/* ── Top Bar ──────────────────────────────────────── */}
       <header className="h-14 border-b border-white/[0.08] bg-[#0E0E10] px-4 flex items-center justify-between shrink-0 z-20">
         <div className="flex items-center gap-3">
-          <Link href="/problems" className="p-1.5 rounded-md hover:bg-white/5 text-white/60 hover:text-white transition-colors" title="Back to Problems">
+          <Link href="/problems" className="p-1.5 rounded-md hover:bg-white/5 text-white/60 hover:text-white transition-colors cursor-pointer" title="Back to Library">
             <ArrowLeft className="size-4" />
           </Link>
           <Link href="/" className="flex items-center gap-2 font-bold text-sm tracking-tight text-white mr-2">
@@ -285,6 +352,10 @@ export default function ProblemDetailPage() {
           </Link>
           <span className="text-white/20 hidden sm:inline">|</span>
           <div className="flex items-center gap-2 truncate">
+            <span className={`text-[10px] font-mono font-semibold px-2 py-0.5 rounded border uppercase flex items-center gap-1 ${currentModeInfo.cls}`}>
+              <ModeIcon className="size-2.5" />
+              {currentModeInfo.label}
+            </span>
             <span className={`text-[10px] font-mono font-semibold px-2 py-0.5 rounded border uppercase ${difficultyColors}`}>
               {question.difficulty}
             </span>
@@ -331,6 +402,10 @@ export default function ProblemDetailPage() {
             {/* Meta tags */}
             <div className="space-y-3">
               <div className="flex flex-wrap items-center gap-2">
+                <span className={`text-[11px] font-mono font-semibold px-2.5 py-0.5 rounded-full border uppercase flex items-center gap-1.5 ${currentModeInfo.cls}`}>
+                  <ModeIcon className="size-3" />
+                  {currentModeInfo.label}
+                </span>
                 <span className={`text-[11px] font-mono font-semibold px-2.5 py-0.5 rounded-full border uppercase ${difficultyColors}`}>
                   {question.difficulty}
                 </span>
@@ -342,11 +417,6 @@ export default function ProblemDetailPage() {
                     <Clock className="size-3" /> {question.metadata.estimatedTime}m
                   </span>
                 )}
-                {question.mode === "bug_fix" && (
-                  <span className="text-[11px] font-mono text-red-400 bg-red-500/10 border border-red-500/20 px-2 py-0.5 rounded-full">
-                    Bug Fix Mode
-                  </span>
-                )}
               </div>
               <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
                 {question.title}
@@ -354,6 +424,66 @@ export default function ProblemDetailPage() {
             </div>
 
             <hr className="border-white/[0.08]" />
+
+            {/* Mode-specific guidance banner */}
+            {question.mode === "BUG_FIX" && (
+              <div className="p-3.5 rounded-xl border border-red-500/20 bg-red-500/5 text-xs text-red-300 leading-relaxed flex items-start gap-2.5">
+                <Bug className="size-4 shrink-0 text-red-400 mt-0.5" />
+                <div>
+                  <strong className="text-red-400 font-semibold block mb-0.5">Bug Fix Challenge:</strong>
+                  The starter code contains broken logic, regressions, or edge-case bugs. Diagnose the failure and modify the code until all test cases return green!
+                </div>
+              </div>
+            )}
+
+            {question.mode === "PROMPT_WAR" && (
+              <div className="p-3.5 rounded-xl border border-purple-500/20 bg-purple-500/5 text-xs text-purple-300 leading-relaxed flex items-start gap-2.5">
+                <Sparkles className="size-4 shrink-0 text-purple-400 mt-0.5" />
+                <div>
+                  <strong className="text-purple-400 font-semibold block mb-0.5">AI Prompt War Scenario:</strong>
+                  Craft a robust system prompt that guides an LLM to fulfill the scenario, adhere to schema, and satisfy all evaluation criteria under adversarial testing.
+                </div>
+              </div>
+            )}
+
+            {/* Endpoints specification (for Backend mode) */}
+            {endpoints.length > 0 && (
+              <div className="space-y-3 pt-1">
+                <h3 className="text-xs font-mono font-semibold uppercase tracking-wider text-[#35C46A] flex items-center gap-1.5">
+                  <Server className="size-3.5" /> API Endpoints Required
+                </h3>
+                <div className="space-y-2">
+                  {endpoints.map((ep, idx) => (
+                    <div key={idx} className="rounded-xl border border-white/[0.08] bg-white/[0.02] p-3 font-mono text-xs flex items-center justify-between">
+                      <div className="flex items-center gap-2.5">
+                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${ep.method === "GET" ? "bg-blue-500/20 text-blue-400" : ep.method === "POST" ? "bg-emerald-500/20 text-emerald-400" : "bg-amber-500/20 text-amber-400"}`}>
+                          {ep.method}
+                        </span>
+                        <span className="text-white font-semibold">{ep.path}</span>
+                      </div>
+                      {ep.description && <span className="text-[11px] text-white/50">{ep.description}</span>}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Evaluation Criteria (for Prompt War mode) */}
+            {criteria.length > 0 && (
+              <div className="space-y-3 pt-1">
+                <h3 className="text-xs font-mono font-semibold uppercase tracking-wider text-[#B57BF5] flex items-center gap-1.5">
+                  <Sparkles className="size-3.5" /> Evaluation Criteria
+                </h3>
+                <ul className="space-y-2 font-mono text-xs text-white/80 list-disc list-inside bg-white/[0.02] p-3 rounded-xl border border-white/[0.06]">
+                  {criteria.map((cr, idx) => (
+                    <li key={idx} className="leading-relaxed">
+                      <span className="text-purple-300 font-semibold">{cr.name || `Rule ${idx + 1}`}: </span>
+                      <span className="text-white/70">{cr.description}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
 
             {/* Problem Statement Body */}
             <div className="space-y-4 text-sm leading-relaxed text-white/80">
@@ -419,11 +549,10 @@ export default function ProblemDetailPage() {
                   Constraints
                 </h3>
                 <ul className="space-y-1.5 font-mono text-xs text-white/70 list-disc list-inside bg-white/[0.02] p-3 rounded-xl border border-white/[0.06]">
-                  {constraints.map((c, idx) => (
-                    <li key={idx}>
-                      <span className="text-white/90">{c.variable}</span>: {c.description || `${c.min !== undefined ? `${c.min} ≤ ` : ""}${c.variable}${c.max !== undefined ? ` ≤ ${c.max}` : ""}`}
-                    </li>
-                  ))}
+                  {constraints.map((c, idx) => {
+                    const str = typeof c === "string" ? c : `${c.variable || ""}: ${c.description || `${c.min !== undefined ? `${c.min} ≤ ` : ""}${c.variable || ""}${c.max !== undefined ? ` ≤ ${c.max}` : ""}`}`;
+                    return <li key={idx}>{str}</li>;
+                  })}
                 </ul>
               </div>
             )}
@@ -442,7 +571,7 @@ export default function ProblemDetailPage() {
                         <button
                           type="button"
                           onClick={() => setOpenHint(isOpen ? null : idx)}
-                          className="w-full flex items-center justify-between p-2.5 text-xs font-mono text-left text-white/80 hover:text-white"
+                          className="w-full flex items-center justify-between p-2.5 text-xs font-mono text-left text-white/80 hover:text-white cursor-pointer"
                         >
                           <span className="flex items-center gap-2">
                             <HelpCircle className="size-3.5 text-[#FF7A1A]" />
@@ -465,10 +594,10 @@ export default function ProblemDetailPage() {
             {/* Solo Practice Callout */}
             <div className="p-4 rounded-xl border border-[#FF7A1A]/20 bg-[#FF7A1A]/5 space-y-2">
               <div className="flex items-center gap-2 text-xs font-semibold text-[#FF7A1A]">
-                <Zap className="size-4" /> Real-Time Solo Practice
+                <Zap className="size-4" /> Free Solo Sandbox
               </div>
               <p className="text-xs text-white/60 leading-relaxed">
-                Test your code against sample cases directly in the sandbox editor without signing in. To submit your official solution, verify hidden edge cases, and earn global Elo rating points, log in or create a free account.
+                Test and execute your code in our isolated Docker environment without signing up. Log in when you want to officially submit, climb the Elo ratings, and benchmark against other developers.
               </p>
             </div>
           </div>
@@ -480,21 +609,25 @@ export default function ProblemDetailPage() {
           <div className="h-10 border-b border-white/[0.08] bg-[#0E0E12] px-4 flex items-center justify-between shrink-0">
             <div className="flex items-center gap-2">
               <Code2 className="size-3.5 text-white/40" />
-              <select
-                value={selectedLang}
-                onChange={(e) => handleLangChange(e.target.value as SupportedLang)}
-                className="bg-transparent border-0 text-xs font-mono font-medium text-white focus:outline-none cursor-pointer"
-              >
-                <option value="python" className="bg-[#141416] text-white">Python 3</option>
-                <option value="cpp" className="bg-[#141416] text-white">C++ (GCC 20)</option>
-                <option value="javascript" className="bg-[#141416] text-white">JavaScript (Node 20)</option>
-                <option value="java" className="bg-[#141416] text-white">Java (OpenJDK 21)</option>
-              </select>
+              {question.mode === "PROMPT_WAR" ? (
+                <span className="text-xs font-mono text-purple-400 font-semibold">Prompt Template</span>
+              ) : (
+                <select
+                  value={selectedLang}
+                  onChange={(e) => handleLangChange(e.target.value as SupportedLang)}
+                  className="bg-transparent border-0 text-xs font-mono font-medium text-white focus:outline-none cursor-pointer"
+                >
+                  <option value="python" className="bg-[#141416] text-white">Python 3</option>
+                  <option value="cpp" className="bg-[#141416] text-white">C++ (GCC 20)</option>
+                  <option value="javascript" className="bg-[#141416] text-white">JavaScript (Node 20)</option>
+                  <option value="java" className="bg-[#141416] text-white">Java (OpenJDK 21)</option>
+                </select>
+              )}
             </div>
 
             <div className="flex items-center gap-2">
               <span className="text-[10px] font-mono text-white/30 hidden sm:inline">
-                Docker Linux Sandbox
+                Docker Execution Kernel
               </span>
             </div>
           </div>
@@ -503,7 +636,7 @@ export default function ProblemDetailPage() {
           <div className="flex-1 relative w-full overflow-hidden min-h-[300px]">
             <Editor
               height="100%"
-              language={selectedLang === "cpp" ? "cpp" : selectedLang === "python" ? "python" : selectedLang === "java" ? "java" : "javascript"}
+              language={selectedLang === "cpp" ? "cpp" : selectedLang === "python" ? "python" : selectedLang === "java" ? "java" : selectedLang === "prompt" ? "markdown" : "javascript"}
               theme="vs-dark"
               value={code}
               onChange={(val) => setCode(val || "")}
@@ -527,14 +660,14 @@ export default function ProblemDetailPage() {
                 <button
                   type="button"
                   onClick={() => setActiveTab("examples")}
-                  className={`text-[11px] font-mono font-medium tracking-wider uppercase transition-colors ${activeTab === "examples" ? "text-[#FF7A1A] border-b-2 border-[#FF7A1A] py-2" : "text-white/40 hover:text-white"}`}
+                  className={`text-[11px] font-mono font-medium tracking-wider uppercase transition-colors cursor-pointer ${activeTab === "examples" ? "text-[#FF7A1A] border-b-2 border-[#FF7A1A] py-2" : "text-white/40 hover:text-white"}`}
                 >
                   Sample Cases
                 </button>
                 <button
                   type="button"
                   onClick={() => setActiveTab("console")}
-                  className={`text-[11px] font-mono font-medium tracking-wider uppercase flex items-center gap-1.5 transition-colors ${activeTab === "console" ? "text-[#FF7A1A] border-b-2 border-[#FF7A1A] py-2" : "text-white/40 hover:text-white"}`}
+                  className={`text-[11px] font-mono font-medium tracking-wider uppercase flex items-center gap-1.5 transition-colors cursor-pointer ${activeTab === "console" ? "text-[#FF7A1A] border-b-2 border-[#FF7A1A] py-2" : "text-white/40 hover:text-white"}`}
                 >
                   <Terminal className="size-3" /> Console Output
                 </button>
@@ -559,29 +692,37 @@ export default function ProblemDetailPage() {
             <div className="flex-1 overflow-y-auto p-3 font-mono text-xs">
               {activeTab === "examples" && (
                 <div className="space-y-2">
-                  <div className="flex gap-2 mb-2">
-                    {examples.map((_, i) => (
-                      <button
-                        key={i}
-                        type="button"
-                        onClick={() => setActiveSampleIndex(i)}
-                        className={`px-2.5 py-1 rounded text-[11px] transition-colors ${activeSampleIndex === i ? "bg-white/10 text-white font-semibold" : "bg-white/5 text-white/40 hover:text-white"}`}
-                      >
-                        Case {i + 1}
-                      </button>
-                    ))}
-                  </div>
+                  {examples.length > 0 ? (
+                    <>
+                      <div className="flex gap-2 mb-2">
+                        {examples.map((_, i) => (
+                          <button
+                            key={i}
+                            type="button"
+                            onClick={() => setActiveSampleIndex(i)}
+                            className={`px-2.5 py-1 rounded text-[11px] transition-colors cursor-pointer ${activeSampleIndex === i ? "bg-white/10 text-white font-semibold" : "bg-white/5 text-white/40 hover:text-white"}`}
+                          >
+                            Case {i + 1}
+                          </button>
+                        ))}
+                      </div>
 
-                  {examples[activeSampleIndex] && (
-                    <div className="space-y-1.5 text-xs">
-                      <div>
-                        <span className="text-white/40">Input: </span>
-                        <span className="text-white/90">{examples[activeSampleIndex].input}</span>
-                      </div>
-                      <div>
-                        <span className="text-white/40">Expected: </span>
-                        <span className="text-emerald-400">{examples[activeSampleIndex].output}</span>
-                      </div>
+                      {examples[activeSampleIndex] && (
+                        <div className="space-y-1.5 text-xs">
+                          <div>
+                            <span className="text-white/40">Input: </span>
+                            <span className="text-white/90">{examples[activeSampleIndex].input}</span>
+                          </div>
+                          <div>
+                            <span className="text-white/40">Expected: </span>
+                            <span className="text-emerald-400">{examples[activeSampleIndex].output}</span>
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <div className="text-white/40 py-2">
+                      Review the challenge specification and constraints on the left, then click <strong className="text-white">Run Code</strong> to test in sandbox.
                     </div>
                   )}
                 </div>
@@ -644,7 +785,7 @@ export default function ProblemDetailPage() {
                   onClick={handleRunSample}
                   disabled={isRunning}
                   variant="outline"
-                  className="h-8 px-3 text-xs font-mono border-white/20 hover:bg-white/5"
+                  className="h-8 px-3 text-xs font-mono border-white/20 hover:bg-white/5 cursor-pointer"
                 >
                   {isRunning ? <Spinner className="size-3.5 mr-1.5" /> : <Play className="size-3.5 mr-1.5 text-emerald-400 fill-emerald-400" />}
                   Run Code
@@ -654,7 +795,7 @@ export default function ProblemDetailPage() {
                   type="button"
                   onClick={handleSubmit}
                   disabled={isSubmitting}
-                  className="h-8 px-4 text-xs font-mono font-bold bg-[#FF7A1A] hover:bg-[#FF9040] text-black border-0"
+                  className="h-8 px-4 text-xs font-mono font-bold bg-[#FF7A1A] hover:bg-[#FF9040] text-black border-0 cursor-pointer"
                 >
                   {isSubmitting ? (
                     <Spinner className="size-3.5 mr-1.5" />
@@ -702,20 +843,20 @@ export default function ProblemDetailPage() {
             <div className="flex flex-col gap-2.5 pt-2">
               <Link
                 href={`/login?redirect=/problems/${encodeURIComponent(slug)}`}
-                className="w-full h-10 rounded-full bg-[#FF7A1A] hover:bg-[#FF9040] text-black font-bold text-xs flex items-center justify-center gap-2 transition-colors"
+                className="w-full h-10 rounded-full bg-[#FF7A1A] hover:bg-[#FF9040] text-black font-bold text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
               >
                 <LogIn className="size-4" /> Log In
               </Link>
               <Link
                 href={`/signup?redirect=/problems/${encodeURIComponent(slug)}`}
-                className="w-full h-10 rounded-full border border-white/20 hover:border-white/40 text-white font-medium text-xs flex items-center justify-center gap-2 transition-colors"
+                className="w-full h-10 rounded-full border border-white/20 hover:border-white/40 text-white font-medium text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
               >
                 <UserPlus className="size-4" /> Create Free Account
               </Link>
               <button
                 type="button"
                 onClick={() => setShowAuthModal(false)}
-                className="text-xs text-white/40 hover:text-white pt-1 transition-colors"
+                className="text-xs text-white/40 hover:text-white pt-1 transition-colors cursor-pointer"
               >
                 Continue practicing without submitting
               </button>
