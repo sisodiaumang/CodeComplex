@@ -4,6 +4,8 @@ import Link from "next/link";
 import { ArrowLeft, Terminal, Shield, Zap, Award, RefreshCw, Bot, Code2, CheckCircle2 } from "lucide-react";
 import { LogoMark } from "@/components/logo";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { useAuth } from "@/stores/auth-store";
+import { Avatar } from "@/components/ui";
 
 const ARCH_STACK = [
   {
@@ -67,6 +69,8 @@ const DISCIPLINES = [
 ];
 
 export default function AboutPage() {
+  const { user, status } = useAuth();
+  const isAuthenticated = status === "authed" && !!user;
   return (
     <div className="min-h-screen bg-[#0B0B0C] text-[#EFEDE8] selection:bg-[#FF7A1A] selection:text-[#0B0B0C] font-sans antialiased">
       {/* Header */}
@@ -84,18 +88,30 @@ export default function AboutPage() {
             >
               Verify Certificate
             </Link>
-            <Link
-              href="/login"
-              className="text-xs font-medium text-white/70 hover:text-white transition-colors hidden sm:inline-block"
-            >
-              Log in
-            </Link>
-            <Link
-              href="/signup"
-              className="inline-flex items-center justify-center h-8 px-3.5 rounded-full border border-white/20 text-xs font-mono tracking-wider uppercase text-white/80 hover:text-white hover:border-white/40 transition-colors"
-            >
-              Sign up
-            </Link>
+            {isAuthenticated ? (
+              <Link
+                href={`/profile/${user.username}`}
+                className="inline-flex items-center gap-2 h-8 pl-1 pr-3 rounded-full border border-white/20 bg-white/[0.04] text-xs font-medium text-white hover:border-[#FF7A1A]/40 transition-colors"
+              >
+                <Avatar src={user.avatar?.profileImageURL} name={user.username} size={22} />
+                <span>{user.username}</span>
+              </Link>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  className="text-xs font-medium text-white/70 hover:text-white transition-colors hidden sm:inline-block"
+                >
+                  Log in
+                </Link>
+                <Link
+                  href="/signup"
+                  className="inline-flex items-center justify-center h-8 px-3.5 rounded-full border border-white/20 text-xs font-mono tracking-wider uppercase text-white/80 hover:text-white hover:border-white/40 transition-colors"
+                >
+                  Sign up
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </header>
@@ -105,7 +121,7 @@ export default function AboutPage() {
         {/* Navigation & Header */}
         <div className="space-y-4">
           <Link
-            href="/"
+            href={isAuthenticated ? "/battle" : "/"}
             className="inline-flex items-center gap-1.5 text-xs font-mono tracking-wider uppercase text-white/50 hover:text-white transition-colors"
           >
             <ArrowLeft className="size-3.5" /> Back to arena

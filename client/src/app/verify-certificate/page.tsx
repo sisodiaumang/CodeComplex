@@ -26,6 +26,8 @@ import {
 import { api, errorMessage } from "@/lib/api";
 import type { InternshipCertificate, CertificateVerifyResponse } from "@/lib/types";
 import { LogoMark } from "@/components/logo";
+import { useAuth } from "@/stores/auth-store";
+import { Avatar } from "@/components/ui";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 const SAMPLE_IDS = [
@@ -37,6 +39,8 @@ const SAMPLE_IDS = [
 function CertificateVerifierContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { user, status } = useAuth();
+  const isAuthenticated = status === "authed" && !!user;
   const initialId = searchParams.get("id") || "";
 
   const [searchId, setSearchId] = useState(initialId);
@@ -141,18 +145,40 @@ function CertificateVerifierContent() {
             >
               Battle Arena
             </Link>
-            <Link
-              href="/login"
-              className="text-xs font-medium text-white/70 hover:text-white transition-colors hidden sm:inline-block"
-            >
-              Log in
-            </Link>
-            <Link
-              href="/signup"
-              className="inline-flex items-center justify-center h-8 px-3.5 rounded-full border border-white/20 text-xs font-mono tracking-wider uppercase text-white/80 hover:text-white hover:border-white/40 transition-colors"
-            >
-              Sign up
-            </Link>
+            {isAuthenticated ? (
+              <div className="flex items-center gap-3">
+                {user.role && ["ADMIN", "MODERATOR", "OWNER"].includes(user.role) && (
+                  <Link
+                    href="/admin"
+                    className="text-xs font-mono font-medium text-[#FF7A1A] hover:underline transition-colors hidden sm:inline-block"
+                  >
+                    Admin Console
+                  </Link>
+                )}
+                <Link
+                  href={`/profile/${user.username}`}
+                  className="inline-flex items-center gap-2 h-8 pl-1 pr-3 rounded-full border border-white/20 bg-white/[0.04] text-xs font-medium text-white hover:border-[#FF7A1A]/40 transition-colors"
+                >
+                  <Avatar src={user.avatar?.profileImageURL} name={user.username} size={22} />
+                  <span>{user.username}</span>
+                </Link>
+              </div>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  className="text-xs font-medium text-white/70 hover:text-white transition-colors hidden sm:inline-block"
+                >
+                  Log in
+                </Link>
+                <Link
+                  href="/signup"
+                  className="inline-flex items-center justify-center h-8 px-3.5 rounded-full border border-white/20 text-xs font-mono tracking-wider uppercase text-white/80 hover:text-white hover:border-white/40 transition-colors"
+                >
+                  Sign up
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </header>
@@ -162,7 +188,7 @@ function CertificateVerifierContent() {
         {/* Back Link & Header Title */}
         <div className="space-y-4 no-print">
           <Link
-            href="/"
+            href={isAuthenticated ? "/battle" : "/"}
             className="inline-flex items-center gap-1.5 text-xs font-mono tracking-wider uppercase text-white/50 hover:text-white transition-colors"
           >
             <ArrowLeft className="size-3.5" /> Back to arena
