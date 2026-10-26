@@ -65,45 +65,70 @@ function generate() {
   const dbRoot = findDbDir();
   console.log(`Searching challenges in: ${dbRoot}`);
 
-  const manifest = [];
-  const questionEntries = [];
+  let manifest = [];
+  let questionEntries = [];
   const seenSlugs = new Set();
 
-  for (const folder of modeFolders) {
-    const folderPath = path.join(dbRoot, folder);
-    const files = scanJsonFiles(folderPath);
+  if (fs.existsSync(dbRoot)) {
+    for (const folder of modeFolders) {
+      const folderPath = path.join(dbRoot, folder);
+      const files = scanJsonFiles(folderPath);
 
-    for (const file of files) {
-      try {
-        const raw = fs.readFileSync(file, "utf8");
-        const json = JSON.parse(raw);
-        const slug = json.slug || json._id;
-        if (slug && !seenSlugs.has(slug)) {
-          seenSlugs.add(slug);
-          const diff = json.difficulty || "Medium";
+      for (const file of files) {
+        try {
+          const raw = fs.readFileSync(file, "utf8");
+          const json = JSON.parse(raw);
+          const slug = json.slug || json._id;
+          if (slug && !seenSlugs.has(slug)) {
+            seenSlugs.add(slug);
+            const diff = json.difficulty || "Medium";
+            const priority = diff === "Easy" ? "0.85" : diff === "Medium" ? "0.8" : "0.75";
+
+            manifest.push({ slug, difficulty: diff });
+            questionEntries.push({
+              loc: `${baseUrl}/problems/${slug}`,
+              priority,
+              changefreq: "weekly",
+            });
+          }
+        } catch {}
+      }
+    }
+  }
+
+  const dataDir = path.resolve(__dirname, "../src/data");
+  const manifestPath = path.join(dataDir, "questions-manifest.json");
+
+  // Fallback to existing manifest if running in Docker build where backendServer is excluded
+  if (questionEntries.length === 0 && fs.existsSync(manifestPath)) {
+    console.log("No DB files found on disk (Docker/isolated build). Using bundled manifest...");
+    try {
+      const existing = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
+      if (Array.isArray(existing) && existing.length > 0) {
+        manifest = existing;
+        for (const item of existing) {
+          const diff = item.difficulty || "Medium";
           const priority = diff === "Easy" ? "0.85" : diff === "Medium" ? "0.8" : "0.75";
-
-          manifest.push({ slug, difficulty: diff });
           questionEntries.push({
-            loc: `${baseUrl}/problems/${slug}`,
+            loc: `${baseUrl}/problems/${item.slug}`,
             priority,
             changefreq: "weekly",
           });
         }
-      } catch {}
+        console.log(`Preserved ${questionEntries.length} questions from existing manifest.`);
+      }
+    } catch (e) {
+      console.error("Error reading existing manifest:", e.message);
     }
+  } else if (manifest.length > 0) {
+    if (!fs.existsSync(dataDir)) {
+      fs.mkdirSync(dataDir, { recursive: true });
+    }
+    fs.writeFileSync(manifestPath, JSON.stringify(manifest), "utf8");
+    console.log(`Saved ${manifest.length} items to ${manifestPath}`);
   }
 
-  console.log(`Found ${questionEntries.length} unique challenge URLs.`);
-
-  // Write manifest inside client/src/data/ so Next.js can bundle it statically anywhere
-  const dataDir = path.resolve(__dirname, "../src/data");
-  if (!fs.existsSync(dataDir)) {
-    fs.mkdirSync(dataDir, { recursive: true });
-  }
-  const manifestPath = path.join(dataDir, "questions-manifest.json");
-  fs.writeFileSync(manifestPath, JSON.stringify(manifest), "utf8");
-  console.log(`Saved ${manifest.length} items to ${manifestPath}`);
+  console.log(`Total URLs to write to sitemap: ${coreRoutes.length + questionEntries.length}`);
 
   // Write public/sitemap.xml
   let xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
