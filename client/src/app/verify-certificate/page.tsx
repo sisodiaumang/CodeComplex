@@ -35,6 +35,7 @@ const SAMPLE_IDS = [
   { id: "CC-INT-2026-001", label: "Full Stack (Summer '26)" },
   { id: "CC-INT-2026-002", label: "Backend Systems" },
   { id: "CC-INT-2026-003", label: "Frontend Architecture" },
+  { id: "CC-INT-2026-9479", label: "AI & ML (Suraj Saw)" },
 ];
 
 function CertificateVerifierContent() {

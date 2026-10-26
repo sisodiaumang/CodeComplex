@@ -83,6 +83,30 @@ export const SAMPLE_CERTIFICATES = [
         issuer: "CodeComplex Engineering Division",
         signatoryName: "Umang Sisodia",
         signatoryTitle: "Founding Director & Lead Architect",
+    },
+    {
+        certificateId: "CC-INT-2026-9479",
+        recipientName: "Suraj Saw",
+        recipientEmail: "suraj.saw@example.com",
+        role: "Machine Learning Trainee",
+        domain: "Artificial Intelligence & Machine Learning",
+        duration: "10 Weeks",
+        startDate: "2026-06-01",
+        endDate: "2026-08-01",
+        issueDate: new Date("2026-10-26"),
+        grade: "Outstanding Distinction (Top 10%)",
+        skills: [
+            "Deep Learning",
+            "Machine Learning",
+            "Pandas",
+            "Numpy",
+            "Data Visualization"
+        ],
+        description: "Successfully completed the Artificial Intelligence & Machine Learning Internship at CodeComplex with excellence in software engineering, technical problem solving, and system architecture.",
+        status: "VALID" as const,
+        issuer: "CodeComplex Engineering Division",
+        signatoryName: "Pawan Singh",
+        signatoryTitle: "Founding Director & Lead Architect",
     }
 ];
 
