@@ -1,7 +1,7 @@
 import { MetadataRoute } from "next";
-import { getAllQuestionsSummary } from "@/lib/questions";
+import questionsManifest from "@/data/questions-manifest.json";
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = "https://codecomplex.site";
   const now = new Date();
 
@@ -110,18 +110,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
-  try {
-    const questions = await getAllQuestionsSummary();
-    const questionRoutes: MetadataRoute.Sitemap = questions.map((q) => ({
-      url: `${baseUrl}/problems/${q.slug || q._id}`,
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: q.difficulty === "Easy" ? 0.85 : q.difficulty === "Medium" ? 0.8 : 0.75,
-    }));
+  const questionRoutes: MetadataRoute.Sitemap = (questionsManifest as Array<{ slug: string; difficulty: string }>).map((q) => ({
+    url: `${baseUrl}/problems/${q.slug}`,
+    lastModified: now,
+    changeFrequency: "weekly",
+    priority: q.difficulty === "Easy" ? 0.85 : q.difficulty === "Medium" ? 0.8 : 0.75,
+  }));
 
-    return [...coreRoutes, ...questionRoutes];
-  } catch (err) {
-    console.error("Failed to generate dynamic question sitemap:", err);
-    return coreRoutes;
-  }
+  return [...coreRoutes, ...questionRoutes];
 }

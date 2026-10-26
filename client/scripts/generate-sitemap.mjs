@@ -65,6 +65,7 @@ function generate() {
   const dbRoot = findDbDir();
   console.log(`Searching challenges in: ${dbRoot}`);
 
+  const manifest = [];
   const questionEntries = [];
   const seenSlugs = new Set();
 
@@ -81,6 +82,8 @@ function generate() {
           seenSlugs.add(slug);
           const diff = json.difficulty || "Medium";
           const priority = diff === "Easy" ? "0.85" : diff === "Medium" ? "0.8" : "0.75";
+
+          manifest.push({ slug, difficulty: diff });
           questionEntries.push({
             loc: `${baseUrl}/problems/${slug}`,
             priority,
@@ -93,6 +96,16 @@ function generate() {
 
   console.log(`Found ${questionEntries.length} unique challenge URLs.`);
 
+  // Write manifest inside client/src/data/ so Next.js can bundle it statically anywhere
+  const dataDir = path.resolve(__dirname, "../src/data");
+  if (!fs.existsSync(dataDir)) {
+    fs.mkdirSync(dataDir, { recursive: true });
+  }
+  const manifestPath = path.join(dataDir, "questions-manifest.json");
+  fs.writeFileSync(manifestPath, JSON.stringify(manifest), "utf8");
+  console.log(`Saved ${manifest.length} items to ${manifestPath}`);
+
+  // Write public/sitemap.xml
   let xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
 
   for (const r of coreRoutes) {

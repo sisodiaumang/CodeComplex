@@ -6,10 +6,16 @@
 // On a 401 it transparently attempts one token refresh and retries.
 
 export const API_URL =
-  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1";
+  process.env.NEXT_PUBLIC_API_URL ||
+  (process.env.NODE_ENV === "production"
+    ? "https://codecomplex.site/api/v1"
+    : "http://localhost:8000/api/v1");
 
 export const SOCKET_URL =
-  process.env.NEXT_PUBLIC_SOCKET_URL ?? "http://localhost:8000";
+  process.env.NEXT_PUBLIC_SOCKET_URL ||
+  (process.env.NODE_ENV === "production"
+    ? "https://codecomplex.site"
+    : "http://localhost:8000");
 
 export class ApiError extends Error {
   status: number;
