@@ -15,11 +15,9 @@ import {
   Server,
   Sparkles,
 } from "lucide-react";
-import { LogoMark } from "@/components/logo";
-import { ThemeToggle } from "@/components/ThemeToggle";
 import { Spinner } from "@/components/ui";
+import { PublicNavbar } from "@/components/PublicNavbar";
 import { API_URL } from "@/lib/api";
-import { useAuth } from "@/stores/auth-store";
 
 export type ProblemMode = "ALL" | "DSA" | "BUG_FIX" | "FRONTEND" | "BACKEND" | "PROMPT_WAR";
 
@@ -51,7 +49,6 @@ const MODES: Array<{ key: ProblemMode; label: string; icon: any; color: string; 
 ];
 
 export default function ProblemsCatalogPage() {
-  const { status } = useAuth();
   const [problems, setProblems] = useState<ProblemItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
@@ -134,41 +131,8 @@ export default function ProblemsCatalogPage() {
 
   return (
     <div className="min-h-screen bg-[#0B0B0C] text-[#EFEDE8] flex flex-col font-sans selection:bg-[#FF7A1A] selection:text-[#0B0B0C]">
-      {/* ── Header ──────────────────────────────────────── */}
-      <header className="sticky top-0 z-40 border-b border-white/[0.08] bg-[#0B0B0C]/85 backdrop-blur-md">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 h-16">
-          <Link href="/" className="flex items-center gap-2.5 font-bold text-base tracking-tight text-white hover:opacity-90 transition-opacity">
-            <LogoMark size={24} />
-            <span>Code<span className="text-[#FF7A1A]">Complex</span></span>
-          </Link>
-          <div className="flex items-center gap-4">
-            <ThemeToggle className="text-white/70 hover:text-white" />
-            {status === "authed" ? (
-              <Link
-                href="/battle"
-                className="inline-flex items-center gap-1.5 h-8 px-3.5 rounded-full border border-[#FF7A1A]/40 bg-[#FF7A1A]/10 text-xs font-mono text-[#FF7A1A] hover:bg-[#FF7A1A]/20 transition-colors"
-              >
-                <Swords className="size-3" /> Enter 1v1 Arena
-              </Link>
-            ) : (
-              <div className="flex items-center gap-3">
-                <Link
-                  href="/login"
-                  className="text-xs font-medium text-white/70 hover:text-white transition-colors hidden sm:inline-block"
-                >
-                  Log in
-                </Link>
-                <Link
-                  href="/signup"
-                  className="inline-flex items-center justify-center h-8 px-3.5 rounded-full bg-[#FF7A1A] text-black font-semibold text-xs transition-opacity hover:opacity-90"
-                >
-                  Sign up
-                </Link>
-              </div>
-            )}
-          </div>
-        </div>
-      </header>
+      {/* ── Unified CodeComplex Navigation Bar ──────────────────────────────────────── */}
+      <PublicNavbar />
 
       {/* ── Hero / Intro ─────────────────────────────────── */}
       <main className="flex-1 mx-auto max-w-6xl w-full px-6 py-10 space-y-8">

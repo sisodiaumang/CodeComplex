@@ -3,8 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { ArrowLeft, Mail, AlertTriangle, ShieldCheck, Check, Send } from "lucide-react";
-import { LogoMark } from "@/components/logo";
-import { ThemeToggle } from "@/components/ThemeToggle";
+import { PublicNavbar } from "@/components/PublicNavbar";
 
 export default function ContactPage() {
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
@@ -18,30 +17,7 @@ export default function ContactPage() {
 
   return (
     <div className="min-h-screen bg-[#0B0B0C] text-[#EFEDE8] selection:bg-[#FF7A1A] selection:text-[#0B0B0C] font-sans antialiased">
-      {/* Header */}
-      <header className="sticky top-0 z-50 border-b border-white/[0.08] bg-[#0B0B0C]/85 backdrop-blur-md">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 h-16">
-          <Link href="/" className="flex items-center gap-2.5 font-bold text-base tracking-tight text-white hover:opacity-90 transition-opacity">
-            <LogoMark size={24} />
-            <span>Code<span className="text-[#FF7A1A]">Complex</span></span>
-          </Link>
-          <div className="flex items-center gap-4">
-            <ThemeToggle className="text-white/70 hover:text-white" />
-            <Link
-              href="/login"
-              className="text-xs font-medium text-white/70 hover:text-white transition-colors hidden sm:inline-block"
-            >
-              Log in
-            </Link>
-            <Link
-              href="/signup"
-              className="inline-flex items-center justify-center h-8 px-3.5 rounded-full border border-white/20 text-xs font-mono tracking-wider uppercase text-white/80 hover:text-white hover:border-white/40 transition-colors"
-            >
-              Sign up
-            </Link>
-          </div>
-        </div>
-      </header>
+      <PublicNavbar />
 
       {/* Main Content */}
       <main className="mx-auto max-w-4xl px-6 py-14 space-y-12">
