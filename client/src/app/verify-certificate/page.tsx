@@ -432,6 +432,16 @@ function CertificateVerifierContent() {
                 {/* Signatures & Verification Authority */}
                 <div className="pt-6 border-t border-white/[0.08] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
                   <div>
+                    {certificate.signatoryName === "Pawan Singh" && (
+                      <div className="mb-1.5">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src="/signature_pawan_white.png"
+                          alt="Pawan Singh Signature"
+                          className="h-9 object-contain opacity-95"
+                        />
+                      </div>
+                    )}
                     <div className="font-bold text-white text-base">
                       {certificate.signatoryName || "Umang Sisodia"}
                     </div>
