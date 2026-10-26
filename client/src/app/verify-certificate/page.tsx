@@ -99,8 +99,7 @@ function CertificateVerifierContent() {
 
   const copyVerificationLink = () => {
     if (!certificate) return;
-    const origin = typeof window !== "undefined" ? window.location.origin : "https://codecomplex.site";
-    const url = `${origin}/verify-certificate?id=${encodeURIComponent(certificate.certificateId)}`;
+    const url = `https://codecomplex.site/verify-certificate?id=${certificate.certificateId}`;
     navigator.clipboard.writeText(url);
     setCopied(true);
     setTimeout(() => setCopied(false), 2500);
@@ -125,60 +124,60 @@ function CertificateVerifierContent() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0B0B0C] text-[#EFEDE8] selection:bg-[#FF7A1A] selection:text-[#0B0B0C] font-sans antialiased">
+    <div className="min-h-screen bg-bg text-text selection:bg-primary selection:text-white font-sans antialiased flex flex-col">
       <PublicNavbar />
 
       {/* ── Main Content ────────────────────────────────────────────────── */}
-      <main className="mx-auto max-w-4xl px-4 sm:px-6 py-10 sm:py-14 space-y-10">
+      <main className="flex-1 mx-auto max-w-4xl w-full px-4 sm:px-6 py-8 sm:py-12 space-y-8">
         {/* Back Link & Header Title */}
         <div className="space-y-4 no-print">
           <Link
             href={isAuthenticated ? "/battle" : "/"}
-            className="inline-flex items-center gap-1.5 text-xs font-mono tracking-wider uppercase text-white/50 hover:text-white transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs font-mono tracking-wider uppercase text-text-muted hover:text-text transition-colors"
           >
             <ArrowLeft className="size-3.5" /> Back to arena
           </Link>
 
           <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[#FF7A1A]/30 bg-[#FF7A1A]/10 text-[#FF7A1A] text-xs font-mono">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/30 bg-primary-subtle text-primary text-xs font-mono font-medium">
               <ShieldCheck className="size-3.5" />
-              <span>OFFICIAL REGISTRY ? NO SIGNUP REQUIRED</span>
+              <span>OFFICIAL REGISTRY • NO SIGNUP REQUIRED</span>
             </div>
-            <h1 className="text-3xl sm:text-5xl font-bold tracking-tight text-white leading-tight">
+            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-text leading-tight">
               Internship Certificate Verification
             </h1>
-            <p className="text-sm sm:text-base text-white/60 max-w-2xl leading-relaxed">
+            <p className="text-sm sm:text-base text-text-muted max-w-2xl leading-relaxed">
               Verify the authenticity of credentials and software engineering internship completions issued by CodeComplex. Anyone, including recruiters, hiring managers, and academic institutions, can independently validate legitimacy in real time.
             </p>
           </div>
         </div>
 
         {/* ── Search Input Box ────────────────────────────────────────── */}
-        <div className="p-6 sm:p-8 rounded-2xl border border-white/[0.08] bg-white/[0.02] shadow-2xl space-y-5 no-print">
+        <div className="p-6 sm:p-8 rounded-2xl border border-border bg-surface shadow-xs space-y-5 no-print">
           <form onSubmit={handleSubmit} className="space-y-4">
-            <label htmlFor="certId" className="block text-xs font-mono uppercase tracking-wider text-white/70">
+            <label htmlFor="certId" className="block text-xs font-mono uppercase tracking-wider text-text-muted">
               Enter Certificate ID / Credential Code
             </label>
             <div className="flex flex-col sm:flex-row gap-3">
               <div className="relative flex-1">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-white/40 pointer-events-none" />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-text-faint pointer-events-none" />
                 <input
                   id="certId"
                   type="text"
                   value={searchId}
                   onChange={(e) => setSearchId(e.target.value.toUpperCase())}
                   placeholder="e.g. CC-INT-2026-001"
-                  className="w-full h-12 pl-12 pr-4 rounded-xl border border-white/15 bg-black/40 text-white placeholder:text-white/30 text-sm sm:text-base font-mono tracking-wide focus:outline-none focus:border-[#FF7A1A] focus:ring-1 focus:ring-[#FF7A1A] transition-all"
+                  className="w-full h-12 pl-12 pr-4 rounded-xl border border-border bg-surface-2 text-text placeholder:text-text-faint text-sm sm:text-base font-mono tracking-wide focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
                 />
               </div>
               <button
                 type="submit"
                 disabled={loading}
-                className="h-12 px-7 rounded-xl bg-[#FF7A1A] hover:bg-[#FF9040] text-black font-semibold text-sm transition-all disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-2 shrink-0 cursor-pointer shadow-lg shadow-[#FF7A1A]/20"
+                className="h-12 px-7 rounded-xl bg-primary hover:bg-primary-hover text-white font-semibold text-sm transition-all disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-2 shrink-0 cursor-pointer shadow-sm"
               >
                 {loading ? (
                   <>
-                    <span className="size-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                    <span className="size-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                     <span>Verifying...</span>
                   </>
                 ) : (
@@ -193,7 +192,7 @@ function CertificateVerifierContent() {
 
           {/* Quick Demo Samples */}
           <div className="pt-2 flex flex-wrap items-center gap-2 text-xs">
-            <span className="text-white/40 font-mono">Try sample:</span>
+            <span className="text-text-faint font-mono">Try sample:</span>
             {SAMPLE_IDS.map((sample) => (
               <button
                 key={sample.id}
@@ -202,10 +201,10 @@ function CertificateVerifierContent() {
                   setSearchId(sample.id);
                   executeVerify(sample.id);
                 }}
-                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg border border-white/10 bg-white/[0.04] text-white/70 hover:text-white hover:border-[#FF7A1A]/50 hover:bg-[#FF7A1A]/5 font-mono text-[11px] transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg border border-border bg-surface-2 text-text-muted hover:text-text hover:border-primary/50 hover:bg-primary-subtle font-mono text-[11px] transition-colors cursor-pointer"
               >
                 <span>{sample.id}</span>
-                <span className="text-white/30">({sample.label})</span>
+                <span className="text-text-faint">({sample.label})</span>
               </button>
             ))}
           </div>
@@ -213,18 +212,18 @@ function CertificateVerifierContent() {
 
         {/* ── Error / Not Found State ──────────────────────────────────── */}
         {error && !loading && (
-          <div className="p-6 rounded-2xl border border-red-500/30 bg-red-500/[0.06] text-red-200 space-y-3 animate-in fade-in duration-300">
-            <div className="flex items-center gap-2.5 text-red-400 font-bold text-base">
+          <div className="p-6 rounded-2xl border border-danger/30 bg-danger/10 text-danger space-y-3 animate-in fade-in duration-300">
+            <div className="flex items-center gap-2.5 font-bold text-base">
               <ShieldAlert className="size-6 shrink-0" />
               <span>Certificate Not Found or Invalid</span>
             </div>
-            <p className="text-xs sm:text-sm text-red-200/80 leading-relaxed">
+            <p className="text-xs sm:text-sm text-text-muted leading-relaxed">
               {error}
             </p>
-            <div className="pt-2 border-t border-red-500/20 text-xs text-red-300/70 space-y-1">
-              <p>• Make sure the certificate ID is typed accurately (e.g., <code className="font-mono text-red-200">CC-INT-2026-001</code>).</p>
+            <div className="pt-2 border-t border-danger/20 text-xs text-text-faint space-y-1">
+              <p>• Make sure the certificate ID is typed accurately (e.g., <code className="font-mono text-text">CC-INT-2026-001</code>).</p>
               <p>• Only official internship certificates issued by CodeComplex can be verified here.</p>
-              <p>• If you believe this is in error, please contact <a href="mailto:support@codecomplex.site" className="underline hover:text-white">support@codecomplex.site</a>.</p>
+              <p>• If you believe this is in error, please contact <a href="mailto:support@codecomplex.site" className="underline text-primary hover:underline">support@codecomplex.site</a>.</p>
             </div>
           </div>
         )}
@@ -236,18 +235,18 @@ function CertificateVerifierContent() {
             <div
               className={`p-4 sm:p-5 rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${
                 certificate.status === "VALID"
-                  ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-300 shadow-lg shadow-emerald-500/5"
+                  ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 shadow-sm"
                   : certificate.status === "REVOKED"
-                  ? "border-red-500/40 bg-red-500/10 text-red-300"
-                  : "border-amber-500/40 bg-amber-500/10 text-amber-300"
+                  ? "border-red-500/40 bg-red-500/10 text-red-600 dark:text-red-400"
+                  : "border-amber-500/40 bg-amber-500/10 text-amber-600 dark:text-amber-400"
               }`}
             >
               <div className="flex items-center gap-3.5">
                 <div
                   className={`size-11 rounded-xl flex items-center justify-center shrink-0 ${
                     certificate.status === "VALID"
-                      ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
-                      : "bg-red-500/20 text-red-400 border border-red-500/30"
+                      ? "bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30"
+                      : "bg-red-500/20 text-red-600 dark:text-red-400 border border-red-500/30"
                   }`}
                 >
                   {certificate.status === "VALID" ? (
@@ -258,7 +257,7 @@ function CertificateVerifierContent() {
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="font-bold text-base sm:text-lg text-white">
+                    <span className="font-bold text-base sm:text-lg text-text">
                       {certificate.status === "VALID"
                         ? "Officially Verified & Authentic"
                         : certificate.status === "REVOKED"
@@ -268,14 +267,14 @@ function CertificateVerifierContent() {
                     <span
                       className={`text-[10px] font-mono uppercase px-2 py-0.5 rounded-full border ${
                         certificate.status === "VALID"
-                          ? "bg-emerald-400/20 border-emerald-400/30 text-emerald-300"
-                          : "bg-red-400/20 border-red-400/30 text-red-300"
+                          ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-600 dark:text-emerald-400"
+                          : "bg-red-500/20 border-red-500/30 text-red-600 dark:text-red-400"
                       }`}
                     >
                       {certificate.status}
                     </span>
                   </div>
-                  <p className="text-xs text-white/60">
+                  <p className="text-xs text-text-muted">
                     Verified from the official CodeComplex registry on{" "}
                     {new Date().toLocaleDateString("en-US", {
                       month: "short",
@@ -291,17 +290,17 @@ function CertificateVerifierContent() {
                 <button
                   type="button"
                   onClick={copyVerificationLink}
-                  className="h-9 px-3.5 rounded-xl border border-white/15 bg-white/[0.04] hover:bg-white/[0.08] text-white/80 hover:text-white text-xs font-medium transition-colors flex items-center gap-1.5 cursor-pointer"
+                  className="h-9 px-3.5 rounded-xl border border-border bg-surface hover:bg-surface-2 text-text text-xs font-medium transition-colors flex items-center gap-1.5 cursor-pointer shadow-xs"
                   title="Copy shareable verification link"
                 >
-                  {copied ? <Check className="size-3.5 text-emerald-400" /> : <Copy className="size-3.5" />}
+                  {copied ? <Check className="size-3.5 text-emerald-500" /> : <Copy className="size-3.5" />}
                   <span>{copied ? "Link Copied!" : "Copy Link"}</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={handlePrint}
-                  className="h-9 px-3.5 rounded-xl border border-white/15 bg-white/[0.04] hover:bg-white/[0.08] text-white/80 hover:text-white text-xs font-medium transition-colors flex items-center gap-1.5 cursor-pointer"
+                  className="h-9 px-3.5 rounded-xl border border-border bg-surface hover:bg-surface-2 text-text text-xs font-medium transition-colors flex items-center gap-1.5 cursor-pointer shadow-xs"
                   title="Print or save PDF of verified credential"
                 >
                   <Printer className="size-3.5" />
@@ -312,38 +311,38 @@ function CertificateVerifierContent() {
 
             {/* Revocation Warning Box if Revoked */}
             {certificate.status === "REVOKED" && certificate.revocationReason && (
-              <div className="p-4 rounded-xl border border-red-500/30 bg-red-500/[0.05] text-xs text-red-300 space-y-1">
-                <span className="font-bold uppercase tracking-wider text-red-400">Reason for Revocation:</span>
+              <div className="p-4 rounded-xl border border-red-500/30 bg-red-500/[0.05] text-xs text-red-600 dark:text-red-300 space-y-1">
+                <span className="font-bold uppercase tracking-wider text-red-500">Reason for Revocation:</span>
                 <p>{certificate.revocationReason}</p>
               </div>
             )}
 
             {/* Official Credential Document / Plaque */}
-            <div className="relative rounded-3xl border border-white/15 bg-[#101014] p-8 sm:p-12 overflow-hidden shadow-2xl printable-certificate">
+            <div className="relative rounded-3xl border border-border bg-surface p-8 sm:p-12 overflow-hidden shadow-xl printable-certificate">
               {/* Background Watermark Pattern */}
-              <div className="absolute -right-16 -bottom-16 size-80 rounded-full bg-[#FF7A1A]/[0.03] blur-3xl pointer-events-none" />
-              <div className="absolute top-0 right-0 p-8 opacity-[0.04] pointer-events-none">
+              <div className="absolute -right-16 -bottom-16 size-80 rounded-full bg-primary/5 blur-3xl pointer-events-none" />
+              <div className="absolute top-0 right-0 p-8 opacity-[0.03] dark:opacity-[0.06] pointer-events-none">
                 <LogoMark size={220} />
               </div>
 
               <div className="relative space-y-8">
                 {/* Header Section */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 border-b border-white/[0.08] pb-8">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 border-b border-border pb-8">
                   <div className="flex items-center gap-3">
                     <LogoMark size={36} />
                     <div>
-                      <span className="text-xl font-bold tracking-tight text-white">
-                        Code<span className="text-[#FF7A1A]">Complex</span>
+                      <span className="text-xl font-bold tracking-tight text-text">
+                        Code<span className="text-primary">Complex</span>
                       </span>
-                      <p className="text-[11px] font-mono uppercase tracking-widest text-white/40">
-                        Engineering Division ? Official Registry
+                      <p className="text-[11px] font-mono uppercase tracking-widest text-text-faint">
+                        Engineering Division • Official Registry
                       </p>
                     </div>
                   </div>
 
                   <div className="text-left sm:text-right">
-                    <div className="text-[11px] font-mono uppercase tracking-wider text-white/40">Credential ID</div>
-                    <div className="text-base sm:text-lg font-mono font-bold text-[#FF7A1A] tracking-wider">
+                    <div className="text-[11px] font-mono uppercase tracking-wider text-text-faint">Credential ID</div>
+                    <div className="text-base sm:text-lg font-mono font-bold text-primary tracking-wider">
                       {certificate.certificateId}
                     </div>
                   </div>
@@ -351,30 +350,30 @@ function CertificateVerifierContent() {
 
                 {/* Plaque Title */}
                 <div className="text-center space-y-2 py-2">
-                  <span className="text-xs font-mono uppercase tracking-[0.25em] text-[#FF7A1A]">
+                  <span className="text-xs font-mono uppercase tracking-[0.25em] text-primary font-bold">
                     Official Certificate of Completion
                   </span>
-                  <h2 className="text-2xl sm:text-4xl font-bold tracking-tight text-white">
+                  <h2 className="text-2xl sm:text-4xl font-bold tracking-tight text-text">
                     Software Engineering Internship
                   </h2>
-                  <p className="text-xs sm:text-sm text-white/50 font-mono">
+                  <p className="text-xs sm:text-sm text-text-muted font-mono">
                     Issued by CodeComplex Global Engineering Platform
                   </p>
                 </div>
 
                 {/* Recipient Details */}
-                <div className="text-center py-4 space-y-2 border-y border-white/[0.06] bg-white/[0.01] rounded-2xl">
-                  <span className="text-xs font-mono uppercase tracking-wider text-white/40">
+                <div className="text-center py-5 space-y-2 border-y border-border bg-surface-2 rounded-2xl">
+                  <span className="text-xs font-mono uppercase tracking-wider text-text-faint">
                     This is proudly presented to
                   </span>
-                  <div className="text-3xl sm:text-5xl font-extrabold tracking-tight text-white">
+                  <div className="text-3xl sm:text-5xl font-extrabold tracking-tight text-text">
                     {certificate.recipientName}
                   </div>
-                  <div className="text-sm sm:text-base font-medium text-[#FF7A1A]">
-                    {certificate.role} ? {certificate.domain}
+                  <div className="text-sm sm:text-base font-semibold text-primary">
+                    {certificate.role} • {certificate.domain}
                   </div>
                   {certificate.grade && (
-                    <div className="inline-block mt-2 px-3 py-1 rounded-full border border-[#FF7A1A]/30 bg-[#FF7A1A]/10 text-xs font-mono font-semibold text-[#FF7A1A]">
+                    <div className="inline-block mt-2 px-3 py-1 rounded-full border border-primary/30 bg-primary-subtle text-xs font-mono font-semibold text-primary">
                       {certificate.grade}
                     </div>
                   )}
@@ -382,10 +381,10 @@ function CertificateVerifierContent() {
 
                 {/* Scope Description */}
                 <div className="space-y-3">
-                  <span className="text-xs font-mono uppercase tracking-wider text-white/40">
+                  <span className="text-xs font-mono uppercase tracking-wider text-text-faint">
                     Program Scope & Deliverables
                   </span>
-                  <p className="text-sm sm:text-base text-white/70 leading-relaxed">
+                  <p className="text-sm sm:text-base text-text-muted leading-relaxed">
                     {certificate.description}
                   </p>
                 </div>
@@ -393,14 +392,14 @@ function CertificateVerifierContent() {
                 {/* Key Skills & Competencies Verified */}
                 {certificate.skills && certificate.skills.length > 0 && (
                   <div className="space-y-3">
-                    <span className="text-xs font-mono uppercase tracking-wider text-white/40">
+                    <span className="text-xs font-mono uppercase tracking-wider text-text-faint">
                       Verified Technical Competencies
                     </span>
                     <div className="flex flex-wrap gap-2">
                       {certificate.skills.map((skill) => (
                         <span
                           key={skill}
-                          className="px-3 py-1 rounded-lg border border-white/10 bg-white/[0.03] text-white/80 text-xs font-mono"
+                          className="px-3 py-1 rounded-lg border border-border bg-surface-2 text-text text-xs font-mono"
                         >
                           {skill}
                         </span>
@@ -410,58 +409,64 @@ function CertificateVerifierContent() {
                 )}
 
                 {/* Metadata Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 border-t border-white/[0.08] text-xs">
-                  <div className="p-3.5 rounded-xl border border-white/[0.06] bg-white/[0.02] space-y-1">
-                    <span className="font-mono text-white/40 uppercase block">Duration</span>
-                    <span className="font-semibold text-white">{certificate.duration}</span>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 border-t border-border text-xs">
+                  <div className="p-3.5 rounded-xl border border-border bg-surface-2 space-y-1">
+                    <span className="font-mono text-text-faint uppercase block">Duration</span>
+                    <span className="font-semibold text-text">{certificate.duration}</span>
                   </div>
 
-                  <div className="p-3.5 rounded-xl border border-white/[0.06] bg-white/[0.02] space-y-1">
-                    <span className="font-mono text-white/40 uppercase block">Internship Period</span>
-                    <span className="font-semibold text-white">
+                  <div className="p-3.5 rounded-xl border border-border bg-surface-2 space-y-1">
+                    <span className="font-mono text-text-faint uppercase block">Internship Period</span>
+                    <span className="font-semibold text-text">
                       {formatDate(certificate.startDate)} — {formatDate(certificate.endDate)}
                     </span>
                   </div>
 
-                  <div className="p-3.5 rounded-xl border border-white/[0.06] bg-white/[0.02] space-y-1">
-                    <span className="font-mono text-white/40 uppercase block">Issue Date</span>
-                    <span className="font-semibold text-white">{formatDate(certificate.issueDate)}</span>
+                  <div className="p-3.5 rounded-xl border border-border bg-surface-2 space-y-1">
+                    <span className="font-mono text-text-faint uppercase block">Issue Date</span>
+                    <span className="font-semibold text-text">{formatDate(certificate.issueDate)}</span>
                   </div>
                 </div>
 
                 {/* Signatures & Verification Authority */}
-                <div className="pt-6 border-t border-white/[0.08] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+                <div className="pt-6 border-t border-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
                   <div>
                     {certificate.signatoryName === "Pawan Singh" && (
                       <div className="mb-1.5">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
+                          src="/signature_pawan.png"
+                          alt="Pawan Singh Signature"
+                          className="h-9 object-contain dark:hidden"
+                        />
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
                           src="/signature_pawan_white.png"
                           alt="Pawan Singh Signature"
-                          className="h-9 object-contain opacity-95"
+                          className="h-9 object-contain hidden dark:block opacity-95"
                         />
                       </div>
                     )}
-                    <div className="font-bold text-white text-base">
+                    <div className="font-bold text-text text-base">
                       {certificate.signatoryName || "Umang Sisodia"}
                     </div>
-                    <div className="text-xs text-white/50 font-mono">
+                    <div className="text-xs text-text-muted font-mono">
                       {certificate.signatoryTitle || "Founding Director & Lead Architect"}
                     </div>
-                    <div className="text-[11px] text-[#FF7A1A]/80 font-mono mt-0.5">
+                    <div className="text-[11px] text-primary font-mono mt-0.5">
                       {certificate.issuer || "CodeComplex Engineering Division"}
                     </div>
                   </div>
 
                   <div className="text-left sm:text-right space-y-1">
-                    <div className="inline-flex items-center gap-1.5 text-xs text-emerald-400 font-mono font-medium">
+                    <div className="inline-flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400 font-mono font-medium">
                       <CheckCircle2 className="size-3.5" />
                       <span>Tamper-Proof Registry Record</span>
                     </div>
-                    <div className="text-[11px] text-white/40 font-mono">
+                    <div className="text-[11px] text-text-muted font-mono">
                       Total Verifications: {certificate.verificationCount || 1}
                     </div>
-                    <div className="text-[10px] text-white/30 font-mono">
+                    <div className="text-[10px] text-text-faint font-mono">
                       https://codecomplex.site/verify-certificate?id={certificate.certificateId}
                     </div>
                   </div>
@@ -475,94 +480,62 @@ function CertificateVerifierContent() {
         {!certificate && !error && !loading && (
           <div className="space-y-10 pt-4">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="p-6 rounded-2xl border border-white/[0.08] bg-white/[0.02] space-y-3">
-                <div className="size-10 rounded-xl bg-[#FF7A1A]/10 border border-[#FF7A1A]/20 text-[#FF7A1A] flex items-center justify-center">
+              <div className="p-6 rounded-2xl border border-border bg-surface shadow-xs space-y-3">
+                <div className="size-10 rounded-xl bg-primary-subtle border border-primary/20 text-primary flex items-center justify-center">
                   <ShieldCheck className="size-5" />
                 </div>
-                <h3 className="font-bold text-white text-base">Instant Public Validation</h3>
-                <p className="text-xs text-white/60 leading-relaxed">
+                <h3 className="font-bold text-text text-base">Instant Public Validation</h3>
+                <p className="text-xs text-text-muted leading-relaxed">
                   Anyone can confirm validity without logging in, signing up, or waiting for manual confirmation.
                 </p>
               </div>
 
-              <div className="p-6 rounded-2xl border border-white/[0.08] bg-white/[0.02] space-y-3">
-                <div className="size-10 rounded-xl bg-[#FF7A1A]/10 border border-[#FF7A1A]/20 text-[#FF7A1A] flex items-center justify-center">
+              <div className="p-6 rounded-2xl border border-border bg-surface shadow-xs space-y-3">
+                <div className="size-10 rounded-xl bg-primary-subtle border border-primary/20 text-primary flex items-center justify-center">
                   <Cpu className="size-5" />
                 </div>
-                <h3 className="font-bold text-white text-base">Rigorous Technical Bar</h3>
-                <p className="text-xs text-white/60 leading-relaxed">
+                <h3 className="font-bold text-text text-base">Rigorous Technical Bar</h3>
+                <p className="text-xs text-text-muted leading-relaxed">
                   Interns at CodeComplex build real-time socket clusters, container sandboxes, and competitive engineering features.
                 </p>
               </div>
 
-              <div className="p-6 rounded-2xl border border-white/[0.08] bg-white/[0.02] space-y-3">
-                <div className="size-10 rounded-xl bg-[#FF7A1A]/10 border border-[#FF7A1A]/20 text-[#FF7A1A] flex items-center justify-center">
+              <div className="p-6 rounded-2xl border border-border bg-surface shadow-xs space-y-3">
+                <div className="size-10 rounded-xl bg-primary-subtle border border-primary/20 text-primary flex items-center justify-center">
                   <Layers className="size-5" />
                 </div>
-                <h3 className="font-bold text-white text-base">Tamper-Proof Registry</h3>
-                <p className="text-xs text-white/60 leading-relaxed">
-                  Unique serial codes map directly to immutable database records with live audit stamps and revocation tracking.
+                <h3 className="font-bold text-text text-base">Multi-Tier Honors</h3>
+                <p className="text-xs text-text-muted leading-relaxed">
+                  Credentials reflect verified work, distinction tiers (Honors / Top 10%), and verifiable code contribution histories.
                 </p>
               </div>
             </div>
 
-            <div className="p-6 rounded-2xl border border-white/[0.06] bg-white/[0.01] flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="p-8 rounded-3xl border border-border bg-surface-2 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
               <div className="space-y-1">
-                <h4 className="text-sm font-semibold text-white">Are you an employer or recruiter?</h4>
-                <p className="text-xs text-white/50">
-                  Every internship candidate receives a unique Certificate ID printed on their credentials. Enter it above to see full performance metrics.
+                <h4 className="font-bold text-text text-base">Are you a recruiter or hiring manager?</h4>
+                <p className="text-xs text-text-muted max-w-xl leading-relaxed">
+                  Every CodeComplex internship candidate passes through our live competitive sandboxes. Enter their credential ID above to verify their project scope, dates, and evaluated performance.
                 </p>
               </div>
-              <button
-                type="button"
-                onClick={() => {
-                  setSearchId("CC-INT-2026-001");
-                  executeVerify("CC-INT-2026-001");
-                }}
-                className="h-9 px-4 rounded-xl border border-[#FF7A1A]/40 bg-[#FF7A1A]/10 text-[#FF7A1A] hover:bg-[#FF7A1A]/20 text-xs font-mono transition-colors shrink-0 cursor-pointer"
+              <Link
+                href="/battle"
+                className="inline-flex items-center justify-center h-10 px-5 rounded-xl bg-primary hover:bg-primary-hover text-white font-semibold text-xs transition-colors shrink-0 shadow-xs"
               >
-                Inspect Sample Credential
-              </button>
+                Explore Arena
+              </Link>
             </div>
           </div>
         )}
       </main>
 
-      {/* ── Footer ──────────────────────────────────────────────────────── */}
-      <footer className="border-t border-white/[0.08] bg-[#0B0B0C] py-8 text-center text-xs text-white/40 mt-16 no-print">
-        <div className="mx-auto max-w-6xl px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <span>© {new Date().getFullYear()} CodeComplex. Official Internship Credential Registry.</span>
-          <span>Built by Umang Sisodia</span>
+      {/* ── Footer ───────────────────────────────────────── */}
+      <footer className="border-t border-border bg-surface py-8 text-center text-xs text-text-muted mt-12 no-print">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <span>© {new Date().getFullYear()} CodeComplex. Official Engineering Credentials & Audits.</span>
+          <span>Credential ID format: CC-INT-YYYY-XXXX</span>
         </div>
       </footer>
-
-      {/* Print Styles */}
-      <style jsx global>{`
-        @media print {
-          body {
-            background: #ffffff !important;
-            color: #000000 !important;
-          }
-          .no-print {
-            display: none !important;
-          }
-          .printable-certificate {
-            background: #ffffff !important;
-            color: #000000 !important;
-            border: 2px solid #000000 !important;
-            box-shadow: none !important;
-            margin: 0 !important;
-            padding: 24px !important;
-          }
-          .printable-certificate * {
-            color: #000000 !important;
-            text-shadow: none !important;
-          }
-          .printable-certificate .text-\\[\\#FF7A1A\\] {
-            color: #d9531e !important;
-          }
-        }
-      `}</style>
     </div>
   );
 }
@@ -571,11 +544,8 @@ export default function VerifyCertificatePage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-[#0B0B0C] flex items-center justify-center text-white">
-          <div className="flex items-center gap-3 text-sm font-mono text-white/60">
-            <span className="size-4 border-2 border-[#FF7A1A] border-t-transparent rounded-full animate-spin" />
-            <span>Loading CodeComplex Registry...</span>
-          </div>
+        <div className="min-h-screen bg-bg text-text flex items-center justify-center">
+          <div className="animate-spin size-8 border-2 border-primary border-t-transparent rounded-full" />
         </div>
       }
     >

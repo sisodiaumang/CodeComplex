@@ -16,51 +16,51 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0B0B0C] text-[#EFEDE8] selection:bg-[#FF7A1A] selection:text-[#0B0B0C] font-sans antialiased">
+    <div className="min-h-screen bg-bg text-text selection:bg-primary selection:text-white font-sans antialiased flex flex-col">
       <PublicNavbar />
 
       {/* Main Content */}
-      <main className="mx-auto max-w-4xl px-6 py-14 space-y-12">
+      <main className="flex-1 mx-auto max-w-4xl w-full px-6 py-14 space-y-12">
         <div className="space-y-4">
           <Link
             href="/"
-            className="inline-flex items-center gap-1.5 text-xs font-mono tracking-wider uppercase text-white/50 hover:text-white transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs font-mono tracking-wider uppercase text-text-muted hover:text-text transition-colors"
           >
             <ArrowLeft className="size-3.5" /> Back to arena
           </Link>
           <div className="space-y-2">
-            <span className="text-[11px] font-mono tracking-widest uppercase text-[#FF7A1A]">
+            <span className="text-[11px] font-mono tracking-widest uppercase text-primary font-semibold">
               &#123; Contact & Support &#125;
             </span>
-            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-white flex items-center gap-3">
-              <Mail className="size-8 text-[#FF7A1A]" />
+            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-text flex items-center gap-3">
+              <Mail className="size-8 text-primary" />
               Get in Touch
             </h1>
           </div>
-          <p className="text-sm text-white/60">
+          <p className="text-sm text-text-muted">
             Have questions, feedback, security disclosures, or need matchmaking support?
           </p>
         </div>
 
-        <hr className="border-white/[0.08]" />
+        <hr className="border-border" />
 
         <div className="grid gap-8 md:grid-cols-[1.4fr_1fr]">
           {/* Contact Form */}
-          <div className="p-6 rounded-2xl border border-white/[0.08] bg-white/[0.02]">
-            <h2 className="text-base font-bold text-white mb-4">Send a Message</h2>
+          <div className="p-6 rounded-2xl border border-border bg-surface shadow-xs">
+            <h2 className="text-base font-bold text-text mb-4">Send a Message</h2>
             {submitted ? (
               <div className="flex flex-col items-center justify-center py-10 space-y-3 text-center">
-                <div className="size-10 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-400">
+                <div className="size-10 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500">
                   <Check className="size-5" />
                 </div>
-                <h3 className="text-sm font-bold text-white">Message Dispatched!</h3>
-                <p className="text-xs text-white/60 max-w-xs">
+                <h3 className="text-sm font-bold text-text">Message Dispatched!</h3>
+                <p className="text-xs text-text-muted max-w-xs">
                   Thank you for reaching out. We will review your inquiry and follow up shortly.
                 </p>
                 <button
                   type="button"
                   onClick={() => setSubmitted(false)}
-                  className="mt-3 px-4 py-1.5 rounded-full border border-white/20 text-xs font-mono text-white/80 hover:text-white transition-colors"
+                  className="mt-3 px-4 py-1.5 rounded-full border border-border bg-surface-2 text-xs font-mono text-text hover:bg-surface-3 transition-colors cursor-pointer"
                 >
                   Send another message
                 </button>
@@ -69,24 +69,24 @@ export default function ContactPage() {
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="space-y-1.5">
-                    <label htmlFor="name" className="text-[10px] font-mono tracking-wider uppercase text-white/60">Name</label>
+                    <label htmlFor="name" className="text-[10px] font-mono tracking-wider uppercase text-text-muted">Name</label>
                     <input
                       id="name"
                       type="text"
                       required
-                      className="w-full h-10 px-3.5 rounded-xl border border-white/[0.08] bg-white/[0.03] text-white text-xs focus:outline-none focus:border-[#FF7A1A] transition-colors"
+                      className="w-full h-10 px-3.5 rounded-xl border border-border bg-surface-2 text-text text-xs focus:outline-none focus:border-primary transition-colors"
                       value={form.name}
                       onChange={(e) => setForm({ ...form, name: e.target.value })}
                       placeholder="Jane Doe"
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label htmlFor="email" className="text-[10px] font-mono tracking-wider uppercase text-white/60">Email</label>
+                    <label htmlFor="email" className="text-[10px] font-mono tracking-wider uppercase text-text-muted">Email</label>
                     <input
                       id="email"
                       type="email"
                       required
-                      className="w-full h-10 px-3.5 rounded-xl border border-white/[0.08] bg-white/[0.03] text-white text-xs focus:outline-none focus:border-[#FF7A1A] transition-colors"
+                      className="w-full h-10 px-3.5 rounded-xl border border-border bg-surface-2 text-text text-xs focus:outline-none focus:border-primary transition-colors"
                       value={form.email}
                       onChange={(e) => setForm({ ...form, email: e.target.value })}
                       placeholder="jane@example.com"
@@ -94,32 +94,32 @@ export default function ContactPage() {
                   </div>
                 </div>
                 <div className="space-y-1.5">
-                  <label htmlFor="subject" className="text-[10px] font-mono tracking-wider uppercase text-white/60">Subject</label>
+                  <label htmlFor="subject" className="text-[10px] font-mono tracking-wider uppercase text-text-muted">Subject</label>
                   <input
                     id="subject"
                     type="text"
                     required
-                    className="w-full h-10 px-3.5 rounded-xl border border-white/[0.08] bg-white/[0.03] text-white text-xs focus:outline-none focus:border-[#FF7A1A] transition-colors"
+                    className="w-full h-10 px-3.5 rounded-xl border border-border bg-surface-2 text-text text-xs focus:outline-none focus:border-primary transition-colors"
                     value={form.subject}
                     onChange={(e) => setForm({ ...form, subject: e.target.value })}
-                    placeholder="Bug report, feedback, match issue..."
+                    placeholder="Matchmaking appeal / general question"
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label htmlFor="message" className="text-[10px] font-mono tracking-wider uppercase text-white/60">Message</label>
+                  <label htmlFor="message" className="text-[10px] font-mono tracking-wider uppercase text-text-muted">Message</label>
                   <textarea
                     id="message"
                     required
-                    rows={5}
-                    className="w-full p-3.5 rounded-xl border border-white/[0.08] bg-white/[0.03] text-white text-xs focus:outline-none focus:border-[#FF7A1A] transition-colors resize-none"
+                    rows={4}
+                    className="w-full p-3.5 rounded-xl border border-border bg-surface-2 text-text text-xs focus:outline-none focus:border-primary transition-colors resize-none"
                     value={form.message}
                     onChange={(e) => setForm({ ...form, message: e.target.value })}
-                    placeholder="Provide details or match codes..."
+                    placeholder="Details about your inquiry..."
                   />
                 </div>
                 <button
                   type="submit"
-                  className="inline-flex items-center gap-2 h-10 px-5 rounded-full bg-[#FF7A1A] text-[#0B0B0C] text-xs font-bold hover:bg-[#FF9040] transition-colors cursor-pointer"
+                  className="inline-flex items-center gap-2 h-10 px-5 rounded-full bg-primary text-white text-xs font-bold hover:bg-primary-hover transition-colors cursor-pointer shadow-xs"
                 >
                   <Send className="size-3.5" />
                   Submit Message
@@ -130,38 +130,38 @@ export default function ContactPage() {
 
           {/* Direct channels */}
           <div className="space-y-4">
-            <div className="p-5 rounded-2xl border border-white/[0.08] bg-white/[0.02] space-y-2">
-              <div className="flex items-center gap-2 text-[#FF7A1A]">
+            <div className="p-5 rounded-2xl border border-border bg-surface space-y-2 shadow-xs">
+              <div className="flex items-center gap-2 text-primary">
                 <Mail className="size-4" />
-                <h3 className="text-xs font-bold text-white uppercase tracking-wider font-mono">Direct Support</h3>
+                <h3 className="text-xs font-bold text-text uppercase tracking-wider font-mono">Direct Support</h3>
               </div>
-              <p className="text-xs text-white/60 leading-relaxed">
+              <p className="text-xs text-text-muted leading-relaxed">
                 For account verification, appeal requests, or general inquiries:
               </p>
-              <a href="mailto:support@codecomplex.site" className="block text-xs font-mono text-[#FF7A1A] hover:underline">
+              <a href="mailto:support@codecomplex.site" className="block text-xs font-mono text-primary hover:underline">
                 support@codecomplex.site
               </a>
             </div>
 
-            <div className="p-5 rounded-2xl border border-white/[0.08] bg-white/[0.02] space-y-2">
-              <div className="flex items-center gap-2 text-[#FF7A1A]">
+            <div className="p-5 rounded-2xl border border-border bg-surface space-y-2 shadow-xs">
+              <div className="flex items-center gap-2 text-primary">
                 <AlertTriangle className="size-4" />
-                <h3 className="text-xs font-bold text-white uppercase tracking-wider font-mono">Report Violations</h3>
+                <h3 className="text-xs font-bold text-text uppercase tracking-wider font-mono">Report Violations</h3>
               </div>
-              <p className="text-xs text-white/60 leading-relaxed">
+              <p className="text-xs text-text-muted leading-relaxed">
                 Report cheating, bot assistance, or toxic lobby behavior per our{" "}
-                <Link href="/guidelines" className="text-[#FF7A1A] hover:underline font-semibold">
+                <Link href="/guidelines" className="text-primary hover:underline font-semibold">
                   Community Guidelines
                 </Link>.
               </p>
             </div>
 
-            <div className="p-5 rounded-2xl border border-white/[0.08] bg-white/[0.02] space-y-2">
-              <div className="flex items-center gap-2 text-[#FF7A1A]">
+            <div className="p-5 rounded-2xl border border-border bg-surface space-y-2 shadow-xs">
+              <div className="flex items-center gap-2 text-primary">
                 <ShieldCheck className="size-4" />
-                <h3 className="text-xs font-bold text-white uppercase tracking-wider font-mono">Security Reporting</h3>
+                <h3 className="text-xs font-bold text-text uppercase tracking-wider font-mono">Security Reporting</h3>
               </div>
-              <p className="text-xs text-white/60 leading-relaxed">
+              <p className="text-xs text-text-muted leading-relaxed">
                 Responsible disclosure for Docker sandbox boundaries or API vulnerabilities.
               </p>
             </div>
@@ -170,7 +170,7 @@ export default function ContactPage() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-white/[0.08] bg-[#0B0B0C] py-8 text-center text-xs text-white/40">
+      <footer className="border-t border-border bg-surface py-8 text-center text-xs text-text-muted">
         <div className="mx-auto max-w-6xl px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <span>© {new Date().getFullYear()} CodeComplex. Real-time competitive programming.</span>
           <span>Built by Umang Sisodia</span>
@@ -179,4 +179,3 @@ export default function ContactPage() {
     </div>
   );
 }
-

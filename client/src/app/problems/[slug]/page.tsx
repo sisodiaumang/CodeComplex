@@ -31,6 +31,7 @@ import { LogoMark } from "@/components/logo";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Button, Spinner } from "@/components/ui";
 import { useAuth } from "@/stores/auth-store";
+import { useTheme } from "@/stores/theme-store";
 import { API_URL, api } from "@/lib/api";
 
 type SupportedLang = "python" | "cpp" | "javascript" | "java" | "prompt";
@@ -106,6 +107,7 @@ export default function ProblemDetailPage() {
   const router = useRouter();
   const slug = String(params?.slug || "");
   const { user, status } = useAuth();
+  const { resolved: resolvedTheme } = useTheme();
 
   const [question, setQuestion] = useState<QuestionData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -385,26 +387,26 @@ export default function ProblemDetailPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0B0B0C] text-[#EFEDE8] flex flex-col items-center justify-center space-y-4">
-        <Spinner className="size-8" />
-        <p className="text-sm font-mono text-white/50">Loading challenge environment...</p>
+      <div className="min-h-screen bg-bg text-text flex flex-col items-center justify-center space-y-4">
+        <Spinner className="size-8 text-primary" />
+        <p className="text-sm font-mono text-text-muted">Loading challenge environment...</p>
       </div>
     );
   }
 
   if (error || !question) {
     return (
-      <div className="min-h-screen bg-[#0B0B0C] text-[#EFEDE8] flex flex-col items-center justify-center p-6 text-center space-y-4">
-        <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-full text-red-400">
+      <div className="min-h-screen bg-bg text-text flex flex-col items-center justify-center p-6 text-center space-y-4">
+        <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-full text-red-500">
           <XCircle className="size-8" />
         </div>
         <h1 className="text-2xl font-bold">Challenge Not Found</h1>
-        <p className="text-sm text-white/60 max-w-md">
+        <p className="text-sm text-text-muted max-w-md">
           The requested problem could not be located. It may have been archived or renamed.
         </p>
         <Link
           href="/problems"
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-sm font-medium transition-colors cursor-pointer"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-surface border border-border hover:bg-surface-2 text-sm font-medium transition-colors cursor-pointer shadow-xs"
         >
           <ArrowLeft className="size-4" /> Browse Challenge Library
         </Link>
@@ -413,17 +415,17 @@ export default function ProblemDetailPage() {
   }
 
   const difficultyColors = {
-    Easy: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20",
-    Medium: "text-amber-400 bg-amber-500/10 border-amber-500/20",
-    Hard: "text-rose-400 bg-rose-500/10 border-rose-500/20",
+    Easy: "text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border-emerald-500/20",
+    Medium: "text-amber-600 dark:text-amber-400 bg-amber-500/10 border-amber-500/20",
+    Hard: "text-rose-600 dark:text-rose-400 bg-rose-500/10 border-rose-500/20",
   }[question.difficulty];
 
   const modeBadgeStyles: Record<string, { label: string; cls: string; icon: any }> = {
-    DSA: { label: "DSA Algorithm", cls: "text-[#4D8DFF] bg-[#4D8DFF]/10 border-[#4D8DFF]/20", icon: Code2 },
-    BUG_FIX: { label: "Bug Fix Hunter", cls: "text-[#FF5A52] bg-[#FF5A52]/10 border-[#FF5A52]/20", icon: Bug },
-    FRONTEND: { label: "Frontend UI", cls: "text-[#2FCBDB] bg-[#2FCBDB]/10 border-[#2FCBDB]/20", icon: Layout },
-    BACKEND: { label: "Backend API", cls: "text-[#35C46A] bg-[#35C46A]/10 border-[#35C46A]/20", icon: Server },
-    PROMPT_WAR: { label: "AI Prompt War", cls: "text-[#B57BF5] bg-[#B57BF5]/10 border-[#B57BF5]/20", icon: Sparkles },
+    DSA: { label: "DSA Algorithm", cls: "text-blue-600 dark:text-blue-400 bg-blue-500/10 border-blue-500/20", icon: Code2 },
+    BUG_FIX: { label: "Bug Fix Hunter", cls: "text-red-600 dark:text-red-400 bg-red-500/10 border-red-500/20", icon: Bug },
+    FRONTEND: { label: "Frontend UI", cls: "text-cyan-600 dark:text-cyan-400 bg-cyan-500/10 border-cyan-500/20", icon: Layout },
+    BACKEND: { label: "Backend API", cls: "text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border-emerald-500/20", icon: Server },
+    PROMPT_WAR: { label: "AI Prompt War", cls: "text-purple-600 dark:text-purple-400 bg-purple-500/10 border-purple-500/20", icon: Sparkles },
   };
 
   const currentModeInfo = modeBadgeStyles[question.mode?.toUpperCase() || "DSA"] || modeBadgeStyles.DSA;
@@ -436,18 +438,18 @@ export default function ProblemDetailPage() {
   const criteria = question.evaluationCriteria || [];
 
   return (
-    <div className="min-h-screen bg-[#0B0B0C] text-[#EFEDE8] flex flex-col font-sans selection:bg-[#FF7A1A] selection:text-[#0B0B0C]">
+    <div className="min-h-screen bg-bg text-text flex flex-col font-sans selection:bg-primary selection:text-white">
       {/* ── Top Bar ──────────────────────────────────────── */}
-      <header className="h-14 border-b border-white/[0.08] bg-[#0E0E10] px-4 flex items-center justify-between shrink-0 z-20">
+      <header className="h-14 border-b border-border bg-surface px-4 flex items-center justify-between shrink-0 z-20">
         <div className="flex items-center gap-3">
-          <Link href="/problems" className="p-1.5 rounded-md hover:bg-white/5 text-white/60 hover:text-white transition-colors cursor-pointer" title="Back to Library">
+          <Link href="/problems" className="p-1.5 rounded-md hover:bg-surface-2 text-text-muted hover:text-text transition-colors cursor-pointer" title="Back to Library">
             <ArrowLeft className="size-4" />
           </Link>
-          <Link href="/" className="flex items-center gap-2 font-bold text-sm tracking-tight text-white mr-2">
+          <Link href="/" className="flex items-center gap-2 font-bold text-sm tracking-tight text-text mr-2">
             <LogoMark size={22} />
-            <span>Code<span className="text-[#FF7A1A]">Complex</span></span>
+            <span>Code<span className="text-primary">Complex</span></span>
           </Link>
-          <span className="text-white/20 hidden sm:inline">|</span>
+          <span className="text-border hidden sm:inline">|</span>
           <div className="flex items-center gap-2 truncate">
             <span className={`text-[10px] font-mono font-semibold px-2 py-0.5 rounded border uppercase flex items-center gap-1 ${currentModeInfo.cls}`}>
               <ModeIcon className="size-2.5" />
@@ -456,7 +458,7 @@ export default function ProblemDetailPage() {
             <span className={`text-[10px] font-mono font-semibold px-2 py-0.5 rounded border uppercase ${difficultyColors}`}>
               {question.difficulty}
             </span>
-            <span className="text-xs font-semibold text-white truncate max-w-[160px] sm:max-w-xs md:max-w-md">
+            <span className="text-xs font-semibold text-text truncate max-w-[160px] sm:max-w-xs md:max-w-md">
               {question.title}
             </span>
           </div>
@@ -467,32 +469,32 @@ export default function ProblemDetailPage() {
             type="button"
             onClick={handleResetLayout}
             title="Reset Splitter Sizes (50/50)"
-            className="hidden md:flex items-center gap-1 text-[11px] font-mono text-white/40 hover:text-white px-2 py-1 rounded hover:bg-white/5 transition-colors cursor-pointer"
+            className="hidden md:flex items-center gap-1 text-[11px] font-mono text-text-muted hover:text-text px-2 py-1 rounded hover:bg-surface-2 transition-colors cursor-pointer"
           >
             <RotateCcw className="size-3" />
             <span className="hidden lg:inline">Reset Layout</span>
           </button>
 
-          <ThemeToggle className="text-white/60 hover:text-white hidden sm:flex" />
+          <ThemeToggle className="text-text-muted hover:text-text hidden sm:flex" />
 
           {status === "authed" ? (
             <Link
               href="/battle"
-              className="inline-flex items-center gap-1.5 h-8 px-3 rounded-full border border-white/20 text-xs font-mono text-white/80 hover:text-white hover:border-white/40 transition-colors"
+              className="inline-flex items-center gap-1.5 h-8 px-3 rounded-full border border-border text-xs font-mono text-text hover:border-primary hover:text-primary transition-colors bg-surface-2"
             >
-              <Swords className="size-3 text-[#FF7A1A]" /> 1v1 Arena
+              <Swords className="size-3 text-primary" /> 1v1 Arena
             </Link>
           ) : (
             <div className="flex items-center gap-2">
               <Link
                 href="/login"
-                className="text-xs font-medium text-white/70 hover:text-white transition-colors hidden sm:inline-block px-2"
+                className="text-xs font-medium text-text-muted hover:text-text transition-colors hidden sm:inline-block px-2"
               >
                 Log in
               </Link>
               <Link
                 href="/signup"
-                className="inline-flex items-center justify-center h-8 px-3 rounded-full bg-[#FF7A1A] text-black font-semibold text-xs transition-opacity hover:opacity-90"
+                className="inline-flex items-center justify-center h-8 px-3 rounded-lg bg-primary hover:bg-primary-hover text-white font-semibold text-xs transition-colors shadow-xs"
               >
                 Sign up
               </Link>
@@ -509,7 +511,7 @@ export default function ProblemDetailPage() {
         {/* Left Column: Problem Statement & Details */}
         <div
           style={{ width: `${leftWidth}%` }}
-          className="w-full lg:w-[var(--left-w)] flex flex-col border-b lg:border-b-0 border-white/[0.08] bg-[#0B0B0C] overflow-y-auto shrink-0"
+          className="w-full lg:w-[var(--left-w)] flex flex-col border-b lg:border-b-0 border-border bg-surface overflow-y-auto shrink-0"
         >
           <div className="p-6 space-y-6 max-w-2xl">
             {/* Meta tags */}
@@ -522,38 +524,38 @@ export default function ProblemDetailPage() {
                 <span className={`text-[11px] font-mono font-semibold px-2.5 py-0.5 rounded-full border uppercase ${difficultyColors}`}>
                   {question.difficulty}
                 </span>
-                <span className="text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-white/5 border border-white/10 text-white/70">
+                <span className="text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-surface-2 border border-border text-text-muted">
                   {question.category}
                 </span>
                 {question.metadata?.estimatedTime && (
-                  <span className="text-[11px] font-mono text-white/40 flex items-center gap-1">
+                  <span className="text-[11px] font-mono text-text-muted flex items-center gap-1">
                     <Clock className="size-3" /> {question.metadata.estimatedTime}m
                   </span>
                 )}
               </div>
-              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
+              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-text">
                 {question.title}
               </h1>
             </div>
 
-            <hr className="border-white/[0.08]" />
+            <hr className="border-border" />
 
             {/* Mode-specific guidance banner */}
             {question.mode === "BUG_FIX" && (
-              <div className="p-3.5 rounded-xl border border-red-500/20 bg-red-500/5 text-xs text-red-300 leading-relaxed flex items-start gap-2.5">
-                <Bug className="size-4 shrink-0 text-red-400 mt-0.5" />
+              <div className="p-3.5 rounded-xl border border-red-500/20 bg-red-500/5 text-xs text-red-600 dark:text-red-300 leading-relaxed flex items-start gap-2.5">
+                <Bug className="size-4 shrink-0 text-red-500 mt-0.5" />
                 <div>
-                  <strong className="text-red-400 font-semibold block mb-0.5">Bug Fix Challenge:</strong>
+                  <strong className="text-red-500 font-semibold block mb-0.5">Bug Fix Challenge:</strong>
                   The starter code contains broken logic, regressions, or edge-case bugs. Diagnose the failure and modify the code until all test cases return green!
                 </div>
               </div>
             )}
 
             {question.mode === "PROMPT_WAR" && (
-              <div className="p-3.5 rounded-xl border border-purple-500/20 bg-purple-500/5 text-xs text-purple-300 leading-relaxed flex items-start gap-2.5">
-                <Sparkles className="size-4 shrink-0 text-purple-400 mt-0.5" />
+              <div className="p-3.5 rounded-xl border border-purple-500/20 bg-purple-500/5 text-xs text-purple-600 dark:text-purple-300 leading-relaxed flex items-start gap-2.5">
+                <Sparkles className="size-4 shrink-0 text-purple-500 mt-0.5" />
                 <div>
-                  <strong className="text-purple-400 font-semibold block mb-0.5">AI Prompt War Scenario:</strong>
+                  <strong className="text-purple-500 font-semibold block mb-0.5">AI Prompt War Scenario:</strong>
                   Craft a robust system prompt that guides an LLM to fulfill the scenario, adhere to schema, and satisfy all evaluation criteria under adversarial testing.
                 </div>
               </div>
@@ -562,19 +564,19 @@ export default function ProblemDetailPage() {
             {/* Endpoints specification (for Backend mode) */}
             {endpoints.length > 0 && (
               <div className="space-y-3 pt-1">
-                <h3 className="text-xs font-mono font-semibold uppercase tracking-wider text-[#35C46A] flex items-center gap-1.5">
+                <h3 className="text-xs font-mono font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
                   <Server className="size-3.5" /> API Endpoints Required
                 </h3>
                 <div className="space-y-2">
                   {endpoints.map((ep, idx) => (
-                    <div key={idx} className="rounded-xl border border-white/[0.08] bg-white/[0.02] p-3 font-mono text-xs flex items-center justify-between">
+                    <div key={idx} className="rounded-xl border border-border bg-surface-2 p-3 font-mono text-xs flex items-center justify-between">
                       <div className="flex items-center gap-2.5">
-                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${ep.method === "GET" ? "bg-blue-500/20 text-blue-400" : ep.method === "POST" ? "bg-emerald-500/20 text-emerald-400" : "bg-amber-500/20 text-amber-400"}`}>
+                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${ep.method === "GET" ? "bg-blue-500/20 text-blue-500" : ep.method === "POST" ? "bg-emerald-500/20 text-emerald-500" : "bg-amber-500/20 text-amber-500"}`}>
                           {ep.method}
                         </span>
-                        <span className="text-white font-semibold">{ep.path}</span>
+                        <span className="text-text font-semibold">{ep.path}</span>
                       </div>
-                      {ep.description && <span className="text-[11px] text-white/50">{ep.description}</span>}
+                      {ep.description && <span className="text-[11px] text-text-muted">{ep.description}</span>}
                     </div>
                   ))}
                 </div>
@@ -584,14 +586,14 @@ export default function ProblemDetailPage() {
             {/* Evaluation Criteria (for Prompt War mode) */}
             {criteria.length > 0 && (
               <div className="space-y-3 pt-1">
-                <h3 className="text-xs font-mono font-semibold uppercase tracking-wider text-[#B57BF5] flex items-center gap-1.5">
+                <h3 className="text-xs font-mono font-semibold uppercase tracking-wider text-purple-600 dark:text-purple-400 flex items-center gap-1.5">
                   <Sparkles className="size-3.5" /> Evaluation Criteria
                 </h3>
-                <ul className="space-y-2 font-mono text-xs text-white/80 list-disc list-inside bg-white/[0.02] p-3 rounded-xl border border-white/[0.06]">
+                <ul className="space-y-2 font-mono text-xs text-text list-disc list-inside bg-surface-2 p-3 rounded-xl border border-border">
                   {criteria.map((cr, idx) => (
                     <li key={idx} className="leading-relaxed">
-                      <span className="text-purple-300 font-semibold">{cr.name || `Rule ${idx + 1}`}: </span>
-                      <span className="text-white/70">{cr.description}</span>
+                      <span className="text-purple-600 dark:text-purple-300 font-semibold">{cr.name || `Rule ${idx + 1}`}: </span>
+                      <span className="text-text-muted">{cr.description}</span>
                     </li>
                   ))}
                 </ul>
@@ -599,15 +601,15 @@ export default function ProblemDetailPage() {
             )}
 
             {/* Problem Statement Body */}
-            <div className="space-y-4 text-sm leading-relaxed text-white/80">
+            <div className="space-y-4 text-sm leading-relaxed text-text">
               <div className="whitespace-pre-line font-sans">
                 {question.statement?.markdown}
               </div>
 
               {question.statement?.inputFormat && (
                 <div className="space-y-1.5 pt-2">
-                  <h3 className="text-xs font-mono font-semibold uppercase tracking-wider text-white/50">Input Format</h3>
-                  <p className="text-xs font-mono bg-white/[0.02] p-2.5 rounded-lg border border-white/[0.06] text-white/70 whitespace-pre-line">
+                  <h3 className="text-xs font-mono font-semibold uppercase tracking-wider text-text-faint">Input Format</h3>
+                  <p className="text-xs font-mono bg-surface-2 p-2.5 rounded-lg border border-border text-text whitespace-pre-line">
                     {question.statement.inputFormat}
                   </p>
                 </div>
@@ -615,8 +617,8 @@ export default function ProblemDetailPage() {
 
               {question.statement?.outputFormat && (
                 <div className="space-y-1.5 pt-1">
-                  <h3 className="text-xs font-mono font-semibold uppercase tracking-wider text-white/50">Output Format</h3>
-                  <p className="text-xs font-mono bg-white/[0.02] p-2.5 rounded-lg border border-white/[0.06] text-white/70 whitespace-pre-line">
+                  <h3 className="text-xs font-mono font-semibold uppercase tracking-wider text-text-faint">Output Format</h3>
+                  <p className="text-xs font-mono bg-surface-2 p-2.5 rounded-lg border border-border text-text whitespace-pre-line">
                     {question.statement.outputFormat}
                   </p>
                 </div>
@@ -626,25 +628,25 @@ export default function ProblemDetailPage() {
             {/* Examples */}
             {examples.length > 0 && (
               <div className="space-y-3.5 pt-2">
-                <h3 className="text-xs font-mono font-semibold uppercase tracking-wider text-[#FF7A1A]">
+                <h3 className="text-xs font-mono font-semibold uppercase tracking-wider text-primary">
                   Examples
                 </h3>
                 <div className="space-y-3">
                   {examples.map((ex, idx) => (
-                    <div key={idx} className="rounded-xl border border-white/[0.08] bg-white/[0.02] p-3.5 space-y-2 font-mono text-xs">
-                      <div className="font-semibold text-white/60 text-[11px]">Example {idx + 1}:</div>
+                    <div key={idx} className="rounded-xl border border-border bg-surface-2 p-3.5 space-y-2 font-mono text-xs">
+                      <div className="font-semibold text-text-muted text-[11px]">Example {idx + 1}:</div>
                       <div className="space-y-1.5">
-                        <div className="bg-black/40 p-2 rounded border border-white/[0.04]">
-                          <span className="text-white/40">Input: </span>
-                          <span className="text-white/90">{ex.input}</span>
+                        <div className="bg-bg p-2 rounded border border-border">
+                          <span className="text-text-faint">Input: </span>
+                          <span className="text-text">{ex.input}</span>
                         </div>
-                        <div className="bg-black/40 p-2 rounded border border-white/[0.04]">
-                          <span className="text-white/40">Output: </span>
-                          <span className="text-emerald-400 font-bold">{ex.output}</span>
+                        <div className="bg-bg p-2 rounded border border-border">
+                          <span className="text-text-faint">Output: </span>
+                          <span className="text-emerald-600 dark:text-emerald-400 font-bold">{ex.output}</span>
                         </div>
                         {ex.explanation && (
-                          <div className="text-[11px] text-white/50 pt-1 font-sans">
-                            <span className="font-semibold text-white/70">Explanation: </span>
+                          <div className="text-[11px] text-text-muted pt-1 font-sans">
+                            <span className="font-semibold text-text">Explanation: </span>
                             {ex.explanation}
                           </div>
                         )}
@@ -658,10 +660,10 @@ export default function ProblemDetailPage() {
             {/* Constraints */}
             {constraints.length > 0 && (
               <div className="space-y-2.5 pt-2">
-                <h3 className="text-xs font-mono font-semibold uppercase tracking-wider text-white/50">
+                <h3 className="text-xs font-mono font-semibold uppercase tracking-wider text-text-faint">
                   Constraints
                 </h3>
-                <ul className="space-y-1.5 font-mono text-xs text-white/70 list-disc list-inside bg-white/[0.02] p-3 rounded-xl border border-white/[0.06]">
+                <ul className="space-y-1.5 font-mono text-xs text-text-muted list-disc list-inside bg-surface-2 p-3 rounded-xl border border-border">
                   {constraints.map((c, idx) => {
                     const str = typeof c === "string" ? c : `${c.variable || ""}: ${c.description || `${c.min !== undefined ? `${c.min} ≤ ` : ""}${c.variable || ""}${c.max !== undefined ? ` ≤ ${c.max}` : ""}`}`;
                     return <li key={idx}>{str}</li>;
@@ -673,27 +675,27 @@ export default function ProblemDetailPage() {
             {/* Hints (Accordion) */}
             {hints.length > 0 && (
               <div className="space-y-2 pt-2">
-                <h3 className="text-xs font-mono font-semibold uppercase tracking-wider text-white/50">
+                <h3 className="text-xs font-mono font-semibold uppercase tracking-wider text-text-faint">
                   Hints
                 </h3>
                 <div className="space-y-1.5">
                   {hints.map((hint, idx) => {
                     const isOpen = openHint === idx;
                     return (
-                      <div key={idx} className="rounded-lg border border-white/[0.08] bg-white/[0.02] overflow-hidden">
+                      <div key={idx} className="rounded-lg border border-border bg-surface-2 overflow-hidden">
                         <button
                           type="button"
                           onClick={() => setOpenHint(isOpen ? null : idx)}
-                          className="w-full flex items-center justify-between p-2.5 text-xs font-mono text-left text-white/80 hover:text-white cursor-pointer"
+                          className="w-full flex items-center justify-between p-2.5 text-xs font-mono text-left text-text hover:text-primary cursor-pointer"
                         >
                           <span className="flex items-center gap-2">
-                            <HelpCircle className="size-3.5 text-[#FF7A1A]" />
+                            <HelpCircle className="size-3.5 text-primary" />
                             Hint {hint.order || idx + 1}
                           </span>
-                          {isOpen ? <ChevronUp className="size-3.5 text-white/40" /> : <ChevronDown className="size-3.5 text-white/40" />}
+                          {isOpen ? <ChevronUp className="size-3.5 text-text-faint" /> : <ChevronDown className="size-3.5 text-text-faint" />}
                         </button>
                         {isOpen && (
-                          <div className="px-3 pb-3 pt-1 text-xs text-white/60 border-t border-white/[0.06] bg-white/[0.01]">
+                          <div className="px-3 pb-3 pt-1 text-xs text-text-muted border-t border-border bg-surface">
                             {hint.text}
                           </div>
                         )}
@@ -705,11 +707,11 @@ export default function ProblemDetailPage() {
             )}
 
             {/* Solo Practice Callout */}
-            <div className="p-4 rounded-xl border border-[#FF7A1A]/20 bg-[#FF7A1A]/5 space-y-2">
-              <div className="flex items-center gap-2 text-xs font-semibold text-[#FF7A1A]">
+            <div className="p-4 rounded-xl border border-primary/20 bg-primary-subtle space-y-2">
+              <div className="flex items-center gap-2 text-xs font-semibold text-primary">
                 <Zap className="size-4" /> Free Solo Sandbox
               </div>
-              <p className="text-xs text-white/60 leading-relaxed">
+              <p className="text-xs text-text-muted leading-relaxed">
                 Test and execute your code in our isolated Docker environment without signing up. Log in when you want to officially submit, climb the Elo ratings, and benchmark against other developers.
               </p>
             </div>
@@ -719,40 +721,40 @@ export default function ProblemDetailPage() {
         {/* ── Vertical Resizer (Left-Right Splitter) ─────── */}
         <div
           onMouseDown={handleMouseDownLeft}
-          className="hidden lg:flex w-2 hover:w-2.5 bg-transparent hover:bg-[#FF7A1A]/40 transition-all cursor-col-resize shrink-0 relative z-30 self-stretch items-center justify-center group select-none"
+          className="hidden lg:flex w-2 hover:w-2.5 bg-transparent hover:bg-primary/30 transition-all cursor-col-resize shrink-0 relative z-30 self-stretch items-center justify-center group select-none"
           title="Drag to resize problem / editor split"
         >
-          <div className="w-[2px] h-8 bg-white/20 group-hover:bg-[#FF7A1A] rounded-full transition-colors" />
+          <div className="w-[2px] h-8 bg-border group-hover:bg-primary rounded-full transition-colors" />
         </div>
 
         {/* Right Column: Code Editor Workspace */}
         <div
           ref={rightWorkspaceRef}
           style={{ width: `calc(${100 - leftWidth}% - 8px)` }}
-          className="w-full flex-1 flex flex-col bg-[#08090D] overflow-hidden min-w-[300px]"
+          className="w-full flex-1 flex flex-col bg-bg overflow-hidden min-w-[300px]"
         >
           {/* Editor Header */}
-          <div className="h-10 border-b border-white/[0.08] bg-[#0E0E12] px-4 flex items-center justify-between shrink-0 select-none">
+          <div className="h-10 border-b border-border bg-surface px-4 flex items-center justify-between shrink-0 select-none">
             <div className="flex items-center gap-2">
-              <Code2 className="size-3.5 text-white/40" />
+              <Code2 className="size-3.5 text-text-muted" />
               {question.mode === "PROMPT_WAR" ? (
-                <span className="text-xs font-mono text-purple-400 font-semibold">Prompt Template</span>
+                <span className="text-xs font-mono text-purple-600 dark:text-purple-400 font-semibold">Prompt Template</span>
               ) : (
                 <select
                   value={selectedLang}
                   onChange={(e) => handleLangChange(e.target.value as SupportedLang)}
-                  className="bg-transparent border-0 text-xs font-mono font-medium text-white focus:outline-none cursor-pointer"
+                  className="bg-transparent border-0 text-xs font-mono font-medium text-text focus:outline-none cursor-pointer"
                 >
-                  <option value="python" className="bg-[#141416] text-white">Python 3</option>
-                  <option value="cpp" className="bg-[#141416] text-white">C++ (GCC 20)</option>
-                  <option value="javascript" className="bg-[#141416] text-white">JavaScript (Node 20)</option>
-                  <option value="java" className="bg-[#141416] text-white">Java (OpenJDK 21)</option>
+                  <option value="python" className="bg-surface text-text">Python 3</option>
+                  <option value="cpp" className="bg-surface text-text">C++ (GCC 20)</option>
+                  <option value="javascript" className="bg-surface text-text">JavaScript (Node 20)</option>
+                  <option value="java" className="bg-surface text-text">Java (OpenJDK 21)</option>
                 </select>
               )}
             </div>
 
             <div className="flex items-center gap-3">
-              <span className="text-[10px] font-mono text-white/30 hidden sm:inline">
+              <span className="text-[10px] font-mono text-text-faint hidden sm:inline">
                 Docker Linux Sandbox
               </span>
             </div>
@@ -763,7 +765,7 @@ export default function ProblemDetailPage() {
             <Editor
               height="100%"
               language={selectedLang === "cpp" ? "cpp" : selectedLang === "python" ? "python" : selectedLang === "java" ? "java" : selectedLang === "prompt" ? "markdown" : "javascript"}
-              theme="vs-dark"
+              theme={resolvedTheme === "light" ? "light" : "vs-dark"}
               value={code}
               onChange={(val) => setCode(val || "")}
               options={{
@@ -781,31 +783,31 @@ export default function ProblemDetailPage() {
           {/* ── Horizontal Resizer (Editor-Console Splitter) ── */}
           <div
             onMouseDown={handleMouseDownBottom}
-            className="hidden md:flex h-2 hover:h-2.5 bg-transparent hover:bg-[#FF7A1A]/40 transition-all cursor-row-resize shrink-0 relative z-30 w-full items-center justify-center group select-none"
+            className="hidden md:flex h-2 hover:h-2.5 bg-transparent hover:bg-primary/30 transition-all cursor-row-resize shrink-0 relative z-30 w-full items-center justify-center group select-none"
             title="Drag to resize console drawer"
           >
-            <div className="h-[2px] w-8 bg-white/20 group-hover:bg-[#FF7A1A] rounded-full transition-colors" />
+            <div className="h-[2px] w-8 bg-border group-hover:bg-primary rounded-full transition-colors" />
           </div>
 
           {/* Bottom Execution & Console Panel */}
           <div
             style={{ height: `${bottomHeight}px` }}
-            className="border-t border-white/[0.08] bg-[#0B0B0E] flex flex-col shrink-0 overflow-hidden select-none"
+            className="border-t border-border bg-surface flex flex-col shrink-0 overflow-hidden select-none"
           >
             {/* Panel Tabs */}
-            <div className="h-9 px-4 border-b border-white/[0.08] bg-[#0E0E12] flex items-center justify-between shrink-0">
+            <div className="h-9 px-4 border-b border-border bg-surface-2 flex items-center justify-between shrink-0">
               <div className="flex items-center gap-3">
                 <button
                   type="button"
                   onClick={() => setActiveTab("examples")}
-                  className={`text-[11px] font-mono font-medium tracking-wider uppercase transition-colors cursor-pointer ${activeTab === "examples" ? "text-[#FF7A1A] border-b-2 border-[#FF7A1A] py-2" : "text-white/40 hover:text-white"}`}
+                  className={`text-[11px] font-mono font-medium tracking-wider uppercase transition-colors cursor-pointer ${activeTab === "examples" ? "text-primary border-b-2 border-primary py-2 font-bold" : "text-text-muted hover:text-text"}`}
                 >
                   Sample Cases
                 </button>
                 <button
                   type="button"
                   onClick={() => setActiveTab("console")}
-                  className={`text-[11px] font-mono font-medium tracking-wider uppercase flex items-center gap-1.5 transition-colors cursor-pointer ${activeTab === "console" ? "text-[#FF7A1A] border-b-2 border-[#FF7A1A] py-2" : "text-white/40 hover:text-white"}`}
+                  className={`text-[11px] font-mono font-medium tracking-wider uppercase flex items-center gap-1.5 transition-colors cursor-pointer ${activeTab === "console" ? "text-primary border-b-2 border-primary py-2 font-bold" : "text-text-muted hover:text-text"}`}
                 >
                   <Terminal className="size-3" /> Console Output
                 </button>
@@ -814,11 +816,11 @@ export default function ProblemDetailPage() {
               {runResults && (
                 <div className="text-[11px] font-mono flex items-center gap-1.5">
                   {runResults.every((r) => r.passed) ? (
-                    <span className="text-emerald-400 flex items-center gap-1">
+                    <span className="text-emerald-600 dark:text-emerald-400 flex items-center gap-1 font-semibold">
                       <CheckCircle2 className="size-3" /> All Samples Passed
                     </span>
                   ) : (
-                    <span className="text-rose-400 flex items-center gap-1">
+                    <span className="text-rose-600 dark:text-rose-400 flex items-center gap-1 font-semibold">
                       <XCircle className="size-3" /> Some Cases Failed
                     </span>
                   )}
@@ -838,7 +840,7 @@ export default function ProblemDetailPage() {
                             key={i}
                             type="button"
                             onClick={() => setActiveSampleIndex(i)}
-                            className={`px-2.5 py-1 rounded text-[11px] transition-colors cursor-pointer ${activeSampleIndex === i ? "bg-white/10 text-white font-semibold" : "bg-white/5 text-white/40 hover:text-white"}`}
+                            className={`px-2.5 py-1 rounded text-[11px] transition-colors cursor-pointer ${activeSampleIndex === i ? "bg-primary text-white font-semibold" : "bg-surface-3 text-text-muted hover:text-text"}`}
                           >
                             Case {i + 1}
                           </button>
@@ -848,19 +850,19 @@ export default function ProblemDetailPage() {
                       {examples[activeSampleIndex] && (
                         <div className="space-y-1.5 text-xs">
                           <div>
-                            <span className="text-white/40">Input: </span>
-                            <span className="text-white/90">{examples[activeSampleIndex].input}</span>
+                            <span className="text-text-faint">Input: </span>
+                            <span className="text-text font-medium">{examples[activeSampleIndex].input}</span>
                           </div>
                           <div>
-                            <span className="text-white/40">Expected: </span>
-                            <span className="text-emerald-400">{examples[activeSampleIndex].output}</span>
+                            <span className="text-text-faint">Expected: </span>
+                            <span className="text-emerald-600 dark:text-emerald-400 font-bold">{examples[activeSampleIndex].output}</span>
                           </div>
                         </div>
                       )}
                     </>
                   ) : (
-                    <div className="text-white/40 py-2">
-                      Review the challenge specification and constraints on the left, then click <strong className="text-white">Run Code</strong> to test in sandbox.
+                    <div className="text-text-muted py-2">
+                      Review the challenge specification and constraints on the left, then click <strong className="text-text">Run Code</strong> to test in sandbox.
                     </div>
                   )}
                 </div>
@@ -869,13 +871,13 @@ export default function ProblemDetailPage() {
               {activeTab === "console" && (
                 <div className="space-y-2">
                   {isRunning ? (
-                    <div className="flex items-center gap-2 text-white/50 py-4">
+                    <div className="flex items-center gap-2 text-text-muted py-4">
                       <Spinner className="size-4" />
                       <span>Compiling and running sample test cases...</span>
                     </div>
                   ) : compileError ? (
-                    <div className="p-2.5 bg-rose-500/10 border border-rose-500/20 rounded text-rose-300 whitespace-pre-wrap leading-relaxed">
-                      <div className="font-bold flex items-center gap-1.5 mb-1 text-rose-400">
+                    <div className="p-2.5 bg-rose-500/10 border border-rose-500/20 rounded text-rose-600 dark:text-rose-300 whitespace-pre-wrap leading-relaxed">
+                      <div className="font-bold flex items-center gap-1.5 mb-1 text-rose-600 dark:text-rose-400">
                         <XCircle className="size-3.5" /> Compilation / Execution Error:
                       </div>
                       {compileError}
@@ -885,26 +887,26 @@ export default function ProblemDetailPage() {
                       {runResults.map((res) => (
                         <div
                           key={res.testCaseIndex}
-                          className={`p-2.5 rounded border ${res.passed ? "bg-emerald-500/5 border-emerald-500/20 text-emerald-300" : "bg-rose-500/5 border-rose-500/20 text-rose-300"}`}
+                          className={`p-2.5 rounded border ${res.passed ? "bg-emerald-500/5 border-emerald-500/20 text-emerald-600 dark:text-emerald-300" : "bg-rose-500/5 border-rose-500/20 text-rose-600 dark:text-rose-300"}`}
                         >
                           <div className="flex items-center justify-between mb-1 text-[11px] font-bold">
                             <span className="flex items-center gap-1.5">
-                              {res.passed ? <CheckCircle2 className="size-3.5 text-emerald-400" /> : <XCircle className="size-3.5 text-rose-400" />}
+                              {res.passed ? <CheckCircle2 className="size-3.5 text-emerald-600 dark:text-emerald-400" /> : <XCircle className="size-3.5 text-rose-600 dark:text-rose-400" />}
                               Case {res.testCaseIndex} — {res.passed ? "Passed" : "Wrong Answer"}
                             </span>
-                            <span className="text-white/40 font-normal">{res.time}</span>
+                            <span className="text-text-faint font-normal">{res.time}</span>
                           </div>
-                          <div className="text-[11px] space-y-0.5 text-white/80">
-                            <div><span className="text-white/40">Input: </span>{res.input}</div>
-                            <div><span className="text-white/40">Expected: </span><span className="text-emerald-400">{res.expectedOutput}</span></div>
-                            <div><span className="text-white/40">Actual: </span><span className={res.passed ? "text-emerald-400" : "text-rose-400"}>{res.actualOutput || "(empty)"}</span></div>
+                          <div className="text-[11px] space-y-0.5 text-text">
+                            <div><span className="text-text-faint">Input: </span>{res.input}</div>
+                            <div><span className="text-text-faint">Expected: </span><span className="text-emerald-600 dark:text-emerald-400 font-semibold">{res.expectedOutput}</span></div>
+                            <div><span className="text-text-faint">Actual: </span><span className={res.passed ? "text-emerald-600 dark:text-emerald-400 font-semibold" : "text-rose-600 dark:text-rose-400 font-semibold"}>{res.actualOutput || "(empty)"}</span></div>
                           </div>
                         </div>
                       ))}
                     </div>
                   ) : (
-                    <div className="text-white/40 py-2">
-                      Click <strong className="text-white">Run Code</strong> to test your solution against visible sample cases without logging in.
+                    <div className="text-text-muted py-2">
+                      Click <strong className="text-text">Run Code</strong> to test your solution against visible sample cases without logging in.
                     </div>
                   )}
                 </div>
@@ -912,9 +914,9 @@ export default function ProblemDetailPage() {
             </div>
 
             {/* Bottom Action Bar */}
-            <div className="h-12 border-t border-white/[0.08] bg-[#0E0E12] px-4 flex items-center justify-between shrink-0">
-              <span className="text-[11px] font-mono text-white/40">
-                {status === "authed" ? `Logged in as @${user?.username}` : "Guest Mode · Free Solo Practice"}
+            <div className="h-12 border-t border-border bg-surface px-4 flex items-center justify-between shrink-0">
+              <span className="text-[11px] font-mono text-text-muted">
+                {status === "authed" ? `Logged in as @${user?.username}` : "Guest Mode • Free Solo Practice"}
               </span>
 
               <div className="flex items-center gap-2">
@@ -923,9 +925,9 @@ export default function ProblemDetailPage() {
                   onClick={handleRunSample}
                   disabled={isRunning}
                   variant="outline"
-                  className="h-8 px-3 text-xs font-mono border-white/20 hover:bg-white/5 cursor-pointer"
+                  className="h-8 px-3 text-xs font-mono border-border bg-surface-2 hover:bg-surface-3 text-text cursor-pointer"
                 >
-                  {isRunning ? <Spinner className="size-3.5 mr-1.5" /> : <Play className="size-3.5 mr-1.5 text-emerald-400 fill-emerald-400" />}
+                  {isRunning ? <Spinner className="size-3.5 mr-1.5" /> : <Play className="size-3.5 mr-1.5 text-emerald-600 dark:text-emerald-400 fill-emerald-600 dark:fill-emerald-400" />}
                   Run Code
                 </Button>
 
@@ -933,7 +935,7 @@ export default function ProblemDetailPage() {
                   type="button"
                   onClick={handleSubmit}
                   disabled={isSubmitting}
-                  className="h-8 px-4 text-xs font-mono font-bold bg-[#FF7A1A] hover:bg-[#FF9040] text-black border-0 cursor-pointer"
+                  className="h-8 px-4 text-xs font-mono font-bold bg-primary hover:bg-primary-hover text-white border-0 cursor-pointer shadow-xs"
                 >
                   {isSubmitting ? (
                     <Spinner className="size-3.5 mr-1.5" />
@@ -952,28 +954,28 @@ export default function ProblemDetailPage() {
 
       {/* ── Login-Gated Submission Modal ─────────────────── */}
       {showAuthModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="w-full max-w-md rounded-2xl border border-white/[0.12] bg-[#121215] p-6 shadow-2xl space-y-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
+          <div className="w-full max-w-md rounded-2xl border border-border bg-surface p-6 shadow-2xl space-y-6">
             <div className="space-y-2 text-center">
-              <div className="mx-auto size-12 rounded-full bg-[#FF7A1A]/10 border border-[#FF7A1A]/20 flex items-center justify-center text-[#FF7A1A]">
+              <div className="mx-auto size-12 rounded-full bg-primary-subtle border border-primary/20 flex items-center justify-center text-primary">
                 <Lock className="size-6" />
               </div>
-              <h2 className="text-xl font-bold text-white tracking-tight">
+              <h2 className="text-xl font-bold text-text tracking-tight">
                 Log In to Submit Solution
               </h2>
-              <p className="text-xs text-white/60 leading-relaxed max-w-xs mx-auto">
+              <p className="text-xs text-text-muted leading-relaxed max-w-xs mx-auto">
                 You can practice and test sample cases for free. To officially submit, verify hidden stress cases, and climb the global Elo rating ladder, please sign in.
               </p>
             </div>
 
-            <div className="p-3.5 rounded-xl border border-white/[0.06] bg-white/[0.02] space-y-2 text-xs font-mono text-white/70">
-              <div className="flex items-center gap-2 text-emerald-400">
+            <div className="p-3.5 rounded-xl border border-border bg-surface-2 space-y-2 text-xs font-mono text-text">
+              <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400">
                 <CheckCircle2 className="size-3.5" /> Run against full hidden test suite
               </div>
-              <div className="flex items-center gap-2 text-emerald-400">
+              <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400">
                 <CheckCircle2 className="size-3.5" /> Earn Elo rating points & unlock badges
               </div>
-              <div className="flex items-center gap-2 text-emerald-400">
+              <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400">
                 <CheckCircle2 className="size-3.5" /> Add problem to SuperMemo-2 revision queue
               </div>
             </div>
@@ -981,20 +983,20 @@ export default function ProblemDetailPage() {
             <div className="flex flex-col gap-2.5 pt-2">
               <Link
                 href={`/login?redirect=/problems/${encodeURIComponent(slug)}`}
-                className="w-full h-10 rounded-full bg-[#FF7A1A] hover:bg-[#FF9040] text-black font-bold text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                className="w-full h-10 rounded-full bg-primary hover:bg-primary-hover text-white font-bold text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-xs"
               >
                 <LogIn className="size-4" /> Log In
               </Link>
               <Link
                 href={`/signup?redirect=/problems/${encodeURIComponent(slug)}`}
-                className="w-full h-10 rounded-full border border-white/20 hover:border-white/40 text-white font-medium text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                className="w-full h-10 rounded-full border border-border hover:bg-surface-2 text-text font-medium text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
               >
                 <UserPlus className="size-4" /> Create Free Account
               </Link>
               <button
                 type="button"
                 onClick={() => setShowAuthModal(false)}
-                className="text-xs text-white/40 hover:text-white pt-1 transition-colors cursor-pointer"
+                className="text-xs text-text-muted hover:text-text pt-1 transition-colors cursor-pointer"
               >
                 Continue practicing without submitting
               </button>

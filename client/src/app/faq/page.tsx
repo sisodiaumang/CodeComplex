@@ -72,38 +72,38 @@ export default function FAQPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0B0B0C] text-[#EFEDE8] selection:bg-[#FF7A1A] selection:text-[#0B0B0C] font-sans antialiased">
+    <div className="min-h-screen bg-bg text-text selection:bg-primary selection:text-white font-sans antialiased flex flex-col">
       <PublicNavbar />
 
       {/* Main Content */}
-      <main className="mx-auto max-w-3xl px-6 py-14 space-y-12">
+      <main className="flex-1 mx-auto max-w-3xl w-full px-6 py-14 space-y-12">
         <div className="space-y-4">
           <Link
             href="/"
-            className="inline-flex items-center gap-1.5 text-xs font-mono tracking-wider uppercase text-white/50 hover:text-white transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs font-mono tracking-wider uppercase text-text-muted hover:text-text transition-colors"
           >
             <ArrowLeft className="size-3.5" /> Back to arena
           </Link>
           <div className="space-y-2">
-            <span className="text-[11px] font-mono tracking-widest uppercase text-[#FF7A1A]">
+            <span className="text-[11px] font-mono tracking-widest uppercase text-primary font-semibold">
               &#123; Frequently Asked Questions &#125;
             </span>
-            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-white flex items-center gap-3">
-              <HelpCircle className="size-8 text-[#FF7A1A]" />
+            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-text flex items-center gap-3">
+              <HelpCircle className="size-8 text-primary" />
               FAQ & Platform Guide
             </h1>
           </div>
-          <p className="text-sm text-white/60">
+          <p className="text-sm text-text-muted">
             Everything you need to know about matchmaking, sandboxing, Elo ratings, and fair play.
           </p>
         </div>
 
-        <hr className="border-white/[0.08]" />
+        <hr className="border-border" />
 
         <div className="space-y-10">
           {FAQ_LIST.map((group, groupIdx) => (
             <div key={groupIdx} className="space-y-3.5">
-              <h2 className="text-[11px] font-mono tracking-wider uppercase text-[#FF7A1A] border-b border-white/[0.08] pb-2">
+              <h2 className="text-[11px] font-mono tracking-wider uppercase text-primary font-bold border-b border-border pb-2">
                 {group.category}
               </h2>
               <div className="space-y-2.5">
@@ -113,21 +113,21 @@ export default function FAQPage() {
                   return (
                     <div
                       key={faqIdx}
-                      className="rounded-xl border border-white/[0.08] bg-white/[0.02] overflow-hidden transition-colors hover:border-white/[0.16]"
+                      className="rounded-xl border border-border bg-surface overflow-hidden transition-colors hover:border-border-strong shadow-xs"
                     >
                       <button
                         onClick={() => toggle(itemKey)}
                         className="w-full flex items-center justify-between p-4 text-left select-none focus:outline-none cursor-pointer"
                       >
-                        <span className="text-sm font-medium text-white">{faq.q}</span>
+                        <span className="text-sm font-medium text-text">{faq.q}</span>
                         {isOpen ? (
-                          <ChevronUp className="size-4 text-[#FF7A1A] shrink-0 ml-3" />
+                          <ChevronUp className="size-4 text-primary shrink-0 ml-3" />
                         ) : (
-                          <ChevronDown className="size-4 text-white/40 shrink-0 ml-3" />
+                          <ChevronDown className="size-4 text-text-faint shrink-0 ml-3" />
                         )}
                       </button>
                       {isOpen && (
-                        <div className="px-4 pb-4 text-xs leading-relaxed text-white/70 border-t border-white/[0.06] pt-3 bg-white/[0.01]">
+                        <div className="px-4 pb-4 text-xs leading-relaxed text-text-muted border-t border-border pt-3 bg-surface-2">
                           {faq.a}
                         </div>
                       )}
@@ -141,7 +141,7 @@ export default function FAQPage() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-white/[0.08] bg-[#0B0B0C] py-8 text-center text-xs text-white/40">
+      <footer className="border-t border-border bg-surface py-8 text-center text-xs text-text-muted">
         <div className="mx-auto max-w-6xl px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <span>© {new Date().getFullYear()} CodeComplex. Real-time competitive programming.</span>
           <span>Built by Umang Sisodia</span>

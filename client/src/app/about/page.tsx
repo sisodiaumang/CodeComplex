@@ -71,46 +71,46 @@ export default function AboutPage() {
   const { user, status } = useAuth();
   const isAuthenticated = status === "authed" && !!user;
   return (
-    <div className="min-h-screen bg-[#0B0B0C] text-[#EFEDE8] selection:bg-[#FF7A1A] selection:text-[#0B0B0C] font-sans antialiased">
+    <div className="min-h-screen bg-bg text-text selection:bg-primary selection:text-white font-sans antialiased flex flex-col">
       <PublicNavbar />
 
       {/* Main Container */}
-      <main className="mx-auto max-w-4xl px-6 py-14 space-y-16">
+      <main className="flex-1 mx-auto max-w-4xl w-full px-6 py-14 space-y-16">
         {/* Navigation & Header */}
         <div className="space-y-4">
           <Link
             href={isAuthenticated ? "/battle" : "/"}
-            className="inline-flex items-center gap-1.5 text-xs font-mono tracking-wider uppercase text-white/50 hover:text-white transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs font-mono tracking-wider uppercase text-text-muted hover:text-text transition-colors"
           >
             <ArrowLeft className="size-3.5" /> Back to arena
           </Link>
           <div className="space-y-2">
-            <span className="text-[11px] font-mono tracking-widest uppercase text-[#FF7A1A]">
+            <span className="text-[11px] font-mono tracking-widest uppercase text-primary font-semibold">
               &#123; About CodeComplex &#125;
             </span>
-            <h1 className="text-3xl sm:text-5xl font-bold tracking-tight text-white leading-tight">
+            <h1 className="text-3xl sm:text-5xl font-bold tracking-tight text-text leading-tight">
               Real-time competitive programming engineered for mastery.
             </h1>
           </div>
-          <p className="text-base text-white/60 leading-relaxed max-w-2xl">
+          <p className="text-base text-text-muted leading-relaxed max-w-2xl">
             CodeComplex was created to replace static, single-player coding exercises with the pulse, speed, and accountability of live head-to-head multiplayer engineering.
           </p>
         </div>
 
-        <hr className="border-white/[0.08]" />
+        <hr className="border-border" />
 
         {/* Section 1: The Thesis */}
         <section className="space-y-6">
-          <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-white flex items-center gap-2">
-            <Code2 className="size-5 text-[#FF7A1A]" />
+          <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-text flex items-center gap-2">
+            <Code2 className="size-5 text-primary" />
             The Thesis
           </h2>
-          <div className="space-y-4 text-sm text-white/70 leading-relaxed">
+          <div className="space-y-4 text-sm text-text-muted leading-relaxed">
             <p>
               In traditional engineering practice, problem-solving happens in an isolated vacuum without the ticking clock, tactical trade-offs, and adversarial feedback of production systems. When the pressure is zero, engineers default to slow, unvalidated habits.
             </p>
             <p>
-              CodeComplex introduces <strong className="text-white font-semibold">real-time multiplayer duels</strong> across five software disciplines. You match with another engineer at your exact Elo rating, receive an identical challenge down to the exact millisecond, write code inside a live editor, and compile against deterministic Docker sandbox test suites. The first clean submission claims the rating swing.
+              CodeComplex introduces <strong className="text-text font-semibold">real-time multiplayer duels</strong> across five software disciplines. You match with another engineer at your exact Elo rating, receive an identical challenge down to the exact millisecond, write code inside a live editor, and compile against deterministic Docker sandbox test suites. The first clean submission claims the rating swing.
             </p>
           </div>
         </section>
@@ -118,10 +118,10 @@ export default function AboutPage() {
         {/* Section 2: Five Battle Disciplines */}
         <section className="space-y-6">
           <div>
-            <span className="text-[11px] font-mono tracking-widest uppercase text-[#FF7A1A]">
+            <span className="text-[11px] font-mono tracking-widest uppercase text-primary font-semibold">
               &#123; Arenas &#125;
             </span>
-            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-white mt-1">
+            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-text mt-1">
               Five Competitive Disciplines
             </h2>
           </div>
@@ -129,15 +129,15 @@ export default function AboutPage() {
             {DISCIPLINES.map((item) => (
               <div
                 key={item.name}
-                className="p-5 rounded-xl border border-white/[0.08] bg-white/[0.02] hover:border-white/[0.18] transition-all space-y-2.5"
+                className="p-5 rounded-xl border border-border bg-surface hover:border-border-strong transition-all space-y-2.5 shadow-xs"
               >
                 <div className="flex items-center justify-between">
-                  <h3 className="font-semibold text-white text-sm">{item.name}</h3>
-                  <span className="text-[10px] font-mono tracking-wider px-2 py-0.5 rounded-full border border-white/10 text-white/60">
+                  <h3 className="font-semibold text-text text-sm">{item.name}</h3>
+                  <span className="text-[10px] font-mono tracking-wider px-2 py-0.5 rounded-full border border-border bg-surface-2 text-text-muted">
                     {item.badge}
                   </span>
                 </div>
-                <p className="text-xs text-white/60 leading-relaxed">
+                <p className="text-xs text-text-muted leading-relaxed">
                   {item.desc}
                 </p>
               </div>
@@ -148,10 +148,10 @@ export default function AboutPage() {
         {/* Section 3: Architecture & Engineering */}
         <section className="space-y-6">
           <div>
-            <span className="text-[11px] font-mono tracking-widest uppercase text-[#FF7A1A]">
+            <span className="text-[11px] font-mono tracking-widest uppercase text-primary font-semibold">
               &#123; Under the hood &#125;
             </span>
-            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-white mt-1">
+            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-text mt-1">
               Platform Architecture & Sandboxing
             </h2>
           </div>
@@ -159,13 +159,13 @@ export default function AboutPage() {
             {ARCH_STACK.map((item) => (
               <div
                 key={item.title}
-                className="p-5 rounded-xl border border-white/[0.08] bg-white/[0.02] space-y-2"
+                className="p-5 rounded-xl border border-border bg-surface space-y-2 shadow-xs"
               >
                 <div className="flex items-center gap-2">
                   {item.icon}
-                  <h3 className="font-semibold text-white text-sm">{item.title}</h3>
+                  <h3 className="font-semibold text-text text-sm">{item.title}</h3>
                 </div>
-                <p className="text-xs text-white/60 leading-relaxed">
+                <p className="text-xs text-text-muted leading-relaxed">
                   {item.detail}
                 </p>
               </div>
@@ -174,44 +174,43 @@ export default function AboutPage() {
         </section>
 
         {/* Section 4: Fair Play & Verification */}
-        <section className="p-6 rounded-2xl border border-[#FF7A1A]/20 bg-[#FF7A1A]/[0.03] space-y-4">
-          <div className="flex items-center gap-2 text-[#FF7A1A]">
+        <section className="p-6 rounded-2xl border border-primary/20 bg-primary-subtle space-y-4">
+          <div className="flex items-center gap-2 text-primary">
             <CheckCircle2 className="size-5" />
-            <h3 className="text-base font-bold text-white">Fair Play & Competitive Integrity</h3>
+            <h3 className="text-base font-bold text-text">Fair Play & Competitive Integrity</h3>
           </div>
-          <p className="text-xs text-white/70 leading-relaxed">
+          <p className="text-xs text-text-muted leading-relaxed">
             Ranked matchmaking on CodeComplex enforces strict anti-assistant rules: external LLM generation tools (ChatGPT, Claude, Copilot) are strictly prohibited during ranked clock runs. All submission telemetry, typing cadence, and compilation histories are audited, with violators subject to automatic rating resets and hardware/account bans.
           </p>
         </section>
 
-        
         {/* Section 5: Internship & Credential Verification */}
-        <section className="p-6 rounded-2xl border border-white/[0.08] bg-white/[0.02] space-y-3">
-          <div className="flex items-center gap-2 text-[#FF7A1A]">
+        <section className="p-6 rounded-2xl border border-border bg-surface space-y-3 shadow-xs">
+          <div className="flex items-center gap-2 text-primary">
             <Award className="size-5" />
-            <h3 className="text-base font-bold text-white">Internship & Credential Verification</h3>
+            <h3 className="text-base font-bold text-text">Internship & Credential Verification</h3>
           </div>
-          <p className="text-xs text-white/70 leading-relaxed">
-            CodeComplex offers competitive software engineering internships spanning full-stack development, distributed backend systems, and containerized sandbox infrastructure. Anyone—including hiring managers and background investigators—can publicly verify internship credentials in real-time without signing up via our <Link href="/verify-certificate" className="text-[#FF7A1A] underline font-medium hover:text-[#FF9040]">Certificate Verification Registry</Link>.
+          <p className="text-xs text-text-muted leading-relaxed">
+            CodeComplex offers competitive software engineering internships spanning full-stack development, distributed backend systems, and containerized sandbox infrastructure. Anyone—including hiring managers and background investigators—can publicly verify internship credentials in real-time without signing up via our <Link href="/verify-certificate" className="text-primary underline font-medium hover:underline">Certificate Verification Registry</Link>.
           </p>
         </section>
 
         {/* Section 6: Creator & Mission */}
-        <section className="space-y-4 border-t border-white/[0.08] pt-10 text-xs text-white/60 leading-relaxed">
+        <section className="space-y-4 border-t border-border pt-10 text-xs text-text-muted leading-relaxed">
           <p>
-            <strong className="text-white font-medium">CodeComplex</strong> is designed and maintained by <a href="https://github.com/sisodiaumang" target="_blank" rel="noopener noreferrer" className="text-[#FF7A1A] hover:underline font-semibold">Umang Sisodia</a> as an open-ecosystem platform for developers, competitive programmers, and autonomous agents worldwide.
+            <strong className="text-text font-medium">CodeComplex</strong> is designed and maintained by <a href="https://github.com/sisodiaumang" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-semibold">Umang Sisodia</a> as an open-ecosystem platform for developers, competitive programmers, and autonomous agents worldwide.
           </p>
           <p>
-            Have feedback, bug reports, or feature requests? Reach out anytime at <a href="mailto:support@codecomplex.site" className="text-white hover:underline">support@codecomplex.site</a> or contribute directly to our <a href="https://github.com/sisodiaumang/CodeComplex" target="_blank" rel="noopener noreferrer" className="text-[#FF7A1A] hover:underline">GitHub repository</a>.
+            Have feedback, bug reports, or feature requests? Reach out anytime at <a href="mailto:support@codecomplex.site" className="text-text hover:underline">support@codecomplex.site</a> or contribute directly to our <a href="https://github.com/sisodiaumang/CodeComplex" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">GitHub repository</a>.
           </p>
         </section>
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-white/[0.08] bg-[#0B0B0C] py-8 text-center text-xs text-white/40">
+      <footer className="border-t border-border bg-surface py-8 text-center text-xs text-text-muted">
         <div className="mx-auto max-w-6xl px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <span>© {new Date().getFullYear()} CodeComplex. Real-time competitive programming.</span>
-          <Link href="/verify-certificate" className="hover:text-white transition-colors">Verify Certificate</Link>
+          <Link href="/verify-certificate" className="hover:text-text transition-colors">Verify Certificate</Link>
           <span>Built by Umang Sisodia</span>
         </div>
       </footer>

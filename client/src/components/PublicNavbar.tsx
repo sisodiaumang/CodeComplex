@@ -1,25 +1,96 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Menu, X, Swords } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  Menu,
+  X,
+  Swords,
+  Code2,
+  RotateCcw,
+  Trophy,
+  Award,
+  History,
+  Users,
+  Shield,
+  ShieldCheck,
+  Bell,
+  Settings,
+  LogOut,
+  ChevronDown,
+  HelpCircle,
+  FileText
+} from "lucide-react";
 import { LogoMark } from "@/components/logo";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useAuth } from "@/stores/auth-store";
 import { Avatar } from "@/components/ui";
+import { api } from "@/lib/api";
+import { unwrapList, type AppNotification } from "@/lib/types";
+import { cn } from "@/lib/utils";
+
+const AUTH_NAV = [
+  { href: "/battle", label: "Battle", icon: Swords },
+  { href: "/problems", label: "Problems", icon: Code2 },
+  { href: "/revision", label: "Revision", icon: RotateCcw },
+  { href: "/leaderboard", label: "Leaderboard", icon: Trophy },
+  { href: "/achievements", label: "Achievements", icon: Award },
+  { href: "/matches", label: "Matches", icon: History },
+  { href: "/friends", label: "Friends", icon: Users },
+] as const;
+
+const PUBLIC_NAV = [
+  { href: "/problems", label: "Problems", icon: Code2 },
+  { href: "/battle", label: "1v1 Arena", icon: Swords },
+  { href: "/leaderboard", label: "Leaderboard", icon: Trophy },
+  { href: "/verify-certificate", label: "Verify Credential", icon: ShieldCheck },
+  { href: "/faq", label: "FAQ", icon: HelpCircle },
+] as const;
 
 export function PublicNavbar() {
   const pathname = usePathname();
-  const { user, status } = useAuth();
+  const router = useRouter();
+  const queryClient = useQueryClient();
+  const { user, status, setUser } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+  const userMenuRef = useRef<HTMLDivElement>(null);
 
+  const isAuthenticated = status === "authed" && !!user;
+  const isAdmin = user && ["ADMIN", "MODERATOR", "OWNER"].includes(user.role || "");
+
+  // Notification query for logged in users
+  const { data: notifications } = useQuery({
+    queryKey: ["notifications"],
+    queryFn: () => api<unknown>("/notifications"),
+    enabled: isAuthenticated,
+    refetchInterval: 30_000,
+  });
+
+  const unreadCount = isAuthenticated
+    ? unwrapList<AppNotification>(notifications, "notifications").filter((n) => !n.isRead).length
+    : 0;
+
+  // Close dropdown on click outside
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
+        setUserDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Close mobile drawer on resize or escape
   useEffect(() => {
     if (!menuOpen) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setMenuOpen(false);
     };
-    const wide = window.matchMedia("(min-width: 901px)");
+    const wide = window.matchMedia("(min-width: 1024px)");
     const onWide = () => {
       if (wide.matches) setMenuOpen(false);
     };
@@ -35,112 +106,188 @@ export function PublicNavbar() {
     };
   }, [menuOpen]);
 
-  const isHome = pathname === "/";
+  async function handleLogout() {
+    try {
+      await api("/user/logout", { method: "POST" });
+    } catch {}
+    setUser(null);
+    queryClient.clear();
+    router.replace("/login");
+  }
+
+  const activeAuthLinks = [...AUTH_NAV];
+  if (isAdmin) {
+    activeAuthLinks.push({ href: "/admin", label: "Admin", icon: Shield } as any);
+  }
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full backdrop-blur-[14px] bg-[#0B0B0C]/85 dark:bg-[#0B0B0C]/85 light:bg-[#FAF8F4]/88 border-b border-white/[0.08] dark:border-white/[0.08] light:border-black/[0.08] transition-colors no-print">
-        <div className="w-full max-w-[1160px] mx-auto px-6 h-[66px] flex items-center justify-between gap-[22px]">
+      <header className="sticky top-0 z-40 w-full backdrop-blur-md bg-surface/90 border-b border-border text-text transition-colors no-print">
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-4">
           {/* Brand */}
-          <Link
-            href="/"
-            className="flex items-center gap-2.5 font-bold text-[17px] text-[#EFEDE8] dark:text-[#EFEDE8] light:text-[#141310] shrink-0 whitespace-nowrap hover:opacity-95 transition-opacity"
-          >
-            <LogoMark size={26} />
-            <span>
-              Code<span className="text-[#FF7A1A]">Complex</span>
-            </span>
-          </Link>
+          <div className="flex items-center gap-6">
+            <Link
+              href={isAuthenticated ? "/battle" : "/"}
+              className="flex items-center gap-2.5 font-bold text-base tracking-tight text-text shrink-0 whitespace-nowrap hover:opacity-95 transition-opacity"
+            >
+              <LogoMark size={26} />
+              <span>
+                Code<span className="text-primary">Complex</span>
+              </span>
+            </Link>
 
-          {/* Desktop Nav Links - Identical to homepage */}
-          <nav className="hidden md:flex items-center gap-7 text-[13.5px]">
-            <Link
-              href="/problems"
-              className={`whitespace-nowrap transition-colors ${
-                pathname === "/problems"
-                  ? "text-[#EFEDE8] dark:text-[#EFEDE8] light:text-[#141310] font-medium"
-                  : "text-[#A3A099] dark:text-[#A3A099] light:text-[#4F4B44] hover:text-[#EFEDE8] dark:hover:text-[#EFEDE8] light:hover:text-[#141310]"
-              }`}
-            >
-              Problems
-            </Link>
-            <Link
-              href={isHome ? "#modes" : "/#modes"}
-              className="text-[#A3A099] dark:text-[#A3A099] light:text-[#4F4B44] hover:text-[#EFEDE8] dark:hover:text-[#EFEDE8] light:hover:text-[#141310] whitespace-nowrap transition-colors"
-            >
-              Modes
-            </Link>
-            <Link
-              href={isHome ? "#ladder" : "/#ladder"}
-              className="text-[#A3A099] dark:text-[#A3A099] light:text-[#4F4B44] hover:text-[#EFEDE8] dark:hover:text-[#EFEDE8] light:hover:text-[#141310] whitespace-nowrap transition-colors"
-            >
-              Ladder
-            </Link>
-            <Link
-              href={isHome ? "#agents" : "/#agents"}
-              className="text-[#A3A099] dark:text-[#A3A099] light:text-[#4F4B44] hover:text-[#EFEDE8] dark:hover:text-[#EFEDE8] light:hover:text-[#141310] whitespace-nowrap transition-colors"
-            >
-              For agents
-            </Link>
-            <Link
-              href="/faq"
-              className={`whitespace-nowrap transition-colors ${
-                pathname === "/faq"
-                  ? "text-[#EFEDE8] dark:text-[#EFEDE8] light:text-[#141310] font-medium"
-                  : "text-[#A3A099] dark:text-[#A3A099] light:text-[#4F4B44] hover:text-[#EFEDE8] dark:hover:text-[#EFEDE8] light:hover:text-[#141310]"
-              }`}
-            >
-              FAQ
-            </Link>
-          </nav>
+            {/* Desktop Navigation Links */}
+            <nav className="hidden lg:flex items-center gap-1">
+              {isAuthenticated
+                ? activeAuthLinks.map(({ href, label, icon: Icon }) => {
+                    const active = pathname === href || (href !== "/battle" && pathname.startsWith(`${href}/`));
+                    return (
+                      <Link
+                        key={href}
+                        href={href}
+                        className={cn(
+                          "flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors",
+                          active
+                            ? "bg-surface-2 text-primary font-semibold shadow-xs"
+                            : "text-text-muted hover:bg-surface-2 hover:text-text"
+                        )}
+                      >
+                        <Icon className="size-3.5" />
+                        <span>{label}</span>
+                      </Link>
+                    );
+                  })
+                : PUBLIC_NAV.map(({ href, label, icon: Icon }) => {
+                    const active = pathname === href || pathname.startsWith(`${href}/`);
+                    return (
+                      <Link
+                        key={href}
+                        href={href}
+                        className={cn(
+                          "flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors",
+                          active
+                            ? "bg-surface-2 text-primary font-semibold shadow-xs"
+                            : "text-text-muted hover:bg-surface-2 hover:text-text"
+                        )}
+                      >
+                        <Icon className="size-3.5" />
+                        <span>{label}</span>
+                      </Link>
+                    );
+                  })}
+            </nav>
+          </div>
 
-          {/* Nav End Actions */}
-          <div className="flex items-center gap-[18px] text-[13.5px] shrink-0">
-            <ThemeToggle className="text-[#A3A099] hover:text-[#EFEDE8] dark:hover:text-[#EFEDE8] light:hover:text-[#141310] hidden sm:flex" />
+          {/* Right End Actions */}
+          <div className="flex items-center gap-2.5">
+            <ThemeToggle className="text-text-muted hover:text-text" />
 
-            {status === "authed" && user ? (
-              <div className="flex items-center gap-3">
-                <Link
-                  href="/battle"
-                  className="inline-flex items-center gap-1.5 h-[33px] px-3.5 rounded-full border border-[#FF7A1A]/40 bg-[#FF7A1A]/10 text-xs font-mono text-[#FF7A1A] hover:bg-[#FF7A1A]/20 transition-colors"
-                >
-                  <Swords className="size-3" /> Enter 1v1 Arena
-                </Link>
-                <Link
-                  href={`/profile/${user.username}`}
-                  className="hidden sm:inline-flex items-center gap-2 h-[33px] pl-1 pr-3 rounded-full border border-white/12 dark:border-white/12 light:border-black/15 bg-white/[0.03] text-xs font-mono text-[#EFEDE8] hover:border-white/30 transition-colors"
-                >
-                  <Avatar src={user.avatar?.profileImageURL} name={user.username} size={22} />
-                  <span>{user.username}</span>
-                </Link>
-              </div>
-            ) : (
+            {isAuthenticated ? (
               <>
+                {/* Notification Bell */}
+                <Link
+                  href="/notifications"
+                  className={cn(
+                    "relative rounded-lg p-2 transition-colors",
+                    pathname === "/notifications"
+                      ? "bg-surface-2 text-primary"
+                      : "text-text-muted hover:bg-surface-2 hover:text-text"
+                  )}
+                  title="Notifications"
+                >
+                  <Bell className="size-4" />
+                  {unreadCount > 0 && (
+                    <span className="absolute -right-0.5 -top-0.5 flex size-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white">
+                      {unreadCount > 9 ? "9+" : unreadCount}
+                    </span>
+                  )}
+                </Link>
+
+                {/* User Dropdown */}
+                <div ref={userMenuRef} className="relative">
+                  <button
+                    type="button"
+                    onClick={() => setUserDropdownOpen((o) => !o)}
+                    className="flex items-center gap-2 rounded-lg p-1.5 hover:bg-surface-2 transition-colors cursor-pointer"
+                  >
+                    <Avatar src={user?.avatar?.profileImageURL} name={user?.username || "User"} size={26} />
+                    <span className="hidden sm:inline text-xs font-semibold text-text max-w-[120px] truncate">
+                      {user?.username}
+                    </span>
+                    <ChevronDown className="size-3 text-text-muted hidden sm:inline" />
+                  </button>
+
+                  {userDropdownOpen && (
+                    <div className="absolute right-0 top-full mt-1.5 w-52 rounded-xl border border-border bg-surface py-1 shadow-xl z-50 animate-in fade-in zoom-in-95 duration-150">
+                      <div className="px-3.5 py-2 border-b border-border">
+                        <div className="text-xs font-bold text-text truncate">{user?.username}</div>
+                        <div className="text-[11px] text-text-muted font-mono truncate">{user?.email || "Competitive Programmer"}</div>
+                      </div>
+                      <Link
+                        href={`/profile/${user?.username}`}
+                        onClick={() => setUserDropdownOpen(false)}
+                        className="flex items-center gap-2.5 px-3.5 py-2 text-xs font-medium text-text hover:bg-surface-2 transition-colors"
+                      >
+                        <Avatar src={user?.avatar?.profileImageURL} name={user?.username || "User"} size={18} />
+                        My Profile
+                      </Link>
+                      <Link
+                        href="/settings"
+                        onClick={() => setUserDropdownOpen(false)}
+                        className="flex items-center gap-2.5 px-3.5 py-2 text-xs font-medium text-text hover:bg-surface-2 transition-colors"
+                      >
+                        <Settings className="size-3.5 text-text-muted" />
+                        Settings
+                      </Link>
+                      <Link
+                        href="/verify-certificate"
+                        onClick={() => setUserDropdownOpen(false)}
+                        className="flex items-center gap-2.5 px-3.5 py-2 text-xs font-medium text-text hover:bg-surface-2 transition-colors"
+                      >
+                        <ShieldCheck className="size-3.5 text-text-muted" />
+                        Verify Certificate
+                      </Link>
+                      <div className="my-1 border-t border-border" />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setUserDropdownOpen(false);
+                          handleLogout();
+                        }}
+                        className="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-medium text-danger hover:bg-surface-2 cursor-pointer text-left transition-colors"
+                      >
+                        <LogOut className="size-3.5" />
+                        Log out
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </>
+            ) : (
+              <div className="flex items-center gap-2">
                 <Link
                   href="/login"
-                  className="text-[#A3A099] dark:text-[#A3A099] light:text-[#4F4B44] hover:text-[#EFEDE8] dark:hover:text-[#EFEDE8] light:hover:text-[#141310] whitespace-nowrap transition-colors hidden sm:inline-block"
+                  className="text-xs font-medium text-text-muted hover:text-text px-2.5 py-1.5 transition-colors hidden sm:inline-block"
                 >
                   Log in
                 </Link>
                 <Link
                   href="/signup"
-                  className="inline-flex items-center gap-[7px] h-[33px] px-[15px] rounded-full border border-white/12 dark:border-white/12 light:border-black/15 font-mono text-[10.5px] font-medium tracking-[0.11em] uppercase text-[#A3A099] dark:text-[#A3A099] light:text-[#4F4B44] hover:text-[#EFEDE8] dark:hover:text-[#EFEDE8] light:hover:text-[#141310] hover:border-white/30 dark:hover:border-white/30 light:hover:border-black/30 whitespace-nowrap transition-colors"
+                  className="inline-flex items-center justify-center h-8 px-3.5 rounded-lg bg-primary hover:bg-primary-hover text-white font-semibold text-xs transition-colors shadow-xs"
                 >
-                  SIGN UP
+                  Sign up
                 </Link>
-              </>
+              </div>
             )}
 
-            {/* Mobile Hamburger Button */}
+            {/* Mobile Menu Hamburger */}
             <button
               type="button"
-              className="md:hidden inline-flex items-center justify-center size-[38px] rounded-lg text-[#A3A099] hover:text-[#EFEDE8] hover:bg-white/5 transition-colors cursor-pointer"
-              aria-label="Open menu"
-              aria-expanded={menuOpen}
-              aria-controls="public-mobile-menu"
+              className="lg:hidden inline-flex items-center justify-center size-9 rounded-lg text-text-muted hover:text-text hover:bg-surface-2 transition-colors cursor-pointer"
+              aria-label="Open navigation menu"
               onClick={() => setMenuOpen(true)}
             >
-              <Menu size={20} aria-hidden />
+              <Menu size={20} />
             </button>
           </div>
         </div>
@@ -148,102 +295,142 @@ export function PublicNavbar() {
 
       {/* Mobile Drawer */}
       {menuOpen && (
-        <>
+        <div className="fixed inset-0 z-50 lg:hidden">
           <div
-            className="fixed inset-0 z-60 bg-black/60 backdrop-blur-sm transition-opacity"
+            className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity"
             onClick={() => setMenuOpen(false)}
             aria-hidden
           />
-          <div
-            id="public-mobile-menu"
+          <aside
             role="dialog"
             aria-modal="true"
-            aria-label="Menu"
-            className="fixed top-0 right-0 bottom-0 z-61 w-[min(310px,84vw)] flex flex-col p-[18px_22px_26px] bg-[#101012] dark:bg-[#101012] light:bg-[#F1ECE3] border-l border-white/12 dark:border-white/12 light:border-black/15 overflow-y-auto"
+            aria-label="Navigation drawer"
+            className="fixed top-0 right-0 bottom-0 z-51 w-[min(320px,84vw)] flex flex-col p-5 bg-surface border-l border-border text-text shadow-2xl overflow-y-auto"
           >
-            <div className="flex items-center justify-between gap-3 h-[42px] mb-3">
-              <span className="font-mono text-[10.5px] font-medium tracking-[0.15em] uppercase text-[#85827B]">
-                Menu
-              </span>
+            {/* Header */}
+            <div className="flex items-center justify-between pb-4 border-b border-border">
+              <Link
+                href={isAuthenticated ? "/battle" : "/"}
+                className="flex items-center gap-2 font-bold text-sm tracking-tight text-text"
+                onClick={() => setMenuOpen(false)}
+              >
+                <LogoMark size={24} />
+                <span>Code<span className="text-primary">Complex</span></span>
+              </Link>
               <button
                 type="button"
-                className="inline-flex items-center justify-center size-[38px] -mr-2 rounded-lg text-[#A3A099] hover:text-[#EFEDE8] hover:bg-white/5 transition-colors cursor-pointer"
+                className="inline-flex items-center justify-center size-8 rounded-lg text-text-muted hover:text-text hover:bg-surface-2 transition-colors cursor-pointer"
                 aria-label="Close menu"
                 onClick={() => setMenuOpen(false)}
               >
-                <X size={20} aria-hidden />
+                <X size={18} />
               </button>
             </div>
 
-            <div className="flex flex-col">
-              <Link
-                href="/problems"
-                className="block py-3.5 border-t border-white/7 dark:border-white/7 light:border-black/8 text-[17px] font-semibold text-[#EFEDE8] dark:text-[#EFEDE8] light:text-[#141310]"
-                onClick={() => setMenuOpen(false)}
-              >
-                Problems
-              </Link>
-              <Link
-                href={isHome ? "#modes" : "/#modes"}
-                className="block py-3.5 border-t border-white/7 dark:border-white/7 light:border-black/8 text-[17px] font-semibold text-[#EFEDE8] dark:text-[#EFEDE8] light:text-[#141310]"
-                onClick={() => setMenuOpen(false)}
-              >
-                Modes
-              </Link>
-              <Link
-                href={isHome ? "#ladder" : "/#ladder"}
-                className="block py-3.5 border-t border-white/7 dark:border-white/7 light:border-black/8 text-[17px] font-semibold text-[#EFEDE8] dark:text-[#EFEDE8] light:text-[#141310]"
-                onClick={() => setMenuOpen(false)}
-              >
-                Ladder
-              </Link>
-              <Link
-                href={isHome ? "#agents" : "/#agents"}
-                className="block py-3.5 border-t border-white/7 dark:border-white/7 light:border-black/8 text-[17px] font-semibold text-[#EFEDE8] dark:text-[#EFEDE8] light:text-[#141310]"
-                onClick={() => setMenuOpen(false)}
-              >
-                For agents
-              </Link>
-              <Link
-                href="/faq"
-                className="block py-3.5 border-t border-white/7 dark:border-white/7 light:border-black/8 text-[17px] font-semibold text-[#EFEDE8] dark:text-[#EFEDE8] light:text-[#141310]"
-                onClick={() => setMenuOpen(false)}
-              >
-                FAQ
-              </Link>
-            </div>
-
-            <div className="mt-6 pt-5 border-t border-white/12 dark:border-white/12 light:border-black/15 flex flex-col items-start gap-3.5">
-              <ThemeToggle className="text-[#A3A099]" />
-              {status === "authed" ? (
-                <Link
-                  href="/battle"
-                  className="w-full flex items-center justify-center h-12 rounded-full bg-[#FF7A1A] text-[#0B0B0C] font-bold text-[15px] hover:bg-[#FF9040] transition-colors"
-                  onClick={() => setMenuOpen(false)}
-                >
-                  Enter 1v1 Arena
-                </Link>
+            {/* Nav list */}
+            <div className="py-4 space-y-1">
+              {isAuthenticated ? (
+                <>
+                  <div className="text-[10px] font-mono uppercase tracking-wider text-text-faint px-3 pb-1">
+                    Arena Navigation
+                  </div>
+                  {activeAuthLinks.map(({ href, label, icon: Icon }) => {
+                    const active = pathname === href || (href !== "/battle" && pathname.startsWith(`${href}/`));
+                    return (
+                      <Link
+                        key={href}
+                        href={href}
+                        className={cn(
+                          "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
+                          active
+                            ? "bg-surface-2 text-primary font-semibold"
+                            : "text-text-muted hover:bg-surface-2 hover:text-text"
+                        )}
+                        onClick={() => setMenuOpen(false)}
+                      >
+                        <Icon className="size-4" />
+                        <span>{label}</span>
+                      </Link>
+                    );
+                  })}
+                </>
               ) : (
                 <>
+                  <div className="text-[10px] font-mono uppercase tracking-wider text-text-faint px-3 pb-1">
+                    Explore CodeComplex
+                  </div>
+                  {PUBLIC_NAV.map(({ href, label, icon: Icon }) => {
+                    const active = pathname === href || pathname.startsWith(`${href}/`);
+                    return (
+                      <Link
+                        key={href}
+                        href={href}
+                        className={cn(
+                          "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
+                          active
+                            ? "bg-surface-2 text-primary font-semibold"
+                            : "text-text-muted hover:bg-surface-2 hover:text-text"
+                        )}
+                        onClick={() => setMenuOpen(false)}
+                      >
+                        <Icon className="size-4" />
+                        <span>{label}</span>
+                      </Link>
+                    );
+                  })}
+                </>
+              )}
+            </div>
+
+            {/* Bottom Actions */}
+            <div className="mt-auto pt-4 border-t border-border space-y-3">
+              <div className="flex items-center justify-between px-1">
+                <span className="text-xs text-text-muted">Theme Mode</span>
+                <ThemeToggle className="text-text-muted hover:text-text" />
+              </div>
+
+              {isAuthenticated && user ? (
+                <div className="space-y-2 pt-2 border-t border-border">
+                  <div className="flex items-center gap-2.5 px-2 py-1.5">
+                    <Avatar src={user.avatar?.profileImageURL} name={user.username} size={30} />
+                    <div className="min-w-0 flex-1">
+                      <div className="text-xs font-bold text-text truncate">{user.username}</div>
+                      <div className="text-[11px] text-text-muted font-mono truncate">{user.email || "Competitive Programmer"}</div>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMenuOpen(false);
+                      handleLogout();
+                    }}
+                    className="w-full flex items-center justify-center gap-2 h-10 rounded-lg bg-surface-2 hover:bg-surface-3 text-danger text-xs font-medium transition-colors cursor-pointer"
+                  >
+                    <LogOut className="size-3.5" />
+                    <span>Log out</span>
+                  </button>
+                </div>
+              ) : (
+                <div className="flex flex-col gap-2 pt-2">
                   <Link
                     href="/login"
-                    className="text-[#A3A099] dark:text-[#A3A099] light:text-[#4F4B44] hover:text-[#EFEDE8] text-[15px] transition-colors"
+                    className="flex items-center justify-center h-10 rounded-lg border border-border bg-surface-2 text-text text-xs font-semibold hover:bg-surface-3 transition-colors"
                     onClick={() => setMenuOpen(false)}
                   >
                     Log in
                   </Link>
                   <Link
                     href="/signup"
-                    className="w-full flex items-center justify-center h-12 rounded-full bg-[#FF7A1A] text-[#0B0B0C] font-bold text-[15px] hover:bg-[#FF9040] transition-colors"
+                    className="flex items-center justify-center h-10 rounded-lg bg-primary hover:bg-primary-hover text-white text-xs font-semibold transition-colors"
                     onClick={() => setMenuOpen(false)}
                   >
-                    Start a duel
+                    Create Account
                   </Link>
-                </>
+                </div>
               )}
             </div>
-          </div>
-        </>
+          </aside>
+        </div>
       )}
     </>
   );
