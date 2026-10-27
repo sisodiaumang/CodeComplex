@@ -16,6 +16,12 @@ export interface Avatar {
   profileImagePublicId?: string;
 }
 
+export interface EmailNotificationPreferences {
+  revisionReminders: boolean;
+  grindReminders: boolean;
+  welcomeAndAnnouncements: boolean;
+}
+
 export interface Me {
   _id: string;
   username: string;
@@ -36,6 +42,7 @@ export interface Me {
     color: string;
   };
   banner?: string;
+  emailNotifications?: EmailNotificationPreferences;
 }
 
 export interface UserProfileData {
@@ -65,6 +72,7 @@ export interface PublicUser {
     color: string;
   };
   banner?: string;
+  emailNotifications?: EmailNotificationPreferences;
 }
 
 export type Difficulty = "EASY" | "MEDIUM" | "HARD";

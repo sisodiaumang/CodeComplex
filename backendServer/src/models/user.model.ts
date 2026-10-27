@@ -121,6 +121,21 @@ const userSchema = new mongoose.Schema<IUser>(
             default: "USER"
         },
 
+        emailNotifications: {
+            revisionReminders: {
+                type: Boolean,
+                default: true
+            },
+            grindReminders: {
+                type: Boolean,
+                default: true
+            },
+            welcomeAndAnnouncements: {
+                type: Boolean,
+                default: true
+            }
+        },
+
         isVerified: {
             type: Boolean,
             default: false

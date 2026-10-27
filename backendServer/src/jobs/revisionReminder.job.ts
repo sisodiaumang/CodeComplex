@@ -3,7 +3,8 @@ import RevisionTracker from "../models/revision.model.js";
 import { enqueueRevisionReminderEmail } from "../queues/emailQueue.js";
 
 /**
- * Triggers revision reminder emails immediately for all due questions.
+ * Triggers revision reminder emails immediately for all due questions,
+ * respecting user email notification preferences.
  */
 export const triggerRevisionReminders = async (): Promise<number> => {
     const now = new Date();
@@ -12,9 +13,20 @@ export const triggerRevisionReminders = async (): Promise<number> => {
     // Find all revision tracker docs that are due today or overdue
     const dueItems = await RevisionTracker.find({
         nextRevisionDue: { $lte: endOfToday }
-    }).populate<{ userId: { _id: any; email: string; username: string; isVerified: boolean; isBanned: boolean } }>(
+    }).populate<{
+        userId: {
+            _id: any;
+            email: string;
+            username: string;
+            isVerified: boolean;
+            isBanned: boolean;
+            emailNotifications?: {
+                revisionReminders?: boolean;
+            };
+        };
+    }>(
         "userId",
-        "email username isVerified isBanned"
+        "email username isVerified isBanned emailNotifications"
     ).lean();
 
     console.log(`[Job] Found ${dueItems.length} due revision items.`);
@@ -25,6 +37,11 @@ export const triggerRevisionReminders = async (): Promise<number> => {
     for (const item of dueItems) {
         const user = item.userId as any;
         if (!user || !user.email || user.isBanned) {
+            continue;
+        }
+
+        // Check if user turned off revision reminders
+        if (user.emailNotifications?.revisionReminders === false) {
             continue;
         }
 

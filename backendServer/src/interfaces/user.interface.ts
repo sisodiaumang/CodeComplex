@@ -2,7 +2,7 @@ import { Document } from "mongoose";
 
 export interface IUser extends Document {
     username: string;
-    fullName : string;
+    fullName: string;
     email: string;
     password: string;
 
@@ -10,8 +10,8 @@ export interface IUser extends Document {
     oauthId?: string;
 
     avatar: {
-        profileImageURL:string,
-        profileImagePublicId:string
+        profileImageURL: string;
+        profileImagePublicId: string;
     };
     bio?: string;
     country: string;
@@ -23,7 +23,13 @@ export interface IUser extends Document {
         color: string;
     };
     banner?: string;
-    role: "USER" | "ADMIN"|"MODERATOR"|"OWNER";
+    role: "USER" | "ADMIN" | "MODERATOR" | "OWNER";
+
+    emailNotifications?: {
+        revisionReminders: boolean;
+        grindReminders: boolean;
+        welcomeAndAnnouncements: boolean;
+    };
 
     isVerified: boolean;
     isBanned: boolean;
@@ -38,7 +44,6 @@ export interface IUser extends Document {
         password: string
     ): Promise<boolean>;
 
-    generateRefreshToken() : string;
-    generateAccessToken() :string;
-
+    generateRefreshToken(): string;
+    generateAccessToken(): string;
 }

@@ -22,6 +22,7 @@ import {
     updateSocials,
     updateMascot,
     updateBanner,
+    updateEmailNotifications,
     getPublicStats
 } from "../controllers/user.controllers.js";
 import { createReport } from "../controllers/admin.controller.js";
@@ -46,6 +47,7 @@ import {
     updateSocialsSchema,
     updateMascotSchema,
     updateBannerSchema,
+    updateEmailNotificationsSchema,
 } from "../validators/auth.validator.js";
 
 const userRouter = Router();
@@ -80,6 +82,7 @@ userRouter.route("/fullname").patch(verifyJWT, validateRequest(updateFullNameSch
 userRouter.route("/socials").patch(verifyJWT, validateRequest(updateSocialsSchema), updateSocials);
 userRouter.route("/mascot").patch(verifyJWT, validateRequest(updateMascotSchema), updateMascot);
 userRouter.route("/banner").patch(verifyJWT, validateRequest(updateBannerSchema), updateBanner);
+userRouter.route("/email-notifications").patch(verifyJWT, validateRequest(updateEmailNotificationsSchema), updateEmailNotifications);
 userRouter.route("/report").post(verifyJWT, createReport);
 
 userRouter.route("/public/stats").get(getPublicStats);

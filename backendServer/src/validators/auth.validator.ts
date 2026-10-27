@@ -107,6 +107,14 @@ export const updateBannerSchema = z.object({
     }).strict(),
 });
 
+export const updateEmailNotificationsSchema = z.object({
+    body: z.object({
+        revisionReminders: z.boolean().optional(),
+        grindReminders: z.boolean().optional(),
+        welcomeAndAnnouncements: z.boolean().optional(),
+    }).strict(),
+});
+
 export type SignupInput = z.infer<typeof signupSchema>;
 export type VerifyUserInput = z.infer<typeof verifyUserSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
@@ -120,3 +128,4 @@ export type UpdateBioInput = z.infer<typeof updateBioSchema>;
 export type UpdateCountryInput = z.infer<typeof updateCountrySchema>;
 export type UpdateFullNameInput = z.infer<typeof updateFullNameSchema>;
 export type UpdateSocialsInput = z.infer<typeof updateSocialsSchema>;
+export type UpdateEmailNotificationsInput = z.infer<typeof updateEmailNotificationsSchema>;

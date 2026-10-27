@@ -20,6 +20,7 @@ import {
 } from "../services/emailSend.service.js";
 import { logger } from "../utils/logger.js";
 import connectDB from "../db/connectDB.js";
+import User from "../models/user.model.js";
 
 logger.info("Initializing standalone Email Worker process...");
 
@@ -44,6 +45,15 @@ const worker = new Worker(
       }
       case EmailJobType.WELCOME: {
         const data = job.data as WelcomeEmailPayload;
+        try {
+          const user = await User.findOne({ email: data.email }).select("emailNotifications");
+          if (user && user.emailNotifications?.welcomeAndAnnouncements === false) {
+            logger.info({ email: data.email }, "Skipping welcome email: user disabled announcements");
+            break;
+          }
+        } catch (dbErr) {
+          logger.warn({ dbErr }, "Could not check user notification prefs; continuing with send");
+        }
         await sendWelcomeMail(data.email, data.username);
         break;
       }
@@ -54,6 +64,15 @@ const worker = new Worker(
       }
       case EmailJobType.GRIND_REMINDER: {
         const data = job.data as GrindReminderEmailPayload;
+        try {
+          const user = await User.findOne({ email: data.email }).select("emailNotifications");
+          if (user && user.emailNotifications?.grindReminders === false) {
+            logger.info({ email: data.email }, "Skipping grind reminder: user disabled grind reminders");
+            break;
+          }
+        } catch (dbErr) {
+          logger.warn({ dbErr }, "Could not check user notification prefs; continuing with send");
+        }
         await sendGrindReminderMail(data.email, data.username);
         break;
       }
@@ -69,6 +88,15 @@ const worker = new Worker(
       }
       case EmailJobType.REVISION_REMINDER: {
         const data = job.data as RevisionReminderPayload;
+        try {
+          const user = await User.findOne({ email: data.email }).select("emailNotifications");
+          if (user && user.emailNotifications?.revisionReminders === false) {
+            logger.info({ email: data.email }, "Skipping revision reminder: user disabled revision reminders");
+            break;
+          }
+        } catch (dbErr) {
+          logger.warn({ dbErr }, "Could not check user notification prefs; continuing with send");
+        }
         await sendRevisionReminderMail(
           data.email,
           data.username,

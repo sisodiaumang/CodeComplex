@@ -501,7 +501,12 @@ const loginUser = asyncHandler(async (req, res) => {
                         role: user.role,
                         country: user.country,
                         bio: user.bio,
-                        isVerified: user.isVerified
+                        isVerified: user.isVerified,
+                        emailNotifications: user.emailNotifications ?? {
+                            revisionReminders: true,
+                            grindReminders: true,
+                            welcomeAndAnnouncements: true,
+                        }
                     }
                 },
                 "Login successful"
@@ -921,6 +926,11 @@ const getMe = asyncHandler(async (req, res) => {
                 leetcodeProfile: user.leetcodeProfile,
                 mascot: user.mascot,
                 banner: user.banner,
+                emailNotifications: user.emailNotifications ?? {
+                    revisionReminders: true,
+                    grindReminders: true,
+                    welcomeAndAnnouncements: true,
+                },
                 createdAt: user.createdAt,
                 profileData: profile ? {
                     ratings: profile.ratings,
@@ -1200,6 +1210,44 @@ const updateSocials = asyncHandler(async (req, res) => {
     );
 });
 
+
+// ─── updateEmailNotifications ──────────────────────────────────────────────────
+
+const updateEmailNotifications = asyncHandler(async (req, res) => {
+    const { revisionReminders, grindReminders, welcomeAndAnnouncements } = req.body;
+
+    const updates: Record<string, boolean> = {};
+    if (typeof revisionReminders === "boolean") {
+        updates["emailNotifications.revisionReminders"] = revisionReminders;
+    }
+    if (typeof grindReminders === "boolean") {
+        updates["emailNotifications.grindReminders"] = grindReminders;
+    }
+    if (typeof welcomeAndAnnouncements === "boolean") {
+        updates["emailNotifications.welcomeAndAnnouncements"] = welcomeAndAnnouncements;
+    }
+
+    if (Object.keys(updates).length === 0) {
+        throw new ApiError(400, "No valid email notification preferences provided");
+    }
+
+    const user = await User.findByIdAndUpdate(
+        req.user!._id,
+        { $set: updates },
+        { new: true, runValidators: true }
+    ).select("emailNotifications");
+
+    if (!user) throw new ApiError(404, "User not found");
+
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            { emailNotifications: user.emailNotifications },
+            "Email notification preferences updated successfully"
+        )
+    );
+});
+
 // ─── getPublicStats ─────────────────────────────────────────────────────────────
 const getPublicStats = asyncHandler(async (req, res) => {
     const [
@@ -1259,5 +1307,6 @@ export {
     updateSocials,
     updateMascot,
     updateBanner,
+    updateEmailNotifications,
     getPublicStats
 };

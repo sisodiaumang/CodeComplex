@@ -38,6 +38,18 @@ if (env.NODE_ENV === "production" && (!env.EMAIL_USER || !env.EMAIL_PASS)) {
 const FROM_ADDRESS = env.EMAIL_FROM_ADDRESS ?? env.EMAIL_USER ?? "support@codecomplex.site";
 const APP_NAME = 'CodeComplex';
 
+function buildNotificationFooter(typeLabel: string): string {
+    const settingsUrl = `${env.CLIENT_URL || "https://codecomplex.site"}/settings?tab=notifications`;
+    return `
+        <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid #30363d; font-size: 12px; color: #8b949e; text-align: center; line-height: 1.6;">
+            To turn off ${typeLabel} or manage your notification preferences, visit your 
+            <a href="${settingsUrl}" target="_blank" style="color: #FF6B00; text-decoration: underline; font-weight: 500;">
+                Notification Settings
+            </a>.
+        </div>
+    `;
+}
+
 function buildVerificationHtml(otp: string): string {
     return `
         <div style="background-color: #0d1117; color: #c9d1d9; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; padding: 40px 20px; border-radius: 8px; max-width: 500px; margin: 0 auto; border: 1px solid #30363d;">
@@ -98,6 +110,7 @@ function buildWelcomeHtml(username: string): string {
                 <div style="text-align: center; margin: 28px 0 8px 0;">
                     <a href="${env.CLIENT_URL}/battle" target="_blank" style="background-color: #FF6B00; color: #ffffff; font-weight: bold; text-decoration: none; padding: 14px 28px; border-radius: 6px; display: inline-block; font-size: 16px; box-shadow: 0 4px 12px rgba(255, 107, 0, 0.25);">Enter the Arena</a>
                 </div>
+                ${buildNotificationFooter("welcome & platform announcement emails")}
             </div>
             <div style="text-align: center; margin-top: 24px; font-size: 12px; color: #484f58;">
                 &copy; ${new Date().getFullYear()} CodeComplex. All rights reserved.
@@ -120,6 +133,7 @@ function buildGrindReminderHtml(username: string): string {
                 <div style="text-align: center; margin: 28px 0 8px 0;">
                     <a href="${env.CLIENT_URL}/battle" target="_blank" style="background-color: #FF6B00; color: #ffffff; font-weight: bold; text-decoration: none; padding: 14px 28px; border-radius: 6px; display: inline-block; font-size: 16px; box-shadow: 0 4px 12px rgba(255, 107, 0, 0.25);">Back to the Arena</a>
                 </div>
+                ${buildNotificationFooter("inactivity reminder emails")}
             </div>
             <div style="text-align: center; margin-top: 24px; font-size: 12px; color: #484f58;">
                 &copy; ${new Date().getFullYear()} CodeComplex. All rights reserved.
@@ -293,6 +307,7 @@ export async function sendRevisionReminderMail(
                         <p style="font-size: 12px; color: #6e7681; text-align: center; margin-top: 16px;">
                             Practicing spaced repetition strengthens algorithm retention by over 300%.
                         </p>
+                        ${buildNotificationFooter("daily spaced-repetition revision reminder emails")}
                     </div>
                     <div style="text-align: center; margin-top: 24px; font-size: 12px; color: #484f58;">
                         &copy; ${new Date().getFullYear()} CodeComplex. All rights reserved.

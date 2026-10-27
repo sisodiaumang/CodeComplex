@@ -3,7 +3,8 @@ import User from "../models/user.model.js";
 import { enqueueGrindReminderEmail } from "../queues/emailQueue.js";
 
 /**
- * Triggers the grind reminder email task immediately for all inactive users.
+ * Triggers the grind reminder email task immediately for all inactive users
+ * who have not disabled grind reminders in their notification settings.
  * Returns the number of reminder emails successfully enqueued.
  */
 export const triggerGrindReminders = async (): Promise<number> => {
@@ -11,13 +12,15 @@ export const triggerGrindReminders = async (): Promise<number> => {
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
     // Find verified, non-banned users who haven't been seen in the last 7 days
+    // and who have grind reminders enabled (not explicitly false).
     const inactiveUsers = await User.find({
         isVerified: true,
         isBanned: false,
-        lastSeen: { $lt: sevenDaysAgo }
+        lastSeen: { $lt: sevenDaysAgo },
+        "emailNotifications.grindReminders": { $ne: false }
     });
 
-    console.log(`[Job] Found ${inactiveUsers.length} inactive users.`);
+    console.log(`[Job] Found ${inactiveUsers.length} inactive users with grind reminders enabled.`);
 
     let enqueuedCount = 0;
     for (const user of inactiveUsers) {

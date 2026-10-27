@@ -1,7 +1,7 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRef, useState, useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import {
   Camera,
@@ -13,9 +13,15 @@ import {
   Check,
   Sparkles,
   Lock,
+  Bell,
+  Flame,
+  Brain,
+  Megaphone,
+  ShieldCheck,
+  Loader2,
 } from "lucide-react";
 import { api, errorMessage } from "@/lib/api";
-import { avatarUrl, type Me, type Achievement } from "@/lib/types";
+import { avatarUrl, type Me, type Achievement, type EmailNotificationPreferences } from "@/lib/types";
 import { COUNTRIES } from "@/lib/countries";
 import { useAuth } from "@/stores/auth-store";
 import KeyboardMascotAnimation from "@/components/KeyboardMascotAnimation";
@@ -33,7 +39,7 @@ import {
 
 type Feedback = { tone: "success" | "danger" | "info"; text: string } | null;
 
-type Tab = "profile" | "security";
+type Tab = "profile" | "notifications" | "security";
 
 /* ─── helpers ─────────────────────────────────────────────────────────── */
 
@@ -91,16 +97,30 @@ function SectionTitle({
 
 /* ─── main page ───────────────────────────────────────────────────────── */
 
-export default function SettingsPage() {
+function SettingsContent() {
   const { user, setUser, patchUser } = useAuth();
   const queryClient = useQueryClient();
   const router = useRouter();
-  const [tab, setTab] = useState<Tab>("profile");
+  const searchParams = useSearchParams();
+  const requestedTab = searchParams.get("tab") as Tab | null;
+  const [tab, setTab] = useState<Tab>(() => {
+    if (requestedTab === "notifications" || requestedTab === "security" || requestedTab === "profile") {
+      return requestedTab;
+    }
+    return "profile";
+  });
+
+  useEffect(() => {
+    if (requestedTab && (requestedTab === "notifications" || requestedTab === "security" || requestedTab === "profile")) {
+      setTab(requestedTab);
+    }
+  }, [requestedTab]);
 
   if (!user) return null;
 
   const tabs: { key: Tab; label: string; icon: React.ElementType }[] = [
     { key: "profile", label: "Profile", icon: User },
+    { key: "notifications", label: "Notifications", icon: Bell },
     { key: "security", label: "Security", icon: Shield },
   ];
 
@@ -135,6 +155,8 @@ export default function SettingsPage() {
       {/* Tab content */}
       {tab === "profile" ? (
         <ProfileTab user={user} patchUser={patchUser} queryClient={queryClient} />
+      ) : tab === "notifications" ? (
+        <NotificationsTab user={user} patchUser={patchUser} />
       ) : (
         <SecurityTab
           user={user}
@@ -143,6 +165,14 @@ export default function SettingsPage() {
         />
       )}
     </div>
+  );
+}
+
+export default function SettingsPage() {
+  return (
+    <Suspense fallback={null}>
+      <SettingsContent />
+    </Suspense>
   );
 }
 
@@ -889,6 +919,188 @@ function ProfileTab({
           </div>
         </Card>
       </div>
+    </div>
+  );
+}
+
+/* ─── Notifications Tab ───────────────────────────────────────────────── */
+
+function NotificationsTab({
+  user,
+  patchUser,
+}: {
+  user: Me;
+  patchUser: (patch: Partial<Me>) => void;
+}) {
+  const currentPrefs = {
+    revisionReminders: user.emailNotifications?.revisionReminders ?? true,
+    grindReminders: user.emailNotifications?.grindReminders ?? true,
+    welcomeAndAnnouncements: user.emailNotifications?.welcomeAndAnnouncements ?? true,
+  };
+
+  const [prefs, setPrefs] = useState(currentPrefs);
+  const [savingKey, setSavingKey] = useState<string | null>(null);
+  const [feedback, setFeedback] = useState<Feedback>(null);
+
+  useEffect(() => {
+    setPrefs({
+      revisionReminders: user.emailNotifications?.revisionReminders ?? true,
+      grindReminders: user.emailNotifications?.grindReminders ?? true,
+      welcomeAndAnnouncements: user.emailNotifications?.welcomeAndAnnouncements ?? true,
+    });
+  }, [user.emailNotifications]);
+
+  async function handleToggle(
+    key: "revisionReminders" | "grindReminders" | "welcomeAndAnnouncements",
+    nextVal: boolean
+  ) {
+    setSavingKey(key);
+    setFeedback(null);
+    const updated = { ...prefs, [key]: nextVal };
+    setPrefs(updated);
+
+    try {
+      await api<{ emailNotifications: EmailNotificationPreferences }>("/user/email-notifications", {
+        method: "PATCH",
+        body: { [key]: nextVal },
+      });
+      patchUser({
+        emailNotifications: updated,
+      });
+      setFeedback({ tone: "success", text: "Email notification preferences updated." });
+    } catch (err) {
+      setPrefs(prefs);
+      setFeedback({ tone: "danger", text: errorMessage(err) });
+    } finally {
+      setSavingKey(null);
+    }
+  }
+
+  const notificationOptions = [
+    {
+      key: "revisionReminders" as const,
+      title: "Daily Spaced-Repetition Reminders",
+      description: "Receive daily email notifications when problems in your spaced-repetition queue are due for revision to reinforce algorithmic memory.",
+      icon: Brain,
+      enabled: prefs.revisionReminders,
+      color: "text-amber-500",
+      bg: "bg-amber-500/10",
+    },
+    {
+      key: "grindReminders" as const,
+      title: "Inactivity & Streak Nudges",
+      description: "Receive weekly notifications when you've been inactive for over 7 days, letting you know your peers are grinding and keeping your momentum alive.",
+      icon: Flame,
+      enabled: prefs.grindReminders,
+      color: "text-orange-500",
+      bg: "bg-orange-500/10",
+    },
+    {
+      key: "welcomeAndAnnouncements" as const,
+      title: "Platform Updates & Announcements",
+      description: "Receive onboarding guides, major feature updates, tournament invitations, and platform announcements.",
+      icon: Megaphone,
+      enabled: prefs.welcomeAndAnnouncements,
+      color: "text-blue-500",
+      bg: "bg-blue-500/10",
+    },
+  ];
+
+  return (
+    <div className="space-y-6">
+      <Card>
+        <SectionTitle
+          icon={Bell}
+          title="Email Notification Preferences"
+          subtitle={`Manage the notification emails sent to ${user.email}`}
+        />
+
+        <div className="border-t border-border px-6 py-6 space-y-6">
+          {feedback && <Alert tone={feedback.tone}>{feedback.text}</Alert>}
+
+          <p className="text-sm text-text-muted">
+            All outbound notifications include direct instructions and links to adjust or disable future emails. You can configure which emails you wish to receive below.
+          </p>
+
+          <div className="divide-y divide-border rounded-xl border border-border bg-surface-2/40 overflow-hidden">
+            {notificationOptions.map((opt) => {
+              const Icon = opt.icon;
+              const isBusy = savingKey === opt.key;
+
+              return (
+                <div
+                  key={opt.key}
+                  className="flex items-start justify-between gap-4 p-5 transition-colors hover:bg-surface-2/70"
+                >
+                  <div className="flex gap-4">
+                    <div className={cn("mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-lg", opt.bg)}>
+                      <Icon className={cn("size-5", opt.color)} />
+                    </div>
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-semibold text-text">{opt.title}</span>
+                        {isBusy && <Loader2 className="size-3.5 animate-spin text-text-muted" />}
+                      </div>
+                      <p className="text-xs text-text-faint leading-relaxed max-w-xl">
+                        {opt.description}
+                      </p>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    role="switch"
+                    aria-checked={opt.enabled}
+                    disabled={isBusy}
+                    onClick={() => handleToggle(opt.key, !opt.enabled)}
+                    className={cn(
+                      "relative mt-1 inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-surface disabled:opacity-50",
+                      opt.enabled ? "bg-primary" : "bg-surface-3 border-border"
+                    )}
+                  >
+                    <span
+                      aria-hidden="true"
+                      className={cn(
+                        "pointer-events-none inline-block size-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out",
+                        opt.enabled ? "translate-x-5" : "translate-x-0"
+                      )}
+                    />
+                  </button>
+                </div>
+              );
+            })}
+
+            {/* Mandatory security emails */}
+            <div className="flex items-start justify-between gap-4 p-5 bg-surface-2/20">
+              <div className="flex gap-4">
+                <div className="mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-lg bg-emerald-500/10">
+                  <ShieldCheck className="size-5 text-emerald-500" />
+                </div>
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-semibold text-text">Security & Authentication</span>
+                    <span className="rounded bg-surface-3 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-text-muted">
+                      Mandatory
+                    </span>
+                  </div>
+                  <p className="text-xs text-text-faint leading-relaxed max-w-xl">
+                    One-time passwords (OTP), account verification codes, password reset requests, and critical security alerts. These are strictly required to protect your account and cannot be disabled.
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-1 flex items-center">
+                <div
+                  title="Required for account security"
+                  className="relative inline-flex h-6 w-11 shrink-0 cursor-not-allowed rounded-full border-2 border-transparent bg-primary/40 opacity-70"
+                >
+                  <span className="inline-block size-5 translate-x-5 transform rounded-full bg-white shadow-md" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Card>
     </div>
   );
 }
