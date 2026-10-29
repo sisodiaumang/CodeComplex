@@ -364,3 +364,22 @@ export interface Tournament {
   createdAt: string;
   updatedAt: string;
 }
+
+// ── Problem List & Solved Status Types ──────────────────────────────────────
+export interface UserProblemList {
+  _id: string;
+  name: string;
+  description?: string;
+  isDefault: boolean;
+  icon?: string;
+  color?: string;
+  count: number;
+  slugs: string[];
+}
+
+export interface UserProblemStatus {
+  solvedSlugs: string[];
+  solvedCount: number;
+  lists: UserProblemList[];
+}
+

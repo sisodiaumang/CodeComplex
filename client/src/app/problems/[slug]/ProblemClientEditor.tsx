@@ -26,7 +26,10 @@ import {
   Server,
   Sparkles,
   RotateCcw,
+  Star,
+  Bookmark,
 } from "lucide-react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { LogoMark } from "@/components/logo";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Spinner } from "@/components/ui";
@@ -34,6 +37,8 @@ import { useAuth } from "@/stores/auth-store";
 import { useTheme } from "@/stores/theme-store";
 import { API_URL, api } from "@/lib/api";
 import type { QuestionDetail } from "@/lib/questions";
+import type { UserProblemStatus } from "@/lib/types";
+import { cn } from "@/lib/utils";
 
 const Editor = dynamic(() => import("@monaco-editor/react"), {
   ssr: false,
@@ -98,11 +103,50 @@ export function ProblemClientEditor({
   slug: string;
 }) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { user, status } = useAuth();
   const { resolved: resolvedTheme } = useTheme();
 
   const [question, setQuestion] = useState<QuestionData>(initialQuestion);
   const [loading, setLoading] = useState(false);
+
+  // User Problem Status & Favorites
+  const { data: userStatusRes } = useQuery({
+    queryKey: ["userProblemStatus"],
+    queryFn: () => api<UserProblemStatus>("/problem-lists/user-status"),
+    enabled: status === "authed",
+    staleTime: 10_000,
+  });
+
+  const userStatus: UserProblemStatus | null = (userStatusRes as any)?.data ?? userStatusRes ?? null;
+  const isQuestionSolved = useMemo(
+    () => (userStatus?.solvedSlugs || []).includes(question.slug),
+    [userStatus, question.slug]
+  );
+  const defaultFavList = useMemo(
+    () => (userStatus?.lists || []).find((l: any) => l.isDefault),
+    [userStatus]
+  );
+  const isQuestionFavorite = useMemo(
+    () => (defaultFavList?.slugs || []).includes(question.slug),
+    [defaultFavList, question.slug]
+  );
+
+  const toggleFavoriteMutation = useMutation({
+    mutationFn: () =>
+      api("/problem-lists/favorite/toggle", {
+        method: "POST",
+        body: {
+          questionSlug: question.slug,
+          title: question.title,
+          difficulty: question.difficulty,
+          mode: question.mode || "DSA",
+        },
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["userProblemStatus"] });
+    },
+  });
   const [error, setError] = useState<string | null>(null);
 
   // Editor states
@@ -471,9 +515,33 @@ export function ProblemClientEditor({
                   </span>
                 )}
               </div>
-              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-text">
-                {question.title}
-              </h1>
+              <div className="flex items-start justify-between gap-4">
+                <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-text">
+                  {question.title}
+                </h1>
+                {status === "authed" && (
+                  <div className="flex items-center gap-2 shrink-0 pt-1">
+                    {isQuestionSolved && (
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-bold text-emerald-500 bg-emerald-500/10 border border-emerald-500/25 shadow-2xs">
+                        <CheckCircle2 className="size-3.5" /> Solved
+                      </span>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => toggleFavoriteMutation.mutate()}
+                      className={cn(
+                        "p-2 rounded-xl border transition-colors cursor-pointer",
+                        isQuestionFavorite
+                          ? "border-amber-500/30 bg-amber-500/10 text-amber-400"
+                          : "border-border bg-surface hover:bg-surface-2 text-text-faint hover:text-amber-400"
+                      )}
+                      title={isQuestionFavorite ? "Favorited" : "Add to favorites"}
+                    >
+                      <Star className={cn("size-4", isQuestionFavorite && "fill-amber-400")} />
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
 
             <hr className="border-border" />

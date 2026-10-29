@@ -46,6 +46,7 @@ import revisionRouter from "./routes/revision.router.js";
 import certificateRouter from "./routes/certificate.router.js";
 import questionRouter from "./routes/question.router.js";
 import tournamentRouter from "./routes/tournament.router.js";
+import problemListRouter from "./routes/problemList.router.js";
 
 
 
@@ -195,6 +196,7 @@ app.use("/api/v1/revision", revisionRouter);
 app.use("/api/v1/certificates", certificateRouter);
 app.use("/api/v1/questions", questionRouter);
 app.use("/api/v1/tournaments", tournamentRouter);
+app.use("/api/v1/problem-lists", problemListRouter);
 
 
 
