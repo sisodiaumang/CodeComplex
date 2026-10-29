@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import mongoose from "mongoose";
 import ProblemList from "../models/problemList.model.js";
 import Submission from "../models/submission.model.js";
 import ApiError from "../utils/ApiError.js";
@@ -142,7 +143,11 @@ export const createProblemList = asyncHandler(
 export const deleteProblemList = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const userId = req.user?._id;
-    const { listId } = req.params;
+    const listId = String(req.params.listId);
+
+    if (!mongoose.Types.ObjectId.isValid(listId)) {
+      throw new ApiError(400, "Invalid list ID");
+    }
 
     const list = await ProblemList.findOne({ _id: listId, userId });
     if (!list) {
@@ -169,11 +174,15 @@ export const deleteProblemList = asyncHandler(
 export const toggleQuestionInList = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const userId = req.user?._id;
-    const { listId } = req.params;
+    const listId = String(req.params.listId);
     const { questionSlug, title = "", difficulty = "Medium", mode = "DSA" } = req.body;
 
     if (!questionSlug || typeof questionSlug !== "string") {
       throw new ApiError(400, "questionSlug is required");
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(listId)) {
+      throw new ApiError(400, "Invalid list ID");
     }
 
     const list = await ProblemList.findOne({ _id: listId, userId });

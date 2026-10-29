@@ -16,9 +16,9 @@ problemListRouter.use(verifyJWT);
 
 problemListRouter.get("/user-status", getUserProblemStatus);
 problemListRouter.get("/", getProblemLists);
+problemListRouter.post("/favorite/toggle", toggleFavorite);
 problemListRouter.post("/", createProblemList);
 problemListRouter.delete("/:listId", deleteProblemList);
 problemListRouter.post("/:listId/toggle", toggleQuestionInList);
-problemListRouter.post("/favorite/toggle", toggleFavorite);
 
 export default problemListRouter;

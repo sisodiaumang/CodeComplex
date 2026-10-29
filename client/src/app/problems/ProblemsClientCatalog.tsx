@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Search,
@@ -65,6 +66,7 @@ export function ProblemsClientCatalog({
 }: {
   initialProblems?: ProblemItem[];
 }) {
+  const router = useRouter();
   const queryClient = useQueryClient();
   const { user, status } = useAuth();
   const isAuthenticated = status === "authed" && !!user;
@@ -124,7 +126,7 @@ export function ProblemsClientCatalog({
   const defaultFavorites = useMemo(() => userLists.find((l) => l.isDefault), [userLists]);
   const favoritesSet = useMemo(() => new Set<string>(defaultFavorites?.slugs || []), [defaultFavorites]);
 
-  // Quick Toggle Favorite Mutation
+  // Quick Toggle Favorite Mutation with instant optimistic UI update
   const toggleFavoriteMutation = useMutation({
     mutationFn: (prob: ProblemItem) =>
       api("/problem-lists/favorite/toggle", {
@@ -136,7 +138,36 @@ export function ProblemsClientCatalog({
           mode: prob.mode,
         },
       }),
-    onSuccess: () => {
+    onMutate: async (prob) => {
+      await queryClient.cancelQueries({ queryKey: ["userProblemStatus"] });
+      const prevData = queryClient.getQueryData(["userProblemStatus"]);
+      queryClient.setQueryData(["userProblemStatus"], (old: any) => {
+        if (!old) return old;
+        const data = old.data ?? old;
+        const lists = data.lists ? [...data.lists] : [];
+        const favListIndex = lists.findIndex((l: any) => l.isDefault);
+        if (favListIndex >= 0) {
+          const favList = { ...lists[favListIndex] };
+          const slugs = new Set(favList.slugs || []);
+          if (slugs.has(prob.slug)) {
+            slugs.delete(prob.slug);
+          } else {
+            slugs.add(prob.slug);
+          }
+          favList.slugs = Array.from(slugs);
+          favList.count = slugs.size;
+          lists[favListIndex] = favList;
+        }
+        return old.data ? { ...old, data: { ...data, lists } } : { ...data, lists };
+      });
+      return { prevData };
+    },
+    onError: (err, newProb, context) => {
+      if (context?.prevData) {
+        queryClient.setQueryData(["userProblemStatus"], context.prevData);
+      }
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["userProblemStatus"] });
     },
   });
@@ -625,31 +656,37 @@ export function ProblemsClientCatalog({
 
                     <div className="flex items-center gap-3 shrink-0">
                       {/* Action Buttons: Favorite & Add to List (Fixed width column so they never shift) */}
-                      {isAuthenticated ? (
-                        <div className="w-16 shrink-0 flex items-center justify-center gap-1">
-                          {/* Favorite Button */}
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              toggleFavoriteMutation.mutate(prob);
-                            }}
-                            className={cn(
-                              "p-1.5 rounded-lg transition-colors cursor-pointer",
-                              isFavorite
-                                ? "text-amber-400 bg-amber-500/10 hover:bg-amber-500/20"
-                                : "text-text-faint hover:text-amber-400 hover:bg-surface"
-                            )}
-                            title={isFavorite ? "Remove from Favorites" : "Add to Favorites"}
-                          >
-                            <Star className={cn("size-4", isFavorite && "fill-amber-400")} />
-                          </button>
+                      <div className="w-16 shrink-0 flex items-center justify-center gap-1">
+                        {/* Favorite Button */}
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            if (!isAuthenticated) {
+                              router.push(`/login?redirect=/problems`);
+                              return;
+                            }
+                            toggleFavoriteMutation.mutate(prob);
+                          }}
+                          className={cn(
+                            "p-1.5 rounded-lg transition-colors cursor-pointer",
+                            isFavorite
+                              ? "text-amber-400 bg-amber-500/10 hover:bg-amber-500/20"
+                              : "text-text-faint hover:text-amber-400 hover:bg-surface"
+                          )}
+                          title={!isAuthenticated ? "Log in to add to Favorites" : isFavorite ? "Remove from Favorites" : "Add to Favorites"}
+                        >
+                          <Star className={cn("size-4", isFavorite && "fill-amber-400")} />
+                        </button>
 
-                          {/* Add to List Button */}
+                        {/* Add to List Button */}
+                        {isAuthenticated && (
                           <button
                             type="button"
                             onClick={(e) => {
                               e.preventDefault();
+                              e.stopPropagation();
                               setTargetQuestionForList(prob);
                             }}
                             className="p-1.5 rounded-lg text-text-faint hover:text-primary hover:bg-surface transition-colors cursor-pointer"
@@ -657,10 +694,8 @@ export function ProblemsClientCatalog({
                           >
                             <ListPlus className="size-4" />
                           </button>
-                        </div>
-                      ) : (
-                        <div className="w-16 shrink-0" />
-                      )}
+                        )}
+                      </div>
 
                       {/* Difficulty Badge (Fixed width so it never shifts the buttons) */}
                       <div className="w-20 shrink-0 flex items-center justify-center">

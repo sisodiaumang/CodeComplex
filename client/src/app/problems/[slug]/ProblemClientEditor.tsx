@@ -143,7 +143,36 @@ export function ProblemClientEditor({
           mode: question.mode || "DSA",
         },
       }),
-    onSuccess: () => {
+    onMutate: async () => {
+      await queryClient.cancelQueries({ queryKey: ["userProblemStatus"] });
+      const prevData = queryClient.getQueryData(["userProblemStatus"]);
+      queryClient.setQueryData(["userProblemStatus"], (old: any) => {
+        if (!old) return old;
+        const data = old.data ?? old;
+        const lists = data.lists ? [...data.lists] : [];
+        const favListIndex = lists.findIndex((l: any) => l.isDefault);
+        if (favListIndex >= 0) {
+          const favList = { ...lists[favListIndex] };
+          const slugs = new Set(favList.slugs || []);
+          if (slugs.has(question.slug)) {
+            slugs.delete(question.slug);
+          } else {
+            slugs.add(question.slug);
+          }
+          favList.slugs = Array.from(slugs);
+          favList.count = slugs.size;
+          lists[favListIndex] = favList;
+        }
+        return old.data ? { ...old, data: { ...data, lists } } : { ...data, lists };
+      });
+      return { prevData };
+    },
+    onError: (err, newProb, context) => {
+      if (context?.prevData) {
+        queryClient.setQueryData(["userProblemStatus"], context.prevData);
+      }
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["userProblemStatus"] });
     },
   });
