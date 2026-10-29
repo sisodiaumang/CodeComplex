@@ -36,10 +36,18 @@ if (env.NODE_ENV === "production" && (!env.EMAIL_USER || !env.EMAIL_PASS)) {
     );
 }
 
-const FROM_ADDRESS = env.EMAIL_FROM_ADDRESS ?? env.EMAIL_USER ?? "support@codecomplex.site";
+const FROM_ADDRESS = env.EMAIL_FROM_ADDRESS ?? "support@codecomplex.site";
 const APP_NAME = 'CodeComplex';
 
 export type NotificationType = "revisionReminders" | "grindReminders" | "welcomeAndAnnouncements";
+
+export function getEmailBaseUrl(): string {
+    const configured = env.CLIENT_URL || env.CORS_ORIGIN;
+    if (configured && !configured.includes("localhost") && !configured.includes("127.0.0.1")) {
+        return configured.replace(/\/$/, "");
+    }
+    return "https://codecomplex.site";
+}
 
 export function generateUnsubscribeToken(email: string, type: string): string {
     return crypto
@@ -58,7 +66,7 @@ export function verifyUnsubscribeToken(email: string, type: string, token: strin
 }
 
 export function getUnsubscribeUrl(email: string, type: NotificationType): string {
-    const baseUrl = env.CLIENT_URL || env.CORS_ORIGIN || "https://codecomplex.site";
+    const baseUrl = getEmailBaseUrl();
     const token = generateUnsubscribeToken(email, type);
     return `${baseUrl}/unsubscribe?email=${encodeURIComponent(email)}&type=${type}&token=${token}`;
 }
@@ -68,7 +76,7 @@ function buildNotificationFooter(
     actionLabel: string,
     email: string
 ): string {
-    const baseUrl = env.CLIENT_URL || env.CORS_ORIGIN || "https://codecomplex.site";
+    const baseUrl = getEmailBaseUrl();
     const unsubscribeUrl = getUnsubscribeUrl(email, typeKey);
     const settingsUrl = `${baseUrl}/settings?tab=notifications`;
 
@@ -131,6 +139,7 @@ function buildEmailChangeHtml(otp: string): string {
 }
 
 function buildWelcomeHtml(username: string, email: string): string {
+    const arenaUrl = `${getEmailBaseUrl()}/battle`;
     return `
         <div style="background-color: #0d1117; color: #c9d1d9; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; padding: 40px 20px; border-radius: 8px; max-width: 500px; margin: 0 auto; border: 1px solid #30363d;">
             <div style="text-align: center; margin-bottom: 24px;">
@@ -146,7 +155,7 @@ function buildWelcomeHtml(username: string, email: string): string {
                     <li><strong>Prompt War:</strong> Battle other developers to write the best LLM instructions.</li>
                 </ul>
                 <div style="text-align: center; margin: 28px 0 8px 0;">
-                    <a href="${env.CLIENT_URL}/battle" target="_blank" style="background-color: #FF6B00; color: #ffffff; font-weight: bold; text-decoration: none; padding: 14px 28px; border-radius: 6px; display: inline-block; font-size: 16px; box-shadow: 0 4px 12px rgba(255, 107, 0, 0.25);">Enter the Arena</a>
+                    <a href="${arenaUrl}" target="_blank" style="background-color: #FF6B00; color: #ffffff; font-weight: bold; text-decoration: none; padding: 14px 28px; border-radius: 6px; display: inline-block; font-size: 16px; box-shadow: 0 4px 12px rgba(255, 107, 0, 0.25);">Enter the Arena</a>
                 </div>
                 ${buildNotificationFooter("welcomeAndAnnouncements", "Turn off platform updates", email)}
             </div>
@@ -158,6 +167,7 @@ function buildWelcomeHtml(username: string, email: string): string {
 }
 
 function buildGrindReminderHtml(username: string, email: string): string {
+    const arenaUrl = `${getEmailBaseUrl()}/battle`;
     return `
         <div style="background-color: #0d1117; color: #c9d1d9; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; padding: 40px 20px; border-radius: 8px; max-width: 500px; margin: 0 auto; border: 1px solid #30363d;">
             <div style="text-align: center; margin-bottom: 24px;">
@@ -169,7 +179,7 @@ function buildGrindReminderHtml(username: string, email: string): string {
                 <p style="font-size: 15px; line-height: 1.6; color: #8b949e;">Your peers and competitors are climbing the leaderboards and stacking up rating points! Don't let your score gather dust while they grind.</p>
                 <p style="font-size: 15px; line-height: 1.6; color: #8b949e;">Hop back on <strong>CodeComplex</strong> today to claim your victories and show everyone who owns the leaderboard.</p>
                 <div style="text-align: center; margin: 28px 0 8px 0;">
-                    <a href="${env.CLIENT_URL}/battle" target="_blank" style="background-color: #FF6B00; color: #ffffff; font-weight: bold; text-decoration: none; padding: 14px 28px; border-radius: 6px; display: inline-block; font-size: 16px; box-shadow: 0 4px 12px rgba(255, 107, 0, 0.25);">Back to the Arena</a>
+                    <a href="${arenaUrl}" target="_blank" style="background-color: #FF6B00; color: #ffffff; font-weight: bold; text-decoration: none; padding: 14px 28px; border-radius: 6px; display: inline-block; font-size: 16px; box-shadow: 0 4px 12px rgba(255, 107, 0, 0.25);">Back to the Arena</a>
                 </div>
                 ${buildNotificationFooter("grindReminders", "Turn off inactivity reminders", email)}
             </div>
@@ -329,7 +339,7 @@ export async function sendRevisionReminderMail(
     }
 
     try {
-        const targetUrl = `${env.CORS_ORIGIN || "https://codecomplex.site"}/revision`;
+        const targetUrl = `${getEmailBaseUrl()}/revision`;
         const unsubscribeUrl = getUnsubscribeUrl(toEmail, "revisionReminders");
 
         await transporter.sendMail({
