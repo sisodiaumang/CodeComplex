@@ -420,7 +420,7 @@ export function ProblemClientEditor({
   const criteria = question.evaluationCriteria || [];
 
   return (
-    <div className="min-h-screen bg-bg text-text flex flex-col font-sans selection:bg-primary selection:text-white">
+    <div className="h-screen max-h-screen overflow-hidden bg-bg text-text flex flex-col font-sans selection:bg-primary selection:text-white">
       {/* ── Top Bar ──────────────────────────────────────── */}
       <header className="h-14 border-b border-border bg-surface px-4 flex items-center justify-between shrink-0 z-20">
         <div className="flex items-center gap-3">
@@ -488,12 +488,12 @@ export function ProblemClientEditor({
       {/* ── Main Resizable Split View (LeetCode Style) ────── */}
       <div
         ref={containerRef}
-        className="flex-1 flex flex-col lg:flex-row overflow-hidden relative"
+        className="flex-1 min-h-0 flex flex-col lg:flex-row overflow-hidden relative"
       >
         {/* Left Column: Problem Statement & Details */}
         <div
           style={{ width: `${leftWidth}%` }}
-          className="w-full lg:w-[var(--left-w)] flex flex-col border-b lg:border-b-0 border-border bg-surface overflow-y-auto shrink-0"
+          className="w-full lg:w-[var(--left-w)] h-full flex flex-col border-b lg:border-b-0 border-border bg-surface overflow-y-auto shrink-0"
         >
           <div className="p-6 space-y-6 max-w-2xl">
             {/* Meta tags */}
@@ -737,7 +737,7 @@ export function ProblemClientEditor({
         <div
           ref={rightWorkspaceRef}
           style={{ width: `calc(${100 - leftWidth}% - 8px)` }}
-          className="w-full flex-1 flex flex-col bg-bg overflow-hidden min-w-[300px]"
+          className="w-full flex-1 min-h-0 h-full flex flex-col bg-bg overflow-hidden min-w-[300px]"
         >
           {/* Editor Header */}
           <div className="h-10 border-b border-border bg-surface px-4 flex items-center justify-between shrink-0 select-none">
