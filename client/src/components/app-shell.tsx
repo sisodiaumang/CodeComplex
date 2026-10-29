@@ -38,25 +38,25 @@ import { LogoMark } from "@/components/logo";
 import { ThemeToggle } from "./ThemeToggle";
 import { AchievementToastsContainer } from "@/components/AchievementToast";
 
-const PRIMARY_NAV = [
+export const PRIMARY_NAV = [
   { href: "/battle", label: "Battle", icon: Swords },
   { href: "/tournaments", label: "Tournaments", icon: Trophy },
   { href: "/problems", label: "Problems", icon: Code2 },
   { href: "/leaderboard", label: "Leaderboard", icon: Award },
 ] as const;
 
-const MORE_NAV = [
+export const MORE_NAV = [
   { href: "/revision", label: "Revision", icon: RotateCcw, desc: "Spaced-repetition practice" },
   { href: "/achievements", label: "Achievements", icon: ShieldCheck, desc: "Badges & companion pets" },
   { href: "/matches", label: "Matches", icon: History, desc: "Battle history & analysis" },
   { href: "/friends", label: "Friends", icon: Users, desc: "Manage squad & rivals" },
 ] as const;
 
-const ALL_NAV = [...PRIMARY_NAV, ...MORE_NAV];
+export const ALL_NAV = [...PRIMARY_NAV, ...MORE_NAV];
 
 /* ─── Brand ───────────────────────────────────────────────────────────── */
 
-function Brand() {
+export function Brand() {
   return (
     <Link href="/battle" className="flex items-center gap-2 shrink-0">
       <LogoMark size={28} />
@@ -69,7 +69,7 @@ function Brand() {
 
 /* ─── More Dropdown ───────────────────────────────────────────────────── */
 
-function MoreDropdown() {
+export function MoreDropdown() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -146,7 +146,7 @@ function MoreDropdown() {
 
 /* ─── Desktop nav links (horizontal) ──────────────────────────────────── */
 
-function DesktopNav() {
+export function DesktopNav() {
   const pathname = usePathname();
 
   return (
@@ -176,7 +176,7 @@ function DesktopNav() {
 
 /* ─── Notification bell ───────────────────────────────────────────────── */
 
-function NotificationBell() {
+export function NotificationBell() {
   const pathname = usePathname();
 
   const { data: notifications } = useQuery({
@@ -218,7 +218,7 @@ function NotificationBell() {
 
 /* ─── User dropdown ───────────────────────────────────────────────────── */
 
-function UserMenu() {
+export function UserMenu() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { user, setUser } = useAuth();
@@ -340,7 +340,7 @@ function UserMenu() {
 
 /* ─── Mobile nav links (vertical, for drawer) ─────────────────────────── */
 
-function MobileNavLinks({ onNavigate }: { onNavigate: () => void }) {
+export function MobileNavLinks({ onNavigate }: { onNavigate: () => void }) {
   const pathname = usePathname();
   const user = useAuth((s) => s.user);
   const isAdmin = user && ["ADMIN", "MODERATOR", "OWNER"].includes(user.role || "");
@@ -397,7 +397,7 @@ function MobileNavLinks({ onNavigate }: { onNavigate: () => void }) {
 
 /* ─── Mobile user footer ──────────────────────────────────────────────── */
 
-function MobileUserFooter() {
+export function MobileUserFooter() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { user, setUser } = useAuth();
