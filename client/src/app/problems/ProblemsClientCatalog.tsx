@@ -623,55 +623,67 @@ export function ProblemsClientCatalog({
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2.5 sm:gap-3.5 shrink-0">
-                      {/* Favorite Button */}
-                      {isAuthenticated && (
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            toggleFavoriteMutation.mutate(prob);
-                          }}
+                    <div className="flex items-center gap-3 shrink-0">
+                      {/* Action Buttons: Favorite & Add to List (Fixed width column so they never shift) */}
+                      {isAuthenticated ? (
+                        <div className="w-16 shrink-0 flex items-center justify-center gap-1">
+                          {/* Favorite Button */}
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              toggleFavoriteMutation.mutate(prob);
+                            }}
+                            className={cn(
+                              "p-1.5 rounded-lg transition-colors cursor-pointer",
+                              isFavorite
+                                ? "text-amber-400 bg-amber-500/10 hover:bg-amber-500/20"
+                                : "text-text-faint hover:text-amber-400 hover:bg-surface"
+                            )}
+                            title={isFavorite ? "Remove from Favorites" : "Add to Favorites"}
+                          >
+                            <Star className={cn("size-4", isFavorite && "fill-amber-400")} />
+                          </button>
+
+                          {/* Add to List Button */}
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              setTargetQuestionForList(prob);
+                            }}
+                            className="p-1.5 rounded-lg text-text-faint hover:text-primary hover:bg-surface transition-colors cursor-pointer"
+                            title="Add to custom list..."
+                          >
+                            <ListPlus className="size-4" />
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="w-16 shrink-0" />
+                      )}
+
+                      {/* Difficulty Badge (Fixed width so it never shifts the buttons) */}
+                      <div className="w-20 shrink-0 flex items-center justify-center">
+                        <span
                           className={cn(
-                            "p-1.5 rounded-lg transition-colors cursor-pointer",
-                            isFavorite
-                              ? "text-amber-400 bg-amber-500/10 hover:bg-amber-500/20"
-                              : "text-text-faint hover:text-amber-400 hover:bg-surface"
+                            "w-full text-center text-[10px] font-mono font-bold px-2 py-0.5 rounded-full border uppercase",
+                            difficultyColors[prob.difficulty] || "text-text-muted bg-surface-2 border-border"
                           )}
-                          title={isFavorite ? "Remove from Favorites" : "Add to Favorites"}
                         >
-                          <Star className={cn("size-4", isFavorite && "fill-amber-400")} />
-                        </button>
-                      )}
+                          {prob.difficulty}
+                        </span>
+                      </div>
 
-                      {/* Add to List Button */}
-                      {isAuthenticated && (
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            setTargetQuestionForList(prob);
-                          }}
-                          className="p-1.5 rounded-lg text-text-faint hover:text-primary hover:bg-surface transition-colors cursor-pointer"
-                          title="Add to custom list..."
+                      {/* Enter Arrow (Fixed width) */}
+                      <div className="w-6 shrink-0 hidden sm:flex items-center justify-center">
+                        <Link
+                          href={`/problems/${prob.slug || prob._id}`}
+                          className="p-1 rounded-full text-text-faint group-hover:text-text group-hover:translate-x-0.5 transition-all"
+                          aria-label={`Open problem ${prob.title}`}
                         >
-                          <ListPlus className="size-4" />
-                        </button>
-                      )}
-
-                      {/* Difficulty Badge */}
-                      <span className={`text-[10px] font-mono font-semibold px-2.5 py-0.5 rounded-full border uppercase ${difficultyColors[prob.difficulty] || "text-text-muted bg-surface-2 border-border"}`}>
-                        {prob.difficulty}
-                      </span>
-
-                      {/* Enter Arrow */}
-                      <Link
-                        href={`/problems/${prob.slug || prob._id}`}
-                        className="p-1 rounded-full text-text-faint group-hover:text-text group-hover:translate-x-0.5 transition-all hidden sm:inline-flex"
-                        aria-label={`Open problem ${prob.title}`}
-                      >
-                        <ChevronRight className="size-4" />
-                      </Link>
+                          <ChevronRight className="size-4" />
+                        </Link>
+                      </div>
                     </div>
                   </div>
                 );
