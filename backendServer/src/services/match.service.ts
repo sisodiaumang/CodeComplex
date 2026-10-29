@@ -324,4 +324,17 @@ export async function settleMatchAsWon(
                 err
             )
         );
+
+    if ((match as any).tournamentId) {
+        import("./tournament.service.js")
+            .then(({ handleTournamentMatchFinished }) =>
+                handleTournamentMatchFinished(match._id.toString(), null, winnerTeam)
+            )
+            .catch((err) =>
+                console.error(
+                    `[TournamentService] Failed to advance tournament on sudden-death win for match ${match._id}:`,
+                    err
+                )
+            );
+    }
 }

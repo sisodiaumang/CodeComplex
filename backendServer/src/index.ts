@@ -45,6 +45,7 @@ import adminRouter from "./routes/admin.router.js";
 import revisionRouter from "./routes/revision.router.js";
 import certificateRouter from "./routes/certificate.router.js";
 import questionRouter from "./routes/question.router.js";
+import tournamentRouter from "./routes/tournament.router.js";
 
 
 
@@ -193,6 +194,7 @@ app.use("/api/v1/admin", adminRouter);
 app.use("/api/v1/revision", revisionRouter);
 app.use("/api/v1/certificates", certificateRouter);
 app.use("/api/v1/questions", questionRouter);
+app.use("/api/v1/tournaments", tournamentRouter);
 
 
 
@@ -278,6 +280,14 @@ io.on("connection", (socket) => {
 
     registerBattleChatHandlers(io, socket);
     registerBattleVoiceHandlers(io, socket);
+
+    socket.on("tournament:join", ({ tournamentId }: { tournamentId: string }) => {
+        if (tournamentId) socket.join(`tournament:${tournamentId}`);
+    });
+
+    socket.on("tournament:leave", ({ tournamentId }: { tournamentId: string }) => {
+        if (tournamentId) socket.leave(`tournament:${tournamentId}`);
+    });
 
     socket.on("disconnect", () => {
         console.log(` User Disconnected : ${socket.id}`);

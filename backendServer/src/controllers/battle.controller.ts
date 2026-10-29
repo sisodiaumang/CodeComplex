@@ -95,7 +95,7 @@ function buildTopicFilter(topic: string, queryField: string) {
     }
 }
 
-async function pickRandomQuestion(
+export async function pickRandomQuestion(
     room: InstanceType<typeof BattleRoom>
 ): Promise<string | null> {
     const topics = room.topics ?? [];

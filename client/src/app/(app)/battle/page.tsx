@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Swords, KeyRound, DoorOpen, ArrowRight, Users, Play, Info, Shuffle, Target, Search, CheckCircle2 } from "lucide-react";
+import { Swords, KeyRound, DoorOpen, ArrowRight, Users, Play, Info, Shuffle, Target, Search, CheckCircle2, Trophy } from "lucide-react";
 import { api, errorMessage } from "@/lib/api";
 import type { BattleRoom } from "@/lib/types";
 import { MODE_COLORS, type BattleType } from "@/lib/theme";
@@ -246,7 +246,20 @@ export default function BattlePage() {
 
   return (
     <div className="space-y-8">
-      <h1 className="text-2xl font-semibold text-text">Battle</h1>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-semibold text-text">Battle</h1>
+          <p className="text-xs text-text-muted">Duel other developers in real-time or practice in solo sandboxes.</p>
+        </div>
+        <Link
+          href="/tournaments"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500/10 via-primary/10 to-amber-500/10 border border-amber-500/30 text-amber-500 hover:text-amber-400 font-mono text-xs font-bold transition-all shadow-xs hover:border-amber-500/50"
+        >
+          <Trophy className="size-4" />
+          <span>Esports Tournaments (Solo & Team)</span>
+          <ArrowRight className="size-3.5" />
+        </Link>
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_420px] gap-6">
         {/* Create */}

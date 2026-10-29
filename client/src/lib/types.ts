@@ -280,3 +280,87 @@ export interface CertificateVerifyResponse {
   isAuthentic: boolean;
   verifiedAt: string;
 }
+
+// ─── Tournament Types ────────────────────────────────────────────────────────
+
+export type TournamentFormat = "SOLO" | "TEAM";
+export type TournamentStatus = "REGISTRATION" | "IN_PROGRESS" | "COMPLETED" | "CANCELLED";
+export type TournamentMatchStatus = "PENDING" | "ACTIVE" | "COMPLETED" | "BYE";
+
+export interface TournamentParticipantMember {
+  userId: string | { _id: string; username: string; avatar?: { profileImageURL?: string }; fullName?: string };
+  username: string;
+  avatar?: string;
+}
+
+export interface TournamentParticipant {
+  id: string;
+  name: string;
+  avatar?: string;
+  members: TournamentParticipantMember[];
+  seed?: number;
+  registeredAt: string;
+}
+
+export interface TournamentMatchParticipant {
+  id: string;
+  name: string;
+  avatar?: string;
+  score?: number;
+  members?: TournamentParticipantMember[];
+}
+
+export interface TournamentMatch {
+  matchIndex: number;
+  participantA?: TournamentMatchParticipant;
+  participantB?: TournamentMatchParticipant;
+  battleRoomCode?: string;
+  matchId?: string;
+  winnerId?: string;
+  status: TournamentMatchStatus;
+  completedAt?: string;
+}
+
+export interface TournamentRound {
+  roundIndex: number;
+  roundName: string;
+  matches: TournamentMatch[];
+}
+
+export interface Tournament {
+  _id: string;
+  title: string;
+  description?: string;
+  creator: PublicUser | { _id: string; username: string; avatar?: { profileImageURL?: string }; fullName?: string };
+  format: TournamentFormat;
+  teamSize: number;
+  battleType: BattleType;
+  difficulty: Difficulty | "MIXED";
+  topics: string[];
+  maxParticipants: number;
+  status: TournamentStatus;
+  currentRound: number;
+  totalRounds: number;
+  startTime?: string;
+  autoStartWhenFull: boolean;
+  participants: TournamentParticipant[];
+  rounds: TournamentRound[];
+  winner?: {
+    id: string;
+    name: string;
+    avatar?: string;
+    members?: TournamentParticipantMember[];
+  };
+  runnerUp?: {
+    id: string;
+    name: string;
+    avatar?: string;
+    members?: TournamentParticipantMember[];
+  };
+  prizes?: {
+    winnerXp: number;
+    runnerUpXp: number;
+  };
+  createdAt: string;
+  updatedAt: string;
+}

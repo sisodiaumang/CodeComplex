@@ -33,10 +33,11 @@ import { cn } from "@/lib/utils";
 
 const AUTH_NAV = [
   { href: "/battle", label: "Battle", icon: Swords },
+  { href: "/tournaments", label: "Tournaments", icon: Trophy },
   { href: "/problems", label: "Problems", icon: Code2 },
   { href: "/revision", label: "Revision", icon: RotateCcw },
-  { href: "/leaderboard", label: "Leaderboard", icon: Trophy },
-  { href: "/achievements", label: "Achievements", icon: Award },
+  { href: "/leaderboard", label: "Leaderboard", icon: Award },
+  { href: "/achievements", label: "Achievements", icon: ShieldCheck },
   { href: "/matches", label: "Matches", icon: History },
   { href: "/friends", label: "Friends", icon: Users },
 ] as const;
@@ -44,7 +45,8 @@ const AUTH_NAV = [
 const PUBLIC_NAV = [
   { href: "/problems", label: "Problems", icon: Code2 },
   { href: "/battle", label: "1v1 Arena", icon: Swords },
-  { href: "/leaderboard", label: "Leaderboard", icon: Trophy },
+  { href: "/tournaments", label: "Tournaments", icon: Trophy },
+  { href: "/leaderboard", label: "Leaderboard", icon: Award },
   { href: "/verify-certificate", label: "Verify Credential", icon: ShieldCheck },
   { href: "/faq", label: "FAQ", icon: HelpCircle },
 ] as const;

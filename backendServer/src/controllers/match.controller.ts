@@ -384,6 +384,16 @@ export const endMatch = async (
                 console.error("[AchievementService] Failed to check achievements:", err)
             );
 
+        if ((match as any).tournamentId) {
+            import("../services/tournament.service.js")
+                .then(({ handleTournamentMatchFinished }) =>
+                    handleTournamentMatchFinished(match._id.toString(), winnerId ? winnerId.toString() : null, winnerTeam as any)
+                )
+                .catch((err) =>
+                    console.error("[TournamentService] Failed to process tournament match:", err)
+                );
+        }
+
         res.status(200).json({
             success: true,
             message: "Match ended",

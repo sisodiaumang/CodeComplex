@@ -27,7 +27,7 @@ interface AchievementChecker {
 interface AchievementData {
     name: string;
     description: string;
-    category: "RATING" | "MATCHES" | "STREAK" | "DSA" | "PROMPT_WAR" | "SPECIAL";
+    category: "RATING" | "MATCHES" | "STREAK" | "DSA" | "PROMPT_WAR" | "SPECIAL" | "TOURNAMENT";
     rarity: "COMMON" | "RARE" | "EPIC" | "LEGENDARY";
     requirement: number;
     xpReward: number;
@@ -765,6 +765,95 @@ export const ACHIEVEMENTS_DATA: AchievementData[] = [
             rarity: "LEGENDARY"
         },
         check: (p) => p.stats.projectsCompleted >= 50
+    },
+    // ── TOURNAMENTS (6 achievements) ──
+    {
+        name: "Tournament Contender",
+        description: "Enter the grand arena and compete in your first tournament bracket.",
+        category: "TOURNAMENT",
+        rarity: "COMMON",
+        requirement: 1,
+        xpReward: 100,
+        icon: "🏆",
+        mascotReward: {
+            name: "Cyber Falcon",
+            icon: "🦅",
+            description: "A swift digital raptor that scouts bracket matchups from the clouds.",
+            type: "falcon",
+            rarity: "COMMON"
+        },
+        check: (p) => (p.stats.tournamentsPlayed || 0) >= 1
+    },
+    {
+        name: "Bracket Crusher",
+        description: "Eliminate rivals by winning 3 tournament bracket matches.",
+        category: "TOURNAMENT",
+        rarity: "RARE",
+        requirement: 3,
+        xpReward: 250,
+        icon: "⚔️",
+        check: (p) => (p.stats.tournamentMatchesWon || 0) >= 3
+    },
+    {
+        name: "Grand Finalist",
+        description: "Fight through the brackets to reach the Grand Finals of a tournament.",
+        category: "TOURNAMENT",
+        rarity: "RARE",
+        requirement: 1,
+        xpReward: 300,
+        icon: "🥈",
+        check: (p) => (p.stats.finalsReached || 0) >= 1 || (p.stats.tournamentsWon || 0) >= 1
+    },
+    {
+        name: "Solo Arena Champion",
+        description: "Outlast all opposition to win 1st place in a Solo Tournament.",
+        category: "TOURNAMENT",
+        rarity: "EPIC",
+        requirement: 1,
+        xpReward: 600,
+        icon: "👑",
+        mascotReward: {
+            name: "Apex Phoenix",
+            icon: "🔥🦅",
+            description: "A legendary fiery phoenix that perches only beside tournament champions.",
+            type: "phoenix",
+            rarity: "EPIC"
+        },
+        check: (p) => (p.stats.tournamentsWon || 0) >= 1
+    },
+    {
+        name: "Synergy Squad",
+        description: "Lead your team to glory and secure 1st place in a Team-based Tournament.",
+        category: "TOURNAMENT",
+        rarity: "EPIC",
+        requirement: 1,
+        xpReward: 600,
+        icon: "🛡️",
+        mascotReward: {
+            name: "War Titan",
+            icon: "🤖",
+            description: "A towering mechanical sentinel built for team coordination.",
+            type: "robot",
+            rarity: "EPIC"
+        },
+        check: (p) => (p.stats.tournamentsWon || 0) >= 1
+    },
+    {
+        name: "Esports Overlord",
+        description: "Cement your competitive dynasty by winning 3 tournament championships.",
+        category: "TOURNAMENT",
+        rarity: "LEGENDARY",
+        requirement: 3,
+        xpReward: 1500,
+        icon: "🌟",
+        mascotReward: {
+            name: "Golden Cyber Dragon",
+            icon: "🐉✨",
+            description: "The ultimate tournament trophy companion clad in shimmering gold.",
+            type: "dragon",
+            rarity: "LEGENDARY"
+        },
+        check: (p) => (p.stats.tournamentsWon || 0) >= 3
     }
 ];
 
@@ -931,7 +1020,7 @@ export async function seedAchievements(): Promise<void> {
                 { upsert: true, new: true }
             );
         }
-        console.log("[AchievementService] Seeding completed successfully. 50 achievements configured.");
+        console.log(`[AchievementService] Seeding completed successfully. ${ACHIEVEMENTS_DATA.length} achievements configured.`);
     } catch (error) {
         console.error("[AchievementService] Seeding failed:", error);
     }

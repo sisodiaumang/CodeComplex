@@ -40,10 +40,11 @@ import { AchievementToastsContainer } from "@/components/AchievementToast";
 
 const NAV = [
   { href: "/battle", label: "Battle", icon: Swords },
+  { href: "/tournaments", label: "Tournaments", icon: Trophy },
   { href: "/problems", label: "Problems", icon: Code2 },
   { href: "/revision", label: "Revision", icon: RotateCcw },
-  { href: "/leaderboard", label: "Leaderboard", icon: Trophy },
-  { href: "/achievements", label: "Achievements", icon: Award },
+  { href: "/leaderboard", label: "Leaderboard", icon: Award },
+  { href: "/achievements", label: "Achievements", icon: ShieldCheck },
   { href: "/matches", label: "Matches", icon: History },
   { href: "/friends", label: "Friends", icon: Users },
 ] as const;

@@ -1,8 +1,6 @@
 import mongoose from "mongoose";
 import { IAchievement } from "../interfaces/achievement.interface.js";
 
-
-
 const achievementSchema =
     new mongoose.Schema<IAchievement>(
         {
@@ -30,7 +28,8 @@ const achievementSchema =
                     "STREAK",
                     "DSA",
                     "PROMPT_WAR",
-                    "SPECIAL"
+                    "SPECIAL",
+                    "TOURNAMENT"
                 ],
                 required: true
             },
@@ -68,14 +67,11 @@ const achievementSchema =
         },
         {
             timestamps: true
-        });
-
+        }
+    );
 
 const Achievement: mongoose.Model<IAchievement> =
     (mongoose.models.Achievement as mongoose.Model<IAchievement>) ||
-    mongoose.model<IAchievement>(
-        "Achievement",
-        achievementSchema
-    );
+    mongoose.model<IAchievement>("Achievement", achievementSchema);
 
 export default Achievement;

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   Award,
+  Swords,
   Lock,
   CheckCircle,
   Search,
@@ -26,7 +27,8 @@ import { AchievementIcon } from "@/components/AchievementIcon";
 
 const CATEGORIES = [
   { id: "ALL", label: "All", icon: Award },
-  { id: "MATCHES", label: "Matches", icon: Trophy },
+  { id: "TOURNAMENT", label: "Tournaments", icon: Trophy },
+  { id: "MATCHES", label: "Matches", icon: Swords },
   { id: "STREAK", label: "Streaks", icon: Flame },
   { id: "RATING", label: "Ratings", icon: Zap },
   { id: "DSA", label: "DSA", icon: Brain },

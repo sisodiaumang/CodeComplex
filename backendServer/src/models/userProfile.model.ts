@@ -21,11 +21,6 @@ const userProfileSchema =
                 bugFix:    { type: Number, default: 1200, min: 0 }
             },
 
-            // FIX (rating-controller spec): "peakRating" in the spec's
-            // /rating/me response had no backing field anywhere — added
-            // here, mirroring `ratings`. rating.service.ts updates this via
-            // the native MongoDB $max update operator (never decreases,
-            // never needs a fetch-then-compare round trip).
             peakRatings: {
                 dsa:       { type: Number, default: 1200, min: 0 },
                 frontend:  { type: Number, default: 1200, min: 0 },
@@ -37,14 +32,18 @@ const userProfileSchema =
             },
 
             stats: {
-                wins:               { type: Number, default: 0, min: 0 },
-                losses:             { type: Number, default: 0, min: 0 },
-                draws:              { type: Number, default: 0, min: 0 },
-                totalMatches:       { type: Number, default: 0, min: 0 },
-                dsaSolved:          { type: Number, default: 0, min: 0 },
-                frontendCompleted:  { type: Number, default: 0, min: 0 },
-                backendCompleted:   { type: Number, default: 0, min: 0 },
-                projectsCompleted:  { type: Number, default: 0, min: 0 }
+                wins:                 { type: Number, default: 0, min: 0 },
+                losses:               { type: Number, default: 0, min: 0 },
+                draws:                { type: Number, default: 0, min: 0 },
+                totalMatches:         { type: Number, default: 0, min: 0 },
+                dsaSolved:            { type: Number, default: 0, min: 0 },
+                frontendCompleted:    { type: Number, default: 0, min: 0 },
+                backendCompleted:     { type: Number, default: 0, min: 0 },
+                projectsCompleted:    { type: Number, default: 0, min: 0 },
+                tournamentsPlayed:    { type: Number, default: 0, min: 0 },
+                tournamentsWon:       { type: Number, default: 0, min: 0 },
+                tournamentMatchesWon: { type: Number, default: 0, min: 0 },
+                finalsReached:        { type: Number, default: 0, min: 0 }
             },
 
             streak: {
@@ -53,10 +52,6 @@ const userProfileSchema =
                 min: 0
             },
 
-            // FIX: Changed from [String] to ObjectId references so that
-            // badges and achievements can be populated and referential
-            // integrity is maintained. Update your IUserProfile interface
-            // to reflect Types.ObjectId[] for both fields.
             badges: [
                 {
                     type: mongoose.Schema.Types.ObjectId,
@@ -76,7 +71,6 @@ const userProfileSchema =
         }
     );
 
-
 // Per-category leaderboard compound indexes for fast MongoDB index-only scans.
 userProfileSchema.index({ "ratings.dsa": -1, userId: 1 });
 userProfileSchema.index({ "ratings.frontend": -1, userId: 1 });
@@ -85,7 +79,6 @@ userProfileSchema.index({ "ratings.projects": -1, userId: 1 });
 userProfileSchema.index({ "ratings.team": -1, userId: 1 });
 userProfileSchema.index({ "ratings.promptWar": -1, userId: 1 });
 userProfileSchema.index({ "ratings.bugFix": -1, userId: 1 });
-
 
 const UserProfile: mongoose.Model<IUserProfile> =
     (mongoose.models.UserProfile as mongoose.Model<IUserProfile>) ||

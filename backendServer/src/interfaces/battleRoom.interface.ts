@@ -1,6 +1,5 @@
 import { Document, Types } from "mongoose";
 
-
 export type Difficulty =
     | "EASY"
     | "MEDIUM"
@@ -13,7 +12,6 @@ export type BattleType =
     | "PROJECTS"
     | "PROMPT_WAR"
     | "BUG_FIX"
-    | "PROMPT_WAR"
     | "TEAM";
 
 export type RoomStatus =
@@ -23,33 +21,25 @@ export type RoomStatus =
     | "CANCELLED";
 
 export interface IBattleRoom extends Document {
-
     roomCode: string;
-
     host: Types.ObjectId;
-
     battleType: BattleType;
-
     topics?: string[];
-
     difficulty?: Difficulty;
-
     teamSize: number;
-
     status: RoomStatus;
-
     questionSlug?: string;
-
     matchId?: Types.ObjectId;
-
     createdAt: Date;
     updatedAt: Date;
     teams: {
         teamA: Types.ObjectId[];
         teamB: Types.ObjectId[];
-
     };
     isRanked: boolean;
     isSolo?: boolean;
     isPrivate: boolean;
+    tournamentId?: Types.ObjectId;
+    tournamentRoundIndex?: number;
+    tournamentMatchIndex?: number;
 }

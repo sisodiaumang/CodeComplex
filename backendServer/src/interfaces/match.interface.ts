@@ -10,7 +10,7 @@ export type MatchType =
     |    "RANKED"
     |   "CASUAL"
     |   "FRIEND"
-    |  "TOURNAMENT"
+    |  "TOURNAMENT";
 
 export interface IMatch extends Document {
 
@@ -44,4 +44,5 @@ export interface IMatch extends Document {
     difficulty: Difficulty;
     abandonReason : String;
     spectators: Types.ObjectId[];
+    tournamentId?: Types.ObjectId;
 }

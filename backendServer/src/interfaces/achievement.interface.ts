@@ -6,15 +6,14 @@ export type AchievementCategory =
     | "STREAK"
     | "DSA"
     | "PROMPT_WAR"
-    | "SPECIAL";
+    | "SPECIAL"
+    | "TOURNAMENT";
 
 export type Rarity = 
-    
     | "COMMON"
     | "RARE"
     | "EPIC"
     | "LEGENDARY";
-
 
 export interface IMascotReward {
     name: string;
@@ -22,25 +21,15 @@ export interface IMascotReward {
     description: string;
 }
 
-
 export interface IAchievement extends Document {
-
     name: string;
-
     description: string;
-
-    rarity :Rarity ;
-
+    rarity: Rarity;
     icon: string;
-
     category: AchievementCategory;
-
     requirement: number;
-
     xpReward: number;
-
     mascotReward?: IMascotReward;
-
     createdAt: Date;
     updatedAt: Date;
 }
