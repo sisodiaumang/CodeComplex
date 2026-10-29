@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer';
+import crypto from 'crypto';
 import { env } from '../config/env.js';
 import ApiError from '../utils/ApiError.js';
 
@@ -38,14 +39,51 @@ if (env.NODE_ENV === "production" && (!env.EMAIL_USER || !env.EMAIL_PASS)) {
 const FROM_ADDRESS = env.EMAIL_FROM_ADDRESS ?? env.EMAIL_USER ?? "support@codecomplex.site";
 const APP_NAME = 'CodeComplex';
 
-function buildNotificationFooter(typeLabel: string): string {
-    const settingsUrl = `${env.CLIENT_URL || "https://codecomplex.site"}/settings?tab=notifications`;
+export type NotificationType = "revisionReminders" | "grindReminders" | "welcomeAndAnnouncements";
+
+export function generateUnsubscribeToken(email: string, type: string): string {
+    return crypto
+        .createHmac("sha256", env.JWT_ACCESS_SECRET)
+        .update(`${email.toLowerCase().trim()}:${type}`)
+        .digest("hex");
+}
+
+export function verifyUnsubscribeToken(email: string, type: string, token: string): boolean {
+    if (!token || typeof token !== "string" || !email || !type) return false;
+    const expected = generateUnsubscribeToken(email, type);
+    const tokenBuf = Buffer.from(token);
+    const expectedBuf = Buffer.from(expected);
+    if (tokenBuf.length !== expectedBuf.length) return false;
+    return crypto.timingSafeEqual(tokenBuf, expectedBuf);
+}
+
+export function getUnsubscribeUrl(email: string, type: NotificationType): string {
+    const baseUrl = env.CLIENT_URL || env.CORS_ORIGIN || "https://codecomplex.site";
+    const token = generateUnsubscribeToken(email, type);
+    return `${baseUrl}/unsubscribe?email=${encodeURIComponent(email)}&type=${type}&token=${token}`;
+}
+
+function buildNotificationFooter(
+    typeKey: NotificationType,
+    actionLabel: string,
+    email: string
+): string {
+    const baseUrl = env.CLIENT_URL || env.CORS_ORIGIN || "https://codecomplex.site";
+    const unsubscribeUrl = getUnsubscribeUrl(email, typeKey);
+    const settingsUrl = `${baseUrl}/settings?tab=notifications`;
+
     return `
-        <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid #30363d; font-size: 12px; color: #8b949e; text-align: center; line-height: 1.6;">
-            To turn off ${typeLabel} or manage your notification preferences, visit your 
-            <a href="${settingsUrl}" target="_blank" style="color: #FF6B00; text-decoration: underline; font-weight: 500;">
-                Notification Settings
-            </a>.
+        <div style="margin-top: 24px; padding-top: 18px; border-top: 1px solid #30363d; font-size: 13px; color: #8b949e; text-align: center; line-height: 1.6;">
+            Don't want to receive these emails?
+            <div style="margin-top: 6px;">
+                <a href="${unsubscribeUrl}" target="_blank" style="color: #FF6B00; text-decoration: underline; font-weight: 600;">
+                    ${actionLabel}
+                </a>
+                <span style="color: #484f58; margin: 0 8px;">&bull;</span>
+                <a href="${settingsUrl}" target="_blank" style="color: #8b949e; text-decoration: underline;">
+                    Manage notification settings
+                </a>
+            </div>
         </div>
     `;
 }
@@ -92,7 +130,7 @@ function buildEmailChangeHtml(otp: string): string {
     `;
 }
 
-function buildWelcomeHtml(username: string): string {
+function buildWelcomeHtml(username: string, email: string): string {
     return `
         <div style="background-color: #0d1117; color: #c9d1d9; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; padding: 40px 20px; border-radius: 8px; max-width: 500px; margin: 0 auto; border: 1px solid #30363d;">
             <div style="text-align: center; margin-bottom: 24px;">
@@ -110,7 +148,7 @@ function buildWelcomeHtml(username: string): string {
                 <div style="text-align: center; margin: 28px 0 8px 0;">
                     <a href="${env.CLIENT_URL}/battle" target="_blank" style="background-color: #FF6B00; color: #ffffff; font-weight: bold; text-decoration: none; padding: 14px 28px; border-radius: 6px; display: inline-block; font-size: 16px; box-shadow: 0 4px 12px rgba(255, 107, 0, 0.25);">Enter the Arena</a>
                 </div>
-                ${buildNotificationFooter("welcome & platform announcement emails")}
+                ${buildNotificationFooter("welcomeAndAnnouncements", "Turn off platform updates", email)}
             </div>
             <div style="text-align: center; margin-top: 24px; font-size: 12px; color: #484f58;">
                 &copy; ${new Date().getFullYear()} CodeComplex. All rights reserved.
@@ -119,7 +157,7 @@ function buildWelcomeHtml(username: string): string {
     `;
 }
 
-function buildGrindReminderHtml(username: string): string {
+function buildGrindReminderHtml(username: string, email: string): string {
     return `
         <div style="background-color: #0d1117; color: #c9d1d9; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; padding: 40px 20px; border-radius: 8px; max-width: 500px; margin: 0 auto; border: 1px solid #30363d;">
             <div style="text-align: center; margin-bottom: 24px;">
@@ -133,7 +171,7 @@ function buildGrindReminderHtml(username: string): string {
                 <div style="text-align: center; margin: 28px 0 8px 0;">
                     <a href="${env.CLIENT_URL}/battle" target="_blank" style="background-color: #FF6B00; color: #ffffff; font-weight: bold; text-decoration: none; padding: 14px 28px; border-radius: 6px; display: inline-block; font-size: 16px; box-shadow: 0 4px 12px rgba(255, 107, 0, 0.25);">Back to the Arena</a>
                 </div>
-                ${buildNotificationFooter("inactivity reminder emails")}
+                ${buildNotificationFooter("grindReminders", "Turn off inactivity reminders", email)}
             </div>
             <div style="text-align: center; margin-top: 24px; font-size: 12px; color: #484f58;">
                 &copy; ${new Date().getFullYear()} CodeComplex. All rights reserved.
@@ -168,11 +206,16 @@ async function sendVerificationMail(email: string, otp: string): Promise<void> {
  */
 async function sendWelcomeMail(email: string, username: string): Promise<void> {
     try {
+        const unsubscribeUrl = getUnsubscribeUrl(email, "welcomeAndAnnouncements");
         await transporter.sendMail({
             from: `"${APP_NAME}" <${FROM_ADDRESS}>`,
             to: email,
             subject: `Welcome to ${APP_NAME}! 🚀`,
-            html: buildWelcomeHtml(username),
+            html: buildWelcomeHtml(username, email),
+            headers: {
+                "List-Unsubscribe": `<${unsubscribeUrl}>`,
+                "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+            },
         });
     } catch (err) {
         console.error(`[EmailService] Welcome email failed to send to ${email}:`, err);
@@ -207,11 +250,16 @@ async function sendEmailChangeMail(email: string, otp: string): Promise<void> {
  */
 async function sendGrindReminderMail(email: string, username: string): Promise<void> {
     try {
+        const unsubscribeUrl = getUnsubscribeUrl(email, "grindReminders");
         await transporter.sendMail({
             from: `"${APP_NAME}" <${FROM_ADDRESS}>`,
             to: email,
             subject: `Your friends are grinding on ${APP_NAME}! ⚔️`,
-            html: buildGrindReminderHtml(username),
+            html: buildGrindReminderHtml(username, email),
+            headers: {
+                "List-Unsubscribe": `<${unsubscribeUrl}>`,
+                "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+            },
         });
     } catch (err) {
         console.error(`[EmailService] Grind reminder email failed to send to ${email}:`, err);
@@ -282,10 +330,16 @@ export async function sendRevisionReminderMail(
 
     try {
         const targetUrl = `${env.CORS_ORIGIN || "https://codecomplex.site"}/revision`;
+        const unsubscribeUrl = getUnsubscribeUrl(toEmail, "revisionReminders");
+
         await transporter.sendMail({
             from: `"${APP_NAME} Memory Trainer" <${FROM_ADDRESS}>`,
             to: toEmail,
             subject: `⚡ Time to Revise: You solved "${questionTitle}" ${daysAgo} days ago!`,
+            headers: {
+                "List-Unsubscribe": `<${unsubscribeUrl}>`,
+                "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+            },
             html: `
                 <div style="background-color: #0d1117; color: #c9d1d9; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; padding: 40px 20px; border-radius: 8px; max-width: 550px; margin: 0 auto; border: 1px solid #30363d;">
                     <div style="text-align: center; margin-bottom: 24px;">
@@ -307,7 +361,7 @@ export async function sendRevisionReminderMail(
                         <p style="font-size: 12px; color: #6e7681; text-align: center; margin-top: 16px;">
                             Practicing spaced repetition strengthens algorithm retention by over 300%.
                         </p>
-                        ${buildNotificationFooter("daily spaced-repetition revision reminder emails")}
+                        ${buildNotificationFooter("revisionReminders", "Turn off revision reminders", toEmail)}
                     </div>
                     <div style="text-align: center; margin-top: 24px; font-size: 12px; color: #484f58;">
                         &copy; ${new Date().getFullYear()} CodeComplex. All rights reserved.

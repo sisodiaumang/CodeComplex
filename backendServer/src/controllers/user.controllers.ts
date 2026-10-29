@@ -22,6 +22,7 @@ import { OtpPurpose } from "../interfaces/otp.interface.js";
 import { uploadOnCloudinary, deleteCloudinary } from "../utils/cloudinary.js";
 import countries from "../constants/countries.js";
 import { isReservedUsername } from "../constants/reservedUsernames.js";
+import { verifyUnsubscribeToken } from "../services/emailSend.service.js";
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
@@ -1248,6 +1249,59 @@ const updateEmailNotifications = asyncHandler(async (req, res) => {
     );
 });
 
+// ─── handleUnsubscribe ─────────────────────────────────────────────────────────
+
+const handleUnsubscribe = asyncHandler(async (req, res) => {
+    const email = (req.query.email || req.body.email) as string;
+    const type = (req.query.type || req.body.type) as string;
+    const token = (req.query.token || req.body.token) as string;
+    const enabled = req.body.enabled !== undefined ? Boolean(req.body.enabled) : false;
+
+    if (!email || !type || !token) {
+        throw new ApiError(400, "Missing required parameters: email, type, or token");
+    }
+
+    const validTypes = ["revisionReminders", "grindReminders", "welcomeAndAnnouncements"];
+    if (!validTypes.includes(type)) {
+        throw new ApiError(400, "Invalid notification type");
+    }
+
+    const isValid = verifyUnsubscribeToken(email, type, token);
+    if (!isValid) {
+        throw new ApiError(400, "Invalid or expired unsubscribe link");
+    }
+
+    const user = await User.findOne({ email: email.toLowerCase().trim() });
+    if (!user) {
+        throw new ApiError(404, "User account not found");
+    }
+
+    if (!user.emailNotifications) {
+        user.emailNotifications = {
+            revisionReminders: true,
+            grindReminders: true,
+            welcomeAndAnnouncements: true,
+        };
+    }
+
+    (user.emailNotifications as any)[type] = enabled;
+    user.markModified("emailNotifications");
+    await user.save({ validateBeforeSave: false });
+
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            {
+                email: user.email,
+                type,
+                enabled,
+                emailNotifications: user.emailNotifications,
+            },
+            enabled ? "Notification turned back on." : "Email notification turned off successfully."
+        )
+    );
+});
+
 // ─── getPublicStats ─────────────────────────────────────────────────────────────
 const getPublicStats = asyncHandler(async (req, res) => {
     const [
@@ -1308,5 +1362,6 @@ export {
     updateMascot,
     updateBanner,
     updateEmailNotifications,
+    handleUnsubscribe,
     getPublicStats
 };

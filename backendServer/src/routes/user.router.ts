@@ -23,6 +23,7 @@ import {
     updateMascot,
     updateBanner,
     updateEmailNotifications,
+    handleUnsubscribe,
     getPublicStats
 } from "../controllers/user.controllers.js";
 import { createReport } from "../controllers/admin.controller.js";
@@ -86,6 +87,7 @@ userRouter.route("/email-notifications").patch(verifyJWT, validateRequest(update
 userRouter.route("/report").post(verifyJWT, createReport);
 
 userRouter.route("/public/stats").get(getPublicStats);
+userRouter.route("/unsubscribe").get(handleUnsubscribe).post(handleUnsubscribe);
 
 // ─── Public profile lookup — keep LAST among GET routes ───────────────
 // A param route like "/:username" matches any path segment, so if it were
