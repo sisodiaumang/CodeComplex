@@ -4,6 +4,33 @@ import { API_URL } from "./api";
 
 export type ProblemMode = "DSA" | "BUG_FIX" | "FRONTEND" | "BACKEND" | "PROMPT_WAR";
 
+const API_URL_CANDIDATES = Array.from(
+  new Set(
+    [
+      process.env.INTERNAL_API_URL,
+      "http://backend:8000/api/v1",
+      API_URL,
+      "https://codecomplex.site/api/v1",
+      "http://localhost:8000/api/v1",
+    ].filter(Boolean) as string[]
+  )
+);
+
+async function fetchFromBackendApi(endpoint: string, init?: RequestInit): Promise<Response | null> {
+  for (const base of API_URL_CANDIDATES) {
+    try {
+      const url = `${base}${endpoint.startsWith("/") ? endpoint : `/${endpoint}`}`;
+      const res = await fetch(url, init);
+      if (res.ok) {
+        return res;
+      }
+    } catch {
+      // try next candidate
+    }
+  }
+  return null;
+}
+
 export interface QuestionSummary {
   _id: string;
   slug: string;
@@ -15,6 +42,12 @@ export interface QuestionSummary {
   tags?: string[];
   topics?: string[];
   estimatedTime?: number;
+  metadata?: {
+    estimatedTime?: number;
+    points?: number;
+    topics?: string[];
+    tags?: string[];
+  };
 }
 
 export interface QuestionDetail extends QuestionSummary {
@@ -104,10 +137,10 @@ export async function getAllQuestionsSummary(filterMode?: string): Promise<Quest
   if (!cachedSummaries) {
     // 1. Try backend API first
     try {
-      const res = await fetch(`${API_URL}/questions?all=true`, {
+      const res = await fetchFromBackendApi("/questions?all=true", {
         next: { revalidate: 3600 },
       });
-      if (res.ok) {
+      if (res && res.ok) {
         const data = await res.json();
         if (data?.data?.questions?.length > 0) {
           cachedSummaries = data.data.questions.map((q: any) => ({
@@ -185,6 +218,8 @@ export async function getAllQuestionsSummary(filterMode?: string): Promise<Quest
   return cachedSummaries || [];
 }
 
+export const getAllQuestions = getAllQuestionsSummary;
+
 export async function getQuestionBySlug(slugOrId: string): Promise<QuestionDetail | null> {
   const norm = String(slugOrId || "").trim().toLowerCase();
   if (cachedDetailsMap.has(norm)) {
@@ -193,10 +228,10 @@ export async function getQuestionBySlug(slugOrId: string): Promise<QuestionDetai
 
   // 1. Try backend API
   try {
-    const res = await fetch(`${API_URL}/questions/${encodeURIComponent(norm)}`, {
+    const res = await fetchFromBackendApi(`/questions/${encodeURIComponent(norm)}`, {
       next: { revalidate: 3600 },
     });
-    if (res.ok) {
+    if (res && res.ok) {
       const json = await res.json();
       if (json?.data) {
         const d = json.data;

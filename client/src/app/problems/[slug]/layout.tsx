@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { getQuestionBySlug } from "@/lib/questions";
 
 export async function generateMetadata({
@@ -13,6 +14,10 @@ export async function generateMetadata({
     return {
       title: "Challenge Not Found — CodeComplex",
       description: "Explore 4,000+ coding challenges across algorithms, debugging, frontend, backend, and prompt engineering on CodeComplex.",
+      robots: {
+        index: false,
+        follow: false,
+      },
     };
   }
 
@@ -76,35 +81,35 @@ export default async function ProblemDetailLayout({
   const { slug } = await params;
   const question = await getQuestionBySlug(slug);
 
-  const questionSchema = question
-    ? {
-        "@context": "https://schema.org",
-        "@type": "Question",
-        "name": question.title,
-        "text": question.statement?.markdown || question.title,
-        "educationalLevel": question.difficulty,
-        "about": [
-          question.mode,
-          question.category,
-          ...(question.topics || []),
-          ...(question.tags || []),
-        ],
-        "learningResourceType": "Interactive Challenge",
-        "potentialAction": {
-          "@type": "SolveAction",
-          "target": `https://codecomplex.site/problems/${question.slug || slug}`,
-        },
-      }
-    : null;
+  if (!question) {
+    notFound();
+  }
+
+  const questionSchema = {
+    "@context": "https://schema.org",
+    "@type": "Question",
+    name: question.title,
+    text: question.statement?.markdown || question.title,
+    educationalLevel: question.difficulty,
+    about: [
+      question.mode,
+      question.category,
+      ...(question.topics || []),
+      ...(question.tags || []),
+    ],
+    learningResourceType: "Interactive Challenge",
+    potentialAction: {
+      "@type": "SolveAction",
+      target: `https://codecomplex.site/problems/${question.slug || slug}`,
+    },
+  };
 
   return (
     <>
-      {questionSchema && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(questionSchema) }}
-        />
-      )}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(questionSchema) }}
+      />
       {children}
     </>
   );
