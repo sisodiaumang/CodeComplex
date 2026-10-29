@@ -174,7 +174,7 @@ export default function TournamentDetailPage({
   }[tournament.status];
 
   return (
-    <div className="space-y-6 max-w-6xl mx-auto pb-16">
+    <div className="space-y-6 pb-16">
       {/* ── Back Navigation ───────────────────────────────── */}
       <div className="flex items-center justify-between">
         <Link

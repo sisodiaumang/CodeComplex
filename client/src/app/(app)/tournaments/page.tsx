@@ -202,7 +202,7 @@ export default function TournamentsPage() {
   };
 
   return (
-    <div className="space-y-8 max-w-6xl mx-auto pb-12">
+    <div className="space-y-8 pb-12">
       {/* ── Hero Banner ─────────────────────────────────── */}
       <div className="relative overflow-hidden rounded-2xl border border-amber-500/20 bg-gradient-to-br from-amber-500/10 via-surface to-surface-2 p-6 sm:p-8 shadow-sm">
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
