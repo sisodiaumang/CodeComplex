@@ -38,16 +38,21 @@ import { LogoMark } from "@/components/logo";
 import { ThemeToggle } from "./ThemeToggle";
 import { AchievementToastsContainer } from "@/components/AchievementToast";
 
-const NAV = [
+const PRIMARY_NAV = [
   { href: "/battle", label: "Battle", icon: Swords },
   { href: "/tournaments", label: "Tournaments", icon: Trophy },
   { href: "/problems", label: "Problems", icon: Code2 },
-  { href: "/revision", label: "Revision", icon: RotateCcw },
   { href: "/leaderboard", label: "Leaderboard", icon: Award },
-  { href: "/achievements", label: "Achievements", icon: ShieldCheck },
-  { href: "/matches", label: "Matches", icon: History },
-  { href: "/friends", label: "Friends", icon: Users },
 ] as const;
+
+const MORE_NAV = [
+  { href: "/revision", label: "Revision", icon: RotateCcw, desc: "Spaced-repetition practice" },
+  { href: "/achievements", label: "Achievements", icon: ShieldCheck, desc: "Badges & companion pets" },
+  { href: "/matches", label: "Matches", icon: History, desc: "Battle history & analysis" },
+  { href: "/friends", label: "Friends", icon: Users, desc: "Manage squad & rivals" },
+] as const;
+
+const ALL_NAV = [...PRIMARY_NAV, ...MORE_NAV];
 
 /* ─── Brand ───────────────────────────────────────────────────────────── */
 
@@ -62,22 +67,92 @@ function Brand() {
   );
 }
 
+/* ─── More Dropdown ───────────────────────────────────────────────────── */
+
+function MoreDropdown() {
+  const pathname = usePathname();
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
+
+  const isMoreActive = MORE_NAV.some(
+    ({ href }) => pathname === href || pathname.startsWith(`${href}/`)
+  );
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className={cn(
+          "flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors cursor-pointer",
+          isMoreActive
+            ? "bg-sidebar-active text-white"
+            : "text-sidebar-muted hover:bg-sidebar-hover hover:text-sidebar-text"
+        )}
+      >
+        <span>More</span>
+        <ChevronDown
+          className={cn("size-3.5 transition-transform duration-200", open && "rotate-180")}
+        />
+      </button>
+
+      {open && (
+        <div className="absolute left-0 top-full z-50 mt-1.5 w-60 rounded-xl border border-border bg-surface p-1.5 shadow-xl animate-in fade-in zoom-in-95 duration-100">
+          <div className="px-2.5 py-1 text-[10px] font-mono uppercase tracking-wider text-text-muted">
+            Community & Tools
+          </div>
+          {MORE_NAV.map(({ href, label, icon: Icon, desc }) => {
+            const active = pathname === href || pathname.startsWith(`${href}/`);
+            return (
+              <Link
+                key={href}
+                href={href}
+                onClick={() => setOpen(false)}
+                className={cn(
+                  "flex items-start gap-2.5 rounded-lg px-2.5 py-2 text-xs transition-colors",
+                  active
+                    ? "bg-surface-2 text-primary font-medium"
+                    : "text-text hover:bg-surface-2"
+                )}
+              >
+                <Icon
+                  className={cn(
+                    "mt-0.5 size-4 shrink-0",
+                    active ? "text-primary" : "text-text-muted"
+                  )}
+                />
+                <div className="flex flex-col">
+                  <span className="font-semibold text-text">{label}</span>
+                  <span className="text-[11px] text-text-muted">{desc}</span>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ─── Desktop nav links (horizontal) ──────────────────────────────────── */
 
 function DesktopNav() {
   const pathname = usePathname();
-  const user = useAuth((s) => s.user);
-  const isAdmin = user && ["ADMIN", "MODERATOR", "OWNER"].includes(user.role || "");
-
-  const navItems = [...NAV];
-  if (isAdmin) {
-    navItems.push({ href: "/admin", label: "Admin", icon: Shield } as any);
-  }
 
   return (
     <nav className="flex items-center gap-1">
-      {navItems.map(({ href, label, icon: Icon }) => {
-        const active = pathname === href || pathname.startsWith(`${href}/`);
+      {PRIMARY_NAV.map(({ href, label, icon: Icon }) => {
+        const active = pathname === href || (href !== "/battle" && pathname.startsWith(`${href}/`));
         return (
           <Link
             key={href}
@@ -94,6 +169,7 @@ function DesktopNav() {
           </Link>
         );
       })}
+      <MoreDropdown />
     </nav>
   );
 }
@@ -172,6 +248,7 @@ function UserMenu() {
   }
 
   if (!user) return null;
+  const isAdmin = ["ADMIN", "MODERATOR", "OWNER"].includes(user.role || "");
 
   return (
     <div ref={ref} className="relative">
@@ -192,11 +269,11 @@ function UserMenu() {
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full z-50 mt-1.5 w-48 overflow-hidden rounded-lg border border-border bg-surface py-1 shadow-lg">
+        <div className="absolute right-0 top-full z-50 mt-1.5 w-52 overflow-hidden rounded-xl border border-border bg-surface py-1 shadow-xl">
           <Link
             href={`/profile/${user.username}`}
             onClick={() => setOpen(false)}
-            className="flex items-center gap-2.5 px-3 py-2 text-sm text-text hover:bg-surface-2"
+            className="flex items-center gap-2.5 px-3.5 py-2 text-sm text-text hover:bg-surface-2"
           >
             <Avatar src={user.avatar?.profileImageURL} name={user.username} size={20} />
             My Profile
@@ -204,36 +281,51 @@ function UserMenu() {
           <Link
             href="/settings"
             onClick={() => setOpen(false)}
-            className="flex items-center gap-2.5 px-3 py-2 text-sm text-text hover:bg-surface-2"
+            className="flex items-center gap-2.5 px-3.5 py-2 text-sm text-text hover:bg-surface-2"
           >
             <Settings className="size-4 text-text-muted" />
             Settings
+          </Link>
+          <Link
+            href="/verify-certificate"
+            onClick={() => setOpen(false)}
+            className="flex items-center gap-2.5 px-3.5 py-2 text-sm text-text hover:bg-surface-2"
+          >
+            <ShieldCheck className="size-4 text-text-muted" />
+            Verify Certificate
           </Link>
           <button
             onClick={() => {
               setOpen(false);
               setReportModalOpen(true);
             }}
-            className="flex w-full items-center gap-2.5 px-3 py-2 text-sm text-text hover:bg-surface-2 text-left"
+            className="flex w-full items-center gap-2.5 px-3.5 py-2 text-sm text-text hover:bg-surface-2 text-left"
           >
             <AlertTriangle className="size-4 text-text-muted" />
             Report Issue
           </button>
-          <Link
-            href="/verify-certificate"
-            onClick={() => setOpen(false)}
-            className="flex items-center gap-2.5 px-3 py-2 text-sm text-text hover:bg-surface-2"
-          >
-            <ShieldCheck className="size-4 text-text-muted" />
-            Verify Certificate
-          </Link>
+
+          {isAdmin && (
+            <>
+              <div className="my-1 border-t border-border" />
+              <Link
+                href="/admin"
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-2.5 px-3.5 py-2 text-sm font-medium text-amber-500 hover:bg-surface-2"
+              >
+                <Shield className="size-4 text-amber-500" />
+                Admin Panel
+              </Link>
+            </>
+          )}
+
           <div className="my-1 border-t border-border" />
           <button
             onClick={() => {
               setOpen(false);
               logout();
             }}
-            className="flex w-full items-center gap-2.5 px-3 py-2 text-sm text-danger hover:bg-surface-2"
+            className="flex w-full items-center gap-2.5 px-3.5 py-2 text-sm text-danger hover:bg-surface-2"
           >
             <LogOut className="size-4" />
             Log out
@@ -264,7 +356,7 @@ function MobileNavLinks({ onNavigate }: { onNavigate: () => void }) {
   ).length;
 
   const allLinks = [
-    ...NAV,
+    ...ALL_NAV,
     { href: "/notifications", label: "Notifications", icon: Bell },
     { href: "/settings", label: "Settings", icon: Settings },
   ];
@@ -346,9 +438,11 @@ function MobileUserFooter() {
 /* ─── App Shell ───────────────────────────────────────────────────────── */
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
-  const { status } = useAuth();
+  const { status, user } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const isAdmin = user && ["ADMIN", "MODERATOR", "OWNER"].includes(user.role || "");
 
   useSocketNotifications();
 
@@ -380,9 +474,23 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             </div>
           </div>
 
-          {/* Right: theme + bell + user (desktop) | hamburger (mobile) */}
-          <div className="hidden items-center gap-1 lg:flex">
+          {/* Right: theme + admin + bell + user (desktop) | hamburger (mobile) */}
+          <div className="hidden items-center gap-1.5 lg:flex">
             <ThemeToggle />
+            {isAdmin && (
+              <Link
+                href="/admin"
+                className={cn(
+                  "relative rounded-md p-2 transition-colors",
+                  pathname.startsWith("/admin")
+                    ? "bg-sidebar-active text-amber-400"
+                    : "text-sidebar-muted hover:bg-sidebar-hover hover:text-amber-400"
+                )}
+                title="Admin Control Panel"
+              >
+                <Shield className="size-4" />
+              </Link>
+            )}
             <NotificationBell />
             <UserMenu />
           </div>

@@ -31,16 +31,21 @@ import { api } from "@/lib/api";
 import { unwrapList, type AppNotification } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
-const AUTH_NAV = [
+const PRIMARY_AUTH_NAV = [
   { href: "/battle", label: "Battle", icon: Swords },
   { href: "/tournaments", label: "Tournaments", icon: Trophy },
   { href: "/problems", label: "Problems", icon: Code2 },
-  { href: "/revision", label: "Revision", icon: RotateCcw },
   { href: "/leaderboard", label: "Leaderboard", icon: Award },
-  { href: "/achievements", label: "Achievements", icon: ShieldCheck },
-  { href: "/matches", label: "Matches", icon: History },
-  { href: "/friends", label: "Friends", icon: Users },
 ] as const;
+
+const MORE_AUTH_NAV = [
+  { href: "/revision", label: "Revision", icon: RotateCcw, desc: "Spaced-repetition practice" },
+  { href: "/achievements", label: "Achievements", icon: ShieldCheck, desc: "Badges & companion pets" },
+  { href: "/matches", label: "Matches", icon: History, desc: "Battle history & analysis" },
+  { href: "/friends", label: "Friends", icon: Users, desc: "Manage squad & rivals" },
+] as const;
+
+const ALL_AUTH_NAV = [...PRIMARY_AUTH_NAV, ...MORE_AUTH_NAV];
 
 const PUBLIC_NAV = [
   { href: "/problems", label: "Problems", icon: Code2 },
@@ -58,7 +63,9 @@ export function PublicNavbar() {
   const { user, status, setUser } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+  const [moreDropdownOpen, setMoreDropdownOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
+  const moreMenuRef = useRef<HTMLDivElement>(null);
 
   const isAuthenticated = status === "authed" && !!user;
   const isAdmin = user && ["ADMIN", "MODERATOR", "OWNER"].includes(user.role || "");
@@ -80,6 +87,9 @@ export function PublicNavbar() {
     function handleClickOutside(e: MouseEvent) {
       if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
         setUserDropdownOpen(false);
+      }
+      if (moreMenuRef.current && !moreMenuRef.current.contains(e.target as Node)) {
+        setMoreDropdownOpen(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -117,10 +127,14 @@ export function PublicNavbar() {
     router.replace("/login");
   }
 
-  const activeAuthLinks = [...AUTH_NAV];
+  const activeAuthLinks = [...ALL_AUTH_NAV];
   if (isAdmin) {
-    activeAuthLinks.push({ href: "/admin", label: "Admin", icon: Shield } as any);
+    activeAuthLinks.push({ href: "/admin", label: "Admin Panel", icon: Shield } as any);
   }
+
+  const isMoreActive = MORE_AUTH_NAV.some(
+    ({ href }) => pathname === href || pathname.startsWith(`${href}/`)
+  );
 
   return (
     <>
@@ -140,8 +154,9 @@ export function PublicNavbar() {
 
             {/* Desktop Navigation Links */}
             <nav className="hidden lg:flex items-center gap-1">
-              {isAuthenticated
-                ? activeAuthLinks.map(({ href, label, icon: Icon }) => {
+              {isAuthenticated ? (
+                <>
+                  {PRIMARY_AUTH_NAV.map(({ href, label, icon: Icon }) => {
                     const active = pathname === href || (href !== "/battle" && pathname.startsWith(`${href}/`));
                     return (
                       <Link
@@ -158,25 +173,82 @@ export function PublicNavbar() {
                         <span>{label}</span>
                       </Link>
                     );
-                  })
-                : PUBLIC_NAV.map(({ href, label, icon: Icon }) => {
-                    const active = pathname === href || pathname.startsWith(`${href}/`);
-                    return (
-                      <Link
-                        key={href}
-                        href={href}
-                        className={cn(
-                          "flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors",
-                          active
-                            ? "bg-surface-2 text-primary font-semibold shadow-xs"
-                            : "text-text-muted hover:bg-surface-2 hover:text-text"
-                        )}
-                      >
-                        <Icon className="size-3.5" />
-                        <span>{label}</span>
-                      </Link>
-                    );
                   })}
+
+                  {/* More Dropdown */}
+                  <div ref={moreMenuRef} className="relative">
+                    <button
+                      type="button"
+                      onClick={() => setMoreDropdownOpen((o) => !o)}
+                      className={cn(
+                        "flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors cursor-pointer",
+                        isMoreActive
+                          ? "bg-surface-2 text-primary font-semibold shadow-xs"
+                          : "text-text-muted hover:bg-surface-2 hover:text-text"
+                      )}
+                    >
+                      <span>More</span>
+                      <ChevronDown
+                        className={cn("size-3 transition-transform duration-200", moreDropdownOpen && "rotate-180")}
+                      />
+                    </button>
+
+                    {moreDropdownOpen && (
+                      <div className="absolute left-0 top-full mt-1.5 w-60 rounded-xl border border-border bg-surface p-1.5 shadow-xl z-50 animate-in fade-in zoom-in-95 duration-100">
+                        <div className="px-2.5 py-1 text-[10px] font-mono uppercase tracking-wider text-text-muted">
+                          Community & Tools
+                        </div>
+                        {MORE_AUTH_NAV.map(({ href, label, icon: Icon, desc }) => {
+                          const active = pathname === href || pathname.startsWith(`${href}/`);
+                          return (
+                            <Link
+                              key={href}
+                              href={href}
+                              onClick={() => setMoreDropdownOpen(false)}
+                              className={cn(
+                                "flex items-start gap-2.5 rounded-lg px-2.5 py-2 text-xs transition-colors",
+                                active
+                                  ? "bg-surface-2 text-primary font-medium"
+                                  : "text-text hover:bg-surface-2"
+                              )}
+                            >
+                              <Icon
+                                className={cn(
+                                  "mt-0.5 size-3.5 shrink-0",
+                                  active ? "text-primary" : "text-text-muted"
+                                )}
+                              />
+                              <div className="flex flex-col">
+                                <span className="font-semibold text-text">{label}</span>
+                                <span className="text-[11px] text-text-muted leading-tight">{desc}</span>
+                              </div>
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                </>
+              ) : (
+                PUBLIC_NAV.map(({ href, label, icon: Icon }) => {
+                  const active = pathname === href || pathname.startsWith(`${href}/`);
+                  return (
+                    <Link
+                      key={href}
+                      href={href}
+                      className={cn(
+                        "flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors",
+                        active
+                          ? "bg-surface-2 text-primary font-semibold shadow-xs"
+                          : "text-text-muted hover:bg-surface-2 hover:text-text"
+                      )}
+                    >
+                      <Icon className="size-3.5" />
+                      <span>{label}</span>
+                    </Link>
+                  );
+                })
+              )}
             </nav>
           </div>
 
@@ -186,6 +258,22 @@ export function PublicNavbar() {
 
             {isAuthenticated ? (
               <>
+                {/* Admin Shield Icon */}
+                {isAdmin && (
+                  <Link
+                    href="/admin"
+                    className={cn(
+                      "relative rounded-lg p-2 transition-colors",
+                      pathname.startsWith("/admin")
+                        ? "bg-surface-2 text-amber-500"
+                        : "text-text-muted hover:bg-surface-2 hover:text-amber-500"
+                    )}
+                    title="Admin Control Panel"
+                  >
+                    <Shield className="size-4" />
+                  </Link>
+                )}
+
                 {/* Notification Bell */}
                 <Link
                   href="/notifications"
@@ -249,6 +337,19 @@ export function PublicNavbar() {
                         <ShieldCheck className="size-3.5 text-text-muted" />
                         Verify Certificate
                       </Link>
+                      {isAdmin && (
+                        <>
+                          <div className="my-1 border-t border-border" />
+                          <Link
+                            href="/admin"
+                            onClick={() => setUserDropdownOpen(false)}
+                            className="flex items-center gap-2.5 px-3.5 py-2 text-xs font-medium text-amber-500 hover:bg-surface-2 transition-colors"
+                          >
+                            <Shield className="size-3.5 text-amber-500" />
+                            Admin Panel
+                          </Link>
+                        </>
+                      )}
                       <div className="my-1 border-t border-border" />
                       <button
                         type="button"
