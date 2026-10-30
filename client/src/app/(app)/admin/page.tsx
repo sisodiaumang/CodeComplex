@@ -1357,58 +1357,86 @@ export default function AdminPanelPage() {
                         <th className="px-6 py-4">Difficulty</th>
                         <th className="px-6 py-4">Arena Mode</th>
                         <th className="px-6 py-4">Lobby State</th>
+                        <th className="px-6 py-4">Date & Time</th>
                         <th className="px-6 py-4 text-right">Emergency Actions</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-border/40 text-sm">
-                      {roomsData.rooms.map((room: any) => (
-                        <tr key={room._id} className="hover:bg-surface/40 transition-colors">
-                          <td className="px-6 py-4 font-mono font-bold text-primary select-text">{room.roomCode}</td>
-                          <td className="px-6 py-4 text-text-muted font-semibold">{room.host?.username || "System Match"}</td>
-                          <td className="px-6 py-4">
-                            <Badge className="bg-surface-2 text-text-muted border border-border text-xs">
-                              {room.difficulty || "Casual"}
-                            </Badge>
-                          </td>
-                          <td className="px-6 py-4">
-                            {room.isRanked ? (
-                              <Badge className="bg-primary-subtle border border-primary/20 text-primary text-xs font-semibold py-0.5">
-                                Ranked Competitive
+                      {roomsData.rooms.map((room: any) => {
+                        const matchTime = room.matchId?.startedAt || room.createdAt;
+                        return (
+                          <tr key={room._id} className="hover:bg-surface/40 transition-colors">
+                            <td className="px-6 py-4 font-mono font-bold text-primary select-text">{room.roomCode}</td>
+                            <td className="px-6 py-4 text-text-muted font-semibold">{room.host?.username || "System Match"}</td>
+                            <td className="px-6 py-4">
+                              <Badge className="bg-surface-2 text-text-muted border border-border text-xs">
+                                {room.difficulty || "Casual"}
                               </Badge>
-                            ) : (
-                              <Badge className="bg-surface-3 border border-border text-text-muted text-xs py-0.5">
-                                Friendly Practice
-                              </Badge>
-                            )}
-                          </td>
-                          <td className="px-6 py-4 flex items-center">
-                            <span className={cn(
-                              "inline-block size-2 rounded-full mr-2",
-                              room.status === "STARTED" ? "bg-win animate-pulse" :
-                              room.status === "FINISHED" ? "bg-text-faint" : "bg-primary animate-pulse"
-                            )} />
-                            <span className="font-bold text-xs text-text uppercase font-mono">{room.status}</span>
-                          </td>
-                          <td className="px-6 py-4 text-right">
-                            {room.status !== "FINISHED" && room.status !== "CANCELLED" ? (
-                              <Button
-                                variant="danger"
-                                size="sm"
-                                onClick={() => {
-                                  if (confirm(`Terminate match room ${room.roomCode}?`)) {
-                                    cancelRoomMutation.mutate(room._id);
-                                  }
-                                }}
-                                className="h-8 text-xs font-bold gap-1 px-3"
-                              >
-                                <Trash2 className="size-3" /> Abort Match
-                              </Button>
-                            ) : (
-                              <span className="text-xs text-text-faint font-semibold uppercase font-mono">Archived</span>
-                            )}
-                          </td>
-                        </tr>
-                      ))}
+                            </td>
+                            <td className="px-6 py-4">
+                              {room.isRanked ? (
+                                <Badge className="bg-primary-subtle border border-primary/20 text-primary text-xs font-semibold py-0.5">
+                                  Ranked Competitive
+                                </Badge>
+                              ) : (
+                                <Badge className="bg-surface-3 border border-border text-text-muted text-xs py-0.5">
+                                  Friendly Practice
+                                </Badge>
+                              )}
+                            </td>
+                            <td className="px-6 py-4">
+                              <div className="flex items-center">
+                                <span className={cn(
+                                  "inline-block size-2 rounded-full mr-2",
+                                  room.status === "STARTED" ? "bg-win animate-pulse" :
+                                  room.status === "FINISHED" ? "bg-text-faint" : "bg-primary animate-pulse"
+                                )} />
+                                <span className="font-bold text-xs text-text uppercase font-mono">{room.status}</span>
+                              </div>
+                            </td>
+                            <td className="px-6 py-4 text-xs font-mono text-text-muted whitespace-nowrap">
+                              {matchTime ? (
+                                <div className="flex flex-col">
+                                  <span className="text-text font-medium">
+                                    {new Date(matchTime).toLocaleDateString(undefined, {
+                                      year: "numeric",
+                                      month: "short",
+                                      day: "numeric",
+                                    })}
+                                  </span>
+                                  <span className="text-text-faint text-[11px]">
+                                    {new Date(matchTime).toLocaleTimeString(undefined, {
+                                      hour: "2-digit",
+                                      minute: "2-digit",
+                                      second: "2-digit",
+                                    })}
+                                  </span>
+                                </div>
+                              ) : (
+                                <span className="text-text-faint">—</span>
+                              )}
+                            </td>
+                            <td className="px-6 py-4 text-right">
+                              {room.status !== "FINISHED" && room.status !== "CANCELLED" ? (
+                                <Button
+                                  variant="danger"
+                                  size="sm"
+                                  onClick={() => {
+                                    if (confirm(`Terminate match room ${room.roomCode}?`)) {
+                                      cancelRoomMutation.mutate(room._id);
+                                    }
+                                  }}
+                                  className="h-8 text-xs font-bold gap-1 px-3"
+                                >
+                                  <Trash2 className="size-3" /> Abort Match
+                                </Button>
+                              ) : (
+                                <span className="text-xs text-text-faint font-semibold uppercase font-mono">Archived</span>
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })}
                     </tbody>
                   </table>
                 )}

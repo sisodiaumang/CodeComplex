@@ -426,6 +426,7 @@ export const getAdminRooms = asyncHandler(
         const [rooms, total] = await Promise.all([
             BattleRoom.find()
                 .populate("host", "username email fullName")
+                .populate("matchId", "startedAt endedAt durationInMinutes")
                 .sort({ createdAt: -1 })
                 .skip(skip)
                 .limit(limit),
